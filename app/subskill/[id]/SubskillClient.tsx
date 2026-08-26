@@ -8,6 +8,7 @@ import { NavButton } from "@/components/NavButton";
 import { ConfettiBurst, useCountUp } from "@/components/CountUp";
 import { StepList, ProseText } from "@/components/StepList";
 import { MathText } from "@/components/MathText";
+import { GeometryDiagram } from "@/components/GeometryDiagram";
 import { sectionTheme } from "@/lib/sectionTheme";
 
 interface SubmitResult {
@@ -273,6 +274,7 @@ export function SubskillClient({
                       <div className="text-sm text-ink font-medium mb-3 leading-relaxed">
                         <MathText text={example.prompt} />
                       </div>
+                      {example.diagram && <GeometryDiagram spec={example.diagram} />}
                       <StepList text={example.walkthrough} className="text-[13px] text-gray-600 mb-3" />
                       <div className="text-[13px] text-accent font-semibold leading-relaxed border-t border-gray-200 pt-3">
                         <MathText text={example.answer} />

@@ -2,11 +2,17 @@
 // domains and skills (College Board), current as of the 2025-2026 digital SAT.
 // Source: satsuite.collegeboard.org/practice/student-question-bank
 
+import type { DiagramSpec } from "@/lib/diagramTypes";
+
 export interface WorkedExample {
   prompt: string;
   walkthrough: string;
   answer: string;
   difficulty: "easy" | "medium" | "hard";
+  // Hand-authored schematic figure for geometry examples (right triangles,
+  // circles, parallel lines, solids, etc.) -- see lib/diagramTypes.ts and
+  // components/GeometryDiagram.tsx. Left unset for non-geometry examples.
+  diagram?: DiagramSpec;
 }
 
 export interface Pattern {
@@ -4613,6 +4619,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the linear scale factor: the side length doubles, so k = 2. Step 2: Recall the rule for area: area scales by k², not k. Step 3: Compute: 2² = 4 — the area increases by a factor of 4, not 2.",
           answer: "The area increases by a factor of 4 (2², not just 2), since area scales with the square of the linear scale factor.",
+          diagram: { kind: "scaleCompare", shape: "square", factorLabel: "2" },
           difficulty: "easy",
         },
         {
@@ -4620,6 +4627,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the linear scale factor: the side length triples, so k = 3. Step 2: Recall the rule for volume specifically (not area this time): volume scales by k³, not k or k². Step 3: Compute: 3³ = 27 — the volume increases by a factor of 27, not 3 or 9.",
           answer: "The volume increases by a factor of 27 (3³, not just 3), since volume scales with the cube of the linear scale factor — a different exponent than the area case above.",
+          diagram: { kind: "scaleCompare", shape: "cube", factorLabel: "3" },
           difficulty: "medium",
         },
         {
@@ -4627,6 +4635,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the linear scale factor: the radius triples, so k = 3. Step 2: Area scales by k², not k. Step 3: Compute: 3² = 9 — the area increases by a factor of 9.",
           answer: "The area increases by a factor of 9, since area scales with the square of the linear scale factor.",
+          diagram: { kind: "scaleCompare", shape: "circle", factorLabel: "3" },
           difficulty: "easy",
         },
         {
@@ -4634,6 +4643,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recall the rule: area scales by k², so if the area increased by a factor of 16, that means k² = 16. Step 2: Solve for k by taking the square root: k = 4 (the positive root, since a scale factor can't be negative). Step 3: The side length increased by a factor of 4, not 16.",
           answer: "The side length increased by a factor of 4 — working backward from an area scale factor requires taking the square root, not using 16 directly.",
+          diagram: { kind: "scaleCompare", shape: "square", factorLabel: "?" },
           difficulty: "medium",
         },
         {
@@ -4641,6 +4651,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recall both rules at once: surface area scales by k² and volume scales by k³, with k = 2 here. Step 2: Surface area scales by 2² = 4; volume scales by 2³ = 8. Step 3: The RATIO of surface area to volume scales by 4/8 = 1/2 — the ratio is cut in half, since volume grows faster than surface area as an object scales up.",
           answer: "The surface-area-to-volume ratio is cut in half — since volume grows by k³ while surface area only grows by k², the ratio between them shrinks as an object scales up, even though both individual measurements increase.",
+          diagram: { kind: "scaleCompare", shape: "cube", factorLabel: "2" },
           difficulty: "hard",
         },
       ],
@@ -4659,6 +4670,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the shape and its formula: a cylinder's volume is πr²h. Step 2: Identify the given values: r = 3, h = 10. Step 3: Substitute and compute: π(3²)(10) = π(9)(10) = 90π.",
           answer: "90π, found by correctly identifying the cylinder volume formula (πr²h) before substituting the given values.",
+          diagram: { kind: "solid", shape: "cylinder", labels: { r: "3", h: "10" } },
           difficulty: "easy",
         },
         {
@@ -4666,6 +4678,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the shape and its formula — a cone, not a cylinder, which means the formula needs the extra factor of 1/3 that a cylinder's formula doesn't have: V = (1/3)πr²h. Step 2: Identify the given values: r = 3, h = 8. Step 3: Substitute and compute: (1/3)π(3²)(8) = (1/3)π(9)(8) = (1/3)(72π) = 24π.",
           answer: "24π, found by correctly identifying and applying the cone volume formula (with its 1/3 factor) rather than mistakenly using the cylinder formula from the example above.",
+          diagram: { kind: "solid", shape: "cone", labels: { r: "3", h: "8" } },
           difficulty: "medium",
         },
         {
@@ -4673,6 +4686,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the shape and its formula: a sphere's volume is (4/3)πr³. Step 2: Identify the given value: r = 6. Step 3: Substitute and compute: (4/3)π(6³) = (4/3)π(216) = 288π.",
           answer: "288π, found by correctly identifying and applying the sphere volume formula.",
+          diagram: { kind: "solid", shape: "sphere", labels: { r: "6" } },
           difficulty: "easy",
         },
         {
@@ -4680,6 +4694,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recognize this is a composite figure — two shapes combined, requiring two separate formulas added together, not just one shape's formula. Step 2: Cylinder volume: πr²h = π(4²)(10) = 160π. Step 3: Hemisphere volume (half a sphere): (1/2)(4/3)πr³ = (1/2)(4/3)π(64) = (128/3)π. Step 4: Add the two volumes together: 160π + (128/3)π = (480/3)π + (128/3)π = (608/3)π.",
           answer: "(608/3)π, found by computing the cylinder's volume and the hemisphere's volume separately, then adding them together — the defining move for any composite-figure problem.",
+          diagram: { kind: "solid", shape: "cylinderHemisphere", labels: { r: "4", h: "10" } },
           difficulty: "medium",
         },
         {
@@ -4687,6 +4702,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recognize this composite figure requires SUBTRACTING one shape from another, not adding — the pipe's material is the outer cylinder minus the hollow inner cylinder. Step 2: Compute the outer cylinder's volume: π(5²)(20) = 500π. Step 3: Compute the inner (hollow) cylinder's volume: π(3²)(20) = 180π. Step 4: Subtract: 500π - 180π = 320π.",
           answer: "320π, found by subtracting the hollow inner cylinder's volume from the outer cylinder's volume — composite figures sometimes require subtracting a removed shape, not just adding two shapes together.",
+          diagram: { kind: "solid", shape: "hollowCylinder", labels: { outerR: "5", innerR: "3", len: "20" } },
           difficulty: "hard",
         },
       ],
@@ -4705,6 +4721,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the formula: rectangular box volume = length × width × height. Step 2: Substitute the given dimensions: V = x × 3 × 5. Step 3: Simplify: V = 15x.",
           answer: "V = 15x, found by substituting the given dimensions directly into the volume formula.",
+          diagram: { kind: "solid", shape: "box", labels: { l: "x", w: "3", h: "5" } },
           difficulty: "easy",
         },
         {
@@ -4712,6 +4729,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the formula: cylinder volume = πr²h. Step 2: Substitute the given dimensions: V = πr²(4). Step 3: Simplify: V = 4πr².",
           answer: "V = 4πr², found by substituting the given dimensions into the cylinder volume formula.",
+          diagram: { kind: "solid", shape: "cylinder", labels: { r: "r", h: "4" } },
           difficulty: "easy",
         },
         {
@@ -4719,6 +4737,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the formula: rectangular prism volume = length × width × height. Step 2: Translate the worded dimensions: length = x (given directly); 'length is 3 more than width' means width = x - 3. Step 3: Height is given directly as 8. Step 4: Substitute: V = x(x-3)(8) = 8x(x-3).",
           answer: "V(x) = 8x(x-3), found by translating 'length is 3 more than width' into width = x-3, then substituting all three dimensions into the volume formula.",
+          diagram: { kind: "solid", shape: "box", labels: { l: "x", w: "x-3", h: "8" } },
           difficulty: "medium",
         },
         {
@@ -4726,6 +4745,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the formula: cylinder volume = πr²h. Step 2: Translate 'height that is twice its radius' into height = 2r — a multiplicative relationship, not additive. Step 3: Substitute: V = πr²(2r) = 2πr³.",
           answer: "V = 2πr³, found by translating 'twice its radius' into height = 2r, then substituting into the cylinder volume formula and simplifying.",
+          diagram: { kind: "solid", shape: "cylinder", labels: { r: "r", h: "2r" } },
           difficulty: "medium",
         },
         {
@@ -4733,6 +4753,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the formula: rectangular box volume = length × width × height. Step 2: Translate both worded relationships in sequence: width = half the length = x/2; height = 4 less than the width = (x/2) - 4. Step 3: Substitute all three into the formula: V = x × (x/2) × ((x/2) - 4). Step 4: Expand and simplify: x × (x/2) = x²/2, then (x²/2) × ((x/2) - 4) = x³/4 - 2x².",
           answer: "V = x³/4 - 2x², found by translating two chained comparative relationships before substituting into the volume formula and fully expanding.",
+          diagram: { kind: "solid", shape: "box", labels: { l: "x", w: "x/2", h: "x/2 - 4" } },
           difficulty: "hard",
         },
       ],
@@ -4762,6 +4783,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Recall the exterior angle rule: an exterior angle equals the sum of the two non-adjacent interior angles. Step 2: Set up the equation directly: 110 = 40 + x, where x is the unknown non-adjacent interior angle. Step 3: Solve: x = 70.",
           answer: "70°, found directly using the exterior angle rule rather than first finding the triangle's third angle via the 180° rule and then subtracting.",
+          diagram: { kind: "triangleAngles", angleA: "?", angleB: "40°", exterior: { at: "C", label: "110°" } },
           difficulty: "easy",
         },
         {
@@ -4769,6 +4791,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Recall the exterior angle rule: an exterior angle equals the sum of the two interior angles that are NOT adjacent to it. Step 2: The two given angles (55° and 65°) are exactly the pair non-adjacent to the exterior angle at the third vertex, so they can be added directly. Step 3: Add: 55 + 65 = 120.",
           answer: "120°, found by adding the two known interior angles directly — this time both non-adjacent angles were given up front, rather than needing to solve for one of them first.",
+          diagram: { kind: "triangleAngles", angleA: "55°", angleB: "65°", exterior: { at: "C", label: "?" } },
           difficulty: "medium",
         },
         {
@@ -4776,6 +4799,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Recall that a triangle's interior angles always sum to 180°. Step 2: Subtract the two known angles: 180 - 50 - 70 = 60.",
           answer: "60°, found directly using the 180° rule.",
+          diagram: { kind: "triangleAngles", angleA: "50°", angleB: "70°", angleC: "?" },
           difficulty: "easy",
         },
         {
@@ -4783,6 +4807,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Recognize this asks for the ADJACENT interior angle, not a non-adjacent one — the exterior-angle shortcut (exterior = sum of non-adjacent angles) doesn't directly apply here. Step 2: Instead, use the fact that an exterior angle and its adjacent interior angle form a straight line, summing to 180°. Step 3: 180 - 115 = 65.",
           answer: "65° — since this asks for the ADJACENT interior angle, the relevant rule is that an exterior angle and its adjacent interior angle are supplementary, not the sum-of-non-adjacent-angles shortcut.",
+          diagram: { kind: "triangleAngles", angleC: "?", exterior: { at: "C", label: "115°" } },
           difficulty: "medium",
         },
         {
@@ -4790,6 +4815,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Find the third angle of triangle ABC first: angle ACB = 180 - 55 - 60 = 65°. Step 2: Since angle ACD and angle ACB form a straight line along BD, they're supplementary: angle ACD = 180 - 65 = 115°. Step 3: Now treat angle ACD as one interior angle of the second triangle, ACD, and apply the 180° rule to that triangle: 115 + 35 + angle DAC = 180, so angle DAC = 30°.",
           answer: "30° — this requires chaining two triangles together: finding an angle in triangle ABC, using it to find the adjacent angle at C, then using that as an interior angle of triangle ACD to apply the 180° rule again.",
+          diagram: { kind: "triangleAngles", chained: { angleB: "60°", angleBAC: "55°", angleD: "35°", angleDAC: "?" } },
           difficulty: "hard",
         },
       ],
@@ -4808,6 +4834,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Identify the angle relationship at play: co-interior (same-side interior) angles, not corresponding or alternate interior angles. Step 2: Recall the rule for this specific pair: co-interior angles are supplementary, summing to 180° (unlike corresponding or alternate interior angles, which are equal). Step 3: Solve: 180 - 65 = 115°.",
           answer: "115°, using the co-interior angle rule (supplementary, summing to 180°) rather than the equal-angle rule that applies to corresponding or alternate interior angles.",
+          diagram: { kind: "parallelTransversal", givenLabel: "65°", givenPosition: 3, askedLabel: "?", askedPosition: 5 },
           difficulty: "easy",
         },
         {
@@ -4815,6 +4842,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Identify the angle relationship at play: alternate exterior angles this time, not co-interior. Step 2: Recall the rule for this specific pair: alternate exterior angles are equal, not supplementary — the opposite relationship from the co-interior pair in the example above. Step 3: Since the angles are equal, the alternate exterior angle also measures 72°.",
           answer: "72° — alternate exterior angles are equal, which is the opposite rule from the supplementary co-interior pair covered above, and mixing the two up is the single most common error in this subskill.",
+          diagram: { kind: "parallelTransversal", givenLabel: "72°", givenPosition: 1, askedLabel: "?", askedPosition: 8 },
           difficulty: "medium",
         },
         {
@@ -4822,6 +4850,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Identify the angle relationship: corresponding angles, which sit in the same relative position at each intersection. Step 2: Recall the rule: corresponding angles are equal. Step 3: The corresponding angle also measures 110°.",
           answer: "110° — corresponding angles are always equal.",
+          diagram: { kind: "parallelTransversal", givenLabel: "110°", givenPosition: 2, askedLabel: "?", askedPosition: 6 },
           difficulty: "easy",
         },
         {
@@ -4829,6 +4858,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: First find the co-interior angle to the given 75° angle: co-interior angles are supplementary, so 180 - 75 = 105°. Step 2: The question then asks for the angle VERTICAL to that 105° angle — vertical angles (formed by two intersecting lines) are always equal to each other, regardless of the parallel-lines context. Step 3: The vertical angle also measures 105°.",
           answer: "105° — this chains two separate rules: the co-interior (supplementary) relationship to get 105°, then the vertical-angles-are-equal rule, which leaves that value unchanged.",
+          diagram: { kind: "parallelTransversal", givenLabel: "75°", givenPosition: 3, askedLabel: "?", askedPosition: 8, extraLabel: "105°", extraPosition: 5 },
           difficulty: "medium",
         },
         {
@@ -4836,6 +4866,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: This classic 'bent path between two parallel lines' setup is solved by drawing an auxiliary line through the bend point B, parallel to both p and q. Step 2: This auxiliary line splits the angle at B into two pieces, each an alternate interior angle with one of the given angles — one piece equals 35°, and the other equals 50°. Step 3: Add the two pieces together to get the full angle at B: 35 + 50 = 85°.",
           answer: "85° — this zigzag setup is solved by drawing an auxiliary line through the bend point parallel to both given lines, splitting the unknown angle into two alternate-interior-angle pieces that add up to the given angles.",
+          diagram: { kind: "bentPath", angle1: "35°", angle2: "50°", unknown: "?" },
           difficulty: "hard",
         },
       ],
@@ -4854,6 +4885,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Identify the scale factor using the pair of corresponding sides that are both given: AB corresponds to DE (since the triangles' names list vertices in matching order), so scale = DE/AB = 9/6 = 1.5. Step 2: Apply that same scale factor to BC's corresponding side, EF: EF = BC × 1.5 = 8 × 1.5 = 12.",
           answer: "EF = 12, found by first finding the scale factor between the two known corresponding sides, then applying it to BC to find EF.",
+          diagram: { kind: "similarTriangles", leftLabels: ["A", "B", "C"], leftSides: ["6", "8", ""], rightLabels: ["D", "E", "F"], rightSides: ["9", "?", ""] },
           difficulty: "easy",
         },
         {
@@ -4861,6 +4893,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Unlike some problems, the scale factor is given directly here: 2/3. Step 2: Apply it to the known side, PQ, to find its corresponding side, XY: XY = 12 × (2/3) = 8.",
           answer: "XY = 8, found by applying the given scale factor directly to the known side PQ.",
+          diagram: { kind: "similarTriangles", leftLabels: ["P", "Q", "R"], leftSides: ["12", "", ""], rightLabels: ["X", "Y", "Z"], rightSides: ["?", "", ""] },
           difficulty: "easy",
         },
         {
@@ -4868,6 +4901,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Carefully match vertices according to the order given in the similarity statement: triangle ABC ~ triangle EFD means A corresponds to E, B corresponds to F, and C corresponds to D — not necessarily the order you'd guess from how the sides are listed. Step 2: Find the scale factor from the known pair: AB corresponds to EF, so scale = EF/AB = 15/10 = 1.5. Step 3: CA corresponds to DE (since C↔D and A↔E), so DE = CA × 1.5 = 8 × 1.5 = 12.",
           answer: "DE = 12 — the key challenge is correctly matching CA to DE based on the vertex order in 'triangle ABC ~ triangle EFD,' not just guessing based on which sides are listed near each other.",
+          diagram: { kind: "similarTriangles", leftLabels: ["A", "B", "C"], leftSides: ["10", "", "8"], rightLabels: ["E", "F", "D"], rightSides: ["15", "", "?"] },
           difficulty: "medium",
         },
         {
@@ -4875,6 +4909,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Find the scale factor using the one pair of corresponding sides given completely (GH and JK): scale = JK/GH = 6/14 = 3/7. Step 2: Apply that scale factor to HI (which corresponds to KL) to find the unknown: KL = 21 × (3/7) = 9.",
           answer: "KL = 9, found by first computing the scale factor from the one fully-known corresponding pair, then applying it to HI to find KL.",
+          diagram: { kind: "similarTriangles", leftLabels: ["G", "H", "I"], leftSides: ["14", "21", ""], rightLabels: ["J", "K", "L"], rightSides: ["6", "?", ""] },
           difficulty: "medium",
         },
         {
@@ -4882,6 +4917,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Before applying any proportion, confirm similarity — find the missing angle in each triangle. Triangle ABC's third angle: 180 - 50 - 70 = 60°. Triangle DEF's third angle (angle E): 180 - 50 - 60 = 70°. Step 2: Compare the full angle sets: ABC has 50°, 70°, 60°; DEF has 50°, 70°, 60° too — since all corresponding angles match, the triangles ARE similar, a step the problem doesn't hand you directly. Step 3: Match sides by their EQUAL angles, not listed order: angle A (50°) matches angle D (50°), and since angle C (60°) matches angle F (60°), side AB (opposite C) corresponds to side DE (opposite F). The scale factor from ABC to DEF is DE/AB = 6/9 = 2/3.",
           answer: "The triangles are similar (all three corresponding angles match once the missing angles are found), and the scale factor from ABC to DEF is 2/3 — found by first computing each triangle's missing angle to confirm similarity, then matching sides by equal angles rather than listed order.",
+          diagram: { kind: "similarTriangles", leftLabels: ["A", "B", "C"], leftSides: ["9", "", ""], rightLabels: ["D", "E", "F"], rightSides: ["6", "", ""] },
           difficulty: "hard",
         },
       ],
@@ -4900,6 +4936,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           prompt: "Two lines intersect, forming an angle of 65°. What is the measure of the angle vertical to it?",
           walkthrough: "Step 1: Vertical angles (directly across from each other at an intersection) are always equal. Step 2: The vertical angle also measures 65°.",
           answer: "65° — vertical angles are always equal, with no further calculation needed.",
+          diagram: { kind: "intersectingLines", lines: 2, angles: [{ label: "65°", position: 0 }, { label: "?", position: 2 }] },
           difficulty: "easy",
         },
         {
@@ -4907,6 +4944,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Angles adjacent to each other along a straight line are supplementary, adding to 180°. Step 2: Subtract: 180 - 110 = 70°.",
           answer: "70° — adjacent angles along a straight line always sum to 180°.",
+          diagram: { kind: "intersectingLines", lines: 2, angles: [{ label: "110°", position: 0 }, { label: "?", position: 1 }] },
           difficulty: "easy",
         },
         {
@@ -4915,6 +4953,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Since these two angles are vertical angles, they must be equal — set their expressions equal to each other: 3x + 15 = 5x - 25. Step 2: Subtract 3x from both sides: 15 = 2x - 25. Step 3: Add 25 to both sides: 40 = 2x, so x = 20.",
           answer: "x = 20, found by setting the two vertical angles' expressions equal to each other, since vertical angles are always equal.",
+          diagram: { kind: "intersectingLines", lines: 2, angles: [{ label: "(3x+15)°", position: 0 }, { label: "(5x-25)°", position: 2 }] },
           difficulty: "medium",
         },
         {
@@ -4923,6 +4962,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           walkthrough:
             "Step 1: Since these two angles are adjacent along a straight line, they're supplementary: (2x+10) + (3x-30) = 180. Step 2: Combine like terms: 5x - 20 = 180, so 5x = 200, giving x = 40. Step 3: Substitute back to find each angle: 2(40)+10 = 90°, and 3(40)-30 = 90° — both angles happen to be equal in this case (90° each), so the 'larger' angle is 90°.",
           answer: "90° — solving for x using the supplementary-angle relationship, then substituting back into both expressions to compare them.",
+          diagram: { kind: "intersectingLines", lines: 2, angles: [{ label: "(2x+10)°", position: 0 }, { label: "(3x-30)°", position: 1 }] },
           difficulty: "medium",
         },
         {
@@ -4932,6 +4972,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             "Step 1: With three lines through one point, six angles are formed, but the straight-line (180°) rule still applies along each of the three lines individually. Step 2: The third angle described is vertical to the 40° angle, so it also measures 40°. Step 3: The first, second, and third angles together must span a straight line (180°) along one of the three lines, since they're described as consecutively adjacent: 40 + (second angle) + 40 = 180, so the second angle = 100°.",
           answer:
             "100° — even with three intersecting lines, the straight-line (180°) and vertical-angle (equal) rules still apply to each individual line, just with more angles to track.",
+          diagram: { kind: "intersectingLines", lines: 3, angles: [{ label: "40°", position: 0 }, { label: "?", position: 1 }, { label: "40°", position: 2, muted: true }] },
           difficulty: "hard",
         },
       ],
@@ -4961,6 +5002,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the triangle: the pole's height is opposite the 40° angle, and the 15-foot distance is adjacent to it (the cable itself is the hypotenuse). Step 2: Since we relate opposite and adjacent, this calls for tangent (TOA: opposite/adjacent). Step 3: Set up: tan(40°) = height/15, so height = 15 · tan(40°).",
           answer: "15 · tan(40°), found by correctly identifying the height as 'opposite' the given angle and the 15-foot distance as 'adjacent' to it.",
+          diagram: { kind: "rightTriangle", base: "15", angle: "40°", height: "?", solveFor: "height" },
           difficulty: "easy",
         },
         {
@@ -4968,6 +5010,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the triangle relative to the angle at the ground: the wall height (12 feet) is opposite that angle, and the base distance (5 feet) is adjacent to it — the ladder itself is the hypotenuse. Step 2: Relating opposite and adjacent calls for tangent, same as the cable example — but this time the angle itself is unknown, not a side length. Step 3: Set up tan(angle) = 12/5, then undo the tangent with its inverse to solve for the angle itself: angle = tan⁻¹(12/5).",
           answer: "The angle equals tan⁻¹(12/5) — the same opposite/adjacent setup as the cable example, but solved for the angle itself using an inverse trig function instead of for a side length.",
+          diagram: { kind: "rightTriangle", base: "5", height: "12", angle: "?", solveFor: "angle" },
           difficulty: "medium",
         },
         {
@@ -4975,6 +5018,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the sides relative to the 30° angle: 5 is opposite, 10 is the hypotenuse. Step 2: Sine relates opposite and hypotenuse (SOH). Step 3: sin(30°) = 5/10 = 1/2.",
           answer: "1/2, found by directly applying opposite over hypotenuse.",
+          diagram: { kind: "rightTriangle", height: "5", hypotenuse: "10", angle: "30°" },
           difficulty: "easy",
         },
         {
@@ -4982,6 +5026,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the triangle: the ramp itself (20 feet) is the hypotenuse, and the horizontal distance is adjacent to the 15° angle (the vertical rise would be opposite). Step 2: Since we relate adjacent and hypotenuse, this calls for cosine (CAH: adjacent/hypotenuse). Step 3: Set up: cos(15°) = horizontal/20, so horizontal = 20cos(15°).",
           answer: "20cos(15°), found by correctly identifying the horizontal distance as 'adjacent' to the given angle and the ramp as the hypotenuse — calling for cosine, not tangent or sine.",
+          diagram: { kind: "rightTriangle", hypotenuse: "20", angle: "15°", base: "?", solveFor: "base" },
           difficulty: "medium",
         },
         {
@@ -4989,6 +5034,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recognize that the altitude from the apex to the base's midpoint creates two congruent RIGHT triangles — the key setup insight before any trig can be applied. Step 2: In one of these right triangles, the hypotenuse is the original equal side (13), and half the base (5) is adjacent to the angle in question. Step 3: Find the altitude (opposite that angle) using the Pythagorean theorem: √(13² - 5²) = √144 = 12. Step 4: Sine = opposite/hypotenuse = 12/13.",
           answer: "12/13 — the key step is recognizing that the altitude creates a right triangle within the isosceles triangle, with half the base and the equal side as two of its sides, before the Pythagorean theorem and SOH-CAH-TOA can even be applied.",
+          diagram: { kind: "isoscelesAltitude", equalSide: "13", halfBase: "5", altitude: "?", solveFor: "altitude" },
           difficulty: "hard",
         },
       ],
@@ -5007,6 +5053,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recognize this as a 30-60-90 triangle based on the given 30° angle. Step 2: Recall the fixed ratio: if the side opposite 30° is x, the hypotenuse is always 2x. Step 3: Substitute x = 5: hypotenuse = 2(5) = 10.",
           answer: "10, found instantly using the memorized 30-60-90 ratio (hypotenuse = 2 × side opposite 30°) without needing the Pythagorean theorem.",
+          diagram: { kind: "rightTriangle", height: "5", angle: "30°", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "easy",
         },
         {
@@ -5014,6 +5061,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recognize this as a 45-45-90 triangle, since both legs are equal. Step 2: Recall the fixed ratio: if a leg is x, the hypotenuse is x√2 — this still applies even though the given leg length already contains a radical. Step 3: Substitute x = 7√2: hypotenuse = 7√2 × √2 = 7 × 2 = 14.",
           answer: "14 — the same 45-45-90 ratio as always, it just takes an extra moment of care since the leg's length already has a √2 in it before multiplying by another √2.",
+          diagram: { kind: "rightTriangle", base: "7√2", height: "7√2", angle: "45°", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "medium",
         },
         {
@@ -5021,6 +5069,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recognize this as a 45-45-90 triangle, since both legs are equal. Step 2: Recall the ratio: if a leg is x, the hypotenuse is x√2. Step 3: Substitute x = 9: hypotenuse = 9√2.",
           answer: "9√2, found instantly using the 45-45-90 ratio.",
+          diagram: { kind: "rightTriangle", base: "9", height: "9", angle: "45°", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "easy",
         },
         {
@@ -5028,6 +5077,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recognize this as a 30-60-90 triangle. Step 2: Recall the ratio: if the side opposite 30° is x, the hypotenuse is 2x — but this time the hypotenuse is given, and x must be found by working backward. Step 3: Set up: 2x = 14, so x = 7.",
           answer: "7, found by working backward from the hypotenuse using the same 30-60-90 ratio, rather than starting from the short leg.",
+          diagram: { kind: "rightTriangle", hypotenuse: "14", angle: "30°", height: "?", solveFor: "height" },
           difficulty: "medium",
         },
         {
@@ -5035,6 +5085,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recognize this as a 30-60-90 triangle (since one angle is 60°, the other non-right angle must be 30°). Step 2: Use the hypotenuse to find x first: since hypotenuse = 2x, 16 = 2x, so x = 8 (the side opposite the 30° angle, the shortest side). Step 3: The side opposite 60° is x√3, not x itself: 8√3.",
           answer: "8√3 — this requires two steps: first finding x from the hypotenuse (x = 8), then correctly applying x√3 (not x) for the side opposite 60°.",
+          diagram: { kind: "rightTriangle", hypotenuse: "16", angle: "60°", height: "?", solveFor: "height" },
           difficulty: "hard",
         },
       ],
@@ -5053,6 +5104,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Sine needs the hypotenuse, which isn't given directly — find it first with the Pythagorean theorem: √(6² + 8²) = √(36+64) = √100 = 10. Step 2: Sine = opposite/hypotenuse = 6/10.",
           answer: "3/5, found by first computing the missing hypotenuse (10) via the Pythagorean theorem, then applying opposite over hypotenuse.",
+          diagram: { kind: "rightTriangle", base: "8", height: "6", angle: "θ", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "easy",
         },
         {
@@ -5060,6 +5112,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Notice only two sides are given (5 and 13, a leg and the hypotenuse) — tangent needs opposite/adjacent, so the missing leg must be found first. Step 2: Apply the Pythagorean theorem: missing leg = √(13² - 5²) = √(169-25) = √144 = 12. Step 3: Tangent = opposite/adjacent = 12/5.",
           answer: "12/5, found by first using the Pythagorean theorem to find the missing leg, since tangent requires both the opposite and adjacent sides, and only one was given directly.",
+          diagram: { kind: "rightTriangle", base: "5", angle: "θ", height: "?", hypotenuse: "13", solveFor: "height" },
           difficulty: "easy",
         },
         {
@@ -5067,6 +5120,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Apply the Pythagorean theorem to find the hypotenuse: √(4² + 4²) = √32. Step 2: Simplify the radical before using it: √32 = √(16×2) = 4√2. Step 3: Sine = opposite/hypotenuse = 4/(4√2) = 1/√2, which rationalizes to √2/2.",
           answer: "√2/2, found by first simplifying the radical hypotenuse before computing and rationalizing the sine ratio — skipping the simplification step makes the final ratio much messier to work with.",
+          diagram: { kind: "rightTriangle", base: "4", height: "4", angle: "θ", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "medium",
         },
         {
@@ -5074,6 +5128,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Find the missing leg first: √(15² - 9²) = √(225-81) = √144 = 12. Step 2: Carefully identify sides relative to the specific angle asked about — since the question asks for the angle NOT adjacent to the 9-leg, that means 9 is actually OPPOSITE this angle, and the other leg (12) is adjacent to it instead. Step 3: Cosine = adjacent/hypotenuse = 12/15 = 4/5.",
           answer: "4/5 — the missing leg is found first via the Pythagorean theorem, but the harder part is correctly identifying that the 9-leg is OPPOSITE (not adjacent to) the specific angle asked about.",
+          diagram: { kind: "rightTriangle", height: "9", hypotenuse: "15", angle: "θ", base: "?", solveFor: "base" },
           difficulty: "medium",
         },
         {
@@ -5081,6 +5136,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the triangle: the pole's height (24) is opposite the ground angle, the ground distance (18) is adjacent, and the wire itself is the hypotenuse — which isn't given directly and must be found. Step 2: Apply the Pythagorean theorem: √(24² + 18²) = √(576+324) = √900 = 30. Step 3: Sine = opposite/hypotenuse = 24/30 = 4/5.",
           answer: "4/5, found by first using the Pythagorean theorem to find the wire's length (30 feet), since sine specifically requires the hypotenuse — unlike tangent, which could have been found directly from the pole height and ground distance alone.",
+          diagram: { kind: "rightTriangle", base: "18", height: "24", angle: "θ", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "hard",
         },
       ],
@@ -5100,6 +5156,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Adding a full 2π rotation to any angle doesn't change its trig function values — it lands on the exact same position. Step 2: So cos(2π + π/3) is the same as cos(π/3). Step 3: cos(π/3) = 1/2.",
           answer: "1/2 — adding a full 2π rotation doesn't change where the angle points, so cos(2π + π/3) equals the much simpler cos(π/3).",
+          diagram: { kind: "unitCircleAngle", rawLabel: "2π + π/3", angleDegrees: 60 },
           difficulty: "easy",
         },
         {
@@ -5107,6 +5164,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: A negative angle means rotating clockwise instead of counterclockwise; find its coterminal positive angle by adding 2π: -π/6 + 2π = 11π/6. Step 2: 11π/6 lies in the fourth quadrant, where sine values are negative. Step 3: The reference angle is π/6, and sin(π/6) = 1/2, so with the fourth-quadrant sign: sin(11π/6) = -1/2.",
           answer: "-1/2 — converting the negative angle to its positive coterminal angle (11π/6) places it in the fourth quadrant, where sine is negative, with a reference angle of π/6.",
+          diagram: { kind: "unitCircleAngle", rawLabel: "-π/6", angleDegrees: -30 },
           difficulty: "easy",
         },
         {
@@ -5114,6 +5172,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: 13π/4 is larger than 2π (which is 8π/4), so subtract one full rotation: 13π/4 - 8π/4 = 5π/4. Step 2: 5π/4 lies in the third quadrant, where tangent is positive. Step 3: The reference angle is π/4, and tan(π/4) = 1, so tan(5π/4) = 1.",
           answer: "1, found by subtracting one full 2π rotation from 13π/4 to get the coterminal angle 5π/4, then applying the reference angle with the correct sign for the third quadrant.",
+          diagram: { kind: "unitCircleAngle", rawLabel: "13π/4", angleDegrees: 585 },
           difficulty: "medium",
         },
         {
@@ -5121,6 +5180,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: 17π/2 is much larger than 2π, so it needs MULTIPLE full rotations subtracted, not just one — 17π/2 ÷ (4π/2) = 4.25, meaning 4 full rotations fit inside. Step 2: Subtract 4 full rotations (4 × 4π/2 = 16π/2) from the original angle: 17π/2 - 16π/2 = π/2. Step 3: sin(π/2) = 1.",
           answer: "1 — this angle needed FOUR full 2π rotations subtracted, not just one, to reduce it down to the simple coterminal angle π/2.",
+          diagram: { kind: "unitCircleAngle", rawLabel: "17π/2", angleDegrees: 1530 },
           difficulty: "medium",
         },
         {
@@ -5128,6 +5188,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: This angle is both negative AND large in magnitude, so it may need multiple additions of 2π to reach the standard range. Step 2: Add 2π (6π/3) once: -11π/3 + 6π/3 = -5π/3 — still negative, so add 2π again: -5π/3 + 6π/3 = π/3, now within the standard range. Step 3: cos(π/3) = 1/2.",
           answer: "1/2 — this angle needed 2π added TWICE, since it was both negative and large in magnitude, before landing on the simple coterminal angle π/3.",
+          diagram: { kind: "unitCircleAngle", rawLabel: "-11π/3", angleDegrees: -660 },
           difficulty: "hard",
         },
       ],
@@ -5146,6 +5207,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           prompt: "A right triangle has legs of length 6 and 8. What is the length of the hypotenuse?",
           walkthrough: "Step 1: Apply the Pythagorean theorem: 6² + 8² = c². Step 2: Simplify: 36 + 64 = 100 = c². Step 3: Take the square root: c = 10.",
           answer: "10 — a recognizable 6-8-10 right triangle (a scaled-up 3-4-5).",
+          diagram: { kind: "rightTriangle", base: "6", height: "8", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "easy",
         },
         {
@@ -5153,6 +5215,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Since the hypotenuse is known, solve for the missing leg by subtracting: b² = 13² - 5². Step 2: Simplify: 169 - 25 = 144 = b². Step 3: Take the square root: b = 12.",
           answer: "12 — subtracting the known leg's square from the hypotenuse's square, since the hypotenuse (not a leg) was given.",
+          diagram: { kind: "rightTriangle", hypotenuse: "13", base: "5", height: "?", solveFor: "height" },
           difficulty: "easy",
         },
         {
@@ -5160,6 +5223,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Apply the theorem: 5² + 9² = c². Step 2: Simplify: 25 + 81 = 106 = c². Step 3: Take the square root: c = √106 — since 106 has no perfect-square factors other than 1 (its factors are 2 × 53, neither a perfect square), this radical is already fully simplified.",
           answer: "√106 — the radical doesn't simplify further, since 106 has no perfect-square factor greater than 1.",
+          diagram: { kind: "rightTriangle", base: "5", height: "9", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "medium",
         },
         {
@@ -5168,6 +5232,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Translate the scenario into a right triangle: the ladder is the hypotenuse (15), the distance from the wall is one leg (9), and the height up the wall is the missing leg. Step 2: Apply the theorem: 9² + b² = 15². Step 3: Simplify: 81 + b² = 225, so b² = 144, and b = 12 feet.",
           answer: "12 feet — after translating the word problem into a right triangle, the ladder (hypotenuse) and the ground distance (one leg) solve for the missing height (the other leg).",
+          diagram: { kind: "rightTriangle", hypotenuse: "15", base: "9", height: "?", solveFor: "height" },
           difficulty: "medium",
         },
         {
@@ -5177,6 +5242,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Step 1: Apply the theorem, squaring each leg carefully: (4√3)² + 4² = c². Step 2: Square the radical term correctly: (4√3)² = 16 × 3 = 48 (don't forget to square both the 4 and the √3 separately, then multiply). Step 3: Combine: 48 + 16 = 64 = c². Step 4: Take the square root: c = 8.",
           answer:
             "8 — the key step is correctly squaring the radical leg, (4√3)² = 48, not just 4² = 16 or accidentally dropping the radical.",
+          diagram: { kind: "rightTriangle", base: "4√3", height: "4", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "hard",
         },
       ],
@@ -5195,6 +5261,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           prompt: "If sin(40°) = cos(y°), what is the value of y?",
           walkthrough: "Step 1: Apply the identity sin(x°) = cos(90° - x°) with x = 40. Step 2: y = 90 - 40 = 50.",
           answer: "y = 50 — sin and cos of complementary angles (summing to 90°) are always equal.",
+          diagram: { kind: "rightTriangle", angle: "40°", topAngle: "y°" },
           difficulty: "easy",
         },
         {
@@ -5202,6 +5269,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: In any right triangle, the two non-right angles are always complementary (sum to 90°). Step 2: By the complementary angle identity, sin(A) = cos(B) whenever A and B are complementary. Step 3: cos(B) = 0.6, the same value as sin(A), with no calculation needed.",
           answer: "0.6 — sin(A) and cos(B) are automatically equal whenever A and B are a right triangle's two non-right (complementary) angles.",
+          diagram: { kind: "rightTriangle", angle: "A", topAngle: "B" },
           difficulty: "easy",
         },
         {
@@ -5209,6 +5277,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Apply the identity: sin of one angle equals cos of its complement, so 3x and (2x+15) must sum to 90. Step 2: Set up the equation: 3x + (2x + 15) = 90. Step 3: Combine like terms: 5x + 15 = 90, so 5x = 75, giving x = 15.",
           answer: "x = 15, found by setting the two angle expressions equal to a sum of 90°, since sin and cos of complementary angles are equal.",
+          diagram: { kind: "rightTriangle", angle: "3x°", topAngle: "(2x+15)°" },
           difficulty: "medium",
         },
         {
@@ -5217,6 +5286,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Step 1: The identity sin(x) = cos(90-x) applies here, but written differently: sin(K) = cos(M) where K and M are complementary, and the problem restates cos(M) as cos(K+20°) — meaning M = K + 20. Step 2: Since K and M are complementary: K + (K + 20) = 90. Step 3: Combine: 2K + 20 = 90, so 2K = 70, giving K = 35°.",
           answer:
             "35° — recognizing that the angle inside cos(K+20°) is really playing the role of the complementary angle M lets the same identity apply, just with an algebraic expression instead of a plain number.",
+          diagram: { kind: "rightTriangle", angle: "K", topAngle: "K+20°" },
           difficulty: "hard",
         },
         {
@@ -5226,6 +5296,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Step 1: This combines two ideas — sin(R) requires the complementary angle identity, but cos(P) requires knowing the actual triangle side ratio, which isn't directly given. Step 2: Since P and R are complementary (both non-right angles in the triangle), sin(R) = cos(P) by the identity — meaning the two quantities being added are actually equal to each other. Step 3: Since sin(P) = 5/13 describes a 5-12-13 right triangle (opposite=5, hypotenuse=13, so adjacent=12), cos(P) = 12/13. Step 4: cos(P) + sin(R) = 12/13 + 12/13 = 24/13.",
           answer:
             "24/13 — recognizing that sin(R) equals cos(P) via the complementary angle identity turns this into doubling a single ratio, found from the 5-12-13 triangle implied by sin(P) = 5/13.",
+          diagram: { kind: "rightTriangle", angle: "P", topAngle: "R", base: "12", height: "5", hypotenuse: "13" },
           difficulty: "hard",
         },
       ],
@@ -5257,6 +5328,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Start from the template: (x-h)² + (y-k)² = r². Step 2: Substitute h = 2, k = -3, and r = 5, being careful with the sign for k: (x - 2)² + (y - (-3))² = 5², which simplifies to (x-2)² + (y+3)² = 25. Step 3: Double check: since k = -3, the template's '(y - k)' becomes '(y - (-3))' = '(y+3)' — the plus sign is correct, not a typo.",
             answer: "(x-2)² + (y+3)² = 25 — note the '+3' is correct because the center's y-coordinate is negative, flipping the sign from the template's subtraction.",
+          diagram: { kind: "circleCoordinate", h: 2, k: -3, r: 5 },
           difficulty: "easy",
         },
         {
@@ -5264,6 +5336,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Start from the template: (x-h)² + (y-k)² = r². Step 2: Substitute h = -4, k = 1, and r = 6, being careful with the sign for h this time: (x - (-4))² + (y - 1)² = 6², which simplifies to (x+4)² + (y-1)² = 36. Step 3: Double check: since h = -4, the template's '(x - h)' becomes '(x - (-4))' = '(x+4)' — the same sign-flip rule as before, just showing up on the x-coordinate instead of the y-coordinate.",
           answer: "(x+4)² + (y-1)² = 36 — the '+4' is correct because the center's x-coordinate is negative, the same flip-the-sign rule as the earlier example, applied to the other coordinate.",
+          diagram: { kind: "circleCoordinate", h: -4, k: 1, r: 6 },
           difficulty: "medium",
         },
         {
@@ -5271,6 +5344,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Start from the template: (x-h)² + (y-k)² = r². Step 2: Substitute h = 5, k = 2, r = 3: (x-5)² + (y-2)² = 3². Step 3: Simplify: (x-5)² + (y-2)² = 9.",
           answer: "(x-5)² + (y-2)² = 9, found by substituting directly into the template.",
+          diagram: { kind: "circleCoordinate", h: 5, k: 2, r: 3 },
           difficulty: "easy",
         },
         {
@@ -5278,6 +5352,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Match the given equation to the template (x-h)² + (y-k)² = r². Step 2: Since the equation has (x+1), that's (x-(-1)), so h = -1; since it has (y-8), k = 8. Step 3: The radius is the square root of the right side: √49 = 7, not 49 itself.",
           answer: "Center (-1, 8), radius 7 — read from the equation by matching to the template, remembering to take the SQUARE ROOT of the right side to get the radius.",
+          diagram: { kind: "circleCoordinate", h: -1, k: 8, r: 7 },
           difficulty: "medium",
         },
         {
@@ -5285,6 +5360,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: This equation isn't in center-radius form yet — it needs completing the square for both x and y. Step 2: Group x-terms and y-terms, moving the constant to the other side: (x²+6x) + (y²-4y) = 12. Step 3: Complete the square for each group: for x²+6x, add (6/2)²=9; for y²-4y, add (-4/2)²=4 — adding these same amounts to the right side too: (x²+6x+9)+(y²-4y+4) = 12+9+4 = 25. Step 4: This simplifies to (x+3)² + (y-2)² = 25, so the radius is √25 = 5.",
           answer: "5, found by first completing the square on both x and y terms to rewrite the equation in center-radius form before reading off the radius.",
+          diagram: { kind: "circleCoordinate", h: -3, k: 2, r: 5 },
           difficulty: "hard",
         },
       ],
@@ -5303,6 +5379,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Determine what fraction of the full circle this sector represents: 90°/360° = 1/4. Step 2: Calculate the full circle's area: πr² = π(16) = 16π. Step 3: Apply the fraction to the full area: (1/4)(16π) = 4π.",
           answer: "4π, found by taking the appropriate fraction (90°/360° = 1/4) of the full circle's area (16π).",
+          diagram: { kind: "sector", radiusLabel: "4", angleLabel: "90°", angleDegrees: 90, askFor: "area" },
           difficulty: "easy",
         },
         {
@@ -5310,6 +5387,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Determine what fraction of the full circle this arc represents: 120°/360° = 1/3. Step 2: Calculate the full circle's circumference this time, not its area: 2πr = 2π(9) = 18π. Step 3: Apply the same fraction to the circumference: (1/3)(18π) = 6π.",
           answer: "6π, found using the same 'fraction of the whole' logic as sector area above — just applied to circumference instead of area, which is exactly the connection worth internalizing between the two formulas.",
+          diagram: { kind: "sector", radiusLabel: "9", angleLabel: "120°", angleDegrees: 120, askFor: "arcLength" },
           difficulty: "medium",
         },
         {
@@ -5317,6 +5395,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Determine the fraction of the full circle: 60°/360° = 1/6. Step 2: Calculate the full circle's area: πr² = π(36) = 36π. Step 3: Apply the fraction: (1/6)(36π) = 6π.",
           answer: "6π, found by taking the appropriate fraction (1/6) of the full circle's area.",
+          diagram: { kind: "sector", radiusLabel: "6", angleLabel: "60°", angleDegrees: 60, askFor: "area" },
           difficulty: "easy",
         },
         {
@@ -5324,6 +5403,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Instead of finding a fraction of the circle from a given angle, work backward: find what FRACTION of the full circumference the given arc length represents. Step 2: Full circumference = 2πr = 2π(10) = 20π; fraction = 5π/20π = 1/4. Step 3: Apply that same fraction to the full 360°: (1/4)(360°) = 90°.",
           answer: "90°, found by first determining what fraction of the full circumference the given arc length represents, then applying that fraction to 360° — working backward from the usual direction.",
+          diagram: { kind: "sector", radiusLabel: "10", angleLabel: "?", angleDegrees: 90, askFor: "angle" },
           difficulty: "medium",
         },
         {
@@ -5331,6 +5411,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Notice the angle is given in RADIANS, not degrees — this changes the method: when using radians, arc length = radius × angle, directly, without needing a fraction of 360° at all. Step 2: Apply directly: arc length = 9 × (2π/3). Step 3: Simplify: 9 × (2π/3) = 18π/3 = 6π.",
           answer: "6π — when the central angle is already in radians, arc length is simply radius times angle (rθ) directly; converting to the degrees/360° method first would be an unnecessary extra step here.",
+          diagram: { kind: "sector", radiusLabel: "9", angleLabel: "2π/3", angleDegrees: 120, askFor: "arcLength" },
           difficulty: "hard",
         },
       ],
@@ -5349,6 +5430,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Substitute x=2 into the equation: (2-2)² + (y-3)² = 25, which simplifies to (y-3)² = 25. Step 2: Take the square root of both sides, remembering both the positive AND negative root: y-3 = ±5. Step 3: Solve both cases: y = 3+5 = 8, or y = 3-5 = -2.",
           answer: "y=8 or y=-2 — since x=2 is the circle's center x-coordinate, this vertical line passes through both the top and bottom of the circle, giving two valid y-values.",
+          diagram: { kind: "circleCoordinate", h: 2, k: 3, r: 5, verticalLineAtX: 2, markPoints: true },
           difficulty: "easy",
         },
         {
@@ -5356,6 +5438,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Substitute x=6: 36 + y² = 100. Step 2: Isolate y²: y² = 64. Step 3: Take the square root of both sides: y = ±8.",
           answer: "y=8 or y=-8, found by substituting and applying the ± square root.",
+          diagram: { kind: "circleCoordinate", h: 0, k: 0, r: 10, verticalLineAtX: 6, markPoints: true },
           difficulty: "easy",
         },
         {
@@ -5363,6 +5446,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Substitute x=5: (5+1)² + (y-4)² = 40, which simplifies to 36 + (y-4)² = 40. Step 2: Isolate the squared term by subtracting 36 from both sides: (y-4)² = 4. Step 3: Take the square root of both sides: y-4 = ±2, giving y = 6 or y = 2.",
           answer: "y=6 or y=2, found by substituting the known x-value, isolating the squared y-term, and applying the ± square root.",
+          diagram: { kind: "circleCoordinate", h: -1, k: 4, r: 6, verticalLineAtX: 5, markPoints: true },
           difficulty: "medium",
         },
         {
@@ -5370,6 +5454,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Substitute x=7: (7-3)² + (y+2)² = 16, which simplifies to 16 + (y+2)² = 16. Step 2: Isolate the squared term: (y+2)² = 0. Step 3: Unlike the earlier examples, this produces only ONE solution: y+2 = 0, so y = -2 — because x=7 happens to be the circle's most extreme point in that direction (center x=3 plus radius 4), where the circle only touches that vertical line once.",
           answer: "y=-2, and only one value this time — x=7 is the circle's rightmost point, so the vertical line at x=7 touches the circle at only a single point instead of passing through two.",
+          diagram: { kind: "circleCoordinate", h: 3, k: -2, r: 4, verticalLineAtX: 7, singlePoint: true },
           difficulty: "medium",
         },
         {
@@ -5377,6 +5462,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Substitute x=8: (8-2)² + (y-5)² = 9, which simplifies to 36 + (y-5)² = 9. Step 2: Isolate the squared term: (y-5)² = 9 - 36 = -27. Step 3: Since a squared real number can never be negative, there's no real value of y that satisfies this — the circle does NOT actually pass through any point where x=8.",
           answer: "This is not possible — substituting x=8 leads to (y-5)² = -27, and since a square can never be negative, no real y-value works; x=8 is outside the circle's reach entirely, given its center's x-coordinate of 2 and radius of just 3.",
+          diagram: { kind: "circleCoordinate", h: 2, k: 5, r: 3, verticalLineAtX: 8, noIntersect: true },
           difficulty: "hard",
         },
       ],
@@ -5395,12 +5481,14 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           prompt: "A central angle in a circle measures 70°. What is the measure of the arc it intercepts?",
           walkthrough: "Step 1: Recall that a central angle's measure always equals its intercepted arc's measure in degrees. Step 2: The arc also measures 70°.",
           answer: "70° — a central angle and the arc it cuts off always share the same degree measure.",
+          diagram: { kind: "circleBasic", centralAngleLabel: "70°", arcLabel: "?" },
           difficulty: "easy",
         },
         {
           prompt: "A circle has a radius of 6. What is its area, in terms of π?",
           walkthrough: "Step 1: Apply the area formula: A = πr². Step 2: Substitute r = 6: A = π(6)² = 36π.",
           answer: "36π, found by substituting the radius directly into A = πr².",
+          diagram: { kind: "circleBasic", radiusLabel: "6" },
           difficulty: "easy",
         },
         {
@@ -5410,6 +5498,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Step 1: Since PQ is tangent to the circle at Q, the radius OQ is perpendicular to PQ at that point, making triangle OQP a right triangle with the right angle at Q. Step 2: OP is the hypotenuse (it doesn't touch the circle at a right angle the way OQ and PQ do), so apply the Pythagorean theorem: OQ² + PQ² = OP². Step 3: Substitute known values: 5² + PQ² = 13², so 25 + PQ² = 169, giving PQ² = 144 and PQ = 12.",
           answer:
             "12 — the tangent-radius perpendicularity fact turns this into a standard Pythagorean theorem problem, with OP (not touching the circle) as the hypotenuse.",
+          diagram: { kind: "circleBasic", tangent: { radius: "5", tangentSeg: "?", hyp: "13" } },
           difficulty: "medium",
         },
         {
@@ -5419,6 +5508,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Step 1: Since OA and OB are both radii of the same circle, they're equal, making triangle AOB isosceles with a 60° angle between the two equal sides. Step 2: An isosceles triangle with a 60° angle between its two equal sides is actually equilateral — its other two angles must also be 60° each, since the triangle's two base angles are equal (isosceles) and all three angles sum to 180°, forcing each to be 60°. Step 3: Since the triangle is equilateral, all three sides are equal, so AB = OA = OB = 9.",
           answer:
             "9 — recognizing that two equal radii with a 60° angle between them force an equilateral triangle is the key insight, avoiding any trig or law of cosines calculation.",
+          diagram: { kind: "circleBasic", chordTriangle: { radius: "9", angle: "60°", chord: "?" } },
           difficulty: "hard",
         },
         {
@@ -5428,6 +5518,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Step 1: An arc's length is the same fraction of the full circumference as its central angle is of 360°. Step 2: Find that fraction: arc length / circumference = 4π / 24π = 1/6. Step 3: Apply that same fraction to 360°: (1/6) × 360° = 60°.",
           answer:
             "60° — the arc-length-to-circumference ratio equals the angle-to-360° ratio, so finding one fraction gives you the other directly.",
+          diagram: { kind: "circleBasic", centralAngleLabel: "?", arcLabel: "4π" },
           difficulty: "hard",
         },
       ],
