@@ -7,8 +7,12 @@
 // because Prisma's query API is the same across both databases.
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // Pooled (pgbouncer, transaction mode) for the app at runtime; migrations
+  // use directUrl since pgbouncer's transaction mode doesn't support the
+  // session-level features `prisma migrate` needs.
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
