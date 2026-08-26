@@ -38,6 +38,23 @@ model User {
   baselineScore  Int?
   goalScore      Int?
   targetTestDate DateTime?
+
+  // Onboarding: null means "never seen the welcome page" (new signups land
+  // there once); existing users are backfilled to non-null so they aren't
+  // suddenly routed into it. Login timestamps power the "welcome back,
+  // here's what you did last time" summary on the dashboard.
+  welcomeSeenAt  DateTime?
+  lastLoginAt    DateTime?
+  previousLoginAt DateTime?
+
+  // Study-streak pet: dies if the student goes 7 days without completing a
+  // quiz (see lib/pet.ts). petBornAt resets when a new pet is started after
+  // a death; the two "sent" timestamps stop the daily cron from re-sending
+  // the same warning/death email more than once.
+  petDiedAt              DateTime?
+  petBornAt              DateTime  @default(now())
+  petWarningEmailSentAt  DateTime?
+  petDeathEmailSentAt    DateTime?
 }
 
 model Progress {

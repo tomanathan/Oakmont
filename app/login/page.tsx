@@ -27,7 +27,7 @@ export default function LoginPage() {
         setSubmitting(false);
         return;
       }
-      router.push("/dashboard");
+      router.push(mode === "signup" ? "/welcome" : "/dashboard");
       router.refresh();
     } catch {
       setError("Couldn't reach the server. Please try again.");

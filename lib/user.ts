@@ -10,6 +10,12 @@ export async function getUserStats(userId: string) {
       baselineScore: true,
       goalScore: true,
       targetTestDate: true,
+      lastActiveDate: true,
+      welcomeSeenAt: true,
+      lastLoginAt: true,
+      previousLoginAt: true,
+      petDiedAt: true,
+      petBornAt: true,
     },
   });
   return (
@@ -20,6 +26,12 @@ export async function getUserStats(userId: string) {
       baselineScore: null,
       goalScore: null,
       targetTestDate: null,
+      lastActiveDate: null,
+      welcomeSeenAt: null,
+      lastLoginAt: null,
+      previousLoginAt: null,
+      petDiedAt: null,
+      petBornAt: new Date(),
     }
   );
 }

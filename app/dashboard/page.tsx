@@ -3,8 +3,11 @@ import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
 import { computePacing, courseLengthDaysForUser } from "@/lib/pacing";
+import { computePetState, PET_NAME } from "@/lib/pet";
 import { CURRICULUM, ALL_SUBSKILLS, buildStudyPlan } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
+import { PetCard } from "@/components/PetCard";
+import { WelcomeBackBanner } from "@/components/WelcomeBackBanner";
 import { DashboardClient } from "./DashboardClient";
 
 export default async function DashboardPage() {
@@ -15,6 +18,8 @@ export default async function DashboardPage() {
     prisma.progress.findMany({ where: { userId: user.userId } }),
     getUserStats(user.userId),
   ]);
+  if (!stats.welcomeSeenAt) redirect("/welcome");
+
   const progress: Record<string, { bestScore: number; total: number }> = {};
   for (const row of rows) {
     progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
@@ -35,8 +40,34 @@ export default async function DashboardPage() {
     courseLengthDays
   );
 
+  const petState = computePetState(stats.lastActiveDate ?? null, stats.petDiedAt ?? null, stats.petBornAt);
+
+  let quizzesLastSession = 0;
+  let masteredLastSession = 0;
+  if (stats.previousLoginAt && stats.lastLoginAt) {
+    const from = stats.previousLoginAt.getTime();
+    const to = stats.lastLoginAt.getTime();
+    for (const row of rows) {
+      const t = row.lastAttempt.getTime();
+      if (t >= from && t < to) {
+        quizzesLastSession++;
+        if (row.bestScore === row.total) masteredLastSession++;
+      }
+    }
+  }
+
   return (
     <AppShell email={user.email} stats={stats}>
+      {stats.previousLoginAt && stats.lastLoginAt && (
+        <WelcomeBackBanner
+          sessionKey={stats.lastLoginAt.toISOString()}
+          previousLoginAt={stats.previousLoginAt.toISOString()}
+          quizzesLastSession={quizzesLastSession}
+          masteredLastSession={masteredLastSession}
+          currentStreak={stats.currentStreak}
+        />
+      )}
+      <PetCard petName={PET_NAME} state={petState} />
       <DashboardClient
         curriculum={CURRICULUM}
         progress={progress}

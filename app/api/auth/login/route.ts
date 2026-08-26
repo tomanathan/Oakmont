@@ -30,6 +30,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Incorrect password." }, { status: 401 });
   }
 
+  // Shift the login timestamps so the dashboard can summarize "what you did
+  // last time": lastLoginAt becomes the just-finished session's start, and
+  // the prior lastLoginAt becomes previousLoginAt.
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { previousLoginAt: user.lastLoginAt, lastLoginAt: new Date() },
+  });
+
   const token = await createSessionToken({ userId: user.id, email: user.email });
 
   const res = NextResponse.json({ ok: true, email: user.email });

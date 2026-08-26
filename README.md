@@ -356,9 +356,23 @@ code (all the `prisma.user.findUnique(...)`-style calls) stays identical.
    - Go to [vercel.com](https://vercel.com), sign up, click "New Project,"
      and import your GitHub repo.
    - In the project's Environment Variables settings, add:
-     - `DATABASE_URL` — your Neon/Supabase connection string
+     - `DATABASE_URL` — your Neon/Supabase connection string (use a pooled/
+       transaction-mode connection string if your provider offers one, since
+       every serverless invocation opens its own connection)
+     - `DIRECT_URL` — a direct, non-pooled connection string to the same
+       database, used only for running migrations
      - `SESSION_SECRET` — a long random string (generate one with
        `openssl rand -base64 32` in your terminal)
+     - `CRON_SECRET` — another random string (same command), used to
+       authenticate the daily study-pet check (`vercel.json`'s cron hitting
+       `/api/cron/pet-check`); Vercel sends it automatically as a bearer
+       token once this env var exists, no extra setup needed
+     - `RESEND_API_KEY` and `EMAIL_FROM` — optional, only needed if you want
+       the study-pet warning/death emails to actually send. Sign up at
+       [resend.com](https://resend.com), verify a sending domain (or use
+       their onboarding address for testing), create an API key, and set
+       `EMAIL_FROM` to an address on that domain. Without these two set, the
+       app just logs what it would have sent instead of erroring.
    - Click deploy. Vercel will run `npm run build`, which runs
      `prisma generate && prisma migrate deploy` automatically (already set
      up in `package.json`).
