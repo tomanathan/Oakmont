@@ -1,0 +1,45 @@
+// Prisma schema for the SAT prep platform.
+//
+// Local development uses SQLite (zero setup, just a file on disk).
+// For production deployment (e.g. Vercel), switch the datasource below to
+// Postgres and point DATABASE_URL at a hosted database (Neon, Supabase, etc).
+// See README.md for exact steps -- it's a one-line change, not a rewrite,
+// because Prisma's query API is the same across both databases.
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  passwordHash String
+  createdAt DateTime   @default(now())
+  progress  Progress[]
+
+  // Gamification: XP earned from quiz improvements + mastery bonuses, and a
+  // daily practice streak (consecutive calendar days with at least one quiz
+  // submission). Computed in app/api/progress/route.ts on each submission.
+  totalXP        Int       @default(0)
+  currentStreak  Int       @default(0)
+  longestStreak  Int       @default(0)
+  lastActiveDate DateTime?
+}
+
+model Progress {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subskillId   String
+  bestScore    Int
+  total        Int
+  attempts     Int      @default(1)
+  lastAttempt  DateTime @default(now())
+
+  @@unique([userId, subskillId])
+}

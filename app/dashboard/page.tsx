@@ -1,0 +1,47 @@
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/session";
+import { prisma } from "@/lib/prisma";
+import { getUserStats } from "@/lib/user";
+import { computePacing } from "@/lib/pacing";
+import { CURRICULUM, ALL_SUBSKILLS, STUDY_PLAN } from "@/data/curriculum";
+import { AppShell } from "@/components/AppShell";
+import { DashboardClient } from "./DashboardClient";
+
+export default async function DashboardPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+
+  const [rows, stats] = await Promise.all([
+    prisma.progress.findMany({ where: { userId: user.userId } }),
+    getUserStats(user.userId),
+  ]);
+  const progress: Record<string, { bestScore: number; total: number }> = {};
+  for (const row of rows) {
+    progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
+  }
+  // Pace against the 6-month plan's actual scope (the subskills it schedules
+  // week-by-week), not the full subskill bank, so the numbers line up with
+  // what /plan shows.
+  const planSubskillIds = new Set(
+    STUDY_PLAN.filter((w) => w.type === "subskill").flatMap((w) => w.subskillIds ?? [])
+  );
+  const completedInPlan = Object.keys(progress).filter((id) => planSubskillIds.has(id)).length;
+  const pacing = computePacing(
+    stats.createdAt ?? new Date(),
+    new Date(),
+    planSubskillIds.size,
+    completedInPlan
+  );
+
+  return (
+    <AppShell email={user.email} stats={stats}>
+      <DashboardClient
+        curriculum={CURRICULUM}
+        progress={progress}
+        totalSubskills={ALL_SUBSKILLS.length}
+        stats={stats}
+        pacing={pacing}
+      />
+    </AppShell>
+  );
+}
