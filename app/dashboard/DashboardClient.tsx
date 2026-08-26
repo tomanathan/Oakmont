@@ -53,7 +53,10 @@ export function DashboardClient({
             )}
             {stats.longestStreak > 0 && (
               <span>
-                Longest streak: <span className="font-semibold text-ink">{stats.longestStreak} days</span>
+                Longest streak:{" "}
+                <span className="font-semibold text-ink">
+                  {stats.longestStreak} day{stats.longestStreak === 1 ? "" : "s"}
+                </span>
               </span>
             )}
           </div>

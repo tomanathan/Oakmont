@@ -72,12 +72,17 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ ok: true, checked: users.length, warned, died });
 }
 
+// Falls back to the known production URL so emails still link somewhere
+// sensible if APP_URL isn't set, but prefers the env var so this keeps
+// working if the domain ever changes.
+const APP_URL = process.env.APP_URL || "https://oakmont-chi.vercel.app";
+
 function warningEmailHtml(): string {
   return `
     <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
       <h2 style="color: #1a1a2e;">${PET_NAME} misses you</h2>
       <p style="color: #444;">It's been a few days since your last practice session. ${PET_NAME} has 2 days left before it's gone for good -- complete one quiz on Oakmont Study Center today to bring it back to full health.</p>
-      <p><a href="https://oakmont-chi.vercel.app/dashboard" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Open Oakmont Study Center</a></p>
+      <p><a href="${APP_URL}/dashboard" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Open Oakmont Study Center</a></p>
     </div>
   `;
 }
@@ -87,7 +92,7 @@ function deathEmailHtml(): string {
     <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
       <h2 style="color: #1a1a2e;">${PET_NAME} has passed away</h2>
       <p style="color: #444;">A full week went by without a practice session, and ${PET_NAME} couldn't hang on. The good news: you can start over with a new study pet any time, and your SAT progress is completely untouched.</p>
-      <p><a href="https://oakmont-chi.vercel.app/dashboard" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Start a new pet</a></p>
+      <p><a href="${APP_URL}/dashboard" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Start a new pet</a></p>
     </div>
   `;
 }

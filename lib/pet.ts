@@ -56,9 +56,16 @@ export function computePetState(
   }
 
   const daysInactive = daysBetween(reference, now);
+  const hasEverStudied = !!lastActiveDate;
 
   if (daysInactive <= 0) {
-    return { stage: "thriving", daysInactive, message: `${PET_NAME} is thriving! Great job studying today.` };
+    return {
+      stage: "thriving",
+      daysInactive,
+      message: hasEverStudied
+        ? `${PET_NAME} is thriving! Great job studying today.`
+        : `${PET_NAME} is happy and waiting. Complete your first quiz to start feeding it.`,
+    };
   }
   if (daysInactive <= 1) {
     return { stage: "content", daysInactive, message: `${PET_NAME} is doing well. Complete a quiz today to keep it that way.` };

@@ -47,7 +47,7 @@ export function WelcomeBackBanner({
   if (quizzesLastSession === 0) {
     summary = "You didn't complete any quizzes last time — ready to pick back up?";
   } else {
-    const parts = [`you completed ${quizzesLastSession} quiz${quizzesLastSession === 1 ? "" : "zes"}`];
+    const parts = [`completed ${quizzesLastSession} quiz${quizzesLastSession === 1 ? "" : "zes"}`];
     if (masteredLastSession > 0) {
       parts.push(`mastered ${masteredLastSession} subskill${masteredLastSession === 1 ? "" : "s"}`);
     }

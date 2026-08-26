@@ -90,6 +90,14 @@ export function SubskillClient({
     setMode("lesson");
   }
 
+  function retakeQuiz() {
+    setAnswers({});
+    setSubmitted(false);
+    setResult(null);
+    setErrorMsg("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   async function submitQuiz() {
     if (Object.keys(answers).length < questions.length) {
       setErrorMsg("Answer every question before submitting.");
@@ -447,12 +455,22 @@ export function SubskillClient({
               </button>
             )
           ) : (
-            <ResultBanner
-              score={score ?? 0}
-              total={questions.length}
-              saving={saving}
-              result={result}
-            />
+            <>
+              <ResultBanner
+                score={score ?? 0}
+                total={questions.length}
+                saving={saving}
+                result={result}
+              />
+              {!saving && (
+                <button
+                  onClick={retakeQuiz}
+                  className="mt-3 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-medium hover:border-gray-300"
+                >
+                  Retake quiz
+                </button>
+              )}
+            </>
           )}
         </div>
       )}
