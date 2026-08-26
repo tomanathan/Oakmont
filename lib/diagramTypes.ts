@@ -142,6 +142,14 @@ export interface ParabolaGraphSpec {
   vertexLabel?: string;
   rootLabels?: [string, string];
   yInterceptLabel?: string;
+  touchesAxis?: boolean;
+}
+
+export interface LineParabolaSystemSpec {
+  kind: "lineParabolaSystem";
+  opensUp: boolean;
+  points: { label: string; accepted: boolean }[];
+  noSolutions?: boolean;
 }
 
 export interface ExponentialGraphSpec {
@@ -173,5 +181,6 @@ export type DiagramSpec =
   | LineGraphSpec
   | SystemGraphSpec
   | ParabolaGraphSpec
+  | LineParabolaSystemSpec
   | ExponentialGraphSpec
   | ScatterGraphSpec;

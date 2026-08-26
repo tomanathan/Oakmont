@@ -845,14 +845,16 @@ function ParabolaGraph({
   vertexLabel,
   rootLabels,
   yInterceptLabel,
+  touchesAxis,
 }: {
   opensUp: boolean;
   vertexLabel?: string;
   rootLabels?: [string, string];
   yInterceptLabel?: string;
+  touchesAxis?: boolean;
 }) {
   const hasRoots = !!rootLabels;
-  const vertexY = opensUp ? (hasRoots ? 175 : 70) : hasRoots ? 35 : 140;
+  const vertexY = touchesAxis ? 105 : opensUp ? (hasRoots ? 175 : 70) : hasRoots ? 35 : 140;
   const armY = opensUp ? 20 : 190;
   const leftX = 45;
   const rightX = 235;
@@ -881,6 +883,97 @@ function ParabolaGraph({
       )}
       {yInterceptLabel && !hasRoots && (
         <Label x={vertexX + 18} y={vertexY - (opensUp ? 8 : -18)} text={yInterceptLabel} size={11} anchor="start" />
+      )}
+    </>
+  );
+}
+
+function bezierPoint(
+  p0: [number, number],
+  p1: [number, number],
+  p2: [number, number],
+  t: number
+): [number, number] {
+  const mt = 1 - t;
+  return [
+    mt * mt * p0[0] + 2 * mt * t * p1[0] + t * t * p2[0],
+    mt * mt * p0[1] + 2 * mt * t * p1[1] + t * t * p2[1],
+  ];
+}
+
+function LineParabolaSystem({
+  opensUp,
+  points,
+  noSolutions,
+}: {
+  opensUp: boolean;
+  points: { label: string; accepted: boolean }[];
+  noSolutions?: boolean;
+}) {
+  const vertexY = opensUp ? 165 : 45;
+  const armY = opensUp ? 20 : 190;
+  const leftX = 45;
+  const rightX = 235;
+  const vertexX = 140;
+  const p0: [number, number] = [leftX, armY];
+  const p1: [number, number] = [vertexX, 2 * vertexY - armY];
+  const p2: [number, number] = [rightX, armY];
+
+  const two = points.length >= 2;
+  const one = points.length === 1;
+  const tA = 0.32;
+  const tB = 0.68;
+  const ptA = bezierPoint(p0, p1, p2, tA);
+  const ptB = bezierPoint(p0, p1, p2, tB);
+  const vertexPt: [number, number] = [vertexX, vertexY];
+
+  let lineEnds: [[number, number], [number, number]] = [
+    [10, ptA[1] - (ptB[1] - ptA[1]) * 0.4],
+    [270, ptB[1] + (ptB[1] - ptA[1]) * 0.4],
+  ];
+  if (one) {
+    lineEnds = [
+      [10, vertexPt[1]],
+      [270, vertexPt[1]],
+    ];
+  } else if (noSolutions) {
+    // Placed on the far side of the vertex from the arms (below the vertex
+    // for an upward parabola, above it for a downward one) so it stays
+    // inside the canvas while still clearly missing the curve entirely.
+    lineEnds = opensUp
+      ? [
+          [10, 195],
+          [270, 195],
+        ]
+      : [
+          [10, 18],
+          [270, 18],
+        ];
+  }
+
+  return (
+    <>
+      <Axes />
+      <path d={`M ${leftX} ${armY} Q ${vertexX} ${p1[1]} ${rightX} ${armY}`} fill="none" stroke={STROKE} strokeWidth={2.5} />
+      <line x1={lineEnds[0][0]} y1={lineEnds[0][1]} x2={lineEnds[1][0]} y2={lineEnds[1][1]} stroke={HILITE} strokeWidth={2} />
+      {two &&
+        points.slice(0, 2).map((p, i) => {
+          const [px, py] = i === 0 ? ptA : ptB;
+          return (
+            <g key={i}>
+              <circle cx={px} cy={py} r={3.5} fill={p.accepted ? HILITE : MUTED} />
+              <Label x={px} y={py - 10} text={p.label} hilite={p.accepted} muted={!p.accepted} size={11} />
+            </g>
+          );
+        })}
+      {one && (
+        <>
+          <circle cx={vertexPt[0]} cy={vertexPt[1]} r={3.5} fill={HILITE} />
+          <Label x={vertexPt[0]} y={vertexPt[1] + (opensUp ? 16 : -10)} text={points[0]?.label ?? ""} hilite size={12} />
+        </>
+      )}
+      {noSolutions && (
+        <Label x={200} y={lineEnds[1][1] + (opensUp ? -10 : 16)} text="No real solutions" muted size={11} />
       )}
     </>
   );
@@ -1025,6 +1118,7 @@ export function GeometryDiagram({ spec }: { spec: DiagramSpec }) {
         {spec.kind === "lineGraph" && <LineGraph {...spec} />}
         {spec.kind === "systemGraph" && <SystemGraph {...spec} />}
         {spec.kind === "parabolaGraph" && <ParabolaGraph {...spec} />}
+        {spec.kind === "lineParabolaSystem" && <LineParabolaSystem {...spec} />}
         {spec.kind === "exponentialGraph" && <ExponentialGraph {...spec} />}
         {spec.kind === "scatterGraph" && <ScatterGraph {...spec} />}
       </svg>

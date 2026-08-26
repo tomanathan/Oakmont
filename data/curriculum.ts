@@ -2271,6 +2271,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Isolate y by moving 4x to the other side: 2y = -4x + 8. Step 2: Divide every term by 2: y = -2x + 4. Step 3: Now the slope is directly readable as the coefficient of x: -2.",
           answer: "The slope is -2, found by converting to slope-intercept form first, rather than trying to read the slope directly from standard form.",
+          diagram: { kind: "lineGraph", direction: "gentleNeg", slopeLabel: "slope = -2" },
           difficulty: "easy",
         },
         {
@@ -2278,6 +2279,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Isolate y by moving 6x to the other side: -3y = -6x + 12. Step 2: Divide every term by -3, being careful with the negative signs: y = 2x - 4. Step 3: The slope is directly readable as the coefficient of x: 2.",
           answer: "The slope is 2 — note that dividing by a negative coefficient here still produces a positive slope, since both terms being divided were negative.",
+          diagram: { kind: "lineGraph", direction: "gentlePos", slopeLabel: "slope = 2" },
           difficulty: "medium",
         },
         {
@@ -2285,6 +2287,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Isolate y by subtracting 2x from both sides: y = -2x + 5. Step 2: The slope is directly readable as the coefficient of x: -2.",
           answer: "The slope is -2, found by converting to slope-intercept form first.",
+          diagram: { kind: "lineGraph", direction: "gentleNeg", slopeLabel: "slope = -2" },
           difficulty: "easy",
         },
         {
@@ -2292,6 +2295,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Isolate y by moving 5x to the other side: 4y = -5x + 20. Step 2: Divide every term by 4: y = -(5/4)x + 5. Step 3: The slope is the coefficient of x: -5/4.",
           answer: "The slope is -5/4 — the fraction just needs to be carried through the division carefully rather than rounded or simplified incorrectly.",
+          diagram: { kind: "lineGraph", direction: "steepNeg", slopeLabel: "slope = -5/4" },
           difficulty: "medium",
         },
         {
@@ -2299,6 +2303,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Isolate y by adding 3x to both sides: -6y = 3x + 18. Step 2: Divide every term by -6, tracking both sign flips carefully: y = -0.5x - 3. Step 3: The slope is the coefficient of x: -1/2.",
           answer: "The slope is -1/2 — dividing by a negative coefficient (-6) here means both terms flip sign at once, which is where errors tend to happen.",
+          diagram: { kind: "lineGraph", direction: "gentleNeg", slopeLabel: "slope = -1/2" },
           difficulty: "hard",
         },
       ],
@@ -2317,6 +2322,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the given slope: 1/2. Step 2: For a perpendicular line, take the negative reciprocal: flip the fraction (getting 2/1, or 2) and change the sign (making it -2). Step 3: Look for the answer choice with slope -2.",
           answer: "The line with slope -2 is perpendicular to the given line, since -2 is the negative reciprocal of 1/2.",
+          diagram: { kind: "lineGraph", direction: "gentlePos", slopeLabel: "slope = 1/2", extra: { direction: "steepNeg", label: "perpendicular: slope = -2" } },
           difficulty: "easy",
         },
         {
@@ -2324,6 +2330,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Convert to slope-intercept form first: -2y = -3x + 8, so y = (3/2)x - 4. Step 2: The slope of the given line is 3/2. Step 3: Parallel lines share the exact same slope (unlike perpendicular lines, which need the negative reciprocal), so look for the answer choice with slope 3/2 as well.",
           answer: "A line with slope 3/2 is parallel to the given line, since parallel lines share identical slopes — this one required converting from standard form first before that comparison was even possible.",
+          diagram: { kind: "lineGraph", direction: "gentlePos", slopeLabel: "slope = 3/2", extra: { direction: "gentlePos", label: "parallel: slope = 3/2" } },
           difficulty: "medium",
         },
         {
@@ -2331,6 +2338,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the given slope: 4. Step 2: Parallel lines share the exact same slope. Step 3: Look for the answer choice with slope 4.",
           answer: "The line with slope 4 is parallel to the given line, since parallel lines share identical slopes.",
+          diagram: { kind: "lineGraph", direction: "steepPos", slopeLabel: "slope = 4", extra: { direction: "steepPos", label: "parallel: slope = 4" } },
           difficulty: "easy",
         },
         {
@@ -2338,6 +2346,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Convert to slope-intercept form first: 4y = -2x + 16, so y = -0.5x + 4. Step 2: The given slope is -1/2. Step 3: For a perpendicular line, take the negative reciprocal: flip the fraction (2/1) and change the sign, giving 2.",
           answer: "The line with slope 2 is perpendicular to the given line, since 2 is the negative reciprocal of -1/2 — and this one required converting from standard form before that comparison was possible.",
+          diagram: { kind: "lineGraph", direction: "gentleNeg", slopeLabel: "slope = -1/2", extra: { direction: "steepPos", label: "perpendicular: slope = 2" } },
           difficulty: "medium",
         },
         {
@@ -2345,6 +2354,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Convert both to slope-intercept form. Line 1: 6y = -4x + 12, so y = -(2/3)x + 2, slope = -2/3. Line 2: -4y = -6x + 8, so y = (3/2)x - 2, slope = 3/2. Step 2: Check the relationship between the two slopes: the negative reciprocal of -2/3 is 3/2 (flip to 3/2, then flip the sign of the original before flipping — or just check that multiplying the two slopes gives -1). Step 3: Since the slopes are negative reciprocals of each other, the lines are perpendicular.",
           answer: "The lines are perpendicular — after converting both to slope-intercept form, their slopes (-2/3 and 3/2) are negative reciprocals of each other.",
+          diagram: { kind: "lineGraph", direction: "gentleNeg", slopeLabel: "slope = -2/3", extra: { direction: "steepPos", label: "slope = 3/2" } },
           difficulty: "hard",
         },
       ],
@@ -3038,6 +3048,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: The equation is already in 'expression = 0' form. Step 2: Look for two numbers that multiply to -10 and add to -3: -5 and 2 work (-5 × 2 = -10, -5 + 2 = -3). Step 3: Factor: (x - 5)(x + 2) = 0. Step 4: Apply the zero product property: x - 5 = 0 or x + 2 = 0, so x = 5 or x = -2.",
           answer: "x = 5 or x = -2, found by factoring into (x-5)(x+2) and setting each factor equal to zero.",
+          diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-2", "5"] },
           difficulty: "easy",
         },
         {
@@ -3045,6 +3056,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: This isn't in 'expression = 0' form yet — add 7 to both sides first: (d-30)(d+30) = 0. Step 2: The equation is now already factored, so apply the zero product property directly without expanding: d - 30 = 0 or d + 30 = 0. Step 3: Solve each: d = 30 or d = -30.",
           answer: "d = 30 or d = -30 — after isolating the product on one side, the expression was already factored, so no expansion was needed.",
+          diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-30", "30"] },
           difficulty: "easy",
         },
         {
@@ -3052,6 +3064,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: The leading coefficient isn't 1, which makes integer factoring trickier — check whether the quadratic formula is faster here. Step 2: Identify a=2, b=5, c=-3 and substitute: x = (-5 ± √(25-4(2)(-3))) / (2·2) = (-5 ± √49) / 4 = (-5 ± 7) / 4. Step 3: Compute both cases: x = 2/4 = 1/2, or x = -12/4 = -3.",
           answer: "x = 1/2 or x = -3, found with the quadratic formula since the leading coefficient of 2 makes clean integer factoring less obvious.",
+          diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-3", "1/2"] },
           difficulty: "medium",
         },
         {
@@ -3060,6 +3073,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Step 1: Move everything to one side: 3x² - 12x = 0. Step 2: Factor out the greatest common factor first, before trying to factor further: 3x(x - 4) = 0. Step 3: Apply the zero product property: 3x = 0 or x - 4 = 0, giving x = 0 or x = 4.",
           answer:
             "x = 0 or x = 4 — the key step is factoring out the shared 3x first rather than dividing both sides by x, which would illegally lose the x = 0 solution.",
+          diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["0", "4"] },
           difficulty: "medium",
         },
         {
@@ -3068,6 +3082,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Step 1: Look for integer factors of 4 that add to 6 — none exist (1×4 and 2×2 don't add to 6), so this won't factor cleanly. Step 2: Use the quadratic formula with a=1, b=6, c=4: x = (-6 ± √(36-16)) / 2 = (-6 ± √20) / 2. Step 3: Simplify the radical: √20 = √(4·5) = 2√5, so x = (-6 ± 2√5) / 2 = -3 ± √5.",
           answer:
             "x = -3 + √5 or x = -3 - √5 — recognizing early that the expression won't factor into integers saves time otherwise spent guessing factor pairs.",
+          diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-3-√5", "-3+√5"] },
           difficulty: "hard",
         },
       ],
@@ -3138,6 +3153,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify a, b, and c: a=1, b=4, c=5. Step 2: Compute the discriminant: b² - 4ac = 16 - 4(1)(5) = 16 - 20 = -4. Step 3: Since the discriminant is negative, there are no real solutions — no further work (like attempting to factor or use the quadratic formula) is needed.",
           answer: "No real solutions, determined directly from a negative discriminant without needing to solve the equation further.",
+          diagram: { kind: "parabolaGraph", opensUp: true, vertexLabel: "No real solutions" },
           difficulty: "easy",
         },
         {
@@ -3145,6 +3161,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify a, b, and c: a=2, b=-4, c=2. Step 2: Compute the discriminant: b² - 4ac = 16 - 4(2)(2) = 16 - 16 = 0. Step 3: A discriminant of exactly zero is a distinct case from both the positive and negative ones — it means exactly one repeated real solution, not zero and not two.",
           answer: "Exactly one real solution (a repeated root), since the discriminant equals zero — a case worth knowing separately from 'no solutions' and 'two solutions.'",
+          diagram: { kind: "parabolaGraph", opensUp: true, touchesAxis: true, vertexLabel: "1 solution" },
           difficulty: "medium",
         },
         {
@@ -3152,6 +3169,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify a, b, and c: a=1, b=-6, c=8. Step 2: Compute the discriminant: b² - 4ac = 36 - 4(1)(8) = 36 - 32 = 4. Step 3: Since the discriminant is positive, there are two real solutions.",
           answer: "Two real solutions, determined directly from a positive discriminant.",
+          diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["", ""], vertexLabel: "2 solutions" },
           difficulty: "easy",
         },
         {
@@ -3159,6 +3177,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify a, b, and c: a=-2, b=3, c=-5. Step 2: Compute the discriminant carefully with the negative values: b² - 4ac = 9 - 4(-2)(-5) = 9 - 40 = -31. Step 3: Since the discriminant is negative, there are no real solutions.",
           answer: "No real solutions — the negative coefficients make the -4ac computation a good place to double-check signs (4 × -2 × -5 = 40, a positive number being subtracted).",
+          diagram: { kind: "parabolaGraph", opensUp: false, vertexLabel: "No real solutions" },
           difficulty: "medium",
         },
         {
@@ -3166,6 +3185,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Set up the discriminant using the given coefficients, with k as the unknown: b² - 4ac = 36 - 4(1)(k) = 36 - 4k. Step 2: 'Two real solutions' requires the discriminant to be strictly positive (not just non-negative, since exactly one solution needs it to equal zero), so set up the inequality: 36 - 4k > 0. Step 3: Solve for k: 36 > 4k, so k < 9.",
           answer: "k < 9 — set up the discriminant as an expression in k, then solve the strict inequality discriminant > 0, since two solutions specifically requires a positive discriminant, not zero.",
+          diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["", ""], vertexLabel: "2 solutions when k < 9" },
           difficulty: "hard",
         },
       ],
@@ -3232,6 +3252,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Substitute the linear expression for y into the quadratic equation: x + 1 = x² - 5. Step 2: Rearrange: 0 = x² - x - 6, which factors to (x-3)(x+2) = 0, giving x = 3 or x = -2. Step 3: Apply the constraint x > 0: keep x = 3, reject x = -2.",
           answer: "x = 3, found by substituting, factoring the resulting quadratic, and applying the given constraint to pick the correct root.",
+          diagram: { kind: "lineParabolaSystem", opensUp: true, points: [{ label: "x = -2", accepted: false }, { label: "x = 3", accepted: true }] },
           difficulty: "easy",
         },
         {
@@ -3239,6 +3260,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Substitute y = 2x into the second equation: 2x = x² - 3x. Step 2: Move everything to one side: 0 = x² - 5x. Step 3: Factor: x(x-5) = 0, giving x = 0 or x = 5.",
           answer: "x = 0 or x = 5, found by substituting the linear expression for y into the quadratic equation and solving by factoring.",
+          diagram: { kind: "lineParabolaSystem", opensUp: true, points: [{ label: "x = 0", accepted: true }, { label: "x = 5", accepted: true }] },
           difficulty: "easy",
         },
         {
@@ -3246,6 +3268,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Substitute 4x for y: 4x = x² - 12. Step 2: Rearrange: 0 = x² - 4x - 12, which factors to (x-6)(x+2) = 0, giving x = 6 or x = -2. Step 3: Apply the constraint x > 0: keep x = 6, reject x = -2.",
           answer: "x = 6, found the same way as the easier version, just with less immediately obvious factoring.",
+          diagram: { kind: "lineParabolaSystem", opensUp: true, points: [{ label: "x = -2", accepted: false }, { label: "x = 6", accepted: true }] },
           difficulty: "medium",
         },
         {
@@ -3253,6 +3276,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Solve the linear equation for y: y = 10 - x. Step 2: Substitute into the quadratic equation: 10 - x = x² - 4x + 6. Step 3: Rearrange: 0 = x² - 3x - 4, which factors to (x-4)(x+1) = 0, giving x = 4 or x = -1. Step 4: Apply the constraint x < 3: reject x = 4 (not less than 3), keep x = -1.",
           answer: "x = -1 — after substituting and factoring, two candidate values emerge (4 and -1), and the given constraint is what narrows it down to the correct one.",
+          diagram: { kind: "lineParabolaSystem", opensUp: true, points: [{ label: "x = 4", accepted: false }, { label: "x = -1", accepted: true }] },
           difficulty: "medium",
         },
         {
@@ -3260,6 +3284,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Substitute the linear expression into the quadratic equation: x + 8 = x² + 2x + 10. Step 2: Rearrange into standard form: 0 = x² + x + 2. Step 3: Rather than forcing a factoring attempt, check the discriminant: 1² - 4(1)(2) = 1 - 8 = -7, which is negative. Step 4: A negative discriminant means no real solutions — the line and the parabola never intersect.",
           answer: "No real solutions — after substituting, the resulting quadratic has a negative discriminant, meaning the line and parabola never intersect; checking the discriminant is faster than forcing a factoring attempt that won't work.",
+          diagram: { kind: "lineParabolaSystem", opensUp: true, points: [], noSolutions: true },
           difficulty: "hard",
         },
       ],
@@ -3279,6 +3304,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: 'Passes through (5, 0)' means f(5) = 0. Substitute x = 5: (5-3)(5-k) = 2(5-k) = 0, so 5 - k = 0, giving k = 5. Step 2: Now evaluate f(0) using k = 5: f(0) = (0-3)(0-5) = (-3)(-5) = 15.",
           answer: "f(0) = 15 — first solve for k using the given point (k = 5), then substitute both x = 0 and k = 5 into the function for the final answer.",
+          diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["3", "5"] },
           difficulty: "easy",
         },
         {
@@ -3286,6 +3312,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: 'Passes through (6, 0)' means g(6) = 0. Substitute x = 6: (6+2)(6-k) = 8(6-k) = 0, so 6 - k = 0, giving k = 6. Step 2: Evaluate g(0) using k = 6: g(0) = (0+2)(0-6) = 2(-6) = -12.",
           answer: "g(0) = -12, found by solving for k first, then substituting both x = 0 and the now-known k.",
+          diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-2", "6"] },
           difficulty: "easy",
         },
         {
@@ -3293,6 +3320,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: '(24, 0)' means g(24) = 0. Substitute x = 24: (24+14)(t-24) = 38(t-24) = 0; since 38 ≠ 0, the second factor must be zero, so t = 24. Step 2: Substitute x = 0 and t = 24 into g(x) = (x+14)(t-x): g(0) = (0+14)(24-0) = 14 × 24 = 336.",
           answer: "g(0) = 336 — first solve for t using the given root, then substitute x = 0 and the now-known t back into the function.",
+          diagram: { kind: "parabolaGraph", opensUp: false, rootLabels: ["-14", "24"] },
           difficulty: "medium",
         },
         {
@@ -3300,6 +3328,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Unlike a root (where the output is 0), here the given point tells us h(2) = -6, a nonzero value — the same substitution method still applies, just without one factor automatically equaling zero. Step 2: Substitute x = 2: (2-4)(2+k) = (-2)(2+k) = -6. Step 3: Divide both sides by -2: 2 + k = 3, so k = 1.",
           answer: "k = 1 — since the given point isn't a root this time, solving for k requires dividing through by the known factor rather than simply setting a factor equal to zero.",
+          diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-1", "4"] },
           difficulty: "medium",
         },
         {
@@ -3307,6 +3336,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: '(10, 0)' means p(10) = 0. Substitute x = 10: (10+6)(10-m) = 16(10-m) = 0; since 16 ≠ 0, 10 - m = 0, so m = 10. Step 2: Substitute x = -2 and m = 10 into p(x) = (x+6)(x-m): p(-2) = (-2+6)(-2-10) = (4)(-12) = -48. Step 3: The negative arithmetic in the second factor (-2 - 10) is the easiest place to drop a sign, so it's worth double-checking.",
           answer: "p(-2) = -48 — first solve for m using the given root (m = 10), then substitute x = -2 and m = 10 back into the function, watching the sign in (-2-10) carefully.",
+          diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-6", "10"] },
           difficulty: "hard",
         },
       ],
