@@ -206,22 +206,17 @@ function DayContent({
         onClick={() => onNavigate("/analysis")}
         className="text-left text-[13px] font-semibold text-[#9a6a12] hover:underline"
       >
-        Take full-length practice test {day.testNumber} of 8 &rarr;
-      </button>
-    );
-  }
-  if (day.type === "review") {
-    return (
-      <button
-        onClick={() => onNavigate("/analysis")}
-        className="text-left text-[13px] font-medium text-[#9a6a12] hover:underline"
-      >
-        Log &amp; review practice test {day.testNumber} results &rarr;
+        Take full-length practice test {day.testNumber} of 8, then log &amp; review your results &rarr;
       </button>
     );
   }
   return (
     <div className="flex flex-col gap-1">
+      {day.type === "review" && (
+        <div className="text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-0.5">
+          Review
+        </div>
+      )}
       {day.subskills.map((s) => {
         const p = progress[s.id];
         const mastered = p && p.bestScore === p.total;

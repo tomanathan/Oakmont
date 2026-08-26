@@ -30,15 +30,20 @@ export default async function PlanPage() {
     return { id, name: s?.name, section: s?.section, domain: s?.domain };
   };
 
-  const weeksWithNames = studyPlan.map((w) => ({
-    week: w.week,
-    testNumbers: w.testNumbers,
-    subskills: w.subskillIds.map(nameSubskill),
-    days: buildDayPlan(w).map((d) => ({
+  const priorSubskillIds: string[] = [];
+  const weeksWithNames = studyPlan.map((w) => {
+    const days = buildDayPlan(w, priorSubskillIds).map((d) => ({
       ...d,
       subskills: d.subskillIds.map(nameSubskill),
-    })),
-  }));
+    }));
+    priorSubskillIds.push(...w.subskillIds);
+    return {
+      week: w.week,
+      testNumbers: w.testNumbers,
+      subskills: w.subskillIds.map(nameSubskill),
+      days,
+    };
+  });
 
   return (
     <AppShell email={user.email} stats={stats}>
