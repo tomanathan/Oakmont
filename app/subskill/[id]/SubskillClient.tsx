@@ -11,9 +11,7 @@ import { MathText } from "@/components/MathText";
 import { sectionTheme } from "@/lib/sectionTheme";
 
 interface SubmitResult {
-  xpGained: number;
   justMastered: boolean;
-  totalXP: number;
   currentStreak: number;
 }
 
@@ -43,6 +41,16 @@ export function SubskillClient({
     setViewedExamples((prev) => (prev.has(key) ? prev : new Set(prev).add(key)));
   }, [activePattern, activeExample]);
 
+  // Scrolls to the top of the page any time the visible content changes --
+  // switching Lesson/Practice, jumping patterns, or stepping examples -- so a
+  // button press never leaves the viewport stranded mid-page against new
+  // content. Centralizing this in one effect (rather than scattering
+  // window.scrollTo calls across every handler) means it's impossible for a
+  // new navigation control to accidentally skip it.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [mode, activePattern, activeExample]);
+
   function selectPattern(i: number) {
     setActivePattern(i);
     setActiveExample(0);
@@ -66,7 +74,6 @@ export function SubskillClient({
     } else {
       setMode("practice");
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function selectAnswer(qIdx: number, choiceIdx: number) {
@@ -80,7 +87,6 @@ export function SubskillClient({
     setActivePattern(i);
     setActiveExample(0);
     setMode("lesson");
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function submitQuiz() {
@@ -100,12 +106,10 @@ export function SubskillClient({
       if (res.ok) {
         const data = await res.json();
         setResult({
-          xpGained: data.xpGained ?? 0,
           justMastered: !!data.justMastered,
-          totalXP: data.totalXP ?? 0,
           currentStreak: data.currentStreak ?? 0,
         });
-        // Refreshes server-fetched data (like the streak/XP chips in AppShell)
+        // Refreshes server-fetched data (like the streak badge in AppShell)
         // in place, without discarding this page's client-side quiz state.
         router.refresh();
       }
@@ -153,9 +157,18 @@ export function SubskillClient({
                 Question patterns within this subskill
               </div>
               {subskill.patterns.length > 1 && (
-                <div className="text-[11px] text-gray-400 whitespace-nowrap">
-                  {subskill.patterns.filter((_, i) => isPatternComplete(i)).length}/
-                  {subskill.patterns.length} viewed
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-gray-400 whitespace-nowrap">
+                    {subskill.patterns.filter((_, i) => isPatternComplete(i)).length}/
+                    {subskill.patterns.length} viewed
+                  </span>
+                  <StepArrows
+                    onPrev={() => selectPattern(activePattern - 1)}
+                    onNext={() => selectPattern(activePattern + 1)}
+                    prevDisabled={activePattern === 0}
+                    nextDisabled={activePattern === subskill.patterns.length - 1}
+                    label="pattern"
+                  />
                 </div>
               )}
             </div>
@@ -213,7 +226,18 @@ export function SubskillClient({
                       Worked example
                       {pattern.examples.length > 1 && ` ${activeExample + 1} of ${pattern.examples.length}`}
                     </div>
-                    {example && <DifficultyPill difficulty={example.difficulty} />}
+                    <div className="flex items-center gap-2">
+                      {example && <DifficultyPill difficulty={example.difficulty} />}
+                      {pattern.examples.length > 1 && (
+                        <StepArrows
+                          onPrev={() => setActiveExample((i) => i - 1)}
+                          onNext={() => setActiveExample((i) => i + 1)}
+                          prevDisabled={activeExample === 0}
+                          nextDisabled={activeExample === pattern.examples.length - 1}
+                          label="example"
+                        />
+                      )}
+                    </div>
                   </div>
 
                   {pattern.examples.length > 1 && (
@@ -305,7 +329,6 @@ export function SubskillClient({
                     setActivePattern(prevIdx);
                     setActiveExample(subskill.patterns[prevIdx].examples.length - 1);
                   }
-                  window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 disabled={activeExample === 0 && activePattern === 0}
                 className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-medium disabled:opacity-30 disabled:cursor-default hover:border-gray-300"
@@ -469,19 +492,12 @@ function ResultBanner({
           {saving && <span className="text-xs text-gray-400 font-normal ml-2">Saving...</span>}
         </div>
 
-        {result && !saving && (result.xpGained > 0 || result.currentStreak > 0) && (
+        {result && !saving && result.currentStreak > 0 && (
           <div className="flex items-center gap-2">
-            {result.xpGained > 0 && (
-              <span className="animate-pop-in inline-flex items-center gap-1 text-[13px] font-bold text-accent bg-[#eaf6ef] border border-[#cde8d9] rounded-full px-2.5 py-1">
-                +{result.xpGained} XP
-              </span>
-            )}
-            {result.currentStreak > 0 && (
-              <span className="inline-flex items-center gap-1 text-[13px] font-semibold text-gray-600">
-                <span className="animate-flame-pulse inline-block">🔥</span>
-                {result.currentStreak}-day streak
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1 text-[13px] font-semibold text-gray-600">
+              <span className="animate-flame-pulse inline-block">🔥</span>
+              {result.currentStreak}-day streak
+            </span>
           </div>
         )}
       </div>
@@ -500,6 +516,41 @@ const DIFFICULTY_LABELS: Record<"easy" | "medium" | "hard", string> = {
   medium: "Medium",
   hard: "Hard",
 };
+
+function StepArrows({
+  onPrev,
+  onNext,
+  prevDisabled,
+  nextDisabled,
+  label,
+}: {
+  onPrev: () => void;
+  onNext: () => void;
+  prevDisabled: boolean;
+  nextDisabled: boolean;
+  label: string;
+}) {
+  return (
+    <div className="flex items-center gap-1">
+      <button
+        onClick={onPrev}
+        disabled={prevDisabled}
+        aria-label={`Previous ${label}`}
+        className="w-6 h-6 flex items-center justify-center rounded-md border border-gray-200 text-gray-500 leading-none disabled:opacity-25 disabled:cursor-default hover:border-gray-300 hover:text-gray-700"
+      >
+        &lsaquo;
+      </button>
+      <button
+        onClick={onNext}
+        disabled={nextDisabled}
+        aria-label={`Next ${label}`}
+        className="w-6 h-6 flex items-center justify-center rounded-md border border-gray-200 text-gray-500 leading-none disabled:opacity-25 disabled:cursor-default hover:border-gray-300 hover:text-gray-700"
+      >
+        &rsaquo;
+      </button>
+    </div>
+  );
+}
 
 function DifficultyPill({ difficulty }: { difficulty: "easy" | "medium" | "hard" }) {
   return (

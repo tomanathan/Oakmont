@@ -3,7 +3,7 @@ import "./globals.css";
 import "katex/dist/katex.min.css";
 
 export const metadata: Metadata = {
-  title: "Elevate SAT Prep",
+  title: "Oakmont Study Center",
   description: "A full 6-month SAT curriculum built around every official subskill.",
 };
 

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { getSubskill } from "@/data/curriculum";
-import { MASTERY_BONUS_XP, justReachedMastery, updateStreak, xpForImprovement } from "@/lib/gamification";
+import { justReachedMastery, updateStreak } from "@/lib/gamification";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -67,12 +67,7 @@ export async function POST(req: NextRequest) {
         data: { userId: user.userId, subskillId, bestScore: score, total, attempts: 1 },
       });
 
-  // Gamification: award XP only for genuine improvement on this subskill's
-  // best score (not for re-submitting without doing better), plus a
-  // one-time bonus the moment a subskill first reaches a perfect score.
   const justMastered = justReachedMastery(previousBest, newBest, total);
-  const xpGained =
-    xpForImprovement(previousBest, newBest) + (justMastered ? MASTERY_BONUS_XP : 0);
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.userId } });
   const streak = updateStreak(
@@ -84,7 +79,6 @@ export async function POST(req: NextRequest) {
   const updatedUser = await prisma.user.update({
     where: { id: user.userId },
     data: {
-      totalXP: { increment: xpGained },
       currentStreak: streak.currentStreak,
       longestStreak: streak.longestStreak,
       lastActiveDate: streak.lastActiveDate,
@@ -94,9 +88,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     ok: true,
     progress: progressResult,
-    xpGained,
     justMastered,
-    totalXP: updatedUser.totalXP,
     currentStreak: updatedUser.currentStreak,
     longestStreak: updatedUser.longestStreak,
   });

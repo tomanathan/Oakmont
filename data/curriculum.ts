@@ -5712,6 +5712,12 @@ export function getSubskill(id: string): Subskill | undefined {
   return ALL_SUBSKILLS.find((s) => s.id === id);
 }
 
+// The 8 official College Board score-report domains (4 per section), used
+// as the subject-breakdown categories on the practice-test analysis page.
+export const ALL_DOMAINS: { domain: string; section: string }[] = CURRICULUM.flatMap((sec) =>
+  sec.domains.map((d) => ({ domain: d.domain, section: sec.section }))
+);
+
 // 6-month (26-week) study plan: all subskills spread evenly across the
 // subskill weeks (a week may get more than one if the subskill count
 // doesn't divide evenly), then full-length practice test weeks at the end.
@@ -5726,25 +5732,39 @@ export const SUBSKILL_WEEK_COUNT = 23;
 export const FULLTEST_WEEK_COUNT = 3;
 export const STUDY_PLAN_WEEK_COUNT = SUBSKILL_WEEK_COUNT + FULLTEST_WEEK_COUNT;
 
-export function buildStudyPlan(): PlanWeek[] {
+/**
+ * Builds a study plan of `totalWeeks` weeks: every subskill spread evenly
+ * across the subskill weeks, followed by full-length practice test weeks at
+ * the end. Full-test weeks keep roughly the same proportion as the default
+ * 26-week plan (3 of 26), so a shorter custom timeline still ends in at
+ * least one practice test and a longer one gets more.
+ */
+export function buildStudyPlan(totalWeeks: number = STUDY_PLAN_WEEK_COUNT): PlanWeek[] {
+  const safeTotalWeeks = Math.max(2, Math.round(totalWeeks));
+  const fulltestWeeks = Math.min(
+    safeTotalWeeks - 1,
+    Math.max(1, Math.round((safeTotalWeeks * FULLTEST_WEEK_COUNT) / STUDY_PLAN_WEEK_COUNT))
+  );
+  const subskillWeeks = safeTotalWeeks - fulltestWeeks;
+
   const order = ALL_SUBSKILLS.map((s) => s.id);
   const weeks: PlanWeek[] = [];
   let i = 0;
-  for (let w = 1; w <= SUBSKILL_WEEK_COUNT; w++) {
+  for (let w = 1; w <= subskillWeeks; w++) {
     // Spread any remainder across the earliest weeks so every subskill in
     // ALL_SUBSKILLS ends up scheduled, even when its length isn't a clean
-    // multiple of SUBSKILL_WEEK_COUNT.
-    const remainingWeeks = SUBSKILL_WEEK_COUNT - w + 1;
+    // multiple of subskillWeeks.
+    const remainingWeeks = subskillWeeks - w + 1;
     const remainingSubskills = order.length - i;
     const count = Math.ceil(remainingSubskills / remainingWeeks);
     weeks.push({ week: w, type: "subskill", subskillIds: order.slice(i, i + count) });
     i += count;
   }
-  for (let w = SUBSKILL_WEEK_COUNT + 1; w <= STUDY_PLAN_WEEK_COUNT; w++) {
+  for (let w = subskillWeeks + 1; w <= safeTotalWeeks; w++) {
     weeks.push({
       week: w,
       type: "fulltest",
-      label: `Full-length practice test ${w - SUBSKILL_WEEK_COUNT}`,
+      label: `Full-length practice test ${w - subskillWeeks}`,
     });
   }
   return weeks;

@@ -39,9 +39,9 @@ export default function LoginPage() {
     <div className="max-w-[420px] mx-auto px-6 py-12 font-sans">
       <div className="text-center mb-8">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#6d7fd6] to-accent flex items-center justify-center text-white text-lg font-bold mx-auto mb-3">
-          E
+          O
         </div>
-        <div className="text-[28px] font-bold text-ink mb-1">Elevate SAT Prep</div>
+        <div className="text-[28px] font-bold text-ink mb-1">Oakmont Study Center</div>
         <div className="text-sm text-gray-500">
           A full 6-month SAT curriculum, built around every official subskill.
         </div>

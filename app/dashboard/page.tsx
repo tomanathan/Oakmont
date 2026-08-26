@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
-import { computePacing } from "@/lib/pacing";
-import { CURRICULUM, ALL_SUBSKILLS, STUDY_PLAN } from "@/data/curriculum";
+import { computePacing, courseLengthDaysForUser } from "@/lib/pacing";
+import { CURRICULUM, ALL_SUBSKILLS, buildStudyPlan } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
 import { DashboardClient } from "./DashboardClient";
 
@@ -19,18 +19,22 @@ export default async function DashboardPage() {
   for (const row of rows) {
     progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
   }
-  // Pace against the 6-month plan's actual scope (the subskills it schedules
+  const createdAt = stats.createdAt ?? new Date();
+  const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null);
+  const studyPlan = buildStudyPlan(Math.round(courseLengthDays / 7));
+  // Pace against the plan's actual scope (the subskills it schedules
   // week-by-week), not the full subskill bank, so the numbers line up with
   // what /plan shows.
   const planSubskillIds = new Set(
-    STUDY_PLAN.filter((w) => w.type === "subskill").flatMap((w) => w.subskillIds ?? [])
+    studyPlan.filter((w) => w.type === "subskill").flatMap((w) => w.subskillIds ?? [])
   );
   const completedInPlan = Object.keys(progress).filter((id) => planSubskillIds.has(id)).length;
   const pacing = computePacing(
-    stats.createdAt ?? new Date(),
+    createdAt,
     new Date(),
     planSubskillIds.size,
-    completedInPlan
+    completedInPlan,
+    courseLengthDays
   );
 
   return (

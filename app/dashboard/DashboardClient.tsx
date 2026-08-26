@@ -18,7 +18,7 @@ export function DashboardClient({
   curriculum: Section[];
   progress: ProgressMap;
   totalSubskills: number;
-  stats: { totalXP: number; currentStreak: number; longestStreak: number };
+  stats: { currentStreak: number; longestStreak: number };
   pacing: Pacing;
 }) {
   const router = useRouter();

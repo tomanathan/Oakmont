@@ -21,14 +21,19 @@ model User {
   passwordHash String
   createdAt DateTime   @default(now())
   progress  Progress[]
+  practiceTests PracticeTest[]
 
-  // Gamification: XP earned from quiz improvements + mastery bonuses, and a
-  // daily practice streak (consecutive calendar days with at least one quiz
+  // Daily practice streak (consecutive calendar days with at least one quiz
   // submission). Computed in app/api/progress/route.ts on each submission.
-  totalXP        Int       @default(0)
   currentStreak  Int       @default(0)
   longestStreak  Int       @default(0)
   lastActiveDate DateTime?
+
+  // Study goals: a baseline score, target score, and SAT test date, used to
+  // build a custom-length timeline in place of the default 6-month plan.
+  baselineScore  Int?
+  goalScore      Int?
+  targetTestDate DateTime?
 }
 
 model Progress {
@@ -42,4 +47,24 @@ model Progress {
   lastAttempt  DateTime @default(now())
 
   @@unique([userId, subskillId])
+}
+
+// A self-reported result from a full-length practice test (e.g. Bluebook or
+// an official practice test), used to track section- and domain-level
+// progress over time on the analysis page.
+model PracticeTest {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  takenAt        DateTime @default(now())
+  compositeScore Int
+  rwScore        Int
+  mathScore      Int
+  // Optional per-domain estimated score (0-100), keyed by domain name (see
+  // data/curriculum.ts domain names) -- e.g. { "Algebra": 78 }. Domains the
+  // student didn't report are simply absent from the object.
+  domainScores   Json     @default("{}")
+  createdAt      DateTime @default(now())
+
+  @@index([userId, takenAt])
 }

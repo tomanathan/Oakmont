@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
-import { STUDY_PLAN, getSubskill } from "@/data/curriculum";
+import { courseLengthDaysForUser } from "@/lib/pacing";
+import { buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
 import { PlanClient } from "./PlanClient";
 
@@ -19,7 +20,12 @@ export default async function PlanPage() {
     progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
   }
 
-  const weeksWithNames = STUDY_PLAN.map((w) => ({
+  const courseLengthDays = courseLengthDaysForUser(
+    stats.createdAt ?? new Date(),
+    stats.targetTestDate ?? null
+  );
+  const studyPlan = buildStudyPlan(Math.round(courseLengthDays / 7));
+  const weeksWithNames = studyPlan.map((w) => ({
     ...w,
     subskills: (w.subskillIds ?? []).map((id) => {
       const s = getSubskill(id);

@@ -1,19 +1,6 @@
-// Pure functions for the app's gamification layer: XP awarded for quiz
-// improvements and mastery, and the daily practice streak. Kept separate
-// from the API route so the rules are easy to see and test in one place.
-
-export const XP_PER_CORRECT_ANSWER = 10;
-export const MASTERY_BONUS_XP = 25;
-
-/**
- * XP is only awarded for genuine improvement on a subskill's best score, not
- * for re-submitting a quiz without doing any better. This keeps the number
- * meaningful (it tracks progress, not attempts) and prevents farming XP by
- * resubmitting the same quiz repeatedly.
- */
-export function xpForImprovement(previousBest: number, newBest: number): number {
-  return XP_PER_CORRECT_ANSWER * Math.max(0, newBest - previousBest);
-}
+// Pure functions for the app's gamification layer: mastery detection and the
+// daily practice streak. Kept separate from the API route so the rules are
+// easy to see and test in one place.
 
 export function justReachedMastery(previousBest: number, newBest: number, total: number): boolean {
   return total > 0 && newBest === total && previousBest !== total;

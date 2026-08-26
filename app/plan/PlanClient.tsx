@@ -29,13 +29,19 @@ export function PlanClient({
   const doneSubskills = allSubskills.filter((s) => progress[s.id]).length;
   const weekPct =
     allSubskills.length > 0 ? Math.round((doneSubskills / allSubskills.length) * 100) : 0;
+  const fulltestCount = weeks.filter((w) => w.type === "fulltest").length;
 
   return (
     <div>
-      <div className="text-xl font-bold text-ink mb-1.5">Your 6-month roadmap</div>
+      <div className="text-xl font-bold text-ink mb-1.5">Your study roadmap</div>
       <div className="text-sm text-gray-500 mb-4">
-        26 weeks: focused subskills week by week, followed by three full-length practice test
-        weeks to finish.
+        {weeks.length} weeks: focused subskills week by week, followed by{" "}
+        {fulltestCount === 1 ? "a" : fulltestCount} full-length practice test{" "}
+        {fulltestCount === 1 ? "week" : "weeks"} to finish. Set a target SAT date in{" "}
+        <button onClick={() => router.push("/settings")} className="underline hover:text-ink">
+          Settings
+        </button>{" "}
+        to custom-fit this timeline.
       </div>
       <div className="bg-[#eef0fc] border border-[#d7dbf3] rounded-xl p-5 mb-6">
         <div className="flex justify-between items-baseline mb-2">
