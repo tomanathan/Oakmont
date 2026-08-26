@@ -7,6 +7,7 @@ import type { Question } from "@/data/questions";
 import { NavButton } from "@/components/NavButton";
 import { ConfettiBurst, useCountUp } from "@/components/CountUp";
 import { StepList, ProseText } from "@/components/StepList";
+import { MathText } from "@/components/MathText";
 import { sectionTheme } from "@/lib/sectionTheme";
 
 interface SubmitResult {
@@ -246,11 +247,11 @@ export function SubskillClient({
                   {example && (
                     <>
                       <div className="text-sm text-ink font-medium mb-3 leading-relaxed">
-                        {example.prompt}
+                        <MathText text={example.prompt} />
                       </div>
                       <StepList text={example.walkthrough} className="text-[13px] text-gray-600 mb-3" />
                       <div className="text-[13px] text-accent font-semibold leading-relaxed border-t border-gray-200 pt-3">
-                        {example.answer}
+                        <MathText text={example.answer} />
                       </div>
                     </>
                   )}
@@ -264,7 +265,9 @@ export function SubskillClient({
                     {pattern.traps.map((t, i) => (
                       <li key={i} className="text-[13px] text-gray-600 leading-relaxed flex gap-2">
                         <span className="text-[#d97f7e] flex-shrink-0">&#9679;</span>
-                        <span>{t}</span>
+                        <span>
+                          <MathText text={t} />
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -365,7 +368,7 @@ export function SubskillClient({
               className="bg-white border border-[#ece9f7] shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-5 mb-3.5"
             >
               <div className="text-sm font-medium text-ink mb-3">
-                {i + 1}. {q.q}
+                {i + 1}. <MathText text={q.q} />
               </div>
               <div className="flex flex-col gap-2">
                 {q.choices.map((c, ci) => {
@@ -388,7 +391,7 @@ export function SubskillClient({
                           : "border-[#ece9f7] bg-white hover:border-[#d8d4f0]"
                       } text-ink`}
                     >
-                      {String.fromCharCode(65 + ci)}. {c}
+                      {String.fromCharCode(65 + ci)}. <MathText text={c} />
                     </div>
                   );
                 })}
@@ -396,7 +399,7 @@ export function SubskillClient({
               {submitted && (
                 <div className="text-[13px] text-gray-500 mt-2.5 leading-relaxed">
                   <strong className="text-ink">Explanation: </strong>
-                  {q.explain}
+                  <MathText text={q.explain} />
                 </div>
               )}
               {submitted && answers[i] !== q.answer && q.pattern && (
@@ -545,7 +548,7 @@ function TipsPanel({ tips }: { tips: string[] }) {
       <ul className="space-y-3">
         {tips.map((t, i) => (
           <li key={i} className="text-[13px] text-gray-700 leading-relaxed pb-3 border-b border-[#f0e4c8] last:border-b-0 last:pb-0">
-            {t}
+            <MathText text={t} />
           </li>
         ))}
       </ul>

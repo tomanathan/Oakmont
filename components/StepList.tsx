@@ -1,3 +1,5 @@
+import { MathText } from "./MathText";
+
 /**
  * Curriculum walkthroughs and Desmos tricks are written as "Step 1: ... Step 2: ..."
  * prose so they read naturally as data, but shown as one dense paragraph they're a
@@ -17,7 +19,11 @@ export function StepList({ text, className = "" }: { text: string; className?: s
   const steps = splitSteps(text);
 
   if (steps.length === 1) {
-    return <p className={`leading-relaxed ${className}`}>{steps[0]}</p>;
+    return (
+      <p className={`leading-relaxed ${className}`}>
+        <MathText text={steps[0]} />
+      </p>
+    );
   }
 
   return (
@@ -27,7 +33,9 @@ export function StepList({ text, className = "" }: { text: string; className?: s
           <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-white border border-gray-300 text-gray-500 text-[10px] font-bold flex items-center justify-center">
             {i + 1}
           </span>
-          <span>{step}</span>
+          <span>
+            <MathText text={step} />
+          </span>
         </li>
       ))}
     </ol>
@@ -55,13 +63,21 @@ function splitLeadSentence(text: string): [string, string] | null {
 export function ProseText({ text, className = "" }: { text: string; className?: string }) {
   const split = splitLeadSentence(text);
   if (!split) {
-    return <p className={`leading-relaxed ${className}`}>{text}</p>;
+    return (
+      <p className={`leading-relaxed ${className}`}>
+        <MathText text={text} />
+      </p>
+    );
   }
   const [lead, rest] = split;
   return (
     <div className={className}>
-      <p className="leading-relaxed font-medium mb-2.5">{lead}</p>
-      <p className="leading-relaxed">{rest}</p>
+      <p className="leading-relaxed font-medium mb-2.5">
+        <MathText text={lead} />
+      </p>
+      <p className="leading-relaxed">
+        <MathText text={rest} />
+      </p>
     </div>
   );
 }
