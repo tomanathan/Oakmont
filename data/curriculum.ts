@@ -5718,54 +5718,63 @@ export const ALL_DOMAINS: { domain: string; section: string }[] = CURRICULUM.fla
   sec.domains.map((d) => ({ domain: d.domain, section: sec.section }))
 );
 
-// 6-month (26-week) study plan: all subskills spread evenly across the
-// subskill weeks (a week may get more than one if the subskill count
-// doesn't divide evenly), then full-length practice test weeks at the end.
+// Study plan: every subskill spread evenly across the course, with the 8
+// official full-length practice tests spaced throughout the whole timeline
+// (not clustered at the end) so testing tracks progress as it happens. A
+// week can carry subskills, a practice test, or (usually) both.
 export interface PlanWeek {
   week: number;
-  type: "subskill" | "fulltest";
-  subskillIds?: string[];
-  label?: string;
+  subskillIds: string[];
+  testNumbers: number[]; // which of the 8 full-length tests (1-8) land this week, if any
 }
 
 export const SUBSKILL_WEEK_COUNT = 23;
 export const FULLTEST_WEEK_COUNT = 3;
 export const STUDY_PLAN_WEEK_COUNT = SUBSKILL_WEEK_COUNT + FULLTEST_WEEK_COUNT;
+export const NUM_FULL_LENGTH_TESTS = 8;
 
 /**
- * Builds a study plan of `totalWeeks` weeks: every subskill spread evenly
- * across the subskill weeks, followed by full-length practice test weeks at
- * the end. Full-test weeks keep roughly the same proportion as the default
- * 26-week plan (3 of 26), so a shorter custom timeline still ends in at
- * least one practice test and a longer one gets more.
+ * Builds a study plan of `totalWeeks` weeks.
+ *
+ * The 8 full-length practice tests are placed at even fractions of the
+ * course (1/9, 2/9, ... 8/9 through), so the first test comes only after
+ * some real content is covered, later tests land further apart in absolute
+ * terms on a longer timeline and closer together on a short one, and the
+ * final test always lands on the very last week -- a capstone right before
+ * the real SAT. The last week is reserved for that final test plus review,
+ * with no brand-new material, matching the usual advice not to cram new
+ * content the day before the exam.
+ *
+ * All 29 subskills are spread evenly across the remaining weeks (a week may
+ * get more than one if the count doesn't divide evenly). A week that also
+ * hosts a practice test still gets subskills -- see buildDayPlan, which
+ * fits both into the week's 7 days.
  */
 export function buildStudyPlan(totalWeeks: number = STUDY_PLAN_WEEK_COUNT): PlanWeek[] {
   const safeTotalWeeks = Math.max(2, Math.round(totalWeeks));
-  const fulltestWeeks = Math.min(
-    safeTotalWeeks - 1,
-    Math.max(1, Math.round((safeTotalWeeks * FULLTEST_WEEK_COUNT) / STUDY_PLAN_WEEK_COUNT))
-  );
-  const subskillWeeks = safeTotalWeeks - fulltestWeeks;
+  const contentWeeks = Math.max(1, safeTotalWeeks - 1);
+
+  const testsByWeek = new Map<number, number[]>();
+  for (let t = 1; t <= NUM_FULL_LENGTH_TESTS; t++) {
+    const w = Math.max(1, Math.min(safeTotalWeeks, Math.round((t / NUM_FULL_LENGTH_TESTS) * safeTotalWeeks)));
+    testsByWeek.set(w, [...(testsByWeek.get(w) ?? []), t]);
+  }
 
   const order = ALL_SUBSKILLS.map((s) => s.id);
   const weeks: PlanWeek[] = [];
   let i = 0;
-  for (let w = 1; w <= subskillWeeks; w++) {
+  for (let w = 1; w <= contentWeeks; w++) {
     // Spread any remainder across the earliest weeks so every subskill in
     // ALL_SUBSKILLS ends up scheduled, even when its length isn't a clean
-    // multiple of subskillWeeks.
-    const remainingWeeks = subskillWeeks - w + 1;
+    // multiple of contentWeeks.
+    const remainingWeeks = contentWeeks - w + 1;
     const remainingSubskills = order.length - i;
-    const count = Math.ceil(remainingSubskills / remainingWeeks);
-    weeks.push({ week: w, type: "subskill", subskillIds: order.slice(i, i + count) });
+    const count = remainingSubskills > 0 ? Math.ceil(remainingSubskills / remainingWeeks) : 0;
+    weeks.push({ week: w, subskillIds: order.slice(i, i + count), testNumbers: testsByWeek.get(w) ?? [] });
     i += count;
   }
-  for (let w = subskillWeeks + 1; w <= safeTotalWeeks; w++) {
-    weeks.push({
-      week: w,
-      type: "fulltest",
-      label: `Full-length practice test ${w - subskillWeeks}`,
-    });
+  if (safeTotalWeeks > contentWeeks) {
+    weeks.push({ week: safeTotalWeeks, subskillIds: [], testNumbers: testsByWeek.get(safeTotalWeeks) ?? [] });
   }
   return weeks;
 }

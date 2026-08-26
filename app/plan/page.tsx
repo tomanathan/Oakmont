@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
 import { courseLengthDaysForUser } from "@/lib/pacing";
+import { buildDayPlan } from "@/lib/studyPlan";
 import { buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
 import { PlanClient } from "./PlanClient";
@@ -20,22 +21,32 @@ export default async function PlanPage() {
     progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
   }
 
-  const courseLengthDays = courseLengthDaysForUser(
-    stats.createdAt ?? new Date(),
-    stats.targetTestDate ?? null
-  );
+  const courseStartDate = stats.createdAt ?? new Date();
+  const courseLengthDays = courseLengthDaysForUser(courseStartDate, stats.targetTestDate ?? null);
   const studyPlan = buildStudyPlan(Math.round(courseLengthDays / 7));
+
+  const nameSubskill = (id: string) => {
+    const s = getSubskill(id);
+    return { id, name: s?.name, section: s?.section, domain: s?.domain };
+  };
+
   const weeksWithNames = studyPlan.map((w) => ({
-    ...w,
-    subskills: (w.subskillIds ?? []).map((id) => {
-      const s = getSubskill(id);
-      return { id, name: s?.name, section: s?.section, domain: s?.domain };
-    }),
+    week: w.week,
+    testNumbers: w.testNumbers,
+    subskills: w.subskillIds.map(nameSubskill),
+    days: buildDayPlan(w).map((d) => ({
+      ...d,
+      subskills: d.subskillIds.map(nameSubskill),
+    })),
   }));
 
   return (
     <AppShell email={user.email} stats={stats}>
-      <PlanClient weeks={weeksWithNames} progress={progress} />
+      <PlanClient
+        weeks={weeksWithNames}
+        progress={progress}
+        courseStartDate={courseStartDate.toISOString()}
+      />
     </AppShell>
   );
 }

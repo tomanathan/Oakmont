@@ -1,7 +1,9 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { sectionTheme } from "@/lib/sectionTheme";
+import type { DayType } from "@/lib/studyPlan";
 
 interface WeekSubskill {
   id: string;
@@ -10,38 +12,82 @@ interface WeekSubskill {
   domain?: string;
 }
 
+interface DayItem {
+  day: number;
+  dayName: string;
+  type: DayType;
+  testNumber?: number;
+  subskills: WeekSubskill[];
+}
+
 interface WeekItem {
   week: number;
-  type: "subskill" | "fulltest";
-  label?: string;
+  testNumbers: number[];
   subskills: WeekSubskill[];
+  days: DayItem[];
+}
+
+function addDays(from: string | Date, days: number): Date {
+  const d = new Date(from);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+function formatDate(d: Date): string {
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
 export function PlanClient({
   weeks,
   progress,
+  courseStartDate,
 }: {
   weeks: WeekItem[];
   progress: Record<string, { bestScore: number; total: number }>;
+  courseStartDate: string;
 }) {
   const router = useRouter();
-  const allSubskills = weeks.filter((w) => w.type === "subskill").flatMap((w) => w.subskills);
+  const allSubskills = weeks.flatMap((w) => w.subskills);
   const doneSubskills = allSubskills.filter((s) => progress[s.id]).length;
   const weekPct =
     allSubskills.length > 0 ? Math.round((doneSubskills / allSubskills.length) * 100) : 0;
-  const fulltestCount = weeks.filter((w) => w.type === "fulltest").length;
+  const totalTests = weeks.reduce((acc, w) => acc + w.testNumbers.length, 0);
+
+  const currentWeekNumber = useMemo(() => {
+    const daysElapsed = Math.floor(
+      (Date.now() - new Date(courseStartDate).getTime()) / 86400000
+    );
+    return Math.max(1, Math.floor(daysElapsed / 7) + 1);
+  }, [courseStartDate]);
+  const currentDayOfWeek = useMemo(() => {
+    const daysElapsed = Math.floor(
+      (Date.now() - new Date(courseStartDate).getTime()) / 86400000
+    );
+    return ((daysElapsed % 7) + 7) % 7; // 0-6
+  }, [courseStartDate]);
+
+  const [expanded, setExpanded] = useState<Set<number>>(() => new Set([currentWeekNumber]));
+
+  function toggleWeek(week: number) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(week)) next.delete(week);
+      else next.add(week);
+      return next;
+    });
+  }
 
   return (
     <div>
       <div className="text-xl font-bold text-ink mb-1.5">Your study roadmap</div>
       <div className="text-sm text-gray-500 mb-4">
-        {weeks.length} weeks: focused subskills week by week, followed by{" "}
-        {fulltestCount === 1 ? "a" : fulltestCount} full-length practice test{" "}
-        {fulltestCount === 1 ? "week" : "weeks"} to finish. Set a target SAT date in{" "}
+        {weeks.length} weeks, broken down day by day. All {totalTests} full-length practice
+        tests are spaced throughout based on how much time you have, not bunched up at the end.
+        Set a target SAT date in{" "}
         <button onClick={() => router.push("/settings")} className="underline hover:text-ink">
           Settings
         </button>{" "}
-        to custom-fit this timeline.
+        to custom-fit this timeline. Click a week to see the day-by-day plan.
       </div>
       <div className="bg-[#eef0fc] border border-[#d7dbf3] rounded-xl p-5 mb-6">
         <div className="flex justify-between items-baseline mb-2">
@@ -60,63 +106,156 @@ export function PlanClient({
       </div>
       <div className="flex flex-col gap-2">
         {weeks.map((w) => {
-          if (w.type === "fulltest") {
-            return (
-              <div
-                key={w.week}
-                className="flex items-center gap-3 px-3.5 py-2.5 border border-dashed border-[#e8cd8f] bg-[#fffaf0] rounded-[10px]"
-              >
-                <div className="text-xs font-bold text-[#c9971b] w-16">Week {w.week}</div>
-                <div className="text-sm text-gray-700">{w.label}</div>
-              </div>
-            );
-          }
+          const isOpen = expanded.has(w.week);
+          const isCurrentWeek = w.week === currentWeekNumber;
+          const weekStart = addDays(courseStartDate, (w.week - 1) * 7);
+          const weekEnd = addDays(courseStartDate, w.week * 7 - 1);
+          const doneInWeek = w.subskills.filter((s) => progress[s.id]).length;
+
           return (
             <div
               key={w.week}
-              className="flex items-start gap-3 px-3.5 py-2.5 border border-[#ece9f7] bg-white rounded-[10px]"
+              className={`border rounded-[10px] overflow-hidden ${
+                isCurrentWeek ? "border-[#c9c6ee]" : "border-[#ece9f7]"
+              } bg-white`}
             >
-              <div className="text-xs font-bold text-gray-400 w-16 pt-2">Week {w.week}</div>
-              <div className="flex-1 flex flex-col gap-1.5">
-                {w.subskills.map((s) => {
-                  const p = progress[s.id];
-                  const mastered = p && p.bestScore === p.total;
-                  const theme = sectionTheme(s.section ?? "");
-                  return (
-                    <div
-                      key={s.id}
-                      onClick={() => router.push(`/subskill/${s.id}`)}
-                      className={`flex items-center gap-3 px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${
-                        mastered
-                          ? "bg-[#fffaf0] hover:bg-[#fdf3df]"
-                          : p
-                          ? "bg-[#f0f7f2] hover:bg-[#e6f1e9]"
-                          : `${theme.cardBg} hover:opacity-80`
-                      }`}
+              <button
+                onClick={() => toggleWeek(w.week)}
+                className="w-full flex items-center gap-3 px-3.5 py-2.5 text-left hover:bg-[#faf9ff]"
+              >
+                <div className="text-xs font-bold text-gray-400 w-14 flex-shrink-0">
+                  Week {w.week}
+                </div>
+                <div className="text-[11px] text-gray-400 w-28 flex-shrink-0">
+                  {formatDate(weekStart)} &ndash; {formatDate(weekEnd)}
+                </div>
+                <div className="flex-1 flex items-center gap-2 flex-wrap min-w-0">
+                  {isCurrentWeek && (
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-[#6d7fd6] bg-[#eef0fc] px-1.5 py-0.5 rounded">
+                      This week
+                    </span>
+                  )}
+                  {w.subskills.length > 0 && (
+                    <span className="text-[13px] text-gray-600">
+                      {w.subskills.length} subskill{w.subskills.length === 1 ? "" : "s"}
+                      {doneInWeek > 0 && ` · ${doneInWeek} done`}
+                    </span>
+                  )}
+                  {w.testNumbers.map((n) => (
+                    <span
+                      key={n}
+                      className="text-[11px] font-semibold text-[#c9971b] bg-[#fffaf0] border border-[#f0e0b0] px-1.5 py-0.5 rounded"
                     >
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-ink">{s.name}</div>
-                        <div className="text-xs text-gray-400">
-                          {s.section} · {s.domain}
+                      Practice test {n} of 8
+                    </span>
+                  ))}
+                </div>
+                <span className="text-gray-300 text-xs flex-shrink-0">{isOpen ? "▾" : "▸"}</span>
+              </button>
+
+              {isOpen && (
+                <div className="border-t border-[#f0eff9] divide-y divide-[#f5f4fb]">
+                  {w.days.map((d) => {
+                    const dayDate = addDays(weekStart, d.day - 1);
+                    const isToday = isCurrentWeek && d.day - 1 === currentDayOfWeek;
+                    return (
+                      <div
+                        key={d.day}
+                        className={`flex items-start gap-3 px-3.5 py-2.5 ${
+                          isToday ? "bg-[#faf9ff]" : ""
+                        }`}
+                      >
+                        <div className="w-14 flex-shrink-0 pt-0.5">
+                          <div className="text-[11px] font-bold text-gray-500">{d.dayName}</div>
+                          <div className="text-[10px] text-gray-400">{formatDate(dayDate)}</div>
+                          {isToday && (
+                            <div className="text-[9px] font-bold uppercase text-[#6d7fd6]">Today</div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <DayContent day={d} progress={progress} onNavigate={router.push} />
                         </div>
                       </div>
-                      {mastered ? (
-                        <span className="text-[11px] text-[#c9971b] font-semibold whitespace-nowrap">
-                          ★ Mastered
-                        </span>
-                      ) : p ? (
-                        <span className="text-[11px] text-accent font-semibold whitespace-nowrap">
-                          ✓ {p.bestScore}/{p.total}
-                        </span>
-                      ) : null}
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function DayContent({
+  day,
+  progress,
+  onNavigate,
+}: {
+  day: DayItem;
+  progress: Record<string, { bestScore: number; total: number }>;
+  onNavigate: (path: string) => void;
+}) {
+  if (day.type === "rest") {
+    return <div className="text-[13px] text-gray-300">Rest &amp; catch up</div>;
+  }
+  if (day.type === "test") {
+    return (
+      <button
+        onClick={() => onNavigate("/analysis")}
+        className="text-left text-[13px] font-semibold text-[#9a6a12] hover:underline"
+      >
+        Take full-length practice test {day.testNumber} of 8 &rarr;
+      </button>
+    );
+  }
+  if (day.type === "review") {
+    return (
+      <button
+        onClick={() => onNavigate("/analysis")}
+        className="text-left text-[13px] font-medium text-[#9a6a12] hover:underline"
+      >
+        Log &amp; review practice test {day.testNumber} results &rarr;
+      </button>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-1">
+      {day.subskills.map((s) => {
+        const p = progress[s.id];
+        const mastered = p && p.bestScore === p.total;
+        const theme = sectionTheme(s.section ?? "");
+        return (
+          <div
+            key={s.id}
+            onClick={() => onNavigate(`/subskill/${s.id}`)}
+            className={`flex items-center gap-3 px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${
+              mastered
+                ? "bg-[#fffaf0] hover:bg-[#fdf3df]"
+                : p
+                ? "bg-[#f0f7f2] hover:bg-[#e6f1e9]"
+                : `${theme.cardBg} hover:opacity-80`
+            }`}
+          >
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium text-ink">{s.name}</div>
+              <div className="text-xs text-gray-400">
+                {s.section} &middot; {s.domain}
+              </div>
+            </div>
+            {mastered ? (
+              <span className="text-[11px] text-[#c9971b] font-semibold whitespace-nowrap">
+                ★ Mastered
+              </span>
+            ) : p ? (
+              <span className="text-[11px] text-accent font-semibold whitespace-nowrap">
+                ✓ {p.bestScore}/{p.total}
+              </span>
+            ) : null}
+          </div>
+        );
+      })}
     </div>
   );
 }

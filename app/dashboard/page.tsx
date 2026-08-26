@@ -25,9 +25,7 @@ export default async function DashboardPage() {
   // Pace against the plan's actual scope (the subskills it schedules
   // week-by-week), not the full subskill bank, so the numbers line up with
   // what /plan shows.
-  const planSubskillIds = new Set(
-    studyPlan.filter((w) => w.type === "subskill").flatMap((w) => w.subskillIds ?? [])
-  );
+  const planSubskillIds = new Set(studyPlan.flatMap((w) => w.subskillIds));
   const completedInPlan = Object.keys(progress).filter((id) => planSubskillIds.has(id)).length;
   const pacing = computePacing(
     createdAt,
