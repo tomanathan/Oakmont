@@ -49,7 +49,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Whole-Passage Main Idea",
       explanation:
-        "These questions ask you to identify what the entire passage is fundamentally about — its single unifying claim or purpose. The trap is that the main idea is almost never stated in the first sentence; it usually emerges from the relationship between the passage's parts. A reliable method: after reading, ask yourself 'if I could only keep one sentence of this passage, which one captures why all the other sentences exist?' The correct answer choice will be broad enough to cover every part of the passage, but not so broad that it could describe a completely different passage too. Wrong answers are usually either too narrow (they only describe one paragraph or one detail) or too broad (they're vaguely true but don't capture what's distinctive about this specific passage).",
+        "These questions ask what the whole passage is really about. The trap: the main idea is almost never stated in the first sentence — you have to piece it together from the whole passage. After reading, ask yourself: 'If I could keep only one sentence, which one explains why all the others exist?' The right answer covers the whole passage, not just one part of it. It also shouldn't be so broad that it could describe a totally different passage. Wrong answers are usually too narrow (about just one detail) or too broad (vague and generic).",
       examples: [
         {
           prompt:
@@ -106,7 +106,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Explicit Detail Retrieval",
       explanation:
-        "A more literal companion to main-idea questions: instead of synthesizing the whole passage, you're asked what the text directly states about one specific fact, number, or finding. This is different from main-idea questions (no synthesis needed) and from 'function of a detail' questions (you're not explaining why it was included, just reporting what it says). The method is simple but requires discipline: locate the exact sentence that answers the question, then match the choice that restates it accurately — without adding outside knowledge, reversing a direction, or borrowing a fact from a different part of the passage.",
+        "These questions are simpler than main-idea questions: you just report what the text directly says about one specific fact, number, or finding — no piecing-together required. This is different from 'function of a detail' questions too, since you're not explaining why the detail is there, just what it says. The method: find the exact sentence that answers the question, then pick the choice that restates it accurately. Don't add outside knowledge, reverse a direction, or borrow a fact from somewhere else in the passage.",
       examples: [
         {
           prompt:
@@ -163,7 +163,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Function of a Specific Detail",
       explanation:
-        "These questions zoom into a single detail (a statistic, an example, a quotation) and ask what role it plays in supporting the passage's broader claim. Unlike main-idea questions, you're not summarizing the whole passage — you're explaining why this one piece of evidence was included. The key move is to first identify the specific claim the detail is attached to (usually the sentence right before or after it), then check whether the answer choice describes the detail's actual logical relationship to that claim (supports it, complicates it, provides a contrasting case, etc.) rather than just restating what the detail says.",
+        "These questions zoom in on one detail — a statistic, an example, a quotation — and ask what job it's doing for the passage's larger claim. You're not summarizing the whole passage here; you're explaining why this one piece of evidence was included. First, find the specific claim the detail is attached to (usually the sentence right before or after it). Then check whether the answer choice correctly describes the detail's relationship to that claim — does it support it, complicate it, or offer a contrasting case? Don't just pick the choice that restates what the detail says.",
       examples: [
         {
           prompt:
@@ -239,7 +239,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Direct Quantitative Support",
       explanation:
-        "The most common Command of Evidence pattern gives you a claim and asks which choice provides the strongest quantitative or factual support. The winning answer is almost always the choice with the most specific, directly relevant number or fact — not the choice that's merely 'related' to the topic. A fast filter: cross out any choice that's a general statement about the topic (these exist as bait) and keep only choices with a specific measurement, comparison, or named data point.",
+        "This is the most common Command of Evidence pattern: you're given a claim and asked which choice provides the strongest factual support. The winning answer is almost always the one with the most specific, directly relevant number or fact — not just the choice that's 'related' to the topic. Fast filter: cross out any choice that's a general statement about the topic (those are bait). Keep only choices with a specific measurement, comparison, or named data point.",
       examples: [
         {
           prompt:
@@ -305,7 +305,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Ruling Out Alternative Explanations",
       explanation:
-        "A more advanced Command of Evidence pattern involves causal claims — where the best evidence isn't just a supporting number, but a comparison that rules out an alternative explanation. These questions often involve a control group, a similar-but-different comparison case, or a 'before vs. after with a comparison group' structure. Recognize this pattern when the claim uses causal language ('caused,' 'led to,' 'is responsible for') rather than just descriptive language ('is associated with').",
+        "This is a harder Command of Evidence pattern, used for causal claims. Here, the best evidence isn't just a supporting number — it's a comparison that rules out some other explanation. Look for a control group, a similar-but-different comparison case, or a 'before vs. after' setup with a comparison group. You'll know this pattern applies when the claim uses causal language like 'caused' or 'led to,' not just descriptive language like 'is associated with.'",
       examples: [
         {
           prompt:
@@ -361,7 +361,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Selecting the Best Illustrative Quotation",
       explanation:
-        "A third Command of Evidence pattern applies to literary texts: you're given a claim about a character's feeling, an author's stylistic choice, or a story's theme, and asked which quotation from the text most effectively illustrates it. There's no data or comparison group to evaluate here — the method is to identify precisely what quality or emotion the claim names, then find the quotation that most specifically embodies that exact quality, not just one that mentions the same general topic, character, or scene.",
+        "This Command of Evidence pattern applies to literary texts. You're given a claim about a character's feeling, an author's style, or a story's theme, and asked which quotation best illustrates it. There's no data to weigh here. Instead: figure out exactly what quality or emotion the claim names, then find the quotation that embodies that specific quality — not just one that mentions the same character or scene.",
       examples: [
         {
           prompt:
@@ -418,7 +418,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Evaluating a Hypothetical Finding's Support for a Claim",
       explanation:
-        "These questions describe a researcher's hypothesis, a claim, or a proposed explanation, then ask which additional fact or finding — one that isn't already stated in the passage — would most strengthen it (occasionally, most undermine it). There's no graph or table to read, and unlike quotation-selection questions, none of the answer choices are real quotes from the text; they're all hypothetical statements you're evaluating for logical fit. The method: restate the hypothesis as a prediction ('if this hypothesis is true, then we should expect to observe ___'), then pick the choice that reports exactly that predicted observation. For a 'weaken' version, look for the choice that reports the opposite of the predicted observation.",
+        "These questions describe a hypothesis or claim, then ask which new fact — one not already in the passage — would most strengthen it (sometimes, most weaken it). There's no graph to read, and none of the choices are real quotes; they're all hypothetical findings you're judging for logical fit. The method: turn the hypothesis into a prediction ('if this is true, we'd expect to see ___'), then pick the choice that matches that prediction exactly. For a 'weaken' question, pick the choice that reports the opposite.",
       examples: [
         {
           prompt:
@@ -485,7 +485,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Logical Completion (Fill-in-the-Blank Style)",
       explanation:
-        "These questions present a passage with a blank or an incomplete final clause, and ask you to determine what most logically follows given everything stated before it. The key discipline is conservatism: the correct answer follows necessarily from the text, without requiring outside knowledge or a creative leap. A good technique is to explicitly ask 'given only what's stated, what MUST be true next?' rather than 'what would be interesting or dramatic next?'",
+        "These questions give you a passage with a blank at the end, and ask what logically follows from everything stated before it. Stay strict: the correct answer follows directly from the text, with no outside knowledge or creative leaps allowed. Ask yourself 'given only what's stated, what MUST be true next?' — not 'what would be interesting next?'",
       examples: [
         {
           prompt:
@@ -541,7 +541,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "What Can Be Reasonably Concluded",
       explanation:
-        "A second inference pattern gives you a full passage (not a fill-in-the-blank) and asks what can be 'most reasonably inferred' from it. Here, the trap is overreaching: turning a specific, local observation into a sweeping general claim. The correct answer is usually the narrowest inference that the text directly supports — often about the exact case described, not about the category it belongs to.",
+        "This pattern gives you a full passage — not a fill-in-the-blank — and asks what can be 'most reasonably inferred' from it. The trap is overreaching: turning one small observation into a sweeping general claim. The correct answer is usually the narrowest inference the text actually supports — about the specific case described, not the whole category it belongs to.",
       examples: [
         {
           prompt:
@@ -607,7 +607,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Precise Synonym in Context",
       explanation:
-        "The most common pattern gives you a sentence with a blank and four choices that are all loosely synonymous, but only one fits the specific tone, register, and logic of the sentence. The trap is picking the choice that's the 'most common' synonym rather than the most precise one for this exact context. The fix: cover the answer choices, read the sentence, and predict your own word first — often a simple word like 'strict' — then find the choice that's the closest formal match to your prediction, not the flashiest-sounding option.",
+        "You're given a sentence with a blank and four choices that all mean roughly the same thing — but only one fits this sentence's exact tone and logic. The trap: picking the most common synonym instead of the most precise one. Fix: cover the choices, read the sentence, and guess your own word first (often something simple, like 'strict'). Then pick the choice closest to your guess — not the fanciest-sounding option.",
       examples: [
         {
           prompt: "'The committee's ______ approach to spending drew criticism from departments hoping for expanded budgets.'",
@@ -653,7 +653,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Multiple-Meaning Word Trap",
       explanation:
-        "A second pattern specifically tests words that have more than one common meaning, where the SAT deliberately uses the less frequent meaning. If a word choice seems 'too obvious' or 'too simple' at first glance, double check whether the sentence is actually using a secondary, less common definition. This is one of the highest-yield things to watch for, because it explains why capable readers sometimes miss what looks like an easy question.",
+        "This pattern tests words with more than one common meaning, where the SAT deliberately uses the less common one. If a choice looks 'too obvious' or 'too easy,' double-check whether the sentence actually needs its secondary, less-familiar meaning. This is worth watching for closely — it's why strong readers sometimes miss questions that look easy.",
       examples: [
         {
           prompt: "'Her argument, while ______, ultimately failed to address the panel's central concern.' (Context: earlier sentences describe the argument as brief and to the point, not lacking in quality.)",
@@ -709,7 +709,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Function of a Sentence Within a Paragraph",
       explanation:
-        "This pattern asks what job a specific sentence is doing — not what it means, but its purpose in the argument. Common functions include: introducing a claim, providing a counterexample, qualifying an earlier statement, or transitioning between ideas. The key discipline is to ask 'what would be missing from the passage's logic if this sentence were deleted?' rather than just restating the sentence's content.",
+        "This pattern asks what JOB a sentence is doing — not what it means, but its purpose in the argument. Common jobs: introducing a claim, giving a counterexample, qualifying an earlier point, or transitioning between ideas. Ask yourself: 'what would break in the passage's logic if I deleted this sentence?' That's more useful than just restating what the sentence says.",
       examples: [
         {
           prompt:
@@ -760,7 +760,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Function of an Entire Paragraph",
       explanation:
-        "A broader version of the same skill applies at the paragraph level: what role does this whole paragraph play in the passage (e.g., providing context, presenting a counterargument, offering supporting evidence, drawing a conclusion)? The technique is the same — identify what the paragraph is doing relative to the paragraphs around it, using signal words (however, for example, in contrast, therefore) as clues to its function.",
+        "This is the same skill applied to a whole paragraph instead of one sentence: what role does this paragraph play — giving context, presenting a counterargument, offering evidence, or drawing a conclusion? Use the same technique: look at what the paragraph does relative to the ones around it. Signal words like 'however,' 'for example,' and 'therefore' are strong clues to its job.",
       examples: [
         {
           prompt:
@@ -811,7 +811,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Describing the Structure of an Entire Passage",
       explanation:
-        "These questions ask how an entire short passage is organized from beginning to end — its overall shape — rather than the role of one particular sentence or paragraph within it. Common shapes include: a general claim followed by a specific supporting example; a widely held belief followed by a challenge to it; a problem followed by a proposed solution; a question followed by an investigative answer; or an anecdote that pivots into a broader generalization. The method: before reading the choices, sketch the passage's shape in one short phrase ('states a claim, then illustrates it with a case' or 'poses a question, then answers it'). Then match that shape to the answer choice describing the same sequence of moves in the same order — not just an answer choice that mentions the same topic.",
+        "These questions ask how a whole passage is organized from start to finish — its overall shape — not the role of one sentence or paragraph. Common shapes: a claim followed by an example; a common belief followed by a challenge to it; a problem followed by a solution; a question followed by an answer; or a small story that leads into a bigger point. Before reading the choices, sketch the shape yourself in one short phrase, like 'states a claim, then gives an example.' Then find the choice describing that same sequence of moves in the same order — not just one that mentions the right topic.",
       examples: [
         {
           prompt:
@@ -878,7 +878,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finding Common Ground Between Disagreeing Authors",
       explanation:
-        "This pattern presents two passages that reach different or opposing conclusions, then asks what both authors would agree on. The key insight is that authors who disagree on a conclusion often still share the same underlying premise or fact — they just interpret it differently. The technique: separate each passage's premises (facts both would accept) from its conclusion (the interpretation only one author holds), and look for overlap in the premises.",
+        "You're given two passages that reach different conclusions, and asked what both authors would still agree on. Key insight: authors who disagree on a conclusion often still share the same underlying facts — they just interpret them differently. Technique: separate each passage's facts (what both would accept) from its conclusion (what only one author believes). Then look for overlap in the facts.",
       examples: [
         {
           prompt:
@@ -929,7 +929,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Predicting One Author's Response to the Other's Claim",
       explanation:
-        "A second pattern asks how one author would most likely respond to a specific claim made in the other passage. This requires you to simulate the second author's reasoning style and values, then apply it to the new claim — not just repeat their original argument. The move: identify the core value or concern driving each author's argument (e.g., 'depth of connection' for an isolation-focused author), then predict how that same concern would react to the new claim.",
+        "This pattern asks how one author would likely respond to a specific claim made in the OTHER passage. You have to apply that author's reasoning and values to a new claim — not just repeat their original argument. Find the core value driving each author's argument (for example, 'depth of connection' for an author focused on isolation). Then predict how that same value would react to the new claim.",
       examples: [
         {
           prompt:
@@ -990,7 +990,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
     {
       name: "Goal-Filtered Selection",
       explanation:
-        "You're given bullet-point notes and a specific stated goal (e.g., 'emphasize the economic stakes'), then asked which sentence best accomplishes that goal using only the given notes. The single biggest mistake is treating this like a 'which sentence is true' question — every choice is usually factually accurate. The actual test is whether the sentence accomplishes the *specific stated goal*, not just whether it's a correct statement using the notes.",
+        "You're given bullet-point notes and a specific goal (like 'emphasize the economic stakes'), then asked which sentence best accomplishes that goal using only those notes. The biggest mistake: treating this as a 'which sentence is true' question. Every choice is usually factually accurate! The real test is whether a sentence accomplishes the SPECIFIC stated goal — not just whether it's a correct statement.",
       examples: [
         {
           prompt:
@@ -1066,7 +1066,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Identify the Logical Relationship First",
       explanation:
-        "The single most useful habit for transitions questions is to determine the logical relationship between the two ideas *before* looking at the answer choices — is it contrast, cause-and-effect, addition, or example? Only after naming the relationship should you match it to a specific transition word. Many students instead try each word in the blank and see what 'sounds right,' which is slower and more error-prone, especially since several choices might sound grammatically fine.",
+        "The most useful habit for transitions questions: figure out the logical relationship between the two ideas BEFORE looking at the choices. Is it contrast, cause-and-effect, addition, or example? Only after naming the relationship should you match it to a specific word. Many students instead try each word and see what 'sounds right' — that's slower and riskier, since several choices can sound fine grammatically.",
       examples: [
         {
           prompt:
@@ -1117,7 +1117,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Contrast vs. Concession",
       explanation:
-        "A more advanced version of this skill distinguishes between direct contrast transitions (however, in contrast, conversely) and concession transitions (nonetheless, still, even so), which signal that despite acknowledging a preceding point, the author is proceeding with their original position anyway. Recognizing which flavor of 'contrast' is needed can distinguish between two answer choices that both seem to fit at first glance.",
+        "This is a harder version of the same skill: telling apart direct contrast words (however, in contrast) from concession words (nonetheless, still, even so). Concession words mean the author acknowledges a point but sticks with their original position anyway. Knowing which flavor of 'contrast' is needed helps you choose between two options that both seem to fit at first.",
       examples: [
         {
           prompt:
@@ -1177,7 +1177,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Independent Clause Joins (Comma, Semicolon, Period, or Conjunction)",
       explanation:
-        "This pattern is about how two complete, independent clauses (each capable of standing alone as a sentence) can be correctly joined. The entire question hinges on one diagnostic step: is each side of the punctuation mark a full independent clause (subject + verb, complete thought) or not? If both sides are independent, you have exactly four correct options: a period (making two sentences), a semicolon, a comma plus a coordinating conjunction (and, but, so, for, yet, nor, or), or a colon (only if the second clause explains or elaborates the first). A comma alone joining two independent clauses — a 'comma splice' — is a common wrong answer. Recognize this pattern whenever you see two clauses that could each be read as a standalone sentence.",
+        "This pattern is about joining two complete, independent clauses — each one could stand alone as its own sentence. Everything hinges on one question: is each side of the punctuation a full independent clause (subject + verb, complete thought)? If both sides are independent, you have exactly four correct options: a period, a semicolon, a comma plus a word like 'and' or 'but,' or a colon (only if the second clause explains the first). A comma by itself joining two independent clauses — a 'comma splice' — is a common wrong answer. Watch for this pattern whenever both clauses could be read as standalone sentences.",
       examples: [
         {
           prompt: "'The results were surprising ______ no one had predicted such a sharp decline.'",
@@ -1223,7 +1223,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Semicolon-Separated Lists with Internal Commas",
       explanation:
-        "A second Boundaries pattern covers lists whose individual items already contain their own internal comma — most often a name followed by a description (e.g., 'Chen Liu, a sculptor'). When every item in a list is a simple word or phrase, ordinary commas separate them fine. But once any item already has a comma inside it, separating the items with more commas makes it impossible to tell where one item ends and the next begins — that's the signal to introduce the list with a colon and separate its items with semicolons instead of commas. Recognize this pattern whenever a sentence lists several people, places, or things, and check specifically whether any single item already contains its own comma.",
+        "This pattern covers lists where individual items already contain their own comma — most often a name followed by a description, like 'Chen Liu, a sculptor.' When every list item is a simple word or phrase, ordinary commas work fine. But once one item already has a comma inside it, more commas make it impossible to tell where one item ends and the next begins. That's your signal: introduce the list with a colon and separate items with semicolons instead. Watch for this whenever a sentence lists several people, places, or things — check if any single item already has its own comma.",
       examples: [
         {
           prompt:
@@ -1280,7 +1280,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Nonessential Appositives and Descriptive Phrases",
       explanation:
-        "A third Boundaries pattern covers appositives — a word or phrase that renames or describes a nearby noun, like 'a retired firefighter' describing 'my uncle Raymond.' Unlike the list pattern above, this isn't about separating multiple items; it's about correctly bracketing one piece of extra, droppable information within a single sentence so a reader can't misread what it's attached to. The core test: if the phrase is essential to knowing who or what is being discussed, it takes no commas; if it's just extra detail once the noun is already identifiable, it must be boxed off with commas — on both sides if it falls in the middle of a sentence, or with a single comma if it opens or closes the sentence.",
+        "This pattern covers appositives — a word or phrase that renames or describes a nearby noun, like 'a retired firefighter' describing 'my uncle Raymond.' This isn't about separating list items; it's about correctly bracketing one piece of extra, droppable information. The core test: if the phrase is essential to knowing who or what's being discussed, it gets no commas. If it's just extra detail — the noun is already clear without it — it must be boxed off with commas, on both sides if it's mid-sentence, or one comma if it opens or closes the sentence.",
       examples: [
         {
           prompt: "'My uncle Raymond a retired firefighter still volunteers at the local station.'",
@@ -1329,7 +1329,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Introductory Phrases and Single-Boundary Commas",
       explanation:
-        "A third, often-overlooked pattern involves a single dependent phrase or clause at the start of a sentence, followed by an independent clause. Unlike the first pattern (two independent clauses), here only one side is independent — so a period or semicolon would be wrong (they require independent clauses on both sides). The correct boundary is almost always a single comma after the introductory phrase.",
+        "This often-overlooked pattern involves a dependent phrase at the START of a sentence, followed by an independent clause. Unlike the first Boundaries pattern (two independent clauses), only ONE side is independent here — so a period or semicolon would be wrong, since both need independent clauses on both sides. The correct boundary is almost always a single comma right after the introductory phrase.",
       examples: [
         {
           prompt: "'Despite the storm the flight departed on time.'",
@@ -1375,7 +1375,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Possessive vs. Plural Noun Forms",
       explanation:
-        "These questions test whether a noun needs a plain plural ending (just -s), a possessive ending (apostrophe+s, or an apostrophe alone after an existing plural -s), based purely on the grammar of the sentence — the three forms sound identical out loud, so you can't rely on your ear. The method: ask what job the noun is doing. If it's simply naming more than one of something, with nothing following it that it 'owns,' use the plain plural with no apostrophe. If it's immediately followed by another noun it possesses or is associated with, it needs an apostrophe: apostrophe+s for one owner, an apostrophe alone after the -s for more than one owner. Count how many owners the sentence actually describes before choosing between singular and plural possessive.",
+        "These questions test whether a noun needs a plain plural (-s), or a possessive (apostrophe+s, or just an apostrophe after an existing -s). All three sound identical out loud, so you can't rely on your ear — you have to check the grammar. Ask: what job is the noun doing? If it's just naming more than one of something, with nothing after it being 'owned,' use the plain plural with no apostrophe. If another noun right after it is being possessed, add an apostrophe: apostrophe+s for one owner, apostrophe alone (after the -s) for more than one owner. Count how many owners the sentence actually describes before deciding.",
       examples: [
         {
           prompt:
@@ -1430,7 +1430,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Recognizing When No Punctuation Is Needed",
       explanation:
-        "Every other Boundaries pattern is about adding correct punctuation somewhere in a sentence. This one is the mirror image: sometimes the correct answer choice is the one with no punctuation at all, and the wrong choices tempt you with a comma, dash, or colon that looks plausible but isn't grammatically justified anywhere in the sentence. This most often happens between a verb and its direct object, between a preposition and its object, or before a short, tightly bound phrase that isn't actually nonessential. The method: apply the same 'what's on each side' checks you use for every other Boundaries question, and don't assume one of the four choices must add punctuation just because the others do — treat 'no punctuation' as a real candidate every time.",
+        "Every other Boundaries pattern is about adding correct punctuation. This one's the opposite: sometimes the right answer has NO punctuation at all, and the wrong choices tempt you with a comma, dash, or colon that looks plausible but isn't actually justified. This usually happens between a verb and its direct object, between a preposition and its object, or before a short phrase that isn't really nonessential. Apply the same 'what's on each side' checks you use everywhere else in Boundaries — and don't assume one choice must add punctuation just because the others do. Treat 'no punctuation' as a real option every time.",
       examples: [
         {
           prompt:
@@ -1484,7 +1484,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Using a Colon to Introduce a List, Explanation, or Elaboration",
       explanation:
-        "A colon can introduce something other than a second independent clause: a list, a single noun phrase that renames or elaborates on something just mentioned, or an explanation of what came before. Unlike the semicolon-and-conjunctive-adverb rule, what follows a colon doesn't need to be a complete sentence — a list of examples or a single explanatory phrase works fine. What matters is the other side: everything BEFORE the colon must be a complete, independent clause capable of standing on its own, even though what follows it might not be.",
+        "A colon can introduce more than just a second independent clause — it can introduce a list, a phrase that renames something just mentioned, or an explanation. Unlike a semicolon, what follows a colon doesn't need to be a complete sentence; a list or a single explanatory phrase works fine. What matters is the OTHER side: everything before the colon must be a complete, independent clause that could stand on its own — even if what follows it can't.",
       examples: [
         {
           prompt:
@@ -1551,7 +1551,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Subject-Verb Agreement with Distracting Phrases",
       explanation:
-        "This pattern tests whether you can correctly identify a sentence's true grammatical subject, especially when other nouns (often inside prepositional phrases or between commas) sit between the subject and its verb, creating a false impression of the correct verb form. The reliable method: mentally cross out any prepositional phrase or interrupting clause between the subject and the verb, then check agreement using only what remains.",
+        "This pattern tests whether you can find a sentence's TRUE subject — especially when other nouns sit between the subject and its verb (often inside a prepositional phrase or between commas) and create a false impression of the right verb form. The fix: mentally cross out any phrase or clause that interrupts the subject and verb, then check agreement using only what's left.",
       examples: [
         {
           prompt: "'The list of items ______ long.'",
@@ -1597,7 +1597,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Parallel Structure in Lists and Comparisons",
       explanation:
-        "This pattern tests whether all items in a list, or both sides of a comparison, use matching grammatical forms — all -ing forms, all infinitives, or all plain verbs, but not a mix. The trap answer usually shifts form partway through a list (e.g., two -ing verbs followed by an infinitive), which sounds subtly 'off' even to readers who can't name the specific rule. The fix: identify the grammatical form used by the first one or two items, then require every remaining item to match that exact form.",
+        "This pattern tests whether all items in a list — or both sides of a comparison — use matching grammatical forms: all -ing forms, all infinitives, or all plain verbs, never a mix. The trap answer usually shifts form partway through the list (two -ing verbs, then suddenly an infinitive), which sounds subtly 'off' even if you can't name the rule. The fix: find the form used by the first item or two, then require every other item to match it exactly.",
       examples: [
         {
           prompt: "'She enjoys hiking, swimming, and ______.'",
@@ -1643,7 +1643,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Pronoun Agreement and Reference",
       explanation:
-        "This pattern checks whether a pronoun correctly matches its antecedent (the noun it refers back to) in number (singular/plural) and whether the antecedent is clear and unambiguous. A frequent sub-case involves singular indefinite pronouns like 'each' and 'neither,' which take singular pronouns even though they might feel like they're describing a group.",
+        "This pattern checks whether a pronoun correctly matches the noun it refers back to — in number (singular or plural) — and whether that noun is clear and unambiguous. One common trap: words like 'each' and 'neither' are singular, and need singular pronouns, even though they might feel like they're describing a group.",
       examples: [
         {
           prompt: "'Each of the students submitted ______ essay by the deadline.'",
@@ -1689,7 +1689,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Verb Tense and Form Consistency",
       explanation:
-        "A distinct Form, Structure, and Sense pattern is about whether a verb's TENSE or FORM correctly matches the timeline and grammatical structure the rest of the sentence establishes — separate from subject-verb number agreement. The method: first identify what timeline the sentence sets up (a single past event, one past event before another, an action continuing up to now) or what form a specific nearby word requires (some verbs need 'to + verb' after them, others need the '-ing' form), then match the verb precisely to that signal rather than defaulting to whatever tense sounds natural in isolation.",
+        "This pattern is about whether a verb's TENSE or FORM matches the timeline the rest of the sentence sets up — separate from subject-verb agreement. First, figure out the timeline: a single past event, one past event before another, or something continuing up to now. Or check what form a nearby word requires — some verbs need 'to + verb' after them, others need the '-ing' form. Match the verb to that signal, instead of just picking whatever tense sounds natural on its own.",
       examples: [
         {
           prompt: "'By the time the store closed, the clerk ______ every shelf twice.'",
@@ -1736,7 +1736,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Modifier Placement and Dangling Modifiers",
       explanation:
-        "This pattern tests whether an introductory phrase or clause correctly describes the subject that immediately follows it. A modifier — usually an introductory phrase without its own explicit subject, often starting with an '-ing' or '-ed' word — is only correctly placed if the noun right after the comma is the thing actually doing or experiencing what the phrase describes. A 'dangling modifier' happens when the phrase describes someone or something that never appears as the following subject, leaving a different, often unstated actor implied instead. The fix is always the same: identify who or what the modifier is logically describing, then make sure that exact noun is the sentence's subject, positioned immediately after the modifier.",
+        "This pattern tests whether an introductory phrase correctly describes the subject right after it. A modifier — usually a phrase without its own subject, often starting with an '-ing' or '-ed' word — is only correctly placed if the noun right after the comma is the thing actually doing what the phrase describes. A 'dangling modifier' happens when the phrase describes someone who never actually shows up as the following subject. The fix is always the same: figure out who or what the modifier is really describing, then make sure that exact noun comes right after it as the sentence's subject.",
       examples: [
         {
           prompt: "'______, the museum's new wing finally opened to visitors.' Which opening correctly avoids a dangling modifier: 'After years of delays' or 'Delaying the project for years'?",
@@ -1783,7 +1783,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finite vs. Non-Finite Verb Forms",
       explanation:
-        "A finite verb is one that can serve as a clause's complete main verb — it shows tense and agrees with a subject on its own (runs, ran, is running as the sentence's actual verb). A non-finite form — an infinitive ('to run'), a gerund ('running' used as a noun), or a participle ('having run,' or '-ing'/'-ed' used as a modifier) — cannot stand alone as a clause's main verb. These questions test which form a given spot needs. Two shapes come up constantly: (1) a phrase attaches to an already-complete sentence, and using a finite verb there accidentally creates a run-on, when a participle was needed instead; and (2) a question gets embedded inside a larger sentence as a noun clause, which needs ordinary statement word order (subject, then verb, no inversion, no question mark) rather than a standalone question's inverted order. The method: first locate the clause's one true finite main verb. Anything else that looks verb-like elsewhere in the sentence needs a non-finite form instead.",
+        "A finite verb can be a sentence's complete main verb on its own — it shows tense and matches its subject (runs, ran, is running). A non-finite form — an infinitive ('to run'), a gerund ('running' as a noun), or a participle ('having run,' or '-ing'/'-ed' as a modifier) — can NOT stand alone as the main verb. These questions test which form a spot needs. Two shapes come up constantly: (1) a phrase attaches to an already-complete sentence, and using a finite verb there accidentally creates a run-on — a participle was needed instead; (2) a question gets embedded inside a bigger sentence, which needs plain statement word order (subject, then verb — no inversion, no question mark), not a standalone question's flipped order. The method: find the sentence's one true finite main verb first. Anything else that looks verb-like needs a non-finite form.",
       examples: [
         {
           prompt:
@@ -1844,7 +1844,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Standard Isolate-the-Variable Equations",
       explanation:
-        "The most common pattern is a straightforward equation requiring you to isolate x using inverse operations, working from the outside in: undo addition/subtraction first (if the equation isn't already simplified), then multiplication/division, always performing the same operation to both sides. The main source of errors isn't conceptual — it's sign mistakes when distributing or combining terms. Writing out each step explicitly, rather than doing multiple steps in your head, prevents most careless errors.",
+        "The most common pattern: a straightforward equation where you isolate x using inverse operations, working from the outside in. Undo addition and subtraction first, then multiplication and division — always doing the same thing to both sides. Most errors here aren't conceptual; they're sign mistakes while distributing or combining terms. Writing out each step explicitly, instead of doing several steps in your head, prevents most careless mistakes.",
       examples: [
         {
           prompt: "Solve for x: 5(x + 2) = 3x + 18",
@@ -1890,7 +1890,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "No-Solution and Infinite-Solution Equations",
       explanation:
-        "A distinct pattern involves equations where the variable terms cancel out entirely when simplified, leaving either a false statement (no solution) or a true statement (infinite solutions). Recognize this pattern when, after simplifying both sides, the x-terms match exactly on both sides. If the remaining constants are different, there's no solution (a false statement like '5 = 7'); if the constants also match, every real number is a solution (a true statement like '5 = 5').",
+        "This pattern involves equations where the x-terms cancel out completely when simplified, leaving either a false statement (no solution) or a true statement (infinite solutions). You'll spot it when, after simplifying both sides, the x-terms match exactly. If the leftover numbers are different, there's no solution (a false statement, like '5 = 7'). If the numbers also match, every real number works (a true statement, like '5 = 5').",
       examples: [
         {
           prompt: "For which value of k does the equation 4x + k = 4x + 7 have no solution when k ≠ 7?",
@@ -1936,7 +1936,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving for a Related Expression Without Fully Isolating x",
       explanation:
-        "Some questions give an equation and ask for the value of an expression involving x — like x − 7, or 2x — rather than x itself. The fast, reliable method is to manipulate the whole equation so it directly isolates the exact requested expression, rather than solving all the way down to x and then substituting back in afterward. Recognize this pattern whenever a question's final ask is an expression, not a bare 'what is x' — dividing, adding, or combining equations to land exactly on that expression is almost always faster than the two-step 'solve for x, then compute' approach.",
+        "Some questions ask for the value of an expression involving x — like x − 7 or 2x — instead of x itself. The fast method: manipulate the whole equation so it isolates the exact expression being asked for, instead of solving all the way down to x and substituting afterward. Watch for this whenever the question asks for an expression, not a plain 'what is x.' Dividing, adding, or combining terms to land exactly on that expression is almost always faster than solving for x first.",
       examples: [
         {
           prompt: "If 4x - 28 = -24, what is the value of x - 7?",
@@ -1983,7 +1983,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Translating a Word Problem into an Equation",
       explanation:
-        "Before you can solve an equation, you sometimes have to build it from a description in words — and some questions stop right there, asking only which equation correctly represents a situation, not for the solution itself. The method: assign a variable to the unknown quantity and write down in plain words what it represents. Then translate the sentence piece by piece — 'more than' and 'increased by' mean addition, 'less than' means subtraction (written in reverse order from how it's spoken), 'times' or 'of' mean multiplication, and 'is' or 'equals' means the equals sign. Read the sentence slowly, phrase by phrase, rather than trying to convert it all at once.",
+        "Sometimes you need to build an equation from a word description before you can solve anything — and some questions stop right there, just asking which equation represents the situation. The method: assign a variable to the unknown, and write down in plain words what it stands for. Then translate piece by piece. 'More than' and 'increased by' mean addition. 'Less than' means subtraction, written in reverse order from how it's spoken. 'Times' or 'of' mean multiplication. 'Is' or 'equals' means the equals sign. Go slowly, phrase by phrase, instead of converting the whole sentence at once.",
       examples: [
         {
           prompt: "Eight times a number is 56. Which equation represents this situation, using n for the number?",
@@ -2046,7 +2046,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Extracting Slope and Intercept from a Real-World Scenario",
       explanation:
-        "Many linear function questions are word problems where you must translate a real-world description into slope and y-intercept. The reliable technique: the y-intercept is always the 'starting value' or 'flat fee' (the amount present when the input is zero), and the slope is always the 'rate' or 'per unit' language (per mile, per month, per hour). Once you've identified which number plays which role, writing the function is mechanical.",
+        "Many linear function questions are word problems where you translate a real-world description into slope and y-intercept. The reliable trick: the y-intercept is always the 'starting value' or 'flat fee' — the amount present when the input is zero. The slope is always the 'rate' or 'per unit' language, like per mile or per month. Once you know which number plays which role, writing the function is just mechanical.",
       examples: [
         {
           prompt: "A taxi charges $3 plus $2 per mile. Which function models the cost C for m miles?",
@@ -2092,7 +2092,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Reading Slope and Intercept Directly from a Graph",
       explanation:
-        "A separate, purely visual pattern gives you a line's graph — not an equation or a table — and asks for its slope, y-intercept, or a specific value. No algebra is required: read the y-intercept as the point where the line crosses the y-axis, and find the slope by picking two clearly marked points on the grid and computing rise over run between them, counting grid squares directly rather than estimating.",
+        "This pattern gives you a line's graph — not an equation or table — and asks for its slope, y-intercept, or a specific value. No algebra needed: read the y-intercept where the line crosses the y-axis. Find the slope by picking two clearly marked points and computing rise over run — count grid squares directly instead of estimating.",
       examples: [
         {
           prompt: "A line is graphed passing through the marked points (0, 3) and (2, 7). What is the y-intercept of the line?",
@@ -2139,7 +2139,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finding Slope from Two Points or Function Values",
       explanation:
-        "A second pattern gives you two data points (either as coordinate pairs, or as two function values like f(2) and f(5)) and asks you to find the slope, or use the slope to find another value. The formula is always change in output divided by change in input, but the key skill is correctly identifying which numbers are inputs and which are outputs, especially when the problem is phrased as a word problem rather than explicit coordinates.",
+        "This pattern gives you two data points — either as coordinate pairs, or as two function values like f(2) and f(5) — and asks for the slope, or asks you to use the slope to find another value. The formula is always change in output divided by change in input. The real skill is correctly telling which numbers are inputs and which are outputs, especially in a word problem instead of plain coordinates.",
       examples: [
         {
           prompt: "A linear function f has f(0) = 4 and f(3) = 13. What is the slope of f?",
@@ -2185,7 +2185,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Evaluating a Function and Solving for Input Given Output",
       explanation:
-        "The most basic linear-function skill is also one that's easy to overlook: plugging a given input directly into a function's rule to find its output, f(a), or running the process in reverse — given an output, solving for the input that produces it. Neither direction requires a graph, a real-world scenario, or a second point; it's direct substitution and algebra. For 'find f(a),' substitute a for every x in the rule and simplify. For 'find x such that f(x) = b,' set the function's rule equal to b and solve the resulting equation for x.",
+        "This is the most basic linear-function skill, and it's easy to overlook: plug a given input directly into a function's rule to find its output, f(a) — or run it backward, given an output, to solve for the input. Neither direction needs a graph or a second point; it's just substitution and algebra. To find f(a): substitute a for every x in the rule and simplify. To find x such that f(x) = b: set the rule equal to b and solve for x.",
       examples: [
         {
           prompt: "The function is defined by f(x) = 7x + 1. What is f(4)?",
@@ -2243,7 +2243,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Extracting Slope from Standard Form",
       explanation:
-        "Lines are often given in standard form (Ax + By = C) rather than slope-intercept form, and many students waste time trying to identify the slope directly from this form. The reliable method: always convert to slope-intercept form (y = mx + b) first by isolating y, then read off the slope. This single habit eliminates nearly all errors on this pattern.",
+        "Lines are often given in standard form (Ax + By = C) instead of slope-intercept form, and many students waste time trying to read the slope straight from it. The reliable method: always convert to slope-intercept form (y = mx + b) first by isolating y, then read off the slope. This one habit eliminates nearly all errors on this pattern.",
       examples: [
         {
           prompt: "What is the slope of the line 4x + 2y = 8?",
@@ -2289,7 +2289,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Parallel and Perpendicular Line Relationships",
       explanation:
-        "This pattern tests the relationship between slopes of parallel lines (identical slopes) and perpendicular lines (negative reciprocal slopes). The fastest approach: convert every given line to slope-intercept form first, identify the slope, then apply the appropriate rule directly rather than trying to visualize or graph the lines.",
+        "This pattern tests how the slopes of parallel lines (identical) and perpendicular lines (negative reciprocals) relate to each other. The fastest approach: convert every line to slope-intercept form first, find the slope, then apply the right rule directly — don't waste time trying to visualize or graph the lines.",
       examples: [
         {
           prompt: "Which line is perpendicular to y = (1/2)x + 3?",
@@ -2335,7 +2335,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Interpreting a Constant or Coefficient in a Real-World Equation",
       explanation:
-        "A separate pattern gives you a linear equation that already models a real-world situation and asks what a specific number in that equation represents — not building the equation from scratch, but reading backward from one you're given. The method: identify what each variable stands for from the problem's setup, then match the number's role to what that role means in context. A number multiplying a variable is a rate tied to that variable; a number standing alone (not multiplying anything) is a fixed amount present regardless of the variables' values.",
+        "This pattern gives you a linear equation that already models a real situation, and asks what a specific number in it represents — you're reading backward from a given equation, not building one from scratch. The method: figure out what each variable stands for from the setup, then match the number's role to what that means in context. A number multiplying a variable is a rate tied to that variable. A number standing alone — not multiplying anything — is a fixed amount, present no matter what the variables equal.",
       examples: [
         {
           prompt: "A store's total revenue from selling notebooks is represented by y = 3x + 50, where x is the number of notebooks sold. What does the 50 represent in this equation?",
@@ -2382,7 +2382,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Translating a Word Scenario into a Two-Variable Equation",
       explanation:
-        "Some questions ask you to build a two-variable equation from a real-world description, rather than analyzing one you're already given. The method: identify the two quantities the equation will relate (these become your two variables), then find a total, constraint, or relationship connecting them — often a fixed total that a combination of the two quantities must add up to, or a per-unit cost/rate multiplying each. Assign each variable to exactly one quantity, write down in plain words what it represents, then translate the relationship using the same word cues as any equation-building question: 'per' or 'each' signals multiplication by that variable, and a fixed total becomes the constant the equation equals.",
+        "Some questions ask you to build a two-variable equation from a word description, instead of analyzing one you're already given. The method: identify the two quantities the equation will relate — these become your two variables. Then find what connects them: often a fixed total the two quantities must add up to, or a per-unit rate multiplying each. Assign each variable to one quantity, write down in plain words what it represents, then translate using the same word cues as any equation-building question: 'per' or 'each' means multiplication by that variable, and a fixed total becomes the constant the equation equals.",
       examples: [
         {
           prompt:
@@ -2436,7 +2436,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving for One Variable Given the Other's Value",
       explanation:
-        "Given a two-variable equation and a specific value for one of the variables (usually from context, like a specific input in a real-world scenario), substitute the known value in and solve the resulting one-variable equation for what's left. This is a much shorter skill than analyzing the equation's slope or intercepts — it's direct substitution and algebra, exactly like solving any one-variable equation, just with an extra substitution step first.",
+        "Given a two-variable equation and a value for one of the variables, substitute the known value in and solve the resulting one-variable equation for what's left. This is a much shorter skill than analyzing slope or intercepts — it's direct substitution and algebra, just like solving any one-variable equation, with one extra substitution step first.",
       examples: [
         {
           prompt: "If 3x + 2y = 22 and y = 5, what is the value of x?",
@@ -2497,7 +2497,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving for a Specific Value via Elimination",
       explanation:
-        "The most common systems pattern asks you to solve for one variable (or a specific expression) using two equations. Elimination — adding or subtracting the equations to cancel one variable — is almost always faster than substitution when the equations are already in a similar form (like Ax + By = C), especially when coefficients line up or can be easily matched.",
+        "The most common systems pattern asks you to solve for one variable (or a specific expression) using two equations. Elimination — adding or subtracting the equations to cancel one variable — is almost always faster than substitution, especially when the equations are already in a similar form and the coefficients line up or can be easily matched.",
       examples: [
         {
           prompt: "Solve the system: x + y = 10, x - y = 2. What is x?",
@@ -2543,7 +2543,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Determining the Number of Solutions Without Fully Solving",
       explanation:
-        "A separate pattern asks how many solutions a system has, without necessarily requiring you to find them. This is purely about comparing slopes and intercepts (if the equations are in or convertible to slope-intercept form): different slopes means exactly one solution; same slope with different intercepts means no solution (parallel lines); same slope and same intercept means infinite solutions (identical lines). This can often be answered in seconds without any solving at all.",
+        "This pattern asks how many solutions a system has, without requiring you to actually find them. It's purely about comparing slopes and intercepts: different slopes means exactly one solution; same slope with different intercepts means no solution (parallel lines); same slope AND same intercept means infinite solutions (identical lines). You can often answer this in seconds, with no solving at all.",
       examples: [
         {
           prompt: "How many solutions does this system have? y = 2x + 1 and y = 2x - 3",
@@ -2591,7 +2591,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       desmosTrick:
         "Step 1: Open Desmos and type the first equation into the first line exactly as it's written — if it's in the form Ax + By = C, you can enter it in that form directly, no need to solve for y first. Step 2: Type the second equation into the next line the same way. Desmos draws both as straight lines. Step 3: Click on the point where the two lines cross (use the +/- zoom buttons if they cross off-screen) — Desmos shows a small label with that point's exact coordinates. Step 4: Read the solution straight off that label: the first number is x, the second is y. No elimination or substitution required.",
       explanation:
-        "A separate, purely visual pattern shows the graphs of two lines (or a line and a curve) and asks for the system's solution — the point where they intersect. No algebra is needed: the solution is simply the coordinates of the point where the two graphs cross, read directly off the grid. This differs from counting the number of solutions (which doesn't require finding the actual point) and from elimination (which solves algebraically without a picture) — here, the graph already shows you the answer.",
+        "This pattern shows the graphs of two lines (or a line and a curve) and asks for the system's solution — the point where they cross. No algebra needed: the solution is just the coordinates of that intersection point, read directly off the grid. This is different from counting solutions (no point needed) and from elimination (solved algebraically, no picture) — here, the graph already shows you the answer.",
       examples: [
         {
           prompt: "The graphs of two linear equations intersect at the point where x = 3 and y = 5, clearly marked on the grid. What is the solution to the system?",
@@ -2648,7 +2648,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving with the Sign-Flip Rule",
       explanation:
-        "Linear inequalities follow the same isolation steps as equations, with one critical exception: multiplying or dividing both sides by a negative number flips the direction of the inequality sign. This is the single highest-yield thing to check on every inequality problem, since it's easy to forget under time pressure, especially in multi-step problems where the negative division happens in a later step.",
+        "Linear inequalities follow the same isolation steps as equations, with one big exception: multiplying or dividing both sides by a negative number flips the inequality sign. This is the single most important thing to check on every inequality problem — it's easy to forget under time pressure, especially when the negative division happens in a later step of a multi-step problem.",
       examples: [
         {
           prompt: "Solve: -3x + 6 > 0",
@@ -2694,7 +2694,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Word Problems with Inequality Language",
       explanation:
-        "A second pattern involves translating phrases like 'at least,' 'at most,' 'no more than,' and 'exceeds' into the correct inequality symbol, then solving. The translation step is often the actual difficulty, not the algebra that follows. 'At least' means the value can equal the stated number or be greater (≥); 'at most' means it can equal the stated number or be less (≤); 'more than' or 'exceeds' is strictly greater (>), without allowing equality.",
+        "This pattern involves translating phrases like 'at least,' 'at most,' 'no more than,' and 'exceeds' into the right inequality symbol, then solving. The translation is usually the real difficulty here, not the algebra after it. 'At least' means the value can equal the number or be greater (≥). 'At most' means it can equal the number or be less (≤). 'More than' or 'exceeds' is strictly greater (>) — equality isn't allowed.",
       examples: [
         {
           prompt: "A student needs an average of at least 90 across 4 tests to earn an A. Scores so far are 85, 92, 88. What is the minimum score needed on the 4th test?",
@@ -2740,7 +2740,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Matching a Graph, Table, or Point to an Inequality or System",
       explanation:
-        "These questions run the usual process in reverse: instead of solving an inequality, you're given a graph's shaded region, a table of (x, y) pairs, or a specific point, and asked which inequality (or system of inequalities) it matches — or whether a given point is even a valid solution at all. For a point and an inequality, substitute the point's coordinates directly into the inequality and check whether the resulting statement is true. For a table, every single row must satisfy the inequality for the table to match — one failing row rules that inequality out. For a shaded graph region, identify the boundary line's equation first, then test any point clearly inside the shaded region to determine which direction (greater than or less than) the shading represents.",
+        "These questions run the usual process backward: instead of solving an inequality, you're given a shaded graph region, a table of points, or a single point, and asked which inequality it matches — or whether the point is even a valid solution. For a point and an inequality: substitute the coordinates in and check if the result is true. For a table: every single row must satisfy the inequality for the table to match — one failing row rules it out. For a shaded region: find the boundary line's equation first, then test a point clearly inside the shading to see which direction (greater than or less than) it represents.",
       examples: [
         {
           prompt: "Does the point (3, 1) satisfy the inequality y > 2x - 4?",
@@ -2802,7 +2802,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Recognizing Factoring Patterns Instantly",
       explanation:
-        "Most equivalent-expression questions reward pattern recognition over from-scratch algebra. Three patterns cover the large majority of factoring questions: difference of squares (a² - b² = (a-b)(a+b)), perfect square trinomials (a² ± 2ab + b² = (a±b)²), and simple trinomial factoring (finding two numbers that multiply to the constant and add to the middle coefficient). Training yourself to recognize these shapes on sight — rather than working them out by trial and error each time — is the single biggest speed gain on this subskill.",
+        "Most equivalent-expression questions reward recognizing a pattern instantly, over working out algebra from scratch. Three patterns cover most factoring questions: difference of squares (a² - b² = (a-b)(a+b)), perfect square trinomials (a² ± 2ab + b² = (a±b)²), and simple trinomial factoring (finding two numbers that multiply to the constant and add to the middle coefficient). Training yourself to recognize these shapes ON SIGHT, instead of trial-and-error each time, is the single biggest speed gain on this subskill.",
       examples: [
         {
           prompt: "Factor completely: x² - 9",
@@ -2848,7 +2848,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Simplifying Rational Expressions via Factoring",
       explanation:
-        "A separate pattern involves simplifying a fraction where both the numerator and denominator are polynomials. The key move is always the same: factor both the top and bottom completely first, then cancel any shared factors. Trying to simplify without factoring first (e.g., attempting to divide term-by-term) is a common source of errors.",
+        "This pattern involves simplifying a fraction where both the top and bottom are polynomials. The key move is always the same: factor both completely first, then cancel any shared factors. Trying to simplify without factoring first — like dividing term-by-term — is a common source of errors.",
       examples: [
         {
           prompt: "Simplify the rational expression: (x² - 4)/(x - 2)",
@@ -2895,7 +2895,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Applying the Laws of Exponents",
       explanation:
-        "These questions test the rules for combining and rewriting exponential expressions: when multiplying same-base powers, add the exponents (x^a · x^b = x^(a+b)); when dividing, subtract them (x^a / x^b = x^(a-b)); when raising a power to a power, multiply the exponents ((x^a)^b = x^(ab)). A rational (fractional) exponent represents a radical: x^(1/n) means the nth root of x, and x^(m/n) means the nth root of x, raised to the m power (or equivalently, the nth root of x^m) — both directions of this conversion, from rational exponent to radical and back, come up on the test. A negative exponent means reciprocal, not negative value: x^(-n) = 1/x^n.",
+        "These questions test the rules for combining and rewriting exponents. Multiplying same-base powers: add the exponents (x^a · x^b = x^(a+b)). Dividing: subtract them (x^a / x^b = x^(a-b)). Raising a power to a power: multiply the exponents ((x^a)^b = x^(ab)). A fractional exponent represents a radical: x^(1/n) means the nth root of x, and x^(m/n) means the nth root of x, raised to the m power. Both directions of this conversion — exponent to radical, and back — show up on the test. A negative exponent means reciprocal, not a negative value: x^(-n) = 1/x^n.",
       examples: [
         {
           prompt: "Simplify: x^5 · x^3",
@@ -2943,7 +2943,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Expanding and Combining Polynomial Expressions",
       explanation:
-        "This is the reverse direction of factoring: multiplying out (distributing) an expression like (x+3)(x-5), or simply adding, subtracting, or combining like terms across two or more polynomials. Distribute every term in the first factor across every term in the second (the same idea as FOIL for two binomials, extended to any size polynomial), then combine any like terms that result. When adding or subtracting whole polynomials, line up like terms — matching powers of x — before combining their coefficients, and be especially careful to distribute a negative sign across every term when subtracting one polynomial from another.",
+        "This is the reverse of factoring: multiplying out (distributing) an expression like (x+3)(x-5), or adding, subtracting, and combining like terms across polynomials. Distribute every term in the first factor across every term in the second — the same idea as FOIL, just extended to any size polynomial — then combine the like terms that result. When adding or subtracting whole polynomials, line up matching powers of x before combining coefficients. Be extra careful to distribute a negative sign across EVERY term when subtracting one polynomial from another.",
       examples: [
         {
           prompt: "Simplify: (2x³ - 5x + 1) + (x³ + 4x - 6)",
@@ -3002,7 +3002,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving a Quadratic by Factoring or the Quadratic Formula",
       explanation:
-        "This is the baseline method every other pattern in this subskill builds on: finding the actual solution(s) to a quadratic equation, not just how many it has, not a special radical or system variant. First, get the equation into 'expression = 0' form by moving every term to one side. Then try factoring: look for two numbers that multiply to give the constant term and add to give the middle coefficient (for a leading coefficient of 1), or use the zero product property once you have two factors — if (x - p)(x - q) = 0, then x = p or x = q. If the expression doesn't factor into nice integers, fall back to the quadratic formula, x = (-b ± √(b²-4ac)) / 2a, which always works.",
+        "This is the baseline method every other pattern in this subskill builds on: actually finding the solution(s) to a quadratic equation, not just how many it has. First, get the equation into 'expression = 0' form by moving everything to one side. Then try factoring: look for two numbers that multiply to the constant term and add to the middle coefficient. Once you have two factors, use the zero product property — if (x - p)(x - q) = 0, then x = p or x = q. If it doesn't factor into nice integers, fall back to the quadratic formula, x = (-b ± √(b²-4ac)) / 2a, which always works.",
       examples: [
         {
           prompt: "Solve for x: x² - 3x - 10 = 0",
@@ -3051,7 +3051,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving Absolute Value Equations",
       explanation:
-        "An absolute value equation like |expression| = k has two cases, because the quantity inside the bars could have been positive or negative before the absolute value was applied: expression = k, or expression = -k. Solve both cases separately to get up to two solutions. If k is negative, there's no solution at all, since an absolute value can never equal a negative number — check this before doing any algebra. Once you have candidate solutions, it's good practice to check both back in the original equation, the same habit that catches extraneous solutions in radical equations.",
+        "An absolute value equation like |expression| = k has two cases, because whatever's inside the bars could have started out positive or negative: expression = k, or expression = -k. Solve both separately to get up to two solutions. If k is negative, there's no solution at all — an absolute value can never equal a negative number, so check this before doing any algebra. Once you have candidate solutions, check both back in the original equation. It's the same habit that catches extraneous solutions in radical equations.",
       examples: [
         {
           prompt: "Solve for x: |x - 5| = 10",
@@ -3102,7 +3102,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       desmosTrick:
         "Step 1: If the equation isn't already in 'expression = 0' form, move everything to one side first. Step 2: Type y = [that side] into Desmos as a new line. Step 3: Look at how many times the curve crosses the x-axis — two crossings means two real solutions, one crossing where the curve just touches the axis (without crossing through) means exactly one repeated solution, and zero crossings means no real solutions. You can count crossings by eye instead of computing b²-4ac.",
       explanation:
-        "For quadratic equations in the form ax² + bx + c = 0, the discriminant (b² - 4ac) tells you the number of real solutions without needing to fully solve the equation: positive means two real solutions, zero means exactly one repeated real solution, and negative means no real solutions. This is often much faster than attempting to factor or use the full quadratic formula when the question only asks 'how many solutions,' not what the solutions are.",
+        "For a quadratic ax² + bx + c = 0, the discriminant (b² - 4ac) tells you the number of real solutions without solving the whole equation. Positive means two real solutions. Zero means exactly one repeated solution. Negative means no real solutions. This is much faster than factoring or using the full quadratic formula when a question only asks 'how many solutions' — not what they are.",
       examples: [
         {
           prompt: "How many real solutions does x² + 4x + 5 = 0 have?",
@@ -3148,7 +3148,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving Radical Equations and Checking for Extraneous Solutions",
       explanation:
-        "Radical (square root) equations require squaring both sides to eliminate the radical, but this step can introduce 'extraneous' solutions — values that satisfy the squared equation but not the original equation with the radical. The critical, often-skipped final step is plugging your solution back into the original equation to verify it actually works.",
+        "Radical (square root) equations require squaring both sides to get rid of the radical — but that step can introduce 'extraneous' solutions: values that satisfy the squared equation but not the original one. The critical, often-skipped last step: plug your solution back into the ORIGINAL equation to verify it actually works.",
       examples: [
         {
           prompt: "Solve for x: √(x + 3) = 5",
@@ -3196,7 +3196,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       desmosTrick:
         "Step 1: Type the linear equation into the first line and the quadratic equation into the second line, exactly as given — Desmos accepts input like y = x^2 + 3x - 4 directly. Desmos graphs a line and a parabola. Step 2: Every point where they cross is a solution to the system, so click each crossing point to read off its exact coordinates. Step 3: If the line touches the parabola at exactly one point, there's one solution; if it never touches, there are none. This replaces the whole substitute-and-solve process with reading a picture.",
       explanation:
-        "Some systems pair one linear equation with one nonlinear (usually quadratic) equation. Elimination generally doesn't apply here the way it does for two linear equations — the reliable method is substitution: solve the linear equation for one variable, then substitute that expression into the nonlinear equation, producing a single-variable equation (often quadratic) to solve. Watch for systems with two valid solutions, since a line can cross a parabola at up to two points — don't stop after finding just one unless a stated constraint rules the other out.",
+        "Some systems pair one linear equation with one nonlinear (usually quadratic) equation. Elimination doesn't really work here the way it does for two linear equations — the reliable method is substitution. Solve the linear equation for one variable, then substitute that expression into the nonlinear equation. This gives you a single-variable equation (often quadratic) to solve. Watch for two valid solutions — a line can cross a parabola at up to two points. Don't stop after finding just one, unless something in the question rules the other out.",
       examples: [
         {
           prompt: "Solve the system: y = x + 1, y = x² - 5. What is the value of x, given x > 0?",
@@ -3243,7 +3243,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finding an Unknown Constant from a Given Root, Then Evaluating",
       explanation:
-        "Some questions give a function in factored form with an unknown constant, tell you one point its graph passes through, and ask you to first solve for that constant, then use it to evaluate the function at a different input. The method is two-stage: substitute the given point into the function to solve for the unknown constant, then substitute that constant back into the function — along with the NEW requested input — to compute the final answer. Don't stop after finding the constant if the question asks for something further.",
+        "Some questions give a function in factored form with an unknown constant, tell you one point its graph passes through, and ask you to first solve for that constant — then use it to evaluate the function somewhere else. The method has two stages: substitute the given point into the function to solve for the unknown constant, then substitute that constant back in — along with the NEW input you're asked about — to get the final answer. Don't stop after finding the constant if the question asks for more.",
       examples: [
         {
           prompt: "The function f is defined by f(x) = (x - 3)(x - k), where k is a constant. The graph of y = f(x) passes through the point (5, 0). What is f(0)?",
@@ -3300,7 +3300,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Reading Vertex Form Directly",
       explanation:
-        "Quadratic functions written in vertex form, f(x) = a(x-h)² + k, directly reveal the vertex (h, k) without any calculation — this is one of the fastest 'free points' available if you recognize the form. The only common error is a sign mix-up: since the form has (x - h), a function written as (x + 3)² actually means h = -3, not h = 3.",
+        "A quadratic written in vertex form, f(x) = a(x-h)² + k, reveals its vertex (h, k) with zero calculation — one of the fastest free points on the whole test, if you recognize the form. The one common error: a sign mix-up. Since the form has (x - h), a function written as (x + 3)² actually means h = -3, not h = 3.",
       examples: [
         {
           prompt: "The vertex of f(x) = (x-2)² + 5 is:",
@@ -3346,7 +3346,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Modeling Growth and Decay with Exponential Functions",
       explanation:
-        "Word problems describing repeated percentage growth or decay (population growth, compound interest, radioactive decay, depreciation) should be modeled with an exponential function, not a linear one — a common early mistake. The base of the exponential captures the growth/decay rate directly: for growth of r% per period, the base is (1 + r/100); for decay of r% per period, the base is (1 - r/100).",
+        "Word problems describing repeated percentage growth or decay — population growth, compound interest, radioactive decay, depreciation — need an exponential function, not a linear one. (Using a linear model here is a common early mistake.) The base of the exponential directly captures the rate: for growth of r% per period, the base is (1 + r/100); for decay of r% per period, it's (1 - r/100).",
       examples: [
         {
           prompt: "A car's value decreases by 12% each year from an initial price of $30,000. What is the value after 2 years?",
@@ -3392,7 +3392,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Reading Linear vs. Exponential Growth From a Table",
       explanation:
-        "A separate pattern gives you a table of x and y values — not an equation or a word problem — and asks whether the function is linear or exponential, and whether it's increasing or decreasing. The method: check how the output changes as the input increases by a constant amount. If the output changes by the same ADDED amount each time, the function is linear; if it changes by the same MULTIPLIED factor each time, it's exponential. Check at least two consecutive differences or ratios before answering, since a single matching pair isn't enough to confirm the pattern holds.",
+        "This pattern gives you a table of x and y values — not an equation or word problem — and asks whether the function is linear or exponential, and increasing or decreasing. The method: check how the output changes as the input increases by a constant amount. If it changes by the same ADDED amount each time, it's linear. If it changes by the same MULTIPLIED factor each time, it's exponential. Check at least two consecutive differences or ratios before deciding — one matching pair isn't enough to confirm the pattern.",
       examples: [
         {
           prompt: "A table shows x: -1, 0, 1, 2 with f(x): 16, 17, 18, 19. Which best describes f?",
@@ -3439,7 +3439,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Graph Transformations (Shifts)",
       explanation:
-        "A separate pattern shows the graph of a function f and asks you to identify a transformed version, like f(x) + k (vertical shift) or f(x - h) (horizontal shift). The method: know the shift rules directly — adding a constant OUTSIDE the function shifts the graph vertically (up if positive, down if negative); adding or subtracting a constant INSIDE the function's input shifts it horizontally, and counterintuitively in the OPPOSITE direction of the sign (f(x-3) shifts right, f(x+3) shifts left). Apply the shift to a few key reference points from the original graph to see exactly where they land.",
+        "This pattern shows the graph of a function f and asks you to identify a transformed version, like f(x) + k (vertical shift) or f(x - h) (horizontal shift). Know the shift rules directly: adding a constant OUTSIDE the function shifts it vertically — up if positive, down if negative. Adding or subtracting a constant INSIDE the function's input shifts it horizontally, and counterintuitively in the OPPOSITE direction of the sign (f(x-3) shifts right, f(x+3) shifts left). Apply the shift to a few key reference points from the original graph to see exactly where they land.",
       examples: [
         {
           prompt: "The graph of f passes through the point (2, 5). If g(x) = f(x) + 3, what corresponding point lies on the graph of g?",
@@ -3486,7 +3486,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Minimum, Maximum, and Asymptote Reasoning for Exponential Functions",
       explanation:
-        "A separate pattern asks about the minimum or maximum value of an exponential function, or where it levels off — not vertex form, since exponential functions don't have vertices. The key fact: for a function of the form f(x) = a·b^x + c, the graph never actually reaches c but gets arbitrarily close to it — that's the horizontal asymptote — and c also acts as the function's effective floor or ceiling. Whether the function increases or decreases, and whether c acts as a floor or a ceiling, depends on the signs of a and b, not on c alone.",
+        "This pattern asks about the minimum or maximum value of an exponential function, or where it levels off — no vertex form here, since exponential functions don't have vertices. The key fact: for f(x) = a·b^x + c, the graph gets closer and closer to c but never actually reaches it — that's the horizontal asymptote — and c acts as the function's effective floor or ceiling. Whether the function increases or decreases, and whether c is a floor or a ceiling, depends on the signs of a and b — not on c alone.",
       examples: [
         {
           prompt: "What value does the function f(x) = 3(2)^x + 4 approach but never reach as x decreases toward negative infinity?",
@@ -3533,7 +3533,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finding the Vertex of a Quadratic from Standard Form",
       explanation:
-        "When a quadratic is given in standard form, f(x) = ax² + bx + c, rather than vertex form, its vertex isn't visible at a glance — it has to be found. The fastest method: the vertex's x-coordinate is always -b/2a. Substitute that value back into the original function to get the y-coordinate. An alternative that works just as well is completing the square to rewrite the function in vertex form directly, which is useful when the question also asks for the function's rewritten equation, not just the vertex's coordinates.",
+        "When a quadratic is given in standard form, f(x) = ax² + bx + c, instead of vertex form, its vertex isn't visible at a glance — you have to find it. The fastest method: the vertex's x-coordinate is always -b/2a. Substitute that back into the function to get the y-coordinate. Completing the square works too, and rewrites the function in vertex form directly — useful when the question also asks for the rewritten equation, not just the vertex's coordinates.",
       examples: [
         {
           prompt: "Find the vertex of f(x) = x² - 6x + 5.",
@@ -3582,7 +3582,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Evaluating a Function and Interpreting Its Output in Context",
       explanation:
-        "These questions ask you to either compute a function's output at a specific input, or interpret what an already-computed output means in the real-world scenario the function describes — for a quadratic or exponential function, not a linear one. Unlike vertex, growth-rate, or table-based patterns, there's no shortcut here beyond careful substitution: plug the given input into the function and simplify, following order of operations exactly. When interpreting a given output in context, connect the input variable and the output variable back to what they represent in the scenario (e.g., 'time in seconds' and 'height in feet'), and state the result using those units and meanings, not just as a bare number.",
+        "These questions ask you to either compute a quadratic or exponential function's output at a given input, or interpret what an already-computed output means in the real-world scenario it describes. Unlike the vertex, growth-rate, or table patterns, there's no shortcut here beyond careful substitution: plug the input into the function, simplify, and follow order of operations exactly. When interpreting an output, connect the input and output variables back to what they mean in the scenario — like 'time in seconds' and 'height in feet' — and state the result using those units, not just as a bare number.",
       examples: [
         {
           prompt: "The function is defined by f(x) = 2x² - 5x + 1. What is f(3)?",
@@ -3645,7 +3645,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Setting Up Proportions Correctly",
       explanation:
-        "The most reliable technique for ratio/rate word problems is to set up two fractions with matching units in matching positions (both numerators describe the same kind of quantity, both denominators describe the same kind of quantity), then cross-multiply. Errors on this subskill almost always come from mismatched setups, not from the arithmetic itself.",
+        "The most reliable trick for ratio and rate word problems: set up two fractions with matching units in matching positions — both numerators are the same kind of quantity, both denominators are the same kind of quantity — then cross-multiply. Errors here almost always come from a mismatched setup, not from the arithmetic itself.",
       examples: [
         {
           prompt: "A recipe uses 2 cups of flour for 12 cookies. How many cups are needed for 30 cookies?",
@@ -3691,7 +3691,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Unit Conversion Chains",
       explanation:
-        "A second common pattern requires converting between units (e.g., miles to feet, hours to seconds) before or after a rate calculation. The safest method is to write out a chain of conversion factors, each one arranged so the unwanted unit cancels out (appearing once on top and once on bottom), rather than trying to remember whether to multiply or divide by the conversion number.",
+        "This pattern requires converting between units — like miles to feet, or hours to seconds — before or after a rate calculation. The safest method: write out a chain of conversion factors, each one arranged so the unwanted unit cancels out (appearing once on top, once on bottom). That's more reliable than trying to remember whether to multiply or divide by the conversion number.",
       examples: [
         {
           prompt: "A car travels at 60 miles per hour. What is this speed in feet per minute? (1 mile = 5,280 feet)",
@@ -3737,7 +3737,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Expressing One Quantity as an Algebraic Ratio Expression",
       explanation:
-        "A distinct ratio pattern doesn't ask you to solve for a specific number — it asks you to write an algebraic expression representing one quantity in terms of another, using a given ratio. The method: translate the ratio into a fraction exactly as stated, then multiply or divide the given variable by that fraction to express the other quantity, making sure the variable ends up multiplied or divided in the direction that actually matches the ratio.",
+        "This pattern doesn't ask for a specific number — it asks you to write an algebraic expression for one quantity in terms of another, using a given ratio. The method: translate the ratio into a fraction exactly as stated, then multiply or divide the given variable by that fraction. Double-check that the variable ends up multiplied or divided in the direction that actually matches the ratio.",
       examples: [
         {
           prompt: "At a bakery, the ratio of loaves of bread baked to bags of flour used is 4 to 1. If f bags of flour are used, which expression represents the number of loaves baked?",
@@ -3794,7 +3794,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Straightforward Percent Change and Discount Problems",
       explanation:
-        "Basic percentage problems (discounts, tax, tips, simple percent change) all follow the same core formula: percent change = (new - old)/old × 100. For direct calculations (like 'find the sale price'), it's often faster to think in terms of multipliers: a 25% discount means the customer pays 75% of the original price, so multiply directly by 0.75 rather than calculating the discount amount and subtracting.",
+        "Basic percentage problems — discounts, tax, tips, simple percent change — all follow the same formula: percent change = (new - old)/old × 100. For direct calculations, like 'find the sale price,' it's often faster to think in multipliers: a 25% discount means the customer pays 75% of the original price. Just multiply by 0.75 directly, instead of calculating the discount amount and subtracting it.",
       examples: [
         {
           prompt: "A shirt originally $40 is discounted 25%. What is the sale price?",
@@ -3840,7 +3840,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Successive Percent Changes (Compounding, Not Additive)",
       explanation:
-        "A common trap pattern involves two or more percentage changes applied in sequence (e.g., a 20% increase followed by a 20% decrease). Students often assume these cancel out to zero net change, but percentage changes compound multiplicatively, not additively — applying them in sequence using multipliers reveals the actual (non-zero) net effect.",
+        "This trap pattern involves two or more percentage changes applied in sequence — like a 20% increase followed by a 20% decrease. Students often assume these cancel out to zero net change. They don't: percentage changes compound by multiplying, not adding. Apply them in sequence using multipliers to find the real (non-zero) net effect.",
       examples: [
         {
           prompt: "An item's price increases by 20% and then decreases by 20%. Compared to the original price, the final price is:",
@@ -3886,7 +3886,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finding What Percent One Number Is of Another",
       explanation:
-        "Not every percentage question involves a change, discount, or increase — some simply ask what percent one quantity is of another, or ask you to find a percentage of a quantity directly, with no 'before and after' involved at all. The formula is straightforward: percent = (part / whole) × 100. The main skill is correctly identifying which quantity is the 'part' and which is the 'whole' from the wording — the whole is the quantity being compared TO, usually following the word 'of.'",
+        "Not every percentage question involves a change or discount — some just ask what percent one quantity is of another, with no 'before and after' at all. The formula: percent = (part / whole) × 100. The main skill is correctly telling which quantity is the 'part' and which is the 'whole' — the whole is whatever's being compared TO, usually right after the word 'of.'",
       examples: [
         {
           prompt: "What percent of 300 is 75?",
@@ -3945,7 +3945,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Comparing Mean and Median to Detect Skew",
       explanation:
-        "This pattern tests whether you understand how outliers pull the mean away from the median. If the mean is noticeably higher than the median, that signals a small number of unusually high values (right skew) are pulling the average up; if the mean is lower than the median, unusually low values (left skew) are pulling it down. The median is far more resistant to outliers because it only depends on the middle position(s) of the ordered data, not the extreme values themselves.",
+        "This pattern tests whether you understand how outliers pull the mean away from the median. If the mean is noticeably higher than the median, a few unusually high values (right skew) are pulling the average up. If the mean is lower, unusually low values (left skew) are pulling it down. The median resists outliers much better, since it only depends on the middle of the ordered data, not the extreme values.",
       examples: [
         {
           prompt: "A data set: 4, 6, 6, 8, 10, 50. Which measure of center best represents a 'typical' value, given the outlier?",
@@ -3991,7 +3991,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Interpreting Standard Deviation as Spread",
       explanation:
-        "Questions comparing two data sets' standard deviations are testing whether you understand standard deviation as a measure of spread/variability around the mean, not a measure of the mean's size itself. Two data sets can have identical means but very different standard deviations, indicating one set's values are clustered tightly while the other's are spread widely.",
+        "Questions comparing two data sets' standard deviations are testing whether you understand standard deviation as a measure of spread around the mean — not the size of the mean itself. Two data sets can have identical means but very different standard deviations: one set's values might be clustered tightly, while the other's are spread out widely.",
       examples: [
         {
           prompt: "Two data sets have the same mean but Data Set A has a much larger standard deviation than Data Set B. What does this indicate?",
@@ -4037,7 +4037,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Reading Values and Basic Statistics Directly from a Graph or Table",
       explanation:
-        "Not every one-variable-data question requires computing a statistic — many just ask you to read a specific value, count, or range directly off a bar graph, dot plot, histogram, or frequency table, or to compute a simple mean or range from a short list once you've read the values off. The method is mostly about careful reading: identify exactly which bar, dot, or row the question is asking about, read its value off the axis or table precisely, and watch for off-by-one errors when counting dots or bars. For a plain range, subtract the smallest value from the largest; for a plain mean from a short raw list, add every value and divide by the count.",
+        "Not every data question requires computing a statistic — many just ask you to read a value, count, or range directly off a graph or table, or compute a simple mean or range from a short list. It's mostly about careful reading: find exactly which bar, dot, or row the question means, read its value precisely, and watch for off-by-one errors when counting. For a plain range: subtract the smallest value from the largest. For a plain mean: add every value and divide by the count.",
       examples: [
         {
           prompt: "A bar graph shows the number of books read by each of 5 students: 3, 5, 2, 6, 4. What is the range of this data set?",
@@ -4087,7 +4087,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "How Changing a Data Set Changes Its Statistics",
       explanation:
-        "These questions ask what happens to a data set's mean, median, or range after some kind of change: adding a new data point, removing one, or shifting every value by the same amount. The key distinction: adding a constant to every value in a data set shifts the mean, median, and range predictably (mean and median shift by that same constant; range stays the same, since every value moved together). Adding or removing a single data point is different — it can change the mean by a calculable amount, but its effect on the median depends on where the new point falls relative to the existing data, and its effect on the range depends on whether the new point is more extreme than the current minimum or maximum.",
+        "These questions ask what happens to a data set's mean, median, or range after a change: adding a point, removing one, or shifting every value by the same amount. Key distinction: shifting every value by a constant moves the mean and median by that same constant, and leaves the range unchanged, since every value moved together. Adding or removing a single point is different — it changes the mean by a calculable amount, but its effect on the median depends on where the new point falls, and its effect on the range depends on whether the new point is more extreme than the current min or max.",
       examples: [
         {
           prompt:
@@ -4151,7 +4151,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       desmosTrick:
         "Step 1: Click the '+' menu and add a table, then enter the given data points as x1, y1 columns — one point per row. Step 2: On the next line, type a regression template matching the shape you're testing: y1 ~ mx1+b for a straight-line trend, y1 ~ ax1^2+bx1+c for a curve that bends once, or y1 ~ a*b^x1 for growth or decay that speeds up or slows down over time. Step 3: Desmos fits that shape through your points and reports the actual values of m, b, a, and c — so instead of guessing which shape 'looks right' by eye, you can check exactly how well each one fits.",
       explanation:
-        "This pattern asks you to match a scatterplot's visual pattern to the correct model type: a straight-line pattern with constant rate of change is linear; a pattern with increasingly steep, multiplicative growth is exponential; a pattern with a single peak or trough is quadratic. The key is looking at HOW the rate of change itself behaves — constant, accelerating, or reversing direction — rather than just the general 'up and to the right' shape.",
+        "This pattern asks you to match a scatterplot's shape to the correct model type. A straight-line pattern with a constant rate of change is linear. A pattern that gets increasingly steep is exponential. A pattern with a single peak or trough is quadratic. The key is looking at HOW the rate of change behaves — constant, accelerating, or reversing — not just the general 'up and to the right' shape.",
       examples: [
         {
           prompt: "A scatterplot shows points rising steadily at a constant rate, forming a straight-line pattern. Which model best fits?",
@@ -4197,7 +4197,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Interpreting Residuals",
       explanation:
-        "A residual is the difference between an actual observed data point and what a model predicts for that same input: residual = actual - predicted. Questions testing this concept often give you a predicted value and an actual value and ask you to compute or interpret the residual directly, or ask what a residual pattern (like residuals that grow larger for bigger x-values) suggests about the model's fit.",
+        "A residual is the difference between an actual data point and what a model predicts for that same input: residual = actual - predicted. Questions often give you a predicted and an actual value and ask you to compute or interpret the residual directly — or ask what a residual pattern, like residuals growing larger for bigger x-values, says about how well the model fits.",
       examples: [
         {
           prompt: "A line of best fit predicts y = 45 for a given x-value, but the actual observed y-value is 50. What is the residual?",
@@ -4253,7 +4253,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Basic and Compound Probability",
       explanation:
-        "Simple probability questions use the formula: favorable outcomes divided by total outcomes. Compound probability questions (involving 'and'/'or') require recognizing whether events are independent (multiply for 'and') or need the addition rule (for 'or', add individual probabilities and subtract any overlap to avoid double-counting).",
+        "Simple probability questions use one formula: favorable outcomes divided by total outcomes. Compound probability questions — the ones with 'and' or 'or' — need you to recognize whether events are independent (multiply, for 'and') or need the addition rule (for 'or': add the individual probabilities, then subtract any overlap so you don't double-count).",
       examples: [
         {
           prompt: "Two independent events A and B have P(A) = 0.5 and P(B) = 0.4. What is P(A and B)?",
@@ -4299,7 +4299,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Conditional Probability",
       explanation:
-        "Conditional probability questions restrict the total sample space to a specific subgroup mentioned in the problem (indicated by phrases like 'given that' or 'if we know'). The key move is to identify the restricted group first, and calculate the probability using ONLY that subgroup as your new total, not the entire original data set.",
+        "Conditional probability questions shrink the total sample space down to a specific subgroup — signaled by phrases like 'given that' or 'if we know.' The key move: identify that restricted group first, then calculate probability using ONLY that subgroup as your new total — not the entire original data set.",
       examples: [
         {
           prompt: "A deck has 52 cards. What is the probability of drawing a card that is a heart, given that the card drawn is red?",
@@ -4355,7 +4355,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Interpreting Confidence Intervals Correctly",
       explanation:
-        "Confidence interval questions test whether you understand what the interval actually claims: it describes a plausible range for the true population parameter, based on the sampling method used — not a claim about individual data points, and not a guarantee. A common trap is choosing an answer that misapplies the interval to individual observations rather than to the population parameter as a whole.",
+        "Confidence interval questions test whether you understand what the interval actually claims: a plausible range for the TRUE population value, based on the sampling method — not a claim about individual data points, and not a guarantee. A common trap: picking an answer that misapplies the interval to individual observations, instead of to the population as a whole.",
       examples: [
         {
           prompt: "A 95% confidence interval for a population mean is (48, 56). Which statement correctly interprets this interval?",
@@ -4401,7 +4401,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Sample Size's Effect on Margin of Error",
       explanation:
-        "This pattern tests the relationship between sample size and precision: larger samples generally produce smaller margins of error (more precise estimates), holding the confidence level constant. This is a directional relationship worth memorizing directly, since it appears frequently in slightly different phrasings.",
+        "This pattern tests the relationship between sample size and precision: larger samples generally produce smaller margins of error — more precise estimates — as long as the confidence level stays the same. This is worth just memorizing directly, since it shows up often in slightly different phrasings.",
       examples: [
         {
           prompt: "A researcher increases the sample size from 100 to 400 while keeping the same confidence level. What is the most likely effect on the width of the confidence interval?",
@@ -4447,7 +4447,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Estimating a Population Count from a Sample Proportion",
       explanation:
-        "The most basic and common version of this subskill doesn't involve confidence intervals or margin of error at all — it simply asks you to scale up a proportion observed in a random sample to estimate a count in the full population. The method: find the sample's proportion (favorable outcomes divided by sample size), then apply that same proportion to the full population size. This works reliably only when the sample was selected randomly from the population being estimated — always check that a sample is actually random before trusting a scaled-up estimate from it.",
+        "The most common version of this subskill doesn't involve confidence intervals or margin of error at all — it just asks you to scale up a proportion from a random sample to estimate a count in the full population. The method: find the sample's proportion (favorable outcomes divided by sample size), then apply that same proportion to the full population size. This only works reliably when the sample was actually random — always check that before trusting a scaled-up estimate.",
       examples: [
         {
           prompt: "A researcher randomly selects 20 employees from a company of 400 and finds that 16 of them are enrolled in a wellness program. Based on this sample, what is the best estimate of the number of employees at the company enrolled in the wellness program?",
@@ -4504,7 +4504,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
     {
       name: "Distinguishing Correlation from Causation",
       explanation:
-        "This is the single most tested concept in this subskill: an observational study (no random assignment) can only establish correlation/association, never causation, because a confounding (lurking) variable could explain the relationship instead. A randomized controlled experiment (with random assignment to groups) is what's needed to support a causal claim. Recognizing which type of study design is described is the entire key to these questions.",
+        "This is the single most-tested concept in this subskill: an observational study — no random assignment — can only show correlation, never causation, because some hidden confounding variable could actually explain the relationship. Only a randomized controlled experiment, with random assignment to groups, can support a causal claim. Recognizing which type of study design is described is the entire key to these questions.",
       examples: [
         {
           prompt: "An observational study finds ice cream sales correlate with drowning incidents. What's the best interpretation?",
@@ -4550,7 +4550,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
     {
       name: "Evaluating Study Design for Causal Claims",
       explanation:
-        "A related pattern asks you to evaluate whether a specific study design supports the causal claim being made. The checklist: was there random assignment to treatment/control groups (needed for causation)? Was there a control or placebo group (needed to isolate the treatment's effect from other factors)? If either is missing, the strongest honest conclusion is 'association only,' regardless of how compelling the result looks.",
+        "This pattern asks you to evaluate whether a specific study design actually supports the causal claim being made. Checklist: was there random assignment to treatment/control groups? Was there a control or placebo group, to isolate the treatment's effect from other factors? If either is missing, the strongest honest conclusion is 'association only' — no matter how compelling the result looks.",
       examples: [
         {
           prompt: "A company claims a new supplement causes weight loss based on a study with no control group. What is the primary weakness of this claim?",
@@ -4606,7 +4606,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Scale Factor Effects on Area and Volume",
       explanation:
-        "This pattern tests whether you understand that linear scale factors don't apply directly to area or volume. If every linear dimension of a shape is scaled by a factor of k, area scales by k² (not k), and volume scales by k³ (not k). This is a very frequent trap: students correctly identify the scale factor but then apply it linearly to area or volume instead of squaring or cubing it.",
+        "This pattern tests whether you know that a linear scale factor doesn't apply directly to area or volume. If every linear dimension of a shape scales by a factor of k, area scales by k² — not k — and volume scales by k³ — not k. This is a very common trap: correctly finding the scale factor, then applying it directly to area or volume instead of squaring or cubing it first.",
       examples: [
         {
           prompt: "If a square's side length doubles, by what factor does its area increase?",
@@ -4652,7 +4652,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Composite Figures and Formula Selection",
       explanation:
-        "A second common pattern involves selecting and correctly applying the right area or volume formula for a given shape, often within a word problem that disguises the shape's identity (e.g., a 'can' is a cylinder, a 'ball' is a sphere). The reliable approach: identify exactly which formula applies before doing any calculation, and write it out explicitly rather than trying to recall the calculation from memory mid-problem.",
+        "This pattern involves picking and correctly applying the right area or volume formula for a shape — often in a word problem that disguises what the shape actually is (a 'can' is a cylinder, a 'ball' is a sphere). The reliable approach: figure out exactly which formula applies before calculating anything, and write it out explicitly instead of trying to recall it from memory mid-problem.",
       examples: [
         {
           prompt: "A cylindrical water tank has a radius of 3 and a height of 10. What is its volume in terms of π?",
@@ -4698,7 +4698,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Building a Volume Expression Algebraically from a Word Description",
       explanation:
-        "A separate pattern doesn't give numeric dimensions at all — it describes a solid's dimensions in words, often with one dimension defined in terms of another using a variable, and asks for a volume FORMULA rather than a numeric answer. The method: identify the correct volume formula for the shape first, then carefully translate each worded dimension into algebraic form before substituting — paying special attention to phrases like '3 more than,' 'twice,' or 'half of,' which describe one dimension in terms of another.",
+        "This pattern gives no numeric dimensions at all — it describes a solid's dimensions in words, often with one dimension defined in terms of another using a variable, and asks for a volume FORMULA, not a number. The method: find the correct volume formula for the shape first, then carefully translate each worded dimension into algebra before substituting. Pay close attention to phrases like '3 more than,' 'twice,' or 'half of' — they describe one dimension in terms of another.",
       examples: [
         {
           prompt: "A rectangular box has a length of x, a width of 3, and a height of 5. Which expression gives the volume V of the box, in terms of x?",
@@ -4755,7 +4755,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
     {
       name: "Triangle Angle Sum and Exterior Angles",
       explanation:
-        "Every triangle's interior angles sum to exactly 180°, which lets you find a missing angle whenever the other two are known. A related, often-overlooked rule: a triangle's exterior angle equals the sum of the two non-adjacent interior angles — this can shortcut problems that would otherwise require two separate steps.",
+        "Every triangle's interior angles add up to exactly 180°, so you can always find a missing angle if you know the other two. A related, often-overlooked rule: a triangle's exterior angle equals the sum of the two non-adjacent interior angles. This can shortcut problems that would otherwise take two separate steps.",
       examples: [
         {
           prompt: "A triangle's exterior angle measures 110°, and it is not adjacent to one of the triangle's interior angles of 40°. What is the measure of the third interior angle?",
@@ -4801,7 +4801,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
     {
       name: "Parallel Lines Cut by a Transversal",
       explanation:
-        "When two parallel lines are cut by a transversal, several angle-pair relationships hold: corresponding angles are equal, alternate interior angles are equal, and co-interior (same-side interior) angles are supplementary (sum to 180°). The key skill is correctly identifying which relationship applies based on the angles' positions relative to the two parallel lines and the transversal, since the correct answer depends entirely on which pair type is involved.",
+        "When two parallel lines are cut by a transversal, a few angle-pair relationships always hold: corresponding angles are equal, alternate interior angles are equal, and same-side interior angles are supplementary (add to 180°). The key skill is correctly identifying which relationship applies, based on the angles' positions relative to the two lines and the transversal — the right answer depends entirely on which pair type is involved.",
       examples: [
         {
           prompt: "Two parallel lines are cut by a transversal. If one angle measures 65°, what is the measure of its co-interior (same-side interior) angle?",
@@ -4847,7 +4847,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
     {
       name: "Similar Triangles and Proportional Sides",
       explanation:
-        "This pattern tests whether corresponding sides of two similar triangles (triangles with the same shape but possibly different size) maintain a constant ratio, called the scale factor. The method: first correctly match each side of one triangle to its corresponding side in the other — matching is based on the triangles' matching angles, not just which side looks similar in length or happens to be listed nearby — then set up a proportion using that scale factor to solve for an unknown side. The setup itself is rarely the hard part; mismatching which sides actually correspond is.",
+        "This pattern tests whether corresponding sides of two similar triangles — same shape, possibly different size — keep a constant ratio, called the scale factor. The method: first match each side of one triangle to its corresponding side in the other. Matching is based on the triangles' matching angles, not just which sides look similar in length or happen to be listed near each other. Then set up a proportion using that scale factor to solve for the unknown side. The proportion itself is rarely the hard part — mismatching which sides actually correspond is.",
       examples: [
         {
           prompt: "Triangle ABC is similar to triangle DEF. If AB = 6, DE = 9, and BC = 8, what is EF?",
@@ -4894,7 +4894,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
     {
       name: "Vertical Angles and Basic Angle Relationships",
       explanation:
-        "When two straight lines cross, they form two pairs of vertical angles (the angles directly across from each other) and pairs of adjacent angles along each line. Vertical angles are always exactly equal, with no calculation needed once you spot the relationship. Adjacent angles along a straight line are supplementary, meaning they add to 180°, since a straight line always measures 180°. These facts apply with just two intersecting lines — no triangle and no parallel-lines transversal setup required, unlike the other patterns in this subskill.",
+        "When two straight lines cross, they form two pairs of vertical angles (directly across from each other) and pairs of adjacent angles along each line. Vertical angles are always exactly equal — no calculation needed once you spot them. Adjacent angles along a straight line are supplementary, adding to 180°, since a straight line always measures 180°. These facts apply with just two crossing lines — no triangle, no parallel-lines setup required, unlike the other patterns in this subskill.",
       examples: [
         {
           prompt: "Two lines intersect, forming an angle of 65°. What is the measure of the angle vertical to it?",
@@ -4954,7 +4954,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "SOH-CAH-TOA Setup",
       explanation:
-        "The foundational skill for this subskill is correctly identifying which sides are 'opposite,' 'adjacent,' and 'hypotenuse' relative to the specific angle in question, then applying the matching trig ratio (SOH: sine = opposite/hypotenuse; CAH: cosine = adjacent/hypotenuse; TOA: tangent = opposite/adjacent). The most common error isn't the formula itself, but misidentifying which side is 'opposite' versus 'adjacent' relative to the angle being used.",
+        "The foundational skill here: correctly identify which sides are 'opposite,' 'adjacent,' and 'hypotenuse' relative to the specific angle in question, then apply the matching trig ratio. SOH: sine = opposite/hypotenuse. CAH: cosine = adjacent/hypotenuse. TOA: tangent = opposite/adjacent. The most common error isn't the formula — it's misidentifying which side is 'opposite' versus 'adjacent' for the angle being used.",
       examples: [
         {
           prompt: "A support cable is anchored 15 feet from the base of a pole and meets the top of the pole at a 40° angle of elevation. Which expression gives the pole's height?",
@@ -5000,7 +5000,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Special Right Triangles (30-60-90 and 45-45-90)",
       explanation:
-        "Special right triangles have fixed, memorizable side ratios that let you skip the Pythagorean theorem entirely. In a 45-45-90 triangle, both legs are equal, and the hypotenuse is a leg times √2. In a 30-60-90 triangle, the side opposite 30° is the shortest side (call it x), the side opposite 60° is x√3, and the hypotenuse (opposite 90°) is 2x. Recognizing these specific angle measures instantly gives you every side length without further calculation.",
+        "Special right triangles have fixed, memorizable side ratios that let you skip the Pythagorean theorem entirely. In a 45-45-90 triangle, both legs are equal, and the hypotenuse is a leg times √2. In a 30-60-90 triangle, the side opposite 30° is the shortest side (call it x), the side opposite 60° is x√3, and the hypotenuse (opposite 90°) is 2x. Recognizing these specific angle measures gives you every side length instantly, with no further calculation.",
       examples: [
         {
           prompt: "In a right triangle, the side opposite a 30° angle is 5. What is the hypotenuse?",
@@ -5046,7 +5046,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Using the Pythagorean Theorem Before Computing a Trig Ratio",
       explanation:
-        "Some problems give a right triangle with two side lengths but no angle measures, and ask for a trig ratio of one of the acute angles. Since a trig ratio needs two of the three side relationships, but only two sides are given (and sometimes the wrong two), the Pythagorean theorem must be used FIRST to find the missing third side, before SOH-CAH-TOA can be applied. Recognize this pattern whenever a question gives exactly two side lengths and asks for a trig ratio rather than an angle — though check first whether the needed ratio (like tangent, using only the two legs) might not require the missing side at all.",
+        "Some problems give a right triangle with two side lengths, no angle measures, and ask for a trig ratio of one of the acute angles. A trig ratio needs two sides, but sometimes you're given the wrong two — so the Pythagorean theorem has to find the missing third side FIRST, before SOH-CAH-TOA can be applied. Watch for this whenever a question gives exactly two side lengths and asks for a trig ratio, not an angle. But check first: if the ratio you need (like tangent, using only the two legs) doesn't require the missing side, you can skip this step.",
       examples: [
         {
           prompt: "In a right triangle, the two legs measure 6 and 8. What is the sine of the angle opposite the side of length 6?",
@@ -5093,7 +5093,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Radian Measure and Coterminal Angles",
       explanation:
-        "A separate pattern tests angles measured in radians rather than degrees, especially values larger than 2π (a full circle) or negative angles. The method: find a coterminal angle within the standard 0-to-2π range by adding or subtracting multiples of 2π until the angle falls in that range, then evaluate the trig function using that simpler, equivalent angle — coterminal angles always share identical trig function values, since they land in the exact same position.",
+        "This pattern tests angles measured in radians instead of degrees, especially values larger than 2π (a full circle) or negative angles. The method: find a coterminal angle within the standard 0-to-2π range, by adding or subtracting multiples of 2π until it lands there. Then evaluate the trig function using that simpler, equivalent angle. Coterminal angles always share identical trig values, since they land in the exact same position on the circle.",
       examples: [
         {
           prompt: "What is the value of cos(2π + π/3)?",
@@ -5140,7 +5140,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Using the Pythagorean Theorem Alone to Find a Missing Side",
       explanation:
-        "Not every right-triangle question needs a trig ratio at all — plenty just ask for a missing side length, which the Pythagorean theorem (a² + b² = c²) finds directly, where c is always the hypotenuse (opposite the right angle, and always the longest side). Identify which side is missing: if it's the hypotenuse, add the two known legs' squares and take the square root; if it's a leg, subtract the other leg's square from the hypotenuse's square before taking the square root. Many answers come out as a simplified radical rather than a whole number — know how to simplify a square root (pull out the largest perfect-square factor) rather than leaving an answer unsimplified or rounding it early.",
+        "Not every right-triangle question needs a trig ratio — plenty just ask for a missing side length, which the Pythagorean theorem (a² + b² = c²) finds directly. Remember c is always the hypotenuse: opposite the right angle, and always the longest side. If the hypotenuse is missing, add the two legs' squares and take the square root. If a leg is missing, subtract the other leg's square from the hypotenuse's square first. Many answers come out as a simplified radical, not a whole number — know how to simplify a square root (pull out the largest perfect-square factor) instead of leaving it unsimplified or rounding early.",
       examples: [
         {
           prompt: "A right triangle has legs of length 6 and 8. What is the length of the hypotenuse?",
@@ -5189,7 +5189,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "The Sine-Cosine Complementary Angle Relationship",
       explanation:
-        "In any right triangle, the two non-right angles are always complementary (they add to 90°), and this creates a direct shortcut: the sine of one acute angle always equals the cosine of the other, since each angle's 'opposite' side is the other angle's 'adjacent' side. Written as an identity: sin(x°) = cos(90° - x°), for any angle x. This means a question can hand you sin(x°) = cos(y°) and ask for a relationship between x and y without giving you a triangle or any side lengths at all — the answer is always that x and y sum to 90, no triangle needed.",
+        "In any right triangle, the two non-right angles are always complementary — they add to 90°. That creates a direct shortcut: the sine of one acute angle always equals the cosine of the other, since each angle's 'opposite' side is the other angle's 'adjacent' side. As an identity: sin(x°) = cos(90° - x°), for any angle x. So a question can hand you sin(x°) = cos(y°) and ask for the relationship between x and y with no triangle and no side lengths at all — the answer is always that x and y add up to 90.",
       examples: [
         {
           prompt: "If sin(40°) = cos(y°), what is the value of y?",
@@ -5250,7 +5250,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       desmosTrick:
         "Step 1: Type the equation exactly as given, using ^2 for squares — for example (x-3)^2+(y+1)^2=25. Desmos draws the circle immediately. Step 2: Read the center straight off what's being subtracted from x and y inside the parentheses (watch the sign carefully: (x-3) means the center's x-coordinate is +3, not -3). Step 3: The radius is the square root of the number on the right side. Step 4: You can also click any point on the drawn circle to read its coordinates directly, instead of plugging a value into the equation algebraically.",
       explanation:
-        "A circle's equation in the form (x-h)² + (y-k)² = r² directly encodes its center (h, k) and radius r. As with vertex form for parabolas, the most common error is a sign mix-up: an equation with (x+3)² actually means h = -3, not h = 3, since the template subtracts h.",
+        "A circle's equation in the form (x-h)² + (y-k)² = r² directly encodes its center (h, k) and radius r. Just like with vertex form for parabolas, the most common error is a sign mix-up: an equation with (x+3)² actually means h = -3, not h = 3, since the template subtracts h.",
       examples: [
         {
           prompt: "What is the equation of a circle with center (2, -3) and radius 5?",
@@ -5296,7 +5296,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Arc Length and Sector Area as Fractions of the Whole Circle",
       explanation:
-        "Both arc length and sector area work the same way: take the central angle as a fraction of the full 360°, then apply that same fraction to the circle's total circumference (for arc length) or total area (for sector area). Recognizing this 'fraction of the whole' structure makes both formulas easy to derive on the spot rather than requiring separate memorization.",
+        "Both arc length and sector area work the same way: take the central angle as a fraction of the full 360°, then apply that same fraction to the circle's total circumference (for arc length) or total area (for sector area). Recognizing this 'fraction of the whole' idea lets you derive both formulas on the spot, instead of memorizing them separately.",
       examples: [
         {
           prompt: "A sector has a central angle of 90° in a circle of radius 4. What is its area?",
@@ -5342,7 +5342,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving the Circle Equation for a Coordinate's Possible Values",
       explanation:
-        "A separate pattern gives a circle's equation and one coordinate of a point known to lie on the circle, then asks for the possible value(s) of the other coordinate. Because a circle equation is quadratic in both x and y, substituting a known coordinate typically produces two possible values for the unknown one — unless the given coordinate happens to be at the circle's most extreme point in that direction, which yields only one, or unless the point isn't actually reachable, which yields none. The method: substitute the known value, then solve for the remaining variable, watching for a plus-or-minus square root step.",
+        "This pattern gives a circle's equation and one coordinate of a point on the circle, then asks for the possible value(s) of the OTHER coordinate. Since a circle equation is quadratic in both x and y, substituting a known coordinate usually gives two possible values for the unknown one — unless that coordinate is at the circle's most extreme point in that direction (only one value), or the point isn't actually on the circle at all (no values). The method: substitute the known value, then solve for what's left, watching for a plus-or-minus square root step.",
       examples: [
         {
           prompt: "The circle (x-2)² + (y-3)² = 25 passes through a point where x=2. What are the possible value(s) of y at this point?",
@@ -5389,7 +5389,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Circle Theorems: Central Angles, Arcs, and Tangent Lines",
       explanation:
-        "Not every circle question involves the coordinate-plane equation — many are classical geometry facts about a circle drawn without any coordinates at all. The core facts: a central angle (vertex at the circle's center) is always exactly equal to the measure of the arc it cuts off, in degrees. A radius drawn to the point where a tangent line touches the circle is always perpendicular to that tangent line, which often creates a right triangle you can solve with the Pythagorean theorem. Two radii of the same circle are always equal in length, which frequently makes a triangle formed by two radii isosceles. Basic area and circumference (A = πr², C = 2πr) also show up here without any coordinate-equation framing.",
+        "Not every circle question involves the coordinate-plane equation — many are classic geometry facts about a circle drawn with no coordinates at all. Core facts: a central angle (vertex at the circle's center) always equals the arc it cuts off, in degrees. A radius drawn to where a tangent line touches the circle is always perpendicular to that tangent line, which often creates a right triangle you can solve with the Pythagorean theorem. Two radii of the same circle are always equal in length, which often makes a triangle formed by two radii isosceles. Basic area and circumference (A = πr², C = 2πr) show up here too, with no coordinate equation involved.",
       examples: [
         {
           prompt: "A central angle in a circle measures 70°. What is the measure of the arc it intercepts?",

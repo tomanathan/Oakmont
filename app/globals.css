@@ -10,6 +10,10 @@ body {
   background: #f5f4fb;
 }
 
+.katex-inline .katex {
+  font-size: 1.08em;
+}
+
 @keyframes confetti-fall {
   0% {
     transform: translateY(-10px) rotate(0deg);
