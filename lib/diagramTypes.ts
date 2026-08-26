@@ -112,6 +112,50 @@ export interface ScaleCompareSpec {
   factorLabel: string;
 }
 
+export type SlopeDirection = "steepPos" | "gentlePos" | "steepNeg" | "gentleNeg" | "zero" | "undefined";
+
+export interface GraphPoint {
+  label: string;
+  at: "left" | "mid" | "right";
+}
+
+export interface LineGraphSpec {
+  kind: "lineGraph";
+  direction: SlopeDirection;
+  points?: GraphPoint[];
+  slopeLabel?: string;
+  extra?: { direction: SlopeDirection; label?: string };
+}
+
+export interface SystemGraphSpec {
+  kind: "systemGraph";
+  line1Direction: SlopeDirection;
+  line2Direction: SlopeDirection;
+  parallel?: boolean;
+  sameLine?: boolean;
+  solutionLabel?: string;
+}
+
+export interface ParabolaGraphSpec {
+  kind: "parabolaGraph";
+  opensUp: boolean;
+  vertexLabel?: string;
+  rootLabels?: [string, string];
+  yInterceptLabel?: string;
+}
+
+export interface ExponentialGraphSpec {
+  kind: "exponentialGraph";
+  growth: boolean;
+  yInterceptLabel?: string;
+  asymptoteLabel?: string;
+}
+
+export interface ScatterGraphSpec {
+  kind: "scatterGraph";
+  trend: "linearPos" | "linearNeg" | "quadratic" | "exponential" | "none";
+}
+
 export type DiagramSpec =
   | RightTriangleSpec
   | IsoscelesAltitudeSpec
@@ -125,4 +169,9 @@ export type DiagramSpec =
   | SectorSpec
   | UnitCircleAngleSpec
   | SolidShapeSpec
-  | ScaleCompareSpec;
+  | ScaleCompareSpec
+  | LineGraphSpec
+  | SystemGraphSpec
+  | ParabolaGraphSpec
+  | ExponentialGraphSpec
+  | ScatterGraphSpec;

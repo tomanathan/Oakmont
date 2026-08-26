@@ -2059,6 +2059,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the flat fee (y-intercept): $3, the amount charged even for zero miles. Step 2: Identify the rate (slope): $2 per mile, the amount added for each additional mile. Step 3: Write the function with the rate multiplying the input variable, plus the flat fee: C = 2m + 3.",
           answer: "C = 2m + 3, where 2 is the per-mile rate (slope) and 3 is the flat starting fee (y-intercept).",
+          diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "y-int = 3", at: "left" }], slopeLabel: "slope = 2" },
           difficulty: "easy",
         },
         {
@@ -2066,6 +2067,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the starting value (y-intercept): 200 gallons, the amount present at m = 0. Step 2: Identify the rate (slope): 15 gallons per minute — but since the tank is draining, the amount is decreasing, so the rate needs a negative sign: -15. Step 3: Write the function: W = -15m + 200.",
           answer: "W = -15m + 200, where -15 (negative, since the tank is draining) is the rate and 200 is the starting amount.",
+          diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "y-int = 200", at: "left" }], slopeLabel: "slope = -15" },
           difficulty: "medium",
         },
         {
@@ -2073,6 +2075,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the flat fee (y-intercept): $20, charged once regardless of months. Step 2: Identify the rate (slope): $15 per month. Step 3: Write the function: C = 15m + 20.",
           answer: "C = 15m + 20, where 15 is the monthly rate (slope) and 20 is the one-time sign-up fee (y-intercept).",
+          diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "y-int = 20", at: "left" }], slopeLabel: "slope = 15" },
           difficulty: "easy",
         },
         {
@@ -2080,6 +2083,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the starting value (y-intercept): 8 inches at t = 0. Step 2: Identify the rate: half an inch per 20 minutes needs converting to a per-minute rate first: 0.5 / 20 = 0.025 inches per minute — and since the candle is burning down, this rate must be negative. Step 3: Write the function: H = -0.025t + 8.",
           answer: "H = -0.025t + 8 — the tricky part is converting 'half an inch every 20 minutes' into a per-minute rate before assigning it a negative sign for the decreasing height.",
+          diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "y-int = 8", at: "left" }], slopeLabel: "slope = -0.025" },
           difficulty: "medium",
         },
         {
@@ -2087,6 +2091,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Unlike a scenario that states the flat fee and rate directly, here neither is given — both must be derived from two cost/mileage pairs. Step 2: Find the rate (slope) using the two data points: (560 - 350) / (120 - 50) = 210 / 70 = 3 dollars per mile. Step 3: Use the rate and one data point to find the flat fee (intercept): 350 = 3(50) + b, so b = 200. Step 4: C = 3m + 200.",
           answer: "C = 3m + 200, found by first computing the rate from two given cost/mileage pairs (like a slope-from-two-points calculation), then using that rate and one pair to solve for the flat fee.",
+          diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "(50, 350)", at: "left" }, { label: "(120, 560)", at: "right" }] },
           difficulty: "hard",
         },
       ],
@@ -2105,6 +2110,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: The y-intercept is simply the point where the line crosses the y-axis, i.e., where x = 0. Step 2: The graph shows the line passing through (0, 3) — that point directly IS the y-intercept. Step 3: Read it straight off the graph, no calculation needed.",
           answer: "The y-intercept is 3 (the point (0,3)), read directly from where the line crosses the y-axis.",
+          diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "(0, 3)", at: "left" }, { label: "(2, 7)", at: "right" }] },
           difficulty: "easy",
         },
         {
@@ -2112,6 +2118,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Pick the two clearly marked points. Step 2: Compute rise over run: (8 - 2) / (3 - 1) = 6 / 2 = 3. Step 3: Counting grid squares directly confirms it: from (1,2) to (3,8) is 2 squares right and 6 squares up, matching a slope of 3.",
           answer: "The slope is 3, found by computing rise over run between the two marked points — counting grid squares directly confirms the calculation.",
+          diagram: { kind: "lineGraph", direction: "steepPos", points: [{ label: "(1, 2)", at: "left" }, { label: "(3, 8)", at: "right" }] },
           difficulty: "easy",
         },
         {
@@ -2119,6 +2126,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Notice the axes are scaled at 5 units per gridline, not the default 1 unit — easy to miss if you count gridlines as if each were worth 1. Step 2: The line crosses the y-axis 2 gridlines up, and since each gridline = 5 units, that's 2 × 5 = 10. Step 3: The y-intercept is 10, not 2.",
           answer: "The y-intercept is 10, not 2 — since each gridline represents 5 units, the 'crossing at 2 gridlines up' must be multiplied by the scale before reporting the answer.",
+          diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "y-int", at: "left" }] },
           difficulty: "medium",
         },
         {
@@ -2126,6 +2134,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Identify the two marked points where the line crosses each axis: (4, 0) and (0, 8). Step 2: Compute the slope: (8 - 0) / (0 - 4) = 8 / (-4) = -2. Step 3: The line falling from upper-left to lower-right on the graph visually confirms a negative slope.",
           answer: "The slope is -2, found using the x-intercept and y-intercept as the two known points — the line's downward direction visually confirms the negative sign.",
+          diagram: { kind: "lineGraph", direction: "steepNeg", points: [{ label: "(0, 8)", at: "left" }, { label: "(4, 0)", at: "right" }] },
           difficulty: "medium",
         },
         {
@@ -2133,6 +2142,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Convert grid positions to actual coordinates using the scale (3 units per gridline): the two points become (3, 12) and (9, 6). Step 2: Compute the slope: (6 - 12) / (9 - 3) = -6 / 6 = -1. Step 3: Use one point and the slope to solve for the y-intercept: 12 = -1(3) + b, so b = 15. Step 4: This value isn't a point directly marked on the graph — it has to be found by extending the line's equation back to x = 0.",
           answer: "The y-intercept is 15, found by first converting the grid positions to actual coordinates using the scale, computing the slope, and then solving for b, since x = 0 isn't one of the directly marked points here.",
+          diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "(3, 12)", at: "left" }, { label: "(9, 6)", at: "right" }] },
           difficulty: "hard",
         },
       ],
@@ -2152,6 +2162,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Translate function notation into coordinate pairs: f(0) = 4 means the point (0, 4); f(3) = 13 means the point (3, 13). Step 2: Apply the slope formula: (change in output) / (change in input) = (13 - 4) / (3 - 0). Step 3: Simplify: 9 / 3 = 3.",
           answer: "The slope is 3, found by dividing the change in function output (9) by the change in input (3).",
+          diagram: { kind: "lineGraph", direction: "steepPos", points: [{ label: "(0, 4)", at: "left" }, { label: "(3, 13)", at: "right" }] },
           difficulty: "easy",
         },
         {
@@ -2159,6 +2170,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Translate function notation into coordinate pairs: g(-2) = 9 means the point (-2, 9); g(4) = -3 means the point (4, -3). Step 2: Apply the slope formula: (change in output) / (change in input) = (-3 - 9) / (4 - (-2)). Step 3: Simplify carefully with the negative numbers: -12 / 6 = -2.",
           answer: "The slope is -2, found by dividing the change in output (-12) by the change in input (6) — the negative numbers make this a good check on sign carefulness.",
+          diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "(-2, 9)", at: "left" }, { label: "(4, -3)", at: "right" }] },
           difficulty: "medium",
         },
         {
@@ -2166,6 +2178,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Translate function notation into coordinate pairs: h(1) = 7 means (1, 7); h(4) = 16 means (4, 16). Step 2: Apply the slope formula: (16 - 7) / (4 - 1). Step 3: Simplify: 9 / 3 = 3.",
           answer: "The slope is 3, found by dividing the change in output (9) by the change in input (3).",
+          diagram: { kind: "lineGraph", direction: "steepPos", points: [{ label: "(1, 7)", at: "left" }, { label: "(4, 16)", at: "right" }] },
           difficulty: "easy",
         },
         {
@@ -2173,6 +2186,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Use the slope formula in reverse — each increase of 1 in input increases the output by the slope, 4. Step 2: Going from x = 2 to x = 5 is an increase of 3 in input, so the output increases by 4 × 3 = 12. Step 3: k(5) = 11 + 12 = 23.",
           answer: "k(5) = 23, found by applying the slope (4) across the 3-unit increase in input, rather than needing two given points to compute a new slope.",
+          diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "(2, 11)", at: "left" }, { label: "k(5) = ?", at: "right" }], slopeLabel: "slope = 4" },
           difficulty: "medium",
         },
         {
@@ -2180,6 +2194,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Any two points from a linear function's table give the same slope, so pick a convenient pair — say (-3, 22) and (1, 10). Step 2: Apply the slope formula: (10 - 22) / (1 - (-3)) = -12 / 4 = -3. Step 3: Checking with the third point, from (1, 10) to (6, -5): (-5 - 10) / (6 - 1) = -15 / 5 = -3 — the same value, confirming consistency.",
           answer: "The slope is -3, found using any two of the given points, since a linear function has one constant slope everywhere — checking with the third point confirms it.",
+          diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "(-3, 22)", at: "left" }, { label: "(6, -5)", at: "right" }] },
           difficulty: "hard",
         },
       ],
@@ -2556,6 +2571,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Compare the slopes: both are 2 — identical. Step 2: Compare the y-intercepts: 1 versus -3 — different. Step 3: Same slope with different intercepts means the lines are parallel and never intersect — no solution, without needing to solve anything further.",
           answer: "No solution — the lines share the same slope but have different y-intercepts, making them parallel.",
+          diagram: { kind: "systemGraph", line1Direction: "gentlePos", line2Direction: "gentlePos", parallel: true },
           difficulty: "easy",
         },
         {
@@ -2563,6 +2579,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Convert both to slope-intercept form before comparing anything. First equation: y = -2x + 5. Second equation: 2y = -4x + 10, which simplifies to y = -2x + 5 as well. Step 2: Compare: both the slope (-2) and the y-intercept (5) match exactly — this isn't just two parallel lines, it's the exact same line written two different ways. Step 3: Same slope and same intercept means every point on the line is a solution.",
           answer: "Infinitely many solutions — both equations describe the exact same line once simplified, which is a step further than the merely-parallel (no solution) case.",
+          diagram: { kind: "systemGraph", line1Direction: "gentleNeg", line2Direction: "gentleNeg", sameLine: true },
           difficulty: "medium",
         },
         {
@@ -2570,6 +2587,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Compare the slopes: 3 versus -1 — different. Step 2: Different slopes always mean exactly one solution, without needing to solve anything further.",
           answer: "Exactly one solution — the lines have different slopes, so they cross at exactly one point.",
+          diagram: { kind: "systemGraph", line1Direction: "steepPos", line2Direction: "gentleNeg", solutionLabel: "?" },
           difficulty: "easy",
         },
         {
@@ -2577,6 +2595,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Convert both to slope-intercept form first. Equation 1: y = -2x + 7. Equation 2: 2y = -4x + 9, so y = -2x + 4.5. Step 2: Compare: both have slope -2 — identical. Step 3: Compare the intercepts: 7 versus 4.5 — different. Same slope with different intercepts means the lines are parallel — no solution.",
           answer: "No solution — the lines share the same slope but have different y-intercepts, making them parallel.",
+          diagram: { kind: "systemGraph", line1Direction: "gentleNeg", line2Direction: "gentleNeg", parallel: true },
           difficulty: "medium",
         },
         {
@@ -2584,6 +2603,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Convert both to slope-intercept form. Equation 1: 6y = 3x + 12, so y = 0.5x + 2. Equation 2: -2y = -x - 4, so y = 0.5x + 2. Step 2: Both the slope AND the intercept match exactly — despite looking like different equations at first glance (different coefficients, one negative), they're actually the same line (equation 1 is -3 times equation 2). Step 3: Same slope and same intercept means every point on the line is a solution.",
           answer: "Infinitely many solutions — despite looking different at first, converting both to slope-intercept form reveals they describe the exact same line.",
+          diagram: { kind: "systemGraph", line1Direction: "gentlePos", line2Direction: "gentlePos", sameLine: true },
           difficulty: "hard",
         },
       ],
@@ -2604,6 +2624,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: The solution to a system, read from a graph, is simply the point where the two lines cross. Step 2: That marked point is (3, 5). Step 3: Report the coordinates directly — no algebra needed.",
           answer: "(3, 5) is the solution, read directly from the marked intersection point.",
+          diagram: { kind: "systemGraph", line1Direction: "steepPos", line2Direction: "gentleNeg", solutionLabel: "(3, 5)" },
           difficulty: "easy",
         },
         {
@@ -2611,6 +2632,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Convert the grid description directly into coordinates: 4 units right means x = 4, 2 units up means y = 2. Step 2: The solution is the point where the lines actually cross, which is exactly this marked point.",
           answer: "(4, 2) is the solution, read directly from the marked intersection point.",
+          diagram: { kind: "systemGraph", line1Direction: "gentlePos", line2Direction: "steepNeg", solutionLabel: "(4, 2)" },
           difficulty: "easy",
         },
         {
@@ -2618,6 +2640,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: A system's 'solution' specifically means the point where the two lines cross EACH OTHER, not either line's own y-intercept. Step 2: The y-intercepts, (0, 6) and (0, 1), describe where each line individually crosses the y-axis — not the answer to this question. Step 3: The solution is the shared intersection point, (2, 4).",
           answer: "(2, 4) is the solution — the two individual y-intercepts describe where each line crosses the y-axis on its own, not where the lines meet each other.",
+          diagram: { kind: "systemGraph", line1Direction: "gentleNeg", line2Direction: "steepPos", solutionLabel: "(2, 4)" },
           difficulty: "medium",
         },
         {
@@ -3313,6 +3336,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Match the given function to the vertex form template, a(x-h)² + k. Step 2: Identify h and k directly: since the function has (x - 2), h = 2; since it adds 5, k = 5. Step 3: The vertex is (h, k) = (2, 5), read directly with no further calculation needed.",
           answer: "(2, 5), read directly from vertex form without any calculation.",
+          diagram: { kind: "parabolaGraph", opensUp: true, vertexLabel: "(2, 5)" },
           difficulty: "easy",
         },
         {
@@ -3320,6 +3344,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Match to the template a(x-h)² + k. Step 2: The function has (x + 3), not (x - 3) — since the template subtracts h, this means h = -3, not h = 3. It also subtracts 1, so k = -1. Step 3: The vertex is (h, k) = (-3, -1). The negative leading coefficient (a = -2) doesn't change how h and k are read; it just means this vertex is the graph's maximum point rather than its minimum.",
           answer: "(-3, -1), read directly from vertex form — note that (x+3) means h = -3, not h = 3, since the template is written as (x - h).",
+          diagram: { kind: "parabolaGraph", opensUp: false, vertexLabel: "(-3, -1)" },
           difficulty: "medium",
         },
         {
@@ -3327,6 +3352,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Match to the template a(x-h)² + k. Step 2: Since the function has (x - 7), h = 7; since it adds 2, k = 2. Step 3: The vertex is (7, 2), read directly.",
           answer: "(7, 2), read directly from vertex form.",
+          diagram: { kind: "parabolaGraph", opensUp: true, vertexLabel: "(7, 2)" },
           difficulty: "easy",
         },
         {
@@ -3334,6 +3360,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Match to the template a(x-h)² + k. Step 2: Since the function has (x + 4), meaning (x - (-4)), h = -4. Step 3: There's no added or subtracted constant after the squared term — that means k = 0, not that there's no k at all; the vertex's y-coordinate is exactly 0.",
           answer: "(-4, 0) — even though no constant is explicitly added, k is still 0, not absent.",
+          diagram: { kind: "parabolaGraph", opensUp: true, vertexLabel: "(-4, 0)" },
           difficulty: "medium",
         },
         {
@@ -3341,6 +3368,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: This isn't written in the standard y = a(x-h)² + k template yet — isolate y first by adding 4 to both sides: y = -(x-6)² + 4. Step 2: Now match to the template: h = 6, k = 4. Step 3: The vertex is (6, 4), read the same way as always, just after one rearranging step first.",
           answer: "(6, 4) — the equation needed to be rearranged into standard vertex form (adding 4 to isolate y) before the vertex could be read off directly.",
+          diagram: { kind: "parabolaGraph", opensUp: false, vertexLabel: "(6, 4)" },
           difficulty: "hard",
         },
       ],
@@ -3359,6 +3387,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recognize this is percentage decay, not a flat dollar amount lost each year — this requires an exponential model, not a linear one. Step 2: Since the value decreases by 12% each year, 88% remains each year, giving a base of 0.88. Step 3: Apply the model: 30000 × (0.88)^2 = 30000 × 0.7744 = 23,232.",
           answer: "$23,232, found using an exponential decay model with a base of 0.88 (representing 88% remaining each year) raised to the number of years.",
+          diagram: { kind: "exponentialGraph", growth: false, yInterceptLabel: "$30,000" },
           difficulty: "easy",
         },
         {
@@ -3366,6 +3395,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recognize this is percentage growth repeated every hour — this needs an exponential model, not a model that just adds a flat number of bacteria each hour. Step 2: Growth of 8% per hour means the base is 1 + 0.08 = 1.08, not 0.08 itself. Step 3: Write the model with the starting amount out front and the growth base raised to the number of hours: P = 500(1.08)^t.",
           answer: "P = 500(1.08)^t — 500 is the starting population and 1.08 is the growth multiplier per hour (1 + 0.08), not the raw 0.08 rate.",
+          diagram: { kind: "exponentialGraph", growth: true, yInterceptLabel: "500" },
           difficulty: "medium",
         },
         {
@@ -3373,6 +3403,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Recognize this is percentage decay — needs an exponential model. Step 2: A 5% decrease means 95% remains each year, giving a base of 0.95. Step 3: P = 800(0.95)^t.",
           answer: "P = 800(0.95)^t, using a base of 0.95 (95% remaining each year).",
+          diagram: { kind: "exponentialGraph", growth: false, yInterceptLabel: "800" },
           difficulty: "easy",
         },
         {
@@ -3380,6 +3411,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: This needs adjusting for compounding frequency — 8% is an ANNUAL rate, but interest compounds quarterly, so the rate per period is 0.08/4 = 0.02, not 0.08. Step 2: Since there are 4 compounding periods per year, the exponent must count total quarters over t years: 4t, not just t. Step 3: V = 2000(1.02)^(4t).",
           answer: "V = 2000(1.02)^(4t) — the annual rate is divided by 4 for the quarterly rate, and the exponent counts total quarters, not years.",
+          diagram: { kind: "exponentialGraph", growth: true, yInterceptLabel: "$2,000" },
           difficulty: "medium",
         },
         {
@@ -3387,6 +3419,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Since no percentage is stated directly, find the growth multiplier by dividing the new value by the original: 44,000 / 40,000 = 1.1. Step 2: This multiplier (1.1) IS the base of the exponential function directly — no need to separately identify '10%' and re-add 1. Step 3: P = 40000(1.1)^t.",
           answer: "P = 40000(1.1)^t — the growth multiplier is found directly by dividing the new population by the original, without needing to separately convert a stated percentage.",
+          diagram: { kind: "exponentialGraph", growth: true, yInterceptLabel: "40,000" },
           difficulty: "hard",
         },
       ],
@@ -4164,6 +4197,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Notice the key phrase 'constant rate' and 'straight-line pattern' — this describes a fixed amount of increase for each fixed step along the x-axis. Step 2: Compare to model behaviors: linear models have constant rate of change; exponential models have accelerating rate of change; quadratic models change direction at a vertex. Step 3: A constant rate of change specifically matches the definition of a linear relationship.",
           answer: "A linear model fits best, since a constant rate of increase forming a straight-line pattern is the defining characteristic of linear relationships.",
+          diagram: { kind: "scatterGraph", trend: "linearPos" },
           difficulty: "easy",
         },
         {
@@ -4171,6 +4205,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: The key phrase is that the rate of increase itself keeps growing — each step's jump is bigger than the one before, unlike the constant jumps of a linear pattern. Step 2: This rules out linear (constant rate) immediately. It's tempting to think 'curving upward' means quadratic, but a quadratic model eventually turns and changes direction at its vertex — this pattern just keeps accelerating in the same direction without turning around. Step 3: A rate of increase that keeps growing, without reversing direction, matches exponential growth specifically.",
           answer: "An exponential model fits best, since the rate of increase itself keeps growing rather than staying constant (ruling out linear) or reversing direction at a peak (ruling out quadratic).",
+          diagram: { kind: "scatterGraph", trend: "exponential" },
           difficulty: "medium",
         },
         {
@@ -4178,6 +4213,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: Notice the data doesn't just keep increasing or decreasing — it changes direction once, at a single peak. Step 2: Neither linear (constant rate, never changes direction) nor exponential (keeps accelerating in one direction) matches a shape that turns around. Step 3: A single peak or trough is the defining feature of a quadratic model.",
           answer: "A quadratic model fits best, since a single symmetric peak — the data rising, then falling — is the defining shape of a quadratic relationship.",
+          diagram: { kind: "scatterGraph", trend: "quadratic" },
           difficulty: "easy",
         },
         {
@@ -4185,6 +4221,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           walkthrough:
             "Step 1: The rate of increase itself is changing — specifically getting SMALLER — which rules out a purely linear model (constant rate). Step 2: This also rules out exponential growth, which would have an ACCELERATING rate, the opposite direction. Step 3: A rate of increase that's shrinking while still positive matches the rising portion of a quadratic model, before it reaches its peak and turns downward.",
           answer: "A quadratic model fits best — even though the points are still rising throughout, the shrinking rate of increase matches the beginning portion of a curve that will eventually peak and turn around.",
+          diagram: { kind: "scatterGraph", trend: "quadratic" },
           difficulty: "medium",
         },
         {

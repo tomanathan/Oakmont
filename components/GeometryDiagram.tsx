@@ -25,6 +25,9 @@ function Label({
   anchor?: "start" | "middle" | "end";
   size?: number;
 }) {
+  // A halo behind the glyphs (same tone as the card/shape fill) keeps a
+  // label legible even when it sits on or near a line -- the line gets
+  // masked out under the number instead of visibly cutting through it.
   return (
     <text
       x={x}
@@ -34,6 +37,10 @@ function Label({
       fill={hilite ? HILITE : muted ? MUTED : STROKE}
       fontWeight={hilite ? 700 : 500}
       fontFamily="inherit"
+      stroke={FILL}
+      strokeWidth={4}
+      strokeLinejoin="round"
+      paintOrder="stroke"
     >
       {text}
     </text>
@@ -171,8 +178,8 @@ function TriangleAngles({
         <polygon points={`${A.join(",")} ${C.join(",")} ${D.join(",")}`} fill="#f6e8db" stroke={STROKE} strokeWidth={2} />
         <line x1={C[0]} y1={C[1] - 5} x2={C[0]} y2={C[1] + 5} stroke={STROKE} strokeWidth={1.5} />
         <Label x={62} y={155} text={chained.angleB} />
-        <Label x={112} y={58} text={chained.angleBAC} size={13} />
-        <Label x={168} y={58} text={chained.angleDAC} hilite size={13} />
+        <Label x={120} y={90} text={chained.angleBAC} size={13} />
+        <Label x={160} y={90} text={chained.angleDAC} hilite size={13} />
         <Label x={205} y={155} text={chained.angleD} />
       </>
     );
@@ -188,7 +195,7 @@ function TriangleAngles({
         <line x1={C[0]} y1={C[1]} x2={extPoint[0]} y2={extPoint[1]} stroke={STROKE} strokeWidth={1.5} strokeDasharray="4 3" />
       )}
       <polygon points={`${A.join(",")} ${B.join(",")} ${C.join(",")}`} fill={FILL} stroke={STROKE} strokeWidth={2} />
-      {angleA !== undefined && <Label x={130} y={52} text={angleA} size={13} />}
+      {angleA !== undefined && <Label x={130} y={60} text={angleA} size={13} />}
       {angleB !== undefined && <Label x={62} y={155} text={angleB} size={13} />}
       {angleC !== undefined && <Label x={195} y={155} text={angleC} size={13} />}
       {exterior && <Label x={255} y={150} text={exterior.label} hilite size={13} />}
@@ -373,8 +380,8 @@ function CircleBasic({
         <line x1={O[0]} y1={O[1]} x2={p2[0]} y2={p2[1]} stroke={STROKE} strokeWidth={2} />
         <line x1={p1[0]} y1={p1[1]} x2={p2[0]} y2={p2[1]} stroke={STROKE} strokeWidth={2} />
         <Label x={O[0] - 20} y={O[1] - 4} text={chordTriangle.radius} size={12} anchor="end" />
-        <Label x={O[0]} y={O[1] + 30} text={chordTriangle.angle} size={13} />
-        <Label x={(p1[0] + p2[0]) / 2} y={(p1[1] + p2[1]) / 2 + 22} text={chordTriangle.chord} hilite size={13} />
+        <Label x={O[0]} y={O[1] + 16} text={chordTriangle.angle} size={13} />
+        <Label x={(p1[0] + p2[0]) / 2} y={(p1[1] + p2[1]) / 2 + 24} text={chordTriangle.chord} hilite size={13} />
       </>
     );
   }
@@ -568,7 +575,7 @@ function Solid({ shape, labels }: { shape: string; labels: Record<string, string
         <path d="M 55 165 A 75 16 0 0 0 205 165" fill="none" stroke={STROKE} strokeWidth={2} />
         <ellipse cx={130} cy={65} rx={75} ry={16} fill={FILL} stroke={STROKE} strokeWidth={2} />
         <ellipse cx={130} cy={65} rx={40} ry={9} fill="white" stroke={STROKE} strokeWidth={1.5} />
-        <Label x={168} y={58} text={labels.outerR ?? ""} size={11} />
+        <Label x={196} y={48} text={labels.outerR ?? ""} size={11} anchor="start" />
         <Label x={130} y={68} text={labels.innerR ?? ""} size={11} />
         <Label x={222} y={115} text={labels.len ?? ""} size={13} anchor="start" />
       </>
@@ -644,6 +651,360 @@ function ScaleCompare({ shape, factorLabel }: { shape: "square" | "cube" | "circ
   );
 }
 
+function Axes() {
+  return (
+    <>
+      <line x1={18} y1={105} x2={264} y2={105} stroke={MUTED} strokeWidth={1.5} />
+      <line x1={140} y1={12} x2={140} y2={198} stroke={MUTED} strokeWidth={1.5} />
+      <path d="M 258 100 L 264 105 L 258 110" fill="none" stroke={MUTED} strokeWidth={1.5} />
+      <path d="M 135 18 L 140 12 L 145 18" fill="none" stroke={MUTED} strokeWidth={1.5} />
+      <Label x={256} y={120} text="x" muted size={12} />
+      <Label x={150} y={24} text="y" muted size={12} />
+    </>
+  );
+}
+
+const LINE_ENDPOINTS: Record<string, [[number, number], [number, number]]> = {
+  steepPos: [
+    [70, 185],
+    [210, 25],
+  ],
+  gentlePos: [
+    [25, 140],
+    [255, 65],
+  ],
+  steepNeg: [
+    [70, 25],
+    [210, 185],
+  ],
+  gentleNeg: [
+    [25, 65],
+    [255, 140],
+  ],
+  zero: [
+    [25, 105],
+    [255, 105],
+  ],
+  undefined: [
+    [140, 15],
+    [140, 195],
+  ],
+};
+
+function pointOnLine([x1, y1]: [number, number], [x2, y2]: [number, number], t: number): [number, number] {
+  return [x1 + (x2 - x1) * t, y1 + (y2 - y1) * t];
+}
+
+function GraphLine({
+  direction,
+  dashed,
+  offset = 0,
+  color = STROKE,
+}: {
+  direction: string;
+  dashed?: boolean;
+  offset?: number;
+  color?: string;
+}) {
+  const [[x1, y1], [x2, y2]] = LINE_ENDPOINTS[direction] ?? LINE_ENDPOINTS.gentlePos;
+  return (
+    <line
+      x1={x1}
+      y1={y1 + offset}
+      x2={x2}
+      y2={y2 + offset}
+      stroke={color}
+      strokeWidth={2.5}
+      strokeDasharray={dashed ? "5 4" : undefined}
+    />
+  );
+}
+
+function lineIntersection(dir1: string, dir2: string): [number, number] {
+  const [[ax1, ay1], [ax2, ay2]] = LINE_ENDPOINTS[dir1] ?? LINE_ENDPOINTS.gentlePos;
+  const [[bx1, by1], [bx2, by2]] = LINE_ENDPOINTS[dir2] ?? LINE_ENDPOINTS.gentleNeg;
+  const d = (ax1 - ax2) * (by1 - by2) - (ay1 - ay2) * (bx1 - bx2);
+  if (Math.abs(d) < 1e-6) return [140, 105];
+  const a = ax1 * ay2 - ay1 * ax2;
+  const b = bx1 * by2 - by1 * bx2;
+  const px = (a * (bx1 - bx2) - (ax1 - ax2) * b) / d;
+  const py = (a * (by1 - by2) - (ay1 - ay2) * b) / d;
+  return [Math.min(260, Math.max(20, px)), Math.min(195, Math.max(15, py))];
+}
+
+const POINT_X: Record<"left" | "mid" | "right", number> = { left: 0.15, mid: 0.5, right: 0.85 };
+
+function LineGraph({
+  direction,
+  points,
+  slopeLabel,
+  extra,
+}: {
+  direction: string;
+  points?: { label: string; at: "left" | "mid" | "right" }[];
+  slopeLabel?: string;
+  extra?: { direction: string; label?: string };
+}) {
+  const endpoints = LINE_ENDPOINTS[direction] ?? LINE_ENDPOINTS.gentlePos;
+  return (
+    <>
+      <Axes />
+      {extra && (
+        <>
+          <GraphLine
+            direction={extra.direction}
+            dashed
+            color={MUTED}
+            offset={extra.direction === direction ? -35 : 0}
+          />
+          {extra.label && (
+            <Label
+              {...(() => {
+                const [p1, p2] = LINE_ENDPOINTS[extra.direction] ?? LINE_ENDPOINTS.gentlePos;
+                const [lx, ly] = pointOnLine(p1, p2, 0.2);
+                return { x: lx, y: (ly + (extra.direction === direction ? -35 : 0)) - 8 };
+              })()}
+              text={extra.label}
+              muted
+              size={11}
+            />
+          )}
+        </>
+      )}
+      <GraphLine direction={direction} />
+      {points?.map((p, i) => {
+        const [px, py] = pointOnLine(endpoints[0], endpoints[1], POINT_X[p.at]);
+        return (
+          <g key={i}>
+            <circle cx={px} cy={py} r={3.5} fill={HILITE} />
+            <Label x={px + 8} y={py - 8} text={p.label} hilite size={12} anchor="start" />
+          </g>
+        );
+      })}
+      {slopeLabel && (
+        <Label
+          x={pointOnLine(endpoints[0], endpoints[1], 0.7)[0]}
+          y={pointOnLine(endpoints[0], endpoints[1], 0.7)[1] - 12}
+          text={slopeLabel}
+          size={12}
+        />
+      )}
+    </>
+  );
+}
+
+function SystemGraph({
+  line1Direction,
+  line2Direction,
+  parallel,
+  sameLine,
+  solutionLabel,
+}: {
+  line1Direction: string;
+  line2Direction: string;
+  parallel?: boolean;
+  sameLine?: boolean;
+  solutionLabel?: string;
+}) {
+  if (sameLine) {
+    return (
+      <>
+        <Axes />
+        <GraphLine direction={line1Direction} />
+        <GraphLine direction={line1Direction} offset={-3} color={MUTED} dashed />
+        <Label x={200} y={40} text="Same line" muted size={12} />
+      </>
+    );
+  }
+  if (parallel) {
+    return (
+      <>
+        <Axes />
+        <GraphLine direction={line1Direction} offset={-25} />
+        <GraphLine direction={line1Direction} offset={25} />
+        <Label x={215} y={50} text="No intersection" muted size={11} />
+      </>
+    );
+  }
+  const [ix, iy] = lineIntersection(line1Direction, line2Direction);
+  return (
+    <>
+      <Axes />
+      <GraphLine direction={line1Direction} />
+      <GraphLine direction={line2Direction} />
+      <circle cx={ix} cy={iy} r={4} fill={HILITE} />
+      {solutionLabel && (
+        <Label x={ix + 10} y={iy - 10} text={solutionLabel} hilite size={12} anchor="start" />
+      )}
+    </>
+  );
+}
+
+function ParabolaGraph({
+  opensUp,
+  vertexLabel,
+  rootLabels,
+  yInterceptLabel,
+}: {
+  opensUp: boolean;
+  vertexLabel?: string;
+  rootLabels?: [string, string];
+  yInterceptLabel?: string;
+}) {
+  const hasRoots = !!rootLabels;
+  const vertexY = opensUp ? (hasRoots ? 175 : 70) : hasRoots ? 35 : 140;
+  const armY = opensUp ? 20 : 190;
+  const leftX = 45;
+  const rightX = 235;
+  const vertexX = 140;
+  const ctrlY = 2 * vertexY - armY;
+  return (
+    <>
+      <Axes />
+      <path
+        d={`M ${leftX} ${armY} Q ${vertexX} ${ctrlY} ${rightX} ${armY}`}
+        fill="none"
+        stroke={STROKE}
+        strokeWidth={2.5}
+      />
+      <circle cx={vertexX} cy={vertexY} r={3} fill={STROKE} />
+      {vertexLabel && (
+        <Label x={vertexX} y={vertexY + (opensUp ? 16 : -10)} text={vertexLabel} hilite size={12} />
+      )}
+      {hasRoots && (
+        <>
+          <circle cx={95} cy={105} r={3} fill={HILITE} />
+          <circle cx={185} cy={105} r={3} fill={HILITE} />
+          <Label x={95} y={122} text={rootLabels![0]} size={11} />
+          <Label x={185} y={122} text={rootLabels![1]} size={11} />
+        </>
+      )}
+      {yInterceptLabel && !hasRoots && (
+        <Label x={vertexX + 18} y={vertexY - (opensUp ? 8 : -18)} text={yInterceptLabel} size={11} anchor="start" />
+      )}
+    </>
+  );
+}
+
+function ExponentialGraph({
+  growth,
+  yInterceptLabel,
+  asymptoteLabel,
+}: {
+  growth: boolean;
+  yInterceptLabel?: string;
+  asymptoteLabel?: string;
+}) {
+  const path = growth ? "M 30 188 Q 200 188 255 22" : "M 30 22 Q 90 188 255 190";
+  return (
+    <>
+      <Axes />
+      <line x1={20} y1={188} x2={264} y2={188} stroke={MUTED} strokeWidth={1.5} strokeDasharray="4 3" />
+      <path d={path} fill="none" stroke={STROKE} strokeWidth={2.5} />
+      {asymptoteLabel && <Label x={230} y={200} text={asymptoteLabel} muted size={11} />}
+      {yInterceptLabel && (
+        <Label
+          x={growth ? 42 : 42}
+          y={growth ? 178 : 15}
+          text={yInterceptLabel}
+          hilite
+          size={12}
+          anchor="start"
+        />
+      )}
+    </>
+  );
+}
+
+const SCATTER_POINTS: Record<string, [number, number][]> = {
+  linearPos: [
+    [40, 175],
+    [65, 160],
+    [80, 165],
+    [100, 145],
+    [120, 150],
+    [140, 125],
+    [155, 135],
+    [175, 110],
+    [195, 100],
+    [210, 90],
+    [230, 75],
+    [245, 60],
+  ],
+  linearNeg: [
+    [40, 55],
+    [60, 70],
+    [80, 65],
+    [100, 90],
+    [120, 85],
+    [140, 105],
+    [160, 115],
+    [180, 130],
+    [200, 140],
+    [215, 155],
+    [235, 165],
+    [250, 180],
+  ],
+  quadratic: [
+    [35, 60],
+    [55, 100],
+    [75, 130],
+    [95, 155],
+    [120, 172],
+    [140, 178],
+    [160, 172],
+    [185, 155],
+    [205, 130],
+    [225, 100],
+    [245, 60],
+  ],
+  exponential: [
+    [35, 178],
+    [60, 176],
+    [85, 172],
+    [110, 165],
+    [130, 155],
+    [150, 140],
+    [170, 115],
+    [190, 85],
+    [210, 50],
+    [230, 25],
+    [248, 15],
+  ],
+  none: [
+    [45, 100],
+    [70, 60],
+    [90, 150],
+    [115, 90],
+    [135, 140],
+    [150, 55],
+    [175, 120],
+    [195, 80],
+    [215, 160],
+    [235, 100],
+  ],
+};
+
+function ScatterGraph({ trend }: { trend: string }) {
+  const pts = SCATTER_POINTS[trend] ?? SCATTER_POINTS.none;
+  return (
+    <>
+      <Axes />
+      {pts.map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r={3} fill={STROKE} opacity={0.75} />
+      ))}
+      {trend === "linearPos" && <line x1={35} y1={182} x2={250} y2={58} stroke={HILITE} strokeWidth={1.5} strokeDasharray="4 3" />}
+      {trend === "linearNeg" && <line x1={35} y1={52} x2={255} y2={182} stroke={HILITE} strokeWidth={1.5} strokeDasharray="4 3" />}
+      {trend === "quadratic" && (
+        <path d="M 35 55 Q 140 195 245 55" fill="none" stroke={HILITE} strokeWidth={1.5} strokeDasharray="4 3" />
+      )}
+      {trend === "exponential" && (
+        <path d="M 35 180 Q 200 180 248 15" fill="none" stroke={HILITE} strokeWidth={1.5} strokeDasharray="4 3" />
+      )}
+    </>
+  );
+}
+
 export function GeometryDiagram({ spec }: { spec: DiagramSpec }) {
   return (
     <div className="my-3 rounded-lg border border-[#f0d0b3] bg-[#fef8f2] p-3 flex flex-col items-center">
@@ -661,6 +1022,11 @@ export function GeometryDiagram({ spec }: { spec: DiagramSpec }) {
         {spec.kind === "unitCircleAngle" && <UnitCircleAngle {...spec} />}
         {spec.kind === "solid" && <Solid {...spec} />}
         {spec.kind === "scaleCompare" && <ScaleCompare {...spec} />}
+        {spec.kind === "lineGraph" && <LineGraph {...spec} />}
+        {spec.kind === "systemGraph" && <SystemGraph {...spec} />}
+        {spec.kind === "parabolaGraph" && <ParabolaGraph {...spec} />}
+        {spec.kind === "exponentialGraph" && <ExponentialGraph {...spec} />}
+        {spec.kind === "scatterGraph" && <ScatterGraph {...spec} />}
       </svg>
       <div className="text-[10px] text-gray-400 mt-1">Figure not drawn to scale.</div>
     </div>
