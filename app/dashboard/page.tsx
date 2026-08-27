@@ -7,7 +7,7 @@ import { computePetState, PET_NAME } from "@/lib/pet";
 import { CURRICULUM, ALL_SUBSKILLS, buildStudyPlan } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
 import { PetCard } from "@/components/PetCard";
-import { WelcomeBackBanner } from "@/components/WelcomeBackBanner";
+import { WelcomeBackModal } from "@/components/WelcomeBackModal";
 import { DashboardClient } from "./DashboardClient";
 
 export default async function DashboardPage() {
@@ -59,8 +59,7 @@ export default async function DashboardPage() {
   return (
     <AppShell email={user.email} stats={stats}>
       {stats.previousLoginAt && stats.lastLoginAt && (
-        <WelcomeBackBanner
-          sessionKey={stats.lastLoginAt.toISOString()}
+        <WelcomeBackModal
           previousLoginAt={stats.previousLoginAt.toISOString()}
           quizzesLastSession={quizzesLastSession}
           masteredLastSession={masteredLastSession}

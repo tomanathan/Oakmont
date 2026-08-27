@@ -21,6 +21,14 @@ export function WelcomeClient({ email }: { email: string }) {
 
   return (
     <div className="max-w-[640px] mx-auto px-6 py-12 font-sans">
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={() => router.push("/dashboard")}
+          className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2"
+        >
+          Skip to dashboard →
+        </button>
+      </div>
       <div className="text-center mb-10">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#6d7fd6] to-accent flex items-center justify-center text-white text-xl font-bold mx-auto mb-4">
           O
