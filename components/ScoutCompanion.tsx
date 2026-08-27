@@ -41,8 +41,14 @@ function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+// Order-independent on purpose: if a transient layout read ever makes
+// max < min (e.g. clientWidth briefly smaller than the margin itself),
+// this still returns a sensible value instead of collapsing to `max`
+// (which a naive min(max, max(min, v)) would do whenever min > max).
 function clamp(v: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, v));
+  const lo = Math.min(min, max);
+  const hi = Math.max(min, max);
+  return Math.min(hi, Math.max(lo, v));
 }
 
 // Pages without the logged-in app chrome -- Scout doesn't belong there.
@@ -61,6 +67,44 @@ const SLOW_SPEED = 60; // px/sec, used when the OS prefers reduced motion
 const LEG_SWAP_MS = 110;
 const MOUSE_CHECK_MS = 7000; // how often he reconsiders wandering toward the cursor
 const ESCAPE_COOLDOWN_MS = 1500;
+// Text doesn't move, so unlike the cursor reflex this doesn't need heavy
+// damping to avoid fighting a moving target -- keep it short so a fresh
+// overlap (crossing through a different block mid-transit, say) gets
+// corrected almost immediately rather than sitting for up to 1.5s.
+const TEXT_ESCAPE_COOLDOWN_MS = 200;
+
+// The area kept clear of text -- not just his body, but the zone above him
+// where a speech bubble renders too (he speaks often enough that this
+// needs to be checked proactively, not just while a bubble happens to be
+// showing). Sized to the bubble's own max-width/typical height plus its
+// gap, so "clear of text" means clear of anything he could show, not just
+// his sprite. Hovering just outside this box is still fine -- it isn't
+// padded beyond what he can actually cover.
+const FOOTPRINT_HALF_W = 120;
+const FOOTPRINT_ABOVE = 90;
+const FOOTPRINT_BELOW = 20;
+const TEXT_SELECTOR =
+  "h1,h2,h3,h4,h5,h6,p,span,li,td,th,label,a,button,strong,em,b,i,small,dt,dd,blockquote,figcaption,caption,legend,summary";
+const TEXT_REFRESH_MS = 1500;
+
+// How far outside the visible viewport he has to drift before he notices
+// and dashes back, and how much faster that dash is than his normal pace.
+const OUT_OF_VIEW_MARGIN = 40;
+const RETURN_SPEED_MULT = 2.1;
+const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave me behind!"];
+
+function rectsOverlap(
+  al: number,
+  at: number,
+  ar: number,
+  ab: number,
+  bl: number,
+  bt: number,
+  br: number,
+  bb: number
+): boolean {
+  return al < br && ar > bl && at < bb && ab > bt;
+}
 
 export function ScoutCompanion() {
   const pathname = usePathname();
@@ -83,6 +127,9 @@ export function ScoutCompanion() {
   const mouseAnchorRef = useRef<{ x: number; y: number } | null>(null);
   const nextMouseCheckRef = useRef(0);
   const escapeUntilRef = useRef(0);
+  const textEscapeUntilRef = useRef(0);
+  const textRectsRef = useRef<{ left: number; top: number; right: number; bottom: number }[]>([]);
+  const returningRef = useRef(false);
   const walkingRef = useRef(false);
   const facingRef = useRef<1 | -1>(1);
   const reducedMotionRef = useRef(false);
@@ -105,8 +152,12 @@ export function ScoutCompanion() {
   // guarding this with a ref that's never reset would leave the second
   // setup a no-op and the pointermove listener permanently unattached.
   useEffect(() => {
-    const startX = window.innerWidth / 2;
-    const startY = window.scrollY + Math.min(window.innerHeight - 120, window.innerHeight * 0.55);
+    // Fall back to a sane default if the viewport isn't actually laid out
+    // yet (same zero-size edge case guarded against in the render loop).
+    const vw0 = window.innerWidth || 800;
+    const vh0 = window.innerHeight || 600;
+    const startX = vw0 / 2;
+    const startY = window.scrollY + Math.min(vh0 - 120, vh0 * 0.55);
     posRef.current = { x: startX, y: startY };
     targetRef.current = { x: startX, y: startY };
     pathTRef.current = 1;
@@ -142,6 +193,72 @@ export function ScoutCompanion() {
       window.removeEventListener("pointermove", onMove);
     };
   }, []);
+
+  // Keeps a snapshot of every visible text element's page-space bounding
+  // box, so movement can steer clear of them -- refreshed on navigation,
+  // on resize, and on an interval to catch content that changes without a
+  // route change (quiz answers, saved results, etc.), rather than on every
+  // tick, since it walks the whole DOM.
+  function refreshTextRects() {
+    const els = document.querySelectorAll(TEXT_SELECTOR);
+    const rects: { left: number; top: number; right: number; bottom: number }[] = [];
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const wrapper = wrapperRef.current;
+    els.forEach((el) => {
+      if (wrapper && wrapper.contains(el)) return;
+      const text = el.textContent ? el.textContent.trim() : "";
+      if (!text) return;
+      const cr = el.getBoundingClientRect();
+      if (cr.width < 2 || cr.height < 2) return;
+      rects.push({
+        left: cr.left + scrollX,
+        top: cr.top + scrollY,
+        right: cr.right + scrollX,
+        bottom: cr.bottom + scrollY,
+      });
+    });
+    textRectsRef.current = rects;
+  }
+
+  useEffect(() => {
+    refreshTextRects();
+    const interval = setInterval(refreshTextRects, TEXT_REFRESH_MS);
+    window.addEventListener("resize", refreshTextRects);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("resize", refreshTextRects);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
+  // Returns the first text box his footprint (body + likely speech-bubble
+  // zone, centered on x,y) would overlap, or null if that spot is clear.
+  function overlapsText(x: number, y: number) {
+    const l = x - FOOTPRINT_HALF_W;
+    const r = x + FOOTPRINT_HALF_W;
+    const t = y - FOOTPRINT_ABOVE;
+    const b = y + FOOTPRINT_BELOW;
+    const rects = textRectsRef.current;
+    for (let i = 0; i < rects.length; i++) {
+      const rc = rects[i];
+      if (rectsOverlap(l, t, r, b, rc.left, rc.top, rc.right, rc.bottom)) return rc;
+    }
+    return null;
+  }
+
+  // A point roughly in the middle of whatever's currently on screen, for
+  // dashing back into view.
+  function pickReturnTarget() {
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    return {
+      x: scrollX + vw * 0.2 + Math.random() * vw * 0.6,
+      y: scrollY + vh * 0.25 + Math.random() * vh * 0.5,
+    };
+  }
 
   function speak(text: string, ms = 4500) {
     setBubble(text);
@@ -184,36 +301,53 @@ export function ScoutCompanion() {
 
   // Lays out a new curved leg of the walk: a quadratic Bezier from the
   // current spot to a fresh target, bowed sideways by a random amount so
-  // the path reads as a natural arc instead of a straight beeline. When
-  // `awayFromCursor`, the target is biased to the opposite side of wherever
-  // the pointer currently is (used only for the rare "too close" nudge --
-  // everyday wandering never chases the live cursor).
-  function beginWalk(awayFromCursor = false) {
+  // the path reads as a natural arc instead of a straight beeline.
+  //   - `avoid`: bias the target to the opposite side of this point (used
+  //     for the cursor "too close" and "standing on text" reflexes).
+  //   - `forceTarget`: use this point outright (used to dash back into
+  //     view) instead of picking a random wander target.
+  //   - `urgent`: move faster and straighter -- purposeful, not a stroll.
+  // Whatever target comes out gets resampled (or re-picked, for a forced
+  // one) up to a few times if it lands on top of a text box, so he never
+  // deliberately walks onto text -- only ever right up next to it.
+  function beginWalk(opts: { avoid?: { x: number; y: number } | null; urgent?: boolean; forceTarget?: { x: number; y: number } } = {}) {
+    const { avoid, urgent = false, forceTarget } = opts;
     const start = { x: posRef.current.x, y: posRef.current.y };
-    const maxX = document.documentElement.clientWidth - SIDE_MARGIN;
-    const maxY = document.documentElement.scrollHeight - BOTTOM_MARGIN;
+    // Floored at the margin itself so a transient small clientWidth/
+    // scrollHeight reading (e.g. mid-layout) can never push max below min.
+    const maxX = Math.max(SIDE_MARGIN, document.documentElement.clientWidth - SIDE_MARGIN);
+    const maxY = Math.max(TOP_MARGIN, document.documentElement.scrollHeight - BOTTOM_MARGIN);
 
-    let angle: number;
-    let anchor = mouseAnchorRef.current ?? start;
-    if (awayFromCursor && mouseRef.current) {
-      const away = Math.atan2(start.y - mouseRef.current.y, start.x - mouseRef.current.x);
-      angle = away + (Math.random() - 0.5) * (Math.PI / 2);
-      anchor = start;
-    } else {
-      angle = Math.random() * Math.PI * 2;
+    function randomCandidate() {
+      let angle: number;
+      let anchor = mouseAnchorRef.current ?? start;
+      if (avoid) {
+        const away = Math.atan2(start.y - avoid.y, start.x - avoid.x);
+        angle = away + (Math.random() - 0.5) * (Math.PI / 2);
+        anchor = start;
+      } else {
+        angle = Math.random() * Math.PI * 2;
+      }
+      const radius = WANDER_MIN + Math.random() * (WANDER_MAX - WANDER_MIN);
+      return {
+        x: clamp(anchor.x + Math.cos(angle) * radius, SIDE_MARGIN, maxX),
+        y: clamp(anchor.y + Math.sin(angle) * radius, TOP_MARGIN, maxY),
+      };
     }
-    const radius = WANDER_MIN + Math.random() * (WANDER_MAX - WANDER_MIN);
-    const end = {
-      x: clamp(anchor.x + Math.cos(angle) * radius, SIDE_MARGIN, maxX),
-      y: clamp(anchor.y + Math.sin(angle) * radius, TOP_MARGIN, maxY),
-    };
+
+    let end = forceTarget
+      ? { x: clamp(forceTarget.x, SIDE_MARGIN, maxX), y: clamp(forceTarget.y, TOP_MARGIN, maxY) }
+      : randomCandidate();
+    for (let tries = 0; overlapsText(end.x, end.y) && tries < 12; tries++) {
+      end = forceTarget ? pickReturnTarget() : randomCandidate();
+    }
 
     const dx = end.x - start.x;
     const dy = end.y - start.y;
     const dist = Math.hypot(dx, dy) || 1;
     const perpX = -dy / dist;
     const perpY = dx / dist;
-    const bend = (Math.random() - 0.5) * 2 * Math.min(80, dist * 0.5);
+    const bend = (Math.random() - 0.5) * 2 * Math.min(80, dist * 0.5) * (urgent ? 0.35 : 1);
     // A quadratic Bezier always stays within the convex hull of its three
     // control points, so clamping this one to the same bounds as start/end
     // guarantees the whole curve does too -- otherwise a bend near a page
@@ -228,7 +362,7 @@ export function ScoutCompanion() {
     targetRef.current = end;
     pathLenRef.current = Math.max(30, dist);
     pathTRef.current = 0;
-    pathSpeedRef.current = 0.75 + Math.random() * 0.6;
+    pathSpeedRef.current = urgent ? RETURN_SPEED_MULT + Math.random() * 0.3 : 0.75 + Math.random() * 0.6;
     walkingRef.current = true;
     setIsWalking(true);
   }
@@ -248,6 +382,16 @@ export function ScoutCompanion() {
       const now = performance.now();
       const dt = lastFrameRef.current === null ? 16 : Math.min(64, now - lastFrameRef.current);
       lastFrameRef.current = now;
+
+      // A tab that isn't actually laid out right now (backgrounded,
+      // mid-transition, not yet visible) can report a zero-size viewport,
+      // which would otherwise corrupt every bounds/target calculation
+      // below into a degenerate single point. Skip the tick entirely
+      // rather than compute garbage from it -- position just holds until
+      // a real viewport is back, no jump once it is (dt already got
+      // reset above so the next real tick isn't inflated).
+      if (window.innerWidth < 50 || window.innerHeight < 50) return;
+
       const nowMs = Date.now();
 
       if (nowMs > speakAtRef.current) {
@@ -262,19 +406,53 @@ export function ScoutCompanion() {
         if (mouseRef.current) mouseAnchorRef.current = { ...mouseRef.current };
       }
 
-      // Personal-space reflex: this one DOES use the live cursor (not the
-      // throttled anchor) and can interrupt whatever he's doing, but it's
-      // cooldown-gated so it reacts once and then leaves it alone rather
-      // than fighting the cursor every tick.
-      if (mouseRef.current && nowMs > escapeUntilRef.current) {
-        const d = Math.hypot(posRef.current.x - mouseRef.current.x, posRef.current.y - mouseRef.current.y);
-        if (d < MIN_DIST) {
-          escapeUntilRef.current = nowMs + ESCAPE_COOLDOWN_MS;
-          beginWalk(true);
+      const pos = posRef.current;
+
+      // Highest priority: scrolling him out of the visible viewport means
+      // he'd otherwise just sit there off-screen, which undercuts the
+      // whole point of anchoring him to the page. Dash back in -- once,
+      // not re-triggered every tick while already on the way.
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const outOfView =
+        pos.x < scrollX - OUT_OF_VIEW_MARGIN ||
+        pos.x > scrollX + vw + OUT_OF_VIEW_MARGIN ||
+        pos.y < scrollY - OUT_OF_VIEW_MARGIN ||
+        pos.y > scrollY + vh + OUT_OF_VIEW_MARGIN;
+
+      if (outOfView && !returningRef.current) {
+        returningRef.current = true;
+        beginWalk({ urgent: true, forceTarget: pickReturnTarget() });
+        speak(pick(RETURN_PHRASES), 2400);
+      }
+
+      // Text-overlap reflex: unconditional, on purpose -- "never cover
+      // text" has no exceptions for being mid-return or off in a corner.
+      // While returning, redirect to a fresh clear spot in view rather
+      // than the normal away-from-this-point wander (staying on-mission).
+      if (nowMs > textEscapeUntilRef.current) {
+        const hit = overlapsText(pos.x, pos.y);
+        if (hit) {
+          textEscapeUntilRef.current = nowMs + TEXT_ESCAPE_COOLDOWN_MS;
+          if (returningRef.current) {
+            beginWalk({ urgent: true, forceTarget: pickReturnTarget() });
+          } else {
+            beginWalk({ avoid: { x: (hit.left + hit.right) / 2, y: (hit.top + hit.bottom) / 2 } });
+          }
         }
       }
 
-      const pos = posRef.current;
+      // Personal-space reflex only applies during genuinely normal
+      // wandering -- not while out of view or mid-dash back into it.
+      if (!outOfView && !returningRef.current && mouseRef.current && nowMs > escapeUntilRef.current) {
+        const d = Math.hypot(pos.x - mouseRef.current.x, pos.y - mouseRef.current.y);
+        if (d < MIN_DIST) {
+          escapeUntilRef.current = nowMs + ESCAPE_COOLDOWN_MS;
+          beginWalk({ avoid: mouseRef.current });
+        }
+      }
 
       if (walkingRef.current) {
         const speed = (reducedMotionRef.current ? SLOW_SPEED : RUN_SPEED) * pathSpeedRef.current;
@@ -285,6 +463,7 @@ export function ScoutCompanion() {
           pos.y = targetRef.current.y;
           walkingRef.current = false;
           setIsWalking(false);
+          returningRef.current = false;
           behaviorUntilRef.current = nowMs + pickPauseMs();
         } else {
           const t = pathTRef.current;
@@ -295,12 +474,12 @@ export function ScoutCompanion() {
           pos.x = clamp(
             mt * mt * s.x + 2 * mt * t * c.x + t * t * e.x,
             SIDE_MARGIN,
-            document.documentElement.clientWidth - SIDE_MARGIN
+            Math.max(SIDE_MARGIN, document.documentElement.clientWidth - SIDE_MARGIN)
           );
           pos.y = clamp(
             mt * mt * s.y + 2 * mt * t * c.y + t * t * e.y,
             TOP_MARGIN,
-            document.documentElement.scrollHeight - BOTTOM_MARGIN
+            Math.max(TOP_MARGIN, document.documentElement.scrollHeight - BOTTOM_MARGIN)
           );
           const tangentX = 2 * mt * (c.x - s.x) + 2 * t * (e.x - c.x);
           if (Math.abs(tangentX) > 0.5) {
@@ -309,14 +488,17 @@ export function ScoutCompanion() {
           }
         }
 
+        // Faster movement gets faster leg-swaps too, so a return dash reads
+        // as a run rather than a fast slide.
         legTimerRef.current += dt;
-        if (legTimerRef.current > LEG_SWAP_MS) {
+        const legSwapThreshold = LEG_SWAP_MS / Math.max(0.6, pathSpeedRef.current);
+        if (legTimerRef.current > legSwapThreshold) {
           legTimerRef.current = 0;
           setLegFrame((f) => (f === 0 ? 1 : 0));
         }
       } else {
         if (nowMs > behaviorUntilRef.current) {
-          beginWalk(false);
+          beginWalk();
         } else if (Math.random() < 0.003) {
           // An idle glance side to side -- small, infrequent, alive.
           facingRef.current = facingRef.current === 1 ? -1 : 1;
