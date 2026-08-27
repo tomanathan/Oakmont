@@ -27,6 +27,13 @@ const NUDGES = [
   "No pressure — even five minutes helps.",
   "Whenever you're ready, I'll come along.",
 ];
+// What he says if you click him awake -- distinct from the normal
+// click-to-greet pool so waking him up actually feels like waking him up.
+const SLEEPY_WAKE_PHRASES = [
+  "*yawn* ...oh, hi!",
+  "Huh? Oh — welcome back!",
+  "Mmm... must've dozed off. Hi!",
+];
 const TIPS = [
   "You can retake any quiz from its subskill page to reinforce it.",
   "Set your target test date in Settings and your whole plan resizes to fit.",
@@ -137,6 +144,17 @@ const NAV_SPEAK_CHANCE = 0.75;
 const NAV_SPEAK_DELAY_MIN_MS = 600;
 const NAV_SPEAK_DELAY_MAX_MS = 1300;
 
+// No interaction anywhere on the page (mouse, scroll, keyboard, click, or
+// a navigation) for this long and he settles down for a nap -- only from
+// an already-resting state, never mid-stride. Anything that counts as
+// interaction wakes him again immediately.
+const IDLE_SLEEP_MS = 60000;
+// A short "stirring" pause after waking before he's willing to set off on
+// a fresh walk -- reads as him actually coming to, not an instant snap
+// back to full speed.
+const WAKE_PAUSE_MIN_MS = 500;
+const WAKE_PAUSE_MAX_MS = 1000;
+
 function rectsOverlap(
   al: number,
   at: number,
@@ -159,6 +177,7 @@ export function ScoutCompanion() {
   const [bubble, setBubble] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [behindText, setBehindText] = useState(false);
+  const [asleep, setAsleep] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const posRef = useRef({ x: 80, y: 400 });
@@ -190,6 +209,8 @@ export function ScoutCompanion() {
   const hasGreetedRef = useRef(false);
   const hasMountedPathRef = useRef(false);
   const navSpeakTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastInteractionAtRef = useRef(Date.now());
+  const asleepRef = useRef(false);
 
   // One-time setup: pick a starting spot in page coordinates and fetch
   // Scout's mood. ScoutCompanion is mounted once at the root layout, so
@@ -213,6 +234,7 @@ export function ScoutCompanion() {
     speakAtRef.current =
       Date.now() + AMBIENT_SPEAK_MIN_MS + Math.random() * (AMBIENT_SPEAK_MAX_MS - AMBIENT_SPEAK_MIN_MS);
     behaviorUntilRef.current = Date.now() + 900 + Math.random() * 900;
+    lastInteractionAtRef.current = Date.now();
     setReady(true);
 
     fetch("/api/pet/state")
@@ -235,12 +257,27 @@ export function ScoutCompanion() {
 
     function onMove(e: PointerEvent) {
       mouseRef.current = { x: e.clientX + window.scrollX, y: e.clientY + window.scrollY };
+      lastInteractionAtRef.current = Date.now();
     }
     window.addEventListener("pointermove", onMove);
+
+    // Anything else that counts as "someone's here" for the idle-sleep
+    // timer, even without the mouse moving -- scrolling to read, typing,
+    // clicking anywhere on the page. Lightweight: these only stamp the
+    // timestamp, they don't touch mouseRef.
+    function onInteract() {
+      lastInteractionAtRef.current = Date.now();
+    }
+    window.addEventListener("scroll", onInteract, { passive: true });
+    window.addEventListener("keydown", onInteract);
+    window.addEventListener("click", onInteract);
 
     return () => {
       mq.removeEventListener?.("change", onMotionChange);
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("scroll", onInteract);
+      window.removeEventListener("keydown", onInteract);
+      window.removeEventListener("click", onInteract);
     };
   }, []);
 
@@ -295,6 +332,17 @@ export function ScoutCompanion() {
   }
 
   useEffect(() => {
+    // Navigating somewhere is as clear an "I'm here" signal as it gets --
+    // wake him immediately rather than waiting for the render loop's next
+    // idle check to notice, so there's no chance of a stray nav-triggered
+    // line appearing to come from a dog who's still shown asleep.
+    lastInteractionAtRef.current = Date.now();
+    if (asleepRef.current) {
+      asleepRef.current = false;
+      setAsleep(false);
+      behaviorUntilRef.current = Date.now() + WAKE_PAUSE_MIN_MS + Math.random() * (WAKE_PAUSE_MAX_MS - WAKE_PAUSE_MIN_MS);
+    }
+
     refreshTextRects();
     // A page change swaps the whole text layout out from under him. If
     // he's mid-walk, the target he's headed for was picked against the
@@ -519,6 +567,35 @@ export function ScoutCompanion() {
 
       const nowMs = Date.now();
 
+      // Idle sleep: no interaction anywhere on the page for a while and he
+      // settles down for a nap, frozen in place until something wakes him.
+      // Checked before everything else so the rest of this tick already
+      // knows whether he's out cold -- and so a fresh interaction (which
+      // stamps lastInteractionAtRef the moment it happens, not on the next
+      // tick) wakes him in the very same tick it's noticed in, before any
+      // reactive check below gets a chance to act on stale asleep state.
+      const idleMs = nowMs - lastInteractionAtRef.current;
+      if (asleepRef.current) {
+        if (idleMs < IDLE_SLEEP_MS) {
+          asleepRef.current = false;
+          setAsleep(false);
+          behaviorUntilRef.current = nowMs + WAKE_PAUSE_MIN_MS + Math.random() * (WAKE_PAUSE_MAX_MS - WAKE_PAUSE_MIN_MS);
+        }
+      } else if (idleMs > IDLE_SLEEP_MS && !walkingRef.current && stageRef.current !== "dead") {
+        asleepRef.current = true;
+        setAsleep(true);
+        if (bubbleTimeoutRef.current) clearTimeout(bubbleTimeoutRef.current);
+        setBubble(null);
+      }
+
+      if (asleepRef.current) {
+        // Frozen except for the Zzz (rendered off the `asleep` state) --
+        // no wandering, no cursor/text reflexes, no ambient chatter, until
+        // he wakes. Position doesn't change, so there's nothing else to do
+        // this tick.
+        return;
+      }
+
       if (nowMs > speakAtRef.current) {
         speakAtRef.current = nowMs + AMBIENT_SPEAK_MIN_MS + Math.random() * (AMBIENT_SPEAK_MAX_MS - AMBIENT_SPEAK_MIN_MS);
         if (Math.random() < AMBIENT_SPEAK_CHANCE) speak(pickMessage());
@@ -664,6 +741,17 @@ export function ScoutCompanion() {
   }, []);
 
   function onClickDog() {
+    // The window-level click listener (see the init effect) already stamps
+    // lastInteractionAtRef for the generic idle timer; a direct click on
+    // him specifically gets its own sleepy-specific reaction instead of the
+    // silent wake the timer would otherwise give him.
+    if (asleepRef.current) {
+      asleepRef.current = false;
+      setAsleep(false);
+      behaviorUntilRef.current = Date.now() + WAKE_PAUSE_MIN_MS + Math.random() * (WAKE_PAUSE_MAX_MS - WAKE_PAUSE_MIN_MS);
+      speak(pick(SLEEPY_WAKE_PHRASES), 3200);
+      return;
+    }
     speak(pick(GREETINGS), 3200);
   }
 
@@ -709,6 +797,27 @@ export function ScoutCompanion() {
           <div className="w-2.5 h-2.5 bg-white border-r border-b border-[#ece9f7] rotate-45 mx-auto -mt-[7px]" />
         </div>
       )}
+      {asleep && !bubble && (
+        // Three "z"s of increasing size, staggered so they drift up and
+        // fade out one after another in a loop rather than all at once --
+        // the classic sleepy cue. Sits in the same spot a speech bubble
+        // would (bubble is suppressed the instant he falls asleep, so
+        // there's never a clash), but visually its own thing: small,
+        // muted, and looping instead of a one-shot pop-in.
+        <div className="absolute bottom-full left-1/2 mb-1 pointer-events-none" style={{ transform: "translateX(-50%)" }}>
+          <div className="relative w-9 h-7">
+            <span className="absolute bottom-0 left-0 text-[10px] font-bold text-[#9694b0] animate-zzz" style={{ animationDelay: "0s" }}>
+              z
+            </span>
+            <span className="absolute bottom-0 left-2.5 text-xs font-bold text-[#9694b0] animate-zzz" style={{ animationDelay: "0.55s" }}>
+              Z
+            </span>
+            <span className="absolute bottom-0 left-5 text-sm font-bold text-[#9694b0] animate-zzz" style={{ animationDelay: "1.1s" }}>
+              Z
+            </span>
+          </div>
+        </div>
+      )}
       <button
         onClick={onClickDog}
         aria-label="Scout, your study companion"
@@ -719,7 +828,14 @@ export function ScoutCompanion() {
             : undefined,
         }}
       >
-        <PixelDog size={44} mood={mood} dead={stage === "dead"} legFrame={isWalking ? legFrame : 0} facing={facing} />
+        <PixelDog
+          size={44}
+          mood={mood}
+          dead={stage === "dead"}
+          asleep={asleep}
+          legFrame={isWalking ? legFrame : 0}
+          facing={facing}
+        />
       </button>
     </div>
   );

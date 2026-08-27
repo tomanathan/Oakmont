@@ -32,6 +32,7 @@ export function PixelDog({
   legFrame = 0,
   facing = 1,
   dead = false,
+  asleep = false,
   className = "",
 }: {
   size?: number;
@@ -39,13 +40,18 @@ export function PixelDog({
   legFrame?: 0 | 1;
   facing?: 1 | -1;
   dead?: boolean;
+  asleep?: boolean;
   className?: string;
 }) {
   const p = dead ? PALETTE_DEAD : PALETTE;
-  const earUp = !dead && (mood === "happy" || mood === "neutral");
-  const tailUp = !dead && mood === "happy";
-  const showTongue = !dead && mood === "happy";
-  const showFrown = dead || mood === "sad";
+  // Asleep overrides every other expressive cue the same way dead does --
+  // ears relax down, tail drops, tongue and frown both hide -- so a dozing
+  // dog reads as peacefully out, not as whatever mood he happened to be in
+  // right before he nodded off.
+  const earUp = !dead && !asleep && (mood === "happy" || mood === "neutral");
+  const tailUp = !dead && !asleep && mood === "happy";
+  const showTongue = !dead && !asleep && mood === "happy";
+  const showFrown = !asleep && (dead || mood === "sad");
 
   const backLegDown = legFrame === 0;
 
@@ -93,11 +99,15 @@ export function PixelDog({
         <rect x={34} y={14} width={5} height={14} fill={p.bodyDark} />
       )}
 
-      {/* eye */}
+      {/* eye -- dead gets an X, asleep gets a flat closed line, tired gets
+          a half-lidded slit (drowsy but not fully out), everyone else gets
+          the normal open square */}
       {dead ? (
-        <>
-          <path d="M 41 10 L 44 13 M 44 10 L 41 13" stroke={p.dark} strokeWidth={1.4} strokeLinecap="round" />
-        </>
+        <path d="M 41 10 L 44 13 M 44 10 L 41 13" stroke={p.dark} strokeWidth={1.4} strokeLinecap="round" />
+      ) : asleep ? (
+        <rect x={41} y={12.3} width={4} height={1.2} rx={0.6} fill={p.dark} />
+      ) : mood === "tired" ? (
+        <rect x={41.5} y={11.8} width={3.5} height={2} fill={p.dark} />
       ) : (
         <rect x={42} y={11} width={3} height={3} fill={p.dark} />
       )}
