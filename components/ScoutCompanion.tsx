@@ -85,11 +85,17 @@ const SLOW_SPEED = 60; // px/sec, used when the OS prefers reduced motion
 const LEG_SWAP_MS = 110;
 const MOUSE_CHECK_MS = 7000; // how often he reconsiders wandering toward the cursor
 const ESCAPE_COOLDOWN_MS = 1500;
-// Text doesn't move, so unlike the cursor reflex this doesn't need heavy
-// damping to avoid fighting a moving target -- keep it short so a fresh
-// overlap (crossing through a different block mid-transit, say) gets
-// corrected almost immediately rather than sitting for up to 1.5s.
-const TEXT_ESCAPE_COOLDOWN_MS = 200;
+// Only used now for the "landed somewhere bad" recovery walk (e.g. right
+// after a page change) -- crossing text mid-walk no longer triggers a
+// redirect at all, so this doesn't need to be as trigger-happy as before.
+const TEXT_ESCAPE_COOLDOWN_MS = 400;
+
+// Crossing text while walking is fine -- he's passing by, not settling in
+// -- but he fades out and quickens through it so a reader never mistakes
+// him for staying put on top of what they're reading, and so he doesn't
+// linger there either.
+const BEHIND_TEXT_OPACITY = 0.4;
+const BEHIND_TEXT_SPEED_MULT = 1.8;
 
 // How far outside the visible viewport he has to drift before he notices
 // and dashes back, and how much faster that dash is than his normal pace.
@@ -118,6 +124,7 @@ export function ScoutCompanion() {
   const [isWalking, setIsWalking] = useState(false);
   const [bubble, setBubble] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  const [behindText, setBehindText] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const posRef = useRef({ x: 80, y: 400 });
@@ -132,6 +139,7 @@ export function ScoutCompanion() {
   const nextMouseCheckRef = useRef(0);
   const escapeUntilRef = useRef(0);
   const textEscapeUntilRef = useRef(0);
+  const onTextRef = useRef(false);
   const textRectsRef = useRef<{ left: number; top: number; right: number; bottom: number }[]>([]);
   const returningRef = useRef(false);
   const walkingRef = useRef(false);
@@ -227,6 +235,15 @@ export function ScoutCompanion() {
 
   useEffect(() => {
     refreshTextRects();
+    // A page change swaps the whole text layout out from under him. If
+    // he's mid-walk, the target he's headed for was picked against the
+    // OLD layout and could now land him at rest on top of new text --
+    // replan that leg against the new page rather than letting him arrive
+    // somewhere that's only valid on the page he just left. (If he's at
+    // rest already, the render loop's own idle-on-text check handles it.)
+    if (walkingRef.current && overlapsText(targetRef.current.x, targetRef.current.y)) {
+      beginWalk();
+    }
     const interval = setInterval(refreshTextRects, TEXT_REFRESH_MS);
     window.addEventListener("resize", refreshTextRects);
     return () => {
@@ -293,14 +310,15 @@ export function ScoutCompanion() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
 
-  // A pause between walks is usually short, but sometimes he really does
-  // just sit and stay a while -- that variety is what keeps it from
-  // reading as a metronome.
+  // A pause between walks is usually a real rest, not a quick beat --
+  // he's a companion sitting nearby, not a wind-up toy that's always
+  // mid-stride. Longer, more varied pauses read as more natural (and
+  // simply as less busy) than frequent short hops.
   function pickPauseMs(): number {
     const r = Math.random();
-    if (r < 0.15) return 5000 + Math.random() * 6000; // a real rest
-    if (r < 0.45) return 2000 + Math.random() * 2200; // a normal beat
-    return 600 + Math.random() * 1300; // barely a pause
+    if (r < 0.2) return 8000 + Math.random() * 8000; // a real rest
+    if (r < 0.55) return 3500 + Math.random() * 3500; // a normal beat
+    return 1500 + Math.random() * 2000; // a brief pause
   }
 
   // Lays out a new curved leg of the walk: a quadratic Bezier from the
@@ -313,7 +331,9 @@ export function ScoutCompanion() {
   //   - `urgent`: move faster and straighter -- purposeful, not a stroll.
   // Whatever target comes out gets resampled (or re-picked, for a forced
   // one) up to a few times if it lands on top of a text box, so he never
-  // deliberately walks onto text -- only ever right up next to it.
+  // deliberately settles on text -- only ever right up next to it. The
+  // path there is free to cross text along the way (see the render loop),
+  // just never the landing spot itself.
   function beginWalk(opts: { avoid?: { x: number; y: number } | null; urgent?: boolean; forceTarget?: { x: number; y: number } } = {}) {
     const { avoid, urgent = false, forceTarget } = opts;
     const start = { x: posRef.current.x, y: posRef.current.y };
@@ -448,20 +468,27 @@ export function ScoutCompanion() {
         speak(pick(RETURN_PHRASES), 2400);
       }
 
-      // Text-overlap reflex: unconditional, on purpose -- "never cover
-      // text" has no exceptions for being mid-return or off in a corner.
-      // While returning, redirect to a fresh clear spot in view rather
-      // than the normal away-from-this-point wander (staying on-mission).
-      if (nowMs > textEscapeUntilRef.current) {
-        const hit = overlapsText(pos.x, pos.y);
-        if (hit) {
-          textEscapeUntilRef.current = nowMs + TEXT_ESCAPE_COOLDOWN_MS;
-          if (returningRef.current) {
-            beginWalk({ urgent: true, forceTarget: pickReturnTarget() });
-          } else {
-            beginWalk({ avoid: { x: (hit.left + hit.right) / 2, y: (hit.top + hit.bottom) / 2 } });
-          }
-        }
+      // Crossing text while walking is allowed now -- he fades and speeds
+      // up through it (handled below) rather than getting redirected away,
+      // which is what used to make text-dense pages feel like he was
+      // stuck fighting the layout. The only time text overlap still
+      // triggers a fresh walk is while he's supposed to be at rest: he
+      // never picks a resting spot on text in the first place (still
+      // enforced in beginWalk), so finding himself on one at a standstill
+      // only happens after something moved the goalposts out from under
+      // him -- most commonly, landing on a new page whose text layout is
+      // completely different from the one he last stood on. Walk out of
+      // it, same as any other walk, just triggered immediately instead of
+      // waiting for the pause timer.
+      const hit = overlapsText(pos.x, pos.y);
+      const onText = !!hit;
+      if (onText !== onTextRef.current) {
+        onTextRef.current = onText;
+        setBehindText(onText);
+      }
+      if (hit && !walkingRef.current && nowMs > textEscapeUntilRef.current) {
+        textEscapeUntilRef.current = nowMs + TEXT_ESCAPE_COOLDOWN_MS;
+        beginWalk({ avoid: { x: (hit.left + hit.right) / 2, y: (hit.top + hit.bottom) / 2 } });
       }
 
       // Personal-space reflex only applies during genuinely normal
@@ -475,7 +502,10 @@ export function ScoutCompanion() {
       }
 
       if (walkingRef.current) {
-        const speed = (reducedMotionRef.current ? SLOW_SPEED : RUN_SPEED) * pathSpeedRef.current;
+        const speed =
+          (reducedMotionRef.current ? SLOW_SPEED : RUN_SPEED) *
+          pathSpeedRef.current *
+          (onText ? BEHIND_TEXT_SPEED_MULT : 1);
         pathTRef.current += (speed * (dt / 1000)) / pathLenRef.current;
 
         if (pathTRef.current >= 1) {
@@ -556,8 +586,13 @@ export function ScoutCompanion() {
   return (
     <div
       ref={wrapperRef}
-      className="absolute z-40 pointer-events-none"
-      style={{ left: posRef.current.x, top: posRef.current.y, transform: "translate(-50%, -50%)" }}
+      className="absolute z-40 pointer-events-none transition-opacity duration-200"
+      style={{
+        left: posRef.current.x,
+        top: posRef.current.y,
+        transform: "translate(-50%, -50%)",
+        opacity: behindText ? BEHIND_TEXT_OPACITY : 1,
+      }}
     >
       {bubble && (
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[240px] pointer-events-none animate-pop-in">
