@@ -10,6 +10,11 @@ import { PetCard } from "@/components/PetCard";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
 import { DashboardClient } from "./DashboardClient";
 
+// Only worth a "welcome back" recap if there was an actual gap since the
+// last login -- logging in again a few minutes later (a dropped session,
+// a refresh-triggered re-auth) isn't a new study session.
+const WELCOME_BACK_GAP_MS = 2 * 60 * 60 * 1000;
+
 export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
@@ -55,10 +60,14 @@ export default async function DashboardPage() {
       }
     }
   }
+  const showWelcomeBack =
+    !!stats.previousLoginAt &&
+    !!stats.lastLoginAt &&
+    stats.lastLoginAt.getTime() - stats.previousLoginAt.getTime() > WELCOME_BACK_GAP_MS;
 
   return (
     <AppShell email={user.email} stats={stats}>
-      {stats.previousLoginAt && stats.lastLoginAt && (
+      {showWelcomeBack && stats.previousLoginAt && stats.lastLoginAt && (
         <WelcomeBackModal
           sessionKey={stats.lastLoginAt.toISOString()}
           previousLoginAt={stats.previousLoginAt.toISOString()}
