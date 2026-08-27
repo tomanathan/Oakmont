@@ -41,39 +41,49 @@ function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+function clamp(v: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, v));
+}
+
 // Pages without the logged-in app chrome -- Scout doesn't belong there.
 const HIDDEN_ON = new Set(["/login"]);
 
-// Stays roughly within this ring of wherever the mouse has been, but never
-// closer than MIN_DIST to the live cursor -- near enough to feel like it's
-// keeping you company, far enough to never sit on top of what you're doing.
 // All distances/positions are in PAGE coordinates (not viewport), so Scout
-// scrolls with the page like something actually standing on it rather than
-// floating over it.
-const MIN_DIST = 100;
-const WANDER_MIN = 130;
-const WANDER_MAX = 280;
+// scrolls with the page like something actually standing on it.
+const MIN_DIST = 100; // never sit closer than this to the live cursor
+const WANDER_MIN = 90;
+const WANDER_MAX = 260;
 const TOP_MARGIN = 100;
 const SIDE_MARGIN = 24;
 const BOTTOM_MARGIN = 24;
-const RUN_SPEED = 150; // px/sec
+const RUN_SPEED = 150; // px/sec, before per-walk random variation
 const SLOW_SPEED = 60; // px/sec, used when the OS prefers reduced motion
 const LEG_SWAP_MS = 110;
+const MOUSE_CHECK_MS = 7000; // how often he reconsiders wandering toward the cursor
+const ESCAPE_COOLDOWN_MS = 1500;
 
 export function ScoutCompanion() {
   const pathname = usePathname();
   const [stage, setStage] = useState<PetStage | null>(null);
   const [facing, setFacing] = useState<1 | -1>(1);
   const [legFrame, setLegFrame] = useState<0 | 1>(0);
-  const [isWalking, setIsWalking] = useState(true);
+  const [isWalking, setIsWalking] = useState(false);
   const [bubble, setBubble] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const posRef = useRef({ x: 80, y: 400 });
   const targetRef = useRef({ x: 80, y: 400 });
+  const pathStartRef = useRef({ x: 80, y: 400 });
+  const pathControlRef = useRef({ x: 80, y: 400 });
+  const pathTRef = useRef(1);
+  const pathLenRef = useRef(1);
+  const pathSpeedRef = useRef(1);
   const mouseRef = useRef<{ x: number; y: number } | null>(null);
-  const walkingRef = useRef(true);
+  const mouseAnchorRef = useRef<{ x: number; y: number } | null>(null);
+  const nextMouseCheckRef = useRef(0);
+  const escapeUntilRef = useRef(0);
+  const walkingRef = useRef(false);
   const facingRef = useRef<1 | -1>(1);
   const reducedMotionRef = useRef(false);
   const behaviorUntilRef = useRef(0);
@@ -99,7 +109,9 @@ export function ScoutCompanion() {
     const startY = window.scrollY + Math.min(window.innerHeight - 120, window.innerHeight * 0.55);
     posRef.current = { x: startX, y: startY };
     targetRef.current = { x: startX, y: startY };
+    pathTRef.current = 1;
     speakAtRef.current = Date.now() + 5000;
+    behaviorUntilRef.current = Date.now() + 900 + Math.random() * 900;
     setReady(true);
 
     fetch("/api/pet/state")
@@ -160,16 +172,65 @@ export function ScoutCompanion() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
 
-  function pickNewTarget() {
-    const anchor = mouseRef.current ?? posRef.current;
-    const angle = Math.random() * Math.PI * 2;
-    const radius = WANDER_MIN + Math.random() * (WANDER_MAX - WANDER_MIN);
+  // A pause between walks is usually short, but sometimes he really does
+  // just sit and stay a while -- that variety is what keeps it from
+  // reading as a metronome.
+  function pickPauseMs(): number {
+    const r = Math.random();
+    if (r < 0.15) return 5000 + Math.random() * 6000; // a real rest
+    if (r < 0.45) return 2000 + Math.random() * 2200; // a normal beat
+    return 600 + Math.random() * 1300; // barely a pause
+  }
+
+  // Lays out a new curved leg of the walk: a quadratic Bezier from the
+  // current spot to a fresh target, bowed sideways by a random amount so
+  // the path reads as a natural arc instead of a straight beeline. When
+  // `awayFromCursor`, the target is biased to the opposite side of wherever
+  // the pointer currently is (used only for the rare "too close" nudge --
+  // everyday wandering never chases the live cursor).
+  function beginWalk(awayFromCursor = false) {
+    const start = { x: posRef.current.x, y: posRef.current.y };
     const maxX = document.documentElement.clientWidth - SIDE_MARGIN;
     const maxY = document.documentElement.scrollHeight - BOTTOM_MARGIN;
-    targetRef.current = {
-      x: Math.min(maxX, Math.max(SIDE_MARGIN, anchor.x + Math.cos(angle) * radius)),
-      y: Math.min(maxY, Math.max(TOP_MARGIN, anchor.y + Math.sin(angle) * radius)),
+
+    let angle: number;
+    let anchor = mouseAnchorRef.current ?? start;
+    if (awayFromCursor && mouseRef.current) {
+      const away = Math.atan2(start.y - mouseRef.current.y, start.x - mouseRef.current.x);
+      angle = away + (Math.random() - 0.5) * (Math.PI / 2);
+      anchor = start;
+    } else {
+      angle = Math.random() * Math.PI * 2;
+    }
+    const radius = WANDER_MIN + Math.random() * (WANDER_MAX - WANDER_MIN);
+    const end = {
+      x: clamp(anchor.x + Math.cos(angle) * radius, SIDE_MARGIN, maxX),
+      y: clamp(anchor.y + Math.sin(angle) * radius, TOP_MARGIN, maxY),
     };
+
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const dist = Math.hypot(dx, dy) || 1;
+    const perpX = -dy / dist;
+    const perpY = dx / dist;
+    const bend = (Math.random() - 0.5) * 2 * Math.min(80, dist * 0.5);
+    // A quadratic Bezier always stays within the convex hull of its three
+    // control points, so clamping this one to the same bounds as start/end
+    // guarantees the whole curve does too -- otherwise a bend near a page
+    // edge can bow the path off-page even though both endpoints are valid.
+    const control = {
+      x: clamp((start.x + end.x) / 2 + perpX * bend, SIDE_MARGIN, maxX),
+      y: clamp((start.y + end.y) / 2 + perpY * bend, TOP_MARGIN, maxY),
+    };
+
+    pathStartRef.current = start;
+    pathControlRef.current = control;
+    targetRef.current = end;
+    pathLenRef.current = Math.max(30, dist);
+    pathTRef.current = 0;
+    pathSpeedRef.current = 0.75 + Math.random() * 0.6;
+    walkingRef.current = true;
+    setIsWalking(true);
   }
 
   // The render loop. Uses setInterval rather than requestAnimationFrame:
@@ -194,62 +255,72 @@ export function ScoutCompanion() {
         speak(pickMessage());
       }
 
-      if (nowMs > behaviorUntilRef.current) {
-        const goWalk = Math.random() < 0.8;
-        walkingRef.current = goWalk;
-        setIsWalking(goWalk);
-        behaviorUntilRef.current =
-          nowMs + (goWalk ? 1800 + Math.random() * 2200 : 1000 + Math.random() * 1800);
-        if (goWalk) pickNewTarget();
+      // Only reconsider "where's the mouse" every few seconds -- he keeps
+      // you company in the general area, he doesn't track your cursor.
+      if (nowMs > nextMouseCheckRef.current) {
+        nextMouseCheckRef.current = nowMs + MOUSE_CHECK_MS;
+        if (mouseRef.current) mouseAnchorRef.current = { ...mouseRef.current };
+      }
+
+      // Personal-space reflex: this one DOES use the live cursor (not the
+      // throttled anchor) and can interrupt whatever he's doing, but it's
+      // cooldown-gated so it reacts once and then leaves it alone rather
+      // than fighting the cursor every tick.
+      if (mouseRef.current && nowMs > escapeUntilRef.current) {
+        const d = Math.hypot(posRef.current.x - mouseRef.current.x, posRef.current.y - mouseRef.current.y);
+        if (d < MIN_DIST) {
+          escapeUntilRef.current = nowMs + ESCAPE_COOLDOWN_MS;
+          beginWalk(true);
+        }
       }
 
       const pos = posRef.current;
 
-      if (mouseRef.current) {
-        const dx = pos.x - mouseRef.current.x;
-        const dy = pos.y - mouseRef.current.y;
-        const dist = Math.hypot(dx, dy) || 1;
-        if (dist < MIN_DIST) {
-          const push = (MIN_DIST - dist) * 0.12 * (dt / 16);
-          pos.x += (dx / dist) * push;
-          pos.y += (dy / dist) * push;
-          if (Math.abs(dx) > 1) {
-            facingRef.current = dx > 0 ? 1 : -1;
-            setFacing(facingRef.current);
-          }
-          if (!walkingRef.current) {
-            walkingRef.current = true;
-            setIsWalking(true);
-          }
-          pickNewTarget();
-          behaviorUntilRef.current = nowMs + 1800 + Math.random() * 2200;
-        }
-      }
-
       if (walkingRef.current) {
-        const dx = targetRef.current.x - pos.x;
-        const dy = targetRef.current.y - pos.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist > 2) {
-          const speed = reducedMotionRef.current ? SLOW_SPEED : RUN_SPEED;
-          const ease = dist < 50 ? Math.max(0.35, dist / 50) : 1;
-          const step = Math.min(dist, speed * ease * (dt / 1000));
-          pos.x += (dx / dist) * step;
-          pos.y += (dy / dist) * step;
-          if (Math.abs(dx) > 0.5) {
-            facingRef.current = dx > 0 ? 1 : -1;
+        const speed = (reducedMotionRef.current ? SLOW_SPEED : RUN_SPEED) * pathSpeedRef.current;
+        pathTRef.current += (speed * (dt / 1000)) / pathLenRef.current;
+
+        if (pathTRef.current >= 1) {
+          pos.x = targetRef.current.x;
+          pos.y = targetRef.current.y;
+          walkingRef.current = false;
+          setIsWalking(false);
+          behaviorUntilRef.current = nowMs + pickPauseMs();
+        } else {
+          const t = pathTRef.current;
+          const mt = 1 - t;
+          const s = pathStartRef.current;
+          const c = pathControlRef.current;
+          const e = targetRef.current;
+          pos.x = clamp(
+            mt * mt * s.x + 2 * mt * t * c.x + t * t * e.x,
+            SIDE_MARGIN,
+            document.documentElement.clientWidth - SIDE_MARGIN
+          );
+          pos.y = clamp(
+            mt * mt * s.y + 2 * mt * t * c.y + t * t * e.y,
+            TOP_MARGIN,
+            document.documentElement.scrollHeight - BOTTOM_MARGIN
+          );
+          const tangentX = 2 * mt * (c.x - s.x) + 2 * t * (e.x - c.x);
+          if (Math.abs(tangentX) > 0.5) {
+            facingRef.current = tangentX > 0 ? 1 : -1;
             setFacing(facingRef.current);
           }
         }
-        const maxX = document.documentElement.clientWidth - SIDE_MARGIN;
-        const maxY = document.documentElement.scrollHeight - BOTTOM_MARGIN;
-        pos.x = Math.min(maxX, Math.max(SIDE_MARGIN, pos.x));
-        pos.y = Math.min(maxY, Math.max(TOP_MARGIN, pos.y));
 
         legTimerRef.current += dt;
         if (legTimerRef.current > LEG_SWAP_MS) {
           legTimerRef.current = 0;
           setLegFrame((f) => (f === 0 ? 1 : 0));
+        }
+      } else {
+        if (nowMs > behaviorUntilRef.current) {
+          beginWalk(false);
+        } else if (Math.random() < 0.003) {
+          // An idle glance side to side -- small, infrequent, alive.
+          facingRef.current = facingRef.current === 1 ? -1 : 1;
+          setFacing(facingRef.current);
         }
       }
 
@@ -291,7 +362,7 @@ export function ScoutCompanion() {
       <button
         onClick={onClickDog}
         aria-label="Scout, your study companion"
-        className="pointer-events-auto block cursor-pointer bg-transparent border-none p-0"
+        className="pointer-events-auto block cursor-pointer bg-transparent border-none p-0 transition-transform duration-150 ease-out"
         style={{
           transform: isWalking
             ? `translateY(${legFrame === 1 ? -3 : 0}px) rotate(${legFrame === 1 ? (facing === 1 ? 2 : -2) : 0}deg)`
