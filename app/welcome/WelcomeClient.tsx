@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PET_NAME } from "@/lib/pet";
 import { PetAvatar } from "@/components/PetAvatar";
+import { BrandMark } from "@/components/BrandMark";
 
 export function WelcomeClient({ email }: { email: string }) {
   const router = useRouter();
@@ -30,10 +31,8 @@ export function WelcomeClient({ email }: { email: string }) {
         </button>
       </div>
       <div className="text-center mb-10">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#6d7fd6] to-accent flex items-center justify-center text-white text-xl font-bold mx-auto mb-4">
-          O
-        </div>
-        <div className="text-[28px] font-bold text-ink mb-1.5">Welcome to Oakmont Study Center</div>
+        <BrandMark size={64} className="mx-auto mb-4" />
+        <div className="font-display font-semibold text-[28px] text-ink mb-1.5">Welcome to Oakmont Study Center</div>
         <div className="text-sm text-gray-500">{email}</div>
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { BrandMark } from "./BrandMark";
 
 export function WelcomeBackModal({
   sessionKey,
@@ -78,10 +79,8 @@ export function WelcomeBackModal({
         onClick={(e) => e.stopPropagation()}
         className="bg-white rounded-2xl shadow-[0_20px_60px_rgba(26,26,46,0.25)] max-w-[440px] w-full p-7 text-center"
       >
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#6d7fd6] to-accent flex items-center justify-center text-white text-lg font-bold mx-auto mb-4">
-          O
-        </div>
-        <div className="text-xl font-bold text-ink mb-1.5">Welcome back!</div>
+        <BrandMark size={48} className="mx-auto mb-4" />
+        <div className="font-display font-semibold text-xl text-ink mb-1.5">Welcome back!</div>
         <div className="text-sm text-gray-500 mb-5">Last time you were here was {lastDate}.</div>
         <div className="bg-[#eef0fc] border border-[#d7dbf3] rounded-xl p-4 mb-6 text-sm text-[#41436b] leading-relaxed">
           {summary}

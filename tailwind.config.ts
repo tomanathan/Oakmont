@@ -12,6 +12,13 @@ const config: Config = {
         ink: "#1a1a2e",
         accent: "#2f6f4f",
       },
+      fontFamily: {
+        // Reserved for the brand wordmark and page titles -- see
+        // app/layout.tsx. Tailwind's built-in `stone` palette (warm
+        // neutral grays) is used alongside this for the same brand chrome,
+        // no override needed there.
+        display: ["var(--font-display)", "Georgia", "serif"],
+      },
     },
   },
   plugins: [],

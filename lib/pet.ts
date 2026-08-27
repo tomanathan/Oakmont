@@ -3,7 +3,7 @@
 // go a full week without one. Kept separate from the UI and the cron route
 // so the rules are easy to see and test in one place.
 
-export const PET_NAME = "Scout";
+export const PET_NAME = "Ozho";
 export const PET_DEATH_DAYS = 7;
 export const PET_WARNING_DAYS = 5;
 

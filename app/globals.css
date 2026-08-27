@@ -7,7 +7,10 @@ html, body {
 }
 
 body {
-  background: #f5f4fb;
+  /* Warm off-white matched to the Oakmont mark's cream background, rather
+     than the cooler lavender-tinted gray this used to be -- ties the page
+     backdrop to the brand instead of clashing with it. */
+  background: #faf8f4;
 }
 
 .katex-inline .katex {

@@ -15,7 +15,7 @@ export function NavButton({
       className={`px-3.5 py-2 rounded-lg border text-sm font-medium transition-colors ${
         active
           ? "bg-ink text-white border-ink"
-          : "bg-[#f0eff9] text-gray-700 border-[#e0defa] hover:border-[#c9c6ee]"
+          : "bg-stone-50 text-stone-600 border-stone-200 hover:border-stone-300 hover:text-ink"
       }`}
     >
       {children}

@@ -6,7 +6,7 @@ import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
 import type { PetStage } from "@/lib/pet";
 
-// Kept warm and low-pressure on purpose -- Scout is a companion, not a
+// Kept warm and low-pressure on purpose -- Ozho is a companion, not a
 // nag. Even the "hungry"/"critical" pool below invites rather than
 // guilt-trips, regardless of how urgent the pet-death countdown actually is.
 const GREETINGS = [
@@ -58,10 +58,10 @@ function clamp(v: number, min: number, max: number): number {
   return Math.min(hi, Math.max(lo, v));
 }
 
-// Pages without the logged-in app chrome -- Scout doesn't belong there.
+// Pages without the logged-in app chrome -- Ozho doesn't belong there.
 const HIDDEN_ON = new Set(["/login"]);
 
-// All distances/positions are in PAGE coordinates (not viewport), so Scout
+// All distances/positions are in PAGE coordinates (not viewport), so Ozho
 // scrolls with the page like something actually standing on it.
 
 // What "clear of text" requires of his actual BODY -- kept tight to his
@@ -221,7 +221,7 @@ export function ScoutCompanion() {
   const sleepAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // One-time setup: pick a starting spot in page coordinates and fetch
-  // Scout's mood. ScoutCompanion is mounted once at the root layout, so
+  // Ozho's mood. ScoutCompanion is mounted once at the root layout, so
   // this survives client-side navigation between pages instead of
   // resetting every time the route changes (it only truly remounts on a
   // full page load). Deliberately has no "already ran" guard: React 18
@@ -494,7 +494,7 @@ export function ScoutCompanion() {
     return pick(ENCOURAGEMENTS);
   }
 
-  // Say hello shortly after Scout's mood is known (once, ever).
+  // Say hello shortly after Ozho's mood is known (once, ever).
   useEffect(() => {
     if (stage === null || hasGreetedRef.current) return;
     hasGreetedRef.current = true;
@@ -876,7 +876,7 @@ export function ScoutCompanion() {
       )}
       <button
         onClick={onClickDog}
-        aria-label="Scout, your study companion"
+        aria-label="Ozho, your study companion"
         className={`pointer-events-auto block cursor-pointer bg-transparent border-none p-0 transition-transform duration-150 ease-out ${
           sleepAnim === "falling" ? "animate-fall-asleep" : sleepAnim === "waking" ? "animate-wake-up" : ""
         }`}

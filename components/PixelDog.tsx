@@ -21,7 +21,7 @@ const PALETTE_DEAD = {
 };
 
 /**
- * A small blocky, flat-color "pixel art" dog -- Scout's on-screen form.
+ * A small blocky, flat-color "pixel art" dog -- Ozho's on-screen form.
  * Shared by the static PetAvatar (dashboard card, welcome page) and the
  * roaming ScoutCompanion, so the character looks the same everywhere; only
  * pose (legFrame), mood, and facing direction change between call sites.
