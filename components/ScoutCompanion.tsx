@@ -56,22 +56,6 @@ const HIDDEN_ON = new Set(["/login"]);
 
 // All distances/positions are in PAGE coordinates (not viewport), so Scout
 // scrolls with the page like something actually standing on it.
-const MIN_DIST = 100; // never sit closer than this to the live cursor
-const WANDER_MIN = 90;
-const WANDER_MAX = 260;
-const TOP_MARGIN = 100;
-const SIDE_MARGIN = 24;
-const BOTTOM_MARGIN = 24;
-const RUN_SPEED = 150; // px/sec, before per-walk random variation
-const SLOW_SPEED = 60; // px/sec, used when the OS prefers reduced motion
-const LEG_SWAP_MS = 110;
-const MOUSE_CHECK_MS = 7000; // how often he reconsiders wandering toward the cursor
-const ESCAPE_COOLDOWN_MS = 1500;
-// Text doesn't move, so unlike the cursor reflex this doesn't need heavy
-// damping to avoid fighting a moving target -- keep it short so a fresh
-// overlap (crossing through a different block mid-transit, say) gets
-// corrected almost immediately rather than sitting for up to 1.5s.
-const TEXT_ESCAPE_COOLDOWN_MS = 200;
 
 // The area kept clear of text -- not just his body, but the zone above him
 // where a speech bubble renders too (he speaks often enough that this
@@ -86,6 +70,26 @@ const FOOTPRINT_BELOW = 20;
 const TEXT_SELECTOR =
   "h1,h2,h3,h4,h5,h6,p,span,li,td,th,label,a,button,strong,em,b,i,small,dt,dd,blockquote,figcaption,caption,legend,summary";
 const TEXT_REFRESH_MS = 1500;
+
+const MIN_DIST = 100; // never sit closer than this to the live cursor
+const WANDER_MIN = 90;
+const WANDER_MAX = 260;
+// Floored to the bubble's own footprint (not just his body) so the bubble
+// itself can never render past the page edge -- a target picked right at
+// the old, tighter margin left the bubble's other side hanging off-screen.
+const TOP_MARGIN = FOOTPRINT_ABOVE + 10;
+const SIDE_MARGIN = FOOTPRINT_HALF_W;
+const BOTTOM_MARGIN = 24;
+const RUN_SPEED = 150; // px/sec, before per-walk random variation
+const SLOW_SPEED = 60; // px/sec, used when the OS prefers reduced motion
+const LEG_SWAP_MS = 110;
+const MOUSE_CHECK_MS = 7000; // how often he reconsiders wandering toward the cursor
+const ESCAPE_COOLDOWN_MS = 1500;
+// Text doesn't move, so unlike the cursor reflex this doesn't need heavy
+// damping to avoid fighting a moving target -- keep it short so a fresh
+// overlap (crossing through a different block mid-transit, say) gets
+// corrected almost immediately rather than sitting for up to 1.5s.
+const TEXT_ESCAPE_COOLDOWN_MS = 200;
 
 // How far outside the visible viewport he has to drift before he notices
 // and dashes back, and how much faster that dash is than his normal pace.
@@ -335,10 +339,26 @@ export function ScoutCompanion() {
       };
     }
 
+    // Landing spot is fully validated up front -- text, and (unless this is
+    // the urgent dash back into view, which takes priority over personal
+    // space) the live cursor too -- rather than walking somewhere and only
+    // finding out it doesn't work after arriving. That "arrive, immediately
+    // discover it's bad, walk again" pattern is exactly what reads as
+    // erratic; picking a target that's already known-good avoids it instead
+    // of reacting to it after the fact.
+    function isValidLanding(x: number, y: number): boolean {
+      if (overlapsText(x, y)) return false;
+      if (!forceTarget && mouseRef.current) {
+        const d = Math.hypot(x - mouseRef.current.x, y - mouseRef.current.y);
+        if (d < MIN_DIST) return false;
+      }
+      return true;
+    }
+
     let end = forceTarget
       ? { x: clamp(forceTarget.x, SIDE_MARGIN, maxX), y: clamp(forceTarget.y, TOP_MARGIN, maxY) }
       : randomCandidate();
-    for (let tries = 0; overlapsText(end.x, end.y) && tries < 12; tries++) {
+    for (let tries = 0; !isValidLanding(end.x, end.y) && tries < 12; tries++) {
       end = forceTarget ? pickReturnTarget() : randomCandidate();
     }
 
@@ -465,6 +485,12 @@ export function ScoutCompanion() {
           setIsWalking(false);
           returningRef.current = false;
           behaviorUntilRef.current = nowMs + pickPauseMs();
+          // A brief settle window before the cursor reflex can fire again --
+          // the landing spot was already validated against where the
+          // cursor was, so this is just a moment to actually stand there
+          // rather than risk an instant re-trigger off a coincidental
+          // cursor move landing right as he arrives.
+          escapeUntilRef.current = nowMs + 400;
         } else {
           const t = pathTRef.current;
           const mt = 1 - t;
