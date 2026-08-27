@@ -82,3 +82,40 @@ body {
 .animate-zzz {
   animation: zzz-float 2s ease-in-out infinite;
 }
+
+/* The underlying sprite swaps between the standing and curled-up poses
+   instantly (they're different art, not a shared shape that can actually
+   morph) -- these bridge that swap with a settle/stretch on whichever
+   pose is showing at the time, so it reads as him sinking down or
+   stirring rather than an abrupt pop between two pictures. */
+@keyframes scout-fall-asleep {
+  0% {
+    transform: scaleY(1) translateY(0);
+  }
+  100% {
+    transform: scaleY(0.72) translateY(6px);
+  }
+}
+
+.animate-fall-asleep {
+  animation: scout-fall-asleep 450ms ease-in forwards;
+}
+
+@keyframes scout-wake-up {
+  0% {
+    transform: scale(1, 1) rotate(0deg);
+  }
+  35% {
+    transform: scale(1.1, 0.9) rotate(-4deg);
+  }
+  65% {
+    transform: scale(0.94, 1.08) rotate(4deg);
+  }
+  100% {
+    transform: scale(1, 1) rotate(0deg);
+  }
+}
+
+.animate-wake-up {
+  animation: scout-wake-up 450ms ease-in-out forwards;
+}

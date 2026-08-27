@@ -44,14 +44,61 @@ export function PixelDog({
   className?: string;
 }) {
   const p = dead ? PALETTE_DEAD : PALETTE;
-  // Asleep overrides every other expressive cue the same way dead does --
-  // ears relax down, tail drops, tongue and frown both hide -- so a dozing
-  // dog reads as peacefully out, not as whatever mood he happened to be in
-  // right before he nodded off.
-  const earUp = !dead && !asleep && (mood === "happy" || mood === "neutral");
-  const tailUp = !dead && !asleep && mood === "happy";
-  const showTongue = !dead && !asleep && mood === "happy";
-  const showFrown = !asleep && (dead || mood === "sad");
+
+  // Asleep (and not dead -- a dead dog stays in the standing pose below,
+  // it doesn't curl up) gets a completely different, compact silhouette
+  // rather than the standing pose with its eyes shut: lying down, tail
+  // curled over the back, legs tucked out of sight entirely. Sized and
+  // positioned to sit in the same viewBox/ground-shadow spot as the
+  // standing pose so nothing shifts when he drops off to sleep.
+  if (asleep && !dead) {
+    return (
+      <svg
+        viewBox="0 0 64 40"
+        width={size}
+        height={(size * 40) / 64}
+        shapeRendering="crispEdges"
+        style={{ transform: facing === -1 ? "scaleX(-1)" : undefined }}
+        className={className}
+      >
+        <ellipse cx={32} cy={38} rx={19} ry={2} fill="#000" opacity={0.12} />
+
+        {/* body -- four stacked bands narrowing toward the top fake a
+            rounded, curled-up dome using the same flat-rect language as
+            the rest of the sprite */}
+        <rect x={14} y={30} width={34} height={4} fill={p.body} />
+        <rect x={11} y={23} width={39} height={7} fill={p.body} />
+        <rect x={16} y={17} width={29} height={6} fill={p.body} />
+        <rect x={21} y={12} width={19} height={5} fill={p.body} />
+
+        {/* tail, curled up and resting on top of the back */}
+        <rect x={16} y={9} width={7} height={7} fill={p.bodyDark} />
+        <rect x={20} y={13} width={6} height={6} fill={p.bodyDark} />
+
+        {/* head, tucked down low at the front */}
+        <rect x={42} y={19} width={13} height={12} fill={p.body} />
+        <rect x={52} y={23} width={7} height={7} fill={p.belly} />
+        <rect x={57} y={25} width={2.5} height={2.5} fill={p.dark} />
+
+        {/* ear, relaxed and hanging against the neck */}
+        <rect x={40} y={25} width={5} height={9} fill={p.bodyDark} />
+
+        {/* eye -- flat closed line */}
+        <rect x={47} y={22.3} width={3.5} height={1.2} rx={0.6} fill={p.dark} />
+
+        {/* collar hint at the neck */}
+        <rect x={40} y={21} width={3} height={7} fill={p.collar} />
+      </svg>
+    );
+  }
+
+  // Every other expressive cue below -- ear, tail, tongue, frown -- only
+  // applies to this standing pose (asleep has its own curled-up look
+  // above; dead always stays standing).
+  const earUp = !dead && (mood === "happy" || mood === "neutral");
+  const tailUp = !dead && mood === "happy";
+  const showTongue = !dead && mood === "happy";
+  const showFrown = dead || mood === "sad";
 
   const backLegDown = legFrame === 0;
 
@@ -99,13 +146,10 @@ export function PixelDog({
         <rect x={34} y={14} width={5} height={14} fill={p.bodyDark} />
       )}
 
-      {/* eye -- dead gets an X, asleep gets a flat closed line, tired gets
-          a half-lidded slit (drowsy but not fully out), everyone else gets
-          the normal open square */}
+      {/* eye -- dead gets an X, tired gets a half-lidded slit (drowsy but
+          not fully out), everyone else gets the normal open square */}
       {dead ? (
         <path d="M 41 10 L 44 13 M 44 10 L 41 13" stroke={p.dark} strokeWidth={1.4} strokeLinecap="round" />
-      ) : asleep ? (
-        <rect x={41} y={12.3} width={4} height={1.2} rx={0.6} fill={p.dark} />
       ) : mood === "tired" ? (
         <rect x={41.5} y={11.8} width={3.5} height={2} fill={p.dark} />
       ) : (

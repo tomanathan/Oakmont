@@ -149,11 +149,16 @@ const NAV_SPEAK_DELAY_MAX_MS = 1300;
 // an already-resting state, never mid-stride. Anything that counts as
 // interaction wakes him again immediately.
 const IDLE_SLEEP_MS = 60000;
-// A short "stirring" pause after waking before he's willing to set off on
-// a fresh walk -- reads as him actually coming to, not an instant snap
-// back to full speed.
-const WAKE_PAUSE_MIN_MS = 500;
-const WAKE_PAUSE_MAX_MS = 1000;
+// How long the curl-up/stretch-awake transition plays (see globals.css)
+// before the pose actually swaps between standing and curled -- he's
+// frozen for the whole thing, same as full sleep.
+const SLEEP_ANIM_MS = 450;
+// A short extra "stirring" pause after the wake-up animation finishes,
+// before he's willing to set off on a fresh walk -- the animation already
+// reads as him coming to, this is just a beat to actually get his bearings
+// rather than launching straight into a walk the instant it ends.
+const WAKE_PAUSE_MIN_MS = 150;
+const WAKE_PAUSE_MAX_MS = 400;
 
 function rectsOverlap(
   al: number,
@@ -178,6 +183,7 @@ export function ScoutCompanion() {
   const [ready, setReady] = useState(false);
   const [behindText, setBehindText] = useState(false);
   const [asleep, setAsleep] = useState(false);
+  const [sleepAnim, setSleepAnim] = useState<"none" | "falling" | "waking">("none");
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const posRef = useRef({ x: 80, y: 400 });
@@ -211,6 +217,8 @@ export function ScoutCompanion() {
   const navSpeakTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastInteractionAtRef = useRef(Date.now());
   const asleepRef = useRef(false);
+  const sleepAnimRef = useRef<"none" | "falling" | "waking">("none");
+  const sleepAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // One-time setup: pick a starting spot in page coordinates and fetch
   // Scout's mood. ScoutCompanion is mounted once at the root layout, so
@@ -333,15 +341,12 @@ export function ScoutCompanion() {
 
   useEffect(() => {
     // Navigating somewhere is as clear an "I'm here" signal as it gets --
-    // wake him immediately rather than waiting for the render loop's next
-    // idle check to notice, so there's no chance of a stray nav-triggered
-    // line appearing to come from a dog who's still shown asleep.
+    // wake him immediately (or cancel an in-progress doze) rather than
+    // waiting for the render loop's next idle check to notice, so there's
+    // no chance of a stray nav-triggered line appearing to come from a dog
+    // who's still shown asleep.
     lastInteractionAtRef.current = Date.now();
-    if (asleepRef.current) {
-      asleepRef.current = false;
-      setAsleep(false);
-      behaviorUntilRef.current = Date.now() + WAKE_PAUSE_MIN_MS + Math.random() * (WAKE_PAUSE_MAX_MS - WAKE_PAUSE_MIN_MS);
-    }
+    beginWakeUp();
 
     refreshTextRects();
     // A page change swaps the whole text layout out from under him. If
@@ -418,6 +423,61 @@ export function ScoutCompanion() {
     // unrelated line right on top of one that just showed.
     speakAtRef.current =
       Date.now() + AMBIENT_SPEAK_MIN_MS + Math.random() * (AMBIENT_SPEAK_MAX_MS - AMBIENT_SPEAK_MIN_MS);
+  }
+
+  // The standing and curled-up sprites are different art, not one shape
+  // that can morph, so the "animation" is a CSS settle/stretch layered on
+  // top of whichever pose is showing (see .animate-fall-asleep/-wake-up in
+  // globals.css) while the underlying pose swap is held back until it
+  // finishes -- these two are the only places that are allowed to touch
+  // asleepRef/sleepAnimRef, so every caller (the idle timer, navigation,
+  // a direct click) goes through them rather than flipping state directly.
+  function clearSleepAnimTimeout() {
+    if (sleepAnimTimeoutRef.current) {
+      clearTimeout(sleepAnimTimeoutRef.current);
+      sleepAnimTimeoutRef.current = null;
+    }
+  }
+
+  function beginFallAsleep() {
+    if (asleepRef.current || sleepAnimRef.current !== "none") return;
+    clearSleepAnimTimeout();
+    sleepAnimRef.current = "falling";
+    setSleepAnim("falling");
+    if (bubbleTimeoutRef.current) clearTimeout(bubbleTimeoutRef.current);
+    setBubble(null);
+    sleepAnimTimeoutRef.current = setTimeout(() => {
+      asleepRef.current = true;
+      setAsleep(true);
+      sleepAnimRef.current = "none";
+      setSleepAnim("none");
+      sleepAnimTimeoutRef.current = null;
+    }, SLEEP_ANIM_MS);
+  }
+
+  // Safe to call any time, including when he's already fully awake -- it's
+  // a no-op then. Mid-fall (hasn't actually curled up yet), it just cancels
+  // the fall, no stretch animation needed since he was never really under.
+  // Already fully asleep, it plays the stretch-awake animation and only
+  // flips the pose back to standing once that finishes.
+  function beginWakeUp() {
+    if (sleepAnimRef.current === "waking") return;
+    clearSleepAnimTimeout();
+    if (!asleepRef.current) {
+      sleepAnimRef.current = "none";
+      setSleepAnim("none");
+      return;
+    }
+    sleepAnimRef.current = "waking";
+    setSleepAnim("waking");
+    sleepAnimTimeoutRef.current = setTimeout(() => {
+      asleepRef.current = false;
+      setAsleep(false);
+      sleepAnimRef.current = "none";
+      setSleepAnim("none");
+      sleepAnimTimeoutRef.current = null;
+      behaviorUntilRef.current = Date.now() + WAKE_PAUSE_MIN_MS + Math.random() * (WAKE_PAUSE_MAX_MS - WAKE_PAUSE_MIN_MS);
+    }, SLEEP_ANIM_MS);
   }
 
   function pickMessage(): string {
@@ -568,31 +628,27 @@ export function ScoutCompanion() {
       const nowMs = Date.now();
 
       // Idle sleep: no interaction anywhere on the page for a while and he
-      // settles down for a nap, frozen in place until something wakes him.
-      // Checked before everything else so the rest of this tick already
-      // knows whether he's out cold -- and so a fresh interaction (which
-      // stamps lastInteractionAtRef the moment it happens, not on the next
-      // tick) wakes him in the very same tick it's noticed in, before any
-      // reactive check below gets a chance to act on stale asleep state.
+      // settles down for a nap (via a short curl-up animation), frozen in
+      // place until something wakes him (via a short stretch-awake
+      // animation). Checked before everything else so the rest of this
+      // tick already knows whether he's out cold or mid-transition -- and
+      // so a fresh interaction (which stamps lastInteractionAtRef the
+      // moment it happens, not on the next tick) wakes him in the very
+      // same tick it's noticed in, before any reactive check below gets a
+      // chance to act on stale asleep state.
       const idleMs = nowMs - lastInteractionAtRef.current;
-      if (asleepRef.current) {
-        if (idleMs < IDLE_SLEEP_MS) {
-          asleepRef.current = false;
-          setAsleep(false);
-          behaviorUntilRef.current = nowMs + WAKE_PAUSE_MIN_MS + Math.random() * (WAKE_PAUSE_MAX_MS - WAKE_PAUSE_MIN_MS);
-        }
+      const sleepy = asleepRef.current || sleepAnimRef.current !== "none";
+      if (sleepy) {
+        if (idleMs < IDLE_SLEEP_MS) beginWakeUp();
       } else if (idleMs > IDLE_SLEEP_MS && !walkingRef.current && stageRef.current !== "dead") {
-        asleepRef.current = true;
-        setAsleep(true);
-        if (bubbleTimeoutRef.current) clearTimeout(bubbleTimeoutRef.current);
-        setBubble(null);
+        beginFallAsleep();
       }
 
-      if (asleepRef.current) {
-        // Frozen except for the Zzz (rendered off the `asleep` state) --
-        // no wandering, no cursor/text reflexes, no ambient chatter, until
-        // he wakes. Position doesn't change, so there's nothing else to do
-        // this tick.
+      if (asleepRef.current || sleepAnimRef.current !== "none") {
+        // Frozen through the whole sleep lifecycle -- falling asleep,
+        // fully out (Zzz rendered off the `asleep` state), and waking back
+        // up -- no wandering, no cursor/text reflexes, no ambient chatter.
+        // Position doesn't change, so there's nothing else to do this tick.
         return;
       }
 
@@ -744,11 +800,11 @@ export function ScoutCompanion() {
     // The window-level click listener (see the init effect) already stamps
     // lastInteractionAtRef for the generic idle timer; a direct click on
     // him specifically gets its own sleepy-specific reaction instead of the
-    // silent wake the timer would otherwise give him.
-    if (asleepRef.current) {
-      asleepRef.current = false;
-      setAsleep(false);
-      behaviorUntilRef.current = Date.now() + WAKE_PAUSE_MIN_MS + Math.random() * (WAKE_PAUSE_MAX_MS - WAKE_PAUSE_MIN_MS);
+    // silent wake the timer would otherwise give him. Captured before
+    // beginWakeUp() runs, since that's what actually changes the state.
+    const wasAsleep = asleepRef.current || sleepAnimRef.current !== "none";
+    beginWakeUp();
+    if (wasAsleep) {
       speak(pick(SLEEPY_WAKE_PHRASES), 3200);
       return;
     }
@@ -797,7 +853,7 @@ export function ScoutCompanion() {
           <div className="w-2.5 h-2.5 bg-white border-r border-b border-[#ece9f7] rotate-45 mx-auto -mt-[7px]" />
         </div>
       )}
-      {asleep && !bubble && (
+      {asleep && sleepAnim !== "waking" && !bubble && (
         // Three "z"s of increasing size, staggered so they drift up and
         // fade out one after another in a loop rather than all at once --
         // the classic sleepy cue. Sits in the same spot a speech bubble
@@ -821,7 +877,9 @@ export function ScoutCompanion() {
       <button
         onClick={onClickDog}
         aria-label="Scout, your study companion"
-        className="pointer-events-auto block cursor-pointer bg-transparent border-none p-0 transition-transform duration-150 ease-out"
+        className={`pointer-events-auto block cursor-pointer bg-transparent border-none p-0 transition-transform duration-150 ease-out ${
+          sleepAnim === "falling" ? "animate-fall-asleep" : sleepAnim === "waking" ? "animate-wake-up" : ""
+        }`}
         style={{
           transform: isWalking
             ? `translateY(${legFrame === 1 ? -3 : 0}px) rotate(${legFrame === 1 ? (facing === 1 ? 2 : -2) : 0}deg)`
