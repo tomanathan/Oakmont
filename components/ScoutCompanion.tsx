@@ -57,28 +57,47 @@ const HIDDEN_ON = new Set(["/login"]);
 // All distances/positions are in PAGE coordinates (not viewport), so Scout
 // scrolls with the page like something actually standing on it.
 
-// The area kept clear of text -- not just his body, but the zone above him
-// where a speech bubble renders too (he speaks often enough that this
-// needs to be checked proactively, not just while a bubble happens to be
-// showing). Sized to the bubble's own max-width/typical height plus its
-// gap, so "clear of text" means clear of anything he could show, not just
-// his sprite. Hovering just outside this box is still fine -- it isn't
-// padded beyond what he can actually cover.
-const FOOTPRINT_HALF_W = 120;
-const FOOTPRINT_ABOVE = 90;
-const FOOTPRINT_BELOW = 20;
-const TEXT_SELECTOR =
-  "h1,h2,h3,h4,h5,h6,p,span,li,td,th,label,a,button,strong,em,b,i,small,dt,dd,blockquote,figcaption,caption,legend,summary";
+// What "clear of text" requires of his actual BODY -- kept tight to his
+// real sprite size (44x44, plus a small buffer), not padded out to the
+// bubble's footprint. That distinction matters now that text detection is
+// comprehensive (see refreshTextRects): a big chunk of most pages is text,
+// so a landing/crossing check padded out to bubble size would reject
+// almost everywhere and leave him constantly re-planning -- exactly the
+// "spastic" repeated-correction feel we're avoiding. His body only ever
+// needs to clear itself; the bubble is a separate, softer concern below.
+const BODY_HALF_W = 26;
+const BODY_ABOVE = 26;
+const BODY_BELOW = 22;
+// The zone a speech bubble renders in, above and to the sides of him --
+// used only to keep his page-bounds margins generous enough that the
+// bubble itself can never render past the page edge (see SIDE_MARGIN/
+// TOP_MARGIN below). Deliberately NOT used for text-overlap: requiring
+// this whole area to be clear of text before he's allowed to stand
+// somewhere is what caused the over-rejection above. An occasional bubble
+// edge brushing nearby text is a minor, momentary cosmetic thing; getting
+// stuck unable to find anywhere to land is not.
+const BUBBLE_HALF_W = 120;
+const BUBBLE_ABOVE = 90;
 const TEXT_REFRESH_MS = 1500;
+// Defensive cap on how many text-bearing elements one refresh will collect
+// -- keeps a pathologically text-dense page from turning a 1.5s interval
+// into a long layout-thrashing scan.
+const MAX_TEXT_RECTS = 1500;
+// A momentary gap between two adjacent text elements (e.g. crossing from
+// one list item's line into the next) shouldn't flip the behind-text
+// fade/speed-up off and back on within the same stride -- that read as a
+// flicker. Once he's counted as "on text," staying counted as such for a
+// short grace period after the literal overlap ends smooths that out.
+const TEXT_EXIT_GRACE_MS = 250;
 
 const MIN_DIST = 100; // never sit closer than this to the live cursor
 const WANDER_MIN = 90;
 const WANDER_MAX = 260;
-// Floored to the bubble's own footprint (not just his body) so the bubble
+// Floored to the bubble's own footprint (not his body) so the bubble
 // itself can never render past the page edge -- a target picked right at
-// the old, tighter margin left the bubble's other side hanging off-screen.
-const TOP_MARGIN = FOOTPRINT_ABOVE + 10;
-const SIDE_MARGIN = FOOTPRINT_HALF_W;
+// a tighter margin would leave the bubble's other side hanging off-screen.
+const TOP_MARGIN = BUBBLE_ABOVE + 10;
+const SIDE_MARGIN = BUBBLE_HALF_W;
 const BOTTOM_MARGIN = 24;
 const RUN_SPEED = 150; // px/sec, before per-walk random variation
 const SLOW_SPEED = 60; // px/sec, used when the OS prefers reduced motion
@@ -155,6 +174,7 @@ export function ScoutCompanion() {
   const escapeUntilRef = useRef(0);
   const textEscapeUntilRef = useRef(0);
   const onTextRef = useRef(false);
+  const lastOnTextAtRef = useRef(-Infinity);
   const textRectsRef = useRef<{ left: number; top: number; right: number; bottom: number }[]>([]);
   const returningRef = useRef(false);
   const walkingRef = useRef(false);
@@ -229,25 +249,48 @@ export function ScoutCompanion() {
   // on resize, and on an interval to catch content that changes without a
   // route change (quiz answers, saved results, etc.), rather than on every
   // tick, since it walks the whole DOM.
+  //
+  // Rather than a fixed list of "text-ish" tag names (which will always
+  // miss something -- a raw <div> label, an <option>, a <pre>, whatever
+  // the next page happens to use), this walks every element and keeps the
+  // ones that directly contain their own non-whitespace text node. That
+  // covers every real form of on-page text -- headings, passage copy,
+  // answer choices, evidence quotes, captions, table cells, anything --
+  // without needing to name it, and just as naturally skips pure layout
+  // wrappers that only contain other elements (they have no direct text
+  // child of their own). A single bounding rect per qualifying element
+  // (not per text node) keeps this at block granularity rather than
+  // fragmenting one paragraph into a dozen tiny slivers.
   function refreshTextRects() {
-    const els = document.querySelectorAll(TEXT_SELECTOR);
     const rects: { left: number; top: number; right: number; bottom: number }[] = [];
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
     const wrapper = wrapperRef.current;
-    els.forEach((el) => {
-      if (wrapper && wrapper.contains(el)) return;
-      const text = el.textContent ? el.textContent.trim() : "";
-      if (!text) return;
+    const all = document.body.querySelectorAll("*");
+    for (let i = 0; i < all.length && rects.length < MAX_TEXT_RECTS; i++) {
+      const el = all[i];
+      const tag = el.tagName;
+      if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT" || tag === "TEMPLATE") continue;
+      if (wrapper && wrapper.contains(el)) continue;
+      let hasDirectText = false;
+      const childNodes = el.childNodes;
+      for (let j = 0; j < childNodes.length; j++) {
+        const child = childNodes[j];
+        if (child.nodeType === 3 && child.textContent && child.textContent.trim()) {
+          hasDirectText = true;
+          break;
+        }
+      }
+      if (!hasDirectText) continue;
       const cr = el.getBoundingClientRect();
-      if (cr.width < 2 || cr.height < 2) return;
+      if (cr.width < 2 || cr.height < 2) continue;
       rects.push({
         left: cr.left + scrollX,
         top: cr.top + scrollY,
         right: cr.right + scrollX,
         bottom: cr.bottom + scrollY,
       });
-    });
+    }
     textRectsRef.current = rects;
   }
 
@@ -289,13 +332,14 @@ export function ScoutCompanion() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  // Returns the first text box his footprint (body + likely speech-bubble
-  // zone, centered on x,y) would overlap, or null if that spot is clear.
+  // Returns the first text box his actual body (centered on x,y) would
+  // overlap, or null if that spot is clear. Deliberately just his body,
+  // not the wider bubble-speaking zone -- see BODY_* vs BUBBLE_* above.
   function overlapsText(x: number, y: number) {
-    const l = x - FOOTPRINT_HALF_W;
-    const r = x + FOOTPRINT_HALF_W;
-    const t = y - FOOTPRINT_ABOVE;
-    const b = y + FOOTPRINT_BELOW;
+    const l = x - BODY_HALF_W;
+    const r = x + BODY_HALF_W;
+    const t = y - BODY_ABOVE;
+    const b = y + BODY_BELOW;
     const rects = textRectsRef.current;
     for (let i = 0; i < rects.length; i++) {
       const rc = rects[i];
@@ -522,7 +566,15 @@ export function ScoutCompanion() {
       // it, same as any other walk, just triggered immediately instead of
       // waiting for the pause timer.
       const hit = overlapsText(pos.x, pos.y);
-      const onText = !!hit;
+      if (hit) lastOnTextAtRef.current = nowMs;
+      // Debounced for the visual fade/speed-up only -- a momentary gap
+      // between two adjacent text elements (crossing from one list item's
+      // line into the next, say) shouldn't flip that off and back on
+      // within the same stride. The idle-correction check just below
+      // still uses the raw, undebounced hit -- that one's about whether
+      // he's actually resting on text right now, not about smoothing a
+      // visual.
+      const onText = !!hit || nowMs - lastOnTextAtRef.current < TEXT_EXIT_GRACE_MS;
       if (onText !== onTextRef.current) {
         onTextRef.current = onText;
         setBehindText(onText);
