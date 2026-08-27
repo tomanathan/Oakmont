@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import { NavButton } from "./NavButton";
+import { ScoutCompanion } from "./ScoutCompanion";
 
 export function AppShell({
   email,
@@ -67,6 +68,7 @@ export function AppShell({
         </div>
       </div>
       {children}
+      <ScoutCompanion />
     </div>
   );
 }
