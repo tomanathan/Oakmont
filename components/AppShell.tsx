@@ -43,9 +43,6 @@ export function AppShell({
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap pr-1">
-          <NavButton active={pathname === "/welcome"} onClick={() => router.push("/welcome")}>
-            Begin here
-          </NavButton>
           <NavButton active={pathname === "/dashboard"} onClick={() => router.push("/dashboard")}>
             Dashboard
           </NavButton>

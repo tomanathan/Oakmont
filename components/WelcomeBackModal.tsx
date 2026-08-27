@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 
 export function WelcomeBackModal({
+  sessionKey,
   previousLoginAt,
   quizzesLastSession,
   masteredLastSession,
   currentStreak,
 }: {
+  sessionKey: string;
   previousLoginAt: string;
   quizzesLastSession: number;
   masteredLastSession: number;
@@ -15,15 +17,19 @@ export function WelcomeBackModal({
 }) {
   const [open, setOpen] = useState(false);
 
+  // Keyed off the timestamp of this specific login (not the calendar day),
+  // so it fires every time someone actually logs in -- including more than
+  // once in the same day -- but doesn't re-fire on every page load/refresh
+  // within that same login, since lastLoginAt only changes when a new
+  // login happens.
   useEffect(() => {
-    const todayKey = new Date().toDateString();
     try {
-      const seenDate = window.localStorage.getItem("welcome-back-seen-date");
-      setOpen(seenDate !== todayKey);
+      const seenKey = window.localStorage.getItem("welcome-back-seen");
+      setOpen(seenKey !== sessionKey);
     } catch {
       setOpen(true);
     }
-  }, []);
+  }, [sessionKey]);
 
   useEffect(() => {
     if (!open) return;
@@ -38,9 +44,9 @@ export function WelcomeBackModal({
   function dismiss() {
     setOpen(false);
     try {
-      window.localStorage.setItem("welcome-back-seen-date", new Date().toDateString());
+      window.localStorage.setItem("welcome-back-seen", sessionKey);
     } catch {
-      // Private browsing or storage disabled -- fine, it just reappears next login today.
+      // Private browsing or storage disabled -- fine, it just reappears next reload.
     }
   }
 

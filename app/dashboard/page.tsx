@@ -60,6 +60,7 @@ export default async function DashboardPage() {
     <AppShell email={user.email} stats={stats}>
       {stats.previousLoginAt && stats.lastLoginAt && (
         <WelcomeBackModal
+          sessionKey={stats.lastLoginAt.toISOString()}
           previousLoginAt={stats.previousLoginAt.toISOString()}
           quizzesLastSession={quizzesLastSession}
           masteredLastSession={masteredLastSession}
