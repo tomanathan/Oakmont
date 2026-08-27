@@ -42,15 +42,15 @@ export function SubskillClient({
     setViewedExamples((prev) => (prev.has(key) ? prev : new Set(prev).add(key)));
   }, [activePattern, activeExample]);
 
-  // Scrolls to the top of the page any time the visible content changes --
-  // switching Lesson/Practice, jumping patterns, or stepping examples -- so a
-  // button press never leaves the viewport stranded mid-page against new
-  // content. Centralizing this in one effect (rather than scattering
-  // window.scrollTo calls across every handler) means it's impossible for a
-  // new navigation control to accidentally skip it.
+  // Scrolls to the top only on an actual page change -- switching between
+  // Lesson and Practice swaps in an entirely different view, same as
+  // navigating somewhere new. Stepping to the next worked example or
+  // jumping to a different question pattern is browsing within the lesson
+  // you're already on, not a page change, so it leaves scroll position
+  // alone -- resetting it there just fights whoever scrolled down to read.
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [mode, activePattern, activeExample]);
+  }, [mode]);
 
   function selectPattern(i: number) {
     setActivePattern(i);
