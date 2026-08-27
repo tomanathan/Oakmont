@@ -103,6 +103,21 @@ const OUT_OF_VIEW_MARGIN = 40;
 const RETURN_SPEED_MULT = 2.1;
 const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave me behind!"];
 
+// Talking is now mostly reactive (a new page = a new problem, or new
+// results to react to) rather than on a chatty ambient timer. The ambient
+// timer still exists as a rare fallback so he isn't completely silent
+// during a long stretch on one page, but it's deliberately slow and only
+// partly likely to actually fire even when it comes due, so it doesn't
+// read as a metronome.
+const AMBIENT_SPEAK_MIN_MS = 70000;
+const AMBIENT_SPEAK_MAX_MS = 160000;
+const AMBIENT_SPEAK_CHANCE = 0.55;
+// Chance he actually says something after navigating to a new page, and
+// how long he waits first so it reads as a reaction, not a trigger.
+const NAV_SPEAK_CHANCE = 0.75;
+const NAV_SPEAK_DELAY_MIN_MS = 600;
+const NAV_SPEAK_DELAY_MAX_MS = 1300;
+
 function rectsOverlap(
   al: number,
   at: number,
@@ -153,6 +168,8 @@ export function ScoutCompanion() {
   const stageRef = useRef<PetStage | null>(null);
   const streakRef = useRef(0);
   const hasGreetedRef = useRef(false);
+  const hasMountedPathRef = useRef(false);
+  const navSpeakTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // One-time setup: pick a starting spot in page coordinates and fetch
   // Scout's mood. ScoutCompanion is mounted once at the root layout, so
@@ -173,7 +190,8 @@ export function ScoutCompanion() {
     posRef.current = { x: startX, y: startY };
     targetRef.current = { x: startX, y: startY };
     pathTRef.current = 1;
-    speakAtRef.current = Date.now() + 5000;
+    speakAtRef.current =
+      Date.now() + AMBIENT_SPEAK_MIN_MS + Math.random() * (AMBIENT_SPEAK_MAX_MS - AMBIENT_SPEAK_MIN_MS);
     behaviorUntilRef.current = Date.now() + 900 + Math.random() * 900;
     setReady(true);
 
@@ -244,11 +262,29 @@ export function ScoutCompanion() {
     if (walkingRef.current && overlapsText(targetRef.current.x, targetRef.current.y)) {
       beginWalk();
     }
+
+    // A new page is the main reason he actually talks now -- a new
+    // problem, a fresh set of results, a different part of the plan all
+    // read as "something new" worth a reaction. Skipped on the very first
+    // run (that's just the initial mount, not a navigation -- the greet
+    // effect covers that one), and not guaranteed every time so it doesn't
+    // feel mechanical.
+    if (hasMountedPathRef.current) {
+      if (navSpeakTimeoutRef.current) clearTimeout(navSpeakTimeoutRef.current);
+      if (Math.random() < NAV_SPEAK_CHANCE) {
+        const delay = NAV_SPEAK_DELAY_MIN_MS + Math.random() * (NAV_SPEAK_DELAY_MAX_MS - NAV_SPEAK_DELAY_MIN_MS);
+        navSpeakTimeoutRef.current = setTimeout(() => speak(pickMessage()), delay);
+      }
+    } else {
+      hasMountedPathRef.current = true;
+    }
+
     const interval = setInterval(refreshTextRects, TEXT_REFRESH_MS);
     window.addEventListener("resize", refreshTextRects);
     return () => {
       clearInterval(interval);
       window.removeEventListener("resize", refreshTextRects);
+      if (navSpeakTimeoutRef.current) clearTimeout(navSpeakTimeoutRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
@@ -285,6 +321,11 @@ export function ScoutCompanion() {
     setBubble(text);
     if (bubbleTimeoutRef.current) clearTimeout(bubbleTimeoutRef.current);
     bubbleTimeoutRef.current = setTimeout(() => setBubble(null), ms);
+    // Any time he actually says something -- whatever the reason -- push
+    // the rare ambient fallback back out, so it never stacks a second,
+    // unrelated line right on top of one that just showed.
+    speakAtRef.current =
+      Date.now() + AMBIENT_SPEAK_MIN_MS + Math.random() * (AMBIENT_SPEAK_MAX_MS - AMBIENT_SPEAK_MIN_MS);
   }
 
   function pickMessage(): string {
@@ -435,8 +476,8 @@ export function ScoutCompanion() {
       const nowMs = Date.now();
 
       if (nowMs > speakAtRef.current) {
-        speakAtRef.current = nowMs + 4500 + Math.random() * 4500;
-        speak(pickMessage());
+        speakAtRef.current = nowMs + AMBIENT_SPEAK_MIN_MS + Math.random() * (AMBIENT_SPEAK_MAX_MS - AMBIENT_SPEAK_MIN_MS);
+        if (Math.random() < AMBIENT_SPEAK_CHANCE) speak(pickMessage());
       }
 
       // Only reconsider "where's the mouse" every few seconds -- he keeps
@@ -595,6 +636,20 @@ export function ScoutCompanion() {
       }}
     >
       {bubble && (
+        // The bubble is out-of-flow (absolute) and always centers on the
+        // wrapper's own width regardless of the bubble's own size, so it's
+        // dead-center above the dog's head by construction. The one thing
+        // that broke that: the pop-in keyframes (globals.css) set
+        // `transform: scale(...)` on every step, which -- being the same
+        // CSS property as -translate-x-1/2's translateX(-50%) -- silently
+        // replaced it for the animation's whole duration (and, via
+        // `forwards`, permanently after). The bubble was rendering
+        // uncentered and shifted right by half its own width the entire
+        // time a pop-in animation had ever run on it, which is also
+        // exactly what let a long tip sail its right edge past the page
+        // edge undetected by the position-picking margins (which assume
+        // it's centered). Fixed at the keyframes, which now carry
+        // translateX(-50%) through every step.
         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[240px] pointer-events-none animate-pop-in">
           <div className="bg-white border border-[#ece9f7] shadow-[0_6px_20px_rgba(26,26,46,0.12)] rounded-xl px-3 py-2 text-xs text-ink leading-snug text-center">
             {bubble}
