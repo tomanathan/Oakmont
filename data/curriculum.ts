@@ -138,9 +138,9 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
     },
     {
-      name: "Explicit Detail Retrieval",
+      name: "Detail Comprehension in Informational Texts",
       explanation:
-        "These questions are simpler than main-idea questions: you just report what the text directly says about one specific fact, number, or finding — no piecing-together required. This is different from 'function of a detail' questions too, since you're not explaining why the detail is there, just what it says. The method: find the exact sentence that answers the question, then pick the choice that restates it accurately. Don't add outside knowledge, reverse a direction, or borrow a fact from somewhere else in the passage.",
+        "These questions ask what the text directly states, or reports, about one specific fact, number, finding, or reason — not the whole passage's point, just one piece of it accurately restated. The stems vary: 'According to the text, what is true about X?' 'Why does X believe Y?' 'What did the study find?' 'Which question does the text most directly attempt to answer?' The method is the same regardless of phrasing: locate the exact sentence(s) answering the question, then pick the choice matching what's actually said — no outside knowledge, no reversed direction, and no overstating a modest finding into a stronger one.",
       examples: [
         {
           q: "A marine biologist tagged 40 sea turtles as part of a two-year nesting study. Of those 40, 34 returned to the same nesting beach the following year. According to the text, what did the biologist find?",
@@ -169,11 +169,16 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "A bridge inspection examined 12 support cables. Of these, 2 showed early signs of corrosion, while the remaining 10 met all safety standards. Because of the corrosion findings, a follow-up inspection has been scheduled for 18 months from now instead of the standard 36. According to the text, how many of the inspected cables showed early signs of corrosion?",
-          choices: ["10", "12", "2", "18"],
-          answer: 2,
+          q: "A single colony of aspen trees, all connected by one shared root system, is believed to be among the largest living organisms by mass in the region where it grows. Researchers monitoring the colony have found that its growth has been slowing in recent years, in part because deer graze on young saplings before the saplings can mature. The researchers believe that fencing off the colony's edges could allow it to resume its earlier growth rate. According to the text, why are the researchers concerned about the aspen colony?",
+          choices: [
+            "Its growth rate has been slowing, in part because deer graze on its young saplings.",
+            "It is being replaced by a faster-growing, invasive species of tree.",
+            "It cannot survive losing any portion of its shared root system.",
+            "It has stopped producing new saplings entirely.",
+          ],
+          answer: 0,
           explain:
-            "Several numbers compete for attention here — 12 total, 10 that passed, 18 months, 36 months — and the question asks specifically about corrosion. The choice reporting 10 gives the number that passed, not the number that showed corrosion; 12 is the total cable count; 18 is the new inspection timeline, not a cable count at all. 2 is the only number that actually answers 'how many showed corrosion.'",
+            "The text gives one specific, stated reason for concern: slowing growth, tied to deer grazing on saplings. D overstates 'slowing' into 'stopped entirely' — a common trap where a moderate finding gets pushed into an absolute one. B and C both invent causes and vulnerabilities the text never mentions. A is the only choice restating the actual reason given, at the actual degree the text supports.",
           difficulty: "medium",
         },
         {
@@ -190,120 +195,184 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "Two research teams have studied coral bleaching in different regions. A team working in the Pacific found bleaching events becoming more frequent but less severe over time. A separate team working in the Caribbean found the opposite pattern: bleaching events becoming less frequent but more severe. According to the text, what did the Caribbean team find?",
+          q: "In the coastal town of Marrow's Bend, residents greet one another not with 'hello' but with a question about the tide — 'high or low?' — even indoors, far from any dock. Researchers studying the phrase have traced its origin to a period when the town's economy depended entirely on tide-timed harvests, when knowing the tide was, quite literally, the most urgent thing two people could tell each other. Though the town's economy has since diversified well beyond fishing, the greeting has persisted for generations. Which question does the text most directly attempt to answer?",
           choices: [
-            "Bleaching events are becoming more frequent but less severe.",
-            "Bleaching events are becoming less frequent but more severe.",
-            "Bleaching events are becoming both more frequent and more severe.",
-            "Bleaching events show no clear pattern in either region.",
+            "How many other coastal towns share this same greeting?",
+            "Why has this unusual greeting persisted in Marrow's Bend?",
+            "When did the town's economy begin to diversify beyond fishing?",
+            "Is the greeting easily understood by visitors to the town?",
           ],
           answer: 1,
           explain:
-            "The passage deliberately sets up two teams with contrasting, easy-to-swap findings. Choice A describes the Pacific team's result, not the Caribbean team's — mixing up which team found what is exactly the trap this question is built around. C and D describe patterns neither team actually reported. B is the only choice correctly matched to 'Caribbean.'",
+            "The text explains where the greeting came from and notes that it has outlasted the economic conditions that originally made it useful — together, that's an explanation for why it persisted. A, C, and D are all questions a reader might reasonably have, but none of them is addressed anywhere in the text: no count of other towns, no date for the economic shift, no mention of visitors' comprehension. B is the only question the passage actually answers.",
           difficulty: "hard",
         },
       ],
       traps: [
         "Choosing an answer accurate for a different part of the passage (a different number, entity, or time period) than the one actually asked about — always re-locate the exact sentence rather than relying on memory.",
-        "Choosing an answer that reverses a stated direction or relationship (before/after, increase/decrease) from the text.",
-        "Choosing an answer that sounds plausible and passage-adjacent but isn't actually stated anywhere in the text — explicit detail questions never require outside inference.",
+        "Choosing an answer that reverses a stated direction or relationship (before/after, increase/decrease, more/less) from the text.",
+        "Overstating what the text actually says — 'growth has slowed' becomes 'growth has stopped,' or 'some' becomes 'most' or 'all.'",
       ],
     },
     {
-      name: "Function of a Specific Detail",
+      name: "Reading Literary Narratives and Poetry",
       explanation:
-        "These questions zoom in on one detail — a statistic, an example, a quotation — and ask what job it's doing for the passage's larger claim. You're not summarizing the whole passage here; you're explaining why this one piece of evidence was included. First, find the specific claim the detail is attached to (usually the sentence right before or after it). Then check whether the answer choice correctly describes the detail's relationship to that claim — does it support it, complicate it, or offer a contrasting case? Don't just pick the choice that restates what the detail says.",
+        "A meaningful share of Central Ideas and Details questions come from novels, short stories, memoirs, and poems, often using older or more formal diction than the informational passages. The skill tested is identical to the informational version: what does the text state or clearly support about a character, narrator, or speaker's actions, feelings, or situation? The real challenge is usually the language itself, not the reasoning — read for what's literally depicted (an action, a stated feeling, a description) rather than projecting an assumption onto the character based on genre instincts. Nervousness doesn't always mean unhappiness; silence doesn't always mean disapproval; and old-fashioned phrasing often has a fairly plain, literal meaning once it's unpacked.",
       examples: [
         {
-          q: "A study of a mentorship program's effect on high school dropout rates reports that in the program's pilot neighborhood, dropout rates fell from 22% to 4% over three years — a decline not observed in demographically similar neighborhoods without the program. Which choice best states the function of the comparison to neighborhoods without the program?",
+          q: "The following text is from a novel. The narrator is about to compete in a debate tournament for the first time. 'I stood backstage running through my opening line one more time, though I'd already said it so many times in my head that the words had started to lose their shape. My coach caught my eye from the wings and mouthed, just breathe. I nodded, but my hands wouldn't stop finding new ways to fold themselves.' According to the text, what does the narrator do while waiting backstage?",
           choices: [
-            "It shows that dropout rates declined significantly in the pilot neighborhood.",
-            "It rules out a general regional trend as the explanation, strengthening the claim that the program itself caused the decline.",
-            "It suggests the program should be expanded to additional neighborhoods immediately.",
-            "It contradicts the passage's claim that the program reduced dropout rates.",
+            "She revises her opening argument at the last minute.",
+            "She repeatedly rehearses her opening line and shows visible signs of nervousness.",
+            "She decides to withdraw from the competition.",
+            "She asks her coach for a different strategy.",
           ],
           answer: 1,
           explain:
-            "The detail's job is to rule out an alternative explanation (a broader regional trend) by comparing the pilot area to similar areas without the program, which strengthens the causal claim. Choice A just paraphrases what the detail says rather than what it does — a classic trap on this question type. D misreads support as contradiction. C draws a conclusion the passage never suggests. B is the only choice describing the detail's actual logical role.",
+            "The text states she has already run through her opening line so many times the words 'started to lose their shape,' and that her hands keep restlessly refolding themselves — repetition plus a physical sign of nerves. A misreads 'said it so many times' as revising it; she's repeating the same line, not changing it. C and D both describe actions the text never depicts. B is the only choice matching both details the text actually gives.",
           difficulty: "easy",
         },
         {
-          q: "A study credits a new traffic law with reducing pedestrian injuries in one town. It adds that in the two neighboring towns that later adopted similar crosswalk timing rules, injury rates fell by a comparable margin within a year. Which choice best states the function of this detail?",
+          q: "The following text is from a short story. Wen has just noticed that his grandfather quietly paid for a stranger's groceries. 'My grandfather never mentioned it to anyone, not even to my grandmother that evening at dinner. When I brought it up later, all he said was, \"That's between me and the young man,\" and reached for the newspaper, as though the conversation were already over.' According to the text, what is true about the grandfather?",
           choices: [
-            "It shows the traffic law worked as intended in the original town.",
-            "It demonstrates that the effect reproduced independently in other towns, showing it wasn't a one-time result specific to a single location.",
-            "It suggests neighboring towns face more dangerous traffic conditions than the original town.",
-            "It compares the traffic law to an entirely different safety intervention used elsewhere.",
+            "He wants recognition for his generosity.",
+            "He regularly gives money to strangers.",
+            "He prefers to keep his acts of kindness private.",
+            "He disapproves of his grandson's curiosity.",
           ],
-          answer: 1,
+          answer: 2,
           explain:
-            "This detail's job differs from a rule-out-alternative-causes detail: it shows the same pattern appearing again, independently, once other towns adopted the rule, addressing 'was this a fluke?' rather than 'was this really caused by the law?' Choice A describes the original town's result, not what this specific detail about the other towns contributes. C and D both invent claims the passage doesn't make. B is the only choice matching the detail's actual reproducibility function.",
-          difficulty: "medium",
-        },
-        {
-          q: "An analysis credits a company's new onboarding program with improved employee retention. It notes that departments that delayed adopting the new process the longest also had the highest turnover during that period — though those same departments already had reputations for higher-than-average turnover before the program existed. Which choice best states the function of the final clause, beginning 'though those same departments'?",
-          choices: [
-            "It provides additional statistical support for the claim that the onboarding program improved retention.",
-            "It acknowledges a complication that offers an alternative explanation for the departments' turnover, rather than straightforwardly supporting the retention claim.",
-            "It proves that the onboarding program had no effect on employee retention.",
-            "It introduces an entirely new claim unrelated to employee retention.",
-          ],
-          answer: 1,
-          explain:
-            "At first glance, the delay-turnover correlation looks like support for the retention claim, but the final clause adds a wrinkle: those departments already had elevated turnover before the program existed, which offers another possible explanation for their numbers. That makes the detail's real function an acknowledged complication, not added support (ruling out A) or unrelated content (ruling out D). C overreaches — a complication isn't proof the program had zero effect. B is the only choice correctly describing this as a complicating acknowledgment.",
-          difficulty: "hard",
-        },
-        {
-          q: "A city credits a new crosswalk signal with reducing pedestrian wait times. It reports that at the intersection where the signal was installed, average pedestrian wait time fell from 45 seconds to 18 seconds. Which choice best states the function of this detail?",
-          choices: [
-            "It provides a direct, specific measurement of the exact outcome the claim is about, at the exact location the change occurred.",
-            "It compares the new signal's performance to signals installed in other cities.",
-            "It raises a concern about whether the reduced wait time is safe for pedestrians.",
-            "It shows that wait times have continued to fall since the signal was installed.",
-          ],
-          answer: 0,
-          explain:
-            "This detail gives specific before-and-after numbers for exactly the claim being made — no comparison group, no complication, just a direct measurement at the location in question. B invents a comparison the passage doesn't make. C and D both add claims (a safety concern, an ongoing trend) that aren't in the text. A is the most literal, direct description of what the detail does.",
+            "He tells no one, including his own wife, and shuts down the topic with a brief, deflecting answer before changing the subject — all signs of someone who doesn't want the act discussed. A is directly contradicted: avoiding mention of it is the opposite of wanting recognition. B describes a pattern the text never establishes; this is one instance. D misreads a short, matter-of-fact reply as disapproval, which the text doesn't support. C is the only choice matching his actual behavior.",
           difficulty: "easy",
         },
         {
-          q: "A study argues that a particular bird species shows unusually flexible migration behavior. It notes that one tagged individual, expected to winter in the species' usual coastal range, instead traveled over 600 miles inland after unseasonable storms altered food availability. Which choice best states the function of this detail?",
+          q: "The following text is adapted from a poem. 'The roots have long since found the pot's edge, / and pressed there, coiled, without complaint, / though somewhere past the clay a field lies open, / loam enough for any tree to spread. / We prune what shows above the rim / and call the smallness chosen, call it shape, / and never ask what happens underneath, / where growth continues, quiet, unconsoled.' Based on the text, what does the poem suggest about growth that is constrained?",
           choices: [
-            "It provides statistical evidence that most individuals in the species migrate inland during storms.",
-            "It illustrates the abstract claim of flexible migration with one concrete, vivid case.",
-            "It contradicts the passage's claim that the species is unusually flexible.",
-            "It compares this species' migration flexibility to that of a related species.",
+            "It stops entirely once a limit is reached.",
+            "It continues even when it isn't visible or acknowledged.",
+            "It can be redirected but is never fully stopped by any container.",
+            "It causes visible damage to whatever contains it.",
           ],
           answer: 1,
           explain:
-            "This detail isn't a statistic or a comparison group — it's one specific case that makes an abstract claim ('flexible migration') concrete and easy to picture. A misreads a single example as a statistical claim about most individuals. C and D both invent relationships the text doesn't establish. B correctly identifies the detail's illustrating function.",
+            "The final lines state directly that beneath what's visibly pruned, 'growth continues, quiet, unconsoled' — unseen, but not absent. A directly contradicts 'continues.' C overreaches: the poem never claims growth always escapes its container, only that it persists internally. D isn't supported; no damage to the pot is described anywhere. B is the only choice matching what the poem actually states about the unseen growth.",
           difficulty: "medium",
         },
         {
-          q: "An article makes two separate claims about a company's remote-work policy: that it boosted productivity, and that it improved employee retention. It later reports that survey responses showed 72% of remote employees cited flexible scheduling, not the ability to skip a commute, as the policy's most valued feature. Which choice best states the function of this survey detail?",
+          q: "The following text is from a novel set in the early nineteenth century. Miss Enderby has just been introduced to her cousin's new husband. 'Miss Enderby said little at the dinner table, a circumstance her aunt later remarked upon with some disappointment, supposing her niece wanting in either wit or interest. But Miss Enderby's silence proceeded from neither cause; she had, within the first quarter hour, discerned in Mr. Halloway's easy manner a carelessness with truth that his bride had not yet detected, and she judged it wiser, for the present, to observe than to speak.' According to the text, what is true about Miss Enderby?",
           choices: [
-            "It supports the retention claim by explaining what employees value about the policy, though it is unrelated to the productivity claim.",
-            "It supports the productivity claim by showing employees are more efficient when working flexible hours.",
-            "It contradicts both claims made earlier in the article.",
-            "It shows that most employees dislike the company's remote-work policy overall.",
+            "She is too shy to converse comfortably with new acquaintances.",
+            "She disapproves of her cousin's choice of husband for financial reasons.",
+            "She has already formed a shrewd, private judgment that she chooses not to voice yet.",
+            "She lacks the wit her aunt expects of her.",
           ],
-          answer: 0,
+          answer: 2,
           explain:
-            "This passage has two different claims, and the detail's content — what employees value about the policy — speaks to why they'd want to stay, tying it to the retention claim specifically rather than the productivity claim. B is a common trap: assuming any work-policy detail supports whichever claim comes to mind first. D misreads 'most valued feature' as dissatisfaction. C is simply wrong; the detail supports rather than contradicts. A correctly ties the detail to the specific claim it addresses.",
+            "The text explicitly rules out both A and D — her silence 'proceeded from neither cause,' meaning neither shyness nor dullness explains it. It states instead that she has quietly detected something dishonest in Halloway and has deliberately chosen to watch rather than speak 'for the present.' B invents a reason (finances) the text never mentions; her judgment concerns his truthfulness, not his wealth. C is the only choice matching what the text directly states about her silence.",
+          difficulty: "medium",
+        },
+        {
+          q: "The following text is from a novel. The narrator has just returned home after a long absence to find her childhood bedroom unchanged. 'Someone had kept the room exactly as I'd left it — the concert posters still crooked on the wall, the desk still angled toward the window instead of the door the way I'd always preferred it. I stood in the doorway for a long moment before I made myself walk in and start packing the boxes I'd come for.' What does the text most strongly suggest about the narrator's reaction to her preserved room?",
+          choices: [
+            "She is grateful that her family thought to preserve it.",
+            "She is more affected by the room than she is ready to act on immediately.",
+            "She is annoyed that nothing in the room has been changed.",
+            "She has no emotional response to seeing the room again.",
+          ],
+          answer: 1,
+          explain:
+            "She hesitates in the doorway for 'a long moment' and has to make herself walk in — both signal a reaction strong enough to slow her down, without the text stating exactly what that reaction is. A invents a feeling (gratitude) never mentioned. C isn't supported; nothing in the text reads as complaint. D is directly undercut by the pause and the effort it takes her to enter — that's the opposite of no response. B is the only choice matching the hesitation the text actually depicts, without overstating what emotion is behind it.",
           difficulty: "hard",
         },
       ],
       traps: [
-        "Picking an answer that just paraphrases the detail's content ('dropout rates decreased') instead of describing its function (why it was included).",
-        "Missing the comparison built into the detail (pilot vs. similar neighborhoods), which is often the entire point of the evidence.",
-        "Assuming a detail always 'supports' the main claim when sometimes it's included specifically to acknowledge a limitation or complication.",
+        "Assuming a character's emotional state from genre instinct (a quiet character must be shy, a sudden reaction must be negative) instead of from what the text actually depicts.",
+        "Getting distracted by unfamiliar or old-fashioned vocabulary and picking the choice that merely 'sounds' literary rather than the one the text supports.",
+        "Importing a plausible backstory or motive the text never actually states, especially in longer character-study excerpts.",
+      ],
+    },
+    {
+      name: "Reasonable Conclusions Supported by the Text",
+      explanation:
+        "These questions ask what can reasonably be concluded from the text, even though the conclusion itself is never stated outright — 'based on the text, what can be concluded,' 'what does the text most strongly suggest,' or 'what would most likely have been true if X hadn't happened.' This differs from pure detail retrieval: instead of restating one stated fact, you connect two or more stated facts (or a stated fact and its logical consequence) into a conclusion the text supports without spelling out. The right answer follows necessarily, or very nearly necessarily, from what's given — not just plausibly. Wrong answers typically add outside information, overstate the conclusion's certainty, or invert which fact caused which effect.",
+      examples: [
+        {
+          q: "A city government surveyed residents about a new bike-share program. Of respondents who had used the program at least once, 91% said they would use it again. However, only 12% of all surveyed residents reported having used the program at all. Based on the text, what can reasonably be concluded about the bike-share program?",
+          choices: [
+            "Most residents dislike the bike-share program.",
+            "The program has been well-received by those who have tried it, but most residents haven't tried it yet.",
+            "The program will likely be canceled due to low approval.",
+            "Residents who used the program found it too expensive.",
+          ],
+          answer: 1,
+          explain:
+            "The 91% figure shows strong approval among people who actually tried the program, while the 12% figure shows that few residents have tried it at all — two separate facts that combine into a specific, supported conclusion. A conflates low usage with dislike, but the text gives no information about what non-users think. C invents a future outcome never suggested by the text. D invents a reason (cost) that's never mentioned. B is the only choice that follows from both given figures without adding anything.",
+          difficulty: "easy",
+        },
+        {
+          q: "A local bakery began offering a discount to customers who brought their own container instead of using a disposable bag. Six months later, the bakery reported using 40% fewer disposable bags than before the discount began, though its total number of daily customers stayed about the same. Based on the text, what can most reasonably be concluded?",
+          choices: [
+            "The discount caused a significant increase in the bakery's daily customers.",
+            "A meaningful portion of the bakery's customers began bringing their own containers because of the discount.",
+            "The bakery lost money by offering the discount.",
+            "Disposable bags are more expensive than the discount amount.",
+          ],
+          answer: 1,
+          explain:
+            "Fewer bags used, combined with a steady customer count, points to existing customers switching their own behavior — not to more people showing up. A is directly contradicted: customer count 'stayed about the same,' not increased. C and D both introduce financial claims the text never addresses at all. B is the only conclusion that follows from the two stated facts.",
+          difficulty: "easy",
+        },
+        {
+          q: "A small furniture maker built each chair entirely by hand for the shop's first decade, a process that limited output to about three chairs a week regardless of how many orders came in. After investing in a table saw and a power sander, the shop's weekly output rose to roughly nine chairs, though each piece still required hours of hand-finishing to match the shop's original standard. Based on the text, what would have most likely been true if the shop had never adopted the new tools?",
+          choices: [
+            "The shop would have been unable to keep its chairs at the same quality standard.",
+            "The shop would have continued producing far fewer chairs per week than it does now.",
+            "The shop would have stopped hand-finishing its chairs entirely.",
+            "The shop would have raised its prices to compensate for slower production.",
+          ],
+          answer: 1,
+          explain:
+            "The tools are what raised weekly output from about three chairs to about nine; without them, that constraint on output would remain. A is wrong because hand-finishing — the step that actually preserves quality — continued even after the tools were introduced, so quality isn't what the tools changed. C inverts the text: hand-finishing is exactly what stayed the same, tools or not. D invents a pricing response never discussed. B is the only choice following directly from the stated cause of the output increase.",
+          difficulty: "medium",
+        },
+        {
+          q: "For decades, engineers assumed that a bridge's support cables needed replacing every 25 years regardless of visible wear, since testing each individual cable's true condition was prohibitively expensive. A new sensor technology now allows continuous, low-cost monitoring of cable stress in real time. In bridges where the sensors have been installed, several cables originally scheduled for replacement have instead remained safely in service for over 30 years. What does the text most strongly suggest about the original 25-year replacement schedule?",
+          choices: [
+            "It was based on a fixed timeline rather than each cable's actual condition.",
+            "It was created specifically to reduce the overall cost of bridge maintenance.",
+            "It has now been proven unsafe for most bridges that still use it.",
+            "It is no longer followed in any bridge, sensored or not.",
+          ],
+          answer: 0,
+          explain:
+            "The schedule applied 'regardless of visible wear' because testing individual condition was too costly — meaning it tracked age, not actual condition — and the sensor data confirms this by showing some cables safely outlasting the schedule by years. B misreads the reasoning: the fixed schedule was a workaround for the cost of testing, not a cost-reduction goal in itself. C overstates the finding into a safety verdict the text never makes; some cables lasting longer doesn't mean the schedule was unsafe. D goes beyond what the text describes about un-sensored bridges. A is the only choice following directly from what the text establishes about the schedule's basis.",
+          difficulty: "medium",
+        },
+        {
+          q: "A team studying a species of freshwater fish transplanted a population from a slow-moving river to a faster-flowing one, to see whether the fish's growth rate was influenced by water speed. The transplanted fish grew significantly faster in their new environment. Crucially, genetic testing showed that the transplanted fish and the original population remained genetically identical throughout the study. It can most reasonably be inferred from the text that the genetic testing was important for which reason?",
+          choices: [
+            "It confirmed that the fish had adapted permanently to the faster-flowing water.",
+            "It ruled out genetic differences as an explanation for the change in growth rate, strengthening the conclusion that water speed caused it.",
+            "It showed that the fish species is more genetically diverse than researchers had expected.",
+            "It demonstrated that faster-flowing rivers contain more genetically varied fish populations.",
+          ],
+          answer: 1,
+          explain:
+            "Without the genetic test, the faster growth could be explained by a pre-existing genetic difference between the two groups rather than by the environment itself; confirming genetic identity closes off that alternative explanation and strengthens the water-speed conclusion specifically. A overstates the finding into 'permanent adaptation,' which the identical genetics actually argue against — no genetic change occurred at all. C and D both invent claims about genetic diversity the text never addresses; the test showed sameness between two groups, not diversity within the species. B is the only choice describing the test's actual logical role.",
+          difficulty: "hard",
+        },
+      ],
+      traps: [
+        "Picking an answer that sounds reasonable in general but isn't actually supported by the specific facts given in the text.",
+        "Confusing a stated fact with the unstated conclusion the question is actually asking for.",
+        "Overstating a modest, well-supported conclusion into a much stronger, unsupported claim ('may be true in some cases' becomes 'is always true').",
       ],
     },
   ],
   tipsAndTricks: [
     "Before reading answer choices, try to state the main idea in your own words in under 10 words. If none of the choices match your version, re-read the passage's last two sentences — conclusions often carry the thesis.",
-    "For 'detail' questions, always re-locate the sentence in the passage rather than relying on memory — SAT wrong answers are specifically designed to sound like things the passage 'probably' said.",
-    "If two answer choices seem both partially true, the correct one is usually the one that connects to the passage's actual argument, not just its topic.",
+    "For detail and literary-comprehension questions, always re-locate the exact sentence in the passage rather than relying on memory — wrong answers are specifically designed to sound like things the passage 'probably' said.",
+    "For 'what can be concluded' questions, treat the answer like a math proof: it should follow necessarily from what's stated, not just seem plausible — if you can imagine a way the text could still be true and the answer choice false, it's not the right answer.",
   ],
 };
 
@@ -476,9 +545,86 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
     },
     {
-      name: "Selecting the Best Illustrative Quotation",
+      name: "Reading Data from a Graph or Table",
       explanation:
-        "This Command of Evidence pattern applies to literary texts. You're given a claim about a character's feeling, an author's style, or a story's theme, and asked which quotation best illustrates it. There's no data to weigh here. Instead: figure out exactly what quality or emotion the claim names, then find the quotation that embodies that specific quality — not just one that mentions the same character or scene.",
+        "Many Command of Evidence questions hand you a graph or table directly, then ask one of two things: to complete a statement using the data ('which choice most effectively uses data from the graph to complete the text'), or to identify which choice describes data that supports or weakens a stated conclusion. There's no trick beyond careful, literal reading: find the exact category, time period, or comparison the question asks about, and check every number and label in each answer choice against the data — not just the first choice that looks plausible. Wrong answers are built by swapping a category, a time period, a direction, or a single digit from the real data, or by citing real numbers that don't actually address what the question is asking.",
+      examples: [
+        {
+          q: "A table shows the average commute time, in minutes, for workers in four cities: Denview, 22; Fairhaven, 31; Grantsville, 18; Millbrook, 27. A student writing about commute times notes that among these four cities, the shortest average commute belongs to ______. Which choice most effectively uses data from the table to complete the statement?",
+          choices: [
+            "Grantsville, at 18 minutes.",
+            "Denview, at 22 minutes.",
+            "Millbrook, at 27 minutes.",
+            "Fairhaven, at 31 minutes.",
+          ],
+          answer: 0,
+          explain:
+            "Grantsville has the lowest value (18), matching 'shortest.' The other three choices each correctly report their own city's number, but none of those numbers is the minimum, so none of them actually completes 'shortest' correctly.",
+          difficulty: "easy",
+        },
+        {
+          q: "A bar graph shows a company's quarterly revenue, in millions of dollars, over one year: Q1, 4.2; Q2, 5.1; Q3, 4.8; Q4, 6.3. An analyst writing about the company's performance notes that after an increase in Q2, revenue ______. Which choice most effectively uses data from the graph to complete the statement?",
+          choices: [
+            "fell slightly in Q3 before rising again in Q4.",
+            "fell in every quarter for the rest of the year.",
+            "remained exactly flat for the rest of the year.",
+            "rose in every quarter for the rest of the year.",
+          ],
+          answer: 0,
+          explain:
+            "Q3 (4.8) is lower than Q2 (5.1) — a slight fall — and Q4 (6.3) is higher again — a rise. 'Fell in every quarter' overstates that one dip into a full decline through year's end. 'Remained flat' ignores that the values changed at all. 'Rose in every quarter' ignores the Q3 dip entirely.",
+          difficulty: "easy",
+        },
+        {
+          q: "Researchers surveyed customer satisfaction, on a 100-point scale, at two competing coffee chains before and after each chain introduced a loyalty rewards app. Chain A's average score rose from 62 to 81 after launching its app. Chain B's average score, measured over the same period without launching any app, rose from 65 to 68. The researchers concluded that Chain A's loyalty app substantially improved customer satisfaction. Which choice best describes data that support the researchers' conclusion?",
+          choices: [
+            "Chain A's score rose by 19 points after its app launched, while Chain B's score, without a comparable app, rose by only 3 points over the same period.",
+            "Chain A's score was higher than Chain B's score both before and after the app launched.",
+            "Both chains saw their customer satisfaction scores increase over the period studied.",
+            "Chain B's score of 68 remained lower than Chain A's score of 81 after the app launched.",
+          ],
+          answer: 0,
+          explain:
+            "The conclusion is causal — the app specifically drove the improvement — so the strongest support is the size of Chain A's rise (19 points) compared to Chain B's much smaller rise (3 points) without an app, ruling out a general trend affecting both chains equally. Comparing the two chains' raw scores at a single point in time doesn't address which company changed more. Noting that 'both increased' actually undercuts the app's unique effect, since Chain B improved too without one.",
+          difficulty: "medium",
+        },
+        {
+          q: "A city's parks department claims that adding new drinking fountains increased park attendance. In the twelve months after fountains were added to five parks, average monthly attendance at those parks rose from 3,200 to 3,850. Over the same period, average monthly attendance at eight comparable parks that did not receive new fountains rose from 3,100 to 3,700. Which choice best describes data that weaken the department's claim?",
+          choices: [
+            "Attendance at the parks without new fountains rose by a comparable percentage (about 19%) over the same period as the parks that did receive fountains (about 20%).",
+            "The five parks that received fountains had slightly higher attendance than the eight comparison parks before the fountains were added.",
+            "Attendance at the parks with new fountains rose by about 650 visitors per month.",
+            "The parks department installed fountains in five of its thirteen total parks.",
+          ],
+          answer: 0,
+          explain:
+            "If parks without any new fountains saw almost the same percentage increase, that points to some other citywide factor — like weather or a general rise in park use — driving attendance up everywhere, not the fountains specifically, which weakens the causal claim. The pre-existing attendance gap and the raw increase at the fountain parks are both true but don't address whether the fountains specifically caused the rise. The fountain-count detail is background information, not evidence either way.",
+          difficulty: "medium",
+        },
+        {
+          q: "A survey asked residents of three neighborhoods how they primarily commute to work: by car, by public transit, or by bicycle. In Neighborhood X, 58% commute by car, 12% by transit, and 30% by bicycle. In Neighborhood Y, 62% commute by car, 33% by transit, and 5% by bicycle. In Neighborhood Z, 55% commute by car, 40% by transit, and 5% by bicycle. A researcher claims that public transit use varies more across these neighborhoods than car use does. Which choice most effectively uses data from the survey to support the researcher's claim?",
+          choices: [
+            "Transit use ranges from 12% to 40% (a 28-point spread) across the neighborhoods, while car use ranges from 55% to 62% (only a 7-point spread).",
+            "Car use ranges from 12% to 40% (a 28-point spread) across the neighborhoods, while transit use ranges from 55% to 62% (only a 7-point spread).",
+            "Neighborhood Z has both the lowest car-commuting rate and the highest transit rate of the three neighborhoods.",
+            "In every neighborhood surveyed, car commuting is more common than either transit or cycling individually.",
+          ],
+          answer: 0,
+          explain:
+            "The claim is specifically about variation — which commute type's rate swings more across the three neighborhoods — so the relevant comparison is each variable's range: transit spans 28 points (12% to 40%) while car spans only 7 points (55% to 62%), directly supporting the claim that transit use varies more. The second choice reports the identical two numbers but swaps which variable they belong to, which would actually support the opposite conclusion. The Neighborhood Z choice and the car-is-most-common choice are both true statements, but each describes a single data point or a consistent pattern rather than the spread across neighborhoods the claim is actually about.",
+          difficulty: "hard",
+        },
+      ],
+      traps: [
+        "Citing real numbers from the graph or table that don't actually address what the question is asking (the right city, but the wrong statistic; the right trend, but the wrong time period).",
+        "Reporting two real values but swapping which category or variable each one belongs to, which can flip a supporting statement into its opposite.",
+        "Overstating what the data shows — a single dip becomes 'fell every quarter,' or a modest gap becomes framed as if it were the entire story.",
+      ],
+    },
+    {
+      name: "Selecting the Best Supporting Quotation",
+      explanation:
+        "This Command of Evidence pattern applies to literary texts, poems, and passages about a historian's or researcher's work. You're given a claim — about a character's feeling, an author's style, a poem's theme, or a scholar's finding — and asked which quotation best supports or illustrates it. There's no data to weigh here. Instead: figure out exactly what quality, emotion, or specific point the claim names, then find the quotation that embodies that specific thing — not just one that mentions the same character, scene, or general topic.",
       examples: [
         {
           q: "A short story states that a young sailor feels profound relief upon finally spotting land after weeks lost at sea. Which quotation from the story most effectively illustrates this claim?",
@@ -520,16 +666,16 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "A poem is said to convey grief through concrete, sensory imagery rather than abstract description. Which quotation from the poem most effectively illustrates this claim?",
+          q: "A researcher studying urban beekeeping claims that some city beekeepers deliberately choose rooftop locations specifically to keep hives farther from pedestrian foot traffic. Which quotation from an interview with a beekeeper would most directly support the researcher's claim?",
           choices: [
-            "\"Grief is a heavy and unbearable thing.\"",
-            "\"The coat still hung by the door, and I could not make myself move it.\"",
-            "\"Time passed slowly in the weeks that followed.\"",
-            "\"I thought often of all that had been lost.\"",
+            "\"I've kept bees in three different rooftop locations, and each one has had its own unique advantages and challenges.\"",
+            "\"Ever since I started keeping bees, I've noticed how calming it is to watch them work.\"",
+            "\"I moved my hives to the roof specifically so people walking by on the sidewalk wouldn't have to worry about getting too close to the bees.\"",
+            "\"Rooftop gardens have become much more popular in this city over the past decade.\"",
           ],
-          answer: 1,
+          answer: 2,
           explain:
-            "The claim specifies how grief is conveyed — through sensory detail, not by naming the emotion directly. The other three quotations all state the emotion or its effects abstractly, without any concrete sensory imagery. Only the coat quotation conveys grief through one specific, physical detail without ever naming the emotion, matching the claim's specific technique precisely.",
+            "The claim is specific: rooftops are chosen deliberately to keep hives away from pedestrians. The first quotation mentions rooftop experience generally but never states a reason for the choice. The second describes a personal feeling unrelated to location. The fourth describes a general trend in rooftop gardening, not a reason for hive placement. Only the third quotation directly states the beekeeper's actual motivation — distance from pedestrians — matching the claim exactly.",
           difficulty: "medium",
         },
         {
@@ -553,9 +699,9 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
     },
     {
-      name: "Evaluating a Hypothetical Finding's Support for a Claim",
+      name: "Evaluating a Hypothetical Finding's Effect on a Claim",
       explanation:
-        "These questions describe a hypothesis or claim, then ask which new fact — one not already in the passage — would most strengthen it (sometimes, most weaken it). There's no graph to read, and none of the choices are real quotes; they're all hypothetical findings you're judging for logical fit. The method: turn the hypothesis into a prediction ('if this is true, we'd expect to see ___'), then pick the choice that matches that prediction exactly. For a 'weaken' question, pick the choice that reports the opposite.",
+        "These questions describe a hypothesis or claim, then ask which new fact — one not already in the passage — would most strengthen it, or, just as often, most weaken it. There's no graph to read, and none of the choices are real quotes; they're all hypothetical findings you're judging for logical fit. The method: turn the hypothesis into a prediction ('if this is true, we'd expect to see ___'), then pick the choice that matches that prediction exactly. For a 'weaken' question, pick the choice that reports the opposite of that prediction, or that shows the same outcome would have happened anyway, without the supposed cause.",
       examples: [
         {
           q: "Researchers hypothesize that a species of beetle locates rotting fruit primarily by scent rather than by sight. Which finding, if true, would most strongly support this hypothesis?",
@@ -584,16 +730,16 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "A psychologist hypothesizes that background music containing lyrics impairs reading comprehension more than instrumental music does. Which finding, if true, would most strongly support this hypothesis?",
+          q: "A nutritionist hypothesizes that a new meal-delivery service causes subscribers to eat more vegetables per week than they did before subscribing. Which finding, if true, would most directly weaken this hypothesis?",
           choices: [
-            "Participants generally read less when any music was playing, compared to silence.",
-            "Participants scored lower on reading tests while lyrical music played than while instrumental music played at the same volume.",
-            "Participants rated lyrical music as more enjoyable to listen to than instrumental music.",
-            "Instrumental music was found to be more common in office environments than lyrical music.",
+            "Subscribers report high satisfaction with the variety of vegetables included in each week's meals.",
+            "Subscribers' vegetable intake was already rising steadily in the months before they subscribed to the service, at about the same rate it continued rising after.",
+            "The service's meals include, on average, three servings of vegetables per meal.",
+            "Subscribers who canceled the service cited high cost as their primary reason for leaving.",
           ],
           answer: 1,
           explain:
-            "The prediction is a specific comparison: comprehension should be lower with lyrical music than with instrumental music, all else being equal. The music-versus-silence finding doesn't distinguish lyrical from instrumental, so it doesn't test that comparison. The enjoyment and workplace-frequency choices don't measure comprehension at all. Only the second choice matches the exact comparison, isolating the lyrics-versus-no-lyrics difference the claim depends on.",
+            "A weakening finding for a causal claim shows the same change would likely have happened anyway, without the supposed cause. If vegetable intake was already climbing at about the same rate before subscribing, the service isn't what's driving the increase — the trend was already in motion. The satisfaction and vegetables-per-meal choices describe the service's content, not whether it actually changed behavior. The cancellation-reason choice concerns a different group (people who left) and doesn't address the hypothesis about eating habits at all.",
           difficulty: "medium",
         },
         {
@@ -634,6 +780,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     "Underline the exact claim being supported before reading any answer choices — don't let the passage's surrounding narrative distract you from the specific sentence in question.",
     "If a claim uses words like 'causes' or 'led to,' the correct evidence usually involves ruling out alternatives (a comparison or control), not just a single supporting statistic.",
     "Rank each answer choice as 'off-topic,' 'related but vague,' or 'specific and directly measures the claim' — the correct answer is almost always in that third category.",
+    "When a graph or table is involved, locate the exact category and time period the question names before looking at any answer choice — most wrong choices cite real numbers from the data, just attached to the wrong label.",
   ],
 };
 
@@ -716,79 +863,80 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
     },
     {
-      name: "What Can Be Reasonably Concluded",
+      name: "Multi-Step and Conditional Inferences",
       explanation:
-        "This pattern gives you a full passage — not a fill-in-the-blank — and asks what can be 'most reasonably inferred' from it. The trap is overreaching: turning one small observation into a sweeping general claim. The correct answer is usually the narrowest inference the text actually supports — about the specific case described, not the whole category it belongs to.",
+        "Some of the hardest Inferences questions don't ask you to extend a single stated fact — they ask you to combine two or more stated facts into one conclusion, rule out a competing explanation the text has quietly set up, or reason forward from a stated hypothesis as if it's true ('assuming this view is correct...', 'if these findings are valid...'). The method is the same discipline as basic completion, just with more moving parts: track each fact separately, notice what a second or third fact rules in or out, and accept any stated premise as true for the purposes of the question, even if it's phrased as someone's belief or assumption. As always, the correct completion is the narrowest one the combined facts actually support — not a sweeping generalization.",
       examples: [
         {
-          q: "A text states that a species thought extinct was recently photographed in a remote forest. Which choice most reasonably follows from this text?",
+          q: "A city's public library recently digitized its entire collection of local newspapers dating back to 1890, making them searchable online for the first time. Historians researching the city's early development had previously needed to visit the library in person and read through physical archives page by page. Now that the newspapers are searchable online, these historians can likely ______. Which choice most logically completes the text?",
           choices: [
-            "The species survived, at least in that specific forest.",
-            "The species is now thriving across its entire historical range.",
-            "Most species previously thought extinct will eventually be rediscovered.",
-            "The photograph was likely the result of a misidentification.",
+            "locate references to specific events far more quickly than before.",
+            "stop using any other historical sources in their research.",
+            "assume the digitized newspapers contain no errors.",
+            "expect the library to digitize other cities' newspaper archives as well.",
           ],
           answer: 0,
           explain:
-            "The photograph directly proves the species survived, at least in that specific forest. Concluding the species is thriving everywhere, or that extinct species generally reappear, both overreach — neither is supported by one photograph in one location. Suggesting a misidentification directly contradicts the passage's own statement. The forest-specific survival is the narrowest inference the text actually supports.",
+            "Two facts combine directly: the text is now searchable, and historians no longer need to search page by page — together, that means locating specific references is now much faster. Stopping the use of other sources, assuming no errors, and expecting other cities' archives to also be digitized are all unsupported leaps the text gives no basis for.",
           difficulty: "easy",
         },
         {
-          q: "A text states that a small business began offering online ordering during a period when in-person sales were down, and that its total revenue grew over the following year. Which choice most reasonably follows from this text?",
+          q: "A bakery's new industrial oven can bake three times as many loaves per batch as its old oven, and it reaches baking temperature in half the time. Combined, these two facts suggest that the bakery's overall bread output could ______. Which choice most logically completes the text?",
           choices: [
-            "The business's revenue grew during the same period it introduced online ordering.",
-            "Online ordering was the direct cause of the business's revenue growth.",
-            "In-person sales returned to their previous levels within the year.",
-            "The business would have failed without introducing online ordering.",
+            "increase substantially without necessarily hiring additional staff.",
+            "decrease slightly due to the oven's higher energy costs.",
+            "remain exactly the same as before, since costs offset the gains.",
+            "depend primarily on how many customers visit the bakery each day.",
           ],
           answer: 0,
           explain:
-            "The text directly establishes that online ordering was added and that total revenue grew over the following year. Naming online ordering as the direct cause overreaches: the text never rules out other explanations, like the in-person slump simply ending on its own. The other two choices introduce outcomes the passage never mentions. The revenue-during-the-same-period choice stays close to exactly what's stated, without asserting a cause.",
-          difficulty: "medium",
-        },
-        {
-          q: "A text states that a museum's newly acquired painting was examined by conservators and found to contain pigments not commercially available until the 1850s. Which choice most reasonably follows from this text?",
-          choices: [
-            "The painting was created no earlier than the 1850s.",
-            "The painting was created by a specific, well-known 1850s artist.",
-            "The painting is a forgery created to deceive art collectors.",
-            "The museum previously believed the painting was a fake.",
-          ],
-          answer: 0,
-          explain:
-            "The pigment finding directly establishes that the painting, or at least its pigments, dates to no earlier than the 1850s. Naming a specific artist, calling it a forgery, or describing the museum's prior beliefs all go well beyond what a pigment date alone can show. The date-based choice is the narrow, correct inference the pigment evidence actually supports.",
+            "More loaves per batch and less time per batch combine directly to support a higher overall output using the same equipment, without necessarily requiring more staff. The other choices introduce costs, customer demand, or an unsupported claim of no change — none of which the text addresses.",
           difficulty: "easy",
         },
         {
-          q: "A text states that a city's downtown parking garage began charging a small overnight fee at the same time that overnight street parking violations rose by 30%. Which choice most reasonably follows from this text?",
+          q: "A city's downtown area saw a 25% drop in reported bicycle theft last year, the same year it installed security cameras at major intersections. However, the number of registered bicycle owners in the downtown area also fell by roughly 20% over the same period. Given this decline in bicycle ownership, the drop in reported thefts ______. Which choice most logically completes the text?",
           choices: [
-            "The overnight fee directly caused the rise in street parking violations.",
-            "Some drivers appear to have shifted from the garage to street parking around the same time the fee began.",
-            "The city plans to eliminate the overnight fee due to the violations.",
-            "Street parking violations had never occurred before the fee was introduced.",
-          ],
-          answer: 1,
-          explain:
-            "The text directly establishes a new fee and a rise in street violations occurring around the same time. Flatly concluding the fee caused the rise requires ruling out other explanations the text doesn't address. Claiming violations never occurred before misreads 'rose by 30%,' which implies some existed already, and a future city decision is never mentioned. The shifted-drivers choice is the more reasonable inference, without asserting causation.",
-          difficulty: "medium",
-        },
-        {
-          q: "A text states that a species of frog thought to communicate only through croaking was recently observed producing calls at frequencies too high for human hearing, detected only with specialized equipment, at three separate wetland sites. Which choice most reasonably follows from this text?",
-          choices: [
-            "This specific frog species' communication is more complex than previously understood.",
-            "All frog species communicate using frequencies beyond human hearing.",
-            "Frogs at wetland sites without specialized equipment do not produce high-frequency calls.",
-            "Human hearing is generally inadequate for studying animal communication.",
+            "may be explained at least partly by there simply being fewer bicycles present to steal, not only by the new cameras.",
+            "proves that the security cameras had no effect on theft rates at all.",
+            "suggests that bicycle theft is no longer a problem in the downtown area.",
+            "indicates that the cameras were installed in the wrong locations.",
           ],
           answer: 0,
           explain:
-            "What's directly established is one species, observed at three specific sites, producing previously undetected high-frequency calls. Extending the finding to all frog species is a tempting overreach unsupported by the text. Concluding frogs elsewhere don't produce such calls misreads an absence of testing as evidence of absence, and a sweeping claim about human hearing generally goes well beyond the passage. The species-specific choice stays narrow and correctly limited to what was actually observed.",
+            "With fewer bicycles present overall, some of the theft decline could reflect that shrinking pool rather than the cameras alone — a competing explanation the text can't rule out. Claiming the cameras had 'no effect at all' overreaches in the other direction, since the text doesn't establish that either. The other two choices go well beyond what a 25% drop with a smaller bike population can support.",
+          difficulty: "medium",
+        },
+        {
+          q: "A vineyard's soil contains a rare mineral that gives its wine a distinctive taste, one that has been chemically confirmed in bottles from every one of the vineyard's harvests dating back to 1962, the year the vineyard was first planted. Records show that the vineyard's original owner sourced all of the vines from a single nursery that closed permanently in 1965. A neighboring vineyard, planted in 1970 in soil with a nearly identical mineral composition but using vines from a different nursery, produces wine that lacks this distinctive taste entirely. Given these facts, the distinctive taste most likely ______. Which choice most logically completes the text?",
+          choices: [
+            "originates from the specific vines sourced from the nursery that closed in 1965, rather than from the soil alone.",
+            "will eventually disappear from the original vineyard's wine as its oldest vines are replaced.",
+            "could be reproduced by any vineyard that plants its vines in similar regional soil.",
+            "was intentionally added to the wine during the bottling process each year.",
+          ],
+          answer: 0,
+          explain:
+            "Chaining the facts: the taste has appeared in every harvest since the vines came from one particular nursery, while a neighboring vineyard with nearly identical soil but different-sourced vines lacks the taste entirely — pointing to the vines themselves, not the shared soil, as the likely origin. The text never discusses vine replacement or an eventual disappearance. 'Similar regional soil' is directly undercut by the neighboring vineyard's lack of the taste despite comparable soil. Nothing in the text mentions any additive during bottling.",
+          difficulty: "hard",
+        },
+        {
+          q: "Economists have long assumed that a country's manufacturing employment declines primarily because factories relocate to countries with cheaper labor. A recent analysis of one country's manufacturing sector found that total manufacturing output actually rose over the past decade even as manufacturing employment fell by 15%, and that domestic factories, rather than closing, increasingly relied on automated equipment to replace manual tasks. Assuming this analysis is accurate, the country's declining manufacturing employment ______. Which choice most logically completes the text?",
+          choices: [
+            "may be explained at least as much by automation replacing workers domestically as by factories relocating abroad.",
+            "confirms that manufacturing has become entirely obsolete as an industry in this country.",
+            "proves that no factories in this country have relocated to other countries.",
+            "suggests that manufacturing output will continue rising indefinitely regardless of employment levels.",
+          ],
+          answer: 0,
+          explain:
+            "If output rose while employment fell and factories stayed open but automated, that pattern points to automation, not just relocation, as at least part of the explanation — directly complicating the traditional assumption stated up front. 'Entirely obsolete' and 'no factories have relocated' both overreach into absolute claims the text doesn't support. The passage also gives no basis for predicting output will keep rising 'indefinitely.'",
           difficulty: "hard",
         },
       ],
       traps: [
-        "Generalizing a specific, local finding into a universal claim ('this proves all X do Y').",
-        "Choosing an answer that would require additional, unstated information to be true.",
+        "Using only the passage's first fact and ignoring a second fact that changes or complicates the picture.",
+        "Treating a stated hypothesis or assumption ('if this view is correct...', 'assuming this analysis is accurate...') as something to question, rather than accepting it as true and reasoning forward from it.",
+        "Picking a conclusion that resolves only part of the tension between two facts, instead of the choice that accounts for both.",
       ],
     },
   ],
