@@ -9,6 +9,7 @@ import { ConfettiBurst, useCountUp } from "@/components/CountUp";
 import { StepList, ProseText } from "@/components/StepList";
 import { MathText } from "@/components/MathText";
 import { GeometryDiagram } from "@/components/GeometryDiagram";
+import { ExamChoices } from "@/components/ExamChoices";
 import { sectionTheme } from "@/lib/sectionTheme";
 
 interface SubmitResult {
@@ -34,6 +35,12 @@ export function SubskillClient({
   const [activePattern, setActivePattern] = useState(0);
   const [activeExample, setActiveExample] = useState(0);
   const [viewedExamples, setViewedExamples] = useState<Set<string>>(new Set());
+  // Which choice (if any) the student has clicked for each worked example,
+  // keyed the same way as viewedExamples -- clicking one reveals correct/
+  // incorrect coloring and the explanation, same interaction as the
+  // practice quiz below. Persists as they browse back and forth, same as
+  // viewedExamples.
+  const [exampleSelections, setExampleSelections] = useState<Record<string, number>>({});
 
   // Marks the currently-open example as viewed, so the pathway UI can show
   // which examples/patterns a student has actually stepped through.
@@ -280,13 +287,26 @@ export function SubskillClient({
                   {example && (
                     <>
                       <div className="text-sm text-ink font-medium mb-3 leading-relaxed">
-                        <MathText text={example.prompt} />
+                        <MathText text={example.q} />
                       </div>
                       {example.diagram && <GeometryDiagram spec={example.diagram} />}
-                      <StepList text={example.walkthrough} className="text-[13px] text-gray-600 mb-3" />
-                      <div className="text-[13px] text-accent font-semibold leading-relaxed border-t border-gray-200 pt-3">
-                        <MathText text={example.answer} />
-                      </div>
+                      <ExamChoices
+                        choices={example.choices}
+                        correctIndex={example.answer}
+                        selected={exampleSelections[`${activePattern}-${activeExample}`] ?? null}
+                        revealed={exampleSelections[`${activePattern}-${activeExample}`] !== undefined}
+                        onSelect={(ci) =>
+                          setExampleSelections((prev) => ({ ...prev, [`${activePattern}-${activeExample}`]: ci }))
+                        }
+                      />
+                      {exampleSelections[`${activePattern}-${activeExample}`] !== undefined && (
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <div className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                            Explanation
+                          </div>
+                          <StepList text={example.explain} className="text-[13px] text-gray-600" />
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
@@ -403,32 +423,14 @@ export function SubskillClient({
               <div className="text-sm font-medium text-ink mb-3">
                 {i + 1}. <MathText text={q.q} />
               </div>
-              <div className="flex flex-col gap-2">
-                {q.choices.map((c, ci) => {
-                  const isSelected = answers[i] === ci;
-                  const isCorrect = submitted && ci === q.answer;
-                  const isWrongSelected = submitted && isSelected && ci !== q.answer;
-                  return (
-                    <div
-                      key={ci}
-                      onClick={() => !submitted && selectAnswer(i, ci)}
-                      className={`px-3 py-2.5 rounded-lg text-[13.5px] border ${
-                        submitted ? "cursor-default" : "cursor-pointer"
-                      } ${
-                        isCorrect
-                          ? "border-accent bg-[#f0f7f2]"
-                          : isWrongSelected
-                          ? "border-red-700 bg-[#fdf0f0]"
-                          : isSelected
-                          ? "border-ink bg-[#f5f5f8]"
-                          : "border-[#ece9f7] bg-white hover:border-[#d8d4f0]"
-                      } text-ink`}
-                    >
-                      {String.fromCharCode(65 + ci)}. <MathText text={c} />
-                    </div>
-                  );
-                })}
-              </div>
+              <ExamChoices
+                choices={q.choices}
+                correctIndex={q.answer}
+                selected={answers[i] ?? null}
+                revealed={submitted}
+                disabled={submitted}
+                onSelect={(ci) => selectAnswer(i, ci)}
+              />
               {submitted && (
                 <div className="text-[13px] text-gray-500 mt-2.5 leading-relaxed">
                   <strong className="text-ink">Explanation: </strong>
