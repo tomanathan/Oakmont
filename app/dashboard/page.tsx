@@ -3,13 +3,10 @@ import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
 import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
-import { computePetState, PET_NAME } from "@/lib/pet";
-import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
-import { isCostumeUnlocked, bestUnlockedCostume } from "@/lib/costumes";
+import { computeDomainMastery, type ProgressMap } from "@/lib/mastery";
 import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
-import { PetCard } from "@/components/PetCard";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
 import { DashboardClient } from "./DashboardClient";
 
@@ -82,14 +79,6 @@ export default async function DashboardPage() {
     progress,
     (latestTest?.domainScores as Record<string, number> | null) ?? null
   );
-  const sectionsCompleted = completedDomainCount(domainMastery);
-  const costume =
-    stats.equippedCostume && isCostumeUnlocked(stats.equippedCostume, sectionsCompleted)
-      ? stats.equippedCostume
-      : bestUnlockedCostume(sectionsCompleted).id;
-
-  const petState = computePetState(stats.lastActiveDate ?? null, stats.petDiedAt ?? null, stats.petBornAt);
-
   let quizzesLastSession = 0;
   let masteredLastSession = 0;
   if (stats.previousLoginAt && stats.lastLoginAt) {
@@ -119,7 +108,6 @@ export default async function DashboardPage() {
           currentStreak={stats.currentStreak}
         />
       )}
-      <PetCard petName={PET_NAME} state={petState} costume={costume} />
       <DashboardClient
         curriculum={CURRICULUM}
         progress={progress}

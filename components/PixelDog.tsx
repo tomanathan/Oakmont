@@ -183,6 +183,28 @@ export function PixelDog({
  */
 function CostumeOverlay({ costume }: { costume: string }) {
   switch (costume) {
+    case "sunglasses":
+      return (
+        <>
+          <rect x={40.5} y={9.5} width={6.5} height={4} rx={0.6} fill="#1a1a2e" />
+          <rect x={38.3} y={10.8} width={2.4} height={1.2} fill="#1a1a2e" />
+        </>
+      );
+    case "bowtie":
+      return (
+        <>
+          <path d="M 30.5 19 L 34.5 21 L 30.5 23 Z" fill="#6d7fd6" />
+          <path d="M 39.5 19 L 35.5 21 L 39.5 23 Z" fill="#6d7fd6" />
+          <rect x={34} y={19.8} width={2} height={2.4} fill="#4a5bb0" />
+        </>
+      );
+    case "scarf":
+      return (
+        <>
+          <rect x={32} y={17.5} width={7} height={4} fill="#3a6690" />
+          <rect x={33} y={21} width={4} height={9} fill="#2d5170" />
+        </>
+      );
     case "bandana":
       return (
         <>

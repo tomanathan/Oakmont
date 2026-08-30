@@ -94,59 +94,39 @@ export function DashboardClient({
         </button>
       )}
 
-      {today && <TodayCard today={today} progress={progress} daysUntilTest={daysUntilTest} />}
-
-      <div className="bg-[#eef0fc] border border-[#d7dbf3] rounded-xl p-6 mb-7">
-        <div className="flex justify-between items-baseline mb-2">
-          <span className="text-sm font-semibold text-ink">This week</span>
-          <span className="text-sm text-[#6b6f8e]">
-            {thisWeek.total > 0 ? (
-              <>
-                {thisWeek.done} / {thisWeek.total} subskills &middot;{" "}
-                <span className="text-[#4a5bb0] font-semibold">
-                  {Math.round((thisWeek.done / thisWeek.total) * 100)}%
-                </span>
-              </>
-            ) : (
-              "No new subskills scheduled this week"
-            )}
-          </span>
-        </div>
-        <div className="h-2.5 bg-white/70 rounded-md overflow-hidden">
-          <div
-            className="h-full bg-[#6d7fd6] transition-all duration-700 ease-out"
-            style={{ width: `${thisWeek.total > 0 ? Math.round((thisWeek.done / thisWeek.total) * 100) : 0}%` }}
-          />
-        </div>
-        <div className="text-xs text-[#6b6f8e] mt-2">
-          The full roadmap and your overall progress live on the{" "}
-          <button onClick={() => router.push("/plan")} className="underline hover:text-ink">
-            6-month plan
-          </button>
-          .
-        </div>
-      </div>
-
-      <PacingBar pacing={pacing} />
-
-      {(masteredCount > 0 || stats.currentStreak > 0) && (
-        <div className="flex flex-wrap gap-x-5 gap-y-1 mb-6 -mt-2 text-xs text-gray-500">
-          {masteredCount > 0 && (
-            <span>
-              <span className="text-[#c9971b] font-semibold">★ {masteredCount}</span> subskill
-              {masteredCount === 1 ? "" : "s"} mastered &middot; {completedCount}/{totalSubskills} attempted
-            </span>
-          )}
-          {stats.longestStreak > 0 && (
-            <span>
-              Longest streak:{" "}
-              <span className="font-semibold text-ink">
-                {stats.longestStreak} day{stats.longestStreak === 1 ? "" : "s"}
-              </span>
-            </span>
-          )}
-        </div>
+      {/* Bar 1 of 2: today's plan items plus this week's progress folded in
+          as a footer, so "what am I doing" and "how's this week going"
+          live in one card instead of two. Skipped only in the rare case
+          neither has anything to show (e.g. a finished custom timeline). */}
+      {(today || thisWeek.total > 0) && (
+        <TodayCard today={today} progress={progress} daysUntilTest={daysUntilTest} thisWeek={thisWeek} />
       )}
+
+      {/* Bar 2 of 2: overall pace, with the mastered-count/streak line
+          folded in as its footer rather than floating below on its own. */}
+      <PacingBar
+        pacing={pacing}
+        footer={
+          (masteredCount > 0 || stats.currentStreak > 0) && (
+            <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-[#6b6f8e]">
+              {masteredCount > 0 && (
+                <span>
+                  <span className="text-[#c9971b] font-semibold">★ {masteredCount}</span> subskill
+                  {masteredCount === 1 ? "" : "s"} mastered &middot; {completedCount}/{totalSubskills} attempted
+                </span>
+              )}
+              {stats.longestStreak > 0 && (
+                <span>
+                  Longest streak:{" "}
+                  <span className="font-semibold text-ink">
+                    {stats.longestStreak} day{stats.longestStreak === 1 ? "" : "s"}
+                  </span>
+                </span>
+              )}
+            </div>
+          )
+        }
+      />
 
       {/* Subject toggle -- one subject shown at a time, kept simple and
           friendly rather than dumping both subjects' full syllabus on
@@ -254,69 +234,106 @@ function TodayCard({
   today,
   progress,
   daysUntilTest,
+  thisWeek,
 }: {
-  today: TodayPlan;
+  today: TodayPlan | null;
   progress: ProgressMap;
   daysUntilTest: number | null;
+  thisWeek: { done: number; total: number };
 }) {
   const router = useRouter();
+  const weekPct = thisWeek.total > 0 ? Math.round((thisWeek.done / thisWeek.total) * 100) : 0;
+
   return (
     <div className="bg-white border border-[#ece9f7] rounded-xl p-4 mb-5">
-      <div className="flex items-center justify-between gap-3 mb-2.5 flex-wrap">
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
-            {DAY_TYPE_COPY[today.type]}
-          </span>
-          <span className="text-[11px] text-gray-300">&middot; {today.dayName}, week {today.week}</span>
-        </div>
-        {daysUntilTest !== null && (
-          <span className="text-[11px] font-semibold text-[#9a6a12] bg-[#fffaf0] border border-[#f0e0b0] px-2 py-0.5 rounded-full whitespace-nowrap">
-            {daysUntilTest > 0 ? `${daysUntilTest} days until your SAT` : daysUntilTest === 0 ? "Your SAT is today!" : "SAT date has passed"}
-          </span>
-        )}
-      </div>
+      {today && (
+        <>
+          <div className="flex items-center justify-between gap-3 mb-2.5 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+                {DAY_TYPE_COPY[today.type]}
+              </span>
+              <span className="text-[11px] text-gray-300">&middot; {today.dayName}, week {today.week}</span>
+            </div>
+            {daysUntilTest !== null && (
+              <span className="text-[11px] font-semibold text-[#9a6a12] bg-[#fffaf0] border border-[#f0e0b0] px-2 py-0.5 rounded-full whitespace-nowrap">
+                {daysUntilTest > 0
+                  ? `${daysUntilTest} days until your SAT`
+                  : daysUntilTest === 0
+                  ? "Your SAT is today!"
+                  : "SAT date has passed"}
+              </span>
+            )}
+          </div>
 
-      {today.type === "rest" ? (
-        <div className="text-sm text-gray-500">
-          Rest day &mdash; no new material scheduled. A quick review never hurts, but you've earned the break.
-        </div>
-      ) : today.type === "test" ? (
-        <button
-          onClick={() => router.push("/analysis")}
-          className="text-left text-sm font-semibold text-[#9a6a12] hover:underline"
-        >
-          Take full-length practice test {today.testNumber} of 8, then log &amp; review your results &rarr;
-        </button>
-      ) : (
-        <div className="flex flex-col gap-1.5">
-          {today.subskills.map((s) => {
-            const p = progress[s.id];
-            const mastered = p && p.bestScore === p.total;
-            const theme = sectionTheme(s.section);
-            return (
-              <div
-                key={s.id}
-                onClick={() => router.push(`/subskill/${s.id}`)}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                  mastered ? "bg-[#fffaf0] hover:bg-[#fdf3df]" : p ? "bg-[#f0f7f2] hover:bg-[#e6f1e9]" : `${theme.cardBg} hover:opacity-80`
-                }`}
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-ink">{s.name}</div>
-                  <div className="text-xs text-gray-400">
-                    {s.section} &middot; {s.domain}
+          {today.type === "rest" ? (
+            <div className="text-sm text-gray-500">
+              Rest day &mdash; no new material scheduled. A quick review never hurts, but you've earned the break.
+            </div>
+          ) : today.type === "test" ? (
+            <button
+              onClick={() => router.push("/analysis")}
+              className="text-left text-sm font-semibold text-[#9a6a12] hover:underline"
+            >
+              Take full-length practice test {today.testNumber} of 8, then log &amp; review your results &rarr;
+            </button>
+          ) : (
+            <div className="flex flex-col gap-1.5">
+              {today.subskills.map((s) => {
+                const p = progress[s.id];
+                const mastered = p && p.bestScore === p.total;
+                const theme = sectionTheme(s.section);
+                return (
+                  <div
+                    key={s.id}
+                    onClick={() => router.push(`/subskill/${s.id}`)}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                      mastered
+                        ? "bg-[#fffaf0] hover:bg-[#fdf3df]"
+                        : p
+                        ? "bg-[#f0f7f2] hover:bg-[#e6f1e9]"
+                        : `${theme.cardBg} hover:opacity-80`
+                    }`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-ink">{s.name}</div>
+                      <div className="text-xs text-gray-400">
+                        {s.section} &middot; {s.domain}
+                      </div>
+                    </div>
+                    {mastered ? (
+                      <span className="text-[11px] text-[#c9971b] font-semibold whitespace-nowrap">★ Mastered</span>
+                    ) : p ? (
+                      <span className="text-[11px] text-accent font-semibold whitespace-nowrap">
+                        ✓ {p.bestScore}/{p.total}
+                      </span>
+                    ) : null}
                   </div>
-                </div>
-                {mastered ? (
-                  <span className="text-[11px] text-[#c9971b] font-semibold whitespace-nowrap">★ Mastered</span>
-                ) : p ? (
-                  <span className="text-[11px] text-accent font-semibold whitespace-nowrap">
-                    ✓ {p.bestScore}/{p.total}
-                  </span>
-                ) : null}
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* This week's progress, folded into the same card as a compact
+          footer rather than a second box -- see /plan for the full
+          roadmap and overall progress. */}
+      {thisWeek.total > 0 && (
+        <div className={today ? "mt-3 pt-3 border-t border-gray-100" : ""}>
+          <div className="flex justify-between items-baseline mb-1">
+            <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">This week</span>
+            <span className="text-xs text-gray-500">
+              {thisWeek.done} / {thisWeek.total} subskills &middot;{" "}
+              <span className="text-[#4a5bb0] font-semibold">{weekPct}%</span>
+            </span>
+          </div>
+          <div className="h-1.5 bg-gray-100 rounded-md overflow-hidden">
+            <div
+              className="h-full bg-[#6d7fd6] transition-all duration-700 ease-out"
+              style={{ width: `${weekPct}%` }}
+            />
+          </div>
         </div>
       )}
     </div>

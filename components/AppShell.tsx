@@ -1,8 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { NavButton } from "./NavButton";
 import { BrandMark } from "./BrandMark";
+import { PixelDog } from "./PixelDog";
+import { MOOD_BY_STAGE } from "./PetAvatar";
+import { PET_NAME, type PetStage } from "@/lib/pet";
+
+const STAGE_PILL: Record<PetStage, string> = {
+  thriving: "bg-[#eaf6ef] border-[#cde8d9] text-[#2f6f4f]",
+  content: "bg-[#eef0fc] border-[#d7dbf3] text-[#4a5bb0]",
+  hungry: "bg-[#fbf1df] border-[#f0ddb8] text-[#9a6a12]",
+  critical: "bg-[#fbeaea] border-[#f0d0d0] text-[#b23b3b]",
+  dead: "bg-[#f0eff2] border-[#e0dee6] text-gray-500",
+};
+const STAGE_LABEL: Record<PetStage, string> = {
+  thriving: "Thriving",
+  content: "Doing well",
+  hungry: "Hungry",
+  critical: "Needs you",
+  dead: "Gone",
+};
 
 export function AppShell({
   email,
@@ -15,6 +34,26 @@ export function AppShell({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const [pet, setPet] = useState<{ stage: PetStage; costume: string | null } | null>(null);
+
+  // Fetched fresh on every mount rather than shared with ScoutCompanion's
+  // own fetch -- AppShell lives inside each page, not the root layout, so
+  // it naturally remounts on every navigation anyway (see ScoutCompanion's
+  // comments on the same distinction).
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/pet/state")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!cancelled && data?.stage) {
+          setPet({ stage: data.stage, costume: data.costume && data.costume !== "none" ? data.costume : null });
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -23,19 +62,35 @@ export function AppShell({
   }
 
   return (
-    <div className="max-w-[900px] mx-auto px-4 pb-12 pt-4 font-sans">
-      <header className="flex items-center justify-between gap-4 py-3.5 px-5 bg-white rounded-2xl shadow-[0_1px_2px_rgba(26,26,46,0.04),0_6px_20px_rgba(26,26,46,0.05)] border border-stone-200 mb-6 flex-wrap">
-        <div className="flex items-center gap-3 min-w-0">
-          <BrandMark size={38} />
+    <div className="max-w-[900px] mx-auto px-4 pb-12 pt-2 font-sans">
+      <header className="flex items-center justify-between gap-3 py-2 px-4 bg-white rounded-xl shadow-[0_1px_2px_rgba(26,26,46,0.04),0_6px_20px_rgba(26,26,46,0.05)] border border-stone-200 mb-4 flex-wrap">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <BrandMark size={28} />
           <div className="min-w-0">
-            <div className="font-display font-semibold text-[17px] text-ink leading-tight truncate">
+            <div className="font-display font-semibold text-[14px] text-ink leading-tight truncate">
               Oakmont Study Center
             </div>
-            <div className="text-xs text-stone-400 truncate">{email}</div>
+            <div className="text-[10.5px] text-stone-400 truncate">{email}</div>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {pet && (
+            <button
+              onClick={() => router.push("/settings")}
+              className={`flex items-center gap-1.5 pl-1 pr-2.5 py-0.5 rounded-full border text-[11px] font-semibold transition-opacity hover:opacity-75 ${STAGE_PILL[pet.stage]}`}
+              title={`${PET_NAME} is ${STAGE_LABEL[pet.stage].toLowerCase()} -- click to manage in Settings`}
+            >
+              <PixelDog
+                size={22}
+                mood={MOOD_BY_STAGE[pet.stage]}
+                dead={pet.stage === "dead"}
+                costume={pet.costume}
+              />
+              {STAGE_LABEL[pet.stage]}
+            </button>
+          )}
+
           {stats && stats.currentStreak > 0 && (
             <div
               className="flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/80 rounded-full pl-1.5 pr-2 py-1"

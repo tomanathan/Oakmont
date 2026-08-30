@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PixelDog } from "@/components/PixelDog";
+import { PetCard } from "@/components/PetCard";
 import { COSTUMES } from "@/lib/costumes";
+import type { PetState } from "@/lib/pet";
 
 export function SettingsClient({
   email,
@@ -13,6 +15,8 @@ export function SettingsClient({
   sectionsCompleted,
   totalSections,
   equippedCostume,
+  petName,
+  petState,
 }: {
   email: string;
   baselineScore: number | null;
@@ -21,6 +25,8 @@ export function SettingsClient({
   sectionsCompleted: number;
   totalSections: number;
   equippedCostume: string;
+  petName: string;
+  petState: PetState;
 }) {
   const router = useRouter();
   const [baseline, setBaseline] = useState(baselineScore?.toString() ?? "");
@@ -111,6 +117,8 @@ export function SettingsClient({
     <div className="max-w-[560px]">
       <div className="text-xl font-bold text-ink mb-1.5">Settings</div>
       <div className="text-sm text-gray-500 mb-6">{email}</div>
+
+      <PetCard petName={petName} state={petState} costume={equippedCostume !== "none" ? equippedCostume : null} />
 
       <form
         onSubmit={saveGoals}

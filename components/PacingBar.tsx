@@ -16,9 +16,12 @@ function statusCopy(pacing: Pacing): string {
 /**
  * Shows today's position within the study plan against a steady-pace line,
  * so a student can tell at a glance whether they're ahead, on track, or
- * behind — without it feeling like a scolding.
+ * behind — without it feeling like a scolding. `footer` folds in a related
+ * stat line (mastered-subskill count, streak) as part of this same card
+ * instead of a separate floating block underneath, keeping the dashboard
+ * down to a small, fixed number of stacked bars.
  */
-export function PacingBar({ pacing }: { pacing: Pacing }) {
+export function PacingBar({ pacing, footer }: { pacing: Pacing; footer?: React.ReactNode }) {
   const weekOfCourse = Math.min(pacing.totalWeeks, Math.ceil(pacing.dayOfCourse / 7));
   const todayMarker = Math.min(98, Math.max(2, pacing.pctExpected));
 
@@ -57,6 +60,7 @@ export function PacingBar({ pacing }: { pacing: Pacing }) {
           {statusCopy(pacing)}
         </span>
       </div>
+      {footer && <div className="mt-3 pt-3 border-t border-[#d7dbf3]">{footer}</div>}
     </div>
   );
 }

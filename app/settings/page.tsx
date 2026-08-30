@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
 import { isCostumeUnlocked, bestUnlockedCostume } from "@/lib/costumes";
+import { computePetState, PET_NAME } from "@/lib/pet";
 import { AppShell } from "@/components/AppShell";
 import { SettingsClient } from "./SettingsClient";
 
@@ -35,6 +36,8 @@ export default async function SettingsPage() {
       ? stats.equippedCostume
       : bestUnlockedCostume(sectionsCompleted).id;
 
+  const petState = computePetState(stats.lastActiveDate ?? null, stats.petDiedAt ?? null, stats.petBornAt);
+
   return (
     <AppShell email={user.email} stats={stats}>
       <SettingsClient
@@ -45,6 +48,8 @@ export default async function SettingsPage() {
         sectionsCompleted={sectionsCompleted}
         totalSections={ALL_DOMAINS.length}
         equippedCostume={equippedCostume}
+        petName={PET_NAME}
+        petState={petState}
       />
     </AppShell>
   );
