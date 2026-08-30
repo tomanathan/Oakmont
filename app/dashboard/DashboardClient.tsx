@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Section } from "@/data/curriculum";
 import type { Pacing } from "@/lib/pacing";
 import type { DomainMastery } from "@/lib/mastery";
-import { PacingBar } from "@/components/PacingBar";
+import { PacingBar, PACE_STATUS_STYLES, paceStatusCopy } from "@/components/PacingBar";
 import { StarRating } from "@/components/StarRating";
 import { sectionTheme } from "@/lib/sectionTheme";
 
@@ -94,39 +94,25 @@ export function DashboardClient({
         </button>
       )}
 
-      {/* Bar 1 of 2: today's plan items plus this week's progress folded in
-          as a footer, so "what am I doing" and "how's this week going"
-          live in one card instead of two. Skipped only in the rare case
-          neither has anything to show (e.g. a finished custom timeline). */}
+      {/* One card instead of the two this used to be: "today's plan" and
+          "study plan pace" both answer the same underlying question --
+          where am I in the plan right now -- just at different zoom
+          levels, and showed overlapping subskill counts in separate boxes.
+          Skipped only in the rare case there's nothing at all to show
+          (e.g. a finished custom timeline). */}
       {(today || thisWeek.total > 0) && (
-        <TodayCard today={today} progress={progress} daysUntilTest={daysUntilTest} thisWeek={thisWeek} />
+        <PlanCard
+          today={today}
+          progress={progress}
+          daysUntilTest={daysUntilTest}
+          thisWeek={thisWeek}
+          pacing={pacing}
+          masteredCount={masteredCount}
+          completedCount={completedCount}
+          totalSubskills={totalSubskills}
+          longestStreak={stats.longestStreak}
+        />
       )}
-
-      {/* Bar 2 of 2: overall pace, with the mastered-count/streak line
-          folded in as its footer rather than floating below on its own. */}
-      <PacingBar
-        pacing={pacing}
-        footer={
-          (masteredCount > 0 || stats.currentStreak > 0) && (
-            <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-[#6b6f8e]">
-              {masteredCount > 0 && (
-                <span>
-                  <span className="text-[#c9971b] font-semibold">★ {masteredCount}</span> subskill
-                  {masteredCount === 1 ? "" : "s"} mastered &middot; {completedCount}/{totalSubskills} attempted
-                </span>
-              )}
-              {stats.longestStreak > 0 && (
-                <span>
-                  Longest streak:{" "}
-                  <span className="font-semibold text-ink">
-                    {stats.longestStreak} day{stats.longestStreak === 1 ? "" : "s"}
-                  </span>
-                </span>
-              )}
-            </div>
-          )
-        }
-      />
 
       {/* Subject toggle -- one subject shown at a time, kept simple and
           friendly rather than dumping both subjects' full syllabus on
@@ -230,19 +216,30 @@ const DAY_TYPE_COPY: Record<TodayPlan["type"], string> = {
   rest: "Today's plan",
 };
 
-function TodayCard({
+function PlanCard({
   today,
   progress,
   daysUntilTest,
   thisWeek,
+  pacing,
+  masteredCount,
+  completedCount,
+  totalSubskills,
+  longestStreak,
 }: {
   today: TodayPlan | null;
   progress: ProgressMap;
   daysUntilTest: number | null;
   thisWeek: { done: number; total: number };
+  pacing: Pacing;
+  masteredCount: number;
+  completedCount: number;
+  totalSubskills: number;
+  longestStreak: number;
 }) {
   const router = useRouter();
   const weekPct = thisWeek.total > 0 ? Math.round((thisWeek.done / thisWeek.total) * 100) : 0;
+  const weekOfCourse = Math.min(pacing.totalWeeks, Math.ceil(pacing.dayOfCourse / 7));
 
   return (
     <div className="bg-white border border-[#ece9f7] rounded-xl p-4 mb-5">
@@ -316,26 +313,54 @@ function TodayCard({
         </>
       )}
 
-      {/* This week's progress, folded into the same card as a compact
-          footer rather than a second box -- see /plan for the full
-          roadmap and overall progress. */}
-      {thisWeek.total > 0 && (
-        <div className={today ? "mt-3 pt-3 border-t border-gray-100" : ""}>
-          <div className="flex justify-between items-baseline mb-1">
-            <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">This week</span>
-            <span className="text-xs text-gray-500">
-              {thisWeek.done} / {thisWeek.total} subskills &middot;{" "}
-              <span className="text-[#4a5bb0] font-semibold">{weekPct}%</span>
-            </span>
-          </div>
-          <div className="h-1.5 bg-gray-100 rounded-md overflow-hidden">
-            <div
-              className="h-full bg-[#6d7fd6] transition-all duration-700 ease-out"
-              style={{ width: `${weekPct}%` }}
-            />
-          </div>
+      {/* The pace section: this week's completion and the whole-course
+          trajectory used to be two separate boxes, each reporting its own
+          subskill count -- combined here so "week X of Y", "this week's
+          progress", and "overall pace" each appear exactly once. */}
+      <div className={today ? "mt-3 pt-3 border-t border-gray-100" : ""}>
+        <div className="flex justify-between items-baseline mb-1 flex-wrap gap-x-3 gap-y-1">
+          <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Your pace</span>
+          <span className="text-xs text-gray-500">
+            Week {weekOfCourse} of {pacing.totalWeeks}
+            {thisWeek.total > 0 && (
+              <>
+                {" "}
+                &middot; this week{" "}
+                <span className="text-[#4a5bb0] font-semibold">
+                  {thisWeek.done}/{thisWeek.total} ({weekPct}%)
+                </span>
+              </>
+            )}
+          </span>
         </div>
-      )}
+        <PacingBar pacing={pacing} />
+        <div className="flex justify-between items-baseline mt-1.5">
+          <span className="text-xs text-gray-500">
+            {pacing.completedUnits}/{pacing.totalUnits} subskills overall
+          </span>
+          <span className={`text-xs font-semibold ${PACE_STATUS_STYLES[pacing.status]}`}>
+            {paceStatusCopy(pacing)}
+          </span>
+        </div>
+        {(masteredCount > 0 || longestStreak > 0) && (
+          <div className="flex flex-wrap gap-x-5 gap-y-1 mt-2.5 pt-2.5 border-t border-gray-100 text-xs text-gray-500">
+            {masteredCount > 0 && (
+              <span>
+                <span className="text-[#c9971b] font-semibold">★ {masteredCount}</span> subskill
+                {masteredCount === 1 ? "" : "s"} mastered &middot; {completedCount}/{totalSubskills} attempted
+              </span>
+            )}
+            {longestStreak > 0 && (
+              <span>
+                Longest streak:{" "}
+                <span className="font-semibold text-ink">
+                  {longestStreak} day{longestStreak === 1 ? "" : "s"}
+                </span>
+              </span>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
