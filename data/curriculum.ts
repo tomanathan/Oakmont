@@ -1316,7 +1316,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "You're given two passages that reach different conclusions, and asked what both authors would still agree on. Key insight: authors who disagree on a conclusion often still share the same underlying facts — they just interpret them differently. Technique: separate each passage's facts (what both would accept) from its conclusion (what only one author believes). Then look for overlap in the facts.",
       examples: [
         {
-          q: "Passage 1: Social media platforms have given ordinary citizens direct channels to organize, mobilize, and participate in public debate in ways that were previously unavailable to most people, fundamentally increasing civic engagement. Passage 2: Social media platforms have changed how people interact so significantly that many users substitute brief online exchanges for the sustained, in-person relationships that once anchored community life, fostering isolation rather than connection. Based on the two passages, with which of the following statements would both authors most likely agree?",
+          q: "Passage 1: Social media platforms have given ordinary citizens direct channels to organize, mobilize, and participate in public debate in ways that were previously unavailable to most people, fundamentally increasing civic engagement. \n\nPassage 2: Social media platforms have changed how people interact so significantly that many users substitute brief online exchanges for the sustained, in-person relationships that once anchored community life, fostering isolation rather than connection.\n\nBased on the two passages, with which of the following statements would both authors most likely agree?",
           choices: [
             "Social media has significantly changed how people interact with one another.",
             "Social media increases civic engagement more than it fosters isolation.",
@@ -1329,7 +1329,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "Passage 1: Standardized tests remain the most consistent, objective tool available for comparing applicants from vastly different schools and backgrounds, and scores on these tests should carry significant weight in college admissions decisions. Passage 2: Standardized test scores consistently differ across students from different socioeconomic backgrounds, not because of differences in underlying achievement, but because wealthier students have far greater access to test preparation resources; these tests should therefore be minimized in admissions decisions. Based on the two passages, with which of the following statements would both authors most likely agree?",
+          q: "Passage 1: Standardized tests remain the most consistent, objective tool available for comparing applicants from vastly different schools and backgrounds, and scores on these tests should carry significant weight in college admissions decisions. \n\nPassage 2: Standardized test scores consistently differ across students from different socioeconomic backgrounds, not because of differences in underlying achievement, but because wealthier students have far greater access to test preparation resources; these tests should therefore be minimized in admissions decisions.\n\nBased on the two passages, with which of the following statements would both authors most likely agree?",
           choices: [
             "Test scores vary across students from different backgrounds.",
             "Standardized tests should be eliminated from the admissions process entirely.",
@@ -1342,7 +1342,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "Passage 1: Clinical trials of a popular diet trend consistently show participants losing significant weight within the first eight weeks, making it an effective option for people seeking rapid short-term results. Passage 2: Follow-up studies of the same diet trend show that the vast majority of participants who lose weight in the first eight weeks regain it within a year, since the diet's restrictive rules are too difficult to maintain as a long-term lifestyle. Based on the two passages, with which of the following statements would both authors most likely agree?",
+          q: "Passage 1: Clinical trials of a popular diet trend consistently show participants losing significant weight within the first eight weeks, making it an effective option for people seeking rapid short-term results. \n\nPassage 2: Follow-up studies of the same diet trend show that the vast majority of participants who lose weight in the first eight weeks regain it within a year, since the diet's restrictive rules are too difficult to maintain as a long-term lifestyle.\n\nBased on the two passages, with which of the following statements would both authors most likely agree?",
           choices: [
             "The diet produces noticeable results within the first eight weeks.",
             "The diet is not effective at producing any weight loss.",
@@ -1355,7 +1355,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "Passage 1: A city's new nighttime noise ordinance has measurably reduced late-night disturbances, and residents report sleeping better and feeling calmer in their own neighborhoods as a direct result. Passage 2: The same noise ordinance has cut deeply into revenue for small businesses that depend on customers arriving after 9 p.m., since those businesses can no longer legally operate with any amplified sound during peak evening hours. Based on the two passages, with which of the following statements would both authors most likely agree?",
+          q: "Passage 1: A city's new nighttime noise ordinance has measurably reduced late-night disturbances, and residents report sleeping better and feeling calmer in their own neighborhoods as a direct result. \n\nPassage 2: The same noise ordinance has cut deeply into revenue for small businesses that depend on customers arriving after 9 p.m., since those businesses can no longer legally operate with any amplified sound during peak evening hours.\n\nBased on the two passages, with which of the following statements would both authors most likely agree?",
           choices: [
             "The ordinance measurably reduced nighttime activity and noise.",
             "The ordinance has been an unambiguous success for the city.",
@@ -1368,7 +1368,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "Passage 1 (a historian): An ancient trade route's gradual decline over roughly a century coincided closely with a major shift in regional political power, as a newly dominant empire redirected trade through routes it could tax and control more directly. Passage 2 (an archaeologist): Sediment core samples show the same region's climate became significantly drier over the same century-long period, and the trade route's key water sources, on which caravans depended, appear to have dried up gradually before the route was finally abandoned. Based on the two passages, with which of the following statements would both authors most likely agree?",
+          q: "Passage 1 (a historian): An ancient trade route's gradual decline over roughly a century coincided closely with a major shift in regional political power, as a newly dominant empire redirected trade through routes it could tax and control more directly. \n\nPassage 2 (an archaeologist): Sediment core samples show the same region's climate became significantly drier over the same century-long period, and the trade route's key water sources, on which caravans depended, appear to have dried up gradually before the route was finally abandoned.\n\nBased on the two passages, with which of the following statements would both authors most likely agree?",
           choices: [
             "The trade route's decline occurred gradually over an extended period.",
             "The trade route was of little economic importance to the region.",
@@ -1392,7 +1392,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "This pattern asks how one author would likely respond to a specific claim made in the OTHER passage. You have to apply that author's reasoning and values to a new claim — not just repeat their original argument. Find the core value driving each author's argument (for example, 'depth of connection' for an author focused on isolation). Then predict how that same value would react to the new claim.",
       examples: [
         {
-          q: "Passage 1: Online communities built around shared interests give people meaningful, sustained connection with others who understand them, and for many users, these communities have effectively replaced the real-world social circles they struggled to find locally. Passage 2: Even the most active online community exchanges tend to be brief and text-based, lacking the shared physical presence, spontaneous conversation, and accumulated small moments that make in-person relationships feel deeply substantial over time. How would the author of Passage 2 most likely respond to Passage 1's claim that online communities effectively replace real-world ones?",
+          q: "Passage 1: Online communities built around shared interests give people meaningful, sustained connection with others who understand them, and for many users, these communities have effectively replaced the real-world social circles they struggled to find locally. \n\nPassage 2: Even the most active online community exchanges tend to be brief and text-based, lacking the shared physical presence, spontaneous conversation, and accumulated small moments that make in-person relationships feel deeply substantial over time.\n\nHow would the author of Passage 2 most likely respond to Passage 1's claim that online communities effectively replace real-world ones?",
           choices: [
             "By arguing that online interaction lacks the depth of in-person connection, regardless of how active it appears.",
             "By fully agreeing that online communities are an adequate substitute for in-person relationships.",
@@ -1405,7 +1405,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "Passage 1: Standardized tests remain the most consistent, objective tool available for comparing applicants from vastly different schools and backgrounds, and scores on these tests should carry significant weight in college admissions decisions. Passage 2: Some highly capable students perform poorly on standardized tests specifically because of test anxiety, a response unrelated to their actual academic ability, which means test scores can misrepresent exactly the students they are meant to accurately measure. How would the author of Passage 1 most likely respond to Passage 2's claim about test anxiety?",
+          q: "Passage 1: Standardized tests remain the most consistent, objective tool available for comparing applicants from vastly different schools and backgrounds, and scores on these tests should carry significant weight in college admissions decisions. \n\nPassage 2: Some highly capable students perform poorly on standardized tests specifically because of test anxiety, a response unrelated to their actual academic ability, which means test scores can misrepresent exactly the students they are meant to accurately measure.\n\nHow would the author of Passage 1 most likely respond to Passage 2's claim about test anxiety?",
           choices: [
             "By arguing that some variation in any single measurement is expected, but this doesn't undermine the test's overall usefulness.",
             "By conceding that the test should be dropped from admissions decisions entirely.",
@@ -1418,7 +1418,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "Passage 1: A city's new nighttime noise ordinance has measurably reduced late-night disturbances, and residents report sleeping better and feeling calmer in their own neighborhoods as a direct result. Passage 2: The same noise ordinance has cut deeply into revenue for small businesses that depend on customers arriving after 9 p.m., since those businesses can no longer legally operate with any amplified sound during peak evening hours. How would the author of Passage 1 most likely respond to Passage 2's claim that the ordinance unfairly burdens small businesses?",
+          q: "Passage 1: A city's new nighttime noise ordinance has measurably reduced late-night disturbances, and residents report sleeping better and feeling calmer in their own neighborhoods as a direct result. \n\nPassage 2: The same noise ordinance has cut deeply into revenue for small businesses that depend on customers arriving after 9 p.m., since those businesses can no longer legally operate with any amplified sound during peak evening hours.\n\nHow would the author of Passage 1 most likely respond to Passage 2's claim that the ordinance unfairly burdens small businesses?",
           choices: [
             "By arguing that the improvement to residents' quality of life outweighs the burden on businesses.",
             "By fully conceding that the ordinance was a mistake and should be repealed.",
@@ -1431,7 +1431,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "Passage 1: Clinical trials of a popular diet trend consistently show participants losing significant weight within the first eight weeks, making it an effective option for people seeking rapid short-term results. Passage 2: Follow-up studies of the same diet trend show that the vast majority of participants who lose weight in the first eight weeks regain it within a year, since the diet's restrictive rules are too difficult to maintain as a long-term lifestyle. How would the author of Passage 2 most likely respond to Passage 1's claim that the diet produces measurable short-term weight loss?",
+          q: "Passage 1: Clinical trials of a popular diet trend consistently show participants losing significant weight within the first eight weeks, making it an effective option for people seeking rapid short-term results. \n\nPassage 2: Follow-up studies of the same diet trend show that the vast majority of participants who lose weight in the first eight weeks regain it within a year, since the diet's restrictive rules are too difficult to maintain as a long-term lifestyle.\n\nHow would the author of Passage 2 most likely respond to Passage 1's claim that the diet produces measurable short-term weight loss?",
           choices: [
             "By conceding the short-term effect is real, but arguing it doesn't matter if it can't be sustained.",
             "By denying that any short-term weight loss occurs at all.",
@@ -1444,7 +1444,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "Passage 1 (a historian): An ancient trade route's gradual decline over roughly a century coincided closely with a major shift in regional political power, as a newly dominant empire redirected trade through routes it could tax and control more directly. Passage 2 (an archaeologist): Sediment core samples show the same region's climate became significantly drier over the same century-long period, and the trade route's key water sources, on which caravans depended, appear to have dried up gradually before the route was finally abandoned. How would the author of Passage 1 most likely respond to the sediment core evidence presented in Passage 2?",
+          q: "Passage 1 (a historian): An ancient trade route's gradual decline over roughly a century coincided closely with a major shift in regional political power, as a newly dominant empire redirected trade through routes it could tax and control more directly. \n\nPassage 2 (an archaeologist): Sediment core samples show the same region's climate became significantly drier over the same century-long period, and the trade route's key water sources, on which caravans depended, appear to have dried up gradually before the route was finally abandoned.\n\nHow would the author of Passage 1 most likely respond to the sediment core evidence presented in Passage 2?",
           choices: [
             "By accepting the environmental evidence as accurate, but arguing it was a secondary factor compared to the political shift.",
             "By flatly denying that the region's climate changed during this period.",

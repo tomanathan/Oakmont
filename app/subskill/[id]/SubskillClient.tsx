@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Subskill, Pattern } from "@/data/curriculum";
 import type { Question } from "@/data/questions";
@@ -44,6 +44,20 @@ export function SubskillClient({
   // practice quiz below. Persists as they browse back and forth, same as
   // viewedExamples.
   const [exampleSelections, setExampleSelections] = useState<Record<string, number>>({});
+  // Bumped on every retake to force a fresh shuffle -- see quizQuestions
+  // below -- so the correct answer's position doesn't stay memorizable
+  // across attempts either.
+  const [shuffleSeed, setShuffleSeed] = useState(0);
+
+  // The practice quiz's own choice order, reshuffled per mount/retake so
+  // the correct answer isn't always sitting at the position it was
+  // authored in (every question in data/questions.ts is written with the
+  // correct choice at index 0 for authoring clarity -- shown unshuffled,
+  // that would train students to just click the first option). Worked
+  // examples deliberately are NOT shuffled: many of their explanations
+  // walk through "choice A... B... C..." by letter, which a shuffle would
+  // make wrong.
+  const quizQuestions = useMemo(() => questions.map(shuffleChoices), [questions, shuffleSeed]);
 
   // Marks the currently-open example as viewed, so the pathway UI can show
   // which examples/patterns a student has actually stepped through.
@@ -105,22 +119,23 @@ export function SubskillClient({
     setSubmitted(false);
     setResult(null);
     setErrorMsg("");
+    setShuffleSeed((s) => s + 1);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function submitQuiz() {
-    if (Object.keys(answers).length < questions.length) {
+    if (Object.keys(answers).length < quizQuestions.length) {
       setErrorMsg("Answer every question before submitting.");
       return;
     }
-    const score = questions.reduce((acc, q, i) => acc + (answers[i] === q.answer ? 1 : 0), 0);
+    const score = quizQuestions.reduce((acc, q, i) => acc + (answers[i] === q.answer ? 1 : 0), 0);
     setSubmitted(true);
     setSaving(true);
     try {
       const res = await fetch("/api/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subskillId: subskill.id, score, total: questions.length }),
+        body: JSON.stringify({ subskillId: subskill.id, score, total: quizQuestions.length }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -162,7 +177,7 @@ export function SubskillClient({
   }
 
   const score = submitted
-    ? questions.reduce((acc, q, i) => acc + (answers[i] === q.answer ? 1 : 0), 0)
+    ? quizQuestions.reduce((acc, q, i) => acc + (answers[i] === q.answer ? 1 : 0), 0)
     : null;
 
   const example = pattern?.examples[Math.min(activeExample, pattern.examples.length - 1)];
@@ -336,8 +351,8 @@ export function SubskillClient({
 
                   {example && (
                     <>
-                      <div className="text-sm text-ink font-medium mb-3 leading-relaxed whitespace-pre-line">
-                        <HighlightedText text={example.q} highlight={example.underline} />
+                      <div className="text-sm text-ink mb-3">
+                        <PassageText text={example.q} highlight={example.underline} />
                       </div>
                       {example.diagram && <GeometryDiagram spec={example.diagram} />}
                       <ExamChoices
@@ -444,19 +459,19 @@ export function SubskillClient({
 
       {mode === "practice" && (
         <div>
-          {questions.length === 0 && (
+          {quizQuestions.length === 0 && (
             <div className="text-sm text-gray-500 mb-4">
               No practice questions are available for this subskill yet.
             </div>
           )}
-          {questions.map((q, i) => (
+          {quizQuestions.map((q, i) => (
             <div
               key={i}
               className="bg-white border border-[#ece9f7] shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-5 mb-3.5"
             >
               <div className="flex items-start justify-between gap-3 mb-3">
-                <div className="text-sm font-medium text-ink whitespace-pre-line">
-                  {i + 1}. <HighlightedText text={q.q} highlight={q.underline} />
+                <div className="text-sm text-ink flex-1 min-w-0">
+                  <PassageText text={q.q} highlight={q.underline} number={i + 1} />
                 </div>
                 {q.difficulty && <DifficultyPill difficulty={q.difficulty} />}
               </div>
@@ -485,7 +500,7 @@ export function SubskillClient({
           ))}
           {errorMsg && <div className="text-red-700 text-sm mb-3">{errorMsg}</div>}
           {!submitted ? (
-            questions.length > 0 && (
+            quizQuestions.length > 0 && (
               <button
                 onClick={submitQuiz}
                 className="px-5 py-2.5 rounded-lg bg-ink text-white font-semibold text-sm"
@@ -497,7 +512,7 @@ export function SubskillClient({
             <>
               <ResultBanner
                 score={score ?? 0}
-                total={questions.length}
+                total={quizQuestions.length}
                 saving={saving}
                 result={result}
               />
@@ -790,11 +805,11 @@ function LessonOutline({
 
 /**
  * Underlines one exact substring of `text` -- the tested word in a Words in
- * Context question (`vocabWord`), or the specific sentence a text-structure
- * question is asking about (`underline`) -- so the student sees it
- * highlighted directly in the passage instead of having to relocate it,
- * matching how the real exam marks it. Falls back to a plain MathText
- * render when there's nothing to highlight, or it can't be found verbatim.
+ * Context question, or the specific sentence a text-structure question is
+ * asking about (both via `highlight`) -- so the student sees it highlighted
+ * directly in the passage instead of having to relocate it, matching how
+ * the real exam marks it. Falls back to a plain MathText render when
+ * there's nothing to highlight, or it can't be found verbatim.
  */
 function HighlightedText({ text, highlight }: { text: string; highlight?: string }) {
   if (!highlight) return <MathText text={text} />;
@@ -810,4 +825,93 @@ function HighlightedText({ text, highlight }: { text: string; highlight?: string
       <MathText text={after} />
     </>
   );
+}
+
+// Matches a leading "Passage 1:", "Passage 2 (a historian):" etc. at the
+// start of a paragraph -- see PassageText below.
+const PASSAGE_LABEL_RE = /^(Passage \d+(?:\s*\([^)]+\))?)\s*:\s*/i;
+
+/**
+ * Renders a question's full text, splitting on blank lines (`\n\n`) into
+ * real, visually separated paragraphs instead of one dense run-on block --
+ * and, when a paragraph starts with "Passage 1:"/"Passage 2:" (Cross-Text
+ * Connections), pulling that label out into its own small heading above a
+ * distinctly boxed passage, so each passage and the question itself read as
+ * clearly separate pieces rather than one blob of text. Single-paragraph
+ * text (the vast majority of questions) renders exactly as before, with
+ * `number` (if given) inline as "1. " -- multi-paragraph text moves that
+ * same number to a small heading above the stacked paragraphs instead,
+ * since there's no longer one single line to prefix it onto.
+ */
+function PassageText({
+  text,
+  highlight,
+  number,
+}: {
+  text: string;
+  highlight?: string;
+  number?: number;
+}) {
+  const paragraphs = text.split(/\n\n+/).filter(Boolean);
+
+  if (paragraphs.length <= 1) {
+    return (
+      <p className="leading-relaxed">
+        {number !== undefined && `${number}. `}
+        <HighlightedText text={text} highlight={highlight} />
+      </p>
+    );
+  }
+
+  return (
+    <div>
+      {number !== undefined && (
+        <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
+          Question {number}
+        </div>
+      )}
+      <div className="flex flex-col gap-3">
+        {paragraphs.map((para, i) => {
+          const m = para.match(PASSAGE_LABEL_RE);
+          if (m) {
+            const label = m[1];
+            const body = para.slice(m[0].length);
+            return (
+              <div key={i} className="bg-[#f8f8fb] border border-[#ece9f7] rounded-lg px-3.5 py-3">
+                <div className="text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-1.5">
+                  {label}
+                </div>
+                <p className="leading-relaxed">
+                  <HighlightedText text={body} highlight={highlight} />
+                </p>
+              </div>
+            );
+          }
+          return (
+            <p key={i} className="leading-relaxed font-medium">
+              <HighlightedText text={para} highlight={highlight} />
+            </p>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Reshuffles a practice question's choices (Fisher-Yates) and remaps
+ * `answer` to match, so the correct choice doesn't always land wherever it
+ * was authored -- every question in data/questions.ts is written with the
+ * correct choice at index 0 for authoring clarity, and shown unshuffled
+ * that would just train students to click the first option. Worked
+ * examples are deliberately never shuffled this way -- see quizQuestions
+ * above.
+ */
+function shuffleChoices(q: Question): Question {
+  const order = [0, 1, 2, 3].slice(0, q.choices.length);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  return { ...q, choices: order.map((idx) => q.choices[idx]), answer: order.indexOf(q.answer) };
 }
