@@ -9,12 +9,21 @@ export const MOOD_BY_STAGE: Record<PetStage, DogMood> = {
   dead: "sad",
 };
 
-export function PetAvatar({ stage, size = 120 }: { stage: PetStage; size?: number }) {
+export function PetAvatar({
+  stage,
+  size = 120,
+  costume = null,
+}: {
+  stage: PetStage;
+  size?: number;
+  costume?: string | null;
+}) {
   return (
     <PixelDog
       size={size}
       mood={MOOD_BY_STAGE[stage]}
       dead={stage === "dead"}
+      costume={costume}
       className={stage === "thriving" ? "animate-flame-pulse" : ""}
     />
   );

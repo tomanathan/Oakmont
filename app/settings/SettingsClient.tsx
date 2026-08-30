@@ -2,17 +2,24 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { PixelDog } from "@/components/PixelDog";
+import { StarRating } from "@/components/StarRating";
+import { COSTUMES } from "@/lib/costumes";
 
 export function SettingsClient({
   email,
   baselineScore,
   goalScore,
   targetTestDate,
+  stars,
+  equippedCostume,
 }: {
   email: string;
   baselineScore: number | null;
   goalScore: number | null;
   targetTestDate: string | null;
+  stars: number;
+  equippedCostume: string;
 }) {
   const router = useRouter();
   const [baseline, setBaseline] = useState(baselineScore?.toString() ?? "");
@@ -21,6 +28,30 @@ export function SettingsClient({
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
   const [saveError, setSaveError] = useState("");
+
+  const [costume, setCostume] = useState(equippedCostume);
+  const [equipping, setEquipping] = useState<string | null>(null);
+
+  async function equip(id: string) {
+    setEquipping(id);
+    try {
+      const res = await fetch("/api/account", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ equippedCostume: id }),
+      });
+      if (res.ok) {
+        setCostume(id);
+        const name = COSTUMES.find((c) => c.id === id)?.name;
+        window.dispatchEvent(
+          new CustomEvent("ozho:celebrate", { detail: { message: name ? `New look: ${name}!` : "New look!" } })
+        );
+        router.refresh();
+      }
+    } finally {
+      setEquipping(null);
+    }
+  }
 
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
@@ -131,6 +162,50 @@ export function SettingsClient({
           {saving ? "Saving..." : "Save"}
         </button>
       </form>
+
+      <div className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-6">
+        <div className="flex items-center justify-between gap-2 mb-1">
+          <div className="text-[15px] font-semibold text-ink">Ozho&apos;s wardrobe</div>
+          <StarRating stars={Math.min(5, stars)} className="opacity-80" />
+        </div>
+        <div className="text-xs text-gray-500 mb-4">
+          {stars} star{stars === 1 ? "" : "s"} earned across every domain (quiz mastery + practice test
+          scores). Costumes unlock as that total grows &mdash; pick whichever unlocked look you want Ozho
+          to wear.
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {COSTUMES.map((c) => {
+            const unlocked = stars >= c.starsRequired;
+            const selected = costume === c.id;
+            return (
+              <button
+                key={c.id}
+                onClick={() => unlocked && !selected && equip(c.id)}
+                disabled={!unlocked || equipping !== null}
+                className={`flex flex-col items-center gap-2 rounded-lg border p-3 text-center transition-colors ${
+                  selected
+                    ? "border-ink bg-[#f5f4fb]"
+                    : unlocked
+                    ? "border-[#ece9f7] hover:border-[#c9c6ee]"
+                    : "border-[#ece9f7] opacity-50 cursor-default"
+                }`}
+              >
+                <PixelDog size={40} costume={unlocked ? c.id : null} />
+                <div className="text-xs font-semibold text-ink">{c.name}</div>
+                <div className="text-[10px] text-gray-400 leading-snug">
+                  {selected
+                    ? "Equipped"
+                    : unlocked
+                    ? equipping === c.id
+                      ? "Equipping..."
+                      : "Tap to wear"
+                    : `${c.starsRequired} stars needed`}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       <div className="bg-white border border-red-100 rounded-xl p-6">
         <div className="text-[15px] font-semibold text-red-700 mb-1">Danger zone</div>

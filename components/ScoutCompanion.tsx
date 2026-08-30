@@ -34,6 +34,11 @@ const SLEEPY_WAKE_PHRASES = [
   "Huh? Oh — welcome back!",
   "Mmm... must've dozed off. Hi!",
 ];
+// What he says while doing his trick -- fired by a window "ozho:celebrate"
+// event (mastering a subskill, a streak milestone, unlocking a wardrobe
+// costume). A caller can pass its own message via the event detail instead;
+// this is just the fallback when none is given.
+const CELEBRATION_PHRASES = ["Woo! Nailed it!", "Watch this!", "Yes!! Let's go!", "That's how it's done!"];
 const TIPS = [
   "You can retake any quiz from its subskill page to reinforce it.",
   "Set your target test date in Settings and your whole plan resizes to fit.",
@@ -184,6 +189,8 @@ export function ScoutCompanion() {
   const [behindText, setBehindText] = useState(false);
   const [asleep, setAsleep] = useState(false);
   const [sleepAnim, setSleepAnim] = useState<"none" | "falling" | "waking">("none");
+  const [trick, setTrick] = useState(false);
+  const [costume, setCostume] = useState<string | null>(null);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const posRef = useRef({ x: 80, y: 400 });
@@ -219,6 +226,7 @@ export function ScoutCompanion() {
   const asleepRef = useRef(false);
   const sleepAnimRef = useRef<"none" | "falling" | "waking">("none");
   const sleepAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const trickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // One-time setup: pick a starting spot in page coordinates and fetch
   // Ozho's mood. ScoutCompanion is mounted once at the root layout, so
@@ -252,6 +260,7 @@ export function ScoutCompanion() {
           stageRef.current = data.stage;
           streakRef.current = data.currentStreak ?? 0;
           setStage(data.stage);
+          setCostume(data.costume && data.costume !== "none" ? data.costume : null);
         }
       })
       .catch(() => {});
@@ -280,12 +289,30 @@ export function ScoutCompanion() {
     window.addEventListener("keydown", onInteract);
     window.addEventListener("click", onInteract);
 
+    // Dopamine hook: any page can fire this to have Ozho do a little
+    // hop-and-spin trick and say something excited -- mastering a
+    // subskill, a streak milestone, unlocking a wardrobe costume. Kept as
+    // a window event rather than a prop/context because ScoutCompanion is
+    // mounted once at the root layout, far from whatever page triggers it.
+    function onCelebrate(e: Event) {
+      lastInteractionAtRef.current = Date.now();
+      beginWakeUp();
+      const detail = (e as CustomEvent<{ message?: string }>).detail;
+      speak(detail?.message || pick(CELEBRATION_PHRASES), 3200);
+      if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
+      setTrick(true);
+      trickTimeoutRef.current = setTimeout(() => setTrick(false), 700);
+    }
+    window.addEventListener("ozho:celebrate", onCelebrate);
+
     return () => {
       mq.removeEventListener?.("change", onMotionChange);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("scroll", onInteract);
       window.removeEventListener("keydown", onInteract);
       window.removeEventListener("click", onInteract);
+      window.removeEventListener("ozho:celebrate", onCelebrate);
+      if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
     };
   }, []);
 
@@ -878,12 +905,19 @@ export function ScoutCompanion() {
         onClick={onClickDog}
         aria-label="Ozho, your study companion"
         className={`pointer-events-auto block cursor-pointer bg-transparent border-none p-0 transition-transform duration-150 ease-out ${
-          sleepAnim === "falling" ? "animate-fall-asleep" : sleepAnim === "waking" ? "animate-wake-up" : ""
+          sleepAnim === "falling"
+            ? "animate-fall-asleep"
+            : sleepAnim === "waking"
+            ? "animate-wake-up"
+            : trick
+            ? "animate-trick"
+            : ""
         }`}
         style={{
-          transform: isWalking
-            ? `translateY(${legFrame === 1 ? -3 : 0}px) rotate(${legFrame === 1 ? (facing === 1 ? 2 : -2) : 0}deg)`
-            : undefined,
+          transform:
+            !trick && isWalking
+              ? `translateY(${legFrame === 1 ? -3 : 0}px) rotate(${legFrame === 1 ? (facing === 1 ? 2 : -2) : 0}deg)`
+              : undefined,
         }}
       >
         <PixelDog
@@ -893,6 +927,7 @@ export function ScoutCompanion() {
           asleep={asleep}
           legFrame={isWalking ? legFrame : 0}
           facing={facing}
+          costume={costume}
         />
       </button>
     </div>

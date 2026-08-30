@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { SESSION_COOKIE_NAME } from "@/lib/auth";
+import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
+import { computeDomainMastery, totalStars, type ProgressMap } from "@/lib/mastery";
+import { isCostumeUnlocked } from "@/lib/costumes";
 
 export async function PATCH(req: NextRequest) {
   const user = await getCurrentUser();
@@ -9,14 +12,39 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Not logged in." }, { status: 401 });
   }
 
-  let body: { baselineScore?: number | null; goalScore?: number | null; targetTestDate?: string | null };
+  let body: {
+    baselineScore?: number | null;
+    goalScore?: number | null;
+    targetTestDate?: string | null;
+    equippedCostume?: string | null;
+  };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const { baselineScore, goalScore, targetTestDate } = body;
+  const { baselineScore, goalScore, targetTestDate, equippedCostume } = body;
+
+  if (equippedCostume !== undefined && equippedCostume !== null) {
+    const [progressRows, latestTest] = await Promise.all([
+      prisma.progress.findMany({ where: { userId: user.userId } }),
+      prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
+    ]);
+    const progress: ProgressMap = {};
+    for (const row of progressRows) progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
+    const subskillsByDomain: Record<string, string[]> = {};
+    for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
+    const mastery = computeDomainMastery(
+      ALL_DOMAINS,
+      subskillsByDomain,
+      progress,
+      (latestTest?.domainScores as Record<string, number> | null) ?? null
+    );
+    if (!isCostumeUnlocked(equippedCostume, totalStars(mastery))) {
+      return NextResponse.json({ error: "That costume isn't unlocked yet." }, { status: 400 });
+    }
+  }
 
   for (const [label, score] of [
     ["Baseline score", baselineScore],
@@ -44,8 +72,9 @@ export async function PATCH(req: NextRequest) {
       ...(baselineScore !== undefined ? { baselineScore } : {}),
       ...(goalScore !== undefined ? { goalScore } : {}),
       ...(parsedDate !== undefined ? { targetTestDate: parsedDate } : {}),
+      ...(equippedCostume !== undefined ? { equippedCostume } : {}),
     },
-    select: { baselineScore: true, goalScore: true, targetTestDate: true },
+    select: { baselineScore: true, goalScore: true, targetTestDate: true, equippedCostume: true },
   });
 
   return NextResponse.json({ ok: true, ...updated });

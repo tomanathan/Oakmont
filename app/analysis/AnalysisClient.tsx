@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { sectionTheme } from "@/lib/sectionTheme";
+import { StarRating } from "@/components/StarRating";
+import type { DomainMastery } from "@/lib/mastery";
 
 interface Test {
   id: string;
@@ -20,11 +22,11 @@ interface DomainInfo {
 
 export function AnalysisClient({
   domains,
-  domainQuizPct,
+  domainMastery,
   tests,
 }: {
   domains: DomainInfo[];
-  domainQuizPct: Record<string, number | null>;
+  domainMastery: DomainMastery[];
   tests: Test[];
 }) {
   const router = useRouter();
@@ -89,18 +91,34 @@ export function AnalysisClient({
             />
           </div>
 
-          <div className="text-sm font-semibold text-ink mb-3">Subject breakdown</div>
+          <div className="flex items-baseline justify-between mb-3 gap-2 flex-wrap">
+            <div className="text-sm font-semibold text-ink">Subject breakdown</div>
+            <div className="text-xs text-gray-400">
+              Mastery blends quiz scores with this test &mdash; it's the same rating shown on the{" "}
+              <button onClick={() => router.push("/dashboard")} className="underline hover:text-ink">
+                dashboard
+              </button>{" "}
+              and{" "}
+              <button onClick={() => router.push("/plan")} className="underline hover:text-ink">
+                6-month plan
+              </button>
+              .
+            </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
             {domains.map((d) => {
               const theme = sectionTheme(d.section);
               const testPct = latest.domainScores[d.domain];
               const prevTestPct = previous?.domainScores[d.domain];
-              const quizPct = domainQuizPct[d.domain];
+              const mastery = domainMastery.find((m) => m.domain === d.domain);
               return (
                 <div key={d.domain} className={`border rounded-[10px] p-4 ${theme.cardBg} ${theme.cardBorder}`}>
-                  <div className="flex items-center gap-2 mb-2.5">
-                    <span className={`w-2 h-2 rounded-full ${theme.dot}`} />
-                    <span className="text-sm font-medium text-ink">{d.domain}</span>
+                  <div className="flex items-center justify-between gap-2 mb-2.5">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${theme.dot}`} />
+                      <span className="text-sm font-medium text-ink truncate">{d.domain}</span>
+                    </div>
+                    <StarRating stars={mastery?.stars ?? 0} />
                   </div>
                   <DomainBar
                     label="Latest practice test"
@@ -112,7 +130,7 @@ export function AnalysisClient({
                     }
                     barClass={theme.bar}
                   />
-                  <DomainBar label="Quiz mastery" pct={quizPct} barClass="bg-gray-400" />
+                  <DomainBar label="Quiz mastery" pct={mastery?.quizPct ?? null} barClass="bg-gray-400" />
                 </div>
               );
             })}

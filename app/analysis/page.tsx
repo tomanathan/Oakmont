@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/session";
 import { getUserStats } from "@/lib/user";
 import { prisma } from "@/lib/prisma";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
+import { computeDomainMastery, type ProgressMap } from "@/lib/mastery";
 import { AppShell } from "@/components/AppShell";
 import { AnalysisClient } from "./AnalysisClient";
 
@@ -19,34 +20,28 @@ export default async function AnalysisPage() {
     prisma.progress.findMany({ where: { userId: user.userId } }),
   ]);
 
-  const progress: Record<string, { bestScore: number; total: number }> = {};
+  const progress: ProgressMap = {};
   for (const row of progressRows) {
     progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
   }
 
-  // Quiz-mastery percentage per domain, from subskill quiz scores, so the
-  // page can show it alongside each domain's practice-test subscore.
-  const domainQuizPct: Record<string, number | null> = {};
-  for (const { domain } of ALL_DOMAINS) {
-    const subIds = ALL_SUBSKILLS.filter((s) => s.domain === domain).map((s) => s.id);
-    const attempted = subIds.map((id) => progress[id]).filter(Boolean) as {
-      bestScore: number;
-      total: number;
-    }[];
-    if (attempted.length === 0) {
-      domainQuizPct[domain] = null;
-      continue;
-    }
-    const pct =
-      attempted.reduce((acc, p) => acc + p.bestScore / p.total, 0) / attempted.length;
-    domainQuizPct[domain] = Math.round(pct * 100);
-  }
+  const subskillsByDomain: Record<string, string[]> = {};
+  for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
+  // Blends quiz mastery with the latest practice test's domain subscore --
+  // the same numbers the dashboard's star ratings use, so logging a test
+  // below visibly moves the same mastery everywhere, not just this page.
+  const domainMastery = computeDomainMastery(
+    ALL_DOMAINS,
+    subskillsByDomain,
+    progress,
+    (tests[0]?.domainScores as Record<string, number> | null) ?? null
+  );
 
   return (
     <AppShell email={user.email} stats={stats}>
       <AnalysisClient
         domains={ALL_DOMAINS}
-        domainQuizPct={domainQuizPct}
+        domainMastery={domainMastery}
         tests={tests.map((t) => ({
           id: t.id,
           takenAt: t.takenAt.toISOString(),

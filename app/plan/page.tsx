@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
-import { courseLengthDaysForUser } from "@/lib/pacing";
+import { courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { buildDayPlan } from "@/lib/studyPlan";
 import { buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
@@ -23,7 +23,11 @@ export default async function PlanPage() {
 
   const courseStartDate = stats.createdAt ?? new Date();
   const courseLengthDays = courseLengthDaysForUser(courseStartDate, stats.targetTestDate ?? null);
-  const studyPlan = buildStudyPlan(Math.round(courseLengthDays / 7));
+  // Enough whole weeks to cover the exact day count -- the final week is
+  // then truncated below so nothing is ever scheduled past the real
+  // target date, and nothing before it is left unaccounted for either.
+  const totalWeeks = Math.ceil(courseLengthDays / 7);
+  const studyPlan = buildStudyPlan(totalWeeks);
 
   const nameSubskill = (id: string) => {
     const s = getSubskill(id);
@@ -31,8 +35,10 @@ export default async function PlanPage() {
   };
 
   const priorSubskillIds: string[] = [];
-  const weeksWithNames = studyPlan.map((w) => {
-    const days = buildDayPlan(w, priorSubskillIds).map((d) => ({
+  const weeksWithNames = studyPlan.map((w, i) => {
+    const isLastWeek = i === studyPlan.length - 1;
+    const dayCount = isLastWeek ? courseLengthDays - i * 7 : 7;
+    const days = buildDayPlan(w, priorSubskillIds, dayCount).map((d) => ({
       ...d,
       subskills: d.subskillIds.map(nameSubskill),
     }));
@@ -51,6 +57,8 @@ export default async function PlanPage() {
         weeks={weeksWithNames}
         progress={progress}
         courseStartDate={courseStartDate.toISOString()}
+        targetTestDate={stats.targetTestDate ? stats.targetTestDate.toISOString() : null}
+        daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
       />
     </AppShell>
   );

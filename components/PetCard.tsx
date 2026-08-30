@@ -13,7 +13,15 @@ const STAGE_BG: Record<string, string> = {
   dead: "bg-[#f0eff2] border-[#e0dee6]",
 };
 
-export function PetCard({ petName, state }: { petName: string; state: PetState }) {
+export function PetCard({
+  petName,
+  state,
+  costume = null,
+}: {
+  petName: string;
+  state: PetState;
+  costume?: string | null;
+}) {
   const router = useRouter();
   const [reviving, setReviving] = useState(false);
 
@@ -29,7 +37,7 @@ export function PetCard({ petName, state }: { petName: string; state: PetState }
 
   return (
     <div className={`border rounded-xl p-4 mb-5 flex items-center gap-4 ${STAGE_BG[state.stage]}`}>
-      <PetAvatar stage={state.stage} size={64} />
+      <PetAvatar stage={state.stage} size={64} costume={costume} />
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold text-ink mb-0.5">{petName}</div>
         <div className="text-xs text-gray-600 leading-relaxed">{state.message}</div>

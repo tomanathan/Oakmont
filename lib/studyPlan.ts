@@ -26,15 +26,19 @@ const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
  * practice on every day. At most one day per week is held back as an
  * actual rest day, and only when there's enough room to spare one.
  */
-export function buildDayPlan(week: PlanWeek, priorSubskillIds: string[] = []): PlanDay[] {
-  const days: PlanDay[] = Array.from({ length: 7 }, (_, i) => ({
+export function buildDayPlan(week: PlanWeek, priorSubskillIds: string[] = [], dayCount: number = 7): PlanDay[] {
+  // Only the plan's very last week is ever shorter than 7 days (truncated
+  // to land exactly on a custom SAT target date instead of drifting a few
+  // days past or short of it -- see getTodayPlanItem/the plan pages).
+  const count = Math.max(1, Math.min(7, Math.round(dayCount)));
+  const days: PlanDay[] = Array.from({ length: count }, (_, i) => ({
     day: i + 1,
     dayName: DAY_NAMES[i],
     type: "rest",
     subskillIds: [],
   }));
 
-  let cursor = 7;
+  let cursor = count;
   for (const testNumber of [...week.testNumbers].reverse()) {
     if (cursor < 1) break;
     days[cursor - 1] = { ...days[cursor - 1], type: "test", testNumber };
@@ -62,4 +66,62 @@ export function buildDayPlan(week: PlanWeek, priorSubskillIds: string[] = []): P
   }
 
   return days;
+}
+
+function startOfDay(d: Date | string): Date {
+  const c = new Date(d);
+  c.setHours(0, 0, 0, 0);
+  return c;
+}
+
+export interface TodayPlanItem {
+  week: number;
+  day: PlanDay;
+}
+
+/**
+ * Finds exactly what today's slot in the plan is -- the same week/day math
+ * the plan page uses to highlight "Today", but exposed as a standalone
+ * lookup so the dashboard can pull today's items (and a "start here" link)
+ * into its own "what am I doing today" card, instead of the plan being
+ * something a student has to visit separately to find out.
+ *
+ * `totalDays`, when given, is the plan's *exact* length (a custom timeline
+ * built from a target SAT date, which rarely lands on a clean multiple of
+ * 7 -- see courseLengthDaysForUser). It truncates the final week to the
+ * days that actually exist, so "today" is never reported inside days that
+ * fall after the real exam date. Omit it for the default fixed-length
+ * plan, where every week is a full 7 days.
+ *
+ * Returns null once the plan has run out (today falls after the last real
+ * day, e.g. test day itself has arrived, or an expired custom timeline).
+ */
+export function getTodayPlanItem(
+  studyPlan: PlanWeek[],
+  courseStartDate: Date | string,
+  now: Date = new Date(),
+  totalDays?: number
+): TodayPlanItem | null {
+  const daysElapsed = Math.floor(
+    (startOfDay(now).getTime() - startOfDay(courseStartDate).getTime()) / 86400000
+  );
+  if (daysElapsed < 0) return null;
+  if (totalDays !== undefined && daysElapsed >= totalDays) return null;
+
+  const weekIndex = Math.floor(daysElapsed / 7);
+  const week = studyPlan[weekIndex];
+  if (!week) return null;
+
+  const isLastWeek = weekIndex === studyPlan.length - 1;
+  const dayCount = isLastWeek && totalDays !== undefined ? totalDays - weekIndex * 7 : 7;
+
+  const dayOfWeek = (daysElapsed % 7) + 1; // 1-7
+  if (dayOfWeek > dayCount) return null;
+
+  const priorSubskillIds = studyPlan.slice(0, weekIndex).flatMap((w) => w.subskillIds);
+  const days = buildDayPlan(week, priorSubskillIds, dayCount);
+  const day = days[dayOfWeek - 1];
+  if (!day) return null;
+
+  return { week: week.week, day };
 }

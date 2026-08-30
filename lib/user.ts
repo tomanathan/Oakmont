@@ -16,6 +16,7 @@ export async function getUserStats(userId: string) {
       previousLoginAt: true,
       petDiedAt: true,
       petBornAt: true,
+      equippedCostume: true,
     },
   });
   return (
@@ -32,6 +33,7 @@ export async function getUserStats(userId: string) {
       previousLoginAt: null,
       petDiedAt: null,
       petBornAt: new Date(),
+      equippedCostume: null,
     }
   );
 }

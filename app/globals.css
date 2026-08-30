@@ -122,3 +122,28 @@ body {
 .animate-wake-up {
   animation: scout-wake-up 450ms ease-in-out forwards;
 }
+
+/* Ozho's "trick" -- a little hop-and-spin celebration played on top of
+   whatever pose is showing, triggered by a window "ozho:celebrate" event
+   (mastering a subskill, hitting a streak milestone, unlocking a wardrobe
+   costume). A jump plus a full rotation reads as a genuine trick rather
+   than just a wiggle, and it's short enough not to get in the way if he's
+   mid-walk when it fires. */
+@keyframes scout-trick {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  35% {
+    transform: translateY(-16px) rotate(190deg);
+  }
+  70% {
+    transform: translateY(-10px) rotate(360deg);
+  }
+  100% {
+    transform: translateY(0) rotate(360deg);
+  }
+}
+
+.animate-trick {
+  animation: scout-trick 700ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}

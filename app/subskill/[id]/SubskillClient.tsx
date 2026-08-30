@@ -125,6 +125,14 @@ export function SubskillClient({
           justMastered: !!data.justMastered,
           currentStreak: data.currentStreak ?? 0,
         });
+        if (data.justMastered) {
+          // Lets Ozho (mounted separately, at the root layout) react with
+          // his little trick + a celebratory line -- see ScoutCompanion's
+          // "ozho:celebrate" listener.
+          window.dispatchEvent(
+            new CustomEvent("ozho:celebrate", { detail: { message: `${subskill.name} mastered!` } })
+          );
+        }
         // Refreshes server-fetched data (like the streak badge in AppShell)
         // in place, without discarding this page's client-side quiz state.
         router.refresh();
@@ -165,7 +173,30 @@ export function SubskillClient({
       </div>
 
       {mode === "lesson" && (
-        <div className="lg:grid lg:grid-cols-[1fr_300px] lg:gap-5 lg:items-start">
+        <div
+          className={
+            subskill.patterns.length > 1
+              ? "lg:grid lg:grid-cols-[180px_1fr_300px] lg:gap-5 lg:items-start"
+              : "lg:grid lg:grid-cols-[1fr_300px] lg:gap-5 lg:items-start"
+          }
+        >
+          {/* Document-tabs-style outline, left of the lesson -- lets a
+              student jump straight to any pattern or example they've
+              already seen, same idea as Google Docs' left-hand outline. */}
+          {subskill.patterns.length > 1 && (
+            <LessonOutline
+              patterns={subskill.patterns}
+              activePattern={activePattern}
+              activeExample={activeExample}
+              viewedExamples={viewedExamples}
+              onSelectPattern={selectPattern}
+              onSelectExample={(i, j) => {
+                setActivePattern(i);
+                setActiveExample(j);
+              }}
+            />
+          )}
+
           {/* Main lesson column */}
           <div className="bg-white border border-[#ece9f7] shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-6 min-w-0">
             <div className="flex items-center justify-between mb-3 gap-3">
@@ -189,7 +220,7 @@ export function SubskillClient({
               )}
             </div>
             {subskill.patterns.length > 1 && (
-              <div className="flex items-start mb-6 overflow-x-auto pb-1">
+              <div className="lg:hidden flex items-start mb-6 overflow-x-auto pb-1">
                 {subskill.patterns.map((p, i) => {
                   const complete = isPatternComplete(i);
                   const active = activePattern === i;
@@ -311,22 +342,6 @@ export function SubskillClient({
                   )}
                 </div>
 
-                <div className="mb-1 bg-[#fdf2f2] border border-[#f6dede] rounded-lg p-3.5">
-                  <div className="text-[11px] font-semibold text-[#b5504f] uppercase tracking-wide mb-2">
-                    Common traps on this pattern
-                  </div>
-                  <ul className="space-y-1.5">
-                    {pattern.traps.map((t, i) => (
-                      <li key={i} className="text-[13px] text-gray-600 leading-relaxed flex gap-2">
-                        <span className="text-[#d97f7e] flex-shrink-0">&#9679;</span>
-                        <span>
-                          <MathText text={t} />
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
                 {pattern.desmosTrick && (
                   <div className="mt-4 bg-[#eef3f8] border border-[#cddbe8] rounded-lg p-3.5">
                     <div className="flex items-center gap-1.5 mb-1.5">
@@ -396,14 +411,14 @@ export function SubskillClient({
             {/* Mobile collapsible tips panel, inline below the lesson */}
             {tipsOpenMobile && (
               <div className="lg:hidden mt-4">
-                <TipsPanel tips={subskill.tipsAndTricks} />
+                <TipsPanel tips={subskill.tipsAndTricks} traps={pattern?.traps} />
               </div>
             )}
           </div>
 
           {/* Desktop persistent sidebar */}
           <div className="hidden lg:block lg:sticky lg:top-6">
-            <TipsPanel tips={subskill.tipsAndTricks} />
+            <TipsPanel tips={subskill.tipsAndTricks} traps={pattern?.traps} />
           </div>
         </div>
       )}
@@ -420,8 +435,11 @@ export function SubskillClient({
               key={i}
               className="bg-white border border-[#ece9f7] shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-5 mb-3.5"
             >
-              <div className="text-sm font-medium text-ink mb-3">
-                {i + 1}. <MathText text={q.q} />
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="text-sm font-medium text-ink">
+                  {i + 1}. <VocabAwareText text={q.q} word={q.vocabWord} />
+                </div>
+                {q.difficulty && <DifficultyPill difficulty={q.difficulty} />}
               </div>
               <ExamChoices
                 choices={q.choices}
@@ -611,20 +629,144 @@ function MethodCallout({
   );
 }
 
-function TipsPanel({ tips }: { tips: string[] }) {
+function TipsPanel({ tips, traps }: { tips: string[]; traps?: string[] }) {
   return (
-    <div className="bg-[#fffaf0] border border-[#f0e4c8] rounded-xl p-4">
-      <div className="flex items-center gap-1.5 mb-3">
-        <span className="text-base leading-none">💡</span>
-        <span className="text-[13px] font-bold text-ink">Tips &amp; tricks</span>
+    <div className="flex flex-col gap-4">
+      <div className="bg-[#fffaf0] border border-[#f0e4c8] rounded-xl p-4">
+        <div className="flex items-center gap-1.5 mb-3">
+          <span className="text-base leading-none">💡</span>
+          <span className="text-[13px] font-bold text-ink">Tips &amp; tricks</span>
+        </div>
+        <ul className="space-y-3">
+          {tips.map((t, i) => (
+            <li key={i} className="text-[13px] text-gray-700 leading-relaxed pb-3 border-b border-[#f0e4c8] last:border-b-0 last:pb-0">
+              <MathText text={t} />
+            </li>
+          ))}
+        </ul>
       </div>
-      <ul className="space-y-3">
-        {tips.map((t, i) => (
-          <li key={i} className="text-[13px] text-gray-700 leading-relaxed pb-3 border-b border-[#f0e4c8] last:border-b-0 last:pb-0">
-            <MathText text={t} />
-          </li>
-        ))}
-      </ul>
+
+      {/* Common traps, right below tips & tricks -- reading how to get it
+          right, then what trips people up, in that order. */}
+      {traps && traps.length > 0 && (
+        <div className="bg-[#fdf2f2] border border-[#f6dede] rounded-xl p-4">
+          <div className="text-[11px] font-semibold text-[#b5504f] uppercase tracking-wide mb-2.5">
+            Common traps on this pattern
+          </div>
+          <ul className="space-y-1.5">
+            {traps.map((t, i) => (
+              <li key={i} className="text-[13px] text-gray-600 leading-relaxed flex gap-2">
+                <span className="text-[#d97f7e] flex-shrink-0">&#9679;</span>
+                <span>
+                  <MathText text={t} />
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
+  );
+}
+
+/**
+ * Document-tabs-style left outline for the lesson, the same idea as Google
+ * Docs' left-hand heading navigator: every pattern is a clickable row, and
+ * the active pattern expands to show its individual examples as smaller
+ * clickable rows underneath, so a student can jump straight to any part of
+ * the lesson they've already been through instead of paging linearly.
+ */
+function LessonOutline({
+  patterns,
+  activePattern,
+  activeExample,
+  viewedExamples,
+  onSelectPattern,
+  onSelectExample,
+}: {
+  patterns: Pattern[];
+  activePattern: number;
+  activeExample: number;
+  viewedExamples: Set<string>;
+  onSelectPattern: (i: number) => void;
+  onSelectExample: (patternIdx: number, exampleIdx: number) => void;
+}) {
+  return (
+    <nav className="hidden lg:block lg:sticky lg:top-6 pr-3 border-r border-[#ece9f7] self-start">
+      <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2 px-2">
+        On this lesson
+      </div>
+      <ol className="flex flex-col gap-0.5">
+        {patterns.map((p, i) => {
+          const active = i === activePattern;
+          const complete = p.examples.every((_, j) => viewedExamples.has(`${i}-${j}`));
+          return (
+            <li key={p.name}>
+              <button
+                onClick={() => onSelectPattern(i)}
+                className={`w-full text-left px-2 py-1.5 rounded-md text-[12.5px] leading-snug flex items-start gap-1.5 border-l-2 transition-colors ${
+                  active
+                    ? "border-ink text-ink font-semibold bg-[#f5f4fb]"
+                    : complete
+                    ? "border-accent/50 text-gray-600 hover:bg-[#faf9ff]"
+                    : "border-transparent text-gray-400 hover:text-gray-600 hover:bg-[#faf9ff]"
+                }`}
+              >
+                <span className="flex-shrink-0 w-3.5">{complete && !active ? "✓" : `${i + 1}.`}</span>
+                <span>{p.name}</span>
+              </button>
+              {active && p.examples.length > 1 && (
+                <ol className="ml-6 mt-0.5 mb-1 flex flex-col gap-0.5">
+                  {p.examples.map((_, j) => {
+                    const isCurrent = j === activeExample;
+                    const isViewed = viewedExamples.has(`${i}-${j}`);
+                    return (
+                      <li key={j}>
+                        <button
+                          onClick={() => onSelectExample(i, j)}
+                          className={`w-full text-left px-2 py-1 rounded text-[11px] flex items-center gap-1.5 ${
+                            isCurrent ? "text-ink font-semibold" : isViewed ? "text-gray-500" : "text-gray-400"
+                          }`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
+                              isCurrent ? "bg-ink" : isViewed ? "bg-accent/60" : "bg-gray-300"
+                            }`}
+                          />
+                          Example {j + 1}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ol>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
+  );
+}
+
+/**
+ * For Words in Context questions, `vocabWord` names the exact word (as it
+ * appears in `q`) the question is testing -- underlined here so a student
+ * doesn't have to hunt for which word in the passage the question means.
+ * Falls back to a plain MathText render when there's no vocab word, or the
+ * word can't be found verbatim in the text.
+ */
+function VocabAwareText({ text, word }: { text: string; word?: string }) {
+  if (!word) return <MathText text={text} />;
+  const idx = text.toLowerCase().indexOf(word.toLowerCase());
+  if (idx === -1) return <MathText text={text} />;
+  const before = text.slice(0, idx);
+  const match = text.slice(idx, idx + word.length);
+  const after = text.slice(idx + word.length);
+  return (
+    <>
+      <MathText text={before} />
+      <u className="decoration-2 decoration-accent underline-offset-2">{match}</u>
+      <MathText text={after} />
+    </>
   );
 }

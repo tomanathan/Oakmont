@@ -48,6 +48,13 @@ function startOfDay(d: Date): Date {
   return c;
 }
 
+/** Whole calendar days remaining until the target SAT date, or null if none is set. */
+export function daysUntilTest(targetTestDate: Date | null, now: Date = new Date()): number | null {
+  if (!targetTestDate) return null;
+  const msPerDay = 24 * 60 * 60 * 1000;
+  return Math.round((startOfDay(targetTestDate).getTime() - startOfDay(now).getTime()) / msPerDay);
+}
+
 /**
  * Computes where a student stands against a steady-pace line that would
  * finish all `totalUnits` subskills by the end of the plan (by default a

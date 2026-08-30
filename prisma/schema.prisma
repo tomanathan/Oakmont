@@ -39,6 +39,12 @@ model User {
   goalScore      Int?
   targetTestDate DateTime?
 
+  // Which unlocked wardrobe costume (see lib/costumes.ts) Ozho is currently
+  // wearing -- null/"none" means bare. Unlocking is computed live from star
+  // totals, never stored; this only remembers the student's own pick among
+  // whatever they've unlocked.
+  equippedCostume String?
+
   // Onboarding: null means "never seen the welcome page" (new signups land
   // there once); existing users are backfilled to non-null so they aren't
   // suddenly routed into it. Login timestamps power the "welcome back,

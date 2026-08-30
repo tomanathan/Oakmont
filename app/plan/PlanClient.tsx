@@ -41,10 +41,14 @@ export function PlanClient({
   weeks,
   progress,
   courseStartDate,
+  targetTestDate,
+  daysUntilTest,
 }: {
   weeks: WeekItem[];
   progress: Record<string, { bestScore: number; total: number }>;
   courseStartDate: string;
+  targetTestDate: string | null;
+  daysUntilTest: number | null;
 }) {
   const router = useRouter();
   const allSubskills = weeks.flatMap((w) => w.subskills);
@@ -52,6 +56,7 @@ export function PlanClient({
   const weekPct =
     allSubskills.length > 0 ? Math.round((doneSubskills / allSubskills.length) * 100) : 0;
   const totalTests = weeks.reduce((acc, w) => acc + w.testNumbers.length, 0);
+  const lastWeek = weeks[weeks.length - 1];
 
   const currentWeekNumber = useMemo(() => {
     const daysElapsed = Math.floor(
@@ -89,11 +94,37 @@ export function PlanClient({
         </button>{" "}
         to custom-fit this timeline. Click a week to see the day-by-day plan.
       </div>
+
+      {targetTestDate && daysUntilTest !== null && (
+        <div className="flex items-center justify-between gap-3 bg-[#fffaf0] border border-[#f0e0b0] rounded-xl px-5 py-3.5 mb-5 flex-wrap">
+          <div className="text-sm text-ink">
+            <span className="font-semibold">
+              {daysUntilTest > 0
+                ? `${daysUntilTest} day${daysUntilTest === 1 ? "" : "s"} until your SAT`
+                : daysUntilTest === 0
+                ? "Your SAT is today — good luck!"
+                : "Your SAT date has passed"}
+            </span>{" "}
+            <span className="text-gray-500">
+              &middot;{" "}
+              {new Date(targetTestDate).toLocaleDateString(undefined, {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
+          </div>
+          <div className="text-xs text-[#9a6a12]">
+            This plan is paced to finish exactly by then, not before or after.
+          </div>
+        </div>
+      )}
+
       <div className="bg-[#eef0fc] border border-[#d7dbf3] rounded-xl p-5 mb-6">
         <div className="flex justify-between items-baseline mb-2">
-          <span className="text-sm font-semibold text-ink">Subskills completed</span>
+          <span className="text-sm font-semibold text-ink">Overall progress</span>
           <span className="text-sm text-[#6b6f8e]">
-            {doneSubskills} / {allSubskills.length} &middot;{" "}
+            {doneSubskills} / {allSubskills.length} subskills &middot;{" "}
             <span className="text-accent font-semibold">{weekPct}%</span>
           </span>
         </div>
@@ -109,7 +140,10 @@ export function PlanClient({
           const isOpen = expanded.has(w.week);
           const isCurrentWeek = w.week === currentWeekNumber;
           const weekStart = addDays(courseStartDate, (w.week - 1) * 7);
-          const weekEnd = addDays(courseStartDate, w.week * 7 - 1);
+          // w.days.length is 7 for every week except a truncated final week
+          // (see app/plan/page.tsx), so this naturally lines up with the
+          // real target date instead of always assuming a full 7 days.
+          const weekEnd = addDays(weekStart, w.days.length - 1);
           const doneInWeek = w.subskills.filter((s) => progress[s.id]).length;
 
           return (
@@ -158,19 +192,23 @@ export function PlanClient({
                   {w.days.map((d) => {
                     const dayDate = addDays(weekStart, d.day - 1);
                     const isToday = isCurrentWeek && d.day - 1 === currentDayOfWeek;
+                    const isExamDay =
+                      !!targetTestDate && w === lastWeek && d.day === lastWeek.days[lastWeek.days.length - 1]?.day;
                     return (
                       <div
                         key={d.day}
                         className={`flex items-start gap-3 px-3.5 py-2.5 ${
-                          isToday ? "bg-[#faf9ff]" : ""
+                          isExamDay ? "bg-[#fffaf0]" : isToday ? "bg-[#faf9ff]" : ""
                         }`}
                       >
                         <div className="w-14 flex-shrink-0 pt-0.5">
                           <div className="text-[11px] font-bold text-gray-500">{d.dayName}</div>
                           <div className="text-[10px] text-gray-400">{formatDate(dayDate)}</div>
-                          {isToday && (
+                          {isExamDay ? (
+                            <div className="text-[9px] font-bold uppercase text-[#9a6a12]">🎯 SAT day</div>
+                          ) : isToday ? (
                             <div className="text-[9px] font-bold uppercase text-[#6d7fd6]">Today</div>
-                          )}
+                          ) : null}
                         </div>
                         <div className="flex-1 min-w-0">
                           <DayContent day={d} progress={progress} onNavigate={router.push} />

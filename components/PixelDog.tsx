@@ -33,6 +33,7 @@ export function PixelDog({
   facing = 1,
   dead = false,
   asleep = false,
+  costume = null,
   className = "",
 }: {
   size?: number;
@@ -41,6 +42,11 @@ export function PixelDog({
   facing?: 1 | -1;
   dead?: boolean;
   asleep?: boolean;
+  // Wardrobe costume id (see lib/costumes.ts), or null/"none" for bare.
+  // Only drawn on the standing pose -- a dead or sleeping Ozho stays
+  // undressed, both to keep the art simple and because neither state is
+  // really a "look how far I've come" moment.
+  costume?: string | null;
   className?: string;
 }) {
   const p = dead ? PALETTE_DEAD : PALETTE;
@@ -162,6 +168,47 @@ export function PixelDog({
       {/* collar */}
       <rect x={33} y={19} width={5} height={6} fill={p.collar} />
       <circle cx={35} cy={27} r={2} fill={p.tag} />
+
+      {/* wardrobe costume -- standing pose only, see the costume prop doc */}
+      {!dead && costume && costume !== "none" && <CostumeOverlay costume={costume} />}
     </svg>
   );
+}
+
+/**
+ * Flat-rect costume pieces layered on top of the standing sprite, drawn in
+ * the same viewBox coordinates and blocky style as the rest of Ozho. Each
+ * one is intentionally simple -- a handful of shapes, not new art
+ * direction -- so it reads at 44-120px without fussy detail.
+ */
+function CostumeOverlay({ costume }: { costume: string }) {
+  switch (costume) {
+    case "bandana":
+      return (
+        <>
+          <path d="M 30 20.5 L 44 20.5 L 37.5 30.5 Z" fill="#c0524f" />
+          <rect x={34} y={18.5} width={6} height={3} fill="#a8433f" />
+        </>
+      );
+    case "cap":
+      return (
+        <>
+          <rect x={35} y={0.5} width={15} height={6} fill="#3a6690" />
+          <rect x={46.5} y={5.5} width={10} height={2.5} fill="#2d5170" />
+          <circle cx={42.5} cy={2.5} r={1} fill="#eef3f8" />
+        </>
+      );
+    case "cape":
+      return <path d="M 12 14.5 L 12 32 L 1.5 28 L 3.5 17.5 Z" fill="#b23b3b" />;
+    case "crown":
+      return (
+        <>
+          <path d="M 35.5 6.5 L 37.5 1 L 41 4.5 L 44.5 -0.5 L 47.5 4.5 L 48.5 6.5 Z" fill="#e0b84a" />
+          <circle cx={41} cy={3} r={0.9} fill="#c0524f" />
+          <circle cx={37.7} cy={4} r={0.7} fill="#2f6f4f" />
+        </>
+      );
+    default:
+      return null;
+  }
 }
