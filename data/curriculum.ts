@@ -21,6 +21,11 @@ export interface WorkedExample {
   // circles, parallel lines, solids, etc.) -- see lib/diagramTypes.ts and
   // components/GeometryDiagram.tsx. Left unset for non-geometry examples.
   diagram?: DiagramSpec;
+  // For RW passage-based questions that reference one specific sentence
+  // (e.g. "the underlined sentence") -- the exact substring of `q`, as it
+  // literally appears there, to render underlined so the student sees it
+  // highlighted directly in the passage rather than having to relocate it.
+  underline?: string;
 }
 
 export interface Pattern {
@@ -1067,7 +1072,8 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "This pattern asks what JOB a sentence is doing — not what it means, but its purpose in the argument. Common jobs: introducing a claim, giving a counterexample, qualifying an earlier point, or transitioning between ideas. Ask yourself: 'what would break in the passage's logic if I deleted this sentence?' That's more useful than just restating what the sentence says.",
       examples: [
         {
-          q: "A passage argues that narrow city streets improve safety. Partway through, the text states: 'However, narrow streets without clear sightlines at intersections can actually increase collision risk.' Which choice best states the function of this sentence in the text as a whole?",
+          q: "Traffic engineers have increasingly championed narrow city streets as a straightforward way to improve pedestrian safety, since narrower lanes naturally slow drivers down. However, narrow streets without clear sightlines at intersections can actually increase collision risk. Many cities that adopted narrow-street policies in the 1990s have since added painted sightline zones at intersections to offset this risk. Which choice best states the function of the underlined sentence in the text as a whole?",
+          underline: "However, narrow streets without clear sightlines at intersections can actually increase collision risk.",
           choices: [
             "It introduces a qualification that limits the scope of the main claim, rather than fully rejecting it.",
             "It completely reverses the passage's argument, showing narrow streets are always more dangerous.",
@@ -1080,7 +1086,8 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "A passage explains a company's decision to switch entirely to remote work. Partway through, the text states: 'Not every employee benefited equally — those with young children at home often found the change added new stressors rather than removing old ones.' Which choice best states the function of this sentence in the text as a whole?",
+          q: "When a mid-sized consulting firm shifted every employee to remote work in 2021, leadership expected a uniform boost in morale and productivity. Surveys the following year largely confirmed this: most employees reported shorter commutes and greater overall satisfaction. Not every employee benefited equally, however — those with young children at home often found the change added new stressors rather than removing old ones. The firm later introduced a stipend for co-working space specifically to address this gap. Which choice best states the function of the underlined sentence in the text as a whole?",
+          underline: "Not every employee benefited equally, however — those with young children at home often found the change added new stressors rather than removing old ones.",
           choices: [
             "It argues that the entire remote-work policy was a mistake.",
             "It complicates an otherwise uniformly positive account by noting the change didn't benefit every employee equally.",
@@ -1093,7 +1100,8 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "A passage describes a new bus rapid transit line. Partway through, the text states: 'The city funded the project using a combination of state grants and a small increase in the local sales tax.' Which choice best states the function of this sentence in the text as a whole?",
+          q: "A new bus rapid transit line connecting downtown to the eastern suburbs began carrying passengers last spring, cutting the average commute by nearly twenty minutes. The city funded the project using a combination of state grants and a small increase in the local sales tax. Ridership has already exceeded initial projections, prompting officials to consider extending the line further east. Which choice best states the function of the underlined sentence in the text as a whole?",
+          underline: "The city funded the project using a combination of state grants and a small increase in the local sales tax.",
           choices: [
             "It challenges the passage's earlier claim about the project's benefits.",
             "It introduces a counterexample to the project's success.",
@@ -1106,7 +1114,8 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "A passage argues that a company's four-day work week improved morale. Partway through, the text states: 'Even the initiative's most vocal early critics now describe the schedule as a net positive for the company.' Which choice best states the function of this sentence in the text as a whole?",
+          q: "A four-day work week piloted at a mid-sized software company was initially met with skepticism from managers who worried that fewer hours would mean missed deadlines. A year into the pilot, however, project completion rates held steady and employee turnover fell by half. Even the initiative's most vocal early critics now describe the schedule as a net positive for the company. Company leadership has since made the policy permanent. Which choice best states the function of the underlined sentence in the text as a whole?",
+          underline: "Even the initiative's most vocal early critics now describe the schedule as a net positive for the company.",
           choices: [
             "It introduces a new argument unrelated to employee morale.",
             "It strengthens the argument by showing that even initial skeptics now agree, which is stronger evidence than simply restating that morale improved.",
@@ -1119,7 +1128,8 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "A passage argues that a particular species of moth locates mates over long distances using scent, not sight. Partway through, the text states: 'In laboratory conditions with the moths' eyes temporarily covered, mate-location success rates remained statistically unchanged.' Which choice best states the function of this sentence in the text as a whole?",
+          q: "Certain species of moth are known to locate distant mates not through vision but through scent, detecting pheromones carried on the wind from more than a mile away. In laboratory conditions with the moths' eyes temporarily covered, mate-location success rates remained statistically unchanged. Researchers now suspect that vision plays, at most, a minor supporting role once a moth has already closed most of the distance to a potential mate. Which choice best states the function of the underlined sentence in the text as a whole?",
+          underline: "In laboratory conditions with the moths' eyes temporarily covered, mate-location success rates remained statistically unchanged.",
           choices: [
             "It provides direct experimental evidence supporting the main claim, by showing mate-location success is unaffected when vision is removed.",
             "It introduces a complication that weakens the passage's central claim about scent.",
@@ -1143,7 +1153,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "This is the same skill applied to a whole paragraph instead of one sentence: what role does this paragraph play — giving context, presenting a counterargument, offering evidence, or drawing a conclusion? Use the same technique: look at what the paragraph does relative to the ones around it. Signal words like 'however,' 'for example,' and 'therefore' are strong clues to its job.",
       examples: [
         {
-          q: "The first paragraph of a biography describes the social norms of the era the subject lived in. The second paragraph returns to describing the subject's personal choices. Which choice best states the function of the first paragraph relative to the passage as a whole?",
+          q: "Long before she became known for her writing, the subject grew up in a small mill town where unmarried women were expected to work only until marriage, then leave paid employment entirely.\n\nAgainst this backdrop, her decision at twenty-three to turn down a marriage proposal and move to the city alone to pursue a writing career was a far more radical break than it might appear today.\n\nWhich choice best states the function of the first paragraph relative to the passage as a whole?",
           choices: [
             "It provides context that helps the reader understand the constraints shaping the subject's subsequent choices.",
             "It presents a counterargument to the biography's main thesis.",
@@ -1156,7 +1166,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "The first paragraph of an article describes, in technical detail, how a particular metal alloy is manufactured. The second paragraph shifts to describing how that alloy changed what was possible in the design of a well-known bridge. Which choice best states the function of the first paragraph relative to the passage as a whole?",
+          q: "A particular titanium alloy achieves its unusual strength-to-weight ratio through a manufacturing process that cools the metal in controlled stages, preventing the brittle crystal structures that form when titanium cools too quickly.\n\nThat same alloy made possible the record-setting span of the Cedar Point Bridge, whose designers could not have achieved its slender central arch with conventional steel.\n\nWhich choice best states the function of the first paragraph relative to the passage as a whole?",
           choices: [
             "It argues that the alloy's manufacturing process was flawed.",
             "It provides the technical background needed to understand and trust the design claims made about the bridge in the paragraph that follows.",
@@ -1169,7 +1179,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "The first paragraph of an article describes a common misconception about how a lightning rod protects a building. The second paragraph explains how a lightning rod actually works. Which choice best states the function of the first paragraph relative to the passage as a whole?",
+          q: "Many people assume a lightning rod works by attracting a strike to itself and drawing it away from a building, like a decoy.\n\nIn reality, a lightning rod works by providing a low-resistance path to the ground, so that if a strike does occur nearby, the current passes safely through the rod rather than through the building's structure.\n\nWhich choice best states the function of the first paragraph relative to the passage as a whole?",
           choices: [
             "It presents a common misconception, setting up a contrast with the accurate explanation that follows.",
             "It provides the historical origin of the lightning rod's invention.",
@@ -1182,7 +1192,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "The first paragraph of an essay describes several artists who struggled financially throughout their careers despite later fame. The second paragraph focuses specifically on one such artist's decision to keep working despite years without a single sale. Which choice best states the function of the second paragraph relative to the passage as a whole?",
+          q: "Many painters and composers now considered canonical spent the bulk of their careers in financial precarity, dependent on patrons, side jobs, or family support to keep working at all.\n\nOne such painter, Odille Marchetti, continued producing new canvases for nearly a decade without a single sale, turning down a steady teaching position that would have meant giving up painting almost entirely.\n\nWhich choice best states the function of the second paragraph relative to the passage as a whole?",
           choices: [
             "It contradicts the first paragraph's claim by describing an artist who succeeded quickly.",
             "It narrows the essay's general claim into one specific, detailed case, making the broader pattern more concrete.",
@@ -1195,7 +1205,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "The first paragraph of a report presents a study's surprising finding: a widely used teaching method showed no measurable benefit. The second paragraph outlines three possible flaws in the study's methodology, without endorsing any of them as the actual explanation. Which choice best states the function of the second paragraph relative to the passage as a whole?",
+          q: "A widely used classroom teaching method, adopted by thousands of schools over the past two decades, showed no measurable benefit to student test scores in a large randomized study published last year.\n\nThe study's authors were careful to note three possible limitations of their design — a short study window, an unusually experienced pool of teachers, and a test that may not have captured the skills the method targets — without concluding that any of these actually explains the result.\n\nWhich choice best states the function of the second paragraph relative to the passage as a whole?",
           choices: [
             "It definitively refutes the study's surprising finding.",
             "It raises possible limitations of the study without concluding any of them actually invalidate the finding.",
@@ -1219,7 +1229,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "These questions ask how a whole passage is organized from start to finish — its overall shape — not the role of one sentence or paragraph. Common shapes: a claim followed by an example; a common belief followed by a challenge to it; a problem followed by a solution; a question followed by an answer; or a small story that leads into a bigger point. Before reading the choices, sketch the shape yourself in one short phrase, like 'states a claim, then gives an example.' Then find the choice describing that same sequence of moves in the same order — not just one that mentions the right topic.",
       examples: [
         {
-          q: "A passage opens by observing that many migratory bird species travel similar north-south routes each year. It then narrows to describe one species whose migration route instead loops in a wide, unusual circle. Which choice best describes the passage's overall structure?",
+          q: "Most migratory songbirds that breed in the Arctic follow strikingly similar north-south routes each year, funneling through the same narrow corridors as their ancestors. The Arctic tern, however, breaks from this pattern entirely: rather than following a direct corridor, its migration traces a wide, looping path that carries it across both the Atlantic and Pacific basins in a single year. Ornithologists still debate whether this looping route evolved to exploit favorable wind patterns or predates the more direct routes used by other species. Which choice best describes the passage's overall structure?",
           choices: [
             "It describes a general migratory pattern, then presents one species as a specific exception to that pattern.",
             "It presents a hypothesis about bird migration, then a series of experiments testing it.",
@@ -1232,7 +1242,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "A passage begins by summarizing the long-accepted account of how a particular bridge collapsed. It then describes a set of engineering records recently rediscovered that suggest a different, previously overlooked cause. Which choice best describes the passage's overall structure?",
+          q: "For nearly a century, the collapse of the Ashgrove Bridge was attributed to a single overloaded delivery truck that crossed it on the day it fell. Engineering records rediscovered in a municipal archive last year, however, suggest a different, previously overlooked cause: corrosion in a support cable that had gone unreported for years. The records don't prove the truck played no role, but they complicate a story that had gone unquestioned for generations. Which choice best describes the passage's overall structure?",
           choices: [
             "It presents the long-accepted explanation for an event, then introduces newly discovered evidence that complicates that explanation.",
             "It proves the long-accepted explanation was entirely wrong using the new records.",
@@ -1245,7 +1255,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "A passage opens by noting that a certain coral species survives water temperatures that should be lethal to it. It then walks through a series of lab experiments that eventually identify a heat-resistant protein as the explanation. Which choice best describes the passage's overall structure?",
+          q: "A particular coral species off the coast of a Pacific island survives water temperatures that should, by every existing model, kill it outright. Curious researchers spent three years running a series of laboratory experiments, gradually eliminating possible explanations — first unusually thick tissue, then unusual feeding behavior — before finally isolating a heat-resistant protein produced by algae living inside the coral's own cells. That protein, researchers now believe, is the coral's actual defense. Which choice best describes the passage's overall structure?",
           choices: [
             "It presents a puzzling phenomenon, then narrates the experimental process that eventually explains it.",
             "It describes an experiment, then a puzzling phenomenon the experiment failed to explain.",
@@ -1258,7 +1268,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "A passage describes a small town's declining water supply, then presents a proposed desalination project as a potential fix, closing by noting the project's high energy cost as an unresolved drawback. Which choice best describes the passage's overall structure?",
+          q: "A small coastal town's water supply has been shrinking for over a decade as a nearby aquifer runs dry faster than it can recharge. City planners have proposed a desalination plant as a fix, capable of processing enough seawater to meet the town's needs well into the next century. That capacity comes at a cost, however: the plant's energy demands are high enough that the town would need to nearly double its current power generation, a drawback planners have yet to fully resolve. Which choice best describes the passage's overall structure?",
           choices: [
             "It describes a problem, proposes a solution to it, and then acknowledges a significant drawback of that proposed solution.",
             "It describes a problem and its solution, ending on an entirely positive note.",
@@ -1271,7 +1281,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "A passage opens with a brief anecdote about a chess player who won a tournament using an unconventional opening move. It then broadens into a discussion of how unconventional strategies can succeed precisely because opponents haven't prepared for them. It closes by returning to note that the same player's opponent later admitted having no prepared response. Which choice best describes the passage's overall structure?",
+          q: "At a regional tournament three years ago, a relatively unranked chess player won the championship match using an opening move so unconventional that commentators initially assumed it was a mistake. That win turned out to illustrate a broader principle: unconventional strategies often succeed not because they're objectively stronger, but because opponents haven't prepared a response to them. The player's opponent later admitted, in a post-match interview, that he had never once encountered that opening in years of studying the game. Which choice best describes the passage's overall structure?",
           choices: [
             "It opens with a specific anecdote, generalizes from it, and then returns to that same anecdote with an additional detail that reinforces the generalization.",
             "It opens with a general claim, then narrows to a single specific example that illustrates it.",

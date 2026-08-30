@@ -336,8 +336,8 @@ export function SubskillClient({
 
                   {example && (
                     <>
-                      <div className="text-sm text-ink font-medium mb-3 leading-relaxed">
-                        <MathText text={example.q} />
+                      <div className="text-sm text-ink font-medium mb-3 leading-relaxed whitespace-pre-line">
+                        <HighlightedText text={example.q} highlight={example.underline} />
                       </div>
                       {example.diagram && <GeometryDiagram spec={example.diagram} />}
                       <ExamChoices
@@ -455,8 +455,8 @@ export function SubskillClient({
               className="bg-white border border-[#ece9f7] shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-5 mb-3.5"
             >
               <div className="flex items-start justify-between gap-3 mb-3">
-                <div className="text-sm font-medium text-ink">
-                  {i + 1}. <VocabAwareText text={q.q} word={q.vocabWord} />
+                <div className="text-sm font-medium text-ink whitespace-pre-line">
+                  {i + 1}. <HighlightedText text={q.q} highlight={q.underline} />
                 </div>
                 {q.difficulty && <DifficultyPill difficulty={q.difficulty} />}
               </div>
@@ -789,19 +789,20 @@ function LessonOutline({
 }
 
 /**
- * For Words in Context questions, `vocabWord` names the exact word (as it
- * appears in `q`) the question is testing -- underlined here so a student
- * doesn't have to hunt for which word in the passage the question means.
- * Falls back to a plain MathText render when there's no vocab word, or the
- * word can't be found verbatim in the text.
+ * Underlines one exact substring of `text` -- the tested word in a Words in
+ * Context question (`vocabWord`), or the specific sentence a text-structure
+ * question is asking about (`underline`) -- so the student sees it
+ * highlighted directly in the passage instead of having to relocate it,
+ * matching how the real exam marks it. Falls back to a plain MathText
+ * render when there's nothing to highlight, or it can't be found verbatim.
  */
-function VocabAwareText({ text, word }: { text: string; word?: string }) {
-  if (!word) return <MathText text={text} />;
-  const idx = text.toLowerCase().indexOf(word.toLowerCase());
+function HighlightedText({ text, highlight }: { text: string; highlight?: string }) {
+  if (!highlight) return <MathText text={text} />;
+  const idx = text.toLowerCase().indexOf(highlight.toLowerCase());
   if (idx === -1) return <MathText text={text} />;
   const before = text.slice(0, idx);
-  const match = text.slice(idx, idx + word.length);
-  const after = text.slice(idx + word.length);
+  const match = text.slice(idx, idx + highlight.length);
+  const after = text.slice(idx + highlight.length);
   return (
     <>
       <MathText text={before} />
