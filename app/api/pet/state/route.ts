@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { computePetState } from "@/lib/pet";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
-import { computeDomainMastery, totalStars, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
 import { isCostumeUnlocked, bestUnlockedCostume } from "@/lib/costumes";
 
 export async function GET() {
@@ -42,16 +42,19 @@ export async function GET() {
     progress,
     (latestTest?.domainScores as Record<string, number> | null) ?? null
   );
-  const stars = totalStars(mastery);
+  const sectionsCompleted = completedDomainCount(mastery);
 
-  // Wardrobe stars are monotonic in practice, but a later, worse practice
-  // test *can* pull a domain's blend back down -- re-validate the saved
-  // pick still unlocked rather than trusting it forever, falling back to
-  // the best costume still earned.
+  // Re-validate the saved pick is still unlocked rather than trusting it
+  // forever, falling back to the best costume still earned.
   const costume =
-    stats.equippedCostume && isCostumeUnlocked(stats.equippedCostume, stars)
+    stats.equippedCostume && isCostumeUnlocked(stats.equippedCostume, sectionsCompleted)
       ? stats.equippedCostume
-      : bestUnlockedCostume(stars).id;
+      : bestUnlockedCostume(sectionsCompleted).id;
 
-  return NextResponse.json({ stage: state.stage, currentStreak: stats.currentStreak, costume, stars });
+  return NextResponse.json({
+    stage: state.stage,
+    currentStreak: stats.currentStreak,
+    costume,
+    sectionsCompleted,
+  });
 }

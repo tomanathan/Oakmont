@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { SESSION_COOKIE_NAME } from "@/lib/auth";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
-import { computeDomainMastery, totalStars, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
 import { isCostumeUnlocked } from "@/lib/costumes";
 
 export async function PATCH(req: NextRequest) {
@@ -41,7 +41,7 @@ export async function PATCH(req: NextRequest) {
       progress,
       (latestTest?.domainScores as Record<string, number> | null) ?? null
     );
-    if (!isCostumeUnlocked(equippedCostume, totalStars(mastery))) {
+    if (!isCostumeUnlocked(equippedCostume, completedDomainCount(mastery))) {
       return NextResponse.json({ error: "That costume isn't unlocked yet." }, { status: 400 });
     }
   }

@@ -10,11 +10,14 @@ import { StepList, ProseText } from "@/components/StepList";
 import { MathText } from "@/components/MathText";
 import { GeometryDiagram } from "@/components/GeometryDiagram";
 import { ExamChoices } from "@/components/ExamChoices";
+import { PixelDog } from "@/components/PixelDog";
 import { sectionTheme } from "@/lib/sectionTheme";
 
 interface SubmitResult {
   justMastered: boolean;
   currentStreak: number;
+  justCompletedDomain: string | null;
+  newCostume: { id: string; name: string } | null;
 }
 
 export function SubskillClient({
@@ -124,14 +127,21 @@ export function SubskillClient({
         setResult({
           justMastered: !!data.justMastered,
           currentStreak: data.currentStreak ?? 0,
+          justCompletedDomain: data.justCompletedDomain ?? null,
+          newCostume: data.newCostume ?? null,
         });
         if (data.justMastered) {
           // Lets Ozho (mounted separately, at the root layout) react with
           // his little trick + a celebratory line -- see ScoutCompanion's
-          // "ozho:celebrate" listener.
-          window.dispatchEvent(
-            new CustomEvent("ozho:celebrate", { detail: { message: `${subskill.name} mastered!` } })
-          );
+          // "ozho:celebrate" listener. A newly unlocked costume is the
+          // biggest deal, then finishing the whole section, then just this
+          // one subskill -- only the most significant line is shown.
+          const message = data.newCostume
+            ? `${data.justCompletedDomain} complete! New outfit: ${data.newCostume.name}!`
+            : data.justCompletedDomain
+            ? `${data.justCompletedDomain} complete!`
+            : `${subskill.name} mastered!`;
+          window.dispatchEvent(new CustomEvent("ozho:celebrate", { detail: { message } }));
         }
         // Refreshes server-fetched data (like the streak badge in AppShell)
         // in place, without discarding this page's client-side quiz state.
@@ -541,6 +551,27 @@ function ResultBanner({
           </div>
         )}
       </div>
+
+      {result?.justCompletedDomain && !saving && (
+        <div className="mt-3 pt-3 border-t border-[#f0e0b0] flex items-center gap-3">
+          {result.newCostume && <PixelDog size={36} costume={result.newCostume.id} />}
+          <div className="text-[13px] text-[#9a6a12]">
+            <span className="font-semibold">{result.justCompletedDomain} complete!</span>{" "}
+            {result.newCostume ? (
+              <>
+                Ozho unlocked a new outfit: <span className="font-semibold">{result.newCostume.name}</span>.
+                Equip it from{" "}
+                <a href="/settings" className="underline hover:text-[#7a5410]">
+                  Settings
+                </a>
+                .
+              </>
+            ) : (
+              "Every subskill in this section is now mastered."
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

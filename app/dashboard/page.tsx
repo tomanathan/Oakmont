@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
 import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { computePetState, PET_NAME } from "@/lib/pet";
-import { computeDomainMastery, totalStars, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
 import { isCostumeUnlocked, bestUnlockedCostume } from "@/lib/costumes";
 import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
@@ -82,11 +82,11 @@ export default async function DashboardPage() {
     progress,
     (latestTest?.domainScores as Record<string, number> | null) ?? null
   );
-  const stars = totalStars(domainMastery);
+  const sectionsCompleted = completedDomainCount(domainMastery);
   const costume =
-    stats.equippedCostume && isCostumeUnlocked(stats.equippedCostume, stars)
+    stats.equippedCostume && isCostumeUnlocked(stats.equippedCostume, sectionsCompleted)
       ? stats.equippedCostume
-      : bestUnlockedCostume(stars).id;
+      : bestUnlockedCostume(sectionsCompleted).id;
 
   const petState = computePetState(stats.lastActiveDate ?? null, stats.petDiedAt ?? null, stats.petBornAt);
 

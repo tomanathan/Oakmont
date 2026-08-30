@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PixelDog } from "@/components/PixelDog";
-import { StarRating } from "@/components/StarRating";
 import { COSTUMES } from "@/lib/costumes";
 
 export function SettingsClient({
@@ -11,14 +10,16 @@ export function SettingsClient({
   baselineScore,
   goalScore,
   targetTestDate,
-  stars,
+  sectionsCompleted,
+  totalSections,
   equippedCostume,
 }: {
   email: string;
   baselineScore: number | null;
   goalScore: number | null;
   targetTestDate: string | null;
-  stars: number;
+  sectionsCompleted: number;
+  totalSections: number;
   equippedCostume: string;
 }) {
   const router = useRouter();
@@ -166,16 +167,23 @@ export function SettingsClient({
       <div className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-6">
         <div className="flex items-center justify-between gap-2 mb-1">
           <div className="text-[15px] font-semibold text-ink">Ozho&apos;s wardrobe</div>
-          <StarRating stars={Math.min(5, stars)} className="opacity-80" />
+          <div className="flex items-center gap-1" aria-label={`${sectionsCompleted} of ${totalSections} sections completed`}>
+            {Array.from({ length: totalSections }, (_, i) => (
+              <span
+                key={i}
+                className={`w-2 h-2 rounded-full ${i < sectionsCompleted ? "bg-[#c9971b]" : "bg-gray-200"}`}
+              />
+            ))}
+          </div>
         </div>
         <div className="text-xs text-gray-500 mb-4">
-          {stars} star{stars === 1 ? "" : "s"} earned across every domain (quiz mastery + practice test
-          scores). Costumes unlock as that total grows &mdash; pick whichever unlocked look you want Ozho
-          to wear.
+          {sectionsCompleted} of {totalSections} sections completed &mdash; every subskill in a domain
+          quizzed to a perfect score. Finishing a new section unlocks a new costume; pick whichever
+          unlocked look you want Ozho to wear.
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {COSTUMES.map((c) => {
-            const unlocked = stars >= c.starsRequired;
+            const unlocked = sectionsCompleted >= c.domainsRequired;
             const selected = costume === c.id;
             return (
               <button
@@ -199,7 +207,9 @@ export function SettingsClient({
                     ? equipping === c.id
                       ? "Equipping..."
                       : "Tap to wear"
-                    : `${c.starsRequired} stars needed`}
+                    : c.domainsRequired === 1
+                    ? "Complete 1 section"
+                    : `Complete ${c.domainsRequired} sections`}
                 </div>
               </button>
             );

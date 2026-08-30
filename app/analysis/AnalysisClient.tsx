@@ -94,15 +94,11 @@ export function AnalysisClient({
           <div className="flex items-baseline justify-between mb-3 gap-2 flex-wrap">
             <div className="text-sm font-semibold text-ink">Subject breakdown</div>
             <div className="text-xs text-gray-400">
-              Mastery blends quiz scores with this test &mdash; it's the same rating shown on the{" "}
+              Stars track quiz mastery &mdash; the same rating shown on the{" "}
               <button onClick={() => router.push("/dashboard")} className="underline hover:text-ink">
                 dashboard
-              </button>{" "}
-              and{" "}
-              <button onClick={() => router.push("/plan")} className="underline hover:text-ink">
-                6-month plan
               </button>
-              .
+              . Your practice test score is shown separately below.
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">

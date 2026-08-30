@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
-import { getSubskill } from "@/data/curriculum";
+import { getSubskill, ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { justReachedMastery, updateStreak } from "@/lib/gamification";
+import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
+import { bestUnlockedCostume } from "@/lib/costumes";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -26,6 +28,9 @@ export async function GET() {
   return NextResponse.json({ progress });
 }
 
+const SUBSKILLS_BY_DOMAIN: Record<string, string[]> = {};
+for (const s of ALL_SUBSKILLS) (SUBSKILLS_BY_DOMAIN[s.domain] ??= []).push(s.id);
+
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) {
@@ -40,16 +45,19 @@ export async function POST(req: NextRequest) {
   }
 
   const { subskillId, score, total } = body;
-  if (!subskillId || !getSubskill(subskillId)) {
+  const subskill = subskillId ? getSubskill(subskillId) : null;
+  if (!subskillId || !subskill) {
     return NextResponse.json({ error: "Unknown subskill." }, { status: 400 });
   }
   if (typeof score !== "number" || typeof total !== "number" || total <= 0 || score < 0 || score > total) {
     return NextResponse.json({ error: "Invalid score data." }, { status: 400 });
   }
 
-  const existing = await prisma.progress.findUnique({
-    where: { userId_subskillId: { userId: user.userId, subskillId } },
-  });
+  // Fetched once and reused both to find this subskill's prior best (below)
+  // and to compute domain mastery before/after this submission (further
+  // down), rather than querying progress twice.
+  const rowsBefore = await prisma.progress.findMany({ where: { userId: user.userId } });
+  const existing = rowsBefore.find((r) => r.subskillId === subskillId);
   const previousBest = existing?.bestScore ?? 0;
   const newBest = Math.max(previousBest, score);
 
@@ -68,6 +76,27 @@ export async function POST(req: NextRequest) {
       });
 
   const justMastered = justReachedMastery(previousBest, newBest, total);
+
+  // Did this submission just finish an entire domain ("section") -- every
+  // subskill in it now at a perfect score -- and did that push the
+  // student's completed-section count into a new wardrobe tier? Compared
+  // before vs. after this one update rather than just checking the after
+  // state, so "just completed"/"just unlocked" only fires on the actual
+  // transition, not on every subsequent quiz taken in an already-finished
+  // domain.
+  const progressBefore: ProgressMap = {};
+  for (const row of rowsBefore) progressBefore[row.subskillId] = { bestScore: row.bestScore, total: row.total };
+  const progressAfter: ProgressMap = { ...progressBefore, [subskillId]: { bestScore: newBest, total } };
+
+  const masteryBefore = computeDomainMastery(ALL_DOMAINS, SUBSKILLS_BY_DOMAIN, progressBefore, null);
+  const masteryAfter = computeDomainMastery(ALL_DOMAINS, SUBSKILLS_BY_DOMAIN, progressAfter, null);
+  const domainBefore = masteryBefore.find((d) => d.domain === subskill.domain);
+  const domainAfter = masteryAfter.find((d) => d.domain === subskill.domain);
+  const justCompletedDomain = !domainBefore?.completed && domainAfter?.completed ? subskill.domain : null;
+
+  const costumeBefore = bestUnlockedCostume(completedDomainCount(masteryBefore));
+  const costumeAfter = bestUnlockedCostume(completedDomainCount(masteryAfter));
+  const newCostume = costumeAfter.id !== costumeBefore.id ? costumeAfter : null;
 
   const dbUser = await prisma.user.findUnique({ where: { id: user.userId } });
   const streak = updateStreak(
@@ -89,6 +118,8 @@ export async function POST(req: NextRequest) {
     ok: true,
     progress: progressResult,
     justMastered,
+    justCompletedDomain,
+    newCostume: newCostume ? { id: newCostume.id, name: newCostume.name } : null,
     currentStreak: updatedUser.currentStreak,
     longestStreak: updatedUser.longestStreak,
   });
