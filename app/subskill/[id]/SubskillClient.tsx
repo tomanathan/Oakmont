@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Subskill, Pattern } from "@/data/curriculum";
 import type { Question } from "@/data/questions";
@@ -53,11 +53,32 @@ export function SubskillClient({
   // the correct answer isn't always sitting at the position it was
   // authored in (every question in data/questions.ts is written with the
   // correct choice at index 0 for authoring clarity -- shown unshuffled,
-  // that would train students to just click the first option). Worked
-  // examples deliberately are NOT shuffled: many of their explanations
-  // walk through "choice A... B... C..." by letter, which a shuffle would
-  // make wrong.
-  const quizQuestions = useMemo(() => questions.map(shuffleChoices), [questions, shuffleSeed]);
+  // that would train students to just click the first option).
+  //
+  // Deliberately NOT a useMemo: this component is server-rendered for the
+  // initial HTML, and Math.random() inside a useMemo would run once on the
+  // server and again during client hydration with a *different* result,
+  // making the server-rendered choice order disagree with what the client
+  // immediately re-renders -- a real hydration mismatch, not a cosmetic
+  // one. Starting state at the authored (unshuffled) order matches
+  // whatever the server actually sent, then shuffling in an effect (client
+  // -only, runs after hydration completes) avoids that entirely, at the
+  // cost of one imperceptible extra render right after mount.
+  const [quizQuestions, setQuizQuestions] = useState<Question[]>(questions);
+  useEffect(() => {
+    setQuizQuestions(questions.map(shuffleChoices));
+  }, [questions, shuffleSeed]);
+
+  // Same idea for the lesson's worked examples, shuffled once per page
+  // visit (not on every navigation between examples) -- exampleSelections
+  // above stores a plain choice *index* per example, so reshuffling a
+  // pattern's examples every time a student steps back to one already
+  // viewed would leave that stored index pointing at a different choice
+  // than the one they actually clicked.
+  const [shuffledPatterns, setShuffledPatterns] = useState<Pattern[]>(subskill.patterns);
+  useEffect(() => {
+    setShuffledPatterns(subskill.patterns.map((p) => ({ ...p, examples: p.examples.map(shuffleChoices) })));
+  }, [subskill]);
 
   // Marks the currently-open example as viewed, so the pathway UI can show
   // which examples/patterns a student has actually stepped through.
@@ -86,7 +107,7 @@ export function SubskillClient({
     return p.examples.every((_, j) => viewedExamples.has(`${i}-${j}`));
   }
 
-  const pattern = subskill.patterns[activePattern];
+  const pattern = shuffledPatterns[activePattern];
   const isLastExampleInPattern = !!pattern && activeExample === pattern.examples.length - 1;
   const isLastPattern = activePattern === subskill.patterns.length - 1;
 
@@ -899,19 +920,20 @@ function PassageText({
 }
 
 /**
- * Reshuffles a practice question's choices (Fisher-Yates) and remaps
- * `answer` to match, so the correct choice doesn't always land wherever it
- * was authored -- every question in data/questions.ts is written with the
- * correct choice at index 0 for authoring clarity, and shown unshuffled
- * that would just train students to click the first option. Worked
- * examples are deliberately never shuffled this way -- see quizQuestions
- * above.
+ * Reshuffles a question's or worked example's choices (Fisher-Yates) and
+ * remaps `answer` to match, so the correct choice doesn't always land
+ * wherever it was authored -- every item in data/questions.ts and
+ * data/curriculum.ts is written with the correct choice at index 0 for
+ * authoring clarity, and shown unshuffled that would just train students
+ * to click the first option. Generic over both Question and WorkedExample
+ * since both share the same {choices, answer} shape; every other field is
+ * passed through untouched.
  */
-function shuffleChoices(q: Question): Question {
-  const order = [0, 1, 2, 3].slice(0, q.choices.length);
+function shuffleChoices<T extends { choices: string[]; answer: number }>(item: T): T {
+  const order = [0, 1, 2, 3].slice(0, item.choices.length);
   for (let i = order.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [order[i], order[j]] = [order[j], order[i]];
   }
-  return { ...q, choices: order.map((idx) => q.choices[idx]), answer: order.indexOf(q.answer) };
+  return { ...item, choices: order.map((idx) => item.choices[idx]), answer: order.indexOf(item.answer) };
 }

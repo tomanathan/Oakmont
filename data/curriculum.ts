@@ -80,7 +80,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The passage's whole arc is a revision: from believing temperature was the main threat, to finding genetic diversity determines survival, ending in a policy recommendation built on that finding. Choice A restates the original, now-revised belief. C is generic enough to describe almost any conservation passage without engaging the study's specific finding. D is a true but trivial detail (how long they studied), not the passage's point. B is the only choice that captures both the finding and the stakes the final sentence signals.",
+            "The passage's whole arc is a revision: from believing temperature was the main threat, to finding genetic diversity determines survival, ending in a policy recommendation built on that finding. Restating the original, now-revised belief about temperature misses that the passage moves past it. A claim generic enough to describe almost any conservation passage never engages the study's specific finding, and a true but trivial detail (how long they studied) isn't the passage's point. Only 'genetic diversity, not temperature control alone, is the key factor' captures both the finding and the stakes the final sentence signals.",
           difficulty: "easy",
         },
         {
@@ -93,7 +93,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 2,
           explain:
-            "Nothing states a conclusion outright, so build it from what changes across the passage: presented as beautification, but paragraph two reveals a measurable food-access benefit, and paragraph three shows other institutions responding to that practical benefit, not the visual one. A covers only the setup. B is a downstream detail. D overstates scope — only participating families, not most families citywide — and is a supporting fact rather than the throughline. C is the only choice capturing the shift from framing to actual impact.",
+            "Nothing states a conclusion outright, so build it from what changes across the passage: presented as beautification, but paragraph two reveals a measurable food-access benefit, and paragraph three shows other institutions responding to that practical benefit, not the visual one. Simply restating that a city built the gardens covers only the setup, and noting growing school interest is a downstream detail. Claiming spending fell for most families citywide overstates scope — only participating families, not most families citywide — and is a supporting fact rather than the throughline. Only 'a program framed as a beautification effort ended up producing real, practical benefits for participating families' captures the shift from framing to actual impact.",
           difficulty: "medium",
         },
         {
@@ -106,7 +106,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "Track the shift: technical training, then dismissed as a break from it, then later understood as an extension of it. A is tempting because it's true, but it's generic enough to fit thousands of passages and ignores the specific misunderstanding this one describes. C invents a comparison the text never makes. D adds a claim ('her best work') the passage doesn't support — historians recognized structural continuity, not superiority. B is the only choice with both required pieces: what was misunderstood, and that it was later corrected.",
+            "Track the shift: technical training, then dismissed as a break from it, then later understood as an extension of it. The claim that critics are often unfair is tempting because it's true, but it's generic enough to fit thousands of passages and ignores the specific misunderstanding this one describes. Comparing her training's rigor to her contemporaries' invents a comparison the text never makes, and calling the recordings her 'best work' adds a claim the passage doesn't support — historians recognized structural continuity, not superiority. Only 'her improvisational work was originally dismissed as a break from her training but was later recognized as an extension of it' has both required pieces: what was misunderstood, and that it was later corrected.",
           difficulty: "hard",
         },
         {
@@ -119,7 +119,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "The passage tracks two outcomes for one project — a financial one (under budget) and an economic one (more customers) — and the main idea has to capture both, not just one. D reports only the budget half. B reports the initial mixed reaction, a detail from the opening, not the passage's point. C generalizes beyond what this passage actually supports. A is the only choice combining both outcomes into the passage's real claim.",
+            "The passage tracks two outcomes for one project — a financial one (under budget) and an economic one (more customers) — and the main idea has to capture both, not just one. Reporting only that the project cost less than expected covers just the budget half, and noting businesses were initially skeptical reports a detail from the opening, not the passage's point. A broader claim about rail-to-trail conversions generally generalizes beyond what this passage actually supports. Only 'the rail-to-trail conversion succeeded both financially and economically' combines both outcomes into the passage's real claim.",
           difficulty: "easy",
         },
         {
@@ -132,7 +132,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 2,
           explain:
-            "The passage moves from decline, to a deliberate adaptation-over-restoration decision, to a record-attendance outcome, and ties the outcome to the decision. B states the outcome but not the reasoning that makes it the passage's actual point. A misreads facade preservation as a limitation rather than a deliberate choice. D stretches one theater's result into a claim about historic theaters generally, which the passage never argues. C is the only choice linking the specific decision to the specific result.",
+            "The passage moves from decline, to a deliberate adaptation-over-restoration decision, to a record-attendance outcome, and ties the outcome to the decision. Simply noting the theater is more popular now states the outcome but not the reasoning that makes it the passage's actual point, and framing facade preservation as all that could be saved misreads it as a limitation rather than a deliberate choice. A broader claim that historic theaters generally benefit from prioritizing accessibility stretches one theater's result into a claim the passage never argues. Only 'choosing to modernize the theater rather than restore it exactly to its original form is what enabled its success' links the specific decision to the specific result.",
           difficulty: "medium",
         },
       ],
@@ -157,7 +157,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Locate the exact sentence answering 'what did she find' — the return count, 34 of 40. C describes what she did (tagged turtles), not what she found. D reports the number that did NOT return (40 minus 34), a classic swapped-number trap. B overstates the finding to 'all,' which the passage doesn't say. A restates the finding exactly, without adding or reversing anything.",
+            "Locate the exact sentence answering 'what did she find' — the return count, 34 of 40. Describing the tagging itself reports what she did, not what she found. Reporting that 6 turtles returned gives the number that did NOT return (40 minus 34), a classic swapped-number trap, and claiming all 40 returned overstates the finding to 'all,' which the passage doesn't say. Only '34 of the 40 tagged turtles returned to the same nesting beach the following year' restates the finding exactly, without adding or reversing anything.",
           difficulty: "easy",
         },
         {
@@ -170,7 +170,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "Locate the sentence describing the 2019 change specifically: plastics were added. A reverses the facts — paper and glass remained accepted, nothing was removed. D misattributes the original materials to the 2019 change. C invents an event the passage never mentions. B is the only choice matching exactly what changed and when.",
+            "Locate the sentence describing the 2019 change specifically: plastics were added. Claiming paper and glass were dropped reverses the facts — they remained accepted, nothing was removed. Saying paper and glass were newly accepted in 2019 misattributes the original materials to that change, and claiming the program was replaced entirely invents an event the passage never mentions. Only 'the program began accepting most plastics in addition to paper and glass' matches exactly what changed and when.",
           difficulty: "easy",
         },
         {
@@ -183,7 +183,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "The text gives one specific, stated reason for concern: slowing growth, tied to deer grazing on saplings. D overstates 'slowing' into 'stopped entirely' — a common trap where a moderate finding gets pushed into an absolute one. B and C both invent causes and vulnerabilities the text never mentions. A is the only choice restating the actual reason given, at the actual degree the text supports.",
+            "The text gives one specific, stated reason for concern: slowing growth, tied to deer grazing on saplings. Claiming it has stopped producing saplings entirely overstates 'slowing' into 'stopped entirely' — a common trap where a moderate finding gets pushed into an absolute one. Claims about an invasive species replacing it, or the root system being unable to survive any loss, both invent causes and vulnerabilities the text never mentions. Only 'its growth rate has been slowing, in part because deer graze on its young saplings' restates the actual reason given, at the actual degree the text supports.",
           difficulty: "medium",
         },
         {
@@ -196,7 +196,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The question asks specifically for the before value. Choice A reports the after value (6.2 years) — swapping the two time periods is the main trap built into this question. C reverses the direction entirely (the median fell, not rose). D denies that any change occurred, which contradicts the passage. B is the only choice reporting the correct number for the correct time period.",
+            "The question asks specifically for the before value. Reporting 6.2 years reports the after value — swapping the two time periods is the main trap built into this question. Claiming trial length increased reverses the direction entirely (the median fell, not rose), and claiming it remained unchanged contradicts the passage. Only 'the median trial length was 8.5 years' reports the correct number for the correct time period.",
           difficulty: "medium",
         },
         {
@@ -209,7 +209,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The text explains where the greeting came from and notes that it has outlasted the economic conditions that originally made it useful — together, that's an explanation for why it persisted. A, C, and D are all questions a reader might reasonably have, but none of them is addressed anywhere in the text: no count of other towns, no date for the economic shift, no mention of visitors' comprehension. B is the only question the passage actually answers.",
+            "The text explains where the greeting came from and notes that it has outlasted the economic conditions that originally made it useful — together, that's an explanation for why it persisted. Questions about how many other towns share the greeting, when the economy diversified, or whether visitors understand it are all questions a reader might reasonably have, but none of them is addressed anywhere in the text: no count of other towns, no date for the economic shift, no mention of visitors' comprehension. Only 'why has this unusual greeting persisted in Marrow's Bend?' is a question the passage actually answers.",
           difficulty: "hard",
         },
       ],
@@ -234,7 +234,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The text states she has already run through her opening line so many times the words 'started to lose their shape,' and that her hands keep restlessly refolding themselves — repetition plus a physical sign of nerves. A misreads 'said it so many times' as revising it; she's repeating the same line, not changing it. C and D both describe actions the text never depicts. B is the only choice matching both details the text actually gives.",
+            "The text states she has already run through her opening line so many times the words 'started to lose their shape,' and that her hands keep restlessly refolding themselves — repetition plus a physical sign of nerves. Claiming she revises her argument misreads 'said it so many times' as revising it; she's repeating the same line, not changing it. Withdrawing from the competition or asking her coach for a new strategy both describe actions the text never depicts. Only 'she repeatedly rehearses her opening line and shows visible signs of nervousness' matches both details the text actually gives.",
           difficulty: "easy",
         },
         {
@@ -247,7 +247,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 2,
           explain:
-            "He tells no one, including his own wife, and shuts down the topic with a brief, deflecting answer before changing the subject — all signs of someone who doesn't want the act discussed. A is directly contradicted: avoiding mention of it is the opposite of wanting recognition. B describes a pattern the text never establishes; this is one instance. D misreads a short, matter-of-fact reply as disapproval, which the text doesn't support. C is the only choice matching his actual behavior.",
+            "He tells no one, including his own wife, and shuts down the topic with a brief, deflecting answer before changing the subject — all signs of someone who doesn't want the act discussed. Claiming he wants recognition is directly contradicted: avoiding mention of it is the opposite of wanting recognition. Claiming he regularly gives to strangers describes a pattern the text never establishes; this is one instance. Reading his short, matter-of-fact reply as disapproval isn't supported by the text either. Only 'he prefers to keep his acts of kindness private' matches his actual behavior.",
           difficulty: "easy",
         },
         {
@@ -260,7 +260,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The final lines state directly that beneath what's visibly pruned, 'growth continues, quiet, unconsoled' — unseen, but not absent. A directly contradicts 'continues.' C overreaches: the poem never claims growth always escapes its container, only that it persists internally. D isn't supported; no damage to the pot is described anywhere. B is the only choice matching what the poem actually states about the unseen growth.",
+            "The final lines state directly that beneath what's visibly pruned, 'growth continues, quiet, unconsoled' — unseen, but not absent. Claiming it stops entirely once a limit is reached directly contradicts 'continues.' Claiming it always escapes its container overreaches: the poem never claims that, only that it persists internally. Claiming it causes visible damage isn't supported; no damage to the pot is described anywhere. Only 'it continues even when it isn't visible or acknowledged' matches what the poem actually states about the unseen growth.",
           difficulty: "medium",
         },
         {
@@ -273,7 +273,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 2,
           explain:
-            "The text explicitly rules out both A and D — her silence 'proceeded from neither cause,' meaning neither shyness nor dullness explains it. It states instead that she has quietly detected something dishonest in Halloway and has deliberately chosen to watch rather than speak 'for the present.' B invents a reason (finances) the text never mentions; her judgment concerns his truthfulness, not his wealth. C is the only choice matching what the text directly states about her silence.",
+            "The text explicitly rules out both shyness and dullness as explanations — her silence 'proceeded from neither cause.' It states instead that she has quietly detected something dishonest in Halloway and has deliberately chosen to watch rather than speak 'for the present.' Claiming she disapproves for financial reasons invents a reason the text never mentions; her judgment concerns his truthfulness, not his wealth. Only 'she has already formed a shrewd, private judgment that she chooses not to voice yet' matches what the text directly states about her silence.",
           difficulty: "medium",
         },
         {
@@ -286,7 +286,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "She hesitates in the doorway for 'a long moment' and has to make herself walk in — both signal a reaction strong enough to slow her down, without the text stating exactly what that reaction is. A invents a feeling (gratitude) never mentioned. C isn't supported; nothing in the text reads as complaint. D is directly undercut by the pause and the effort it takes her to enter — that's the opposite of no response. B is the only choice matching the hesitation the text actually depicts, without overstating what emotion is behind it.",
+            "She hesitates in the doorway for 'a long moment' and has to make herself walk in — both signal a reaction strong enough to slow her down, without the text stating exactly what that reaction is. Claiming she feels gratitude invents a feeling never mentioned, and claiming she's annoyed isn't supported; nothing in the text reads as complaint. Claiming she has no emotional response is directly undercut by the pause and the effort it takes her to enter — that's the opposite of no response. Only 'she is more affected by the room than she is ready to act on immediately' matches the hesitation the text actually depicts, without overstating what emotion is behind it.",
           difficulty: "hard",
         },
       ],
@@ -311,7 +311,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The 91% figure shows strong approval among people who actually tried the program, while the 12% figure shows that few residents have tried it at all — two separate facts that combine into a specific, supported conclusion. A conflates low usage with dislike, but the text gives no information about what non-users think. C invents a future outcome never suggested by the text. D invents a reason (cost) that's never mentioned. B is the only choice that follows from both given figures without adding anything.",
+            "The 91% figure shows strong approval among people who actually tried the program, while the 12% figure shows that few residents have tried it at all — two separate facts that combine into a specific, supported conclusion. Claiming most residents dislike the program conflates low usage with dislike, but the text gives no information about what non-users think. Predicting cancellation invents a future outcome never suggested by the text, and claiming users found it too expensive invents a reason that's never mentioned. Only 'the program has been well-received by those who have tried it, but most residents haven't tried it yet' follows from both given figures without adding anything.",
           difficulty: "easy",
         },
         {
@@ -324,7 +324,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "Fewer bags used, combined with a steady customer count, points to existing customers switching their own behavior — not to more people showing up. A is directly contradicted: customer count 'stayed about the same,' not increased. C and D both introduce financial claims the text never addresses at all. B is the only conclusion that follows from the two stated facts.",
+            "Fewer bags used, combined with a steady customer count, points to existing customers switching their own behavior — not to more people showing up. Claiming customers increased is directly contradicted: customer count 'stayed about the same,' not increased. Claims about the bakery losing money or bags costing more than the discount both introduce financial claims the text never addresses at all. Only 'a meaningful portion of the bakery's customers began bringing their own containers because of the discount' follows from the two stated facts.",
           difficulty: "easy",
         },
         {
@@ -337,7 +337,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The tools are what raised weekly output from about three chairs to about nine; without them, that constraint on output would remain. A is wrong because hand-finishing — the step that actually preserves quality — continued even after the tools were introduced, so quality isn't what the tools changed. C inverts the text: hand-finishing is exactly what stayed the same, tools or not. D invents a pricing response never discussed. B is the only choice following directly from the stated cause of the output increase.",
+            "The tools are what raised weekly output from about three chairs to about nine; without them, that constraint on output would remain. Claiming quality would have suffered is wrong because hand-finishing — the step that actually preserves quality — continued even after the tools were introduced, so quality isn't what the tools changed. Claiming hand-finishing would have stopped inverts the text: hand-finishing is exactly what stayed the same, tools or not. Claiming prices would have risen invents a pricing response never discussed. Only 'the shop would have continued producing far fewer chairs per week than it does now' follows directly from the stated cause of the output increase.",
           difficulty: "medium",
         },
         {
@@ -350,7 +350,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "The schedule applied 'regardless of visible wear' because testing individual condition was too costly — meaning it tracked age, not actual condition — and the sensor data confirms this by showing some cables safely outlasting the schedule by years. B misreads the reasoning: the fixed schedule was a workaround for the cost of testing, not a cost-reduction goal in itself. C overstates the finding into a safety verdict the text never makes; some cables lasting longer doesn't mean the schedule was unsafe. D goes beyond what the text describes about un-sensored bridges. A is the only choice following directly from what the text establishes about the schedule's basis.",
+            "The schedule applied 'regardless of visible wear' because testing individual condition was too costly — meaning it tracked age, not actual condition — and the sensor data confirms this by showing some cables safely outlasting the schedule by years. Claiming it was created to cut maintenance costs misreads the reasoning: the fixed schedule was a workaround for the cost of testing, not a cost-reduction goal in itself. Claiming it's been proven unsafe overstates the finding into a safety verdict the text never makes; some cables lasting longer doesn't mean the schedule was unsafe. Claiming it's no longer followed anywhere goes beyond what the text describes about un-sensored bridges. Only 'it was based on a fixed timeline rather than each cable's actual condition' follows directly from what the text establishes about the schedule's basis.",
           difficulty: "medium",
         },
         {
@@ -363,7 +363,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "Without the genetic test, the faster growth could be explained by a pre-existing genetic difference between the two groups rather than by the environment itself; confirming genetic identity closes off that alternative explanation and strengthens the water-speed conclusion specifically. A overstates the finding into 'permanent adaptation,' which the identical genetics actually argue against — no genetic change occurred at all. C and D both invent claims about genetic diversity the text never addresses; the test showed sameness between two groups, not diversity within the species. B is the only choice describing the test's actual logical role.",
+            "Without the genetic test, the faster growth could be explained by a pre-existing genetic difference between the two groups rather than by the environment itself; confirming genetic identity closes off that alternative explanation and strengthens the water-speed conclusion specifically. Claiming it confirmed permanent adaptation overstates the finding, which the identical genetics actually argue against — no genetic change occurred at all. Claims about the species being more genetically diverse, or faster rivers containing more varied populations, both invent claims the text never addresses; the test showed sameness between two groups, not diversity within the species. Only 'it ruled out genetic differences as an explanation for the change in growth rate' describes the test's actual logical role.",
           difficulty: "hard",
         },
       ],
@@ -1082,7 +1082,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "If this sentence were deleted, the passage would seem to claim narrow streets are unconditionally safer, with no nuance. Its function is to complicate or qualify the main claim, not contradict it entirely — it adds a condition (sightlines) under which the benefit doesn't hold. Choice B overstates this as a full reversal, C misreads it as supporting rather than qualifying, and D ignores that it's directly tied to the main claim.",
+            "If this sentence were deleted, the passage would seem to claim narrow streets are unconditionally safer, with no nuance. Its function is to complicate or qualify the main claim, not contradict it entirely — it adds a condition (sightlines) under which the benefit doesn't hold. Describing it as a complete reversal overstates it as a full reversal, describing it as a supporting statistic misreads it as supporting rather than qualifying, and calling it an unrelated topic ignores that it's directly tied to the main claim.",
           difficulty: "easy",
         },
         {
@@ -1096,7 +1096,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "If deleted, the passage would read as if the switch benefited everyone the same way, with no exceptions. Its job is to complicate that uniform picture by pointing out one specific group the change didn't help, not to argue the whole policy was a mistake, which A overstates. C introduces an unrelated claim about productivity, and D misses that this sentence adds nuance rather than restating the main point.",
+            "If deleted, the passage would read as if the switch benefited everyone the same way, with no exceptions. Its job is to complicate that uniform picture by pointing out one specific group the change didn't help, not to argue the whole policy was a mistake, which the 'entire policy was a mistake' reading overstates. Claiming it proves remote work reduces productivity introduces an unrelated claim about productivity, and claiming it restates the main point misses that this sentence adds nuance rather than restating it.",
           difficulty: "medium",
         },
         {
@@ -1110,7 +1110,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 2,
           explain:
-            "If deleted, the passage would describe the transit line without explaining how it was paid for. Its job is simply to supply funding-source information, a supporting detail, not a qualification or counterexample as A and B both wrongly suggest. D invents a comparison the sentence never makes. C plainly describes this detail-supplying function.",
+            "If deleted, the passage would describe the transit line without explaining how it was paid for. Its job is simply to supply funding-source information, a supporting detail, not a qualification or counterexample, as reading it as a challenge or a counterexample both wrongly suggest. Comparing the project's cost to another city's invents a comparison the sentence never makes. Only 'it explains how the project was financed, supplying a supporting detail about its funding sources' plainly describes this detail-supplying function.",
           difficulty: "easy",
         },
         {
@@ -1124,7 +1124,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "If deleted, the passage would argue morale improved but wouldn't address that some people opposed the change initially. Its function is to strengthen the argument by showing that even skeptics changed their minds, stronger support than simply repeating 'morale improved,' which D wrongly describes it as. C misreads the sentence as ongoing opposition, when it actually reports conversion, and A ignores that it's directly on-topic.",
+            "If deleted, the passage would argue morale improved but wouldn't address that some people opposed the change initially. Its function is to strengthen the argument by showing that even skeptics changed their minds, stronger support than simply repeating 'morale improved,' which describing it as a repeated claim wrongly reduces it to. Reading it as pointing to ongoing opposition misreads the sentence, when it actually reports conversion, and calling it an unrelated new argument ignores that it's directly on-topic.",
           difficulty: "medium",
         },
         {
@@ -1138,7 +1138,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "If deleted, the claim (scent, not sight) would remain an assertion without direct experimental support. This sentence's function is not to complicate or qualify the claim, which B wrongly suggests — it provides the controlled experimental evidence that directly confirms it, by showing performance is unaffected when vision is removed. C misreads the finding entirely, and D invents a methodological critique the sentence doesn't make. It's actually the paragraph's strongest piece of direct support, even though the setup (covering eyes) might read as a complication at first.",
+            "If deleted, the claim (scent, not sight) would remain an assertion without direct experimental support. This sentence's function is not to complicate or qualify the claim, which reading it as 'a complication that weakens the claim' wrongly suggests — it provides the controlled experimental evidence that directly confirms it, by showing performance is unaffected when vision is removed. Reading it as showing sight is sometimes more important misreads the finding entirely, and describing it as a methodology critique invents one the sentence doesn't make. It's actually the paragraph's strongest piece of direct support, even though the setup (covering eyes) might read as a complication at first.",
           difficulty: "hard",
         },
       ],
@@ -1162,7 +1162,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Why would the author pause the personal narrative to describe social norms? This is a common structural move — providing context that helps explain constraints or pressures shaping the subject's later choices. Choices B, C, and D each invent a function (counterargument, conclusion, criticism) the paragraph doesn't perform. A correctly names this context-providing, explanatory role.",
+            "Why would the author pause the personal narrative to describe social norms? This is a common structural move — providing context that helps explain constraints or pressures shaping the subject's later choices. Describing it as a counterargument, an advance conclusion, or a criticism of the era each invents a function the paragraph doesn't perform. Only 'it provides context that helps the reader understand the constraints shaping the subject's subsequent choices' correctly names this context-providing, explanatory role.",
           difficulty: "easy",
         },
         {
@@ -1175,7 +1175,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "Why would the author spend an entire paragraph on manufacturing detail before returning to the bridge itself? This is a common structural move — laying groundwork that makes the later, more impressive claims about the bridge's design easier to understand and trust. A, C, and D each invent content the paragraph doesn't contain. B correctly names this groundwork-laying role.",
+            "Why would the author spend an entire paragraph on manufacturing detail before returning to the bridge itself? This is a common structural move — laying groundwork that makes the later, more impressive claims about the bridge's design easier to understand and trust. Describing it as arguing the process was flawed, comparing it to a competitor, or summarizing criticism of the bridge each invents content the paragraph doesn't contain. Only 'it provides the technical background needed to understand and trust the design claims made about the bridge' correctly names this groundwork-laying role.",
           difficulty: "medium",
         },
         {
@@ -1188,7 +1188,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Why would an author open with a misconception before explaining the truth? This is a common structural move — clearing away a wrong assumption first so the correct explanation that follows is easier to appreciate and contrast against. B, C, and D each invent content the paragraph doesn't contain. A correctly describes this 'clear the misconception, then explain' role.",
+            "Why would an author open with a misconception before explaining the truth? This is a common structural move — clearing away a wrong assumption first so the correct explanation that follows is easier to appreciate and contrast against. Describing it as giving the rod's invention history, arguing rods are ineffective, or describing a rare exception each invents content the paragraph doesn't contain. Only 'it presents a common misconception, setting up a contrast with the accurate explanation that follows' correctly describes this 'clear the misconception, then explain' role.",
           difficulty: "easy",
         },
         {
@@ -1201,7 +1201,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "Why zoom in on one specific case after a general survey? This is a common structural move — narrowing from a general pattern to one detailed, illustrative case, which makes the broader claim more concrete and persuasive. A misreads the example as contradicting the premise, and C and D each invent a shift or data the paragraph doesn't contain. B correctly names this narrowing-to-a-case function.",
+            "Why zoom in on one specific case after a general survey? This is a common structural move — narrowing from a general pattern to one detailed, illustrative case, which makes the broader claim more concrete and persuasive. Claiming it contradicts the first paragraph misreads the example as contradicting the premise, and claiming it shifts focus away from financial struggle or provides statistical data each invents a shift or data the paragraph doesn't contain. Only 'it narrows the essay's general claim into one specific, detailed case, making the broader pattern more concrete' correctly names this narrowing-to-a-case function.",
           difficulty: "medium",
         },
         {
@@ -1214,7 +1214,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "If deleted, the surprising finding would stand unchallenged and unexamined. The second paragraph's function isn't to disprove the finding — it explicitly doesn't endorse any of the three possible flaws as the real explanation. Its function is to introduce reasonable doubt while leaving the question open. A overstates this as a full refutation, which a non-committal list of possible flaws doesn't accomplish, and C and D each invent conclusions or evidence not present. B correctly captures this cautious, doubt-raising role.",
+            "If deleted, the surprising finding would stand unchallenged and unexamined. The second paragraph's function isn't to disprove the finding — it explicitly doesn't endorse any of the three possible flaws as the real explanation. Its function is to introduce reasonable doubt while leaving the question open. Claiming it definitively refutes the finding overstates this as a full refutation, which a non-committal list of possible flaws doesn't accomplish, and claiming it confirms the method is ineffective or introduces a second study each invent conclusions or evidence not present. Only 'it raises possible limitations of the study without concluding any of them actually invalidate the finding' correctly captures this cautious, doubt-raising role.",
           difficulty: "hard",
         },
       ],
@@ -1238,7 +1238,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Sketch the shape: general pattern first, then one specific case that stands out from it. The case isn't just an example of the general pattern — it's presented as an exception to it, a more specific relationship than plain illustration. B, C, and D each describe a structure the passage doesn't use. A captures 'general pattern, then a specific exception to it' precisely.",
+            "Sketch the shape: general pattern first, then one specific case that stands out from it. The case isn't just an example of the general pattern — it's presented as an exception to it, a more specific relationship than plain illustration. Describing it as a hypothesis-then-experiments structure, competing theories, or a single bird's first-person narration each describes a structure the passage doesn't use. Only 'it describes a general migratory pattern, then presents one species as a specific exception to that pattern' captures 'general pattern, then a specific exception to it' precisely.",
           difficulty: "easy",
         },
         {
@@ -1251,7 +1251,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Sketch the shape: an established, conventional account comes first, then new evidence complicates it. The passage doesn't say the old account was definitely wrong, only that the new records 'suggest' a different cause, so B overstates this as a full refutation. C misreads the two explanations as equally weighted, and D reverses the actual order. A matches both the sequence and the passage's cautious wording.",
+            "Sketch the shape: an established, conventional account comes first, then new evidence complicates it. The passage doesn't say the old account was definitely wrong, only that the new records 'suggest' a different cause, so claiming the records prove the old explanation entirely wrong overstates this as a full refutation. Claiming both explanations are presented as equally accepted misreads them as equally weighted, and claiming the passage opens with the new records reverses the actual order. Only 'it presents the long-accepted explanation for an event, then introduces newly discovered evidence that complicates that explanation' matches both the sequence and the passage's cautious wording.",
           difficulty: "easy",
         },
         {
@@ -1264,7 +1264,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Sketch the shape: the passage opens with a puzzle or unexplained phenomenon, then works through an investigation that resolves it. This is a question-then-answer structure, delivered through a narrated process (a series of experiments) rather than a single stated hypothesis. B and D both reverse the actual order, and C invents a comparison never made. A mentions both the initial puzzle and the investigative process that resolves it.",
+            "Sketch the shape: the passage opens with a puzzle or unexplained phenomenon, then works through an investigation that resolves it. This is a question-then-answer structure, delivered through a narrated process (a series of experiments) rather than a single stated hypothesis. Describing it as an experiment followed by an unexplained puzzle, or a solution followed by the problem it solves, both reverse the actual order, and comparing the coral to a second species invents a comparison never made. Only 'it presents a puzzling phenomenon, then narrates the experimental process that eventually explains it' mentions both the initial puzzle and the investigative process that resolves it.",
           difficulty: "medium",
         },
         {
@@ -1277,7 +1277,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "This passage has three moves, not two: a problem, a proposed solution, and then a complication that qualifies the solution. B is incomplete — it leaves out the passage's actual ending, which raises a real drawback rather than closing on an unqualified fix. C invents a second solution never described, and D reverses the order. A captures all three moves in order.",
+            "This passage has three moves, not two: a problem, a proposed solution, and then a complication that qualifies the solution. Describing it as ending on an entirely positive note is incomplete — it leaves out the passage's actual ending, which raises a real drawback rather than closing on an unqualified fix. Claiming it presents two competing solutions invents a second solution never described, and claiming it opens with the solution reverses the order. Only 'it describes a problem, proposes a solution to it, and then acknowledges a significant drawback of that proposed solution' captures all three moves in order.",
           difficulty: "medium",
         },
         {
@@ -1290,7 +1290,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Sketch the shape carefully — this passage doesn't just move from specific to general; it returns to the opening anecdote at the end, adding a new detail that reinforces the general point. D describes only part of the structure, missing that final return to the anecdote, since the passage's structure is closer to a loop than a straight line. B reverses the actual order, and C invents a second anecdote. A captures all three moves: the anecdote, the generalization it leads to, and the passage's return to that anecdote with a reinforcing detail.",
+            "Sketch the shape carefully — this passage doesn't just move from specific to general; it returns to the opening anecdote at the end, adding a new detail that reinforces the general point. Describing it as opening with the anecdote and generalizing without returning describes only part of the structure, missing that final return to the anecdote, since the passage's structure is closer to a loop than a straight line. Claiming it opens with a general claim reverses the actual order, and claiming it presents two unrelated anecdotes invents a second one. Only 'it opens with a specific anecdote, generalizes from it, and then returns to that same anecdote with an additional detail that reinforces the generalization' captures all three moves: the anecdote, the generalization it leads to, and the passage's return to that anecdote with a reinforcing detail.",
           difficulty: "hard",
         },
       ],
@@ -1325,7 +1325,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Both authors are discussing the same underlying phenomenon: social media has changed how people interact and participate in public life. Their conclusions differ — engagement versus isolation — but the shared premise, that social media has significantly changed interaction patterns, is something both would accept, since it's the foundation their opposing arguments are built on. B just restates one author's conclusion, and C and D are claims neither passage actually makes.",
+            "Both authors are discussing the same underlying phenomenon: social media has changed how people interact and participate in public life. Their conclusions differ — engagement versus isolation — but the shared premise, that social media has significantly changed interaction patterns, is something both would accept, since it's the foundation their opposing arguments are built on. Claiming social media increases engagement more than isolation just restates one author's conclusion, and claims about government regulation or in-person relationships becoming obsolete are claims neither passage actually makes.",
           difficulty: "easy",
         },
         {
@@ -1338,7 +1338,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Both authors are working from the same observable fact: scores on these tests differ across students from different backgrounds. Their conclusions differ sharply — one trusts the test, one distrusts it — but they disagree about why scores vary, not whether they vary. B and D each state only one author's conclusion, and C directly contradicts Passage 2. A is the underlying pattern both authors would accept.",
+            "Both authors are working from the same observable fact: scores on these tests differ across students from different backgrounds. Their conclusions differ sharply — one trusts the test, one distrusts it — but they disagree about why scores vary, not whether they vary. Claiming tests should be eliminated, or that they're the single best predictor of success, each state only one author's conclusion, and claiming prep access has no effect directly contradicts Passage 2. Only 'test scores vary across students from different backgrounds' is the underlying pattern both authors would accept.",
           difficulty: "medium",
         },
         {
@@ -1364,7 +1364,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Both authors discuss the same underlying fact: the ordinance changed nighttime activity patterns in the city. Their conclusions differ — benefit to residents versus burden on businesses — but the shared premise, that the ordinance measurably reduced nighttime activity and noise, is something both would accept, since it's the shared foundation each side interprets differently. B and D each state only one side's evaluation, and C contradicts Passage 2 directly.",
+            "Both authors discuss the same underlying fact: the ordinance changed nighttime activity patterns in the city. Their conclusions differ — benefit to residents versus burden on businesses — but the shared premise, that the ordinance measurably reduced nighttime activity and noise, is something both would accept, since it's the shared foundation each side interprets differently. Claiming it's been an unambiguous success, or that it should be repealed immediately, each state only one side's evaluation, and claiming businesses weren't affected contradicts Passage 2 directly.",
           difficulty: "medium",
         },
         {
@@ -1377,7 +1377,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "A tempting but too-generic shared-ground answer might claim the route was economically important — probably true, but it's assumed background, not the actual point either author argues about. The more precise shared ground is that both authors agree the decline occurred gradually over an extended period, since each proposes a different explanation (political vs. environmental) for that same observed pattern. C and D each state only one author's specific causal claim.",
+            "A tempting but too-generic shared-ground answer might claim the route was economically important — probably true, but it's assumed background, not the actual point either author argues about. The more precise shared ground is that both authors agree the decline occurred gradually over an extended period, since each proposes a different explanation (political vs. environmental) for that same observed pattern. Claiming political shifts or claiming climate change were the sole cause of the decline each state only one author's specific causal claim.",
           difficulty: "hard",
         },
       ],
@@ -1401,7 +1401,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Passage 2's core concern is that online interaction lacks the depth of real connection. Applying that same concern to the new claim, an author worried about depth of connection would most likely argue that online communities, however active, don't fully replace the depth of in-person relationships. B would directly contradict their entire stated position, C misreads the claim as irrelevant when it's central to their argument, and D introduces a policy position never suggested.",
+            "Passage 2's core concern is that online interaction lacks the depth of real connection. Applying that same concern to the new claim, an author worried about depth of connection would most likely argue that online communities, however active, don't fully replace the depth of in-person relationships. Fully agreeing that online communities are an adequate substitute would directly contradict their entire stated position, ignoring the claim as irrelevant misreads it as irrelevant when it's central to their argument, and arguing communities should be banned introduces a policy position never suggested.",
           difficulty: "easy",
         },
         {
@@ -1414,7 +1414,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Passage 1's core concern is that test scores are a reliable, trustworthy measure of achievement and deserve real weight in decisions. Applying that concern to the new claim, an author committed to defending the test's reliability would most likely argue that some variation in any single measurement is expected, but that this doesn't undermine the test's overall usefulness. B and D would both concede the test is fundamentally flawed, directly contradicting Passage 1's stated position, and C denies a real phenomenon rather than reframing its significance.",
+            "Passage 1's core concern is that test scores are a reliable, trustworthy measure of achievement and deserve real weight in decisions. Applying that concern to the new claim, an author committed to defending the test's reliability would most likely argue that some variation in any single measurement is expected, but that this doesn't undermine the test's overall usefulness. Conceding the test should be dropped entirely, or agreeing scores frequently misrepresent ability, would both concede the test is fundamentally flawed, directly contradicting Passage 1's stated position, and denying test anxiety exists denies a real phenomenon rather than reframing its significance.",
           difficulty: "medium",
         },
         {
@@ -1427,7 +1427,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Passage 1's core concern is improved quality of life for residents. Applying that concern to the new claim, an author focused on resident quality of life would most likely argue that the benefit to residents outweighs the inconvenience to businesses, or that businesses can adjust. B would contradict their stated position entirely, and C and D both go well beyond what a reasonable, consistent response would claim.",
+            "Passage 1's core concern is improved quality of life for residents. Applying that concern to the new claim, an author focused on resident quality of life would most likely argue that the benefit to residents outweighs the inconvenience to businesses, or that businesses can adjust. Conceding the ordinance was a mistake would contradict their stated position entirely, and denying any businesses were affected or arguing they should relocate both go well beyond what a reasonable, consistent response would claim.",
           difficulty: "easy",
         },
         {
@@ -1440,7 +1440,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Passage 2's core concern is not whether short-term effects occur, but whether they can be sustained. Applying that concern to the new claim, this author would most likely concede the short-term effect is real, but argue it doesn't matter if it can't be maintained long-term. B misreads their critique, which is about durability, not the initial result. C would contradict their own conclusion, and D wrongly treats the claim as irrelevant when it's central to their argument.",
+            "Passage 2's core concern is not whether short-term effects occur, but whether they can be sustained. Applying that concern to the new claim, this author would most likely concede the short-term effect is real, but argue it doesn't matter if it can't be maintained long-term. Denying any short-term weight loss occurs misreads their critique, which is about durability, not the initial result. Arguing the diet should be recommended more widely would contradict their own conclusion, and ignoring the claim as unrelated wrongly treats it as irrelevant when it's central to their argument.",
           difficulty: "medium",
         },
         {
@@ -1453,7 +1453,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Passage 1's core concern is that political shifts were the primary cause of the decline. A careful historian wouldn't necessarily dispute solid sediment-core data, since that's not their area of expertise or actual disagreement — their real disagreement is about which cause was primary, not whether the climate changed at all. B has the historian flatly deny data outside their argument, D attacks a scientific method without cause, and C would abandon their own thesis entirely. A accepts the data but reframes its importance as secondary, the most consistent response.",
+            "Passage 1's core concern is that political shifts were the primary cause of the decline. A careful historian wouldn't necessarily dispute solid sediment-core data, since that's not their area of expertise or actual disagreement — their real disagreement is about which cause was primary, not whether the climate changed at all. Flatly denying the climate changed rejects data outside their argument, attacking sediment core analysis as unreliable attacks a scientific method without cause, and agreeing environmental change was the true primary cause would abandon their own thesis entirely. Only 'accepting the environmental evidence as accurate, but arguing it was a secondary factor' accepts the data but reframes its importance as secondary, the most consistent response.",
           difficulty: "hard",
         },
       ],
@@ -1487,7 +1487,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           ],
           answer: 1,
           explain:
-            "Re-read the goal: 'economic stakes,' not causes or general facts about bees. Note 1 (pollinating food crops) is the economic angle. Choices A and D focus on the cause (note 3), not economic stakes, and C reports the decline alone with no economic connection. B is the only choice combining the crop-pollination fact with the decline statistic, directly serving the stated goal.",
+            "Re-read the goal: 'economic stakes,' not causes or general facts about bees. Note 1 (pollinating food crops) is the economic angle. Framing colony collapse disorder as poorly understood, or as the cause of the decline, focuses on the cause (note 3), not economic stakes, and reporting the decline alone leaves no economic connection. Only 'because bees pollinate about one-third of food crops grown for human consumption, a 40% population decline since 2006 threatens a significant portion of the food supply' combines the crop-pollination fact with the decline statistic, directly serving the stated goal.",
           difficulty: "easy",
         },
         {
@@ -1500,7 +1500,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           ],
           answer: 1,
           explain:
-            "Re-read the goal carefully: 'impact on staff work,' not patron convenience. The wait-time note is tempting because it's about the same event, but it's about patrons, exactly what the goal says to avoid, ruling out A and C. D mentions only the installation, with no effect on staff at all. B combines the kiosk installation with the staff time-reallocation note, directly serving the goal.",
+            "Re-read the goal carefully: 'impact on staff work,' not patron convenience. The wait-time note is tempting because it's about the same event, but it's about patrons, exactly what the goal says to avoid, ruling out choices built around the wait-time drop. Mentioning only the installation as a technology investment leaves no effect on staff at all. Only 'a city library added 12 self-checkout kiosks in 2022, freeing staff to spend more time helping patrons find books' combines the kiosk installation with the staff time-reallocation note, directly serving the goal.",
           difficulty: "medium",
         },
         {
@@ -1513,7 +1513,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           ],
           answer: 1,
           explain:
-            "Re-read the goal precisely: 'long-term environmental impact,' not just that the giveaway happened or general festival facts. Note 4 (ticket prices) is true but has nothing to do with the environment, ruling out C. Note 2 (3 tons of plastic waste) sets the scale of the problem, but by itself doesn't show any actual impact from the giveaway — it's background, not an outcome, which is why A and D fall short. Note 3 (68% still using the bottles a month later) is the only note showing a real, lasting effect tied specifically to the giveaway, which is why B is correct.",
+            "Re-read the goal precisely: 'long-term environmental impact,' not just that the giveaway happened or general festival facts. Note 4 (ticket prices) is true but has nothing to do with the environment, ruling out the choice built around ticket prices. Note 2 (3 tons of plastic waste) sets the scale of the problem, but by itself doesn't show any actual impact from the giveaway — it's background, not an outcome, which is why choices pairing the giveaway with just the waste figure fall short. Note 3 (68% still using the bottles a month later) is the only note showing a real, lasting effect tied specifically to the giveaway, which is why 'a nonprofit distributed 500 reusable water bottles at a summer festival, and a follow-up survey a month later found that 68% of attendees still used the bottles regularly' is correct.",
           difficulty: "hard",
         },
         {
@@ -1526,7 +1526,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           ],
           answer: 1,
           explain:
-            "Re-read the goal: 'customer support,' not cost. Note 3 (68% would pay more) ties directly to customer support. A and D both center the cost increase, answering a different question, and C mentions the survey but frames it as a contrast to the cost increase rather than as the sentence's actual emphasis. B combines the packaging change with the survey result, directly serving the stated goal.",
+            "Re-read the goal: 'customer support,' not cost. Note 3 (68% would pay more) ties directly to customer support. Choices centered on the 15% cost increase both answer a different question, and the choice that mentions the survey only as a contrast to the cost increase frames it as a footnote rather than as the sentence's actual emphasis. Only 'a local bakery started using compostable packaging in 2021, and customer surveys show that 68% of customers say they'd pay more for eco-friendly packaging' combines the packaging change with the survey result, directly serving the stated goal.",
           difficulty: "easy",
         },
         {
@@ -1539,7 +1539,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           ],
           answer: 1,
           explain:
-            "Re-read the goal: 'benefited the orchestra's future,' not how big the tour was or who leads the orchestra. C and D both bring in the conductor's tenure (note 4), unrelated to the tour's benefit, and A describes scope (note 2), not benefit. B combines the tour with the instrument-funding outcome, the specific future benefit the goal asks about.",
+            "Re-read the goal: 'benefited the orchestra's future,' not how big the tour was or who leads the orchestra. Choices bringing in the conductor's tenure (note 4) are unrelated to the tour's benefit, and describing the tour's scope (note 2) alone doesn't address benefit. Only 'a youth orchestra's first international tour in 2019 funded new instruments for the following year through ticket sales' combines the tour with the instrument-funding outcome, the specific future benefit the goal asks about.",
           difficulty: "medium",
         },
         {
@@ -1552,7 +1552,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           ],
           answer: 2,
           explain:
-            "Re-read the goal precisely: demand existed before the library reacted, not just that Sunday hours are popular now. Choice A's 18%-of-visits figure shows current usage, but that's after the change, so alone it doesn't prove demand existed beforehand — a tempting but incomplete choice. B and D don't address demand at all. C is the only choice combining this library's 2022 change with the comparable branch's years-long Sunday demand pattern, showing the demand pre-dated this library's own reaction.",
+            "Re-read the goal precisely: demand existed before the library reacted, not just that Sunday hours are popular now. The 18%-of-visits figure shows current usage, but that's after the change, so alone it doesn't prove demand existed beforehand — a tempting but incomplete choice. Pairing the change with the budget increase, or describing the old closure schedule, don't address demand at all. Only 'a public library extended its hours to include Sunday openings in 2022, following years of similar Sunday demand at a separate branch across town that has offered Sunday hours since 2015' combines this library's 2022 change with the comparable branch's years-long Sunday demand pattern, showing the demand pre-dated this library's own reaction.",
           difficulty: "hard",
         },
       ],
@@ -1749,7 +1749,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "This is a list, not two independent clauses, so it needs a colon to introduce it, not a semicolon (choice D) or comma (choice C) beforehand. Each list item already contains its own internal comma (name, then role), so using only commas throughout (choice B) makes it impossible to tell where one item ends and the next begins. The correct choice uses a colon to introduce the list and semicolons to separate the individual comma-containing items.",
+            "This is a list, not two independent clauses, so it needs a colon to introduce it, not a semicolon or a plain comma beforehand. Each list item already contains its own internal comma (name, then role), so using only commas throughout makes it impossible to tell where one item ends and the next begins. The correct choice uses a colon to introduce the list and semicolons to separate the individual comma-containing items.",
           difficulty: "easy",
         },
         {
@@ -1762,7 +1762,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "This is a list, not two independent clauses, so a colon introduces it, not a semicolon (choice D) or comma (choice C) beforehand. Each item has its own internal comma (name, then job), so plain commas throughout (choice B) would make it impossible to tell where one item ends and the next begins.",
+            "This is a list, not two independent clauses, so a colon introduces it, not a semicolon or a plain comma beforehand. Each item has its own internal comma (name, then job), so plain commas throughout would make it impossible to tell where one item ends and the next begins.",
           difficulty: "easy",
         },
         {
@@ -1775,7 +1775,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Even with only two applicants instead of three, the same signal applies: each item already contains its own internal comma (name, then status), so the list needs a colon to introduce it and semicolons, not plain commas, to separate the items. Choice B uses only commas throughout, creating ambiguity about where one applicant's description ends and the next begins; choice C drops the commas around each description entirely; choice D uses a semicolon instead of a colon to introduce the list.",
+            "Even with only two applicants instead of three, the same signal applies: each item already contains its own internal comma (name, then status), so the list needs a colon to introduce it and semicolons, not plain commas, to separate the items. Using only commas throughout creates ambiguity about where one applicant's description ends and the next begins; dropping the commas around each description entirely loses necessary detail-marking; and using a semicolon instead of a colon to introduce the list breaks the intro punctuation.",
           difficulty: "medium",
         },
         {
@@ -1788,7 +1788,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Most items have internal commas (name plus role), but 'Devon Marsh' alone has no descriptor. Since at least one item in the list has an internal comma, plain commas throughout (choice B) would still create ambiguity about where items begin and end — the rule applies to the whole list, not just the items with descriptions. Choice C drops necessary commas, and choice D uses a semicolon instead of a colon to introduce the list.",
+            "Most items have internal commas (name plus role), but 'Devon Marsh' alone has no descriptor. Since at least one item in the list has an internal comma, plain commas throughout would still create ambiguity about where items begin and end — the rule applies to the whole list, not just the items with descriptions. Dropping necessary commas around the descriptions, or using a semicolon instead of a colon to introduce the list, are both errors of the same kind.",
           difficulty: "medium",
         },
         {
@@ -1801,7 +1801,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Each judge's name is followed by its own extra descriptive detail requiring commas on both sides, so plain commas separating the three list items too (choice C) would make it impossible to tell where one judge's entry ends and the next begins. Choice B drops the commas around each description, and choice D uses a semicolon instead of a colon to introduce the list. The correct choice uses a colon to introduce the list and semicolons between the three items, while keeping the commas around each individual description.",
+            "Each judge's name is followed by its own extra descriptive detail requiring commas on both sides, so plain commas separating the three list items too would make it impossible to tell where one judge's entry ends and the next begins. Dropping the commas around each description, or using a semicolon instead of a colon to introduce the list, are both errors of the same kind. The correct choice uses a colon to introduce the list and semicolons between the three items, while keeping the commas around each individual description.",
           difficulty: "hard",
         },
         {
@@ -1814,7 +1814,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "None of the items — muffins, scones, croissants — contains its own internal comma, so plain commas between them are perfectly clear on their own, with a comma before 'and' following standard serial-comma convention. Semicolons (choices B and C) are unnecessary here and would actually be a mistake in the other direction, since there's no ambiguity for them to resolve; dropping punctuation entirely (choice D) is a plain error.",
+            "None of the items — muffins, scones, croissants — contains its own internal comma, so plain commas between them are perfectly clear on their own, with a comma before 'and' following standard serial-comma convention. Semicolons throughout the list are unnecessary here and would actually be a mistake in the other direction, since there's no ambiguity for them to resolve; dropping punctuation entirely is a plain error.",
           difficulty: "hard",
         },
       ],
@@ -2493,7 +2493,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["4", "8", "1", "-4"],
           answer: 0,
           explain:
-            "Distribute the 5: 5x + 10 = 3x + 18. Subtract 3x from both sides: 2x + 10 = 18. Subtract 10: 2x = 8. Divide by 2: x = 4. Choice B comes from forgetting to distribute the 5 across both terms. Choice C comes from adding 3x to both sides instead of subtracting. Choice D comes from a sign error in the final division.",
+            "Distribute the 5: 5x + 10 = 3x + 18. Subtract 3x from both sides: 2x + 10 = 18. Subtract 10: 2x = 8. Divide by 2: x = 4. Getting 8 comes from forgetting to distribute the 5 across both terms. Getting 1 comes from adding 3x to both sides instead of subtracting. Getting -4 comes from a sign error in the final division.",
           difficulty: "easy",
         },
         {
@@ -2501,7 +2501,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["6", "0", "-6", "4"],
           answer: 0,
           explain:
-            "Distribute the -3 carefully: -3x + 12 + 2 = x - 10, which simplifies to -3x + 14 = x - 10. Add 3x to both sides: 14 = 4x - 10. Add 10: 24 = 4x. Divide by 4: x = 6. Choice B comes from distributing -3 incorrectly as -3x - 12 instead of -3x + 12. Choice C comes from a sign error in the final step. Choice D comes from an arithmetic slip combining 14 and 10.",
+            "Distribute the -3 carefully: -3x + 12 + 2 = x - 10, which simplifies to -3x + 14 = x - 10. Add 3x to both sides: 14 = 4x - 10. Add 10: 24 = 4x. Divide by 4: x = 6. Getting 0 comes from distributing -3 incorrectly as -3x - 12 instead of -3x + 12. Getting -6 comes from a sign error in the final step. Getting 4 comes from an arithmetic slip combining 14 and 10.",
           difficulty: "medium",
         },
         {
@@ -2509,7 +2509,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["5", "15", "-5", "7"],
           answer: 0,
           explain:
-            "Add 4 to both sides: 3x = 15. Divide by 3: x = 5. Choice B comes from forgetting to divide by 3 after isolating 3x. Choice C comes from a sign error. Choice D comes from subtracting 4 instead of adding it to both sides.",
+            "Add 4 to both sides: 3x = 15. Divide by 3: x = 5. Getting 15 comes from forgetting to divide by 3 after isolating 3x. Getting -5 comes from a sign error. Getting 7 comes from subtracting 4 instead of adding it to both sides.",
           difficulty: "easy",
         },
         {
@@ -2517,7 +2517,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["4.5", "9", "1.5", "-4.5"],
           answer: 0,
           explain:
-            "Distribute on both sides: 6x - 2 + 5 = 4x + 12, simplifying to 6x + 3 = 4x + 12. Subtract 4x: 2x + 3 = 12. Subtract 3 and divide by 2: 2x = 9, so x = 4.5. Choice B comes from forgetting to divide by 2 in the final step. Choice C comes from a division error. Choice D comes from a sign error.",
+            "Distribute on both sides: 6x - 2 + 5 = 4x + 12, simplifying to 6x + 3 = 4x + 12. Subtract 4x: 2x + 3 = 12. Subtract 3 and divide by 2: 2x = 9, so x = 4.5. Getting 9 comes from forgetting to divide by 2 in the final step. Getting 1.5 comes from a division error. Getting -4.5 comes from a sign error.",
           difficulty: "medium",
         },
         {
@@ -2525,7 +2525,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["12", "20", "10", "60"],
           answer: 0,
           explain:
-            "Clear the fractions by multiplying every term by the least common denominator, 12: 3x + 2x = 60. Combine like terms: 5x = 60, so x = 12. Choice B comes from a common LCD error. Choice C comes from using an incorrect denominator guess instead of 12. Choice D comes from forgetting to divide by 5 in the last step.",
+            "Clear the fractions by multiplying every term by the least common denominator, 12: 3x + 2x = 60. Combine like terms: 5x = 60, so x = 12. Getting 20 comes from a common LCD error. Getting 10 comes from using an incorrect denominator guess instead of 12. Getting 60 comes from forgetting to divide by 5 in the last step.",
           difficulty: "hard",
         },
       ],
@@ -2663,7 +2663,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["n - 12 = 3n", "12 - n = 3n", "n - 12 = n/3", "3n - 12 = n"],
           answer: 0,
           explain:
-            "'A number decreased by 12' translates to n - 12 — 'decreased by' keeps the same word order as spoken, the number first, then subtract 12. '3 times the number' translates to 3n, and 'is the same as' becomes the equals sign: n - 12 = 3n. Choice B reverses which quantity is subtracted from which.",
+            "'A number decreased by 12' translates to n - 12 — 'decreased by' keeps the same word order as spoken, the number first, then subtract 12. '3 times the number' translates to 3n, and 'is the same as' becomes the equals sign: n - 12 = 3n. Writing '12 - n = 3n' reverses which quantity is subtracted from which.",
           difficulty: "medium",
         },
         {
@@ -2671,7 +2671,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["n - 12 = 45", "12 - n = 45", "n + 12 = 45", "12n = 45"],
           answer: 0,
           explain:
-            "'12 less than a number' is a reversed-order phrase — despite '12' appearing first in the sentence, it's the number that comes first in the equation, with 12 subtracted from it: n - 12 = 45. Choice B is a common error that reverses which quantity is being subtracted from which.",
+            "'12 less than a number' is a reversed-order phrase — despite '12' appearing first in the sentence, it's the number that comes first in the equation, with 12 subtracted from it: n - 12 = 45. Writing '12 - n = 45' is a common error that reverses which quantity is being subtracted from which.",
           difficulty: "medium",
         },
         {
@@ -2709,7 +2709,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["C = 2m + 3", "C = 3m + 2", "C = 2m - 3", "C = 5m"],
           answer: 0,
           explain:
-            "The flat fee (y-intercept) is $3, the amount charged even for zero miles. The rate (slope) is $2 per mile, the amount added for each additional mile. Choice B swaps which number is the rate and which is the flat fee. Choice C uses the wrong sign, and choice D incorrectly adds the two numbers together into a single rate.",
+            "The flat fee (y-intercept) is $3, the amount charged even for zero miles. The rate (slope) is $2 per mile, the amount added for each additional mile. 'C = 3m + 2' swaps which number is the rate and which is the flat fee. 'C = 2m - 3' uses the wrong sign, and 'C = 5m' incorrectly adds the two numbers together into a single rate.",
           diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "y-int = 3", at: "left" }], slopeLabel: "slope = 2" },
           difficulty: "easy",
         },
@@ -2718,7 +2718,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["W = -15m + 200", "W = 15m + 200", "W = -15m - 200", "W = 200m - 15"],
           answer: 0,
           explain:
-            "The starting value (y-intercept) is 200 gallons, the amount present at m = 0. The rate (slope) is 15 gallons per minute, but since the tank is draining, the amount is decreasing, so the rate needs a negative sign. Choice B forgets the negative sign entirely, and choices C and D each misplace the negative sign or swap the roles of the two numbers.",
+            "The starting value (y-intercept) is 200 gallons, the amount present at m = 0. The rate (slope) is 15 gallons per minute, but since the tank is draining, the amount is decreasing, so the rate needs a negative sign. 'W = 15m + 200' forgets the negative sign entirely, and 'W = -15m - 200' and 'W = 200m - 15' each misplace the negative sign or swap the roles of the two numbers.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "y-int = 200", at: "left" }], slopeLabel: "slope = -15" },
           difficulty: "medium",
         },
@@ -2727,7 +2727,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["C = 15m + 20", "C = 20m + 15", "C = 15m - 20", "C = 35m"],
           answer: 0,
           explain:
-            "The flat fee (y-intercept) is $20, charged once regardless of months. The rate (slope) is $15 per month. Choice B swaps which number is the rate and which is the flat fee, choice C uses the wrong sign, and choice D incorrectly combines the two numbers into a single rate.",
+            "The flat fee (y-intercept) is $20, charged once regardless of months. The rate (slope) is $15 per month. 'C = 20m + 15' swaps which number is the rate and which is the flat fee, 'C = 15m - 20' uses the wrong sign, and 'C = 35m' incorrectly combines the two numbers into a single rate.",
           diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "y-int = 20", at: "left" }], slopeLabel: "slope = 15" },
           difficulty: "easy",
         },
@@ -2736,7 +2736,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["H = -0.025t + 8", "H = 0.025t + 8", "H = -0.5t + 8", "H = -0.025t - 8"],
           answer: 0,
           explain:
-            "The starting value (y-intercept) is 8 inches at t = 0. The tricky part is converting 'half an inch every 20 minutes' into a per-minute rate first: 0.5 / 20 = 0.025 inches per minute, and since the candle is burning down, this rate must be negative. Choice B forgets the negative sign, choice C forgets to convert the rate to a per-minute basis, and choice D applies the negative sign to the wrong number.",
+            "The starting value (y-intercept) is 8 inches at t = 0. The tricky part is converting 'half an inch every 20 minutes' into a per-minute rate first: 0.5 / 20 = 0.025 inches per minute, and since the candle is burning down, this rate must be negative. 'H = 0.025t + 8' forgets the negative sign, 'H = -0.5t + 8' forgets to convert the rate to a per-minute basis, and 'H = -0.025t - 8' applies the negative sign to the wrong number.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "y-int = 8", at: "left" }], slopeLabel: "slope = -0.025" },
           difficulty: "medium",
         },
@@ -2745,7 +2745,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["C = 3m + 200", "C = 3m + 350", "C = 7m + 200", "C = 3m - 200"],
           answer: 0,
           explain:
-            "Unlike a scenario that states the flat fee and rate directly, here both must be derived from two cost/mileage pairs. The rate (slope) is (560 - 350) / (120 - 50) = 210 / 70 = 3 dollars per mile. Using the rate and one data point to find the flat fee: 350 = 3(50) + b, so b = 200, giving C = 3m + 200. Choice B mistakes one of the cost values for the flat fee, choice C uses an incorrect rate, and choice D uses the wrong sign on the flat fee.",
+            "Unlike a scenario that states the flat fee and rate directly, here both must be derived from two cost/mileage pairs. The rate (slope) is (560 - 350) / (120 - 50) = 210 / 70 = 3 dollars per mile. Using the rate and one data point to find the flat fee: 350 = 3(50) + b, so b = 200, giving C = 3m + 200. 'C = 3m + 350' mistakes one of the cost values for the flat fee, 'C = 7m + 200' uses an incorrect rate, and 'C = 3m - 200' uses the wrong sign on the flat fee.",
           diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "(50, 350)", at: "left" }, { label: "(120, 560)", at: "right" }] },
           difficulty: "hard",
         },
@@ -2783,7 +2783,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["10", "2", "7", "5"],
           answer: 0,
           explain:
-            "The axes are scaled at 5 units per gridline, not the default 1 unit — easy to miss if you count gridlines as if each were worth 1. The line crosses the y-axis 2 gridlines up, and since each gridline equals 5 units, that's 2 × 5 = 10. Choice B is the trap that forgets to apply the scale.",
+            "The axes are scaled at 5 units per gridline, not the default 1 unit — easy to miss if you count gridlines as if each were worth 1. The line crosses the y-axis 2 gridlines up, and since each gridline equals 5 units, that's 2 × 5 = 10. Answering '2' is the trap that forgets to apply the scale.",
           diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "y-int", at: "left" }] },
           difficulty: "medium",
         },
@@ -3203,7 +3203,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["17/6", "17/3", "34/7", "2"],
           answer: 0,
           explain:
-            "Here the 'known value' isn't a plain number but an expression in terms of the other variable — substitute y = 2x directly into the equation: 2x + 5(2x) = 34, which simplifies to 12x = 34, so x = 34/12 = 17/6. Choice B comes from dividing by 6 instead of 12, and choice C comes from adding the coefficients incorrectly.",
+            "Here the 'known value' isn't a plain number but an expression in terms of the other variable — substitute y = 2x directly into the equation: 2x + 5(2x) = 34, which simplifies to 12x = 34, so x = 34/12 = 17/6. Getting 17/3 comes from dividing by 6 instead of 12, and getting 34/7 comes from adding the coefficients incorrectly.",
           difficulty: "medium",
         },
         {
