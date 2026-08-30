@@ -184,25 +184,31 @@ export function PixelDog({
 function CostumeOverlay({ costume }: { costume: string }) {
   switch (costume) {
     case "sunglasses":
+      // Sized to clearly cover the whole eye/brow area (the native eye is
+      // only 3x3) rather than a discreet accent -- at 22-40px render sizes
+      // anything subtler than this reads as nothing at all.
       return (
         <>
-          <rect x={40.5} y={9.5} width={6.5} height={4} rx={0.6} fill="#1a1a2e" />
-          <rect x={38.3} y={10.8} width={2.4} height={1.2} fill="#1a1a2e" />
+          <rect x={39} y={9} width={9.5} height={5.5} rx={0.8} fill="#1a1a2e" />
+          <rect x={36.3} y={10.6} width={3} height={1.8} fill="#1a1a2e" />
+          <rect x={41.5} y={10.2} width={2} height={1.2} fill="#4a4a6a" />
         </>
       );
     case "bowtie":
       return (
         <>
-          <path d="M 30.5 19 L 34.5 21 L 30.5 23 Z" fill="#6d7fd6" />
-          <path d="M 39.5 19 L 35.5 21 L 39.5 23 Z" fill="#6d7fd6" />
-          <rect x={34} y={19.8} width={2} height={2.4} fill="#4a5bb0" />
+          <path d="M 29 18.5 L 34.5 21 L 29 23.5 Z" fill="#5a6bc4" />
+          <path d="M 41 18.5 L 35.5 21 L 41 23.5 Z" fill="#5a6bc4" />
+          <rect x={34} y={19.5} width={3} height={3} fill="#e0b84a" />
         </>
       );
     case "scarf":
       return (
         <>
-          <rect x={32} y={17.5} width={7} height={4} fill="#3a6690" />
-          <rect x={33} y={21} width={4} height={9} fill="#2d5170" />
+          <rect x={31} y={17} width={9} height={5} fill="#4a86ad" />
+          <rect x={31} y={18.5} width={9} height={1.5} fill="#7fb3d5" />
+          <rect x={32.5} y={22} width={5} height={10} fill="#3a6690" />
+          <rect x={32.5} y={24.5} width={5} height={1.5} fill="#5a96bd" />
         </>
       );
     case "bandana":
