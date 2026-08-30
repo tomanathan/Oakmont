@@ -992,7 +992,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "Earlier sentences establish that a panel's final report was detailed and thorough in cataloguing an agency's oversight failures, though not necessarily harsh in tone. Though the panel's final report was ______ in its criticism of the agency's oversight failures, it stopped short of recommending anyone's removal. Which choice completes the text with the most logical and precise word or phrase?",
+          q: "The panel's final report ran to nearly two hundred pages, cataloguing every one of the agency's oversight failures in methodical, exhaustive detail. Though the report was ______ in its criticism of the agency's failures, it stopped short of recommending anyone's removal. Which choice completes the text with the most logical and precise word or phrase?",
           choices: ["scathing", "exhaustive", "muted", "premature"],
           answer: 1,
           explain:
@@ -1011,7 +1011,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "This pattern tests words with more than one common meaning, where the SAT deliberately uses the less common one. If a choice looks 'too obvious' or 'too easy,' double-check whether the sentence actually needs its secondary, less-familiar meaning. This is worth watching for closely — it's why strong readers sometimes miss questions that look easy.",
       examples: [
         {
-          q: "Earlier sentences describe an argument as brief and to the point, not lacking in quality. Her argument, while ______, ultimately failed to address the panel's central concern. Which choice completes the text with the most logical and precise word or phrase?",
+          q: "In under three minutes, without a single wasted word, she laid out a case that even opposing counsel privately called impressive. Her argument, while ______, ultimately failed to address the panel's central concern. Which choice completes the text with the most logical and precise word or phrase?",
           choices: ["sound", "flawed", "irrelevant", "confusing"],
           answer: 0,
           explain:
@@ -1019,7 +1019,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "Earlier sentences make clear a critic still recommended a film, but pointed out several real flaws. The critic's review was surprisingly ______ for a film so widely praised elsewhere. Which choice completes the text with the most logical and precise word or phrase?",
+          q: "The critic ultimately recommended the film, but not before spending three paragraphs detailing its uneven pacing and underwritten supporting characters. The critic's review was surprisingly ______ for a film so widely praised elsewhere. Which choice completes the text with the most logical and precise word or phrase?",
           choices: ["glowing", "qualified", "dismissive", "brief"],
           answer: 1,
           explain:
@@ -1027,7 +1027,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "Earlier text makes clear critics disagreed with a senator's politics but admitted the speech itself was persuasive and well-built. Even her harshest critics conceded that the senator's closing argument was ______. Which choice completes the text with the most logical and precise word or phrase?",
+          q: "Political opponents who disagreed with nearly everything else the senator stood for still privately admitted her closing argument was tightly constructed and genuinely persuasive. Even her harshest critics conceded that the senator's closing argument was ______. Which choice completes the text with the most logical and precise word or phrase?",
           choices: ["arresting", "controversial", "predictable", "lengthy"],
           answer: 0,
           explain:
