@@ -39,7 +39,10 @@ export function AppShell({
   // Fetched fresh on every mount rather than shared with ScoutCompanion's
   // own fetch -- AppShell lives inside each page, not the root layout, so
   // it naturally remounts on every navigation anyway (see ScoutCompanion's
-  // comments on the same distinction).
+  // comments on the same distinction). This gives the *starting* costume;
+  // see the "ozho:costume" listener below for how it stays current after
+  // that without depending on a remount or a Next.js router refresh ever
+  // actually re-running this effect (it doesn't, reliably).
   useEffect(() => {
     let cancelled = false;
     fetch("/api/pet/state")
@@ -53,6 +56,22 @@ export function AppShell({
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  // The instant, reliable way this pill's costume stays in sync after the
+  // student equips something in Settings: SettingsClient fires this plain
+  // window event with the new costume the moment the server confirms it,
+  // and every mounted Ozho icon (this one, ScoutCompanion) just applies it
+  // directly -- no re-fetch, no dependency on whether a client component
+  // happens to remount or re-run effects after router.refresh().
+  useEffect(() => {
+    function onCostumeChange(e: Event) {
+      const detail = (e as CustomEvent<{ costume: string | null }>).detail;
+      if (!detail) return;
+      setPet((prev) => (prev ? { ...prev, costume: detail.costume } : prev));
+    }
+    window.addEventListener("ozho:costume", onCostumeChange);
+    return () => window.removeEventListener("ozho:costume", onCostumeChange);
   }, []);
 
   async function handleLogout() {

@@ -50,6 +50,14 @@ export function SettingsClient({
       if (res.ok) {
         setCostume(id);
         const name = COSTUMES.find((c) => c.id === id)?.name;
+        // The actual fix for "equipping does nothing visible": every
+        // mounted Ozho icon (this page's own PetCard, the header pill, the
+        // roaming companion) applies this directly instead of needing to
+        // re-fetch -- see the "ozho:costume" listeners in AppShell and
+        // ScoutCompanion.
+        window.dispatchEvent(
+          new CustomEvent("ozho:costume", { detail: { costume: id !== "none" ? id : null } })
+        );
         window.dispatchEvent(
           new CustomEvent("ozho:celebrate", { detail: { message: name ? `New look: ${name}!` : "New look!" } })
         );
@@ -118,7 +126,7 @@ export function SettingsClient({
       <div className="text-xl font-bold text-ink mb-1.5">Settings</div>
       <div className="text-sm text-gray-500 mb-6">{email}</div>
 
-      <PetCard petName={petName} state={petState} costume={equippedCostume !== "none" ? equippedCostume : null} />
+      <PetCard petName={petName} state={petState} costume={costume !== "none" ? costume : null} />
 
       <form
         onSubmit={saveGoals}

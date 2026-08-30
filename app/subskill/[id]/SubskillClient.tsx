@@ -142,6 +142,15 @@ export function SubskillClient({
             ? `${data.justCompletedDomain} complete!`
             : `${subskill.name} mastered!`;
           window.dispatchEvent(new CustomEvent("ozho:celebrate", { detail: { message } }));
+          // A freshly unlocked costume becomes the worn one automatically
+          // (same fallback Settings and the header pill use) unless the
+          // student already hand-picked something -- update every mounted
+          // Ozho icon immediately rather than waiting on a page reload.
+          if (data.newCostume) {
+            window.dispatchEvent(
+              new CustomEvent("ozho:costume", { detail: { costume: data.newCostume.id } })
+            );
+          }
         }
         // Refreshes server-fetched data (like the streak badge in AppShell)
         // in place, without discarding this page's client-side quiz state.

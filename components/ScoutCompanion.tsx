@@ -305,6 +305,19 @@ export function ScoutCompanion() {
     }
     window.addEventListener("ozho:celebrate", onCelebrate);
 
+    // Keeps the costume he's actually wearing current after an equip in
+    // Settings. ScoutCompanion only ever fetches /api/pet/state once, on
+    // this very first mount at the root layout -- it never remounts on
+    // client-side navigation, so without this it would just keep showing
+    // whatever costume was equipped when the tab was first opened. Applying
+    // the new costume directly from the event, rather than re-fetching, is
+    // instant and doesn't depend on any refetch actually firing.
+    function onCostumeChange(e: Event) {
+      const detail = (e as CustomEvent<{ costume: string | null }>).detail;
+      if (detail) setCostume(detail.costume);
+    }
+    window.addEventListener("ozho:costume", onCostumeChange);
+
     return () => {
       mq.removeEventListener?.("change", onMotionChange);
       window.removeEventListener("pointermove", onMove);
@@ -312,6 +325,7 @@ export function ScoutCompanion() {
       window.removeEventListener("keydown", onInteract);
       window.removeEventListener("click", onInteract);
       window.removeEventListener("ozho:celebrate", onCelebrate);
+      window.removeEventListener("ozho:costume", onCostumeChange);
       if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
     };
   }, []);
