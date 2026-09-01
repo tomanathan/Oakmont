@@ -49,6 +49,7 @@ export default async function AnalysisPage() {
           rwScore: t.rwScore,
           mathScore: t.mathScore,
           domainScores: t.domainScores as Record<string, number>,
+          domainCounts: t.domainCounts as Record<string, { correct: number; total: number }>,
         }))}
       />
     </AppShell>

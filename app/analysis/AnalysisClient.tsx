@@ -6,6 +6,11 @@ import { sectionTheme } from "@/lib/sectionTheme";
 import { StarRating } from "@/components/StarRating";
 import type { DomainMastery } from "@/lib/mastery";
 
+interface DomainCount {
+  correct: number;
+  total: number;
+}
+
 interface Test {
   id: string;
   takenAt: string;
@@ -13,6 +18,7 @@ interface Test {
   rwScore: number;
   mathScore: number;
   domainScores: Record<string, number>;
+  domainCounts: Record<string, DomainCount>;
 }
 
 interface DomainInfo {
@@ -61,6 +67,7 @@ export function AnalysisClient({
       {formOpen && (
         <SubmitTestForm
           domains={domains}
+          bestComposite={tests.length > 0 ? Math.max(...tests.map((t) => t.compositeScore)) : null}
           onSaved={() => {
             setFormOpen(false);
             router.refresh();
@@ -105,6 +112,7 @@ export function AnalysisClient({
             {domains.map((d) => {
               const theme = sectionTheme(d.section);
               const testPct = latest.domainScores[d.domain];
+              const testCount = latest.domainCounts[d.domain] ?? null;
               const prevTestPct = previous?.domainScores[d.domain];
               const mastery = domainMastery.find((m) => m.domain === d.domain);
               return (
@@ -119,6 +127,7 @@ export function AnalysisClient({
                   <DomainBar
                     label="Latest practice test"
                     pct={testPct ?? null}
+                    fraction={testCount}
                     delta={
                       testPct !== undefined && prevTestPct !== undefined
                         ? testPct - prevTestPct
@@ -197,11 +206,16 @@ function ScoreCard({
 function DomainBar({
   label,
   pct,
+  fraction,
   delta,
   barClass,
 }: {
   label: string;
   pct: number | null | undefined;
+  // The literal "X of Y correct" Bluebook shows next to its own domain
+  // bars -- shown instead of the percentage whenever it's available, since
+  // that's the number the student actually read off their screen.
+  fraction?: DomainCount | null;
   delta?: number | null;
   barClass: string;
 }) {
@@ -214,12 +228,12 @@ function DomainBar({
             "not reported"
           ) : (
             <>
-              {pct}%
+              {fraction ? `${fraction.correct}/${fraction.total} correct` : `${pct}%`}
               {delta !== null && delta !== undefined && delta !== 0 && (
                 <span className={delta > 0 ? "text-accent" : "text-red-500"}>
                   {" "}
                   ({delta > 0 ? "+" : ""}
-                  {delta})
+                  {delta}%)
                 </span>
               )}
             </>
@@ -238,28 +252,50 @@ function DomainBar({
 
 function SubmitTestForm({
   domains,
+  bestComposite,
   onSaved,
 }: {
   domains: DomainInfo[];
+  // The highest composite logged so far (null if this is the first test) --
+  // used only to decide how big a deal to make of this one via Ozho's
+  // "ozho:celebrate" event once it saves.
+  bestComposite: number | null;
   onSaved: () => void;
 }) {
   const [takenAt, setTakenAt] = useState(new Date().toISOString().slice(0, 10));
   const [composite, setComposite] = useState("");
   const [rw, setRw] = useState("");
   const [math, setMath] = useState("");
-  const [domainScores, setDomainScores] = useState<Record<string, string>>({});
+  // One "correct" and one "total" text field per domain -- mirrors exactly
+  // what Bluebook's own score report shows next to each domain's bar (e.g.
+  // "11/13"), so filling this in is copying two numbers off the screen
+  // rather than doing mental percentage math from a list of missed
+  // questions.
+  const [correct, setCorrect] = useState<Record<string, string>>({});
+  const [total, setTotal] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+
+    const cleanDomainCounts: Record<string, { correct: number; total: number }> = {};
+    for (const d of domains) {
+      const c = correct[d.domain]?.trim() ?? "";
+      const t = total[d.domain]?.trim() ?? "";
+      if (c === "" && t === "") continue;
+      const cNum = Number(c);
+      const tNum = Number(t);
+      if (c === "" || t === "" || !Number.isInteger(cNum) || !Number.isInteger(tNum) || tNum <= 0 || cNum < 0 || cNum > tNum) {
+        setError(`"${d.domain}": enter both how many you got right and how many questions were in that domain (right can't exceed total).`);
+        return;
+      }
+      cleanDomainCounts[d.domain] = { correct: cNum, total: tNum };
+    }
+
     setSaving(true);
     try {
-      const cleanDomainScores: Record<string, number> = {};
-      for (const [domain, val] of Object.entries(domainScores)) {
-        if (val.trim() !== "") cleanDomainScores[domain] = Number(val);
-      }
       const res = await fetch("/api/practice-tests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -268,7 +304,7 @@ function SubmitTestForm({
           compositeScore: Number(composite),
           rwScore: Number(rw),
           mathScore: Number(math),
-          domainScores: cleanDomainScores,
+          domainCounts: cleanDomainCounts,
         }),
       });
       const data = await res.json();
@@ -276,6 +312,19 @@ function SubmitTestForm({
         setError(data.error || "Couldn't save. Please try again.");
         return;
       }
+      // A logged full-length test is a big enough milestone on its own to
+      // be worth Ozho's trick every time -- a new best composite gets the
+      // bigger burst, same as the in-quiz celebrations.
+      const newComposite = Number(composite);
+      const isNewBest = bestComposite === null || newComposite > bestComposite;
+      window.dispatchEvent(
+        new CustomEvent("ozho:celebrate", {
+          detail: {
+            message: isNewBest ? `New best composite: ${newComposite}!` : "Practice test logged!",
+            tier: isNewBest ? "big" : "small",
+          },
+        })
+      );
       onSaved();
     } catch {
       setError("Couldn't reach the server. Please try again.");
@@ -337,8 +386,12 @@ function SubmitTestForm({
         </div>
       </div>
 
-      <div className="text-sm text-gray-700 mb-2">
-        Domain subscores <span className="text-gray-400">(optional, 0-100 estimated % correct)</span>
+      <div className="text-sm text-gray-700 mb-1">
+        Domain performance <span className="text-gray-400">(optional)</span>
+      </div>
+      <div className="text-xs text-gray-400 mb-2">
+        Bluebook's own score report shows each domain as a bar with a "correct out of total"
+        count &mdash; copy those two numbers in directly, no need to work out a percentage.
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
         {domains.map((d) => (
@@ -347,12 +400,23 @@ function SubmitTestForm({
             <input
               type="number"
               min={0}
-              max={100}
-              value={domainScores[d.domain] ?? ""}
-              onChange={(e) =>
-                setDomainScores((prev) => ({ ...prev, [d.domain]: e.target.value }))
-              }
-              className="w-20 px-2.5 py-1.5 rounded-lg border border-[#e0defa] text-sm focus:outline-none focus:border-[#6d7fd6]"
+              inputMode="numeric"
+              placeholder="correct"
+              aria-label={`${d.domain} correct`}
+              value={correct[d.domain] ?? ""}
+              onChange={(e) => setCorrect((prev) => ({ ...prev, [d.domain]: e.target.value }))}
+              className="w-16 px-2 py-1.5 rounded-lg border border-[#e0defa] text-sm text-center focus:outline-none focus:border-[#6d7fd6]"
+            />
+            <span className="text-gray-400 text-sm">/</span>
+            <input
+              type="number"
+              min={0}
+              inputMode="numeric"
+              placeholder="total"
+              aria-label={`${d.domain} total`}
+              value={total[d.domain] ?? ""}
+              onChange={(e) => setTotal((prev) => ({ ...prev, [d.domain]: e.target.value }))}
+              className="w-16 px-2 py-1.5 rounded-lg border border-[#e0defa] text-sm text-center focus:outline-none focus:border-[#6d7fd6]"
             />
           </div>
         ))}

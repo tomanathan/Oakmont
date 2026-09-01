@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Subskill, Pattern } from "@/data/curriculum";
 import type { Question } from "@/data/questions";
 import { NavButton } from "@/components/NavButton";
-import { ConfettiBurst, useCountUp } from "@/components/CountUp";
+import { useCountUp } from "@/components/CountUp";
 import { StepList, ProseText } from "@/components/StepList";
 import { MathText } from "@/components/MathText";
 import { GeometryDiagram } from "@/components/GeometryDiagram";
@@ -166,27 +166,36 @@ export function SubskillClient({
           justCompletedDomain: data.justCompletedDomain ?? null,
           newCostume: data.newCostume ?? null,
         });
-        if (data.justMastered) {
-          // Lets Ozho (mounted separately, at the root layout) react with
-          // his little trick + a celebratory line -- see ScoutCompanion's
-          // "ozho:celebrate" listener. A newly unlocked costume is the
-          // biggest deal, then finishing the whole section, then just this
-          // one subskill -- only the most significant line is shown.
-          const message = data.newCostume
-            ? `${data.justCompletedDomain} complete! New outfit: ${data.newCostume.name}!`
-            : data.justCompletedDomain
-            ? `${data.justCompletedDomain} complete!`
-            : `${subskill.name} mastered!`;
-          window.dispatchEvent(new CustomEvent("ozho:celebrate", { detail: { message } }));
-          // A freshly unlocked costume becomes the worn one automatically
-          // (same fallback Settings and the header pill use) unless the
-          // student already hand-picked something -- update every mounted
-          // Ozho icon immediately rather than waiting on a page reload.
-          if (data.newCostume) {
-            window.dispatchEvent(
-              new CustomEvent("ozho:costume", { detail: { costume: data.newCostume.id } })
-            );
-          }
+        // Lets Ozho (mounted separately, at the root layout) react with his
+        // trick + a celebratory line + a burst of confetti -- see
+        // ScoutCompanion's and GlobalConfetti's "ozho:celebrate" listeners.
+        // Several of these can technically be true from one submission at
+        // once (mastering the subskill that also happens to complete its
+        // domain, section, or the entire curriculum, on the day a streak
+        // milestone lands) -- only the single most significant one is
+        // actually shown, biggest first, rather than stacking messages.
+        const celebration: { message: string; tier: "small" | "big" } | null = data.streakMilestone
+          ? { message: `🔥 ${data.currentStreak}-day streak! You're on fire.`, tier: "big" }
+          : data.justCompletedCurriculum
+          ? { message: "You've mastered the entire curriculum! Incredible work.", tier: "big" }
+          : data.justCompletedSection
+          ? { message: `${data.justCompletedSection} complete! Every domain mastered.`, tier: "big" }
+          : data.newCostume
+          ? { message: `${data.justCompletedDomain} complete! New outfit: ${data.newCostume.name}!`, tier: "big" }
+          : data.justCompletedDomain
+          ? { message: `${data.justCompletedDomain} complete!`, tier: "small" }
+          : data.justMastered
+          ? { message: `${subskill.name} mastered!`, tier: "small" }
+          : null;
+        if (celebration) {
+          window.dispatchEvent(new CustomEvent("ozho:celebrate", { detail: celebration }));
+        }
+        // A freshly unlocked costume becomes the worn one automatically
+        // (same fallback Settings and the header pill use) unless the
+        // student already hand-picked something -- update every mounted
+        // Ozho icon immediately rather than waiting on a page reload.
+        if (data.newCostume) {
+          window.dispatchEvent(new CustomEvent("ozho:costume", { detail: { costume: data.newCostume.id } }));
         }
         // Refreshes server-fetched data (like the streak badge in AppShell)
         // in place, without discarding this page's client-side quiz state.
@@ -573,8 +582,6 @@ function ResultBanner({
         perfect ? "bg-[#fffaf0] border border-[#f0e0b0]" : "bg-[#f8f8fb]"
       }`}
     >
-      {result?.justMastered && <ConfettiBurst />}
-
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="text-[15px] font-semibold text-ink">
           {perfect && <span className="text-[#c9971b] mr-1.5">★</span>}

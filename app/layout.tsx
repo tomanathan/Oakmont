@@ -3,6 +3,7 @@ import { Fraunces } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import { ScoutCompanion } from "@/components/ScoutCompanion";
+import { GlobalConfetti } from "@/components/GlobalConfetti";
 
 // A characterful serif reserved for the brand wordmark and page titles
 // (top bar, login/welcome/settle-back-in screens) -- everything else stays
@@ -24,12 +25,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={fraunces.variable}>
-      {/* Ozho is mounted once here, above the per-page content, so it
-          persists across client-side navigation instead of resetting
-          (position, mood, walk state) every time the route changes. */}
+      {/* Ozho and the confetti layer are mounted once here, above the
+          per-page content: Ozho persists across client-side navigation
+          instead of resetting (position, mood, walk state) every time the
+          route changes, and GlobalConfetti listens for "ozho:celebrate"
+          from any page so nothing has to render its own confetti locally. */}
       <body className="bg-white text-ink font-sans antialiased">
         {children}
         <ScoutCompanion />
+        <GlobalConfetti />
       </body>
     </html>
   );

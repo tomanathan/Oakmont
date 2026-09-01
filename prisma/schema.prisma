@@ -87,10 +87,20 @@ model PracticeTest {
   compositeScore Int
   rwScore        Int
   mathScore      Int
-  // Optional per-domain estimated score (0-100), keyed by domain name (see
-  // data/curriculum.ts domain names) -- e.g. { "Algebra": 78 }. Domains the
-  // student didn't report are simply absent from the object.
+  // Derived from domainCounts below (correct/total * 100), keyed by domain
+  // name (see data/curriculum.ts domain names) -- e.g. { "Algebra": 78 }.
+  // Domains the student didn't report are simply absent from the object.
+  // This is what lib/mastery.ts blends into the analysis page's domain
+  // breakdown; kept as a plain percentage there so that code doesn't need
+  // to know about raw counts.
   domainScores   Json     @default("{}")
+  // What the student actually types in, and what's shown back to them: the
+  // literal correct/total question counts Bluebook's own score report shows
+  // per domain -- e.g. { "Algebra": { "correct": 11, "total": 13 } }. Kept
+  // alongside domainScores (rather than only the derived percentage) so the
+  // form and history can round-trip the exact numbers off the student's
+  // screen instead of a lossy percentage guess.
+  domainCounts   Json     @default("{}")
   createdAt      DateTime @default(now())
 
   @@index([userId, takenAt])

@@ -90,3 +90,14 @@ export function computeDomainMastery(
 export function completedDomainCount(domainMastery: DomainMastery[]): number {
   return domainMastery.filter((d) => d.completed).length;
 }
+
+/** Every domain within one subject (Math, or Reading and Writing) mastered. */
+export function isSectionComplete(domainMastery: DomainMastery[], section: string): boolean {
+  const inSection = domainMastery.filter((d) => d.section === section);
+  return inSection.length > 0 && inSection.every((d) => d.completed);
+}
+
+/** Every domain across the entire curriculum mastered -- the top of the mountain. */
+export function isCurriculumComplete(domainMastery: DomainMastery[]): boolean {
+  return domainMastery.length > 0 && domainMastery.every((d) => d.completed);
+}

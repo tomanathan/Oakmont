@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { ALL_DOMAINS } from "@/data/curriculum";
@@ -19,6 +20,11 @@ export async function GET() {
   return NextResponse.json({ tests });
 }
 
+interface DomainCount {
+  correct: number;
+  total: number;
+}
+
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) {
@@ -30,7 +36,11 @@ export async function POST(req: NextRequest) {
     compositeScore?: number;
     rwScore?: number;
     mathScore?: number;
-    domainScores?: Record<string, number | null>;
+    // The literal "X correct out of Y" fraction Bluebook's own score
+    // report shows per domain -- e.g. { "Algebra": { correct: 11, total: 13 } }.
+    // This replaces asking the student to mentally convert that into a
+    // percentage themselves.
+    domainCounts?: Record<string, DomainCount | null>;
   };
   try {
     body = await req.json();
@@ -38,7 +48,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const { takenAt, compositeScore, rwScore, mathScore, domainScores } = body;
+  const { takenAt, compositeScore, rwScore, mathScore, domainCounts } = body;
 
   if (
     typeof compositeScore !== "number" ||
@@ -63,15 +73,29 @@ export async function POST(req: NextRequest) {
     parsedDate = d;
   }
 
+  // Validate the raw counts, then derive the percentage from them --
+  // domainScores is never taken from the client directly, so the two can
+  // never disagree.
+  const cleanDomainCounts: Record<string, DomainCount> = {};
   const cleanDomainScores: Record<string, number> = {};
-  if (domainScores) {
-    for (const [domain, score] of Object.entries(domainScores)) {
-      if (score === null || score === undefined) continue;
+  if (domainCounts) {
+    for (const [domain, count] of Object.entries(domainCounts)) {
+      if (count === null || count === undefined) continue;
       if (!VALID_DOMAINS.has(domain)) continue;
-      if (typeof score !== "number" || score < 0 || score > 100) {
-        return NextResponse.json({ error: `Invalid score for ${domain}.` }, { status: 400 });
+      const { correct, total } = count;
+      if (
+        typeof correct !== "number" ||
+        typeof total !== "number" ||
+        !Number.isInteger(correct) ||
+        !Number.isInteger(total) ||
+        total <= 0 ||
+        correct < 0 ||
+        correct > total
+      ) {
+        return NextResponse.json({ error: `Invalid question count for ${domain}.` }, { status: 400 });
       }
-      cleanDomainScores[domain] = score;
+      cleanDomainCounts[domain] = { correct, total };
+      cleanDomainScores[domain] = Math.round((correct / total) * 100);
     }
   }
 
@@ -82,6 +106,7 @@ export async function POST(req: NextRequest) {
       compositeScore,
       rwScore,
       mathScore,
+      domainCounts: cleanDomainCounts as unknown as Prisma.InputJsonValue,
       domainScores: cleanDomainScores,
     },
   });

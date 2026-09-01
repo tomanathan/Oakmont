@@ -42,3 +42,13 @@ export function updateStreak(
   }
   return { currentStreak: 1, longestStreak: Math.max(longestStreak, 1), lastActiveDate: now };
 }
+
+// Round, memorable numbers worth a bigger celebration than the streak
+// badge's usual quiet tick-up -- spaced closer together early on (when
+// sticking with it is hardest to prove to yourself) and further apart
+// once a streak is already well established.
+const STREAK_MILESTONES = [3, 7, 14, 30, 50, 100, 150, 200, 250, 300, 365];
+
+export function isStreakMilestone(streak: number): boolean {
+  return STREAK_MILESTONES.includes(streak);
+}

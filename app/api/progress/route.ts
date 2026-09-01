@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { getSubskill, ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
-import { justReachedMastery, updateStreak } from "@/lib/gamification";
-import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
+import { justReachedMastery, updateStreak, isStreakMilestone } from "@/lib/gamification";
+import {
+  computeDomainMastery,
+  completedDomainCount,
+  isSectionComplete,
+  isCurriculumComplete,
+  type ProgressMap,
+} from "@/lib/mastery";
 import { bestUnlockedCostume } from "@/lib/costumes";
 
 export async function GET() {
@@ -77,13 +83,14 @@ export async function POST(req: NextRequest) {
 
   const justMastered = justReachedMastery(previousBest, newBest, total);
 
-  // Did this submission just finish an entire domain ("section") -- every
-  // subskill in it now at a perfect score -- and did that push the
-  // student's completed-section count into a new wardrobe tier? Compared
-  // before vs. after this one update rather than just checking the after
-  // state, so "just completed"/"just unlocked" only fires on the actual
-  // transition, not on every subsequent quiz taken in an already-finished
-  // domain.
+  // Did this submission just finish an entire domain ("section" in the
+  // dashboard's language) -- every subskill in it now at a perfect score --
+  // and did that ripple up into finishing the whole subject it belongs to,
+  // or the entire curriculum? Each compared before vs. after this one
+  // update rather than just checking the after state, so these only fire
+  // on the actual transition, not on every later quiz taken in an
+  // already-finished domain/subject. Also whether it pushed the student's
+  // completed-domain count into a new wardrobe tier.
   const progressBefore: ProgressMap = {};
   for (const row of rowsBefore) progressBefore[row.subskillId] = { bestScore: row.bestScore, total: row.total };
   const progressAfter: ProgressMap = { ...progressBefore, [subskillId]: { bestScore: newBest, total } };
@@ -93,6 +100,12 @@ export async function POST(req: NextRequest) {
   const domainBefore = masteryBefore.find((d) => d.domain === subskill.domain);
   const domainAfter = masteryAfter.find((d) => d.domain === subskill.domain);
   const justCompletedDomain = !domainBefore?.completed && domainAfter?.completed ? subskill.domain : null;
+
+  const justCompletedSection =
+    !isSectionComplete(masteryBefore, subskill.section) && isSectionComplete(masteryAfter, subskill.section)
+      ? subskill.section
+      : null;
+  const justCompletedCurriculum = !isCurriculumComplete(masteryBefore) && isCurriculumComplete(masteryAfter);
 
   const costumeBefore = bestUnlockedCostume(completedDomainCount(masteryBefore));
   const costumeAfter = bestUnlockedCostume(completedDomainCount(masteryAfter));
@@ -104,6 +117,11 @@ export async function POST(req: NextRequest) {
     dbUser?.currentStreak ?? 0,
     dbUser?.longestStreak ?? 0
   );
+  // Only a genuine milestone moment if the streak actually changed today
+  // (not a second quiz on a day that already counted), so this can't fire
+  // more than once on the day a milestone is actually reached.
+  const streakMilestone =
+    streak.currentStreak !== (dbUser?.currentStreak ?? 0) && isStreakMilestone(streak.currentStreak);
 
   const updatedUser = await prisma.user.update({
     where: { id: user.userId },
@@ -119,8 +137,11 @@ export async function POST(req: NextRequest) {
     progress: progressResult,
     justMastered,
     justCompletedDomain,
+    justCompletedSection,
+    justCompletedCurriculum,
     newCostume: newCostume ? { id: newCostume.id, name: newCostume.name } : null,
     currentStreak: updatedUser.currentStreak,
     longestStreak: updatedUser.longestStreak,
+    streakMilestone,
   });
 }
