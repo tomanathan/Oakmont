@@ -1,4 +1,5 @@
 import type { PlanWeek } from "@/data/curriculum";
+import { utcDayDiff } from "./dateOnly";
 
 export type DayType = "lesson" | "test" | "review" | "rest";
 
@@ -68,12 +69,6 @@ export function buildDayPlan(week: PlanWeek, priorSubskillIds: string[] = [], da
   return days;
 }
 
-function startOfDay(d: Date | string): Date {
-  const c = new Date(d);
-  c.setHours(0, 0, 0, 0);
-  return c;
-}
-
 export interface TodayPlanItem {
   week: number;
   day: PlanDay;
@@ -102,9 +97,7 @@ export function getTodayPlanItem(
   now: Date = new Date(),
   totalDays?: number
 ): TodayPlanItem | null {
-  const daysElapsed = Math.floor(
-    (startOfDay(now).getTime() - startOfDay(courseStartDate).getTime()) / 86400000
-  );
+  const daysElapsed = utcDayDiff(courseStartDate, now);
   if (daysElapsed < 0) return null;
   if (totalDays !== undefined && daysElapsed >= totalDays) return null;
 

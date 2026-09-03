@@ -38,9 +38,15 @@ export default async function DashboardPage() {
   const studyPlan = buildStudyPlan(Math.ceil(courseLengthDays / 7));
   // Pace against the plan's actual scope (the subskills it schedules
   // week-by-week), not the full subskill bank, so the numbers line up with
-  // what /plan shows.
+  // what /plan shows. Counts MASTERED subskills (a perfect quiz score), not
+  // merely-attempted ones -- otherwise the pace bar and "N ahead of pace"
+  // status reward guessing through every quiz once instead of actually
+  // learning the material, and disagree with the "mastered" count shown
+  // right below it on the same card.
   const planSubskillIds = new Set(studyPlan.flatMap((w) => w.subskillIds));
-  const completedInPlan = Object.keys(progress).filter((id) => planSubskillIds.has(id)).length;
+  const completedInPlan = Object.entries(progress).filter(
+    ([id, p]) => planSubskillIds.has(id) && p.bestScore === p.total
+  ).length;
   const pacing = computePacing(
     createdAt,
     new Date(),

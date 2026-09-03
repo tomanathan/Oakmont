@@ -5,15 +5,19 @@ import { usePathname } from "next/navigation";
 import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
 import type { PetStage } from "@/lib/pet";
+import { dedupedFetchJson } from "@/lib/dedupeFetch";
 
 // Kept warm and low-pressure on purpose -- Ozho is a companion, not a
 // nag. Even the "hungry"/"critical" pool below invites rather than
 // guilt-trips, regardless of how urgent the pet-death countdown actually is.
+// Kept free of anything presupposing a *return* visit (no "good to see you
+// back," "welcome back," etc.) -- this same pool is what plays on a brand
+// new account's very first session, seconds after signing up, so nothing
+// here can be wrong the first time it's ever said.
 const GREETINGS = [
   "Woof! Good to see you.",
   "Hey there — ready when you are.",
   "I'm rooting for you today.",
-  "Happy to see you back.",
 ];
 const ENCOURAGEMENTS = [
   "Every problem you solve makes test day easier.",
@@ -90,6 +94,18 @@ const BODY_BELOW = 22;
 // stuck unable to find anywhere to land is not.
 const BUBBLE_HALF_W = 120;
 const BUBBLE_ABOVE = 90;
+// Bold, reasonably large text reads as a heading/label in this app's own
+// styling (headings here are styled divs like "text-[15px] font-bold", not
+// semantic <h1>-<h3> tags, so this is a font-weight/size heuristic rather
+// than a tag list). Landing with the *bubble* on top of one of these is a
+// real problem -- it was caught hiding page titles like "What is the SAT?"
+// and "Study goals" outright -- unlike an occasional bubble edge brushing
+// ordinary body copy, which stays a minor, momentary cosmetic thing (see
+// BUBBLE_HALF_W's own comment above). Deliberately much narrower than "all
+// text" so it doesn't reproduce the over-rejection problem that comment
+// describes: most on-page text is regular weight and won't match this.
+const HEADING_MIN_WEIGHT = 600;
+const HEADING_MIN_SIZE_PX = 15;
 const TEXT_REFRESH_MS = 1500;
 // Defensive cap on how many text-bearing elements one refresh will collect
 // -- keeps a pathologically text-dense page from turning a 1.5s interval
@@ -208,6 +224,11 @@ export function ScoutCompanion() {
   const onTextRef = useRef(false);
   const lastOnTextAtRef = useRef(-Infinity);
   const textRectsRef = useRef<{ left: number; top: number; right: number; bottom: number }[]>([]);
+  // Subset of textRectsRef that also looks heading-like -- see
+  // HEADING_MIN_WEIGHT/HEADING_MIN_SIZE_PX above. Only consulted when
+  // picking a spot to rest (isValidLanding), never for the body's own
+  // text-avoidance or the mid-walk fade-through.
+  const headingRectsRef = useRef<{ left: number; top: number; right: number; bottom: number }[]>([]);
   const returningRef = useRef(false);
   const walkingRef = useRef(false);
   const facingRef = useRef<1 | -1>(1);
@@ -253,8 +274,7 @@ export function ScoutCompanion() {
     lastInteractionAtRef.current = Date.now();
     setReady(true);
 
-    fetch("/api/pet/state")
-      .then((r) => (r.ok ? r.json() : null))
+    dedupedFetchJson<{ stage: PetStage; currentStreak?: number; costume?: string | null }>("/api/pet/state")
       .then((data) => {
         if (data && data.stage) {
           stageRef.current = data.stage;
@@ -349,6 +369,7 @@ export function ScoutCompanion() {
   // fragmenting one paragraph into a dozen tiny slivers.
   function refreshTextRects() {
     const rects: { left: number; top: number; right: number; bottom: number }[] = [];
+    const headingRects: { left: number; top: number; right: number; bottom: number }[] = [];
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
     const wrapper = wrapperRef.current;
@@ -370,14 +391,18 @@ export function ScoutCompanion() {
       if (!hasDirectText) continue;
       const cr = el.getBoundingClientRect();
       if (cr.width < 2 || cr.height < 2) continue;
-      rects.push({
-        left: cr.left + scrollX,
-        top: cr.top + scrollY,
-        right: cr.right + scrollX,
-        bottom: cr.bottom + scrollY,
-      });
+      const rect = { left: cr.left + scrollX, top: cr.top + scrollY, right: cr.right + scrollX, bottom: cr.bottom + scrollY };
+      rects.push(rect);
+      // Computed style is only read for elements that already cleared the
+      // checks above, so this stays bounded by the same MAX_TEXT_RECTS cap
+      // rather than adding an unbounded second pass over the DOM.
+      const cs = getComputedStyle(el);
+      if (parseFloat(cs.fontWeight) >= HEADING_MIN_WEIGHT && parseFloat(cs.fontSize) >= HEADING_MIN_SIZE_PX) {
+        headingRects.push(rect);
+      }
     }
     textRectsRef.current = rects;
+    headingRectsRef.current = headingRects;
   }
 
   useEffect(() => {
@@ -440,6 +465,24 @@ export function ScoutCompanion() {
       if (rectsOverlap(l, t, r, b, rc.left, rc.top, rc.right, rc.bottom)) return rc;
     }
     return null;
+  }
+
+  // Would a speech bubble popped up from (x,y) land on a heading-like
+  // element? Only checked when picking a spot to REST (isValidLanding) --
+  // deliberately not part of overlapsText/the mid-walk fade, so this can't
+  // reproduce the "nowhere valid to land" over-rejection that came from
+  // once checking the wider bubble zone against *all* text.
+  function overlapsHeadingBubbleZone(x: number, y: number) {
+    const l = x - BUBBLE_HALF_W;
+    const r = x + BUBBLE_HALF_W;
+    const t = y - BUBBLE_ABOVE;
+    const b = y;
+    const rects = headingRectsRef.current;
+    for (let i = 0; i < rects.length; i++) {
+      const rc = rects[i];
+      if (rectsOverlap(l, t, r, b, rc.left, rc.top, rc.right, rc.bottom)) return true;
+    }
+    return false;
   }
 
   // A point roughly in the middle of whatever's currently on screen, for
@@ -602,6 +645,7 @@ export function ScoutCompanion() {
     // of reacting to it after the fact.
     function isValidLanding(x: number, y: number): boolean {
       if (overlapsText(x, y)) return false;
+      if (overlapsHeadingBubbleZone(x, y)) return false;
       if (!forceTarget && mouseRef.current) {
         const d = Math.hypot(x - mouseRef.current.x, y - mouseRef.current.y);
         if (d < MIN_DIST) return false;

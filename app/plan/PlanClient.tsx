@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { sectionTheme } from "@/lib/sectionTheme";
+import { addUTCDays, formatUTCDate, utcDayDiff } from "@/lib/dateOnly";
+import { TIGHT_TIMELINE_DAYS } from "@/lib/pacing";
 import type { DayType } from "@/lib/studyPlan";
 
 interface WeekSubskill {
@@ -27,14 +29,8 @@ interface WeekItem {
   days: DayItem[];
 }
 
-function addDays(from: string | Date, days: number): Date {
-  const d = new Date(from);
-  d.setDate(d.getDate() + days);
-  return d;
-}
-
 function formatDate(d: Date): string {
-  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  return formatUTCDate(d, { month: "short", day: "numeric" });
 }
 
 export function PlanClient({
@@ -58,18 +54,13 @@ export function PlanClient({
   const totalTests = weeks.reduce((acc, w) => acc + w.testNumbers.length, 0);
   const lastWeek = weeks[weeks.length - 1];
 
-  const currentWeekNumber = useMemo(() => {
-    const daysElapsed = Math.floor(
-      (Date.now() - new Date(courseStartDate).getTime()) / 86400000
-    );
-    return Math.max(1, Math.floor(daysElapsed / 7) + 1);
-  }, [courseStartDate]);
-  const currentDayOfWeek = useMemo(() => {
-    const daysElapsed = Math.floor(
-      (Date.now() - new Date(courseStartDate).getTime()) / 86400000
-    );
-    return ((daysElapsed % 7) + 7) % 7; // 0-6
-  }, [courseStartDate]);
+  // UTC calendar-day difference, not raw elapsed milliseconds -- keeps
+  // "today"/"this week" lined up with the server's own day-of-course math
+  // (lib/studyPlan.ts, lib/pacing.ts) instead of drifting near midnight or
+  // in timezones behind UTC.
+  const daysElapsed = useMemo(() => utcDayDiff(courseStartDate, new Date()), [courseStartDate]);
+  const currentWeekNumber = Math.max(1, Math.floor(daysElapsed / 7) + 1);
+  const currentDayOfWeek = ((daysElapsed % 7) + 7) % 7; // 0-6
 
   const [expanded, setExpanded] = useState<Set<number>>(() => new Set([currentWeekNumber]));
 
@@ -87,12 +78,25 @@ export function PlanClient({
       <div className="text-xl font-bold text-ink mb-1.5">Your study roadmap</div>
       <div className="text-sm text-gray-500 mb-4">
         {weeks.length} weeks, broken down day by day. All {totalTests} full-length practice
-        tests are spaced throughout based on how much time you have, not bunched up at the end.
-        Set a target SAT date in{" "}
-        <button onClick={() => router.push("/settings")} className="underline hover:text-ink">
-          Settings
-        </button>{" "}
-        to custom-fit this timeline. Click a week to see the day-by-day plan.
+        tests are spaced throughout based on how much time you have, not bunched up at the end.{" "}
+        {targetTestDate ? (
+          <>
+            Change your target date any time in{" "}
+            <button onClick={() => router.push("/settings")} className="underline hover:text-ink">
+              Settings
+            </button>{" "}
+            and this timeline resizes to fit.
+          </>
+        ) : (
+          <>
+            Set a target SAT date in{" "}
+            <button onClick={() => router.push("/settings")} className="underline hover:text-ink">
+              Settings
+            </button>{" "}
+            to custom-fit this timeline.
+          </>
+        )}{" "}
+        Click a week to see the day-by-day plan.
       </div>
 
       {targetTestDate && daysUntilTest !== null && (
@@ -107,15 +111,19 @@ export function PlanClient({
             </span>{" "}
             <span className="text-gray-500">
               &middot;{" "}
-              {new Date(targetTestDate).toLocaleDateString(undefined, {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-              })}
+              {formatUTCDate(targetTestDate, { weekday: "long", month: "long", day: "numeric" })}
             </span>
           </div>
           <div className="text-xs text-[#9a6a12]">
-            This plan is paced to finish exactly by then, not before or after.
+            {daysUntilTest < 0 ? (
+              <button onClick={() => router.push("/settings")} className="underline hover:text-[#7a5410]">
+                Update your test date in Settings
+              </button>
+            ) : daysUntilTest < TIGHT_TIMELINE_DAYS ? (
+              "That's a tight runway -- this plan is compressed to fit it, not stretched past it."
+            ) : (
+              "This plan is paced to finish exactly by then, not before or after."
+            )}
           </div>
         </div>
       )}
@@ -139,11 +147,11 @@ export function PlanClient({
         {weeks.map((w) => {
           const isOpen = expanded.has(w.week);
           const isCurrentWeek = w.week === currentWeekNumber;
-          const weekStart = addDays(courseStartDate, (w.week - 1) * 7);
+          const weekStart = addUTCDays(courseStartDate, (w.week - 1) * 7);
           // w.days.length is 7 for every week except a truncated final week
           // (see app/plan/page.tsx), so this naturally lines up with the
           // real target date instead of always assuming a full 7 days.
-          const weekEnd = addDays(weekStart, w.days.length - 1);
+          const weekEnd = addUTCDays(weekStart, w.days.length - 1);
           const doneInWeek = w.subskills.filter((s) => progress[s.id]).length;
 
           return (
@@ -190,7 +198,7 @@ export function PlanClient({
               {isOpen && (
                 <div className="border-t border-[#f0eff9] divide-y divide-[#f5f4fb]">
                   {w.days.map((d) => {
-                    const dayDate = addDays(weekStart, d.day - 1);
+                    const dayDate = addUTCDays(weekStart, d.day - 1);
                     const isToday = isCurrentWeek && d.day - 1 === currentDayOfWeek;
                     const isExamDay =
                       !!targetTestDate && w === lastWeek && d.day === lastWeek.days[lastWeek.days.length - 1]?.day;

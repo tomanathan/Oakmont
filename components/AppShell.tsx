@@ -7,6 +7,7 @@ import { BrandMark } from "./BrandMark";
 import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
 import { PET_NAME, type PetStage } from "@/lib/pet";
+import { dedupedFetchJson } from "@/lib/dedupeFetch";
 
 const STAGE_PILL: Record<PetStage, string> = {
   thriving: "bg-[#eaf6ef] border-[#cde8d9] text-[#2f6f4f]",
@@ -27,10 +28,20 @@ export function AppShell({
   email,
   stats,
   children,
+  wide = false,
 }: {
   email: string;
   stats?: { currentStreak: number };
   children: React.ReactNode;
+  // The lesson page's own content column was measuring ~42 characters per
+  // line at desktop widths -- narrower than the same page on a phone --
+  // because its two fixed-width side rails (a subskill outline, a tips
+  // panel) were eating most of the shared 900px page width, leaving very
+  // little for the actual reading surface. Opt-in rather than widening
+  // every page: the dashboard/plan/analysis/settings layouts were designed
+  // and look right at 900px, so only pages that specifically need the extra
+  // room ask for it.
+  wide?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -45,8 +56,7 @@ export function AppShell({
   // actually re-running this effect (it doesn't, reliably).
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/pet/state")
-      .then((r) => (r.ok ? r.json() : null))
+    dedupedFetchJson<{ stage: PetStage; costume: string | null }>("/api/pet/state")
       .then((data) => {
         if (!cancelled && data?.stage) {
           setPet({ stage: data.stage, costume: data.costume && data.costume !== "none" ? data.costume : null });
@@ -81,7 +91,7 @@ export function AppShell({
   }
 
   return (
-    <div className="max-w-[900px] mx-auto px-4 pb-12 pt-2 font-sans">
+    <div className={`${wide ? "max-w-[1180px]" : "max-w-[900px]"} mx-auto px-4 pb-12 pt-2 font-sans`}>
       <header className="flex items-center justify-between gap-3 py-2 px-4 bg-white rounded-xl shadow-[0_1px_2px_rgba(26,26,46,0.04),0_6px_20px_rgba(26,26,46,0.05)] border border-stone-200 mb-4 flex-wrap">
         <div className="flex items-center gap-2.5 min-w-0">
           <BrandMark size={28} />

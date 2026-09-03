@@ -3,6 +3,8 @@
 // go a full week without one. Kept separate from the UI and the cron route
 // so the rules are easy to see and test in one place.
 
+import { utcDayDiff } from "./dateOnly";
+
 export const PET_NAME = "Ozho";
 export const PET_DEATH_DAYS = 7;
 export const PET_WARNING_DAYS = 5;
@@ -15,15 +17,8 @@ export interface PetState {
   message: string;
 }
 
-function startOfDay(d: Date): Date {
-  const c = new Date(d);
-  c.setHours(0, 0, 0, 0);
-  return c;
-}
-
 function daysBetween(from: Date, to: Date): number {
-  const msPerDay = 24 * 60 * 60 * 1000;
-  return Math.floor((startOfDay(to).getTime() - startOfDay(from).getTime()) / msPerDay);
+  return utcDayDiff(from, to);
 }
 
 // Starting a new pet is itself a fresh start: its hunger clock should never

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { sectionTheme } from "@/lib/sectionTheme";
 import { StarRating } from "@/components/StarRating";
+import { formatUTCDate } from "@/lib/dateOnly";
 import type { DomainMastery } from "@/lib/mastery";
 
 interface DomainCount {
@@ -37,6 +38,11 @@ export function AnalysisClient({
 }) {
   const router = useRouter();
   const [formOpen, setFormOpen] = useState(tests.length === 0);
+  // Which logged test (if any) the form is currently editing, rather than
+  // creating a new one -- null means the form is in "log a new test" mode.
+  const [editingTest, setEditingTest] = useState<Test | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState("");
   const latest = tests[0] ?? null;
   const previous = tests[1] ?? null;
 
@@ -47,13 +53,40 @@ export function AnalysisClient({
     if (formOpen) window.scrollTo({ top: 0, behavior: "smooth" });
   }, [formOpen]);
 
+  function startEdit(t: Test) {
+    setDeletingId(null);
+    setEditingTest(t);
+    setFormOpen(true);
+  }
+
+  function closeForm() {
+    setFormOpen(false);
+    setEditingTest(null);
+  }
+
+  async function confirmDelete(id: string) {
+    setDeleteError("");
+    try {
+      const res = await fetch(`/api/practice-tests/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setDeleteError(data.error || "Couldn't delete. Please try again.");
+        return;
+      }
+      setDeletingId(null);
+      router.refresh();
+    } catch {
+      setDeleteError("Couldn't reach the server. Please try again.");
+    }
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
         <div className="text-xl font-bold text-ink">Practice exam analysis</div>
         {tests.length > 0 && (
           <button
-            onClick={() => setFormOpen((v) => !v)}
+            onClick={() => (formOpen ? closeForm() : setFormOpen(true))}
             className="px-3.5 py-2 rounded-lg border border-[#e0defa] bg-[#f0eff9] text-gray-700 text-sm font-medium hover:border-[#c9c6ee]"
           >
             {formOpen ? "Cancel" : "+ Log a practice test"}
@@ -67,11 +100,13 @@ export function AnalysisClient({
       {formOpen && (
         <SubmitTestForm
           domains={domains}
+          editing={editingTest}
           bestComposite={tests.length > 0 ? Math.max(...tests.map((t) => t.compositeScore)) : null}
           onSaved={() => {
-            setFormOpen(false);
+            closeForm();
             router.refresh();
           }}
+          onCancel={closeForm}
         />
       )}
 
@@ -141,28 +176,60 @@ export function AnalysisClient({
             })}
           </div>
 
-          {tests.length > 1 && (
+          {tests.length > 0 && (
             <div>
               <div className="text-sm font-semibold text-ink mb-3">History</div>
+              {deleteError && <div className="text-red-700 text-sm mb-2">{deleteError}</div>}
               <div className="flex flex-col gap-1.5">
                 {tests.map((t) => (
                   <div
                     key={t.id}
-                    className="flex items-center justify-between px-3.5 py-2.5 border border-[#ece9f7] bg-white rounded-[10px] text-sm"
+                    className="flex items-center justify-between gap-3 px-3.5 py-2.5 border border-[#ece9f7] bg-white rounded-[10px] text-sm"
                   >
-                    <span className="text-gray-500">
-                      {new Date(t.takenAt).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                    <span className="text-gray-500 whitespace-nowrap">
+                      {formatUTCDate(t.takenAt, { year: "numeric", month: "short", day: "numeric" })}
                     </span>
-                    <span className="text-ink font-semibold">
+                    <span className="text-ink font-semibold flex-1 text-right">
                       {t.compositeScore}{" "}
                       <span className="text-gray-400 font-normal">
                         ({t.rwScore} R&amp;W · {t.mathScore} Math)
                       </span>
                     </span>
+                    {deletingId === t.id ? (
+                      <span className="flex items-center gap-1.5 whitespace-nowrap">
+                        <span className="text-xs text-gray-500">Delete this?</span>
+                        <button
+                          onClick={() => confirmDelete(t.id)}
+                          className="text-xs font-semibold text-red-700 hover:underline"
+                        >
+                          Yes
+                        </button>
+                        <button
+                          onClick={() => setDeletingId(null)}
+                          className="text-xs text-gray-500 hover:underline"
+                        >
+                          No
+                        </button>
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2.5 whitespace-nowrap">
+                        <button
+                          onClick={() => startEdit(t)}
+                          className="text-xs text-gray-400 hover:text-ink hover:underline"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => {
+                            setDeleteError("");
+                            setDeletingId(t.id);
+                          }}
+                          className="text-xs text-gray-400 hover:text-red-700 hover:underline"
+                        >
+                          Delete
+                        </button>
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
@@ -252,27 +319,43 @@ function DomainBar({
 
 function SubmitTestForm({
   domains,
+  editing,
   bestComposite,
   onSaved,
+  onCancel,
 }: {
   domains: DomainInfo[];
+  // The test being edited, or null when logging a brand-new one.
+  editing: Test | null;
   // The highest composite logged so far (null if this is the first test) --
-  // used only to decide how big a deal to make of this one via Ozho's
-  // "ozho:celebrate" event once it saves.
+  // used only to decide how big a deal to make of a new save via Ozho's
+  // "ozho:celebrate" event. Not consulted when editing an existing test --
+  // correcting a typo isn't a fresh achievement.
   bestComposite: number | null;
   onSaved: () => void;
+  onCancel: () => void;
 }) {
-  const [takenAt, setTakenAt] = useState(new Date().toISOString().slice(0, 10));
-  const [composite, setComposite] = useState("");
-  const [rw, setRw] = useState("");
-  const [math, setMath] = useState("");
+  const [takenAt, setTakenAt] = useState(
+    editing ? editing.takenAt.slice(0, 10) : new Date().toISOString().slice(0, 10)
+  );
+  const [composite, setComposite] = useState(editing ? String(editing.compositeScore) : "");
+  const [rw, setRw] = useState(editing ? String(editing.rwScore) : "");
+  const [math, setMath] = useState(editing ? String(editing.mathScore) : "");
   // One "correct" and one "total" text field per domain -- mirrors exactly
   // what Bluebook's own score report shows next to each domain's bar (e.g.
   // "11/13"), so filling this in is copying two numbers off the screen
   // rather than doing mental percentage math from a list of missed
   // questions.
-  const [correct, setCorrect] = useState<Record<string, string>>({});
-  const [total, setTotal] = useState<Record<string, string>>({});
+  const [correct, setCorrect] = useState<Record<string, string>>(() =>
+    editing
+      ? Object.fromEntries(Object.entries(editing.domainCounts).map(([k, v]) => [k, String(v.correct)]))
+      : {}
+  );
+  const [total, setTotal] = useState<Record<string, string>>(() =>
+    editing
+      ? Object.fromEntries(Object.entries(editing.domainCounts).map(([k, v]) => [k, String(v.total)]))
+      : {}
+  );
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -294,37 +377,49 @@ function SubmitTestForm({
       cleanDomainCounts[d.domain] = { correct: cNum, total: tNum };
     }
 
+    const compositeNum = Number(composite);
+    const rwNum = Number(rw);
+    const mathNum = Number(math);
+    if (rwNum + mathNum !== compositeNum) {
+      setError("Reading & Writing + Math must add up to the composite score.");
+      return;
+    }
+
     setSaving(true);
     try {
-      const res = await fetch("/api/practice-tests", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          takenAt,
-          compositeScore: Number(composite),
-          rwScore: Number(rw),
-          mathScore: Number(math),
-          domainCounts: cleanDomainCounts,
-        }),
-      });
+      const res = await fetch(
+        editing ? `/api/practice-tests/${editing.id}` : "/api/practice-tests",
+        {
+          method: editing ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            takenAt,
+            compositeScore: compositeNum,
+            rwScore: rwNum,
+            mathScore: mathNum,
+            domainCounts: cleanDomainCounts,
+          }),
+        }
+      );
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Couldn't save. Please try again.");
         return;
       }
-      // A logged full-length test is a big enough milestone on its own to
-      // be worth Ozho's trick every time -- a new best composite gets the
-      // bigger burst, same as the in-quiz celebrations.
-      const newComposite = Number(composite);
-      const isNewBest = bestComposite === null || newComposite > bestComposite;
-      window.dispatchEvent(
-        new CustomEvent("ozho:celebrate", {
-          detail: {
-            message: isNewBest ? `New best composite: ${newComposite}!` : "Practice test logged!",
-            tier: isNewBest ? "big" : "small",
-          },
-        })
-      );
+      if (!editing) {
+        // A logged full-length test is a big enough milestone on its own to
+        // be worth Ozho's trick every time -- a new best composite gets the
+        // bigger burst, same as the in-quiz celebrations.
+        const isNewBest = bestComposite === null || compositeNum > bestComposite;
+        window.dispatchEvent(
+          new CustomEvent("ozho:celebrate", {
+            detail: {
+              message: isNewBest ? `New best composite: ${compositeNum}!` : "Practice test logged!",
+              tier: isNewBest ? "big" : "small",
+            },
+          })
+        );
+      }
       onSaved();
     } catch {
       setError("Couldn't reach the server. Please try again.");
@@ -335,7 +430,9 @@ function SubmitTestForm({
 
   return (
     <form onSubmit={submit} className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-8">
-      <div className="text-[15px] font-semibold text-ink mb-4">Log a practice test</div>
+      <div className="text-[15px] font-semibold text-ink mb-4">
+        {editing ? "Edit practice test" : "Log a practice test"}
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-3.5">
         <div>
@@ -354,6 +451,7 @@ function SubmitTestForm({
             type="number"
             min={400}
             max={1600}
+            step={10}
             value={composite}
             onChange={(e) => setComposite(e.target.value)}
             required
@@ -366,6 +464,7 @@ function SubmitTestForm({
             type="number"
             min={200}
             max={800}
+            step={10}
             value={rw}
             onChange={(e) => setRw(e.target.value)}
             required
@@ -378,12 +477,17 @@ function SubmitTestForm({
             type="number"
             min={200}
             max={800}
+            step={10}
             value={math}
             onChange={(e) => setMath(e.target.value)}
             required
             className="w-full px-3 py-2.5 rounded-lg border border-[#e0defa] text-sm focus:outline-none focus:border-[#6d7fd6]"
           />
         </div>
+      </div>
+      <div className="text-xs text-gray-400 mb-3.5 -mt-2">
+        Reading &amp; Writing and Math must add up to the composite &mdash; that's how the real score
+        report works too.
       </div>
 
       <div className="text-sm text-gray-700 mb-1">
@@ -424,13 +528,24 @@ function SubmitTestForm({
 
       {error && <div className="text-red-700 text-sm mb-3">{error}</div>}
 
-      <button
-        type="submit"
-        disabled={saving}
-        className="px-4 py-2.5 rounded-lg bg-ink text-white font-semibold text-sm disabled:opacity-60"
-      >
-        {saving ? "Saving..." : "Save results"}
-      </button>
+      <div className="flex items-center gap-2.5">
+        <button
+          type="submit"
+          disabled={saving}
+          className="px-4 py-2.5 rounded-lg bg-ink text-white font-semibold text-sm disabled:opacity-60"
+        >
+          {saving ? "Saving..." : editing ? "Save changes" : "Save results"}
+        </button>
+        {editing && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2.5 rounded-lg border border-[#e0defa] text-gray-600 font-medium text-sm hover:border-[#c9c6ee]"
+          >
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
   );
 }

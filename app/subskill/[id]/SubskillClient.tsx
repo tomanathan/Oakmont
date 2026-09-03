@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Subskill, Pattern } from "@/data/curriculum";
 import type { Question } from "@/data/questions";
@@ -68,6 +68,11 @@ export function SubskillClient({
   useEffect(() => {
     setQuizQuestions(questions.map(shuffleChoices));
   }, [questions, shuffleSeed]);
+
+  // One entry per quiz question card, so an incomplete submission can jump
+  // straight to the first one that's still unanswered instead of leaving
+  // the student to hunt for it across a long, multi-screen scroll.
+  const questionRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Same idea for the lesson's worked examples, shuffled once per page
   // visit (not on every navigation between examples) -- exampleSelections
@@ -146,7 +151,16 @@ export function SubskillClient({
 
   async function submitQuiz() {
     if (Object.keys(answers).length < quizQuestions.length) {
-      setErrorMsg("Answer every question before submitting.");
+      const firstUnanswered = quizQuestions.findIndex((_, i) => answers[i] === undefined);
+      setErrorMsg("Answer every question before submitting -- jumped you to the first one left.");
+      const el = questionRefs.current[firstUnanswered];
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        // Land keyboard focus on the actual answer choices, not just the
+        // card -- a student tabbing from here goes straight into the
+        // question they still need to answer.
+        (el.querySelector('[role="radio"]') as HTMLElement | null)?.focus();
+      }
       return;
     }
     const score = quizQuestions.reduce((acc, q, i) => acc + (answers[i] === q.answer ? 1 : 0), 0);
@@ -494,9 +508,15 @@ export function SubskillClient({
               No practice questions are available for this subskill yet.
             </div>
           )}
+          {!submitted && quizQuestions.length > 0 && (
+            <QuizProgress answeredCount={Object.keys(answers).length} total={quizQuestions.length} />
+          )}
           {quizQuestions.map((q, i) => (
             <div
               key={i}
+              ref={(el) => {
+                questionRefs.current[i] = el;
+              }}
               className="bg-white border border-[#ece9f7] shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-5 mb-3.5"
             >
               <div className="flex items-start justify-between gap-3 mb-3">
@@ -558,6 +578,30 @@ export function SubskillClient({
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+// A long quiz (some run to 15-20+ questions) previously gave no sense of
+// how far along you were or how much was left -- just a stack of cards and
+// a submit button many screens down. Sticky so it stays visible while
+// scrolling through the questions themselves.
+function QuizProgress({ answeredCount, total }: { answeredCount: number; total: number }) {
+  const pct = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
+  return (
+    <div className="sticky top-2 z-10 bg-white/95 backdrop-blur-sm border border-[#ece9f7] rounded-lg px-3.5 py-2 mb-3.5 shadow-[0_1px_2px_rgba(26,26,46,0.03)]">
+      <div className="flex justify-between items-baseline mb-1">
+        <span className="text-xs font-semibold text-ink">
+          {answeredCount} of {total} answered
+        </span>
+        <span className="text-xs text-gray-400">{pct}%</span>
+      </div>
+      <div className="h-1.5 bg-[#f0eff9] rounded-md overflow-hidden">
+        <div
+          className="h-full bg-[#6d7fd6] transition-all duration-300 ease-out"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
     </div>
   );
 }

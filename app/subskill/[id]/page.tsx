@@ -17,7 +17,7 @@ export default async function SubskillPage({ params }: { params: { id: string } 
   const stats = await getUserStats(user.userId);
 
   return (
-    <AppShell email={user.email} stats={stats}>
+    <AppShell email={user.email} stats={stats} wide>
       <SubskillClient subskill={sub} questions={questions} />
     </AppShell>
   );

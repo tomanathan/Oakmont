@@ -2,10 +2,6 @@
 // daily practice streak. Kept separate from the API route so the rules are
 // easy to see and test in one place.
 
-export function justReachedMastery(previousBest: number, newBest: number, total: number): boolean {
-  return total > 0 && newBest === total && previousBest !== total;
-}
-
 function dateKey(d: Date): string {
   return d.toISOString().slice(0, 10); // UTC calendar day, e.g. "2026-08-23"
 }

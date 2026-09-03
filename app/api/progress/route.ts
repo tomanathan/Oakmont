@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { getSubskill, ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
-import { justReachedMastery, updateStreak, isStreakMilestone } from "@/lib/gamification";
+import { QUESTIONS } from "@/data/questions";
+import { updateStreak, isStreakMilestone } from "@/lib/gamification";
 import {
   computeDomainMastery,
   completedDomainCount,
@@ -50,12 +51,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const { subskillId, score, total } = body;
+  const { subskillId, score } = body;
   const subskill = subskillId ? getSubskill(subskillId) : null;
   if (!subskillId || !subskill) {
     return NextResponse.json({ error: "Unknown subskill." }, { status: 400 });
   }
-  if (typeof score !== "number" || typeof total !== "number" || total <= 0 || score < 0 || score > total) {
+  // The real question count for this subskill, from the curriculum data --
+  // never the client's `total`. Trusting a client-supplied total let a
+  // request claim any score against any total (e.g. 999/999), and separately
+  // meant a bestScore from one quiz length could get compared against a
+  // different one, corrupting mastery -- see the ratio comparison below.
+  const realTotal = QUESTIONS[subskillId]?.length ?? 0;
+  if (realTotal <= 0) {
+    return NextResponse.json({ error: "This subskill has no quiz yet." }, { status: 400 });
+  }
+  if (typeof score !== "number" || !Number.isInteger(score) || score < 0 || score > realTotal) {
     return NextResponse.json({ error: "Invalid score data." }, { status: 400 });
   }
 
@@ -64,24 +74,37 @@ export async function POST(req: NextRequest) {
   // down), rather than querying progress twice.
   const rowsBefore = await prisma.progress.findMany({ where: { userId: user.userId } });
   const existing = rowsBefore.find((r) => r.subskillId === subskillId);
-  const previousBest = existing?.bestScore ?? 0;
-  const newBest = Math.max(previousBest, score);
+
+  // Compare by RATIO, not raw score -- a subskill's question count can
+  // change between attempts (the question bank grows), and a prior
+  // bestScore belongs to whatever total was current *then*. Comparing raw
+  // scores across two different totals (e.g. keeping an old "15" against a
+  // new quiz's total of 10) used to let bestScore exceed total outright,
+  // permanently blocking `bestScore === total` from ever being true again --
+  // i.e. the student could never re-master that subskill. bestScore and
+  // total are now always written together, from the same attempt.
+  const previousRatio = existing ? existing.bestScore / existing.total : 0;
+  const newRatio = score / realTotal;
+  const thisAttemptIsNewBest = newRatio >= previousRatio;
+  const newBest = thisAttemptIsNewBest ? score : existing!.bestScore;
+  const bestTotal = thisAttemptIsNewBest ? realTotal : existing!.total;
 
   const progressResult = existing
     ? await prisma.progress.update({
         where: { userId_subskillId: { userId: user.userId, subskillId } },
         data: {
           bestScore: newBest,
-          total,
+          total: bestTotal,
           attempts: existing.attempts + 1,
           lastAttempt: new Date(),
         },
       })
     : await prisma.progress.create({
-        data: { userId: user.userId, subskillId, bestScore: score, total, attempts: 1 },
+        data: { userId: user.userId, subskillId, bestScore: score, total: realTotal, attempts: 1 },
       });
 
-  const justMastered = justReachedMastery(previousBest, newBest, total);
+  const wasMastered = previousRatio >= 1;
+  const justMastered = !wasMastered && newBest === bestTotal;
 
   // Did this submission just finish an entire domain ("section" in the
   // dashboard's language) -- every subskill in it now at a perfect score --
@@ -93,7 +116,7 @@ export async function POST(req: NextRequest) {
   // completed-domain count into a new wardrobe tier.
   const progressBefore: ProgressMap = {};
   for (const row of rowsBefore) progressBefore[row.subskillId] = { bestScore: row.bestScore, total: row.total };
-  const progressAfter: ProgressMap = { ...progressBefore, [subskillId]: { bestScore: newBest, total } };
+  const progressAfter: ProgressMap = { ...progressBefore, [subskillId]: { bestScore: newBest, total: bestTotal } };
 
   const masteryBefore = computeDomainMastery(ALL_DOMAINS, SUBSKILLS_BY_DOMAIN, progressBefore, null);
   const masteryAfter = computeDomainMastery(ALL_DOMAINS, SUBSKILLS_BY_DOMAIN, progressAfter, null);

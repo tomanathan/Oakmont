@@ -1,6 +1,13 @@
+import { utcDayDiff } from "./dateOnly";
+
 /** Default study plan length (26 weeks) when a student hasn't set a target SAT date. */
 export const DEFAULT_COURSE_LENGTH_DAYS = 26 * 7;
-export const MIN_COURSE_LENGTH_DAYS = 4 * 7;
+// Not a floor on the plan's actual length (see clampCourseLengthDays) --
+// used only to decide when a *real* target date leaves a tight enough
+// runway to warn the student about, e.g. on the plan page. A genuine 10-day
+// runway must produce a genuine 10-day plan; inflating it to 4 weeks would
+// schedule content past the actual exam date.
+export const TIGHT_TIMELINE_DAYS = 4 * 7;
 export const MAX_COURSE_LENGTH_DAYS = 52 * 7;
 
 export interface Pacing {
@@ -17,11 +24,15 @@ export interface Pacing {
 
 /**
  * Clamps a raw day count (e.g. days between account creation and a target
- * SAT date) into a sane course length: at least 4 weeks (cramming is still a
- * plan), at most a year.
+ * SAT date) into a sane course length: always at least one day (a plan
+ * can't have zero or negative length), at most a year. Deliberately does
+ * NOT enforce a minimum on the high side -- a target date 10 days out is a
+ * real 10-day plan. Inflating it to a longer default would schedule study
+ * days (and full-length practice tests) past the actual exam date while
+ * telling the student the plan is "paced to finish exactly by then."
  */
 export function clampCourseLengthDays(days: number): number {
-  return Math.min(MAX_COURSE_LENGTH_DAYS, Math.max(MIN_COURSE_LENGTH_DAYS, Math.round(days)));
+  return Math.min(MAX_COURSE_LENGTH_DAYS, Math.max(1, Math.round(days)));
 }
 
 /**
@@ -35,24 +46,14 @@ export function courseLengthDaysForUser(
   now: Date = new Date()
 ): number {
   if (!targetTestDate) return DEFAULT_COURSE_LENGTH_DAYS;
-  const msPerDay = 24 * 60 * 60 * 1000;
-  const daysUntilTest = Math.ceil(
-    (startOfDay(targetTestDate).getTime() - startOfDay(createdAt).getTime()) / msPerDay
-  );
+  const daysUntilTest = utcDayDiff(createdAt, targetTestDate);
   return clampCourseLengthDays(daysUntilTest);
-}
-
-function startOfDay(d: Date): Date {
-  const c = new Date(d);
-  c.setHours(0, 0, 0, 0);
-  return c;
 }
 
 /** Whole calendar days remaining until the target SAT date, or null if none is set. */
 export function daysUntilTest(targetTestDate: Date | null, now: Date = new Date()): number | null {
   if (!targetTestDate) return null;
-  const msPerDay = 24 * 60 * 60 * 1000;
-  return Math.round((startOfDay(targetTestDate).getTime() - startOfDay(now).getTime()) / msPerDay);
+  return utcDayDiff(now, targetTestDate);
 }
 
 /**
@@ -68,10 +69,7 @@ export function computePacing(
   completedUnits: number,
   courseLengthDays: number = DEFAULT_COURSE_LENGTH_DAYS
 ): Pacing {
-  const msPerDay = 24 * 60 * 60 * 1000;
-  const daysElapsed = Math.floor(
-    (startOfDay(now).getTime() - startOfDay(startDate).getTime()) / msPerDay
-  );
+  const daysElapsed = utcDayDiff(startDate, now);
   const dayOfCourse = Math.min(courseLengthDays, Math.max(1, daysElapsed + 1));
   const expectedUnits = (dayOfCourse / courseLengthDays) * totalUnits;
   const pctExpected = (dayOfCourse / courseLengthDays) * 100;
@@ -84,7 +82,12 @@ export function computePacing(
     completedUnits,
     dayOfCourse,
     totalDays: courseLengthDays,
-    totalWeeks: Math.max(1, Math.round(courseLengthDays / 7)),
+    // Math.ceil, not round -- must match the week count the plan pages
+    // actually build the grid with (Math.ceil(courseLengthDays / 7) in
+    // app/plan/page.tsx and app/dashboard/page.tsx), or the last week can
+    // read "Week 28 of 27" once totalWeeks rounds down where the grid
+    // rounded up.
+    totalWeeks: Math.max(1, Math.ceil(courseLengthDays / 7)),
     pctExpected,
     pctComplete,
     unitsAhead: Math.round(diff),

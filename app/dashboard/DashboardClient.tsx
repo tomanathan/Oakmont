@@ -86,7 +86,7 @@ export function DashboardClient({
         >
           <div className="min-w-0">
             <div className="text-[10px] font-semibold uppercase tracking-wide text-white/60 mb-0.5">
-              Jump back in
+              {completedCount > 0 ? "Jump back in" : "Start here"}
             </div>
             <div className="text-[15px] font-semibold truncate">{recommended.label}</div>
           </div>

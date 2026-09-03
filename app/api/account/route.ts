@@ -5,6 +5,7 @@ import { SESSION_COOKIE_NAME } from "@/lib/auth";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
 import { isCostumeUnlocked } from "@/lib/costumes";
+import { parseDateOnly } from "@/lib/dateOnly";
 
 export async function PATCH(req: NextRequest) {
   const user = await getCurrentUser();
@@ -59,8 +60,11 @@ export async function PATCH(req: NextRequest) {
   if (targetTestDate === null) {
     parsedDate = null;
   } else if (targetTestDate) {
-    const d = new Date(targetTestDate);
-    if (isNaN(d.getTime())) {
+    // parseDateOnly (not `new Date`) so a full datetime string can't sneak
+    // a time-of-day component into a value that's supposed to be a plain
+    // calendar day -- see lib/dateOnly.ts.
+    const d = parseDateOnly(targetTestDate);
+    if (!d) {
       return NextResponse.json({ error: "Invalid test date." }, { status: 400 });
     }
     parsedDate = d;
