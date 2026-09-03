@@ -414,7 +414,9 @@ function SubmitTestForm({
         window.dispatchEvent(
           new CustomEvent("ozho:celebrate", {
             detail: {
-              message: isNewBest ? `New best composite: ${compositeNum}!` : "Practice test logged!",
+              message: isNewBest
+                ? `New personal best: ${compositeNum}! I knew you had it in you.`
+                : "Test logged! That's one more data point in your favor.",
               tier: isNewBest ? "big" : "small",
             },
           })

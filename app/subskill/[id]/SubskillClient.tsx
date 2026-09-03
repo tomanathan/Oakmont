@@ -189,17 +189,17 @@ export function SubskillClient({
         // milestone lands) -- only the single most significant one is
         // actually shown, biggest first, rather than stacking messages.
         const celebration: { message: string; tier: "small" | "big" } | null = data.streakMilestone
-          ? { message: `🔥 ${data.currentStreak}-day streak! You're on fire.`, tier: "big" }
+          ? { message: `🔥 ${data.currentStreak} days straight?! You're unstoppable.`, tier: "big" }
           : data.justCompletedCurriculum
-          ? { message: "You've mastered the entire curriculum! Incredible work.", tier: "big" }
+          ? { message: "You did it — the WHOLE curriculum. Best trick I know, just for this.", tier: "big" }
           : data.justCompletedSection
-          ? { message: `${data.justCompletedSection} complete! Every domain mastered.`, tier: "big" }
+          ? { message: `${data.justCompletedSection}: fully mastered, every domain. That's huge.`, tier: "big" }
           : data.newCostume
-          ? { message: `${data.justCompletedDomain} complete! New outfit: ${data.newCostume.name}!`, tier: "big" }
+          ? { message: `${data.justCompletedDomain}: mastered! And look what that unlocked — the ${data.newCostume.name}.`, tier: "big" }
           : data.justCompletedDomain
-          ? { message: `${data.justCompletedDomain} complete!`, tier: "small" }
+          ? { message: `${data.justCompletedDomain}: mastered! On to the next one.`, tier: "small" }
           : data.justMastered
-          ? { message: `${subskill.name} mastered!`, tier: "small" }
+          ? { message: `${subskill.name}: mastered! Nice work.`, tier: "small" }
           : null;
         if (celebration) {
           window.dispatchEvent(new CustomEvent("ozho:celebrate", { detail: celebration }));

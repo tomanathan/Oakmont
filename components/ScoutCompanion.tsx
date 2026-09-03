@@ -7,29 +7,46 @@ import { MOOD_BY_STAGE } from "./PetAvatar";
 import type { PetStage } from "@/lib/pet";
 import { dedupedFetchJson } from "@/lib/dedupeFetch";
 
-// Kept warm and low-pressure on purpose -- Ozho is a companion, not a
-// nag. Even the "hungry"/"critical" pool below invites rather than
-// guilt-trips, regardless of how urgent the pet-death countdown actually is.
+// Ozho's whole voice, in one place. The character: an enthusiastic,
+// slightly goofy study buddy who treats prep like something the two of you
+// are doing together, not a chore he's supervising -- warm and a little
+// funny rather than a flat "good job" narrator, but never so jokey it
+// drowns out the actual encouragement. Kept warm and low-pressure on
+// purpose -- Ozho is a companion, not a nag. Even the "hungry"/"critical"
+// pool below invites rather than guilt-trips, regardless of how urgent the
+// pet-death countdown actually is.
+//
 // Kept free of anything presupposing a *return* visit (no "good to see you
 // back," "welcome back," etc.) -- this same pool is what plays on a brand
 // new account's very first session, seconds after signing up, so nothing
-// here can be wrong the first time it's ever said.
+// here can be wrong the first time it's ever said. It's also what plays
+// every time you click him while he's awake, so it has to hold up as a
+// repeatable "you got my attention" line, not just a first hello.
 const GREETINGS = [
-  "Woof! Good to see you.",
+  "Woof! Tail's already wagging.",
   "Hey there — ready when you are.",
+  "Oh, hi! Perfect timing.",
   "I'm rooting for you today.",
+  "You rang? Let's do this.",
+  "Hi! Nudge me anytime, I don't mind.",
 ];
+// The general-purpose ambient pool -- fires when there's no page-specific
+// line to reach for (see PAGE_LINES below) or the roll just lands here.
+// Genuine encouragement first, personality second.
 const ENCOURAGEMENTS = [
-  "Every problem you solve makes test day easier.",
-  "Small steps count — even one quiz helps.",
-  "Proud of you for showing up today.",
-  "Take a breather if you need one, I'll be here.",
-  "You've got this, one question at a time.",
+  "Every problem you crack makes test day a little less scary.",
+  "Small steps still count — one quiz is still a win.",
+  "Proud of you for showing up today. That's most of the battle.",
+  "Take a breather if you need one — I'm not going anywhere.",
+  "One question at a time. That's the whole trick.",
+  "You don't have to be perfect today. Just a little better than yesterday.",
+  "I believe in you more than I believe in squirrels being fast.",
 ];
 const NUDGES = [
-  "I'd love a little study time together today.",
-  "No pressure — even five minutes helps.",
-  "Whenever you're ready, I'll come along.",
+  "I'd love a little study time with you today, if you've got a minute.",
+  "No pressure at all — even five minutes counts.",
+  "Whenever you're ready, I'll come along for the ride.",
+  "A quick quiz would make my tail very happy.",
 ];
 // What he says if you click him awake -- distinct from the normal
 // click-to-greet pool so waking him up actually feels like waking him up.
@@ -37,21 +54,90 @@ const SLEEPY_WAKE_PHRASES = [
   "*yawn* ...oh, hi!",
   "Huh? Oh — welcome back!",
   "Mmm... must've dozed off. Hi!",
+  "*stretch* Okay, okay, I'm up!",
+  "Wha— oh, it's you! Perfect timing.",
 ];
 // What he says while doing his trick -- fired by a window "ozho:celebrate"
 // event (mastering a subskill, a streak milestone, unlocking a wardrobe
-// costume). A caller can pass its own message via the event detail instead;
-// this is just the fallback when none is given.
-const CELEBRATION_PHRASES = ["Woo! Nailed it!", "Watch this!", "Yes!! Let's go!", "That's how it's done!"];
-const TIPS = [
-  "You can retake any quiz from its subskill page to reinforce it.",
-  "Set your target test date in Settings and your whole plan resizes to fit.",
-  "Missed a question? Read the explanation before moving on — it sticks better.",
-  "All 8 practice tests are spaced through your plan, not just at the end.",
-  "Check Practice exam analysis to see your score trend by subject.",
-  "A few minutes a day beats one long cram session.",
-  "Click a week on the 6-month plan to see it broken down day by day.",
+// costume). A caller can pass its own message via the event detail instead
+// (most do, and are written in this same voice -- see SubskillClient.tsx,
+// AnalysisClient.tsx, SettingsClient.tsx); this is just the fallback when
+// none is given.
+const CELEBRATION_PHRASES = [
+  "Woo! Nailed it!",
+  "Watch this!",
+  "Yes!! Let's go!",
+  "That's how it's done!",
+  "Okay, THAT deserved a spin.",
+  "Did you see that?! I mean — did YOU see what you just did?",
 ];
+// Cross-cutting reminders that hold up no matter where he says them.
+// Anything specific enough to only make sense on one page lives in
+// PAGE_LINES instead, below.
+const TIPS = [
+  "You can retake any quiz to lock in what you learned.",
+  "Missed one? Read the explanation before moving on — it really does stick better.",
+  "A few minutes today beats one big cram session later.",
+  "Every practice test earns a real spot in your plan — none of it's just for show.",
+];
+
+// One line-pool per page, so what he says while nav-speak fires (see the
+// pathname effect below) is actually ABOUT where the student just landed --
+// "let's dig into this one" on a lesson, "click a week to see what's
+// coming" on the plan -- instead of the same wherever-you-are filler on
+// every screen. pickMessage() below also folds these into its ambient rolls
+// while sitting on that page, not just on arrival.
+type PageKind = "dashboard" | "plan" | "analysis" | "subskill" | "settings";
+
+const PAGE_LINES: Record<PageKind, string[]> = {
+  dashboard: [
+    "Your plan's lined up for today — let's knock it out.",
+    "One quiz at a time. I'll be right here.",
+    "Today's a good day to get a little better than yesterday.",
+    "Curious how your practice tests are trending? Analysis has the full story.",
+  ],
+  plan: [
+    "This is the whole road to test day — one week at a time.",
+    "Click into any week to see it broken down day by day.",
+    "All your practice tests are already scheduled in here, spaced out on purpose.",
+    "Every week you finish here is one less thing to worry about later.",
+  ],
+  analysis: [
+    "Let's see how you're trending.",
+    "Every test you log here is a clue about where to focus next.",
+    "Numbers don't lie — and yours are worth a look.",
+    "A rough practice test just means we now know exactly what to fix.",
+  ],
+  subskill: [
+    "Alright, let's dig into this one.",
+    "Read close — the trick's usually hiding in the details.",
+    "Take your time. I'm not timing you, promise.",
+    "You've got this. I'll be cheering from right here.",
+  ],
+  settings: [
+    "Set a target date here and your whole plan resizes to fit it.",
+    "Go on, dress me up. I really don't mind.",
+    "A clear goal makes the whole plan make more sense.",
+  ],
+};
+
+function pageKindFor(pathname: string | null): PageKind | null {
+  if (!pathname) return null;
+  if (pathname.startsWith("/dashboard")) return "dashboard";
+  if (pathname.startsWith("/plan")) return "plan";
+  if (pathname.startsWith("/analysis")) return "analysis";
+  if (pathname.startsWith("/subskill")) return "subskill";
+  if (pathname.startsWith("/settings")) return "settings";
+  return null;
+}
+
+function streakLines(n: number): string[] {
+  return [
+    `${n}-day streak?! Look at you go.`,
+    `${n} days in a row — I'm impressed.`,
+    `Still going strong at ${n} days. Love it.`,
+  ];
+}
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -148,7 +234,7 @@ const BEHIND_TEXT_SPEED_MULT = 1.8;
 // and dashes back, and how much faster that dash is than his normal pace.
 const OUT_OF_VIEW_MARGIN = 40;
 const RETURN_SPEED_MULT = 2.1;
-const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave me behind!"];
+const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave me behind!", "Hold on, I'm coming!"];
 
 // Talking is now mostly reactive (a new page = a new problem, or new
 // results to react to) rather than on a chatty ambient timer. The ambient
@@ -156,12 +242,15 @@ const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave
 // during a long stretch on one page, but it's deliberately slow and only
 // partly likely to actually fire even when it comes due, so it doesn't
 // read as a metronome.
-const AMBIENT_SPEAK_MIN_MS = 70000;
-const AMBIENT_SPEAK_MAX_MS = 160000;
-const AMBIENT_SPEAK_CHANCE = 0.55;
+const AMBIENT_SPEAK_MIN_MS = 55000;
+const AMBIENT_SPEAK_MAX_MS = 140000;
+const AMBIENT_SPEAK_CHANCE = 0.6;
 // Chance he actually says something after navigating to a new page, and
-// how long he waits first so it reads as a reaction, not a trigger.
-const NAV_SPEAK_CHANCE = 0.75;
+// how long he waits first so it reads as a reaction, not a trigger. Now
+// that nav-speak reaches for a line about the page he actually landed on
+// (see PAGE_LINES above) rather than generic filler, a higher chance still
+// reads as purposeful company instead of noise.
+const NAV_SPEAK_CHANCE = 0.85;
 const NAV_SPEAK_DELAY_MIN_MS = 600;
 const NAV_SPEAK_DELAY_MAX_MS = 1300;
 
@@ -206,6 +295,20 @@ export function ScoutCompanion() {
   const [asleep, setAsleep] = useState(false);
   const [sleepAnim, setSleepAnim] = useState<"none" | "falling" | "waking">("none");
   const [trick, setTrick] = useState(false);
+  // A small hop played whenever he speaks while standing still -- see
+  // speak() below. Deliberately never triggered mid-walk (matches the
+  // existing isWalking-gated inline transform just below in the render
+  // return): stacking a second transform-changing animation on top of the
+  // walk-cycle's own inline transform is exactly the kind of silent
+  // clobbering the bubble's centering bug (see its own comment lower down)
+  // already burned this component on once.
+  const [perk, setPerk] = useState(false);
+  // Toggled on a steady beat while he's standing still and thriving, so the
+  // tail visibly wags rather than just sitting up-and-static -- see the
+  // render loop below and PixelDog's forceTailUp prop. Never touched while
+  // walking (a happy trot already reads as tail-up-and-confident) or for
+  // any less-than-thriving mood (a tired or sad dog shouldn't be wagging).
+  const [wag, setWag] = useState(false);
   const [costume, setCostume] = useState<string | null>(null);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -248,6 +351,14 @@ export function ScoutCompanion() {
   const sleepAnimRef = useRef<"none" | "falling" | "waking">("none");
   const sleepAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const trickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const perkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wagTimerRef = useRef(0);
+  // Mirrors the `wag` state for the render-loop interval to read -- that
+  // callback is set up once (see its own effect's empty dep array) so
+  // reading React state directly inside it would always see the value from
+  // the very first render, not the current one. Same reason asleepRef/
+  // sleepAnimRef exist alongside their own state below.
+  const wagRef = useRef(false);
 
   // One-time setup: pick a starting spot in page coordinates and fetch
   // Ozho's mood. ScoutCompanion is mounted once at the root layout, so
@@ -347,6 +458,7 @@ export function ScoutCompanion() {
       window.removeEventListener("ozho:celebrate", onCelebrate);
       window.removeEventListener("ozho:costume", onCostumeChange);
       if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
+      if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
     };
   }, []);
 
@@ -507,6 +619,16 @@ export function ScoutCompanion() {
     // unrelated line right on top of one that just showed.
     speakAtRef.current =
       Date.now() + AMBIENT_SPEAK_MIN_MS + Math.random() * (AMBIENT_SPEAK_MAX_MS - AMBIENT_SPEAK_MIN_MS);
+    // A little hop of delight to go with the line -- only while he's
+    // actually standing still (see the `perk` state's own comment). A
+    // celebration's own bigger trick+spin plays on top of this via
+    // className priority in the render return, so this never needs to
+    // check for that case itself.
+    if (!walkingRef.current) {
+      if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
+      setPerk(true);
+      perkTimeoutRef.current = setTimeout(() => setPerk(false), 260);
+    }
   }
 
   // The standing and curled-up sprites are different art, not one shape
@@ -568,13 +690,15 @@ export function ScoutCompanion() {
     const s = stageRef.current;
     const roll = Math.random();
     if ((s === "hungry" || s === "critical") && roll < 0.3) return pick(NUDGES);
-    if (streakRef.current >= 2 && (s === "thriving" || s === "content") && roll < 0.25) {
-      return pick([
-        `${streakRef.current}-day streak! Keep it going.`,
-        `Loving this ${streakRef.current}-day streak.`,
-      ]);
+    if (streakRef.current >= 2 && (s === "thriving" || s === "content") && roll < 0.22) {
+      return pick(streakLines(streakRef.current));
     }
-    if (roll < 0.6) return pick(TIPS);
+    // Whatever page he's actually standing on gets first crack at a line --
+    // see PAGE_LINES above. Falls through to the general pools on pages
+    // with no dedicated lines (e.g. /welcome) or when the roll misses.
+    const kind = pageKindFor(pathname);
+    if (kind && roll < 0.55) return pick(PAGE_LINES[kind]);
+    if (roll < 0.8) return pick(TIPS);
     return pick(ENCOURAGEMENTS);
   }
 
@@ -864,6 +988,25 @@ export function ScoutCompanion() {
           setLegFrame((f) => (f === 0 ? 1 : 0));
         }
       } else {
+        // Tail wag: only while standing still and genuinely thriving (see
+        // the `wag` state's own comment) -- toggled on a steady beat rather
+        // than randomly, so it actually reads as a wag instead of a twitch.
+        if (stageRef.current === "thriving") {
+          wagTimerRef.current += dt;
+          if (wagTimerRef.current > 300) {
+            wagTimerRef.current = 0;
+            wagRef.current = !wagRef.current;
+            setWag(wagRef.current);
+          }
+        } else if (wagRef.current || wagTimerRef.current !== 0) {
+          // Left thriving (or started walking again) mid-wag -- reset so
+          // the next time this branch is eligible, it starts clean instead
+          // of resuming mid-beat or picking up a stale half-toggled tail.
+          wagTimerRef.current = 0;
+          wagRef.current = false;
+          setWag(false);
+        }
+
         if (nowMs > behaviorUntilRef.current) {
           beginWalk();
         } else if (Math.random() < 0.003) {
@@ -969,6 +1112,8 @@ export function ScoutCompanion() {
             ? "animate-wake-up"
             : trick
             ? "animate-trick"
+            : perk
+            ? "animate-perk"
             : ""
         }`}
         style={{
@@ -986,6 +1131,7 @@ export function ScoutCompanion() {
           legFrame={isWalking ? legFrame : 0}
           facing={facing}
           costume={costume}
+          forceTailUp={!isWalking && !asleep && stage === "thriving" ? wag : undefined}
         />
       </button>
     </div>

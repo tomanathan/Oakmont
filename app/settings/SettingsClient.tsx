@@ -59,7 +59,17 @@ export function SettingsClient({
           new CustomEvent("ozho:costume", { detail: { costume: id !== "none" ? id : null } })
         );
         window.dispatchEvent(
-          new CustomEvent("ozho:celebrate", { detail: { message: name ? `New look: ${name}!` : "New look!" } })
+          new CustomEvent("ozho:celebrate", {
+            detail: {
+              // COSTUMES itself has a "None" entry (id "none"), so `name`
+              // is truthy even when going back to bare -- can't tell the
+              // two apart by truthiness, has to check the id directly.
+              message:
+                id === "none"
+                  ? "Back to basics. Still handsome, if I do say so."
+                  : `The ${name}? Very me. How do I look?`,
+            },
+          })
         );
         router.refresh();
       }

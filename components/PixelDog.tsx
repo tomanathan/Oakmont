@@ -34,6 +34,7 @@ export function PixelDog({
   dead = false,
   asleep = false,
   costume = null,
+  forceTailUp,
   className = "",
 }: {
   size?: number;
@@ -47,6 +48,14 @@ export function PixelDog({
   // undressed, both to keep the art simple and because neither state is
   // really a "look how far I've come" moment.
   costume?: string | null;
+  // Overrides the mood-based tail pose when given (true = curled up, false
+  // = straight down) instead of deriving it from `mood`. Lets a caller
+  // animate a wag by toggling this over time (see ScoutCompanion's own
+  // `wag` state) using the same two poses the mood-based tail already has,
+  // with no new art needed. Every other caller (PetAvatar, PetCard,
+  // AppShell's header pill) omits this and keeps the original mood-only
+  // behavior.
+  forceTailUp?: boolean;
   className?: string;
 }) {
   const p = dead ? PALETTE_DEAD : PALETTE;
@@ -102,7 +111,7 @@ export function PixelDog({
   // applies to this standing pose (asleep has its own curled-up look
   // above; dead always stays standing).
   const earUp = !dead && (mood === "happy" || mood === "neutral");
-  const tailUp = !dead && mood === "happy";
+  const tailUp = !dead && (forceTailUp !== undefined ? forceTailUp : mood === "happy");
   const showTongue = !dead && mood === "happy";
   const showFrown = dead || mood === "sad";
 
