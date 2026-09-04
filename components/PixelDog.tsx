@@ -30,6 +30,7 @@ export function PixelDog({
   size = 56,
   mood = "neutral",
   legFrame = 0,
+  tailFrame = 0,
   facing = 1,
   dead = false,
   asleep = false,
@@ -39,6 +40,20 @@ export function PixelDog({
   size?: number;
   mood?: DogMood;
   legFrame?: 0 | 1;
+  // Which of two hand-drawn tail positions to draw when the tail is up --
+  // see tailUp below. Alternating this (see ScoutCompanion's own tailFrame
+  // timer) is the actual wag: two distinct drawn shapes swapped on a
+  // timer, the same technique the walk cycle already uses for legFrame,
+  // rather than a CSS transform. A continuous CSS rotation was tried
+  // first and turned out to be the wrong tool here -- at his real render
+  // size the tail is only ~7x10px, and `shape-rendering: crispEdges`
+  // pixel-snaps geometry for sharp pixel-art edges, which collapses a
+  // few degrees of sub-pixel rotation into little or no visible
+  // difference. A hand-drawn position swap has no such ambiguity: each
+  // frame is an exact, unrounded set of integer coordinates, so the
+  // difference between frames is always genuinely visible on screen --
+  // exactly why the leg swap already reads fine at this same scale.
+  tailFrame?: 0 | 1;
   facing?: 1 | -1;
   dead?: boolean;
   asleep?: boolean;
@@ -102,16 +117,15 @@ export function PixelDog({
   // applies to this standing pose (asleep has its own curled-up look
   // above; dead always stays standing).
   const earUp = !dead && (mood === "happy" || mood === "neutral");
-  // Same threshold as the ear above, not just "happy" -- "thriving" is
-  // only true on the exact day a quiz was actually completed (see
-  // computePetState in lib/pet.ts), so gating the wag to that alone made
-  // it invisible most of the time: the moment a single day passes without
-  // touching the app, the stage drops to "content" ("doing well"), which
-  // used to get neither the raised tail nor its wag even though it isn't a
-  // negative state. Genuinely neglected moods (tired/sad, "hungry" and
-  // "critical") still get the still, down tail -- that contrast is the
-  // whole point of keeping this narrower than "always."
-  const tailUp = !dead && (mood === "happy" || mood === "neutral");
+  // Deliberately not mood-gated beyond "not dead" -- an earlier version
+  // required "happy" or "neutral" mood, but "thriving" (the only mood that
+  // used to qualify at all) is only true on the exact day a quiz was
+  // completed, so the wag ended up invisible almost all the time. Rather
+  // than keep chasing the right mood threshold, the tail is now up (and
+  // wagging in ScoutCompanion) for every mood short of actually dead --
+  // asleep has its own separate curled-up pose above that doesn't reach
+  // this code at all, so "dead" is the only real exclusion left.
+  const tailUp = !dead;
   const showTongue = !dead && mood === "happy";
   const showFrown = dead || mood === "sad";
 
@@ -129,20 +143,26 @@ export function PixelDog({
       <ellipse cx={32} cy={38} rx={20} ry={2} fill="#000" opacity={0.12} />
 
       {/* tail (widths reach x=12 so they tuck under the body's left edge
-          at x=10 with a 2-unit overlap instead of leaving a gap). When
-          happy, wagged with a real CSS rotation around the point where it
-          meets the body (see .ozho-tail-wag in globals.css) -- a smooth,
-          continuous back-and-forth rather than swapping between two static
-          drawn poses, which read as an instant, un-eased glitch rather
-          than a wag when tried that way before. Pure CSS, so it costs
-          nothing in JS and animates identically wherever a happy PixelDog
-          renders (the roaming companion, the dashboard card, the header
-          pill) with no per-caller wiring needed. */}
+          at x=10 with a 2-unit overlap instead of leaving a gap). Up
+          whenever he's not dead; which of the two positions below draws
+          is tailFrame, alternated by ScoutCompanion on a timer for the
+          actual wag -- see tailFrame's own doc above for why this is a
+          drawn-position swap rather than a CSS rotation. Static callers
+          that never pass tailFrame (PetAvatar, PetCard, the header pill)
+          simply render frame 0 -- tail up, not wagging, which still reads
+          as "happy" even without the motion. */}
       {tailUp ? (
-        <g className="ozho-tail-wag">
-          <rect x={4} y={14} width={8} height={8} fill={p.bodyDark} />
-          <rect x={2} y={8} width={6} height={6} fill={p.bodyDark} />
-        </g>
+        tailFrame === 1 ? (
+          <>
+            <rect x={6} y={16} width={8} height={8} fill={p.bodyDark} />
+            <rect x={4} y={10} width={6} height={6} fill={p.bodyDark} />
+          </>
+        ) : (
+          <>
+            <rect x={4} y={14} width={8} height={8} fill={p.bodyDark} />
+            <rect x={2} y={8} width={6} height={6} fill={p.bodyDark} />
+          </>
+        )
       ) : (
         <rect x={0} y={22} width={12} height={4} fill={p.bodyDark} />
       )}

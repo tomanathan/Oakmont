@@ -216,6 +216,12 @@ const BOTTOM_MARGIN = 24;
 const RUN_SPEED = 150; // px/sec, before per-walk random variation
 const SLOW_SPEED = 60; // px/sec, used when the OS prefers reduced motion
 const LEG_SWAP_MS = 110;
+// The tail wag's own cadence -- deliberately independent of the leg swap
+// (and of walking at all): see the tailFrame prop's doc in PixelDog.tsx
+// for why this is a two-position swap rather than a CSS animation, and
+// the render loop below for why it runs on almost every tick regardless
+// of what else he's doing.
+const TAIL_SWAP_MS = 160;
 const MOUSE_CHECK_MS = 7000; // how often he reconsiders wandering toward the cursor
 const ESCAPE_COOLDOWN_MS = 1500;
 // Only used now for the "landed somewhere bad" recovery walk (e.g. right
@@ -288,6 +294,10 @@ export function ScoutCompanion() {
   const [stage, setStage] = useState<PetStage | null>(null);
   const [facing, setFacing] = useState<1 | -1>(1);
   const [legFrame, setLegFrame] = useState<0 | 1>(0);
+  // The tail wag: alternated on its own timer below, independent of
+  // walking/idle/page -- see TAIL_SWAP_MS and PixelDog's tailFrame prop
+  // for why this is a drawn-position swap rather than a CSS animation.
+  const [tailFrame, setTailFrame] = useState<0 | 1>(0);
   const [isWalking, setIsWalking] = useState(false);
   const [bubble, setBubble] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -333,6 +343,7 @@ export function ScoutCompanion() {
   const behaviorUntilRef = useRef(0);
   const speakAtRef = useRef(0);
   const legTimerRef = useRef(0);
+  const tailTimerRef = useRef(0);
   const lastFrameRef = useRef<number | null>(null);
   const bubbleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stageRef = useRef<PetStage | null>(null);
@@ -848,6 +859,25 @@ export function ScoutCompanion() {
         return;
       }
 
+      // The tail wag: alternates on its own clock every tick, on top of
+      // (not gated by) whatever else this tick does -- walking, standing
+      // still, talking, wandering off text, all of it. That's the point:
+      // wagging almost regardless of what he's otherwise up to, rather
+      // than only in specific states. Skipped only when actually dead
+      // (PixelDog ignores tailFrame then anyway, so this is just not
+      // wasting the tick). Reduced motion slows this down a lot rather
+      // than turning it off outright -- same "slow down, don't eliminate"
+      // choice walking itself already makes for that preference (see
+      // SLOW_SPEED vs RUN_SPEED below) -- so it's never fully invisible.
+      if (stageRef.current !== "dead") {
+        tailTimerRef.current += dt;
+        const swapMs = reducedMotionRef.current ? TAIL_SWAP_MS * 4 : TAIL_SWAP_MS;
+        if (tailTimerRef.current > swapMs) {
+          tailTimerRef.current = 0;
+          setTailFrame((f) => (f === 0 ? 1 : 0));
+        }
+      }
+
       if (nowMs > speakAtRef.current) {
         speakAtRef.current = nowMs + AMBIENT_SPEAK_MIN_MS + Math.random() * (AMBIENT_SPEAK_MAX_MS - AMBIENT_SPEAK_MIN_MS);
         if (Math.random() < AMBIENT_SPEAK_CHANCE) speak(pickMessage());
@@ -1097,6 +1127,7 @@ export function ScoutCompanion() {
           dead={stage === "dead"}
           asleep={asleep}
           legFrame={isWalking ? legFrame : 0}
+          tailFrame={tailFrame}
           facing={facing}
           costume={costume}
         />

@@ -199,38 +199,15 @@ body {
   animation: scout-perk 260ms ease-out;
 }
 
-/* Ozho's tail wag -- a real, continuous rotation rather than swapping
-   between two flat drawn poses (that read as an instant, un-eased glitch,
-   not a wag). Pivots around roughly where the tail meets the body, so it
-   reads as the tail itself swinging rather than the whole shape sliding.
-   Applied directly in PixelDog.tsx to the tail whenever mood is "happy" or
-   "neutral" (i.e. not actively neglected -- see tailUp's own comment
-   there), so it plays identically anywhere a non-neglected Ozho renders --
-   the roaming companion, the dashboard card, the header pill -- with no
-   per-caller wiring, and respects prefers-reduced-motion like the rest of
-   his animations.
-   Amplitude and speed deliberately generous: at his actual render size
-   (44px for the roaming companion, smaller still for the header pill) the
-   tail itself is only ~7x10px, so a subtler sweep all but disappears
-   against the much bigger motion of him walking and bobbing across the
-   screen. This needs to read at a glance, not reward staring. */
-@keyframes ozho-tail-wag {
-  0%,
-  100% {
-    transform: rotate(-30deg);
-  }
-  50% {
-    transform: rotate(30deg);
-  }
-}
-
-.ozho-tail-wag {
-  transform-origin: 11px 21px;
-  animation: ozho-tail-wag 380ms ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ozho-tail-wag {
-    animation: none;
-  }
-}
+/* Ozho's tail wag used to live here as a CSS rotation, pivoting the tail
+   around roughly where it meets the body. Removed: at his actual render
+   size the tail is only ~7x10px, and `shape-rendering: crispEdges` (used
+   throughout PixelDog.tsx for crisp pixel-art edges) pixel-snaps geometry,
+   which collapsed a few degrees of sub-pixel rotation into little or no
+   visible difference on screen -- reliably enough that it read as not
+   wagging at all. The wag is now a hand-drawn two-position swap (see
+   PixelDog's tailFrame prop and ScoutCompanion's own tailFrame timer),
+   the same technique already proven for the leg-swap walk cycle at this
+   same scale -- no CSS animation involved, so prefers-reduced-motion is
+   handled by ScoutCompanion simply not alternating tailFrame at all when
+   reducedMotionRef is set, same as it already slows walking. */
