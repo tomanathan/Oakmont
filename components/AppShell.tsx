@@ -38,9 +38,16 @@ export function AppShell({
   // because its two fixed-width side rails (a subskill outline, a tips
   // panel) were eating most of the shared 900px page width, leaving very
   // little for the actual reading surface. Opt-in rather than widening
-  // every page: the dashboard/plan/analysis/settings layouts were designed
-  // and look right at 900px, so only pages that specifically need the extra
-  // room ask for it.
+  // every page by default: plan/analysis/settings are short, mostly
+  // single-column forms and summaries that don't have more to show at
+  // 1180px, so they stay put. The dashboard opts in too, though, on
+  // explicit request -- it's the page students actually come back to
+  // day after day, and at 900px it sat in a noticeably narrower column
+  // than the lesson page on the exact same desktop screen for no
+  // content-driven reason. Its subskill grid also gains a fourth
+  // column at this width (see DashboardClient) so the extra room goes
+  // toward showing more at once, not just wider padding around the
+  // same three columns.
   wide?: boolean;
 }) {
   const router = useRouter();

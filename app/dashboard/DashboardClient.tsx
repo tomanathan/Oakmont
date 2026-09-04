@@ -165,7 +165,12 @@ export function DashboardClient({
 
                 {isOpen && (
                   <div className="px-4 pb-4 pt-1 border-t border-[#f0eff9]">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                    {/* lg:grid-cols-4 -- the dashboard now renders at the
+                        same 1180px width as the lesson page (see AppShell's
+                        wide prop), so a fourth column here puts that extra
+                        room toward showing more subskill cards at once
+                        instead of just stretching three columns wider. */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
                       {d.subskills.map((s) => {
                         const p = progress[s.id];
                         const mastered = p && p.bestScore === p.total;

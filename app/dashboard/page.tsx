@@ -104,7 +104,7 @@ export default async function DashboardPage() {
     stats.lastLoginAt.getTime() - stats.previousLoginAt.getTime() > WELCOME_BACK_GAP_MS;
 
   return (
-    <AppShell email={user.email} stats={stats}>
+    <AppShell email={user.email} stats={stats} wide>
       {showWelcomeBack && stats.previousLoginAt && stats.lastLoginAt && (
         <WelcomeBackModal
           sessionKey={stats.lastLoginAt.toISOString()}
