@@ -203,11 +203,12 @@ body {
    between two flat drawn poses (that read as an instant, un-eased glitch,
    not a wag). Pivots around roughly where the tail meets the body, so it
    reads as the tail itself swinging rather than the whole shape sliding.
-   Applied directly in PixelDog.tsx to the tail whenever mood is "happy",
-   so it plays identically anywhere a happy Ozho renders -- the roaming
-   companion, the dashboard card, the header pill -- with no per-caller
-   wiring, and respects prefers-reduced-motion like the rest of his
-   animations. */
+   Applied directly in PixelDog.tsx to the tail whenever mood is "happy" or
+   "neutral" (i.e. not actively neglected -- see tailUp's own comment
+   there), so it plays identically anywhere a non-neglected Ozho renders --
+   the roaming companion, the dashboard card, the header pill -- with no
+   per-caller wiring, and respects prefers-reduced-motion like the rest of
+   his animations. */
 @keyframes ozho-tail-wag {
   0%,
   100% {

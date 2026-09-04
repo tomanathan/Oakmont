@@ -102,7 +102,16 @@ export function PixelDog({
   // applies to this standing pose (asleep has its own curled-up look
   // above; dead always stays standing).
   const earUp = !dead && (mood === "happy" || mood === "neutral");
-  const tailUp = !dead && mood === "happy";
+  // Same threshold as the ear above, not just "happy" -- "thriving" is
+  // only true on the exact day a quiz was actually completed (see
+  // computePetState in lib/pet.ts), so gating the wag to that alone made
+  // it invisible most of the time: the moment a single day passes without
+  // touching the app, the stage drops to "content" ("doing well"), which
+  // used to get neither the raised tail nor its wag even though it isn't a
+  // negative state. Genuinely neglected moods (tired/sad, "hungry" and
+  // "critical") still get the still, down tail -- that contrast is the
+  // whole point of keeping this narrower than "always."
+  const tailUp = !dead && (mood === "happy" || mood === "neutral");
   const showTongue = !dead && mood === "happy";
   const showFrown = dead || mood === "sad";
 
