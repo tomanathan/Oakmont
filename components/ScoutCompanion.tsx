@@ -303,12 +303,6 @@ export function ScoutCompanion() {
   // clobbering the bubble's centering bug (see its own comment lower down)
   // already burned this component on once.
   const [perk, setPerk] = useState(false);
-  // Toggled on a steady beat while he's standing still and thriving, so the
-  // tail visibly wags rather than just sitting up-and-static -- see the
-  // render loop below and PixelDog's forceTailUp prop. Never touched while
-  // walking (a happy trot already reads as tail-up-and-confident) or for
-  // any less-than-thriving mood (a tired or sad dog shouldn't be wagging).
-  const [wag, setWag] = useState(false);
   const [costume, setCostume] = useState<string | null>(null);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -352,13 +346,6 @@ export function ScoutCompanion() {
   const sleepAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const trickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const perkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const wagTimerRef = useRef(0);
-  // Mirrors the `wag` state for the render-loop interval to read -- that
-  // callback is set up once (see its own effect's empty dep array) so
-  // reading React state directly inside it would always see the value from
-  // the very first render, not the current one. Same reason asleepRef/
-  // sleepAnimRef exist alongside their own state below.
-  const wagRef = useRef(false);
 
   // One-time setup: pick a starting spot in page coordinates and fetch
   // Ozho's mood. ScoutCompanion is mounted once at the root layout, so
@@ -988,25 +975,6 @@ export function ScoutCompanion() {
           setLegFrame((f) => (f === 0 ? 1 : 0));
         }
       } else {
-        // Tail wag: only while standing still and genuinely thriving (see
-        // the `wag` state's own comment) -- toggled on a steady beat rather
-        // than randomly, so it actually reads as a wag instead of a twitch.
-        if (stageRef.current === "thriving") {
-          wagTimerRef.current += dt;
-          if (wagTimerRef.current > 300) {
-            wagTimerRef.current = 0;
-            wagRef.current = !wagRef.current;
-            setWag(wagRef.current);
-          }
-        } else if (wagRef.current || wagTimerRef.current !== 0) {
-          // Left thriving (or started walking again) mid-wag -- reset so
-          // the next time this branch is eligible, it starts clean instead
-          // of resuming mid-beat or picking up a stale half-toggled tail.
-          wagTimerRef.current = 0;
-          wagRef.current = false;
-          setWag(false);
-        }
-
         if (nowMs > behaviorUntilRef.current) {
           beginWalk();
         } else if (Math.random() < 0.003) {
@@ -1131,7 +1099,6 @@ export function ScoutCompanion() {
           legFrame={isWalking ? legFrame : 0}
           facing={facing}
           costume={costume}
-          forceTailUp={!isWalking && !asleep && stage === "thriving" ? wag : undefined}
         />
       </button>
     </div>
