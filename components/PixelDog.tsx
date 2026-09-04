@@ -20,30 +20,42 @@ const PALETTE_DEAD = {
   tag: "#c7c4cc",
 };
 
-// Six hand-drawn tail positions, swept through a wide diagonal arc for the
-// wag -- see the tailFrame prop's own doc below for why discrete drawn
-// frames are used instead of a CSS rotation. Each entry is
-// [nearX, nearY, tipX, tipY], the top-left corners of the two rects that
-// make up the tail (an 8x8 "near" square closer to the body, a 6x6 "tip"
-// square further out). An earlier version of this table swept almost
-// straight up and down (x barely moved between frames) and read as a
-// vertical bob rather than a wag -- this one gives x roughly as much
-// travel as y (near square: ~8px each axis; tip: ~6px x, ~12px y) so the
-// tail visibly swings side to side as it rises and falls, the way a real
-// wag reads, rather than just bouncing in place. x stays capped low
-// enough that the tail is still mostly clear of the body rect (drawn
-// after it, so anything past x=10 gets painted over) even at the
-// forward-most frame. ScoutCompanion ping-pongs through these in order
-// (0..5..0) rather than looping frame 5 back to 0, since this is a
-// back-and-forth swing, not a full rotation -- a same-direction loop
-// would jump instead of reverse.
+// Six hand-drawn tail positions, swept through a wide arc for the wag --
+// see the tailFrame prop's own doc below for why discrete drawn frames are
+// used instead of a CSS rotation. Each entry is [nearX, nearY, tipX, tipY],
+// the top-left corners of the two rects that make up the tail (an 8x8
+// "near" square closer to the body, a 6x6 "tip" square further out).
+//
+// Two earlier versions of this table moved the near square's position
+// directly from frame to frame -- one swept it almost straight up and
+// down (read as a vertical bob, not a wag), the other widened its
+// horizontal range to fix that but let it drift far enough left that it
+// stopped overlapping the body at all at the extreme frame, so the tail
+// visibly detached from him. Both mistakes trace to the same cause:
+// standard sprite-animation practice pins a tail to a *fixed pivot point*
+// where it meets the body and swings everything else around that one
+// unmoving point -- letting the attachment point itself drift is exactly
+// what makes a sprite "appear to levitate" between frames (see Sources).
+// This table is built that way instead: every [nearX, nearY, tipX, tipY]
+// below is the two squares' centers rotated by a different angle around a
+// single fixed pivot at roughly (9, 20) -- right where the body's left
+// edge sits -- at a small radius for the near square (3px) and a larger
+// one for the tip (7px). Small radius means the near square always
+// contains the pivot point by construction, at every angle, so it always
+// overlaps the body; the tip, rotating rigidly along with it at the same
+// angle, is always close enough to the near square to overlap it too.
+// Both connections are geometric guarantees, not just numbers that
+// happened to work out -- there's no frame where either joint can gap.
+// ScoutCompanion ping-pongs through these in order (0..5..0) rather than
+// looping frame 5 back to 0, since this is a back-and-forth swing, not a
+// full rotation -- a same-direction loop would jump instead of reverse.
 const TAIL_WAG_FRAMES: [number, number, number, number][] = [
-  [0, 19, 0, 12],
-  [2, 17, 1, 10],
-  [3, 15, 2, 7],
-  [5, 13, 4, 5],
-  [6, 11, 5, 2],
-  [8, 9, 6, 0],
+  [6, 13, 7, 10],
+  [4, 13, 4, 10],
+  [3, 14, 2, 11],
+  [2, 15, 0, 14],
+  [2, 16, 0, 17],
+  [2, 17, 0, 19],
 ];
 
 /**

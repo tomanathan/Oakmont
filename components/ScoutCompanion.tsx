@@ -222,10 +222,10 @@ const LEG_SWAP_MS = 110;
 // the render loop below for why it runs on almost every tick regardless
 // of what else he's doing. Per-frame, not per-cycle -- with six frames
 // ping-ponged 0..5..0, a full back-and-forth swing takes 10 steps
-// (~700ms at this value), which is what actually reads as a fast, lively
-// wag rather than a slow one; a 160ms figure here would drag the same
-// swing out to 1.6s if read as a whole-cycle number instead.
-const TAIL_SWAP_MS = 70;
+// (~450ms at this value), quick enough to read as an eager, happy wag
+// rather than a lazy one; a 450ms figure here would be a slow cycle if
+// read as a whole-swing number instead of a single-step one.
+const TAIL_SWAP_MS = 45;
 const MOUSE_CHECK_MS = 7000; // how often he reconsiders wandering toward the cursor
 const ESCAPE_COOLDOWN_MS = 1500;
 // Only used now for the "landed somewhere bad" recovery walk (e.g. right
