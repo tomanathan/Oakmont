@@ -208,20 +208,25 @@ body {
    there), so it plays identically anywhere a non-neglected Ozho renders --
    the roaming companion, the dashboard card, the header pill -- with no
    per-caller wiring, and respects prefers-reduced-motion like the rest of
-   his animations. */
+   his animations.
+   Amplitude and speed deliberately generous: at his actual render size
+   (44px for the roaming companion, smaller still for the header pill) the
+   tail itself is only ~7x10px, so a subtler sweep all but disappears
+   against the much bigger motion of him walking and bobbing across the
+   screen. This needs to read at a glance, not reward staring. */
 @keyframes ozho-tail-wag {
   0%,
   100% {
-    transform: rotate(-16deg);
+    transform: rotate(-30deg);
   }
   50% {
-    transform: rotate(16deg);
+    transform: rotate(30deg);
   }
 }
 
 .ozho-tail-wag {
   transform-origin: 11px 21px;
-  animation: ozho-tail-wag 480ms ease-in-out infinite;
+  animation: ozho-tail-wag 380ms ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
