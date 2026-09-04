@@ -120,12 +120,20 @@ export function PixelDog({
       <ellipse cx={32} cy={38} rx={20} ry={2} fill="#000" opacity={0.12} />
 
       {/* tail (widths reach x=12 so they tuck under the body's left edge
-          at x=10 with a 2-unit overlap instead of leaving a gap) */}
+          at x=10 with a 2-unit overlap instead of leaving a gap). When
+          happy, wagged with a real CSS rotation around the point where it
+          meets the body (see .ozho-tail-wag in globals.css) -- a smooth,
+          continuous back-and-forth rather than swapping between two static
+          drawn poses, which read as an instant, un-eased glitch rather
+          than a wag when tried that way before. Pure CSS, so it costs
+          nothing in JS and animates identically wherever a happy PixelDog
+          renders (the roaming companion, the dashboard card, the header
+          pill) with no per-caller wiring needed. */}
       {tailUp ? (
-        <>
+        <g className="ozho-tail-wag">
           <rect x={4} y={14} width={8} height={8} fill={p.bodyDark} />
           <rect x={2} y={8} width={6} height={6} fill={p.bodyDark} />
-        </>
+        </g>
       ) : (
         <rect x={0} y={22} width={12} height={4} fill={p.bodyDark} />
       )}
