@@ -20,25 +20,30 @@ const PALETTE_DEAD = {
   tag: "#c7c4cc",
 };
 
-// Six hand-drawn tail positions, swept through a wide arc for the wag --
-// see the tailFrame prop's own doc below for why discrete drawn frames are
-// used instead of a CSS rotation. Each entry is [nearX, nearY, tipX, tipY],
-// the top-left corners of the two rects that make up the tail (an 8x8
-// "near" square closer to the body, a 6x6 "tip" square further out).
-// Swept through ~18px of vertical travel -- versus the earlier two-frame
-// version's ~2px -- for a much bigger, unmistakable wag; horizontal drift
-// is kept small so the tail stays mostly clear of the body rect (drawn
-// after it, so anything past x=10 gets painted over) even at the extremes.
-// ScoutCompanion ping-pongs through these in order (0..5..0) rather than
-// looping frame 5 back to 0, since this is a back-and-forth swing, not a
-// full rotation -- a same-direction loop would jump instead of reverse.
+// Six hand-drawn tail positions, swept through a wide diagonal arc for the
+// wag -- see the tailFrame prop's own doc below for why discrete drawn
+// frames are used instead of a CSS rotation. Each entry is
+// [nearX, nearY, tipX, tipY], the top-left corners of the two rects that
+// make up the tail (an 8x8 "near" square closer to the body, a 6x6 "tip"
+// square further out). An earlier version of this table swept almost
+// straight up and down (x barely moved between frames) and read as a
+// vertical bob rather than a wag -- this one gives x roughly as much
+// travel as y (near square: ~8px each axis; tip: ~6px x, ~12px y) so the
+// tail visibly swings side to side as it rises and falls, the way a real
+// wag reads, rather than just bouncing in place. x stays capped low
+// enough that the tail is still mostly clear of the body rect (drawn
+// after it, so anything past x=10 gets painted over) even at the
+// forward-most frame. ScoutCompanion ping-pongs through these in order
+// (0..5..0) rather than looping frame 5 back to 0, since this is a
+// back-and-forth swing, not a full rotation -- a same-direction loop
+// would jump instead of reverse.
 const TAIL_WAG_FRAMES: [number, number, number, number][] = [
-  [2, 21, 0, 15],
-  [3, 17, 1, 11],
-  [4, 13, 2, 7],
-  [4, 9, 2, 3],
-  [5, 6, 3, 0],
-  [6, 3, 4, 0],
+  [0, 19, 0, 12],
+  [2, 17, 1, 10],
+  [3, 15, 2, 7],
+  [5, 13, 4, 5],
+  [6, 11, 5, 2],
+  [8, 9, 6, 0],
 ];
 
 /**
