@@ -218,10 +218,14 @@ const SLOW_SPEED = 60; // px/sec, used when the OS prefers reduced motion
 const LEG_SWAP_MS = 110;
 // The tail wag's own cadence -- deliberately independent of the leg swap
 // (and of walking at all): see the tailFrame prop's doc in PixelDog.tsx
-// for why this is a two-position swap rather than a CSS animation, and
+// for why this is a drawn-position swap rather than a CSS animation, and
 // the render loop below for why it runs on almost every tick regardless
-// of what else he's doing.
-const TAIL_SWAP_MS = 160;
+// of what else he's doing. Per-frame, not per-cycle -- with six frames
+// ping-ponged 0..5..0, a full back-and-forth swing takes 10 steps
+// (~700ms at this value), which is what actually reads as a fast, lively
+// wag rather than a slow one; a 160ms figure here would drag the same
+// swing out to 1.6s if read as a whole-cycle number instead.
+const TAIL_SWAP_MS = 70;
 const MOUSE_CHECK_MS = 7000; // how often he reconsiders wandering toward the cursor
 const ESCAPE_COOLDOWN_MS = 1500;
 // Only used now for the "landed somewhere bad" recovery walk (e.g. right
@@ -294,10 +298,11 @@ export function ScoutCompanion() {
   const [stage, setStage] = useState<PetStage | null>(null);
   const [facing, setFacing] = useState<1 | -1>(1);
   const [legFrame, setLegFrame] = useState<0 | 1>(0);
-  // The tail wag: alternated on its own timer below, independent of
-  // walking/idle/page -- see TAIL_SWAP_MS and PixelDog's tailFrame prop
-  // for why this is a drawn-position swap rather than a CSS animation.
-  const [tailFrame, setTailFrame] = useState<0 | 1>(0);
+  // The tail wag: stepped through PixelDog's six drawn positions on its
+  // own timer below, independent of walking/idle/page -- see
+  // TAIL_SWAP_MS and PixelDog's tailFrame prop for why this is a
+  // drawn-position swap rather than a CSS animation.
+  const [tailFrame, setTailFrame] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
   const [isWalking, setIsWalking] = useState(false);
   const [bubble, setBubble] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -344,6 +349,11 @@ export function ScoutCompanion() {
   const speakAtRef = useRef(0);
   const legTimerRef = useRef(0);
   const tailTimerRef = useRef(0);
+  // Which way tailFrame is currently stepping (see the ping-pong logic
+  // below) -- mirrored in a ref, not just derived from tailFrame state,
+  // because it needs to persist across ticks inside the setInterval
+  // callback the same way every other timer-driven value here does.
+  const tailDirRef = useRef<1 | -1>(1);
   const lastFrameRef = useRef<number | null>(null);
   const bubbleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stageRef = useRef<PetStage | null>(null);
@@ -874,7 +884,21 @@ export function ScoutCompanion() {
         const swapMs = reducedMotionRef.current ? TAIL_SWAP_MS * 4 : TAIL_SWAP_MS;
         if (tailTimerRef.current > swapMs) {
           tailTimerRef.current = 0;
-          setTailFrame((f) => (f === 0 ? 1 : 0));
+          // Ping-pong through the six frames (0..5..0) rather than
+          // looping 5 straight back to 0 -- this is a back-and-forth
+          // swing, not a spin, so it reverses direction at each end
+          // instead of snapping backward.
+          setTailFrame((f) => {
+            let next = f + tailDirRef.current;
+            if (next >= 5) {
+              next = 5;
+              tailDirRef.current = -1;
+            } else if (next <= 0) {
+              next = 0;
+              tailDirRef.current = 1;
+            }
+            return next as 0 | 1 | 2 | 3 | 4 | 5;
+          });
         }
       }
 

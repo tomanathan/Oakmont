@@ -20,6 +20,27 @@ const PALETTE_DEAD = {
   tag: "#c7c4cc",
 };
 
+// Six hand-drawn tail positions, swept through a wide arc for the wag --
+// see the tailFrame prop's own doc below for why discrete drawn frames are
+// used instead of a CSS rotation. Each entry is [nearX, nearY, tipX, tipY],
+// the top-left corners of the two rects that make up the tail (an 8x8
+// "near" square closer to the body, a 6x6 "tip" square further out).
+// Swept through ~18px of vertical travel -- versus the earlier two-frame
+// version's ~2px -- for a much bigger, unmistakable wag; horizontal drift
+// is kept small so the tail stays mostly clear of the body rect (drawn
+// after it, so anything past x=10 gets painted over) even at the extremes.
+// ScoutCompanion ping-pongs through these in order (0..5..0) rather than
+// looping frame 5 back to 0, since this is a back-and-forth swing, not a
+// full rotation -- a same-direction loop would jump instead of reverse.
+const TAIL_WAG_FRAMES: [number, number, number, number][] = [
+  [2, 21, 0, 15],
+  [3, 17, 1, 11],
+  [4, 13, 2, 7],
+  [4, 9, 2, 3],
+  [5, 6, 3, 0],
+  [6, 3, 4, 0],
+];
+
 /**
  * A small blocky, flat-color "pixel art" dog -- Ozho's on-screen form.
  * Shared by the static PetAvatar (dashboard card, welcome page) and the
@@ -40,20 +61,23 @@ export function PixelDog({
   size?: number;
   mood?: DogMood;
   legFrame?: 0 | 1;
-  // Which of two hand-drawn tail positions to draw when the tail is up --
-  // see tailUp below. Alternating this (see ScoutCompanion's own tailFrame
-  // timer) is the actual wag: two distinct drawn shapes swapped on a
-  // timer, the same technique the walk cycle already uses for legFrame,
-  // rather than a CSS transform. A continuous CSS rotation was tried
-  // first and turned out to be the wrong tool here -- at his real render
-  // size the tail is only ~7x10px, and `shape-rendering: crispEdges`
-  // pixel-snaps geometry for sharp pixel-art edges, which collapses a
-  // few degrees of sub-pixel rotation into little or no visible
-  // difference. A hand-drawn position swap has no such ambiguity: each
-  // frame is an exact, unrounded set of integer coordinates, so the
-  // difference between frames is always genuinely visible on screen --
-  // exactly why the leg swap already reads fine at this same scale.
-  tailFrame?: 0 | 1;
+  // Which of TAIL_WAG_FRAMES' six hand-drawn tail positions to draw when
+  // the tail is up -- see tailUp below. Stepping through these (see
+  // ScoutCompanion's own tailFrame timer, which ping-pongs 0..5..0) is
+  // the actual wag: distinct drawn shapes swapped on a timer, the same
+  // technique the walk cycle already uses for legFrame, rather than a CSS
+  // transform. A continuous CSS rotation was tried first and turned out
+  // to be the wrong tool here -- at his real render size the tail is only
+  // ~7x10px, and `shape-rendering: crispEdges` pixel-snaps geometry for
+  // sharp pixel-art edges, which collapses a few degrees of sub-pixel
+  // rotation into little or no visible difference. A hand-drawn position
+  // swap has no such ambiguity: each frame is an exact, unrounded set of
+  // integer coordinates, so the difference between frames is always
+  // genuinely visible on screen -- exactly why the leg swap already reads
+  // fine at this same scale. Six frames (rather than the original two)
+  // give the swing room to cover a much bigger arc while still reading as
+  // a smooth sweep rather than a snap between two extremes.
+  tailFrame?: 0 | 1 | 2 | 3 | 4 | 5;
   facing?: 1 | -1;
   dead?: boolean;
   asleep?: boolean;
@@ -142,27 +166,21 @@ export function PixelDog({
     >
       <ellipse cx={32} cy={38} rx={20} ry={2} fill="#000" opacity={0.12} />
 
-      {/* tail (widths reach x=12 so they tuck under the body's left edge
-          at x=10 with a 2-unit overlap instead of leaving a gap). Up
-          whenever he's not dead; which of the two positions below draws
-          is tailFrame, alternated by ScoutCompanion on a timer for the
-          actual wag -- see tailFrame's own doc above for why this is a
-          drawn-position swap rather than a CSS rotation. Static callers
-          that never pass tailFrame (PetAvatar, PetCard, the header pill)
-          simply render frame 0 -- tail up, not wagging, which still reads
-          as "happy" even without the motion. */}
+      {/* tail (near/tip widths reach past x=10 at some frames so they tuck
+          under the body's left edge instead of leaving a gap -- see
+          TAIL_WAG_FRAMES' own doc for why that's fine). Up whenever he's
+          not dead; which of the six drawn positions shows is tailFrame,
+          stepped by ScoutCompanion on a timer for the actual wag -- see
+          tailFrame's own doc above for why this is a drawn-position swap
+          rather than a CSS rotation. Static callers that never pass
+          tailFrame (PetAvatar, PetCard, the header pill) simply render
+          frame 0 -- tail up, not wagging, which still reads as "happy"
+          even without the motion. */}
       {tailUp ? (
-        tailFrame === 1 ? (
-          <>
-            <rect x={6} y={16} width={8} height={8} fill={p.bodyDark} />
-            <rect x={4} y={10} width={6} height={6} fill={p.bodyDark} />
-          </>
-        ) : (
-          <>
-            <rect x={4} y={14} width={8} height={8} fill={p.bodyDark} />
-            <rect x={2} y={8} width={6} height={6} fill={p.bodyDark} />
-          </>
-        )
+        <>
+          <rect x={TAIL_WAG_FRAMES[tailFrame][0]} y={TAIL_WAG_FRAMES[tailFrame][1]} width={8} height={8} fill={p.bodyDark} />
+          <rect x={TAIL_WAG_FRAMES[tailFrame][2]} y={TAIL_WAG_FRAMES[tailFrame][3]} width={6} height={6} fill={p.bodyDark} />
+        </>
       ) : (
         <rect x={0} y={22} width={12} height={4} fill={p.bodyDark} />
       )}
