@@ -2556,27 +2556,38 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "medium",
         },
         {
-          q: "For which value of k does the equation 2x + 5 = 2x + k have infinitely many solutions?",
-          choices: ["5", "2", "0", "-5"],
+          // Deliberately the "no solution" half of the same setup as the
+          // first example above (same "for which value of k" phrasing,
+          // same style of cancel-the-x-terms equation) -- every example in
+          // this pattern used to ask for the infinitely-many-solutions
+          // value only, so a student could clear the whole lesson without
+          // ever actually working the no-solution case the pattern (and
+          // the traps below) are named for.
+          q: "For which value of k does the equation 2x + 5 = 2x + k have no solution?",
+          choices: ["Any k ≠ 5", "5", "-5", "0"],
           answer: 0,
           explain:
-            "Subtract 2x from both sides: 5 = k. The x-terms have fully canceled, so the equation's truth now depends only on this remaining statement. k = 5 makes it 5 = 5, true for every value of x, giving infinitely many solutions.",
+            "Subtract 2x from both sides: 5 = k. The x-terms have fully canceled, so the equation's truth now depends only on this remaining statement. It's true only when k = 5, which instead gives infinitely many solutions — every other value of k makes '5 = k' false, so any k ≠ 5 gives no solution.",
           difficulty: "easy",
         },
         {
-          q: "For which value of k does the equation 5x - 3(x + 4) = 2x + k have infinitely many solutions?",
-          choices: ["-12", "12", "-3", "0"],
+          q: "How many solutions does the equation 5x - 3(x + 4) = 2x + 3 have?",
+          choices: ["No solution", "Exactly one solution", "Infinitely many solutions", "Exactly two solutions"],
           answer: 0,
           explain:
-            "Simplify the left side first — distribute and combine like terms: 5x - 3x - 12 = 2x + k, which becomes 2x - 12 = 2x + k. The x-terms only visibly match after simplifying, so you have to distribute first to see it. Subtracting 2x from both sides leaves -12 = k, so k = -12 makes the remaining statement true for every x.",
+            "Simplify the left side first — distribute and combine like terms: 5x - 3x - 12 = 2x + 3, which becomes 2x - 12 = 2x + 3. The x-terms only visibly match after simplifying, so you have to distribute first to see it. Subtracting 2x from both sides leaves -12 = 3 — false for every value of x, so the equation has no solution.",
           difficulty: "medium",
         },
         {
-          q: "For which value of k does the equation 0.5(4x + 6) = 2x + k have infinitely many solutions?",
-          choices: ["3", "6", "2", "-3"],
+          // The second no-solution example -- unlike the k-based one two
+          // examples up, this gives a fixed equation with no k at all and
+          // asks for the solution count directly, the way an actual SAT
+          // item would phrase either outcome.
+          q: "How many solutions does the equation 0.5(4x + 6) = 2x + 5 have?",
+          choices: ["No solution", "Exactly one solution", "Infinitely many solutions", "Cannot be determined"],
           answer: 0,
           explain:
-            "Distribute the 0.5 on the left side: 0.5(4x) + 0.5(6) = 2x + 3. The equation is now 2x + 3 = 2x + k, and the x-terms already match. Subtract 2x from both sides: 3 = k. Distributing the decimal coefficient first is the extra step that reveals the matching x-terms.",
+            "Distribute the 0.5 on the left side: 0.5(4x) + 0.5(6) = 2x + 3. The equation is now 2x + 3 = 2x + 5, and the x-terms already match once distributed. Subtract 2x from both sides: 3 = 5 — false for every value of x, so there's no solution. Distributing the decimal coefficient first is the extra step that reveals the x-terms match at all.",
           difficulty: "hard",
         },
       ],
