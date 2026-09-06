@@ -9,6 +9,23 @@ export const PET_NAME = "Ozho";
 export const PET_DEATH_DAYS = 7;
 export const PET_WARNING_DAYS = 5;
 
+// Mochi: a second companion earned at a long daily-practice streak, rather
+// than tied to quiz progress at all. Unlike Ozho, Mochi has no hunger clock
+// and can't die -- once earned at this streak length, Mochi stays earned
+// even if the streak itself later resets to 0, the same "ever achieved"
+// philosophy the wardrobe's section-completion costumes already use (see
+// lib/costumes.ts) rather than something that can be lost by missing a
+// day. 30 is one of lib/gamification.ts's own STREAK_MILESTONES (a full
+// month), picked because it's meaningfully bigger than the wardrobe's
+// biggest streak-gated costume (14 days, see lib/costumes.ts) -- this is
+// the rarer, bigger reward the streak track builds toward.
+export const SECOND_PET_NAME = "Mochi";
+export const SECOND_PET_UNLOCK_STREAK_DAYS = 30;
+
+export function isSecondPetUnlocked(longestStreak: number): boolean {
+  return longestStreak >= SECOND_PET_UNLOCK_STREAK_DAYS;
+}
+
 export type PetStage = "thriving" | "content" | "hungry" | "critical" | "dead";
 
 export interface PetState {

@@ -28,9 +28,10 @@ export async function PATCH(req: NextRequest) {
   const { baselineScore, goalScore, targetTestDate, equippedCostume } = body;
 
   if (equippedCostume !== undefined && equippedCostume !== null) {
-    const [progressRows, latestTest] = await Promise.all([
+    const [progressRows, latestTest, streakUser] = await Promise.all([
       prisma.progress.findMany({ where: { userId: user.userId } }),
       prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
+      prisma.user.findUnique({ where: { id: user.userId }, select: { longestStreak: true } }),
     ]);
     const progress: ProgressMap = {};
     for (const row of progressRows) progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
@@ -42,7 +43,8 @@ export async function PATCH(req: NextRequest) {
       progress,
       (latestTest?.domainScores as Record<string, number> | null) ?? null
     );
-    if (!isCostumeUnlocked(equippedCostume, completedDomainCount(mastery))) {
+    const unlockProgress = { domainsCompleted: completedDomainCount(mastery), longestStreak: streakUser?.longestStreak ?? 0 };
+    if (!isCostumeUnlocked(equippedCostume, unlockProgress)) {
       return NextResponse.json({ error: "That costume isn't unlocked yet." }, { status: 400 });
     }
   }

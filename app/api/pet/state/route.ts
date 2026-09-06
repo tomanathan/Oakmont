@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
-import { computePetState } from "@/lib/pet";
+import { computePetState, isSecondPetUnlocked } from "@/lib/pet";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
 import { isCostumeUnlocked, bestUnlockedCostume } from "@/lib/costumes";
@@ -20,6 +20,7 @@ export async function GET() {
         petDiedAt: true,
         petBornAt: true,
         currentStreak: true,
+        longestStreak: true,
         equippedCostume: true,
       },
     }),
@@ -44,17 +45,22 @@ export async function GET() {
   );
   const sectionsCompleted = completedDomainCount(mastery);
 
+  const unlockProgress = { domainsCompleted: sectionsCompleted, longestStreak: stats.longestStreak };
+
   // Re-validate the saved pick is still unlocked rather than trusting it
   // forever, falling back to the best costume still earned.
   const costume =
-    stats.equippedCostume && isCostumeUnlocked(stats.equippedCostume, sectionsCompleted)
+    stats.equippedCostume && isCostumeUnlocked(stats.equippedCostume, unlockProgress)
       ? stats.equippedCostume
-      : bestUnlockedCostume(sectionsCompleted).id;
+      : bestUnlockedCostume(unlockProgress).id;
 
   return NextResponse.json({
     stage: state.stage,
     currentStreak: stats.currentStreak,
     costume,
     sectionsCompleted,
+    // Mochi (the second companion) reads this to decide whether to render
+    // at all -- see components/SecondCompanion.tsx.
+    mochiUnlocked: isSecondPetUnlocked(stats.longestStreak),
   });
 }

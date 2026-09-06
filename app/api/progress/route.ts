@@ -12,6 +12,7 @@ import {
   type ProgressMap,
 } from "@/lib/mastery";
 import { bestUnlockedCostume } from "@/lib/costumes";
+import { isSecondPetUnlocked } from "@/lib/pet";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -130,16 +131,35 @@ export async function POST(req: NextRequest) {
       : null;
   const justCompletedCurriculum = !isCurriculumComplete(masteryBefore) && isCurriculumComplete(masteryAfter);
 
-  const costumeBefore = bestUnlockedCostume(completedDomainCount(masteryBefore));
-  const costumeAfter = bestUnlockedCostume(completedDomainCount(masteryAfter));
-  const newCostume = costumeAfter.id !== costumeBefore.id ? costumeAfter : null;
-
+  // Fetched before the costume before/after comparison (not just before the
+  // streak update below) because a costume's unlock can now depend on
+  // longestStreak too, not just domain count -- see lib/costumes.ts. A quiz
+  // submitted today can simultaneously push the streak past one of those
+  // thresholds AND finish a domain, so both currencies' "before" snapshots
+  // have to come from the same pre-update read.
   const dbUser = await prisma.user.findUnique({ where: { id: user.userId } });
   const streak = updateStreak(
     dbUser?.lastActiveDate ?? null,
     dbUser?.currentStreak ?? 0,
     dbUser?.longestStreak ?? 0
   );
+
+  const costumeBefore = bestUnlockedCostume({
+    domainsCompleted: completedDomainCount(masteryBefore),
+    longestStreak: dbUser?.longestStreak ?? 0,
+  });
+  const costumeAfter = bestUnlockedCostume({
+    domainsCompleted: completedDomainCount(masteryAfter),
+    longestStreak: streak.longestStreak,
+  });
+  const newCostume = costumeAfter.id !== costumeBefore.id ? costumeAfter : null;
+
+  // Same before/after shape as the costume and domain checks above --
+  // Mochi is a one-time reward, so this only fires true on the exact
+  // submission that first crosses the threshold, never again after.
+  const secondPetJustUnlocked =
+    !isSecondPetUnlocked(dbUser?.longestStreak ?? 0) && isSecondPetUnlocked(streak.longestStreak);
+
   // Only a genuine milestone moment if the streak actually changed today
   // (not a second quiz on a day that already counted), so this can't fire
   // more than once on the day a milestone is actually reached.
@@ -163,6 +183,7 @@ export async function POST(req: NextRequest) {
     justCompletedSection,
     justCompletedCurriculum,
     newCostume: newCostume ? { id: newCostume.id, name: newCostume.name } : null,
+    secondPetJustUnlocked,
     currentStreak: updatedUser.currentStreak,
     longestStreak: updatedUser.longestStreak,
     streakMilestone,

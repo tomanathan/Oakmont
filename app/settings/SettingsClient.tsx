@@ -17,6 +17,9 @@ export function SettingsClient({
   equippedCostume,
   petName,
   petState,
+  longestStreak,
+  secondPetName,
+  secondPetUnlockDays,
 }: {
   email: string;
   baselineScore: number | null;
@@ -27,6 +30,9 @@ export function SettingsClient({
   equippedCostume: string;
   petName: string;
   petState: PetState;
+  longestStreak: number;
+  secondPetName: string;
+  secondPetUnlockDays: number;
 }) {
   const router = useRouter();
   const [baseline, setBaseline] = useState(baselineScore?.toString() ?? "");
@@ -158,12 +164,15 @@ export function SettingsClient({
         </div>
         <div className="text-xs text-gray-500 mb-4">
           {sectionsCompleted} of {totalSections} sections completed &mdash; every subskill in a domain
-          quizzed to a perfect score. Finishing a new section unlocks a new costume; pick whichever
-          unlocked look you want Ozho to wear.
+          quizzed to a perfect score. Two ways to unlock a new look: finish a section, or keep your
+          daily practice streak going. Pick whichever unlocked look you want Ozho to wear.
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {COSTUMES.map((c) => {
-            const unlocked = sectionsCompleted >= c.domainsRequired;
+            const unlocked =
+              c.requirement.type === "free" ||
+              (c.requirement.type === "domains" && sectionsCompleted >= c.requirement.count) ||
+              (c.requirement.type === "streak" && longestStreak >= c.requirement.days);
             const selected = costume === c.id;
             return (
               <button
@@ -187,13 +196,39 @@ export function SettingsClient({
                     ? equipping === c.id
                       ? "Equipping..."
                       : "Tap to wear"
-                    : c.domainsRequired === 1
-                    ? "Complete 1 section"
-                    : `Complete ${c.domainsRequired} sections`}
+                    : c.requirement.type === "domains"
+                    ? c.requirement.count === 1
+                      ? "Complete 1 section"
+                      : `Complete ${c.requirement.count} sections`
+                    : c.requirement.type === "streak"
+                    ? `${c.requirement.days}-day streak`
+                    : ""}
                 </div>
               </button>
             );
           })}
+        </div>
+      </div>
+
+      {/* Mochi -- the bigger streak reward, a second companion rather than
+          a costume. Shown here in the Ozho section (not its own top-level
+          section) since it's still fundamentally about Ozho's world, just
+          a rarer unlock than anything in the wardrobe above. */}
+      <div className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-6 flex items-center gap-4">
+        <PixelDog size={56} variant="mochi" costume={null} className={longestStreak < secondPetUnlockDays ? "opacity-40 grayscale" : ""} />
+        <div className="flex-1 min-w-0">
+          <div className="text-[15px] font-semibold text-ink mb-1">{secondPetName}</div>
+          {longestStreak >= secondPetUnlockDays ? (
+            <div className="text-xs text-gray-500 leading-relaxed">
+              Unlocked at a {secondPetUnlockDays}-day streak &mdash; {secondPetName} is out there roaming
+              alongside {petName} now.
+            </div>
+          ) : (
+            <div className="text-xs text-gray-500 leading-relaxed">
+              A second companion, earned by keeping a {secondPetUnlockDays}-day practice streak going.
+              Longest streak so far: {longestStreak} of {secondPetUnlockDays} days.
+            </div>
+          )}
         </div>
       </div>
 

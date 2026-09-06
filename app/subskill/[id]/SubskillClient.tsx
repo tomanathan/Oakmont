@@ -188,14 +188,32 @@ export function SubskillClient({
         // domain, section, or the entire curriculum, on the day a streak
         // milestone lands) -- only the single most significant one is
         // actually shown, biggest first, rather than stacking messages.
-        const celebration: { message: string; tier: "small" | "big" } | null = data.streakMilestone
+        // secondPetJustUnlocked takes priority over streakMilestone even
+        // though both can fire on the exact same submission -- Mochi's
+        // unlock day (see lib/pet.ts's SECOND_PET_UNLOCK_STREAK_DAYS) is
+        // itself one of lib/gamification.ts's own milestone numbers, so a
+        // generic "days straight" line would undersell what actually just
+        // happened. The streak count still gets mentioned in Mochi's own
+        // message, so nothing from the milestone line is lost.
+        const celebration: { message: string; tier: "small" | "big" } | null = data.secondPetJustUnlocked
+          ? { message: `🐾 Someone new wants to meet you — say hi to Mochi! (${data.currentStreak}-day streak, by the way.)`, tier: "big" }
+          : data.streakMilestone
           ? { message: `🔥 ${data.currentStreak} days straight?! You're unstoppable.`, tier: "big" }
           : data.justCompletedCurriculum
           ? { message: "You did it — the WHOLE curriculum. Best trick I know, just for this.", tier: "big" }
           : data.justCompletedSection
           ? { message: `${data.justCompletedSection}: fully mastered, every domain. That's huge.`, tier: "big" }
           : data.newCostume
-          ? { message: `${data.justCompletedDomain}: mastered! And look what that unlocked — the ${data.newCostume.name}.`, tier: "big" }
+          ? {
+              // justCompletedDomain can be null here now -- costumes can
+              // also unlock from a streak milestone, not just a finished
+              // domain (see lib/costumes.ts) -- so the message branches on
+              // which currency actually earned it instead of assuming.
+              message: data.justCompletedDomain
+                ? `${data.justCompletedDomain}: mastered! And look what that unlocked — the ${data.newCostume.name}.`
+                : `Look what that streak just unlocked — the ${data.newCostume.name}.`,
+              tier: "big",
+            }
           : data.justCompletedDomain
           ? { message: `${data.justCompletedDomain}: mastered! On to the next one.`, tier: "small" }
           : data.justMastered
@@ -210,6 +228,13 @@ export function SubskillClient({
         // Ozho icon immediately rather than waiting on a page reload.
         if (data.newCostume) {
           window.dispatchEvent(new CustomEvent("ozho:costume", { detail: { costume: data.newCostume.id } }));
+        }
+        // Makes the already-mounted SecondCompanion (Mochi) start
+        // rendering immediately, rather than waiting for a full page
+        // reload to re-fetch and discover it's unlocked -- see that
+        // component's own listener for why a plain event, not a refetch.
+        if (data.secondPetJustUnlocked) {
+          window.dispatchEvent(new CustomEvent("ozho:mochi-unlocked"));
         }
         // Refreshes server-fetched data (like the streak badge in AppShell)
         // in place, without discarding this page's client-side quiz state.

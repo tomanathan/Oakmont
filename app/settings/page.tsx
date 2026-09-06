@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
 import { isCostumeUnlocked, bestUnlockedCostume } from "@/lib/costumes";
-import { computePetState, PET_NAME } from "@/lib/pet";
+import { computePetState, PET_NAME, SECOND_PET_NAME, SECOND_PET_UNLOCK_STREAK_DAYS } from "@/lib/pet";
 import { AppShell } from "@/components/AppShell";
 import { SettingsClient } from "./SettingsClient";
 
@@ -31,10 +31,11 @@ export default async function SettingsPage() {
   // costume"), the best costume they've earned is what's shown as worn --
   // so this page always agrees with what Ozho is actually wearing
   // elsewhere in the app.
+  const unlockProgress = { domainsCompleted: sectionsCompleted, longestStreak: stats.longestStreak };
   const equippedCostume =
-    stats.equippedCostume && isCostumeUnlocked(stats.equippedCostume, sectionsCompleted)
+    stats.equippedCostume && isCostumeUnlocked(stats.equippedCostume, unlockProgress)
       ? stats.equippedCostume
-      : bestUnlockedCostume(sectionsCompleted).id;
+      : bestUnlockedCostume(unlockProgress).id;
 
   const petState = computePetState(stats.lastActiveDate ?? null, stats.petDiedAt ?? null, stats.petBornAt);
 
@@ -50,6 +51,9 @@ export default async function SettingsPage() {
         equippedCostume={equippedCostume}
         petName={PET_NAME}
         petState={petState}
+        longestStreak={stats.longestStreak}
+        secondPetName={SECOND_PET_NAME}
+        secondPetUnlockDays={SECOND_PET_UNLOCK_STREAK_DAYS}
       />
     </AppShell>
   );

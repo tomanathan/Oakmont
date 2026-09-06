@@ -20,6 +20,22 @@ const PALETTE_DEAD = {
   tag: "#c7c4cc",
 };
 
+// Mochi's palette -- the second companion, unlocked at a long streak (see
+// lib/pet.ts's SECOND_PET_UNLOCK_STREAK_DAYS). Same silhouette as Ozho
+// throughout this file; only the colors change, drawn from the app's own
+// lavender/indigo accent and gold-star tones rather than a random new
+// palette, so Mochi reads as belonging to this app rather than a generic
+// reskin.
+const PALETTE_MOCHI = {
+  body: "#8b8fc2",
+  bodyDark: "#6d70a0",
+  belly: "#eceafc",
+  dark: "#2b2038",
+  tongue: "#e28a86",
+  collar: "#c9971b",
+  tag: "#e0b84a",
+};
+
 // Six hand-drawn tail positions, swept through a wide arc for the wag --
 // see the tailFrame prop's own doc below for why discrete drawn frames are
 // used instead of a CSS rotation. Each entry is [nearX, nearY, tipX, tipY],
@@ -73,6 +89,7 @@ export function PixelDog({
   dead = false,
   asleep = false,
   costume = null,
+  variant = "ozho",
   className = "",
 }: {
   size?: number;
@@ -103,9 +120,16 @@ export function PixelDog({
   // undressed, both to keep the art simple and because neither state is
   // really a "look how far I've come" moment.
   costume?: string | null;
+  // Which pet this renders as -- "ozho" (default, every existing call
+  // site) or "mochi" (the second companion, unlocked by a long streak).
+  // Same shapes throughout this file either way; only the palette below
+  // changes. Mochi never wears a costume or dies (see SecondCompanion.tsx),
+  // but both states still resolve palette the same way dead does, so
+  // nothing here needs its own dead/asleep branching.
+  variant?: "ozho" | "mochi";
   className?: string;
 }) {
-  const p = dead ? PALETTE_DEAD : PALETTE;
+  const p = dead ? PALETTE_DEAD : variant === "mochi" ? PALETTE_MOCHI : PALETTE;
 
   // Asleep (and not dead -- a dead dog stays in the standing pose below,
   // it doesn't curl up) gets a completely different, compact silhouette
@@ -306,6 +330,43 @@ function CostumeOverlay({ costume }: { costume: string }) {
           <path d="M 35.5 6.5 L 37.5 1 L 41 4.5 L 44.5 -0.5 L 47.5 4.5 L 48.5 6.5 Z" fill="#e0b84a" />
           <circle cx={41} cy={3} r={0.9} fill="#c0524f" />
           <circle cx={37.7} cy={4} r={0.7} fill="#2f6f4f" />
+        </>
+      );
+    // The three below are streak-reward costumes (see lib/costumes.ts) --
+    // same "handful of flat shapes" treatment as the section-reward ones
+    // above, just drawn at different spots on the sprite so they don't
+    // collide with the collar/tag every costume already sits near.
+    case "flame-collar":
+      // A two-tone flame charm hanging just below the collar, roughly
+      // where the tag circle already sits -- reads as a pendant, not a
+      // replacement for the tag itself.
+      return (
+        <>
+          <path d="M 35 23 L 37.5 27 L 35 31 L 32.5 27 Z" fill="#e8622c" />
+          <path d="M 35 25.5 L 36.3 27.5 L 35 29.5 L 33.7 27.5 Z" fill="#f5a94e" />
+        </>
+      );
+    case "star-badge":
+      // A four-pointed sparkle badge on the flank, in the same gold as the
+      // mastery stars elsewhere in the app (StarRating, the tag circle) --
+      // deliberately echoes that iconography rather than inventing a new
+      // "achievement" color.
+      return (
+        <path
+          d="M 18 18 L 19.5 21.5 L 23 23 L 19.5 24.5 L 18 28 L 16.5 24.5 L 13 23 L 16.5 21.5 Z"
+          fill="#e0b84a"
+        />
+      );
+    case "explorer-hat":
+      // A wide-brimmed safari hat -- same head position as the backwards
+      // cap above, but a distinct silhouette (a narrower crown block sits
+      // on top of a brim that extends past both sides) so the two don't
+      // read as near-duplicates.
+      return (
+        <>
+          <rect x={37} y={-1} width={10} height={5} fill="#c9a15a" />
+          <rect x={32} y={3} width={20} height={2.5} rx={0.5} fill="#c9a15a" />
+          <rect x={37} y={3.2} width={10} height={1} fill="#a9824a" />
         </>
       );
     default:
