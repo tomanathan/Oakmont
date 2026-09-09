@@ -485,7 +485,17 @@ export function SubskillClient({
               </button>
               <button
                 onClick={goToNext}
-                className="px-4.5 py-2.5 rounded-lg bg-ink text-white font-semibold text-sm"
+                // Was px-4.5 -- not a real Tailwind utility (the default
+                // spacing scale has no 4.5 step, only 4 and 5), so it
+                // silently generated no CSS at all and left this button
+                // with zero horizontal padding, text running right up to
+                // both edges. px-5 also gives this primary (filled) button
+                // a little more breathing room than the outlined
+                // "Previous" button's px-4 -- a common convention for the
+                // more emphasized side of a button pair -- and the hover
+                // state matches the other bg-ink buttons elsewhere in the
+                // app instead of sitting flat with no feedback at all.
+                className="px-5 py-2.5 rounded-lg bg-ink text-white font-semibold text-sm hover:bg-[#2a2a42] transition-colors"
               >
                 {isLastExampleInPattern
                   ? isLastPattern
