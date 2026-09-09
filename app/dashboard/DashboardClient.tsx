@@ -299,7 +299,7 @@ function PlanCard({
             </div>
           ) : today.type === "test" ? (
             <button
-              onClick={() => router.push("/analysis")}
+              onClick={() => router.push("/plan#practice-tests")}
               className="text-left text-sm font-semibold text-[#9a6a12] hover:underline"
             >
               Take full-length practice test {today.testNumber} of 8, then log &amp; review your results &rarr;
@@ -438,7 +438,7 @@ function findRecommended(
     if (next) return { label: next.name, href: `/subskill/${next.id}`, domain: next.domain };
   }
   if (today?.type === "test") {
-    return { label: `Take full-length practice test ${today.testNumber} of 8`, href: "/analysis" };
+    return { label: `Take full-length practice test ${today.testNumber} of 8`, href: "/plan#practice-tests" };
   }
   for (const sec of curriculum) {
     for (const d of sec.domains) {

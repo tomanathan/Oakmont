@@ -87,25 +87,25 @@ const TIPS = [
 // coming" on the plan -- instead of the same wherever-you-are filler on
 // every screen. pickMessage() below also folds these into its ambient rolls
 // while sitting on that page, not just on arrival.
-type PageKind = "dashboard" | "plan" | "analysis" | "subskill" | "settings";
+type PageKind = "dashboard" | "plan" | "subskill" | "settings";
 
 const PAGE_LINES: Record<PageKind, string[]> = {
   dashboard: [
     "Your plan's lined up for today — let's knock it out.",
     "One quiz at a time. I'll be right here.",
     "Today's a good day to get a little better than yesterday.",
-    "Curious how your practice tests are trending? Analysis has the full story.",
+    "Curious how your practice tests are trending? Your plan page has the full story.",
   ],
+  // Merged from the old separate "analysis" page's lines when the two
+  // became one page (see app/plan/page.tsx) -- the schedule further down
+  // this page now actually reacts to the scores logged at the top of it,
+  // so both halves' lines live together here too.
   plan: [
     "This is the whole road to test day — one week at a time.",
     "Click into any week to see it broken down day by day.",
     "All your practice tests are already scheduled in here, spaced out on purpose.",
     "Every week you finish here is one less thing to worry about later.",
-  ],
-  analysis: [
-    "Let's see how you're trending.",
-    "Every test you log here is a clue about where to focus next.",
-    "Numbers don't lie — and yours are worth a look.",
+    "Every test you log up top reshapes the schedule below it — weaker spots move earlier.",
     "A rough practice test just means we now know exactly what to fix.",
   ],
   subskill: [
@@ -124,8 +124,11 @@ const PAGE_LINES: Record<PageKind, string[]> = {
 function pageKindFor(pathname: string | null): PageKind | null {
   if (!pathname) return null;
   if (pathname.startsWith("/dashboard")) return "dashboard";
-  if (pathname.startsWith("/plan")) return "plan";
-  if (pathname.startsWith("/analysis")) return "analysis";
+  // /analysis itself now only ever redirects to /plan (see
+  // app/analysis/page.tsx) and never actually renders, but a pathname
+  // check costs nothing and means a stale client-side reference to the
+  // old route still resolves to the right dialogue pool instead of none.
+  if (pathname.startsWith("/plan") || pathname.startsWith("/analysis")) return "plan";
   if (pathname.startsWith("/subskill")) return "subskill";
   if (pathname.startsWith("/settings")) return "settings";
   return null;

@@ -249,10 +249,15 @@ function DayContent({
   if (day.type === "test") {
     return (
       <button
-        onClick={() => onNavigate("/analysis")}
+        // A same-page scroll now, not a navigation -- the practice-test
+        // log this used to send students to a separate /analysis page for
+        // now lives above this exact schedule on the same /plan page (see
+        // app/plan/page.tsx). onNavigate still exists for the subskill
+        // links below, which do go to a different page.
+        onClick={() => document.getElementById("practice-tests")?.scrollIntoView({ behavior: "smooth" })}
         className="text-left text-[13px] font-semibold text-[#9a6a12] hover:underline"
       >
-        Take full-length practice test {day.testNumber} of 8, then log &amp; review your results &rarr;
+        Take full-length practice test {day.testNumber} of 8, then log &amp; review your results &uarr;
       </button>
     );
   }

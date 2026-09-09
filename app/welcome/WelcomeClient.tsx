@@ -73,7 +73,7 @@ export function WelcomeClient({ email }: { email: string }) {
         <FeatureCard
           emoji="📈"
           title="Score analysis"
-          body="Log each practice test's results on the Analysis page to see your subject-by-subject trend over time."
+          body="Log each practice test's results on your Study plan page to see your subject-by-subject trend over time -- and watch your schedule adjust to focus on it."
         />
       </div>
 

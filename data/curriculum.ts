@@ -7204,8 +7204,20 @@ export const NUM_FULL_LENGTH_TESTS = 8;
  * get more than one if the count doesn't divide evenly). A week that also
  * hosts a practice test still gets subskills -- see buildDayPlan, which
  * fits both into the week's 7 days.
+ *
+ * `subskillOrder`, when given, replaces the default curriculum-authoring
+ * order those subskills get scheduled in -- see
+ * lib/mastery.ts's orderSubskillsByWeakness, which produces a weakest-
+ * domains-first ordering from a student's actual practice-test and quiz
+ * performance so the plan spends more of a student's *remaining* time on
+ * what they're worst at, not just marching through the syllabus in a
+ * fixed sequence regardless of how it's going. Must be a permutation of
+ * ALL_SUBSKILLS' own ids -- same set, just reordered -- since this
+ * function's whole guarantee is that every subskill gets scheduled
+ * exactly once; omit it to get the original authored order (also what
+ * every call site got before this parameter existed).
  */
-export function buildStudyPlan(totalWeeks: number = STUDY_PLAN_WEEK_COUNT): PlanWeek[] {
+export function buildStudyPlan(totalWeeks: number = STUDY_PLAN_WEEK_COUNT, subskillOrder?: string[]): PlanWeek[] {
   const safeTotalWeeks = Math.max(2, Math.round(totalWeeks));
   const contentWeeks = Math.max(1, safeTotalWeeks - 1);
 
@@ -7215,7 +7227,7 @@ export function buildStudyPlan(totalWeeks: number = STUDY_PLAN_WEEK_COUNT): Plan
     testsByWeek.set(w, [...(testsByWeek.get(w) ?? []), t]);
   }
 
-  const order = ALL_SUBSKILLS.map((s) => s.id);
+  const order = subskillOrder ?? ALL_SUBSKILLS.map((s) => s.id);
   const weeks: PlanWeek[] = [];
   let i = 0;
   for (let w = 1; w <= contentWeeks; w++) {

@@ -101,3 +101,56 @@ export function isSectionComplete(domainMastery: DomainMastery[], section: strin
 export function isCurriculumComplete(domainMastery: DomainMastery[]): boolean {
   return domainMastery.length > 0 && domainMastery.every((d) => d.completed);
 }
+
+/**
+ * A domain's "how urgently does this need study time" number for
+ * ordering the study plan -- lower means weaker means scheduled sooner.
+ * Deliberately a different number from `stars` above: stars are a
+ * quiz-mastery-only display value (see computeDomainMastery's own
+ * comment on why testPct was pulled back out of it), but scheduling
+ * priority is exactly the place a real practice-test score should carry
+ * more weight than quiz history -- an actual exam-format result is the
+ * more current, more direct signal of where a student stands, with quiz
+ * mastery filling in for domains a recent test didn't cover.
+ *
+ * A domain with neither signal yet (never quizzed, never tested) gets a
+ * neutral middle score rather than being pushed to the front (treated as
+ * maximally weak, which isn't known) or the back (treated as safely
+ * mastered, which also isn't known) -- see orderSubskillsByWeakness for
+ * why that neutral default is what keeps a brand-new student's plan
+ * exactly in its original order.
+ */
+function domainWeaknessScore(dm: Pick<DomainMastery, "testPct" | "quizPct"> | undefined): number {
+  if (!dm) return 60;
+  if (dm.testPct !== null && dm.quizPct !== null) return dm.testPct * 0.65 + dm.quizPct * 0.35;
+  if (dm.testPct !== null) return dm.testPct;
+  if (dm.quizPct !== null) return dm.quizPct;
+  return 60;
+}
+
+/**
+ * Reorders a list of subskills so the ones in weaker domains come first --
+ * this is what makes the study plan actually reflect practice-test and
+ * quiz performance, not just the curriculum's original authoring order
+ * and the target test date. Two things are deliberately preserved:
+ *
+ * - Stable within ties: a domain's own subskills keep their original
+ *   relative order (that order is already easy -> hard), and a brand-new
+ *   student with no quiz or test data at all gets back the *exact*
+ *   original order -- every domain scores the same neutral default, so
+ *   nothing moves until real performance data exists to move it.
+ * - A pure reordering, never a filter: the result is always the same
+ *   subskills, just resequenced, so buildStudyPlan's guarantee that every
+ *   subskill gets scheduled exactly once still holds no matter what
+ *   domainMastery says.
+ */
+export function orderSubskillsByWeakness<T extends { id: string; domain: string }>(
+  subskills: T[],
+  domainMastery: DomainMastery[]
+): string[] {
+  const scoreByDomain = new Map(domainMastery.map((d) => [d.domain, domainWeaknessScore(d)]));
+  return subskills
+    .map((s, i) => ({ id: s.id, i, score: scoreByDomain.get(s.domain) ?? 60 }))
+    .sort((a, b) => a.score - b.score || a.i - b.i)
+    .map((x) => x.id);
+}

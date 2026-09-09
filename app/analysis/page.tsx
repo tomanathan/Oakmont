@@ -1,57 +1,11 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "@/lib/session";
-import { getUserStats } from "@/lib/user";
-import { prisma } from "@/lib/prisma";
-import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
-import { computeDomainMastery, type ProgressMap } from "@/lib/mastery";
-import { AppShell } from "@/components/AppShell";
-import { AnalysisClient } from "./AnalysisClient";
 
-export default async function AnalysisPage() {
-  const user = await getCurrentUser();
-  if (!user) redirect("/login");
-
-  const [stats, tests, progressRows] = await Promise.all([
-    getUserStats(user.userId),
-    prisma.practiceTest.findMany({
-      where: { userId: user.userId },
-      orderBy: { takenAt: "desc" },
-    }),
-    prisma.progress.findMany({ where: { userId: user.userId } }),
-  ]);
-
-  const progress: ProgressMap = {};
-  for (const row of progressRows) {
-    progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
-  }
-
-  const subskillsByDomain: Record<string, string[]> = {};
-  for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
-  // Blends quiz mastery with the latest practice test's domain subscore --
-  // the same numbers the dashboard's star ratings use, so logging a test
-  // below visibly moves the same mastery everywhere, not just this page.
-  const domainMastery = computeDomainMastery(
-    ALL_DOMAINS,
-    subskillsByDomain,
-    progress,
-    (tests[0]?.domainScores as Record<string, number> | null) ?? null
-  );
-
-  return (
-    <AppShell email={user.email} stats={stats}>
-      <AnalysisClient
-        domains={ALL_DOMAINS}
-        domainMastery={domainMastery}
-        tests={tests.map((t) => ({
-          id: t.id,
-          takenAt: t.takenAt.toISOString(),
-          compositeScore: t.compositeScore,
-          rwScore: t.rwScore,
-          mathScore: t.mathScore,
-          domainScores: t.domainScores as Record<string, number>,
-          domainCounts: t.domainCounts as Record<string, { correct: number; total: number }>,
-        }))}
-      />
-    </AppShell>
-  );
+// Practice exam analysis now lives on the /plan page (see app/plan/page.tsx)
+// -- the whole point of the merge was for the schedule below it to react
+// to the scores logged above it, which only makes sense as one page. This
+// route stays as a redirect, not a 404, for anyone with an old bookmark or
+// a stale link to it (including a couple of in-app ones this same change
+// missed updating).
+export default function AnalysisPage() {
+  redirect("/plan#practice-tests");
 }

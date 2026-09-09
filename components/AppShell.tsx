@@ -141,11 +141,14 @@ export function AppShell({
             <NavButton active={pathname === "/dashboard"} onClick={() => router.push("/dashboard")}>
               Dashboard
             </NavButton>
+            {/* One nav item now covers what used to be two separate pages
+                (6-month plan, practice exam analysis) -- see app/plan/
+                page.tsx's own comment on why logging scores and seeing the
+                schedule they drive belong on one page, not two. /analysis
+                still resolves (see app/analysis/page.tsx) as a redirect
+                here for anyone with an old bookmark. */}
             <NavButton active={pathname === "/plan"} onClick={() => router.push("/plan")}>
-              6-month plan
-            </NavButton>
-            <NavButton active={pathname === "/analysis"} onClick={() => router.push("/analysis")}>
-              Practice exam analysis
+              Study plan
             </NavButton>
           </nav>
 

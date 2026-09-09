@@ -3,7 +3,7 @@ import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
 import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
-import { computeDomainMastery, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, orderSubskillsByWeakness, type ProgressMap } from "@/lib/mastery";
 import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
@@ -32,10 +32,30 @@ export default async function DashboardPage() {
   }
   const createdAt = stats.createdAt ?? new Date();
   const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null);
+
+  // Computed here, before the plan is built, so the plan itself can be
+  // ordered by it (see orderSubskillsByWeakness below) -- the same
+  // domainMastery this page already needed anyway for DashboardClient's
+  // own subject toggle and star ratings further down, just moved earlier.
+  const subskillsByDomain: Record<string, string[]> = {};
+  for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
+  const domainMastery = computeDomainMastery(
+    ALL_DOMAINS,
+    subskillsByDomain,
+    progress,
+    (latestTest?.domainScores as Record<string, number> | null) ?? null
+  );
+  // Weakest domains first, so the plan spends more of a student's
+  // remaining time on what practice tests and quizzes actually show
+  // they're worst at -- see lib/mastery.ts's own doc for why this is a
+  // stable reorder (a brand-new student with no data gets the original
+  // order back unchanged) rather than a different subskill set.
+  const weaknessOrderedIds = orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery);
+
   // Enough whole weeks to reach the exact day count -- the final week is
   // truncated at render/lookup time (see getTodayPlanItem) so the plan
   // never schedules anything past the real target date.
-  const studyPlan = buildStudyPlan(Math.ceil(courseLengthDays / 7));
+  const studyPlan = buildStudyPlan(Math.ceil(courseLengthDays / 7), weaknessOrderedIds);
   // Pace against the plan's actual scope (the subskills it schedules
   // week-by-week), not the full subskill bank, so the numbers line up with
   // what /plan shows. Counts MASTERED subskills (a perfect quiz score), not
@@ -77,14 +97,6 @@ export default async function DashboardPage() {
   const weekDone = thisWeek ? thisWeek.subskillIds.filter((id) => progress[id]).length : 0;
   const weekTotal = thisWeek ? thisWeek.subskillIds.length : 0;
 
-  const subskillsByDomain: Record<string, string[]> = {};
-  for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
-  const domainMastery = computeDomainMastery(
-    ALL_DOMAINS,
-    subskillsByDomain,
-    progress,
-    (latestTest?.domainScores as Record<string, number> | null) ?? null
-  );
   let quizzesLastSession = 0;
   let masteredLastSession = 0;
   if (stats.previousLoginAt && stats.lastLoginAt) {
