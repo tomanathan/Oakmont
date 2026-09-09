@@ -533,6 +533,33 @@ export function SubskillClient({
               No practice questions are available for this subskill yet.
             </div>
           )}
+          {quizQuestions.length > 0 && (
+            // Shown regardless of submitted state -- not gated with
+            // QuizProgress below, which only makes sense pre-submission.
+            // Placed once above the whole quiz, not per-question: the
+            // point is pointing students at more practice for this
+            // subskill overall, not repeating the same link a dozen times
+            // down the page. Same "tip" visual language as TipsPanel's own
+            // callout (warm cream, not the Desmos blue used elsewhere on
+            // this page) since this reads the same way: a helpful
+            // pointer, not an interactive tool embedded in the page.
+            <div className="bg-[#fffaf0] border border-[#f0e4c8] rounded-lg p-3.5 mb-3.5 flex items-start gap-2.5">
+              <span className="text-base leading-none flex-shrink-0">💡</span>
+              <div className="text-[13px] text-gray-700 leading-relaxed">
+                Once you&apos;ve worked through these, the College Board&apos;s own{" "}
+                <a
+                  href="https://satsuite.collegeboard.org/practice/student-question-bank"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-[#9a6a12] hover:underline"
+                >
+                  SAT Suite Question Bank &#8599;
+                </a>{" "}
+                is a great supplement &mdash; real retired questions, official practice, straight from the
+                source.
+              </div>
+            </div>
+          )}
           {!submitted && quizQuestions.length > 0 && (
             <QuizProgress answeredCount={Object.keys(answers).length} total={quizQuestions.length} />
           )}
