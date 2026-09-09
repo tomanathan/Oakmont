@@ -31,13 +31,23 @@ export function AnalysisClient({
   domains,
   domainMastery,
   tests,
+  dueTestNumber,
 }: {
   domains: DomainInfo[];
   domainMastery: DomainMastery[];
   tests: Test[];
+  // Set by app/plan/page.tsx only when a scheduled practice test's week
+  // has actually arrived and it hasn't been logged yet -- see that file's
+  // own comment on why this section no longer opens itself just because a
+  // student happens to load the page (it used to, unconditionally, for
+  // anyone with zero tests logged). Roadmap is the main content of this
+  // page now; this section stays collapsed to a compact summary unless
+  // there's an actual reason to show it open.
+  dueTestNumber: number | null;
 }) {
   const router = useRouter();
-  const [formOpen, setFormOpen] = useState(tests.length === 0);
+  const [expanded, setExpanded] = useState(dueTestNumber !== null);
+  const [formOpen, setFormOpen] = useState(dueTestNumber !== null);
   // Which logged test (if any) the form is currently editing, rather than
   // creating a new one -- null means the form is in "log a new test" mode.
   const [editingTest, setEditingTest] = useState<Test | null>(null);
@@ -46,12 +56,23 @@ export function AnalysisClient({
   const latest = tests[0] ?? null;
   const previous = tests[1] ?? null;
 
-  // Opening the form inserts a large block above whatever's currently in
-  // view, which otherwise leaves the page stranded mid-scroll against
-  // unrelated content further down.
+  function openToLog() {
+    setExpanded(true);
+    setFormOpen(true);
+  }
+
+  // The roadmap's own test-day rows and the top-of-page due-test prompt
+  // (TestDuePrompt) both fire this instead of holding any state of their
+  // own -- they're siblings of this section, not parents of it, so a
+  // plain window event is how they reach in and expand it. See PlanClient
+  // for the fuller reasoning.
   useEffect(() => {
-    if (formOpen) window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [formOpen]);
+    function onLogTest() {
+      openToLog();
+    }
+    window.addEventListener("plan:log-test", onLogTest);
+    return () => window.removeEventListener("plan:log-test", onLogTest);
+  }, []);
 
   function startEdit(t: Test) {
     setDeletingId(null);
@@ -80,21 +101,65 @@ export function AnalysisClient({
     }
   }
 
+  if (!expanded) {
+    return (
+      <div className="flex items-center justify-between gap-3 bg-white border border-[#ece9f7] rounded-xl px-5 py-4 flex-wrap">
+        <div className="min-w-0">
+          <div className="text-sm font-semibold text-ink mb-0.5">Practice exam analysis</div>
+          <div className="text-xs text-gray-500">
+            {latest
+              ? `${tests.length} test${tests.length === 1 ? "" : "s"} logged · latest: ${latest.compositeScore} (${formatUTCDate(latest.takenAt, { month: "short", day: "numeric" })})`
+              : "No practice tests logged yet."}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={openToLog}
+            className="px-3.5 py-2 rounded-lg border border-[#e0defa] bg-[#f0eff9] text-gray-700 text-sm font-medium hover:border-[#c9c6ee]"
+          >
+            + Log a practice test
+          </button>
+          {tests.length > 0 && (
+            <button
+              onClick={() => setExpanded(true)}
+              className="px-3.5 py-2 rounded-lg text-gray-500 text-sm font-medium hover:text-ink"
+            >
+              View details &#9656;
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
         <div className="text-xl font-bold text-ink">Practice exam analysis</div>
-        {tests.length > 0 && (
+        <div className="flex items-center gap-2">
+          {tests.length > 0 && (
+            <button
+              onClick={() => (formOpen ? closeForm() : setFormOpen(true))}
+              className="px-3.5 py-2 rounded-lg border border-[#e0defa] bg-[#f0eff9] text-gray-700 text-sm font-medium hover:border-[#c9c6ee]"
+            >
+              {formOpen ? "Cancel" : "+ Log a practice test"}
+            </button>
+          )}
           <button
-            onClick={() => (formOpen ? closeForm() : setFormOpen(true))}
-            className="px-3.5 py-2 rounded-lg border border-[#e0defa] bg-[#f0eff9] text-gray-700 text-sm font-medium hover:border-[#c9c6ee]"
+            onClick={() => {
+              setExpanded(false);
+              closeForm();
+            }}
+            className="px-3.5 py-2 rounded-lg text-gray-400 text-sm font-medium hover:text-ink"
           >
-            {formOpen ? "Cancel" : "+ Log a practice test"}
+            Hide &#9662;
           </button>
-        )}
+        </div>
       </div>
       <div className="text-sm text-gray-500 mb-6">
-        Log your full-length practice test results here and see how each subject is trending.
+        {dueTestNumber !== null
+          ? `Practice test ${dueTestNumber} of 8 was scheduled for this week -- log your results below.`
+          : "Log your full-length practice test results here and see how each subject is trending."}
       </div>
 
       {formOpen && (

@@ -4,11 +4,13 @@ import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
 import { courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { buildDayPlan } from "@/lib/studyPlan";
+import { addUTCDays, utcDayDiff } from "@/lib/dateOnly";
 import { computeDomainMastery, orderSubskillsByWeakness, type ProgressMap } from "@/lib/mastery";
 import { buildStudyPlan, getSubskill, ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
 import { PlanClient } from "./PlanClient";
 import { AnalysisClient } from "./AnalysisClient";
+import { TestDuePrompt } from "./TestDuePrompt";
 
 export default async function PlanPage() {
   const user = await getCurrentUser();
@@ -73,19 +75,48 @@ export default async function PlanPage() {
     };
   });
 
+  // How many of the plan's 8 scheduled practice-test slots have reached
+  // their week (weekStart <= today) -- a student is expected to have sat
+  // down for a test once its week arrives, whether or not they've logged
+  // it here yet. Compared against how many tests are actually logged:
+  // fewer logged than scheduled-and-arrived means one is overdue, and the
+  // *next* unlogged one is what the prompt below asks about. This is a
+  // deliberate change from prompting unconditionally -- a student mostly
+  // won't have fresh scores to enter outside of a test the plan itself
+  // just scheduled, so asking every time this page loads regardless read
+  // as noise rather than a useful nudge.
+  let scheduledAndArrivedCount = 0;
+  for (const w of studyPlan) {
+    if (w.testNumbers.length === 0) continue;
+    const weekStart = addUTCDays(courseStartDate, (w.week - 1) * 7);
+    if (utcDayDiff(weekStart, new Date()) >= 0) scheduledAndArrivedCount += w.testNumbers.length;
+  }
+  const dueTestNumber = tests.length < scheduledAndArrivedCount ? scheduledAndArrivedCount : null;
+
   return (
     <AppShell email={user.email} stats={stats} wide>
       <div className="text-xl font-bold text-ink mb-1.5">Study plan</div>
       <div className="text-sm text-gray-500 mb-6">
-        Log a practice test below and the day-by-day schedule further down automatically leans
-        more of your remaining time toward whichever domains it shows you're weakest in --
-        alongside your quiz mastery, and still paced to finish exactly by your SAT date.
+        Your day-by-day roadmap to test day. Log a practice test whenever the plan schedules one
+        and the schedule below leans more of your remaining time toward whatever it shows you're
+        weakest in.
       </div>
 
-      <div id="practice-tests">
+      {dueTestNumber !== null && <TestDuePrompt testNumber={dueTestNumber} />}
+
+      <PlanClient
+        weeks={weeksWithNames}
+        progress={progress}
+        courseStartDate={courseStartDate.toISOString()}
+        targetTestDate={stats.targetTestDate ? stats.targetTestDate.toISOString() : null}
+        daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
+      />
+
+      <div className="mt-10" id="practice-tests">
         <AnalysisClient
           domains={ALL_DOMAINS}
           domainMastery={domainMastery}
+          dueTestNumber={dueTestNumber}
           tests={tests.map((t) => ({
             id: t.id,
             takenAt: t.takenAt.toISOString(),
@@ -95,16 +126,6 @@ export default async function PlanPage() {
             domainScores: t.domainScores as Record<string, number>,
             domainCounts: t.domainCounts as Record<string, { correct: number; total: number }>,
           }))}
-        />
-      </div>
-
-      <div className="mt-10">
-        <PlanClient
-          weeks={weeksWithNames}
-          progress={progress}
-          courseStartDate={courseStartDate.toISOString()}
-          targetTestDate={stats.targetTestDate ? stats.targetTestDate.toISOString() : null}
-          daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
         />
       </div>
     </AppShell>
