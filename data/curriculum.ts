@@ -41,6 +41,18 @@ export interface Pattern {
   // same restraint as the `pattern` field on questions: only tag it where
   // it cleanly applies, never force it in.
   desmosTrick?: string;
+  // Which of the digital SAT's two built-in Desmos calculators the trick
+  // above actually needs -- the real exam gives students the graphing
+  // calculator on Math questions that allow one and the four-function/
+  // scientific calculator on questions that don't, and they're genuinely
+  // different tools at different URLs (see SubskillClient's DESMOS_URLS),
+  // not two skins on the same one. Every desmosTrick written so far talks
+  // students through plotting an equation or a system, so all of them are
+  // "graphing" today, but the field exists (rather than hardcoding one
+  // URL) for the day a trick is pure computation with no plot involved.
+  // Defaults to "graphing" when a trick is set without this -- the
+  // majority case -- so it's optional to specify, not required.
+  desmosCalculator?: "graphing" | "scientific";
 }
 
 export interface Subskill {
@@ -3349,6 +3361,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     },
     {
       name: "Reading the Solution Directly from a Graph",
+      desmosCalculator: "graphing",
       desmosTrick:
         "Step 1: Open Desmos and type the first equation into the first line exactly as it's written — if it's in the form Ax + By = C, you can enter it in that form directly, no need to solve for y first. Step 2: Type the second equation into the next line the same way. Desmos draws both as straight lines. Step 3: Click on the point where the two lines cross (use the +/- zoom buttons if they cross off-screen) — Desmos shows a small label with that point's exact coordinates. Step 4: Read the solution straight off that label: the first number is x, the second is y. No elimination or substitution required.",
       explanation:
@@ -3930,6 +3943,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     },
     {
       name: "Determining the Number of Solutions via the Discriminant",
+      desmosCalculator: "graphing",
       desmosTrick:
         "Step 1: If the equation isn't already in 'expression = 0' form, move everything to one side first. Step 2: Type y = [that side] into Desmos as a new line. Step 3: Look at how many times the curve crosses the x-axis — two crossings means two real solutions, one crossing where the curve just touches the axis (without crossing through) means exactly one repeated solution, and zero crossings means no real solutions. You can count crossings by eye instead of computing b²-4ac.",
       explanation:
@@ -4036,6 +4050,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     },
     {
       name: "Solving a Linear-Quadratic System by Substitution",
+      desmosCalculator: "graphing",
       desmosTrick:
         "Step 1: Type the linear equation into the first line and the quadratic equation into the second line, exactly as given — Desmos accepts input like y = x^2 + 3x - 4 directly. Desmos graphs a line and a parabola. Step 2: Every point where they cross is a solution to the system, so click each crossing point to read off its exact coordinates. Step 3: If the line touches the parabola at exactly one point, there's one solution; if it never touches, there are none. This replaces the whole substitute-and-solve process with reading a picture.",
       explanation:
@@ -5157,6 +5172,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
   patterns: [
     {
       name: "Choosing the Right Model Shape from a Scatterplot's Pattern",
+      desmosCalculator: "graphing",
       desmosTrick:
         "Step 1: Click the '+' menu and add a table, then enter the given data points as x1, y1 columns — one point per row. Step 2: On the next line, type a regression template matching the shape you're testing: y1 ~ mx1+b for a straight-line trend, y1 ~ ax1^2+bx1+c for a curve that bends once, or y1 ~ a*b^x1 for growth or decay that speeds up or slows down over time. Step 3: Desmos fits that shape through your points and reports the actual values of m, b, a, and c — so instead of guessing which shape 'looks right' by eye, you can check exactly how well each one fits.",
       explanation:
@@ -6639,6 +6655,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
   patterns: [
     {
       name: "The Circle Equation (Center-Radius Form)",
+      desmosCalculator: "graphing",
       desmosTrick:
         "Step 1: Type the equation exactly as given, using ^2 for squares — for example (x-3)^2+(y+1)^2=25. Desmos draws the circle immediately. Step 2: Read the center straight off what's being subtracted from x and y inside the parentheses (watch the sign carefully: (x-3) means the center's x-coordinate is +3, not -3). Step 3: The radius is the square root of the number on the right side. Step 4: You can also click any point on the drawn circle to read its coordinates directly, instead of plugging a value into the equation algebraically.",
       explanation:

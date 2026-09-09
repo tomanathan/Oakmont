@@ -20,6 +20,19 @@ interface SubmitResult {
   newCostume: { id: string; name: string } | null;
 }
 
+// The digital SAT actually gives students two different built-in Desmos
+// tools depending on the question -- a full graphing calculator on Math
+// questions that allow one, and a separate four-function/scientific
+// calculator on questions that don't graph anything -- not one calculator
+// at two URLs. Every pattern's own desmosCalculator field (see
+// data/curriculum.ts's Pattern type) says which one its trick actually
+// needs, so the link below can send students to the matching tool instead
+// of always defaulting to graphing regardless of the pattern.
+const DESMOS_URLS: Record<"graphing" | "scientific", string> = {
+  graphing: "https://www.desmos.com/testing/texas/graphing",
+  scientific: "https://www.desmos.com/testing/texas/scientific",
+};
+
 export function SubskillClient({
   subskill,
   questions,
@@ -455,12 +468,13 @@ export function SubskillClient({
                     </div>
                     <StepList text={pattern.desmosTrick} className="text-[13px] text-gray-700 mb-2.5" />
                     <a
-                      href="https://www.desmos.com/testing/college-board"
+                      href={DESMOS_URLS[pattern.desmosCalculator ?? "graphing"]}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[13px] font-semibold text-[#3a6690] hover:underline"
                     >
-                      Open Desmos to try it &#8599;
+                      Open Desmos {pattern.desmosCalculator === "scientific" ? "(scientific)" : "(graphing)"} to try
+                      it &#8599;
                     </a>
                   </div>
                 )}
