@@ -114,23 +114,48 @@ export function DashboardClient({
         />
       )}
 
-      {/* Subject toggle -- one subject shown at a time, kept simple and
-          friendly rather than dumping both subjects' full syllabus on
-          screen together. */}
-      <div className="flex gap-2 mb-5">
+      {/* Subject toggle -- these two sections are the entire test, and the
+          two halves of everything below this point, so the control that
+          switches between them now actually looks like it's carrying that
+          weight instead of reading as a pair of small nav pills. Each side
+          shows its own real mastery number so picking a subject doubles as
+          a glance at how it's going there; the active side goes full color
+          and scales up slightly while the inactive one recedes (a muted
+          card, not just an unfilled outline), the same "one side steps
+          forward, the other steps back" contrast a two-option select
+          screen uses to make the current pick unmistakable at a glance. */}
+      <div className="grid grid-cols-2 gap-3 mb-5">
         {curriculum.map((sec) => {
           const theme = sectionTheme(sec.section);
           const active = sec.section === subject;
+          const { masteredCount: sectionMastered, total: sectionTotal, pct } = sectionProgress(sec, progress);
+          const label = sec.section === "Reading and Writing" ? "Reading & Writing" : sec.section;
           return (
             <button
               key={sec.section}
               onClick={() => setSubject(sec.section)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold transition-colors ${
-                active ? "bg-ink text-white border-ink" : `${theme.cardBg} ${theme.cardBorder} text-ink`
+              aria-pressed={active}
+              className={`relative overflow-hidden rounded-2xl border-2 p-5 text-left transition-all duration-200 ${
+                active
+                  ? `${theme.cardBg} ${theme.cardBorder.split(" ")[0]} shadow-[0_4px_18px_rgba(26,26,46,0.1)] scale-[1.02]`
+                  : "bg-white border-gray-200 opacity-60 hover:opacity-90 hover:border-gray-300"
               }`}
             >
-              <span className={`w-2 h-2 rounded-full ${active ? "bg-white" : theme.dot}`} />
-              {sec.section === "Reading and Writing" ? "Reading & Writing" : sec.section}
+              <div className={`text-[11px] font-bold uppercase tracking-wide mb-1 ${active ? theme.text : "text-gray-400"}`}>
+                {label}
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-[32px] leading-none font-display font-semibold text-ink">{pct}%</span>
+                <span className="text-xs text-gray-500">
+                  {sectionMastered} of {sectionTotal} mastered
+                </span>
+              </div>
+              <div className="mt-3 h-2 rounded-full bg-black/[0.06] overflow-hidden">
+                <div
+                  className={`h-full rounded-full ${active ? theme.bar : "bg-gray-300"} transition-all duration-300`}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
             </button>
           );
         })}
@@ -368,6 +393,28 @@ function PlanCard({
       </div>
     </div>
   );
+}
+
+/**
+ * Real mastery numbers for one whole section (Math, or Reading and
+ * Writing), for the subject toggle above -- every subskill across every
+ * domain in this section, and how many of them are quizzed to a perfect
+ * score. Same "mastered" definition the wardrobe and the header stats use
+ * (bestScore === total), just totaled per section instead of per domain
+ * or across the whole curriculum.
+ */
+function sectionProgress(
+  section: Section,
+  progress: ProgressMap
+): { masteredCount: number; total: number; pct: number } {
+  const subskillIds = section.domains.flatMap((d) => d.subskills.map((s) => s.id));
+  const masteredCount = subskillIds.filter((id) => {
+    const p = progress[id];
+    return !!p && p.bestScore === p.total;
+  }).length;
+  const total = subskillIds.length;
+  const pct = total > 0 ? Math.round((masteredCount / total) * 100) : 0;
+  return { masteredCount, total, pct };
 }
 
 /**
