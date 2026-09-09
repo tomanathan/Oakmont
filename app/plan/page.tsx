@@ -95,13 +95,10 @@ export default async function PlanPage() {
 
   return (
     <AppShell email={user.email} stats={stats} wide>
-      <div className="text-xl font-bold text-ink mb-1.5">Study plan</div>
-      <div className="text-sm text-gray-500 mb-6">
-        Your day-by-day roadmap to test day. Log a practice test whenever the plan schedules one
-        and the schedule below leans more of your remaining time toward whatever it shows you're
-        weakest in.
-      </div>
-
+      {/* PlanClient owns the page's one heading now -- this used to also
+          render its own "Study plan" title and description right above
+          PlanClient's near-identical "Your study roadmap" one, which was
+          two headers explaining the same schedule back to back. */}
       {dueTestNumber !== null && <TestDuePrompt testNumber={dueTestNumber} />}
 
       <PlanClient

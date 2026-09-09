@@ -75,10 +75,12 @@ export function PlanClient({
 
   return (
     <div>
-      <div className="text-xl font-bold text-ink mb-1.5">Your study roadmap</div>
+      <div className="text-xl font-bold text-ink mb-1.5">Study plan</div>
       <div className="text-sm text-gray-500 mb-4">
         {weeks.length} weeks, broken down day by day. All {totalTests} full-length practice
-        tests are spaced throughout based on how much time you have, not bunched up at the end.{" "}
+        tests are spaced throughout based on how much time you have, not bunched up at the end,
+        and the schedule automatically leans more of your remaining time toward whatever domains
+        your practice-test and quiz scores show you're weakest in.{" "}
         {targetTestDate ? (
           <>
             Change your target date any time in{" "}
