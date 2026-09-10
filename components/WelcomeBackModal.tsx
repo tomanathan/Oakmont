@@ -2,6 +2,29 @@
 
 import { useEffect, useState } from "react";
 import { BrandMark } from "./BrandMark";
+import { PixelDog } from "./PixelDog";
+import { MOOD_BY_STAGE } from "./PetAvatar";
+import { PET_NAME, type PetStage } from "@/lib/pet";
+
+// Only the stages worth interrupting for -- there's no point telling
+// someone their pet is fine. Styling and label escalate with severity.
+const PET_ALERT: Partial<Record<PetStage, { box: string; label: string; labelClass: string }>> = {
+  hungry: {
+    box: "bg-[#fbf1df] border-[#f0ddb8]",
+    label: `${PET_NAME} is getting hungry`,
+    labelClass: "text-[#9a6a12]",
+  },
+  critical: {
+    box: "bg-[#fbeaea] border-[#f0d0d0]",
+    label: `⚠️ ${PET_NAME} needs you today`,
+    labelClass: "text-[#b23b3b]",
+  },
+  dead: {
+    box: "bg-[#f0eff2] border-[#e0dee6]",
+    label: `${PET_NAME} didn't make it`,
+    labelClass: "text-gray-500",
+  },
+};
 
 export function WelcomeBackModal({
   sessionKey,
@@ -9,12 +32,16 @@ export function WelcomeBackModal({
   quizzesLastSession,
   masteredLastSession,
   currentStreak,
+  petStage,
+  petMessage,
 }: {
   sessionKey: string;
   previousLoginAt: string;
   quizzesLastSession: number;
   masteredLastSession: number;
   currentStreak: number;
+  petStage: PetStage;
+  petMessage: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -82,10 +109,30 @@ export function WelcomeBackModal({
         <BrandMark size={48} className="mx-auto mb-4" />
         <div className="font-display font-semibold text-xl text-ink mb-1.5">Welcome back!</div>
         <div className="text-sm text-gray-500 mb-5">Last time you were here was {lastDate}.</div>
-        <div className="bg-[#eef0fc] border border-[#d7dbf3] rounded-xl p-4 mb-6 text-sm text-[#41436b] leading-relaxed">
+        <div className="bg-[#eef0fc] border border-[#d7dbf3] rounded-xl p-4 mb-4 text-sm text-[#41436b] leading-relaxed">
           {summary}
           {currentStreak > 0 && ` You're on a ${currentStreak}-day streak — keep it going.`}
         </div>
+
+        {PET_ALERT[petStage] && (
+          <div
+            className={`flex items-center gap-3 rounded-xl border p-3.5 mb-6 text-left ${PET_ALERT[petStage]!.box}`}
+          >
+            <PixelDog
+              size={40}
+              mood={MOOD_BY_STAGE[petStage]}
+              dead={petStage === "dead"}
+              className={`flex-shrink-0 ${petStage === "critical" ? "animate-worried" : ""}`}
+            />
+            <div className="min-w-0">
+              <div className={`text-xs font-bold mb-0.5 ${PET_ALERT[petStage]!.labelClass}`}>
+                {PET_ALERT[petStage]!.label}
+              </div>
+              <div className="text-[13px] text-gray-700 leading-snug">{petMessage}</div>
+            </div>
+          </div>
+        )}
+
         <button
           onClick={dismiss}
           className="w-full py-3 rounded-lg bg-ink text-white font-semibold text-sm hover:opacity-90"

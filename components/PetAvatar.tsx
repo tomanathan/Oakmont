@@ -24,7 +24,9 @@ export function PetAvatar({
       mood={MOOD_BY_STAGE[stage]}
       dead={stage === "dead"}
       costume={costume}
-      className={stage === "thriving" ? "animate-flame-pulse" : ""}
+      className={
+        stage === "thriving" ? "animate-flame-pulse" : stage === "critical" ? "animate-worried" : ""
+      }
     />
   );
 }

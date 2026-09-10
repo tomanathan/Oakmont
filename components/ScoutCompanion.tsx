@@ -728,6 +728,12 @@ export function ScoutCompanion() {
   // simply as less busy) than frequent short hops.
   function pickPauseMs(): number {
     const r = Math.random();
+    // A near-death Ozho lingers between walks -- longer rests, fewer
+    // brief hops -- so he reads as low on energy rather than restless.
+    if (stageRef.current === "critical") {
+      if (r < 0.55) return 9000 + Math.random() * 9000;
+      return 4000 + Math.random() * 4000;
+    }
     if (r < 0.2) return 8000 + Math.random() * 8000; // a real rest
     if (r < 0.55) return 3500 + Math.random() * 3500; // a normal beat
     return 1500 + Math.random() * 2000; // a brief pause
@@ -876,15 +882,19 @@ export function ScoutCompanion() {
       // (not gated by) whatever else this tick does -- walking, standing
       // still, talking, wandering off text, all of it. That's the point:
       // wagging almost regardless of what he's otherwise up to, rather
-      // than only in specific states. Skipped only when actually dead
-      // (PixelDog ignores tailFrame then anyway, so this is just not
-      // wasting the tick). Reduced motion slows this down a lot rather
+      // than only in specific states. Skipped entirely once he's in real
+      // trouble -- critical (about to die) or dead -- where PixelDog draws
+      // the tail down/limp and ignores tailFrame anyway, so this is also
+      // just not wasting the tick. A merely-hungry Ozho still wags, only
+      // noticeably slower, so the drop in energy reads as a gradient
+      // rather than a switch. Reduced motion slows this further rather
       // than turning it off outright -- same "slow down, don't eliminate"
       // choice walking itself already makes for that preference (see
       // SLOW_SPEED vs RUN_SPEED below) -- so it's never fully invisible.
-      if (stageRef.current !== "dead") {
+      if (stageRef.current !== "dead" && stageRef.current !== "critical") {
         tailTimerRef.current += dt;
-        const swapMs = reducedMotionRef.current ? TAIL_SWAP_MS * 4 : TAIL_SWAP_MS;
+        const baseSwap = stageRef.current === "hungry" ? TAIL_SWAP_MS * 2.4 : TAIL_SWAP_MS;
+        const swapMs = reducedMotionRef.current ? baseSwap * 4 : baseSwap;
         if (tailTimerRef.current > swapMs) {
           tailTimerRef.current = 0;
           // Ping-pong through the six frames (0..5..0) rather than
@@ -984,7 +994,12 @@ export function ScoutCompanion() {
         const speed =
           (reducedMotionRef.current ? SLOW_SPEED : RUN_SPEED) *
           pathSpeedRef.current *
-          (onText ? BEHIND_TEXT_SPEED_MULT : 1);
+          (onText ? BEHIND_TEXT_SPEED_MULT : 1) *
+          // A near-death Ozho trudges rather than trots -- part of the
+          // same "he is not okay" read as the tucked tail, stopped wag,
+          // and shiver. Not applied to the urgent dash back into view
+          // (returningRef), which should still look purposeful.
+          (stageRef.current === "critical" && !returningRef.current ? 0.5 : 1);
         pathTRef.current += (speed * (dt / 1000)) / pathLenRef.current;
 
         if (pathTRef.current >= 1) {
@@ -1139,6 +1154,8 @@ export function ScoutCompanion() {
             ? "animate-trick"
             : perk
             ? "animate-perk"
+            : stage === "critical" && !isWalking
+            ? "animate-worried"
             : ""
         }`}
         style={{

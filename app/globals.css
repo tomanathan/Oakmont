@@ -199,6 +199,32 @@ body {
   animation: scout-perk 260ms ease-out;
 }
 
+/* The near-death pet (stage "critical" -- see lib/pet.ts) trembles. A
+   periodic anxious shiver, not a constant one, so it reads as "something
+   is wrong" without turning into a blur. Applied to every Ozho that
+   reflects mood -- the roaming companion, the dashboard/settings card,
+   the header pill, the welcome-back modal -- so a student who's been away
+   long enough for the pet to be in real trouble gets the same urgent cue
+   everywhere at once, alongside the tucked-down tail and stopped wag. */
+@keyframes pet-worried {
+  0%, 58%, 100% { transform: translateX(0); }
+  62% { transform: translateX(-1px); }
+  66% { transform: translateX(1px); }
+  70% { transform: translateX(-0.8px); }
+  74% { transform: translateX(0.8px); }
+  78% { transform: translateX(0); }
+}
+
+.animate-worried {
+  animation: pet-worried 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-worried {
+    animation: none;
+  }
+}
+
 /* Ozho's tail wag used to live here as a CSS rotation, pivoting the tail
    around roughly where it meets the body. Removed: at his actual render
    size the tail is only ~7x10px, and `shape-rendering: crispEdges` (used

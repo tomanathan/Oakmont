@@ -182,15 +182,16 @@ export function PixelDog({
   // applies to this standing pose (asleep has its own curled-up look
   // above; dead always stays standing).
   const earUp = !dead && (mood === "happy" || mood === "neutral");
-  // Deliberately not mood-gated beyond "not dead" -- an earlier version
-  // required "happy" or "neutral" mood, but "thriving" (the only mood that
-  // used to qualify at all) is only true on the exact day a quiz was
-  // completed, so the wag ended up invisible almost all the time. Rather
-  // than keep chasing the right mood threshold, the tail is now up (and
-  // wagging in ScoutCompanion) for every mood short of actually dead --
-  // asleep has its own separate curled-up pose above that doesn't reach
-  // this code at all, so "dead" is the only real exclusion left.
-  const tailUp = !dead;
+  // Tail up (and wagging, in ScoutCompanion) for every mood short of
+  // "sad". "sad" is only ever critical (about to die) or dead -- and a
+  // dog in real trouble shouldn't look thrilled to see you. Alive-but-sad
+  // (critical) tucks the tail down; dead lets it lie limp straight back
+  // (see the tail render below). Hungry maps to "tired", not "sad", so a
+  // merely-hungry Ozho keeps the tail up -- ScoutCompanion just wags it
+  // slower. Asleep has its own separate curled-up pose above that doesn't
+  // reach this code at all.
+  const tailUp = !dead && mood !== "sad";
+  const tailTucked = !dead && mood === "sad";
   const showTongue = !dead && mood === "happy";
   const showFrown = dead || mood === "sad";
 
@@ -207,20 +208,26 @@ export function PixelDog({
     >
       <ellipse cx={32} cy={38} rx={20} ry={2} fill="#000" opacity={0.12} />
 
-      {/* tail (near/tip widths reach past x=10 at some frames so they tuck
-          under the body's left edge instead of leaving a gap -- see
-          TAIL_WAG_FRAMES' own doc for why that's fine). Up whenever he's
-          not dead; which of the six drawn positions shows is tailFrame,
-          stepped by ScoutCompanion on a timer for the actual wag -- see
-          tailFrame's own doc above for why this is a drawn-position swap
-          rather than a CSS rotation. Static callers that never pass
-          tailFrame (PetAvatar, PetCard, the header pill) simply render
-          frame 0 -- tail up, not wagging, which still reads as "happy"
-          even without the motion. */}
+      {/* tail. Three poses:
+          - up (tailUp): one of the six TAIL_WAG_FRAMES positions, stepped
+            by ScoutCompanion on a timer for the wag -- see tailFrame's own
+            doc above. Static callers (PetAvatar, PetCard, the header pill)
+            render frame 0: up, not moving, still reads as fine.
+          - tucked (tailTucked, i.e. critical / about to die): hangs
+            straight down at the back, near the hind legs. The clearest
+            "not okay" tail there is, and distinct from the dead pose.
+          - limp (dead): lies flat straight back, lifeless.
+          near/tip widths reach past x=10 on some frames so the tail tucks
+          under the body's left edge with no gap -- see TAIL_WAG_FRAMES. */}
       {tailUp ? (
         <>
           <rect x={TAIL_WAG_FRAMES[tailFrame][0]} y={TAIL_WAG_FRAMES[tailFrame][1]} width={8} height={8} fill={p.bodyDark} />
           <rect x={TAIL_WAG_FRAMES[tailFrame][2]} y={TAIL_WAG_FRAMES[tailFrame][3]} width={6} height={6} fill={p.bodyDark} />
+        </>
+      ) : tailTucked ? (
+        <>
+          <rect x={5} y={23} width={7} height={6} fill={p.bodyDark} />
+          <rect x={4} y={27} width={6} height={7} fill={p.bodyDark} />
         </>
       ) : (
         <rect x={0} y={22} width={12} height={4} fill={p.bodyDark} />

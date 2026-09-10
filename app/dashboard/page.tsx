@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
 import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
+import { computePetState } from "@/lib/pet";
 import { computeDomainMastery, orderSubskillsByWeakness, type ProgressMap } from "@/lib/mastery";
 import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
@@ -115,6 +116,12 @@ export default async function DashboardPage() {
     !!stats.lastLoginAt &&
     stats.lastLoginAt.getTime() - stats.previousLoginAt.getTime() > WELCOME_BACK_GAP_MS;
 
+  // Coming back after a gap is exactly when the pet is most likely to be
+  // hungry, critical, or already gone -- so the welcome-back modal is
+  // where that lands hardest. Same computation the settings card and the
+  // header pill use.
+  const petState = computePetState(stats.lastActiveDate ?? null, stats.petDiedAt ?? null, stats.petBornAt);
+
   return (
     <AppShell email={user.email} stats={stats} wide>
       {showWelcomeBack && stats.previousLoginAt && stats.lastLoginAt && (
@@ -124,6 +131,8 @@ export default async function DashboardPage() {
           quizzesLastSession={quizzesLastSession}
           masteredLastSession={masteredLastSession}
           currentStreak={stats.currentStreak}
+          petStage={petState.stage}
+          petMessage={petState.message}
         />
       )}
       <DashboardClient

@@ -122,6 +122,7 @@ export function AppShell({
                 mood={MOOD_BY_STAGE[pet.stage]}
                 dead={pet.stage === "dead"}
                 costume={pet.costume}
+                className={pet.stage === "critical" ? "animate-worried" : ""}
               />
               {STAGE_LABEL[pet.stage]}
             </button>
