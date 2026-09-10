@@ -33,14 +33,17 @@ export function PacingBar({ pacing }: { pacing: Pacing }) {
       >
         Today
       </div>
-      <div className="relative h-3 bg-gray-100 rounded-md overflow-hidden">
+      {/* Neutral ink fill, not a subject color -- this bar is the whole
+          course's trajectory, not Math's or Reading's, and it sits right
+          under the two subject cards, which are each strongly hued. */}
+      <div className="relative h-2.5 bg-gray-100 rounded-full overflow-hidden">
         <div
-          className="h-full bg-[#6d7fd6] rounded-md transition-all duration-700 ease-out"
+          className="h-full bg-[#43435c] rounded-full transition-all duration-700 ease-out"
           style={{ width: `${pacing.pctComplete}%` }}
         />
       </div>
       <div
-        className="absolute top-0 w-0.5 h-3 bg-ink/60 -translate-x-1/2"
+        className="absolute top-0 w-0.5 h-2.5 bg-ink/60 -translate-x-1/2"
         style={{ left: `${todayMarker}%` }}
         aria-hidden
       />

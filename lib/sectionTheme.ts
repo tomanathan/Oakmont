@@ -9,6 +9,10 @@ export function sectionTheme(section: string) {
       bar: "bg-[#e6a37c]",
       cardBg: "bg-[#fbe9dd]",
       cardBorder: "border-[#f0d0b3] hover:border-[#e6b98f]",
+      // A single strong hue for a thin accent strip -- the same color as
+      // `dot`, exposed on its own so it can drive a left border without a
+      // wrapper element.
+      accentBorder: "border-l-[#d97a4d]",
     };
   }
   return {
@@ -17,5 +21,6 @@ export function sectionTheme(section: string) {
     bar: "bg-[#95a2e2]",
     cardBg: "bg-[#eaecfa]",
     cardBorder: "border-[#d3d7f2] hover:border-[#b7bdea]",
+    accentBorder: "border-l-[#6d7fd6]",
   };
 }

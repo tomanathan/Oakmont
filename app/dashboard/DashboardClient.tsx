@@ -29,7 +29,6 @@ interface TodayPlan {
 export function DashboardClient({
   curriculum,
   progress,
-  totalSubskills,
   stats,
   pacing,
   domainMastery,
@@ -39,7 +38,6 @@ export function DashboardClient({
 }: {
   curriculum: Section[];
   progress: ProgressMap;
-  totalSubskills: number;
   stats: { currentStreak: number; longestStreak: number };
   pacing: Pacing;
   domainMastery: DomainMastery[];
@@ -82,15 +80,17 @@ export function DashboardClient({
       {recommended && (
         <button
           onClick={() => router.push(recommended.href)}
-          className="w-full flex items-center justify-between gap-3 bg-ink text-white rounded-xl px-5 py-4 mb-5 text-left hover:bg-[#2a2a42] transition-colors"
+          className="group w-full flex items-center justify-between gap-4 bg-ink text-white rounded-2xl px-6 py-5 mb-4 text-left hover:bg-[#26263c] transition-colors shadow-[0_2px_12px_rgba(26,26,46,0.14)]"
         >
           <div className="min-w-0">
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-white/60 mb-0.5">
+            <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/45 mb-1">
               {completedCount > 0 ? "Jump back in" : "Start here"}
             </div>
-            <div className="text-[15px] font-semibold truncate">{recommended.label}</div>
+            <div className="text-[17px] font-display font-semibold truncate">{recommended.label}</div>
           </div>
-          <span className="flex-shrink-0 text-white/80">&rarr;</span>
+          <span className="flex-shrink-0 w-9 h-9 rounded-full bg-white/10 group-hover:bg-white/20 flex items-center justify-center text-lg transition-colors">
+            &rarr;
+          </span>
         </button>
       )}
 
@@ -109,7 +109,6 @@ export function DashboardClient({
           pacing={pacing}
           masteredCount={masteredCount}
           completedCount={completedCount}
-          totalSubskills={totalSubskills}
           longestStreak={stats.longestStreak}
         />
       )}
@@ -124,7 +123,7 @@ export function DashboardClient({
           card, not just an unfilled outline), the same "one side steps
           forward, the other steps back" contrast a two-option select
           screen uses to make the current pick unmistakable at a glance. */}
-      <div className="grid grid-cols-2 gap-3 mb-5">
+      <div className="grid grid-cols-2 gap-3 mb-4">
         {curriculum.map((sec) => {
           const theme = sectionTheme(sec.section);
           const active = sec.section === subject;
@@ -138,7 +137,7 @@ export function DashboardClient({
               className={`relative overflow-hidden rounded-2xl border-2 p-5 text-left transition-all duration-200 ${
                 active
                   ? `${theme.cardBg} ${theme.cardBorder.split(" ")[0]} shadow-[0_4px_18px_rgba(26,26,46,0.1)] scale-[1.02]`
-                  : "bg-white border-gray-200 opacity-60 hover:opacity-90 hover:border-gray-300"
+                  : "bg-white border-gray-200 opacity-[0.55] hover:opacity-90 hover:border-gray-300"
               }`}
             >
               <div className={`text-[11px] font-bold uppercase tracking-wide mb-1 ${active ? theme.text : "text-gray-400"}`}>
@@ -162,23 +161,39 @@ export function DashboardClient({
       </div>
 
       {activeSection && (
-        <div>
+        <div className="flex flex-col gap-2.5">
           {activeSection.domains.map((d) => {
             const theme = sectionTheme(activeSection.section);
             const isOpen = openDomains.has(d.domain);
             const domainDone = d.subskills.filter((s) => progress[s.id]).length;
             return (
-              <div key={d.domain} className="mb-3 border border-[#ece9f7] rounded-xl bg-white overflow-hidden">
+              <div
+                key={d.domain}
+                className={`overflow-hidden rounded-2xl border border-[#ece9f7] border-l-[3px] ${theme.accentBorder} bg-white transition-colors`}
+              >
                 <button
                   onClick={() => toggleDomain(d.domain)}
-                  className="w-full flex items-center justify-between gap-3 px-4 py-3.5 text-left hover:bg-[#faf9ff]"
+                  className={`w-full flex items-center gap-3 pl-5 pr-4 py-4 text-left transition-colors ${
+                    isOpen ? theme.cardBg : "hover:bg-[#faf9ff]"
+                  }`}
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${theme.dot}`} />
+                  <div className="flex items-center gap-2.5 min-w-0 flex-shrink-0">
                     <span className="text-[15px] font-semibold text-ink truncate">{d.domain}</span>
-                    <span className="text-xs text-gray-400 whitespace-nowrap">
+                    <span className="text-[11px] font-semibold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full whitespace-nowrap">
                       {domainDone}/{d.subskills.length}
                     </span>
+                  </div>
+                  {/* Fills the gap in the header and echoes the progress
+                      bars on the subject cards above -- attempted, not
+                      mastered (that's what the stars are for). Only drawn
+                      where there's room for it. */}
+                  <div className="flex-1 mx-3">
+                    <div className="hidden md:block h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${theme.bar}`}
+                        style={{ width: `${(domainDone / d.subskills.length) * 100}%` }}
+                      />
+                    </div>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
                     <StarRating stars={starsFor(d.domain)} />
@@ -189,7 +204,7 @@ export function DashboardClient({
                 </button>
 
                 {isOpen && (
-                  <div className="px-4 pb-4 pt-1 border-t border-[#f0eff9]">
+                  <div className="px-4 pb-4 pt-3 border-t border-[#f0eff9] bg-white">
                     {/* lg:grid-cols-4 -- the dashboard now renders at the
                         same 1180px width as the lesson page (see AppShell's
                         wide prop), so a fourth column here puts that extra
@@ -203,7 +218,7 @@ export function DashboardClient({
                           <div
                             key={s.id}
                             onClick={() => router.push(`/subskill/${s.id}`)}
-                            className={`border rounded-[10px] p-3.5 cursor-pointer transition-colors ${
+                            className={`border rounded-xl p-3.5 cursor-pointer transition-colors ${
                               mastered
                                 ? "bg-[#fffaf0] border-[#f0e0b0] hover:border-[#e8d29a]"
                                 : p
@@ -254,7 +269,6 @@ function PlanCard({
   pacing,
   masteredCount,
   completedCount,
-  totalSubskills,
   longestStreak,
 }: {
   today: TodayPlan | null;
@@ -264,26 +278,26 @@ function PlanCard({
   pacing: Pacing;
   masteredCount: number;
   completedCount: number;
-  totalSubskills: number;
   longestStreak: number;
 }) {
   const router = useRouter();
   const weekPct = thisWeek.total > 0 ? Math.round((thisWeek.done / thisWeek.total) * 100) : 0;
   const weekOfCourse = Math.min(pacing.totalWeeks, Math.ceil(pacing.dayOfCourse / 7));
+  const showStats = masteredCount > 0 || longestStreak > 0;
+
+  const eyebrow = "text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400";
 
   return (
-    <div className="bg-white border border-[#ece9f7] rounded-xl p-4 mb-5">
+    <div className="bg-white border border-[#ece9f7] rounded-2xl p-5 mb-4 shadow-[0_1px_3px_rgba(26,26,46,0.03)]">
       {today && (
-        <>
-          <div className="flex items-center justify-between gap-3 mb-2.5 flex-wrap">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
-                {DAY_TYPE_COPY[today.type]}
-              </span>
-              <span className="text-[11px] text-gray-300">&middot; {today.dayName}, week {today.week}</span>
+        <div className="mb-5 pb-5 border-b border-gray-100">
+          <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+            <div className="flex items-baseline gap-2">
+              <span className={eyebrow}>{DAY_TYPE_COPY[today.type]}</span>
+              <span className="text-[11px] text-gray-300">{today.dayName}, week {today.week}</span>
             </div>
             {daysUntilTest !== null && (
-              <span className="text-[11px] font-semibold text-[#9a6a12] bg-[#fffaf0] border border-[#f0e0b0] px-2 py-0.5 rounded-full whitespace-nowrap">
+              <span className="text-[11px] font-semibold text-[#9a6a12] bg-[#fffaf0] border border-[#f0e0b0] px-2.5 py-1 rounded-full whitespace-nowrap">
                 {daysUntilTest > 0
                   ? `${daysUntilTest} days until your SAT`
                   : daysUntilTest === 0
@@ -314,7 +328,7 @@ function PlanCard({
                   <div
                     key={s.id}
                     onClick={() => router.push(`/subskill/${s.id}`)}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl cursor-pointer transition-colors ${
                       mastered
                         ? "bg-[#fffaf0] hover:bg-[#fdf3df]"
                         : p
@@ -340,57 +354,58 @@ function PlanCard({
               })}
             </div>
           )}
-        </>
+        </div>
       )}
 
       {/* The pace section: this week's completion and the whole-course
           trajectory used to be two separate boxes, each reporting its own
           subskill count -- combined here so "week X of Y", "this week's
-          progress", and "overall pace" each appear exactly once. */}
-      <div className={today ? "mt-3 pt-3 border-t border-gray-100" : ""}>
-        <div className="flex justify-between items-baseline mb-1 flex-wrap gap-x-3 gap-y-1">
-          <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">Your pace</span>
-          <span className="text-xs text-gray-500">
-            Week {weekOfCourse} of {pacing.totalWeeks}
-            {thisWeek.total > 0 && (
-              <>
-                {" "}
-                &middot; this week{" "}
-                <span className="text-[#4a5bb0] font-semibold">
-                  {thisWeek.done}/{thisWeek.total} ({weekPct}%)
-                </span>
-              </>
-            )}
-          </span>
-        </div>
-        <PacingBar pacing={pacing} />
-        <div className="flex justify-between items-baseline mt-1.5">
-          <span className="text-xs text-gray-500">
-            {pacing.completedUnits}/{pacing.totalUnits} subskills overall
-          </span>
-          <span className={`text-xs font-semibold ${PACE_STATUS_STYLES[pacing.status]}`}>
-            {paceStatusCopy(pacing)}
-          </span>
-        </div>
-        {(masteredCount > 0 || longestStreak > 0) && (
-          <div className="flex flex-wrap gap-x-5 gap-y-1 mt-2.5 pt-2.5 border-t border-gray-100 text-xs text-gray-500">
-            {masteredCount > 0 && (
-              <span>
-                <span className="text-[#c9971b] font-semibold">★ {masteredCount}</span> subskill
-                {masteredCount === 1 ? "" : "s"} mastered &middot; {completedCount}/{totalSubskills} attempted
-              </span>
-            )}
-            {longestStreak > 0 && (
-              <span>
-                Longest streak:{" "}
-                <span className="font-semibold text-ink">
-                  {longestStreak} day{longestStreak === 1 ? "" : "s"}
-                </span>
-              </span>
-            )}
-          </div>
-        )}
+          progress", and "overall pace" each appear exactly once. The pace
+          status is the headline; everything else is context under it. */}
+      <div className="flex items-baseline justify-between gap-3 mb-1 flex-wrap">
+        <span className={eyebrow}>Your pace</span>
+        <span className={`text-[13px] font-semibold ${PACE_STATUS_STYLES[pacing.status]}`}>
+          {paceStatusCopy(pacing)}
+        </span>
       </div>
+      <PacingBar pacing={pacing} />
+      <div className="flex justify-between items-baseline mt-1 text-[11px] text-gray-400">
+        <span>
+          Week {weekOfCourse} of {pacing.totalWeeks}
+          {thisWeek.total > 0 && (
+            <>
+              {" "}
+              &middot; this week {thisWeek.done}/{thisWeek.total} ({weekPct}%)
+            </>
+          )}
+        </span>
+        <span>
+          {pacing.completedUnits}/{pacing.totalUnits} subskills overall
+        </span>
+      </div>
+
+      {showStats && (
+        <div className="flex flex-wrap gap-x-8 gap-y-2 mt-4 pt-4 border-t border-gray-100">
+          {masteredCount > 0 && (
+            <div>
+              <div className={eyebrow}>Mastered</div>
+              <div className="text-sm mt-0.5">
+                <span className="font-display font-semibold text-[15px] text-[#c9971b]">{masteredCount}</span>
+                <span className="text-gray-400 text-xs"> of {completedCount} attempted</span>
+              </div>
+            </div>
+          )}
+          {longestStreak > 0 && (
+            <div>
+              <div className={eyebrow}>Longest streak</div>
+              <div className="text-sm mt-0.5">
+                <span className="font-display font-semibold text-[15px] text-ink">{longestStreak}</span>
+                <span className="text-gray-400 text-xs"> day{longestStreak === 1 ? "" : "s"}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
