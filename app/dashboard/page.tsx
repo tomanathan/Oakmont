@@ -138,7 +138,6 @@ export default async function DashboardPage() {
       <DashboardClient
         curriculum={CURRICULUM}
         progress={progress}
-        stats={stats}
         pacing={pacing}
         domainMastery={domainMastery}
         today={today}
