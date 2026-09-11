@@ -207,7 +207,6 @@ const MAX_TEXT_RECTS = 1500;
 // short grace period after the literal overlap ends smooths that out.
 const TEXT_EXIT_GRACE_MS = 250;
 
-const MIN_DIST = 100; // never sit closer than this to the live cursor
 const WANDER_MIN = 90;
 const WANDER_MAX = 260;
 // Floored to the bubble's own footprint (not his body) so the bubble
@@ -230,7 +229,23 @@ const LEG_SWAP_MS = 110;
 // read as a whole-swing number instead of a single-step one.
 const TAIL_SWAP_MS = 45;
 const MOUSE_CHECK_MS = 7000; // how often he reconsiders wandering toward the cursor
-const ESCAPE_COOLDOWN_MS = 1500;
+
+// ---- Cursor behavior ------------------------------------------------------
+// He used to flee once the cursor came within a set radius of him -- a
+// classic "creature AI" personal-space reflex, but wrong for what he's
+// supposed to be: a companion you're meant to reach for and click, not
+// something that bolts the moment you get close. He no longer treats the
+// cursor as something to avoid at all (isValidLanding doesn't steer wander
+// targets away from it, and there's no escape reflex any more) -- instead,
+// the cursor resting near him while he's already standing still reads as an
+// invitation: a quick happy perk, a glance toward it, and sometimes a short
+// line, then he carries on. Never fires mid-walk (a cursor he's simply
+// passing isn't "visiting" him) or while the click menu is open (that's its
+// own, bigger reaction).
+const NOTICE_DIST = 70;
+const NOTICE_COOLDOWN_MS = 8000;
+const NOTICE_PHRASES = ["Oh, hi!", "Hey, didn't see you there.", "*ears perk up*", "Hi again!", "Oh! Hello."];
+
 // Only used now for the "landed somewhere bad" recovery walk (e.g. right
 // after a page change) -- crossing text mid-walk no longer triggers a
 // redirect at all, so this doesn't need to be as trigger-happy as before.
@@ -409,7 +424,7 @@ export function ScoutCompanion() {
   const mouseRef = useRef<{ x: number; y: number } | null>(null);
   const mouseAnchorRef = useRef<{ x: number; y: number } | null>(null);
   const nextMouseCheckRef = useRef(0);
-  const escapeUntilRef = useRef(0);
+  const noticeCooldownRef = useRef(0);
   const textEscapeUntilRef = useRef(0);
   const onTextRef = useRef(false);
   const lastOnTextAtRef = useRef(-Infinity);
@@ -842,7 +857,7 @@ export function ScoutCompanion() {
   // current spot to a fresh target, bowed sideways by a random amount so
   // the path reads as a natural arc instead of a straight beeline.
   //   - `avoid`: bias the target to the opposite side of this point (used
-  //     for the cursor "too close" and "standing on text" reflexes).
+  //     by the "standing on text" reflex).
   //   - `forceTarget`: use this point outright (used to dash back into
   //     view) instead of picking a random wander target.
   //   - `urgent`: move faster and straighter -- purposeful, not a stroll.
@@ -876,20 +891,17 @@ export function ScoutCompanion() {
       };
     }
 
-    // Landing spot is fully validated up front -- text, and (unless this is
-    // the urgent dash back into view, which takes priority over personal
-    // space) the live cursor too -- rather than walking somewhere and only
-    // finding out it doesn't work after arriving. That "arrive, immediately
-    // discover it's bad, walk again" pattern is exactly what reads as
-    // erratic; picking a target that's already known-good avoids it instead
-    // of reacting to it after the fact.
+    // Landing spot is fully validated up front -- just text -- rather than
+    // walking somewhere and only finding out it doesn't work after
+    // arriving. That "arrive, immediately discover it's bad, walk again"
+    // pattern is exactly what reads as erratic; picking a target that's
+    // already known-good avoids it instead of reacting to it after the
+    // fact. The cursor is deliberately not a factor here any more -- he's
+    // free to wander right up next to it (see the "Cursor behavior" note
+    // above).
     function isValidLanding(x: number, y: number): boolean {
       if (overlapsText(x, y)) return false;
       if (overlapsHeadingBubbleZone(x, y)) return false;
-      if (!forceTarget && mouseRef.current) {
-        const d = Math.hypot(x - mouseRef.current.x, y - mouseRef.current.y);
-        if (d < MIN_DIST) return false;
-      }
       return true;
     }
 
@@ -1102,13 +1114,33 @@ export function ScoutCompanion() {
         beginWalk({ avoid: { x: (hit.left + hit.right) / 2, y: (hit.top + hit.bottom) / 2 } });
       }
 
-      // Personal-space reflex only applies during genuinely normal
-      // wandering -- not while out of view or mid-dash back into it.
-      if (!outOfView && !returningRef.current && mouseRef.current && nowMs > escapeUntilRef.current) {
+      // "Noticing" the cursor -- see the Cursor behavior note up top. Only
+      // while he's genuinely at rest (not walking through, not mid-dash
+      // back into view, not under the click menu, which already has its
+      // own bigger reaction) does the cursor resting near him actually
+      // mean anything; a passing cursor on the way somewhere else doesn't
+      // count as a visit.
+      if (
+        !walkingRef.current &&
+        !returningRef.current &&
+        !menuOpenRef.current &&
+        mouseRef.current &&
+        nowMs > noticeCooldownRef.current
+      ) {
         const d = Math.hypot(pos.x - mouseRef.current.x, pos.y - mouseRef.current.y);
-        if (d < MIN_DIST) {
-          escapeUntilRef.current = nowMs + ESCAPE_COOLDOWN_MS;
-          beginWalk({ avoid: mouseRef.current });
+        if (d < NOTICE_DIST) {
+          noticeCooldownRef.current = nowMs + NOTICE_COOLDOWN_MS;
+          facingRef.current = mouseRef.current.x >= pos.x ? 1 : -1;
+          setFacing(facingRef.current);
+          if (Math.random() < 0.5) {
+            // speak() already gives him the same little happy hop -- no
+            // need to trigger it a second time here.
+            speak(pick(NOTICE_PHRASES), 2200);
+          } else {
+            if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
+            setPerk(true);
+            perkTimeoutRef.current = setTimeout(() => setPerk(false), 260);
+          }
         }
       }
 
@@ -1131,12 +1163,6 @@ export function ScoutCompanion() {
           setIsWalking(false);
           returningRef.current = false;
           behaviorUntilRef.current = nowMs + pickPauseMs();
-          // A brief settle window before the cursor reflex can fire again --
-          // the landing spot was already validated against where the
-          // cursor was, so this is just a moment to actually stand there
-          // rather than risk an instant re-trigger off a coincidental
-          // cursor move landing right as he arrives.
-          escapeUntilRef.current = nowMs + 400;
 
           // Fetch: he's just reached the ball -> pick it up and trot back
           // to where he was standing when it was thrown. Second arrival
