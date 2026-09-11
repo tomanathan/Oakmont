@@ -266,23 +266,46 @@ body {
   animation: ozho-heart 1.15s ease-out forwards;
 }
 
-/* The thrown fetch ball actually flying from him to where it lands, not
-   just appearing there. The element sits at its landing spot (left/top);
-   --bx0/--by0 (0% frame) and --bxm/--bym (55% frame), set inline per
-   throw, are precomputed pixel offsets -- see throwBall() -- rather than
-   arithmetic done here on the custom properties themselves: multiplying
-   an *unregistered* custom property by a number inside calc() (e.g.
-   `calc(var(--x) * 0.3)`) isn't reliably supported across browsers, while
-   plain addition of an already-computed length (`calc(-50% + var(--x))`)
-   is completely standard. Each frame is just that addition. */
+/* The thrown fetch ball, in two distinct phases: a toss (0%-58%) that
+   actually flies from him to the spot it's landing on, then a real bounce
+   once it gets there (58%-100%) -- an impact squash, a real hop back up,
+   a smaller second touch-down, and a settle -- rather than the toss just
+   fading to a stop. The element sits at its landing spot (left/top);
+   --bx0/--by0 (0% frame) and --bxm/--bym (28% frame, the flight's apex)
+   are the toss's two offsets back toward him, precomputed pixel values
+   set inline per throw -- see throwBall() -- rather than arithmetic done
+   here on the custom properties themselves: multiplying an *unregistered*
+   custom property by a number inside calc() (e.g. `calc(var(--x) * 0.3)`)
+   isn't reliably supported across browsers, while plain addition of an
+   already-computed length (`calc(-50% + var(--x))`) is completely
+   standard. The bounce itself needs no offsets at all -- it's all in the
+   fixed landing frame, just a plain vertical hop each time. */
 @keyframes ozho-ball-throw {
   0% {
-    transform: translate(calc(-50% + var(--bx0, 0px)), calc(-50% + var(--by0, 0px))) scale(0.6);
-    opacity: 0.75;
+    transform: translate(calc(-50% + var(--bx0, 0px)), calc(-50% + var(--by0, 0px))) scale(0.55);
+    opacity: 0.7;
   }
-  55% {
-    transform: translate(calc(-50% + var(--bxm, 0px)), calc(-50% + var(--bym, 0px))) scale(1.08);
+  20% {
     opacity: 1;
+  }
+  28% {
+    transform: translate(calc(-50% + var(--bxm, 0px)), calc(-50% + var(--bym, 0px))) scale(1);
+  }
+  58% {
+    /* Touches down -- squashed flat by the impact. */
+    transform: translate(-50%, -50%) scale(1.22, 0.68);
+  }
+  70% {
+    /* The real bounce: a genuine hop back up off the landing spot. */
+    transform: translate(-50%, calc(-50% - 15px)) scale(0.92, 1.08);
+  }
+  82% {
+    /* Second, smaller touch-down. */
+    transform: translate(-50%, -50%) scale(1.1, 0.88);
+  }
+  91% {
+    /* Second, smaller bounce. */
+    transform: translate(-50%, calc(-50% - 5px)) scale(0.97, 1.03);
   }
   100% {
     transform: translate(-50%, -50%) scale(1);
@@ -292,7 +315,7 @@ body {
 
 .animate-ozho-ball-throw {
   transform: translate(-50%, -50%);
-  animation: ozho-ball-throw 0.5s cubic-bezier(0.2, 0.6, 0.35, 1) both;
+  animation: ozho-ball-throw 0.65s ease-out both;
 }
 
 /* The "Pet" menu action's own reaction -- a contented little wiggle and
@@ -341,7 +364,7 @@ body {
      brief, in-place wiggles/hops, not motion across the page, so they
      already just play unconditionally. */
   .animate-ozho-ball-throw {
-    animation-duration: 1.3s;
+    animation-duration: 1.5s;
     animation-timing-function: ease-in-out;
   }
 }

@@ -1317,10 +1317,10 @@ export function ScoutCompanion() {
     // fixed radius around him, not a spot picked from the viewport at
     // large -- so it always reads as an honest-to-goodness throw, and the
     // walk out to it always takes comfortably longer than the ball's own
-    // ~0.5s flight (see below) instead of sometimes being so close he'd
-    // arrive before the throw even finished animating.
+    // ~0.65s toss-and-bounce (see .animate-ozho-ball-throw) instead of
+    // sometimes being so close he'd arrive mid-bounce.
     const angle = Math.random() * Math.PI * 2;
-    const throwDist = 220 + Math.random() * 220;
+    const throwDist = 260 + Math.random() * 220;
     const rawTarget = { x: origin.x + Math.cos(angle) * throwDist, y: origin.y + Math.sin(angle) * throwDist };
     fetchHomeRef.current = origin;
     fetchingRef.current = "out";
