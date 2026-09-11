@@ -958,18 +958,39 @@ export function ScoutCompanion() {
       return true;
     }
 
+    // If a forced target itself isn't valid, search progressively further
+    // out *around that same point* rather than substituting something
+    // unrelated -- a forced target is always deliberate (a thrown ball's
+    // landing spot, a "come here" spot near the reader, dashing back into
+    // view), so a fallback needs to stay close to what was actually
+    // asked for. This used to call pickReturnTarget() here instead, which
+    // has nothing to do with the point that failed -- fine back when
+    // forceTarget only ever meant "get back into view" or "come sit near
+    // the reader" (any reasonable on-screen spot really does satisfy
+    // those), but wrong once it also started meaning "land exactly where
+    // this thrown ball is going": falling back to an unrelated,
+    // viewport-relative point could send the ball (and him, chasing it)
+    // off in a direction with no relationship to the actual throw.
+    function nearbyForceTargetCandidate(tries: number) {
+      const jitterAngle = Math.random() * Math.PI * 2;
+      const jitterRadius = 30 + tries * 25;
+      return {
+        x: clamp(forceTarget!.x + Math.cos(jitterAngle) * jitterRadius, SIDE_MARGIN, maxX),
+        y: clamp(forceTarget!.y + Math.sin(jitterAngle) * jitterRadius, TOP_MARGIN, maxY),
+      };
+    }
+
     let end = forceTarget
       ? { x: clamp(forceTarget.x, SIDE_MARGIN, maxX), y: clamp(forceTarget.y, TOP_MARGIN, maxY) }
       : randomCandidate();
     for (let tries = 0; !isValidLanding(end.x, end.y) && tries < 12; tries++) {
-      end = forceTarget ? pickReturnTarget() : randomCandidate();
+      end = forceTarget ? nearbyForceTargetCandidate(tries) : randomCandidate();
     }
-    // pickReturnTarget() (unlike randomCandidate()) doesn't clamp its own
-    // output to the page margins -- it's normally fine since it's built
-    // from real viewport/scroll numbers that land well inside them, but a
-    // degenerate 0-size viewport reading (see the render loop's own guard
-    // for the same case) could otherwise send him to an unclamped corner.
-    // Re-clamping here is a no-op for every already-valid candidate above.
+    // Final safety clamp -- a no-op for every candidate above (both
+    // candidate functions already clamp their own output), but cheap
+    // insurance against a degenerate 0-size viewport reading (see the
+    // render loop's own guard for the same case) ever producing something
+    // out of bounds.
     end = { x: clamp(end.x, SIDE_MARGIN, maxX), y: clamp(end.y, TOP_MARGIN, maxY) };
 
     return { start, end, maxX, maxY };
@@ -1055,6 +1076,7 @@ export function ScoutCompanion() {
         idleMs > IDLE_SLEEP_MS &&
         !walkingRef.current &&
         !menuOpenRef.current &&
+        !fetchingRef.current &&
         stageRef.current !== "dead"
       ) {
         beginFallAsleep();
@@ -1130,10 +1152,32 @@ export function ScoutCompanion() {
 
       const pos = posRef.current;
 
-      // Highest priority: scrolling him out of the visible viewport means
-      // he'd otherwise just sit there off-screen, which undercuts the
-      // whole point of anchoring him to the page. Dash back in -- once,
-      // not re-triggered every tick while already on the way.
+      // Highest priority (ordinarily): scrolling him out of the visible
+      // viewport means he'd otherwise just sit there off-screen, which
+      // undercuts the whole point of anchoring him to the page. Dash back
+      // in -- once, not re-triggered every tick while already on the way.
+      //
+      // Suppressed for the whole of a fetch (fetchingRef truthy), though --
+      // this used to fire regardless of what he was doing, which was a
+      // real bug: a ball thrown far enough (or a page tall enough) to land
+      // outside the current scroll position would have him walking toward
+      // it, cross the "off-screen" threshold mid-chase, and get yanked
+      // onto a completely unrelated `pickReturnTarget()` instead -- a
+      // fresh forced walk overwriting the one already in progress, with no
+      // relationship to where the ball actually was. Worse, since that
+      // hijacked walk still ends with fetchingRef reading "chasing", *its*
+      // arrival was read as reaching the ball -- picking it up (removing
+      // it from the page) and setting off for home from wherever this
+      // unrelated spot happened to be. That's the "runs off in a random
+      // direction and the ball just disappears" bug: not a pathing error
+      // so much as a second, unrelated walk silently replacing the real
+      // one out from under it. Skipping this entirely during a fetch (he
+      // can't be "lost" off-screen mid-game the way ordinary wandering
+      // can -- the chase/return legs always resolve to a specific,
+      // deliberately-picked point, and the whole game is over in a few
+      // seconds either way) also protects "flying" -- he isn't walking
+      // yet at that point, but without this guard he still could be, the
+      // instant this fired.
       const scrollX = window.scrollX;
       const scrollY = window.scrollY;
       const vw = window.innerWidth;
@@ -1144,7 +1188,7 @@ export function ScoutCompanion() {
         pos.y < scrollY - OUT_OF_VIEW_MARGIN ||
         pos.y > scrollY + vh + OUT_OF_VIEW_MARGIN;
 
-      if (outOfView && !returningRef.current) {
+      if (outOfView && !returningRef.current && !fetchingRef.current) {
         returningRef.current = true;
         beginWalk({ urgent: true, forceTarget: pickReturnTarget() });
         speak(pick(RETURN_PHRASES), 2400);
@@ -1176,7 +1220,12 @@ export function ScoutCompanion() {
         onTextRef.current = onText;
         setBehindText(onText);
       }
-      if (hit && !walkingRef.current && nowMs > textEscapeUntilRef.current) {
+      // Excludes "flying" for the same reason as the out-of-view dash
+      // above: he isn't walking yet (walkingRef.current is already false
+      // then, same as ordinary idle), but he does need to actually hold
+      // still watching the thrown ball rather than wandering off because
+      // he happened to be standing on a word when he threw it.
+      if (hit && !walkingRef.current && fetchingRef.current !== "flying" && nowMs > textEscapeUntilRef.current) {
         textEscapeUntilRef.current = nowMs + TEXT_ESCAPE_COOLDOWN_MS;
         beginWalk({ avoid: { x: (hit.left + hit.right) / 2, y: (hit.top + hit.bottom) / 2 } });
       }
