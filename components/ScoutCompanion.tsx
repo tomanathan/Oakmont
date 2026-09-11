@@ -439,6 +439,10 @@ export function ScoutCompanion() {
     midDY: number;
     key: number;
   } | null>(null);
+  // True for the whole return leg of a fetch (see the walk-complete branch
+  // below) -- draws the ball held at his mouth on PixelDog instead of
+  // sitting out on the page, since he's carrying it, not chasing it.
+  const [carryingBall, setCarryingBall] = useState(false);
 
   const router = useRouter();
 
@@ -1195,17 +1199,20 @@ export function ScoutCompanion() {
           returningRef.current = false;
           behaviorUntilRef.current = nowMs + pickPauseMs();
 
-          // Fetch: he's just reached the ball -> pick it up and trot back
-          // to where he was standing when it was thrown. Second arrival
-          // (the "back" leg) just ends the game.
+          // Fetch: he's just reached the ball -> pick it up (see
+          // carryingBall) and trot back to where he was standing when it
+          // was thrown. Second arrival (the "back" leg) just ends the
+          // game.
           if (fetchingRef.current === "out") {
             fetchingRef.current = "back";
             setBall(null);
+            setCarryingBall(true);
             speak(pick(FETCH_RETURN_PHRASES), 2600);
             const home = fetchHomeRef.current ?? pickReturnTarget();
             beginWalk({ urgent: true, forceTarget: home });
           } else if (fetchingRef.current === "back") {
             fetchingRef.current = null;
+            setCarryingBall(false);
           }
         } else {
           const t = pathTRef.current;
@@ -1624,6 +1631,7 @@ export function ScoutCompanion() {
           tailFrame={tailFrame}
           facing={facing}
           costume={costume}
+          carryingBall={carryingBall}
         />
       </button>
 

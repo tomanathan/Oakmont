@@ -90,6 +90,7 @@ export function PixelDog({
   asleep = false,
   costume = null,
   variant = "ozho",
+  carryingBall = false,
   className = "",
 }: {
   size?: number;
@@ -127,6 +128,12 @@ export function PixelDog({
   // but both states still resolve palette the same way dead does, so
   // nothing here needs its own dead/asleep branching.
   variant?: "ozho" | "mochi";
+  // Fetch's return leg: a small ball held at the mouth (drawn in place of
+  // the tongue, which a mouth holding something wouldn't also be sticking
+  // out) so he's visibly carrying it back rather than just running.
+  // Standing-pose only, like the wardrobe -- there's no version of this
+  // for the asleep/dead poses since neither is ever mid-fetch.
+  carryingBall?: boolean;
   className?: string;
 }) {
   const p = dead ? PALETTE_DEAD : variant === "mochi" ? PALETTE_MOCHI : PALETTE;
@@ -192,8 +199,11 @@ export function PixelDog({
   // reach this code at all.
   const tailUp = !dead && mood !== "sad";
   const tailTucked = !dead && mood === "sad";
-  const showTongue = !dead && mood === "happy";
-  const showFrown = dead || mood === "sad";
+  // Carrying a ball takes over whatever the mouth would otherwise be
+  // doing -- no tongue hanging out, no frown line -- since both are drawn
+  // in the same spot the ball itself sits.
+  const showTongue = !dead && !carryingBall && mood === "happy";
+  const showFrown = !carryingBall && (dead || mood === "sad");
 
   const backLegDown = legFrame === 0;
 
@@ -267,6 +277,18 @@ export function PixelDog({
 
       {showTongue && <rect x={51} y={22} width={3} height={5} fill={p.tongue} />}
       {showFrown && <rect x={50} y={23} width={4} height={1.5} fill={p.dark} />}
+
+      {/* the fetched ball, held at the mouth on the run back -- a flat
+          tennis-ball circle with a hinted seam, drawn in this same
+          "facing right" coordinate frame as everything else, so the
+          scaleX(-1) flip above carries it to the correct side of his face
+          automatically when he's facing left. */}
+      {carryingBall && (
+        <>
+          <circle cx={55.5} cy={25} r={3.6} fill="#cddc39" />
+          <path d="M 52.3 25 Q 55.5 22.4 58.7 25" stroke="#eef5c0" strokeWidth={0.8} fill="none" strokeLinecap="round" />
+        </>
+      )}
 
       {/* collar */}
       <rect x={33} y={19} width={5} height={6} fill={p.collar} />
