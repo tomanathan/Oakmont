@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
-import type { PetStage } from "@/lib/pet";
+import { PET_NAME, type PetStage } from "@/lib/pet";
 import { dedupedFetchJson } from "@/lib/dedupeFetch";
 
 // Ozho's whole voice, in one place. The character: an enthusiastic,
@@ -249,6 +249,72 @@ const OUT_OF_VIEW_MARGIN = 40;
 const RETURN_SPEED_MULT = 2.1;
 const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave me behind!", "Hold on, I'm coming!"];
 
+// ---- Click menu: the "full set of things you can do with Ozho" ----------
+// Clicking Ozho (while he's awake and standing still) fans out a little
+// radial menu of actions around him. Each entry here is one button; the
+// handler for each lives in handleMenuAction below. Kept as plain data so
+// the render just maps over it and the arc math stays in one place.
+type OzhoAction = "pet" | "trick" | "next" | "fetch" | "follow" | "wardrobe";
+
+const PET_PHRASES = [
+  "Ohh, right there — perfect.",
+  "*tail thumping the floor*",
+  "You give the best ear scratches.",
+  "Okay, I'm officially recharged.",
+  "Mmm. Ten out of ten, would be pet again.",
+  "This is the good stuff.",
+];
+// Said instead once you've petted him a bunch in one day -- he's had his
+// fill and would like to get back to work with you.
+const PET_PHRASES_LOTS = [
+  "Okay, okay — I'm thoroughly pet, thank you!",
+  "You really like me, huh? Feeling's mutual.",
+  "I could do this all day. Should we do a quiz first, though?",
+];
+const FETCH_THROW_PHRASES = ["Ooh, throw it! Throw it!", "I got this — watch me.", "Fetch is my whole personality."];
+const FETCH_RETURN_PHRASES = [
+  "Got it! Did you see that?",
+  "Here! Go on, throw it again.",
+  "Retrieved. I'm extremely good at this.",
+];
+const FOLLOW_ON_PHRASES = [
+  "Right by your side. Lead the way.",
+  "Okay, I'll stick close.",
+  "Wherever you're reading, that's where I'll be.",
+];
+const FOLLOW_OFF_PHRASES = [
+  "I'll be around if you need me.",
+  "Free to roam again — holler anytime.",
+  "Back to my rounds. Nudge me whenever.",
+];
+const NEXT_INTRO = ["Here's what I'd tackle next:", "Let's get after this one:", "Next up on your plan:"];
+const NEXT_CHECKING = ["One sec — checking your plan...", "Let me look at where you're at..."];
+const NEXT_DONE = [
+  "You're all caught up — genuinely, nice work. Review anything you want.",
+  "Nothing left on the schedule right now. Pick whatever you feel like revisiting.",
+];
+const NEXT_ERROR = ["Hmm, couldn't reach your plan. Try the dashboard?", "Plan's not loading for me — the dashboard should have it."];
+
+// The radial menu, in the order they fan out left-to-right across the arc
+// above his head. `follow` relabels itself once he's already in come-here
+// mode (see the render).
+const MENU_ITEMS: { action: OzhoAction; icon: string; label: string }[] = [
+  { action: "pet", icon: "🫶", label: "Pet" },
+  { action: "trick", icon: "✨", label: "Trick" },
+  { action: "next", icon: "🎯", label: "What now?" },
+  { action: "fetch", icon: "🎾", label: "Fetch" },
+  { action: "follow", icon: "🧭", label: "Come here" },
+  { action: "wardrobe", icon: "👒", label: "Wardrobe" },
+];
+const MENU_RADIUS = 62;
+
+const FOLLOW_STORAGE_KEY = "ozho:follow-mode";
+const PET_COUNT_KEY = "ozho:pet-count"; // "YYYY-MM-DD:N", resets each day
+const PET_LOTS_THRESHOLD = 4;
+// How long the open menu waits with no choice made before it dismisses
+// itself, so a stray click doesn't leave it hanging over the page.
+const MENU_AUTO_DISMISS_MS = 6000;
+
 // Talking is now mostly reactive (a new page = a new problem, or new
 // results to react to) rather than on a chatty ambient timer. The ambient
 // timer still exists as a rare fallback so he isn't completely silent
@@ -322,6 +388,15 @@ export function ScoutCompanion() {
   // already burned this component on once.
   const [perk, setPerk] = useState(false);
   const [costume, setCostume] = useState<string | null>(null);
+  // The click menu, plus the two effects a couple of its actions have that
+  // outlive the menu itself: a heart burst (pet) and a thrown ball (fetch).
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [followMode, setFollowMode] = useState(false);
+  const [heartKey, setHeartKey] = useState(0);
+  const [showHearts, setShowHearts] = useState(false);
+  const [ball, setBall] = useState<{ x: number; y: number; key: number } | null>(null);
+
+  const router = useRouter();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const posRef = useRef({ x: 80, y: 400 });
@@ -370,6 +445,15 @@ export function ScoutCompanion() {
   const sleepAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const trickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const perkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Menu / actions. menuOpenRef and followModeRef mirror their state into
+  // the render loop (which reads refs, not state); fetchingRef sequences
+  // the two legs of a fetch (dash out to the ball, trot back home) inside
+  // that same loop's walk-complete branch.
+  const menuOpenRef = useRef(false);
+  const followModeRef = useRef(false);
+  const fetchingRef = useRef<"out" | "back" | null>(null);
+  const fetchHomeRef = useRef<{ x: number; y: number } | null>(null);
+  const heartsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // One-time setup: pick a starting spot in page coordinates and fetch
   // Ozho's mood. ScoutCompanion is mounted once at the root layout, so
@@ -395,6 +479,17 @@ export function ScoutCompanion() {
     behaviorUntilRef.current = Date.now() + 900 + Math.random() * 900;
     lastInteractionAtRef.current = Date.now();
     setReady(true);
+
+    // "Come here / stay close" is a deliberate choice a student made about
+    // how they want Ozho to behave, so it should survive a reload the same
+    // way the equipped costume does.
+    try {
+      const savedFollow = window.localStorage.getItem(FOLLOW_STORAGE_KEY) === "1";
+      followModeRef.current = savedFollow;
+      setFollowMode(savedFollow);
+    } catch {
+      // storage disabled -- just default to free-roam
+    }
 
     dedupedFetchJson<{ stage: PetStage; currentStreak?: number; costume?: string | null }>("/api/pet/state")
       .then((data) => {
@@ -470,6 +565,7 @@ export function ScoutCompanion() {
       window.removeEventListener("ozho:costume", onCostumeChange);
       if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
       if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
+      if (heartsTimeoutRef.current) clearTimeout(heartsTimeoutRef.current);
     };
   }, []);
 
@@ -536,6 +632,9 @@ export function ScoutCompanion() {
     // who's still shown asleep.
     lastInteractionAtRef.current = Date.now();
     beginWakeUp();
+    // A route change is its own interaction -- whatever the menu was for,
+    // it's stale on the new page.
+    closeMenu();
 
     refreshTextRects();
     // A page change swaps the whole text layout out from under him. If
@@ -800,6 +899,13 @@ export function ScoutCompanion() {
     for (let tries = 0; !isValidLanding(end.x, end.y) && tries < 12; tries++) {
       end = forceTarget ? pickReturnTarget() : randomCandidate();
     }
+    // pickReturnTarget() (unlike randomCandidate()) doesn't clamp its own
+    // output to the page margins -- it's normally fine since it's built
+    // from real viewport/scroll numbers that land well inside them, but a
+    // degenerate 0-size viewport reading (see the render loop's own guard
+    // for the same case) could otherwise send him to an unclamped corner.
+    // Re-clamping here is a no-op for every already-valid candidate above.
+    end = { x: clamp(end.x, SIDE_MARGIN, maxX), y: clamp(end.y, TOP_MARGIN, maxY) };
 
     const dx = end.x - start.x;
     const dy = end.y - start.y;
@@ -866,7 +972,12 @@ export function ScoutCompanion() {
       const sleepy = asleepRef.current || sleepAnimRef.current !== "none";
       if (sleepy) {
         if (idleMs < IDLE_SLEEP_MS) beginWakeUp();
-      } else if (idleMs > IDLE_SLEEP_MS && !walkingRef.current && stageRef.current !== "dead") {
+      } else if (
+        idleMs > IDLE_SLEEP_MS &&
+        !walkingRef.current &&
+        !menuOpenRef.current &&
+        stageRef.current !== "dead"
+      ) {
         beginFallAsleep();
       }
 
@@ -913,6 +1024,17 @@ export function ScoutCompanion() {
             return next as 0 | 1 | 2 | 3 | 4 | 5;
           });
         }
+      }
+
+      // The action menu is open: he holds dead still under it (a drifting
+      // target would slide out from under the buttons) but keeps wagging,
+      // which the block above already handled. Nothing else this tick.
+      if (menuOpenRef.current) {
+        if (wrapperRef.current) {
+          wrapperRef.current.style.left = `${posRef.current.x}px`;
+          wrapperRef.current.style.top = `${posRef.current.y}px`;
+        }
+        return;
       }
 
       if (nowMs > speakAtRef.current) {
@@ -1015,6 +1137,19 @@ export function ScoutCompanion() {
           // rather than risk an instant re-trigger off a coincidental
           // cursor move landing right as he arrives.
           escapeUntilRef.current = nowMs + 400;
+
+          // Fetch: he's just reached the ball -> pick it up and trot back
+          // to where he was standing when it was thrown. Second arrival
+          // (the "back" leg) just ends the game.
+          if (fetchingRef.current === "out") {
+            fetchingRef.current = "back";
+            setBall(null);
+            speak(pick(FETCH_RETURN_PHRASES), 2600);
+            const home = fetchHomeRef.current ?? pickReturnTarget();
+            beginWalk({ urgent: true, forceTarget: home });
+          } else if (fetchingRef.current === "back") {
+            fetchingRef.current = null;
+          }
         } else {
           const t = pathTRef.current;
           const mt = 1 - t;
@@ -1046,6 +1181,26 @@ export function ScoutCompanion() {
           legTimerRef.current = 0;
           setLegFrame((f) => (f === 0 ? 1 : 0));
         }
+      } else if (followModeRef.current) {
+        // "Come here" mode: instead of wandering off on the pause timer, he
+        // stays inside a comfortable band around whatever's on screen. Only
+        // strolls when he's drifted well outside it (a big scroll is
+        // already caught by the out-of-view dash above; this covers the
+        // smaller "you scrolled half a screen" case).
+        if (nowMs > behaviorUntilRef.current) {
+          const cx = scrollX + vw / 2;
+          const cy = scrollY + vh * 0.6;
+          const outsideBand =
+            Math.abs(pos.x - cx) > vw * 0.42 || pos.y - cy < -vh * 0.34 || pos.y - cy > vh * 0.4;
+          if (outsideBand) {
+            beginWalk({ forceTarget: followTarget() });
+          } else {
+            behaviorUntilRef.current = nowMs + 1400 + Math.random() * 1600;
+          }
+        } else if (Math.random() < 0.003) {
+          facingRef.current = facingRef.current === 1 ? -1 : 1;
+          setFacing(facingRef.current);
+        }
       } else {
         if (nowMs > behaviorUntilRef.current) {
           beginWalk();
@@ -1064,20 +1219,189 @@ export function ScoutCompanion() {
     return () => clearInterval(intervalId);
   }, []);
 
+  // ---- Click menu plumbing ----------------------------------------------
+
+  function openMenu() {
+    menuOpenRef.current = true;
+    setMenuOpen(true);
+    // Clear any lingering bubble so it doesn't sit on top of the arc, and
+    // stop him where he is (the render loop freezes him while it's open).
+    if (bubbleTimeoutRef.current) clearTimeout(bubbleTimeoutRef.current);
+    setBubble(null);
+    walkingRef.current = false;
+    setIsWalking(false);
+  }
+
+  function closeMenu() {
+    if (!menuOpenRef.current) return;
+    menuOpenRef.current = false;
+    setMenuOpen(false);
+    // Resume normal life with a fresh pause rather than bolting the instant
+    // the menu closes.
+    behaviorUntilRef.current = Date.now() + pickPauseMs();
+  }
+
+  // A spot to trot to for "come here" -- near the reader, off to the side
+  // of the column so he's company, not an obstruction. beginWalk still
+  // nudges him clear of any text he'd actually land on.
+  function followTarget() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const sx = window.scrollX;
+    const sy = window.scrollY;
+    const nearMouseX = mouseRef.current ? mouseRef.current.x : sx + vw * 0.5;
+    const x = clamp(nearMouseX + (Math.random() < 0.5 ? -1 : 1) * vw * 0.18, sx + vw * 0.12, sx + vw * 0.88);
+    return { x, y: sy + vh * (0.55 + Math.random() * 0.15) };
+  }
+
+  function throwBall() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const sx = window.scrollX;
+    const sy = window.scrollY;
+    const target = { x: sx + vw * (0.2 + Math.random() * 0.6), y: sy + vh * (0.32 + Math.random() * 0.42) };
+    fetchHomeRef.current = { x: posRef.current.x, y: posRef.current.y };
+    fetchingRef.current = "out";
+    speak(pick(FETCH_THROW_PHRASES), 1800);
+    beginWalk({ urgent: true, forceTarget: target });
+    // beginWalk may have nudged the landing spot off nearby text -- put the
+    // ball wherever he's actually headed so he doesn't run past it.
+    setBall({ x: targetRef.current.x, y: targetRef.current.y, key: Date.now() });
+  }
+
+  function petOzho() {
+    const today = new Date().toISOString().slice(0, 10);
+    let n = 0;
+    try {
+      const raw = window.localStorage.getItem(PET_COUNT_KEY);
+      if (raw && raw.startsWith(today + ":")) n = parseInt(raw.slice(today.length + 1), 10) || 0;
+    } catch {
+      // ignore -- just means we can't tell he's been well-loved today
+    }
+    n += 1;
+    try {
+      window.localStorage.setItem(PET_COUNT_KEY, `${today}:${n}`);
+    } catch {
+      // ignore
+    }
+    if (!reducedMotionRef.current) {
+      setHeartKey((k) => k + 1);
+      setShowHearts(true);
+      if (heartsTimeoutRef.current) clearTimeout(heartsTimeoutRef.current);
+      heartsTimeoutRef.current = setTimeout(() => setShowHearts(false), 1300);
+    }
+    speak(pick(n >= PET_LOTS_THRESHOLD ? PET_PHRASES_LOTS : PET_PHRASES), 2800);
+  }
+
+  function doTrick() {
+    if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
+    setTrick(true);
+    trickTimeoutRef.current = setTimeout(() => setTrick(false), 700);
+    speak(pick(CELEBRATION_PHRASES), 2600);
+  }
+
+  function askWhatsNext() {
+    speak(pick(NEXT_CHECKING), 2200);
+    dedupedFetchJson<{ recommendation: { label: string; href: string } | null }>("/api/plan/next")
+      .then((data) => {
+        const rec = data?.recommendation;
+        if (!rec) {
+          speak(pick(NEXT_DONE), 4200);
+          return;
+        }
+        speak(`${pick(NEXT_INTRO)} ${rec.label}. Taking you there…`, 3400);
+        setTimeout(() => router.push(rec.href), 1500);
+      })
+      .catch(() => speak(pick(NEXT_ERROR), 3600));
+  }
+
+  function toggleFollow() {
+    const next = !followModeRef.current;
+    followModeRef.current = next;
+    setFollowMode(next);
+    try {
+      window.localStorage.setItem(FOLLOW_STORAGE_KEY, next ? "1" : "0");
+    } catch {
+      // ignore -- it just won't persist across reloads
+    }
+    speak(pick(next ? FOLLOW_ON_PHRASES : FOLLOW_OFF_PHRASES), 2800);
+    if (next) beginWalk({ forceTarget: followTarget() });
+  }
+
+  function handleMenuAction(action: OzhoAction) {
+    closeMenu();
+    beginWakeUp();
+    lastInteractionAtRef.current = Date.now();
+    switch (action) {
+      case "pet":
+        petOzho();
+        break;
+      case "trick":
+        doTrick();
+        break;
+      case "next":
+        askWhatsNext();
+        break;
+      case "fetch":
+        throwBall();
+        break;
+      case "follow":
+        toggleFollow();
+        break;
+      case "wardrobe":
+        speak("Wardrobe time. After you.", 2000);
+        setTimeout(() => router.push("/settings"), 700);
+        break;
+    }
+  }
+
   function onClickDog() {
     // The window-level click listener (see the init effect) already stamps
     // lastInteractionAtRef for the generic idle timer; a direct click on
-    // him specifically gets its own sleepy-specific reaction instead of the
-    // silent wake the timer would otherwise give him. Captured before
-    // beginWakeUp() runs, since that's what actually changes the state.
+    // him specifically gets its own reaction. Captured before beginWakeUp()
+    // runs, since that's what actually changes the state.
     const wasAsleep = asleepRef.current || sleepAnimRef.current !== "none";
     beginWakeUp();
     if (wasAsleep) {
+      // Waking him is a moment of its own -- don't also throw a menu at the
+      // student in the same click.
       speak(pick(SLEEPY_WAKE_PHRASES), 3200);
       return;
     }
-    speak(pick(GREETINGS), 3200);
+    if (menuOpenRef.current) {
+      closeMenu();
+      return;
+    }
+    // Mid-stride he's a hard thing to "click on" deliberately -- treat that
+    // as the old tap-to-greet rather than trying to pin a menu to a moving
+    // target.
+    if (walkingRef.current) {
+      speak(pick(GREETINGS), 3200);
+      return;
+    }
+    openMenu();
   }
+
+  // While the menu's open, a click anywhere off Ozho, any scroll, or a few
+  // seconds of no choice all dismiss it.
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onDown(e: PointerEvent) {
+      if (!wrapperRef.current?.contains(e.target as Node)) closeMenu();
+    }
+    function onScroll() {
+      closeMenu();
+    }
+    window.addEventListener("pointerdown", onDown);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    const t = setTimeout(closeMenu, MENU_AUTO_DISMISS_MS);
+    return () => {
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("scroll", onScroll);
+      clearTimeout(t);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [menuOpen]);
 
   const mood = stage ? MOOD_BY_STAGE[stage] : "neutral";
   const hidden = HIDDEN_ON.has(pathname ?? "");
@@ -1087,18 +1411,31 @@ export function ScoutCompanion() {
   // Deliberately just one absolutely-positioned element with no positioned
   // wrapper around it: with nothing between it and the document root, its
   // top/left resolve in PAGE space, so it scrolls with the content like
-  // something that actually lives there instead of floating over it.
+  // something that actually lives there instead of floating over it. The
+  // thrown fetch ball is a second such element -- it lives at its own page
+  // coordinates, independent of where Ozho currently is.
   return (
-    <div
-      ref={wrapperRef}
-      className="absolute z-40 pointer-events-none transition-opacity duration-200"
-      style={{
-        left: posRef.current.x,
-        top: posRef.current.y,
-        transform: "translate(-50%, -50%)",
-        opacity: behindText ? BEHIND_TEXT_OPACITY : 1,
-      }}
-    >
+    <>
+      {ball && (
+        <div
+          key={ball.key}
+          aria-hidden
+          className="absolute z-40 pointer-events-none text-lg leading-none select-none animate-ozho-ball-drop"
+          style={{ left: ball.x, top: ball.y, transform: "translate(-50%, -50%)" }}
+        >
+          🎾
+        </div>
+      )}
+      <div
+        ref={wrapperRef}
+        className="absolute z-40 pointer-events-none transition-opacity duration-200"
+        style={{
+          left: posRef.current.x,
+          top: posRef.current.y,
+          transform: "translate(-50%, -50%)",
+          opacity: behindText ? BEHIND_TEXT_OPACITY : 1,
+        }}
+      >
       {bubble && (
         // The bubble is out-of-flow (absolute) and always centers on the
         // wrapper's own width regardless of the bubble's own size, so it's
@@ -1176,6 +1513,66 @@ export function ScoutCompanion() {
           costume={costume}
         />
       </button>
-    </div>
+
+      {showHearts && (
+        // A quick puff of hearts when you pet him -- three, staggered, each
+        // drifting a slightly different direction so it reads as a little
+        // burst rather than a stack. Keyed so repeat pets restart it.
+        <div key={heartKey} className="absolute left-1/2 top-0 pointer-events-none" aria-hidden>
+          {[
+            { d: "0s", x: "-14px" },
+            { d: "0.12s", x: "4px" },
+            { d: "0.24s", x: "16px" },
+          ].map((h, i) => (
+            <span
+              key={i}
+              className="absolute text-sm animate-ozho-heart"
+              style={{ "--hx": h.x, animationDelay: h.d } as CSSProperties}
+            >
+              💛
+            </span>
+          ))}
+        </div>
+      )}
+
+      {menuOpen && (
+        // The action menu: buttons fan out along the top arc above his
+        // head. pointer-events-auto only on the buttons themselves so the
+        // rest of the (pointer-events-none) wrapper still lets clicks
+        // through to the page behind him.
+        <div className="absolute left-1/2 top-1/2 pointer-events-none" role="menu" aria-label={`${PET_NAME} actions`}>
+          {MENU_ITEMS.map((item, i) => {
+            const a = Math.PI + Math.PI * ((i + 0.5) / MENU_ITEMS.length);
+            const dx = Math.cos(a) * MENU_RADIUS;
+            const dy = Math.sin(a) * MENU_RADIUS;
+            const label = item.action === "follow" && followMode ? "Roam free" : item.label;
+            return (
+              // Positioning transform lives on this wrapper; the button
+              // only animates scale/opacity, so the two never fight over
+              // the `transform` property.
+              <div
+                key={item.action}
+                className="absolute"
+                style={{ left: 0, top: 0, transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))` }}
+              >
+                <button
+                  onClick={() => handleMenuAction(item.action)}
+                  aria-label={label}
+                  title={label}
+                  className="pointer-events-auto relative flex h-8 w-8 items-center justify-center rounded-full border border-[#ece9f7] bg-white text-[15px] leading-none shadow-[0_4px_14px_rgba(26,26,46,0.16)] transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6d7fd6] animate-ozho-menu-item"
+                  style={{ animationDelay: `${i * 28}ms` }}
+                >
+                  <span aria-hidden>{item.icon}</span>
+                  <span className="pointer-events-none absolute top-full left-1/2 mt-0.5 -translate-x-1/2 whitespace-nowrap rounded bg-white/95 px-1 text-[9px] font-semibold text-ink shadow-sm">
+                    {label}
+                  </span>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      </div>
+    </>
   );
 }

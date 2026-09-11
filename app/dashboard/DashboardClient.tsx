@@ -8,6 +8,7 @@ import type { DomainMastery } from "@/lib/mastery";
 import { PacingBar, PACE_STATUS_STYLES, paceStatusCopy } from "@/components/PacingBar";
 import { StarRating } from "@/components/StarRating";
 import { sectionTheme } from "@/lib/sectionTheme";
+import { findRecommended } from "@/lib/recommend";
 
 type ProgressMap = Record<string, { bestScore: number; total: number }>;
 
@@ -402,38 +403,6 @@ function sectionProgress(
   return { masteredCount, total, pct };
 }
 
-/**
- * The single subskill to feature at the very top of the dashboard as a
- * one-click "start here". Prefers whatever the 6-month plan has scheduled
- * for today (skipping anything already mastered); falls back to the first
- * not-yet-mastered subskill in curriculum order once today's slate is
- * clear (or there's no plan slot at all -- e.g. a custom timeline that's
- * already finished).
- */
-function findRecommended(
-  curriculum: Section[],
-  progress: ProgressMap,
-  today: TodayPlan | null
-): { label: string; href: string; domain?: string } | null {
-  if (today && today.type !== "test" && today.type !== "rest") {
-    const next = today.subskills.find((s) => {
-      const p = progress[s.id];
-      return !p || p.bestScore !== p.total;
-    });
-    if (next) return { label: next.name, href: `/subskill/${next.id}`, domain: next.domain };
-  }
-  if (today?.type === "test") {
-    return { label: `Take full-length practice test ${today.testNumber} of 8`, href: "/plan#practice-tests" };
-  }
-  for (const sec of curriculum) {
-    for (const d of sec.domains) {
-      for (const s of d.subskills) {
-        const p = progress[s.id];
-        if (!p || p.bestScore !== p.total) {
-          return { label: s.name, href: `/subskill/${s.id}`, domain: d.domain };
-        }
-      }
-    }
-  }
-  return null;
-}
+// findRecommended now lives in @/lib/recommend so the /api/plan/next route
+// (which powers Ozho's "what should I do next?" click action) shares the
+// exact same logic this card uses.
