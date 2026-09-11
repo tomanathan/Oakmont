@@ -424,12 +424,21 @@ export function ScoutCompanion() {
   const [followMode, setFollowMode] = useState(false);
   const [heartKey, setHeartKey] = useState(0);
   const [showHearts, setShowHearts] = useState(false);
-  // fromX/fromY are where the throw started (his position at the moment of
-  // the throw) -- the ball animates from there to x/y instead of just
-  // appearing already landed. See .animate-ozho-ball-throw in globals.css.
-  const [ball, setBall] = useState<{ x: number; y: number; fromX: number; fromY: number; key: number } | null>(
-    null
-  );
+  // x/y is where the ball lands (and stays); startDX/startDY/midDX/midDY
+  // are the flight's two in-between offsets, precomputed here in JS rather
+  // than left for the CSS keyframes to compute -- see .animate-ozho-ball-throw
+  // in globals.css for why (browser support for arithmetic on an
+  // unregistered custom property inside calc() is inconsistent; plain
+  // addition of a precomputed length is not).
+  const [ball, setBall] = useState<{
+    x: number;
+    y: number;
+    startDX: number;
+    startDY: number;
+    midDX: number;
+    midDY: number;
+    key: number;
+  } | null>(null);
 
   const router = useRouter();
 
@@ -1303,22 +1312,41 @@ export function ScoutCompanion() {
   }
 
   function throwBall() {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const sx = window.scrollX;
-    const sy = window.scrollY;
-    const target = { x: sx + vw * (0.2 + Math.random() * 0.6), y: sy + vh * (0.32 + Math.random() * 0.42) };
     const origin = { x: posRef.current.x, y: posRef.current.y };
+    // Thrown a real distance from wherever he's actually standing -- a
+    // fixed radius around him, not a spot picked from the viewport at
+    // large -- so it always reads as an honest-to-goodness throw, and the
+    // walk out to it always takes comfortably longer than the ball's own
+    // ~0.5s flight (see below) instead of sometimes being so close he'd
+    // arrive before the throw even finished animating.
+    const angle = Math.random() * Math.PI * 2;
+    const throwDist = 220 + Math.random() * 220;
+    const rawTarget = { x: origin.x + Math.cos(angle) * throwDist, y: origin.y + Math.sin(angle) * throwDist };
     fetchHomeRef.current = origin;
     fetchingRef.current = "out";
     speak(pick(FETCH_THROW_PHRASES), 1800);
-    beginWalk({ urgent: true, forceTarget: target });
-    // beginWalk may have nudged the landing spot off nearby text -- put the
-    // ball wherever he's actually headed so he doesn't run past it. It
-    // flies there (see .animate-ozho-ball-throw) well before he arrives on
-    // foot -- a thrown ball is faster than a running dog, same as a real
-    // game of fetch.
-    setBall({ x: targetRef.current.x, y: targetRef.current.y, fromX: origin.x, fromY: origin.y, key: Date.now() });
+    beginWalk({ urgent: true, forceTarget: rawTarget });
+    // beginWalk clamps that to the page margins and may nudge it off
+    // nearby text -- throw toward wherever he's actually headed, not the
+    // raw pick, so the ball and the dash out to it always agree.
+    const landX = targetRef.current.x;
+    const landY = targetRef.current.y;
+    // The flight's two in-between offsets (see .animate-ozho-ball-throw):
+    // the 0% frame pulls it back to where he was standing, and the 55%
+    // frame is partway there plus a lift, for an arc instead of a
+    // straight line. Computed here, in plain JS, rather than asking the
+    // CSS keyframes to multiply a custom property by a number themselves.
+    const startDX = origin.x - landX;
+    const startDY = origin.y - landY;
+    setBall({
+      x: landX,
+      y: landY,
+      startDX,
+      startDY,
+      midDX: startDX * 0.3,
+      midDY: startDY * 0.3 - 28,
+      key: Date.now(),
+    });
   }
 
   function petOzho() {
@@ -1477,9 +1505,10 @@ export function ScoutCompanion() {
         // Positioned (left/top) at its landing spot; the throw itself is
         // animated entirely via transform, offset back to where he was
         // standing at 0% and arcing up through the middle of the flight
-        // (see --bx/--by and .animate-ozho-ball-throw in globals.css) --
-        // the same "position the element at rest, animate transform from a
-        // computed offset" trick the heart-burst above uses.
+        // (see .animate-ozho-ball-throw in globals.css) -- the same
+        // "position the element at rest, animate transform from a
+        // computed offset" trick the heart-burst above uses. The offsets
+        // themselves are computed in throwBall(), not here.
         <div
           key={ball.key}
           aria-hidden
@@ -1488,8 +1517,10 @@ export function ScoutCompanion() {
             {
               left: ball.x,
               top: ball.y,
-              "--bx": `${ball.fromX - ball.x}px`,
-              "--by": `${ball.fromY - ball.y}px`,
+              "--bx0": `${ball.startDX}px`,
+              "--by0": `${ball.startDY}px`,
+              "--bxm": `${ball.midDX}px`,
+              "--bym": `${ball.midDY}px`,
             } as CSSProperties
           }
         >

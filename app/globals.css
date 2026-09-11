@@ -268,16 +268,20 @@ body {
 
 /* The thrown fetch ball actually flying from him to where it lands, not
    just appearing there. The element sits at its landing spot (left/top);
-   --bx/--by (set inline, per-throw) are the offset back to where he was
-   standing, so 0% pulls it there via transform, and it arcs up through
-   the middle of the flight before settling -- a real toss, not a drop. */
+   --bx0/--by0 (0% frame) and --bxm/--bym (55% frame), set inline per
+   throw, are precomputed pixel offsets -- see throwBall() -- rather than
+   arithmetic done here on the custom properties themselves: multiplying
+   an *unregistered* custom property by a number inside calc() (e.g.
+   `calc(var(--x) * 0.3)`) isn't reliably supported across browsers, while
+   plain addition of an already-computed length (`calc(-50% + var(--x))`)
+   is completely standard. Each frame is just that addition. */
 @keyframes ozho-ball-throw {
   0% {
-    transform: translate(calc(-50% + var(--bx, 0)), calc(-50% + var(--by, 0))) scale(0.6);
+    transform: translate(calc(-50% + var(--bx0, 0px)), calc(-50% + var(--by0, 0px))) scale(0.6);
     opacity: 0.75;
   }
   55% {
-    transform: translate(calc(-50% + var(--bx, 0) * 0.3), calc(-50% + var(--by, 0) * 0.3 - 28px)) scale(1.08);
+    transform: translate(calc(-50% + var(--bxm, 0px)), calc(-50% + var(--bym, 0px))) scale(1.08);
     opacity: 1;
   }
   100% {
@@ -287,9 +291,6 @@ body {
 }
 
 .animate-ozho-ball-throw {
-  /* Reduced-motion fallback: with the animation itself turned off below,
-     this is the only rule left standing -- the ball just appears already
-     at rest on its landing spot instead of mid-flight-and-uncentered. */
   transform: translate(-50%, -50%);
   animation: ozho-ball-throw 0.5s cubic-bezier(0.2, 0.6, 0.35, 1) both;
 }
@@ -324,11 +325,24 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Purely decorative entrances -- a menu button or a heart appearing
+     instantly instead of popping/drifting in loses nothing functional, so
+     these are fully skipped, same as elsewhere in this file. */
   .animate-ozho-menu-item,
-  .animate-ozho-heart,
-  .animate-ozho-ball-throw,
-  .animate-ozho-pet {
+  .animate-ozho-heart {
     animation: none;
+  }
+  /* The ball throw is how Fetch is actually communicated -- skipping it
+     entirely would mean nothing visibly happens when it's used. Slowed
+     and calmed instead of removed, the same "slow down, don't eliminate"
+     choice already made for his walk speed and tail wag. His other
+     character reactions (.animate-trick, .animate-perk, and the new
+     .animate-ozho-pet) are deliberately absent from this block too --
+     brief, in-place wiggles/hops, not motion across the page, so they
+     already just play unconditionally. */
+  .animate-ozho-ball-throw {
+    animation-duration: 1.3s;
+    animation-timing-function: ease-in-out;
   }
 }
 
