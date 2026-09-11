@@ -35,7 +35,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           until the streak that unlocks it is actually reached -- see its
           own file. */}
       <body className="bg-white text-ink font-sans antialiased">
-        {children}
+        {/* The id here is a deliberate hook, not decoration: ScoutCompanion
+            measures this element's own height (not document.documentElement's)
+            to know how far down the *actual page content* goes. Ozho is a
+            sibling of this div, positioned absolutely -- if his own
+            wandering were ever measured against the whole document instead,
+            his position would count toward that measurement, which is
+            exactly the runaway-downward bug this id exists to prevent (see
+            pageContentBottom() in ScoutCompanion.tsx for the full story). */}
+        <div id="app-content">{children}</div>
         <ScoutCompanion />
         <SecondCompanion />
         <GlobalConfetti />

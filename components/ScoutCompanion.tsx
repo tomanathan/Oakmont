@@ -156,6 +156,32 @@ function clamp(v: number, min: number, max: number): number {
   return Math.min(hi, Math.max(lo, v));
 }
 
+// How far down the *actual page content* goes, in page coordinates --
+// used to bound how deep he's ever allowed to wander. Deliberately NOT
+// document.documentElement.scrollHeight: that measures the whole
+// document, and Ozho's own wrapper (an absolutely-positioned sibling of
+// the real content -- see the #app-content div in the root layout) counts
+// toward it exactly like any other element would. If his position ever
+// ended up deeper than the page's real content -- most commonly by
+// carrying a Y coordinate over from a much taller page (a long subskill
+// lesson) onto a much shorter one (the dashboard) right after navigating,
+// since his position persists across routes on purpose -- the *document's*
+// height would balloon to match wherever he happened to be sitting. Every
+// wander target is bounded by "however tall the page currently measures,"
+// so that inflated number would let him go deeper still, which inflates
+// it further, on and on with no ceiling: the runaway "keeps running
+// downward, endlessly extending the page" bug. Measuring #app-content
+// itself instead sidesteps the loop entirely -- his own position can
+// never feed back into this number, because he isn't part of it.
+function pageContentBottom(): number {
+  const content = document.getElementById("app-content");
+  // Falls back to the whole-document measurement only if that element is
+  // ever somehow missing -- still correct on any page that doesn't have
+  // the runaway problem in the first place, just not loop-proof.
+  if (!content) return document.documentElement.scrollHeight;
+  return content.getBoundingClientRect().bottom + window.scrollY;
+}
+
 // Pages without the logged-in app chrome -- Ozho doesn't belong there.
 const HIDDEN_ON = new Set(["/login"]);
 
@@ -923,9 +949,11 @@ export function ScoutCompanion() {
     const { avoid, forceTarget } = opts;
     const start = { x: posRef.current.x, y: posRef.current.y };
     // Floored at the margin itself so a transient small clientWidth/
-    // scrollHeight reading (e.g. mid-layout) can never push max below min.
+    // content-height reading (e.g. mid-layout) can never push max below
+    // min. See pageContentBottom() for why that's used for the Y bound
+    // instead of document.documentElement.scrollHeight.
     const maxX = Math.max(SIDE_MARGIN, document.documentElement.clientWidth - SIDE_MARGIN);
-    const maxY = Math.max(TOP_MARGIN, document.documentElement.scrollHeight - BOTTOM_MARGIN);
+    const maxY = Math.max(TOP_MARGIN, pageContentBottom() - BOTTOM_MARGIN);
 
     function randomCandidate() {
       let angle: number;
@@ -1311,7 +1339,7 @@ export function ScoutCompanion() {
           pos.y = clamp(
             mt * mt * s.y + 2 * mt * t * c.y + t * t * e.y,
             TOP_MARGIN,
-            Math.max(TOP_MARGIN, document.documentElement.scrollHeight - BOTTOM_MARGIN)
+            Math.max(TOP_MARGIN, pageContentBottom() - BOTTOM_MARGIN)
           );
           const tangentX = 2 * mt * (c.x - s.x) + 2 * t * (e.x - c.x);
           if (Math.abs(tangentX) > 0.5) {
