@@ -266,34 +266,68 @@ body {
   animation: ozho-heart 1.15s ease-out forwards;
 }
 
-/* The thrown fetch ball dropping onto the page, with a small bounce. */
-@keyframes ozho-ball-drop {
+/* The thrown fetch ball actually flying from him to where it lands, not
+   just appearing there. The element sits at its landing spot (left/top);
+   --bx/--by (set inline, per-throw) are the offset back to where he was
+   standing, so 0% pulls it there via transform, and it arcs up through
+   the middle of the flight before settling -- a real toss, not a drop. */
+@keyframes ozho-ball-throw {
   0% {
-    transform: translate(-50%, -180%);
-    opacity: 0;
-  }
-  30% {
-    opacity: 1;
+    transform: translate(calc(-50% + var(--bx, 0)), calc(-50% + var(--by, 0))) scale(0.6);
+    opacity: 0.75;
   }
   55% {
-    transform: translate(-50%, -50%);
-  }
-  72% {
-    transform: translate(-50%, -84%);
+    transform: translate(calc(-50% + var(--bx, 0) * 0.3), calc(-50% + var(--by, 0) * 0.3 - 28px)) scale(1.08);
+    opacity: 1;
   }
   100% {
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
   }
 }
 
-.animate-ozho-ball-drop {
-  animation: ozho-ball-drop 0.55s ease-out;
+.animate-ozho-ball-throw {
+  /* Reduced-motion fallback: with the animation itself turned off below,
+     this is the only rule left standing -- the ball just appears already
+     at rest on its landing spot instead of mid-flight-and-uncentered. */
+  transform: translate(-50%, -50%);
+  animation: ozho-ball-throw 0.5s cubic-bezier(0.2, 0.6, 0.35, 1) both;
+}
+
+/* The "Pet" menu action's own reaction -- a contented little wiggle and
+   settle, distinct from both the tiny speaking-hop (.animate-perk) and the
+   big jump-spin celebration (.animate-trick), so being petted reads as its
+   own moment rather than reusing either. */
+@keyframes ozho-pet {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  18% {
+    transform: rotate(-7deg) scale(1.05);
+  }
+  38% {
+    transform: rotate(6deg) scale(1.07);
+  }
+  58% {
+    transform: rotate(-4deg) scale(1.04);
+  }
+  78% {
+    transform: rotate(2deg) scale(1.02);
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.animate-ozho-pet {
+  animation: ozho-pet 0.7s ease-in-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-ozho-menu-item,
   .animate-ozho-heart,
-  .animate-ozho-ball-drop {
+  .animate-ozho-ball-throw,
+  .animate-ozho-pet {
     animation: none;
   }
 }

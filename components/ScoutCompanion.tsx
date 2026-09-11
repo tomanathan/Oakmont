@@ -310,18 +310,28 @@ const NEXT_DONE = [
 ];
 const NEXT_ERROR = ["Hmm, couldn't reach your plan. Try the dashboard?", "Plan's not loading for me — the dashboard should have it."];
 
-// The radial menu, in the order they fan out left-to-right across the arc
-// above his head. `follow` relabels itself once he's already in come-here
-// mode (see the render).
+// The radial menu, in the order they fan out around him. Short, plain
+// verbs/nouns rather than phrases ("What now?" -> "Next") so six buttons
+// read at a glance instead of needing to be studied one at a time --
+// "Wardrobe" is the one exception, kept to match the exact word Settings
+// already uses for the same thing. `follow` relabels itself once he's
+// already in come-here mode (see the render).
 const MENU_ITEMS: { action: OzhoAction; icon: string; label: string }[] = [
   { action: "pet", icon: "🫶", label: "Pet" },
   { action: "trick", icon: "✨", label: "Trick" },
-  { action: "next", icon: "🎯", label: "What now?" },
+  { action: "next", icon: "🎯", label: "Next" },
   { action: "fetch", icon: "🎾", label: "Fetch" },
-  { action: "follow", icon: "🧭", label: "Come here" },
+  { action: "follow", icon: "🧭", label: "Follow" },
   { action: "wardrobe", icon: "👒", label: "Wardrobe" },
 ];
-const MENU_RADIUS = 62;
+// The menu fans out through 270° around him -- left side, all the way over
+// the top, to the right side -- leaving a 90° gap centered straight down
+// (where his own body/feet are, and where a button would have nowhere
+// good to sit anyway). Wider than a plain semicircle so six buttons get
+// real breathing room between them instead of crowding into a tight arc.
+const MENU_ARC_START = Math.PI * 0.75; // 135°
+const MENU_ARC_SPAN = Math.PI * 1.5; // 270°
+const MENU_RADIUS = 68;
 
 const FOLLOW_STORAGE_KEY = "ozho:follow-mode";
 const PET_COUNT_KEY = "ozho:pet-count"; // "YYYY-MM-DD:N", resets each day
@@ -403,13 +413,23 @@ export function ScoutCompanion() {
   // already burned this component on once.
   const [perk, setPerk] = useState(false);
   const [costume, setCostume] = useState<string | null>(null);
+  // The "Pet" menu action's own animation -- a contented wiggle, distinct
+  // from both the tiny ambient `perk` hop and the bigger `trick` jump-spin,
+  // so being petted actually reads as its own thing (see the className
+  // priority in the render return, and .animate-ozho-pet in globals.css).
+  const [petting, setPetting] = useState(false);
   // The click menu, plus the two effects a couple of its actions have that
   // outlive the menu itself: a heart burst (pet) and a thrown ball (fetch).
   const [menuOpen, setMenuOpen] = useState(false);
   const [followMode, setFollowMode] = useState(false);
   const [heartKey, setHeartKey] = useState(0);
   const [showHearts, setShowHearts] = useState(false);
-  const [ball, setBall] = useState<{ x: number; y: number; key: number } | null>(null);
+  // fromX/fromY are where the throw started (his position at the moment of
+  // the throw) -- the ball animates from there to x/y instead of just
+  // appearing already landed. See .animate-ozho-ball-throw in globals.css.
+  const [ball, setBall] = useState<{ x: number; y: number; fromX: number; fromY: number; key: number } | null>(
+    null
+  );
 
   const router = useRouter();
 
@@ -460,6 +480,7 @@ export function ScoutCompanion() {
   const sleepAnimTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const trickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const perkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pettingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Menu / actions. menuOpenRef and followModeRef mirror their state into
   // the render loop (which reads refs, not state); fetchingRef sequences
   // the two legs of a fetch (dash out to the ball, trot back home) inside
@@ -580,6 +601,7 @@ export function ScoutCompanion() {
       window.removeEventListener("ozho:costume", onCostumeChange);
       if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
       if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
+      if (pettingTimeoutRef.current) clearTimeout(pettingTimeoutRef.current);
       if (heartsTimeoutRef.current) clearTimeout(heartsTimeoutRef.current);
     };
   }, []);
@@ -1286,13 +1308,17 @@ export function ScoutCompanion() {
     const sx = window.scrollX;
     const sy = window.scrollY;
     const target = { x: sx + vw * (0.2 + Math.random() * 0.6), y: sy + vh * (0.32 + Math.random() * 0.42) };
-    fetchHomeRef.current = { x: posRef.current.x, y: posRef.current.y };
+    const origin = { x: posRef.current.x, y: posRef.current.y };
+    fetchHomeRef.current = origin;
     fetchingRef.current = "out";
     speak(pick(FETCH_THROW_PHRASES), 1800);
     beginWalk({ urgent: true, forceTarget: target });
     // beginWalk may have nudged the landing spot off nearby text -- put the
-    // ball wherever he's actually headed so he doesn't run past it.
-    setBall({ x: targetRef.current.x, y: targetRef.current.y, key: Date.now() });
+    // ball wherever he's actually headed so he doesn't run past it. It
+    // flies there (see .animate-ozho-ball-throw) well before he arrives on
+    // foot -- a thrown ball is faster than a running dog, same as a real
+    // game of fetch.
+    setBall({ x: targetRef.current.x, y: targetRef.current.y, fromX: origin.x, fromY: origin.y, key: Date.now() });
   }
 
   function petOzho() {
@@ -1316,6 +1342,11 @@ export function ScoutCompanion() {
       if (heartsTimeoutRef.current) clearTimeout(heartsTimeoutRef.current);
       heartsTimeoutRef.current = setTimeout(() => setShowHearts(false), 1300);
     }
+    // The contented wiggle -- his own distinct reaction to being petted,
+    // not just the generic little speaking-hop every line already gets.
+    if (pettingTimeoutRef.current) clearTimeout(pettingTimeoutRef.current);
+    setPetting(true);
+    pettingTimeoutRef.current = setTimeout(() => setPetting(false), 700);
     speak(pick(n >= PET_LOTS_THRESHOLD ? PET_PHRASES_LOTS : PET_PHRASES), 2800);
   }
 
@@ -1443,11 +1474,24 @@ export function ScoutCompanion() {
   return (
     <>
       {ball && (
+        // Positioned (left/top) at its landing spot; the throw itself is
+        // animated entirely via transform, offset back to where he was
+        // standing at 0% and arcing up through the middle of the flight
+        // (see --bx/--by and .animate-ozho-ball-throw in globals.css) --
+        // the same "position the element at rest, animate transform from a
+        // computed offset" trick the heart-burst above uses.
         <div
           key={ball.key}
           aria-hidden
-          className="absolute z-40 pointer-events-none text-lg leading-none select-none animate-ozho-ball-drop"
-          style={{ left: ball.x, top: ball.y, transform: "translate(-50%, -50%)" }}
+          className="absolute z-40 pointer-events-none text-lg leading-none select-none animate-ozho-ball-throw"
+          style={
+            {
+              left: ball.x,
+              top: ball.y,
+              "--bx": `${ball.fromX - ball.x}px`,
+              "--by": `${ball.fromY - ball.y}px`,
+            } as CSSProperties
+          }
         >
           🎾
         </div>
@@ -1508,13 +1552,15 @@ export function ScoutCompanion() {
       <button
         onClick={onClickDog}
         aria-label="Ozho, your study companion"
-        className={`pointer-events-auto block cursor-pointer bg-transparent border-none p-0 transition-transform duration-150 ease-out ${
+        className={`relative pointer-events-auto block cursor-pointer bg-transparent border-none p-0 transition-transform duration-150 ease-out ${
           sleepAnim === "falling"
             ? "animate-fall-asleep"
             : sleepAnim === "waking"
             ? "animate-wake-up"
             : trick
             ? "animate-trick"
+            : petting
+            ? "animate-ozho-pet"
             : perk
             ? "animate-perk"
             : stage === "critical" && !isWalking
@@ -1528,6 +1574,16 @@ export function ScoutCompanion() {
               : undefined,
         }}
       >
+        {/* An invisible, generously-sized hit area centered over him --
+            his actual sprite is only 44x27.5 and an odd, non-square shape
+            (a walking pixel-art dog, not a button), which made him
+            genuinely hard to reliably click, especially mid-stride. This
+            is a plain descendant of the button (clicks on it still fire
+            onClick via bubbling), sized and centered independently of the
+            sprite, so it doesn't touch this wrapper's own box -- the
+            speech bubble, zzz, and radial menu all position off of that,
+            and shouldn't shift just because the hitbox got friendlier. */}
+        <span className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2" aria-hidden />
         <PixelDog
           size={44}
           mood={mood}
@@ -1562,13 +1618,14 @@ export function ScoutCompanion() {
       )}
 
       {menuOpen && (
-        // The action menu: buttons fan out along the top arc above his
-        // head. pointer-events-auto only on the buttons themselves so the
-        // rest of the (pointer-events-none) wrapper still lets clicks
+        // The action menu: buttons fan out in a 270° ring around him (see
+        // MENU_ARC_START/MENU_ARC_SPAN), open only at the bottom where he's
+        // standing. pointer-events-auto only on the buttons themselves so
+        // the rest of the (pointer-events-none) wrapper still lets clicks
         // through to the page behind him.
         <div className="absolute left-1/2 top-1/2 pointer-events-none" role="menu" aria-label={`${PET_NAME} actions`}>
           {MENU_ITEMS.map((item, i) => {
-            const a = Math.PI + Math.PI * ((i + 0.5) / MENU_ITEMS.length);
+            const a = MENU_ARC_START + MENU_ARC_SPAN * ((i + 0.5) / MENU_ITEMS.length);
             const dx = Math.cos(a) * MENU_RADIUS;
             const dy = Math.sin(a) * MENU_RADIUS;
             const label = item.action === "follow" && followMode ? "Roam free" : item.label;
@@ -1585,11 +1642,11 @@ export function ScoutCompanion() {
                   onClick={() => handleMenuAction(item.action)}
                   aria-label={label}
                   title={label}
-                  className="pointer-events-auto relative flex h-8 w-8 items-center justify-center rounded-full border border-[#ece9f7] bg-white text-[15px] leading-none shadow-[0_4px_14px_rgba(26,26,46,0.16)] transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6d7fd6] animate-ozho-menu-item"
-                  style={{ animationDelay: `${i * 28}ms` }}
+                  className="pointer-events-auto relative flex h-9 w-9 items-center justify-center rounded-full border border-[#ece9f7] bg-white text-base leading-none shadow-[0_4px_14px_rgba(26,26,46,0.16)] transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6d7fd6] animate-ozho-menu-item"
+                  style={{ animationDelay: `${i * 26}ms` }}
                 >
                   <span aria-hidden>{item.icon}</span>
-                  <span className="pointer-events-none absolute top-full left-1/2 mt-0.5 -translate-x-1/2 whitespace-nowrap rounded bg-white/95 px-1 text-[9px] font-semibold text-ink shadow-sm">
+                  <span className="pointer-events-none absolute top-full left-1/2 mt-1 -translate-x-1/2 whitespace-nowrap rounded-md border border-[#ece9f7] bg-white px-1.5 py-0.5 text-[10px] font-semibold text-ink shadow-sm">
                     {label}
                   </span>
                 </button>
