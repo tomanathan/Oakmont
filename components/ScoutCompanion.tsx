@@ -1326,6 +1326,20 @@ export function ScoutCompanion() {
   // ---- Click menu plumbing ----------------------------------------------
 
   function openMenu() {
+    // A click now stops him wherever he is -- see onClickDog -- including
+    // mid-fetch. Chasing or trotting a ball back are both real walks
+    // (walkingRef.current), so the stop below already halts him; this is
+    // just the fetch-specific cleanup that halting alone wouldn't do --
+    // cancel the game outright rather than leaving a ball stranded on the
+    // page, or him permanently "carrying" one he never actually finished
+    // bringing home. (Interrupting the "flying" state -- the ball's own
+    // animation, still in the air -- is left alone: he isn't walking yet
+    // at that point, and the ball plays itself out independent of him.)
+    if (fetchingRef.current === "chasing" || fetchingRef.current === "back") {
+      fetchingRef.current = null;
+      setBall(null);
+      setCarryingBall(false);
+    }
     menuOpenRef.current = true;
     setMenuOpen(true);
     // Clear any lingering bubble so it doesn't sit on top of the arc, and
@@ -1334,6 +1348,11 @@ export function ScoutCompanion() {
     setBubble(null);
     walkingRef.current = false;
     setIsWalking(false);
+    // In case he was mid-dash back into view -- otherwise this would
+    // stay stuck true, silently keeping the "return dash" speed/rest
+    // exceptions active even after he's just standing here with a menu
+    // open.
+    returningRef.current = false;
   }
 
   function closeMenu() {
@@ -1571,13 +1590,12 @@ export function ScoutCompanion() {
       closeMenu();
       return;
     }
-    // Mid-stride he's a hard thing to "click on" deliberately -- treat that
-    // as the old tap-to-greet rather than trying to pin a menu to a moving
-    // target.
-    if (walkingRef.current) {
-      speak(pick(GREETINGS), 3200);
-      return;
-    }
+    // Mid-stride used to just get a greeting, since a moving target is a
+    // hard thing to click a second time to actually pick something from
+    // -- but that meant there was no way to reach the menu at all while
+    // he was walking. The click itself now stops him wherever he is (see
+    // openMenu, which also cleans up a fetch in progress) so the menu he
+    // opens is one you can actually use.
     openMenu();
   }
 
