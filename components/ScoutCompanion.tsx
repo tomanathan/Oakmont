@@ -424,19 +424,26 @@ export function ScoutCompanion() {
   const [followMode, setFollowMode] = useState(false);
   const [heartKey, setHeartKey] = useState(0);
   const [showHearts, setShowHearts] = useState(false);
-  // x/y is where the ball lands (and stays); startDX/startDY/midDX/midDY
-  // are the flight's two in-between offsets, precomputed here in JS rather
-  // than left for the CSS keyframes to compute -- see .animate-ozho-ball-throw
-  // in globals.css for why (browser support for arithmetic on an
+  // x/y is where the ball actually comes to rest (its fixed CSS
+  // position); f0-f3 are the flight's own parabola sampled at four points
+  // and b0-b3 are touchdown plus each bounce after it, all as offsets
+  // from x/y -- precomputed here in JS rather than left for the CSS
+  // keyframes to compute, see throwBall() and .animate-ozho-ball-throw in
+  // globals.css for why (browser support for arithmetic on an
   // unregistered custom property inside calc() is inconsistent; plain
-  // addition of a precomputed length is not).
+  // addition of a precomputed length is not) and for what each point is.
+  type BallOffset = { x: number; y: number };
   const [ball, setBall] = useState<{
     x: number;
     y: number;
-    startDX: number;
-    startDY: number;
-    midDX: number;
-    midDY: number;
+    f0: BallOffset;
+    f1: BallOffset;
+    f2: BallOffset;
+    f3: BallOffset;
+    b0: BallOffset;
+    b1: BallOffset;
+    b2: BallOffset;
+    b3: BallOffset;
     key: number;
   } | null>(null);
   // True for the whole return leg of a fetch (see the walk-complete branch
@@ -496,12 +503,20 @@ export function ScoutCompanion() {
   const pettingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Menu / actions. menuOpenRef and followModeRef mirror their state into
   // the render loop (which reads refs, not state); fetchingRef sequences
-  // the two legs of a fetch (dash out to the ball, trot back home) inside
-  // that same loop's walk-complete branch.
+  // fetch's three legs -- "flying" (the thrown ball is still in the air/
+  // bouncing, he hasn't moved yet), "chasing" (dashing out to where it
+  // landed), "back" (trotting home with it) -- inside that same loop's
+  // walk-complete branch and the idle-wander branch (which "flying" needs
+  // to suppress -- see there).
   const menuOpenRef = useRef(false);
   const followModeRef = useRef(false);
-  const fetchingRef = useRef<"out" | "back" | null>(null);
+  const fetchingRef = useRef<"flying" | "chasing" | "back" | null>(null);
   const fetchHomeRef = useRef<{ x: number; y: number } | null>(null);
+  // Where the ball is landing -- set the moment it's thrown, acted on
+  // (via beginWalk) only once handleBallLanded fires, so he's not walking
+  // toward it while it's still mid-flight.
+  const fetchLandingRef = useRef<{ x: number; y: number } | null>(null);
+  const fetchFallbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const heartsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // One-time setup: pick a starting spot in page coordinates and fetch
@@ -616,6 +631,7 @@ export function ScoutCompanion() {
       if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
       if (pettingTimeoutRef.current) clearTimeout(pettingTimeoutRef.current);
       if (heartsTimeoutRef.current) clearTimeout(heartsTimeoutRef.current);
+      if (fetchFallbackTimeoutRef.current) clearTimeout(fetchFallbackTimeoutRef.current);
     };
   }, []);
 
@@ -888,21 +904,23 @@ export function ScoutCompanion() {
     return 1500 + Math.random() * 2000; // a brief pause
   }
 
-  // Lays out a new curved leg of the walk: a quadratic Bezier from the
-  // current spot to a fresh target, bowed sideways by a random amount so
-  // the path reads as a natural arc instead of a straight beeline.
-  //   - `avoid`: bias the target to the opposite side of this point (used
-  //     by the "standing on text" reflex).
-  //   - `forceTarget`: use this point outright (used to dash back into
-  //     view) instead of picking a random wander target.
-  //   - `urgent`: move faster and straighter -- purposeful, not a stroll.
+  // Resolves what beginWalk would send him to next, WITHOUT actually
+  // starting the walk -- the same validity/clamping rules (page margins,
+  // clear of text), just stopping short of touching any walk-state refs.
+  // throwBall uses this to know exactly where a thrown ball will land
+  // (and thus where he'll need to run once it does) while he's still
+  // standing still watching it fly -- calling beginWalk itself with the
+  // same forceTarget once it lands re-resolves to this same point, since
+  // neither his position nor the page has changed in the meantime.
+  //   - `avoid`: bias a randomly-picked target to the opposite side of
+  //     this point (used by the "standing on text" reflex).
+  //   - `forceTarget`: use this point outright instead of picking a
+  //     random wander target.
   // Whatever target comes out gets resampled (or re-picked, for a forced
   // one) up to a few times if it lands on top of a text box, so he never
-  // deliberately settles on text -- only ever right up next to it. The
-  // path there is free to cross text along the way (see the render loop),
-  // just never the landing spot itself.
-  function beginWalk(opts: { avoid?: { x: number; y: number } | null; urgent?: boolean; forceTarget?: { x: number; y: number } } = {}) {
-    const { avoid, urgent = false, forceTarget } = opts;
+  // deliberately settles on text -- only ever right up next to it.
+  function resolveTarget(opts: { avoid?: { x: number; y: number } | null; forceTarget?: { x: number; y: number } } = {}) {
+    const { avoid, forceTarget } = opts;
     const start = { x: posRef.current.x, y: posRef.current.y };
     // Floored at the margin itself so a transient small clientWidth/
     // scrollHeight reading (e.g. mid-layout) can never push max below min.
@@ -953,6 +971,20 @@ export function ScoutCompanion() {
     // for the same case) could otherwise send him to an unclamped corner.
     // Re-clamping here is a no-op for every already-valid candidate above.
     end = { x: clamp(end.x, SIDE_MARGIN, maxX), y: clamp(end.y, TOP_MARGIN, maxY) };
+
+    return { start, end, maxX, maxY };
+  }
+
+  // Lays out a new curved leg of the walk: a quadratic Bezier from the
+  // current spot to a fresh target (see resolveTarget for how that target
+  // is picked/validated), bowed sideways by a random amount so the path
+  // reads as a natural arc instead of a straight beeline.
+  //   - `urgent`: move faster and straighter -- purposeful, not a stroll.
+  // The path there is free to cross text along the way (see the render
+  // loop) -- resolveTarget only keeps the landing spot itself off of it.
+  function beginWalk(opts: { avoid?: { x: number; y: number } | null; urgent?: boolean; forceTarget?: { x: number; y: number } } = {}) {
+    const { urgent = false } = opts;
+    const { start, end, maxX, maxY } = resolveTarget(opts);
 
     const dx = end.x - start.x;
     const dy = end.y - start.y;
@@ -1202,8 +1234,10 @@ export function ScoutCompanion() {
           // Fetch: he's just reached the ball -> pick it up (see
           // carryingBall) and trot back to where he was standing when it
           // was thrown. Second arrival (the "back" leg) just ends the
-          // game.
-          if (fetchingRef.current === "out") {
+          // game. (The first leg, waiting for the throw itself to land,
+          // is handled by handleBallLanded, not here -- he isn't walking
+          // yet at that point.)
+          if (fetchingRef.current === "chasing") {
             fetchingRef.current = "back";
             setBall(null);
             setCarryingBall(true);
@@ -1245,6 +1279,12 @@ export function ScoutCompanion() {
           legTimerRef.current = 0;
           setLegFrame((f) => (f === 0 ? 1 : 0));
         }
+      } else if (fetchingRef.current === "flying") {
+        // The thrown ball is still in the air/bouncing -- he watches from
+        // right where he threw it from rather than wandering off, so
+        // "doesn't move until it lands" actually holds. handleBallLanded
+        // (fired by the ball's own animationend) is what sends him after
+        // it once it's actually down.
       } else if (followModeRef.current) {
         // "Come here" mode: instead of wandering off on the pause timer, he
         // stays inside a comfortable band around whatever's on screen. Only
@@ -1318,42 +1358,109 @@ export function ScoutCompanion() {
     return { x, y: sy + vh * (0.55 + Math.random() * 0.15) };
   }
 
+  // Fires once the ball's own throw-and-bounce animation actually
+  // finishes (see the ball's onAnimationEnd, and the setTimeout fallback
+  // in throwBall in case that event is ever missed) -- this is the one
+  // and only place he actually starts moving toward it. Guarded on
+  // fetchingRef still being "flying" so a stray extra call (the fallback
+  // firing after the real event already has, say) is a harmless no-op.
+  function handleBallLanded() {
+    if (fetchingRef.current !== "flying") return;
+    if (fetchFallbackTimeoutRef.current) {
+      clearTimeout(fetchFallbackTimeoutRef.current);
+      fetchFallbackTimeoutRef.current = null;
+    }
+    fetchingRef.current = "chasing";
+    const landing = fetchLandingRef.current;
+    fetchLandingRef.current = null;
+    if (landing) beginWalk({ urgent: true, forceTarget: landing });
+  }
+
   function throwBall() {
     const origin = { x: posRef.current.x, y: posRef.current.y };
     // Thrown a real distance from wherever he's actually standing -- a
-    // fixed radius around him, not a spot picked from the viewport at
-    // large -- so it always reads as an honest-to-goodness throw, and the
-    // walk out to it always takes comfortably longer than the ball's own
-    // ~0.65s toss-and-bounce (see .animate-ozho-ball-throw) instead of
-    // sometimes being so close he'd arrive mid-bounce.
+    // fixed radius around him and a random direction, not a spot picked
+    // from the viewport at large -- so it always reads as an
+    // honest-to-goodness throw.
     const angle = Math.random() * Math.PI * 2;
     const throwDist = 260 + Math.random() * 220;
-    const rawTarget = { x: origin.x + Math.cos(angle) * throwDist, y: origin.y + Math.sin(angle) * throwDist };
+    const dirX = Math.cos(angle);
+    const dirY = Math.sin(angle);
+    const rawTarget = { x: origin.x + dirX * throwDist, y: origin.y + dirY * throwDist };
+    // Resolved through the exact same validity/clamping rules beginWalk
+    // itself uses (page margins, clear of text) -- this is where the ball
+    // actually ends up at rest, and so where he'll need to walk once it
+    // gets there. Doesn't start him walking, though -- see the "flying"
+    // branch in the render loop -- he stays put watching until it
+    // actually lands (handleBallLanded above, fired by the ball's own
+    // animationend), which calls beginWalk again with this same point;
+    // that re-resolves identically since neither his position nor the
+    // page has changed in the meantime.
+    const { end: rest } = resolveTarget({ forceTarget: rawTarget });
+
     fetchHomeRef.current = origin;
-    fetchingRef.current = "out";
+    fetchingRef.current = "flying";
+    fetchLandingRef.current = rest;
     speak(pick(FETCH_THROW_PHRASES), 1800);
-    beginWalk({ urgent: true, forceTarget: rawTarget });
-    // beginWalk clamps that to the page margins and may nudge it off
-    // nearby text -- throw toward wherever he's actually headed, not the
-    // raw pick, so the ball and the dash out to it always agree.
-    const landX = targetRef.current.x;
-    const landY = targetRef.current.y;
-    // The flight's two in-between offsets (see .animate-ozho-ball-throw):
-    // the 0% frame pulls it back to where he was standing, and the 55%
-    // frame is partway there plus a lift, for an arc instead of a
-    // straight line. Computed here, in plain JS, rather than asking the
-    // CSS keyframes to multiply a custom property by a number themselves.
-    const startDX = origin.x - landX;
-    const startDY = origin.y - landY;
+
+    // A real bounce keeps a little of the throw's own momentum rather
+    // than stopping dead -- `roll` is how much further it travels, in
+    // the same direction, after first touching down. `rest` above -- what
+    // the ball's own fixed left/top actually are -- is where it ends up
+    // once that roll is spent, which is `roll` past the literal spot the
+    // toss's parabola first meets the ground.
+    const roll = Math.min(46, throwDist * 0.09);
+    const touchdown = { x: rest.x - dirX * roll, y: rest.y - dirY * roll };
+
+    // A longer throw arcs higher -- the same "more force, bigger arc" a
+    // real toss has -- capped so a very long one doesn't sail absurdly
+    // high.
+    const arcHeight = Math.min(150, 42 + throwDist * 0.22);
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+    // Samples the flight's own parabola at t (0 = it just left his mouth,
+    // 1 = touchdown), as an offset from `rest` -- everything the
+    // keyframes draw is relative to the ball's actual fixed position
+    // (rest), not the origin or the touchdown point. Horizontal position
+    // moves at a constant rate (no real air resistance over a toss this
+    // short); vertical position is that same straight-line fall minus a
+    // hump, which is what actually reads as an arc instead of a slide.
+    const flightOffset = (t: number) => ({
+      x: lerp(origin.x, touchdown.x, t) - rest.x,
+      y: lerp(origin.y, touchdown.y, t) - arcHeight * 4 * t * (1 - t) - rest.y,
+    });
+
+    // Touchdown, and each bounce after it, converge from the full
+    // roll-back offset toward (0, 0) -- i.e. toward actually being at
+    // rest -- popping up briefly each time for the bounce itself. All of
+    // this (see .animate-ozho-ball-throw) is computed here in plain JS
+    // rather than asking the CSS keyframes to multiply a custom property
+    // by a number themselves -- see that rule's own comment for why.
+    const rollBackX = touchdown.x - rest.x;
+    const rollBackY = touchdown.y - rest.y;
+
     setBall({
-      x: landX,
-      y: landY,
-      startDX,
-      startDY,
-      midDX: startDX * 0.3,
-      midDY: startDY * 0.3 - 28,
+      x: rest.x,
+      y: rest.y,
+      f0: flightOffset(0),
+      f1: flightOffset(0.25),
+      f2: flightOffset(0.5),
+      f3: flightOffset(0.75),
+      b0: { x: rollBackX, y: rollBackY },
+      b1: { x: rollBackX * 0.55, y: rollBackY * 0.55 - 15 },
+      b2: { x: rollBackX * 0.22, y: rollBackY * 0.22 },
+      b3: { x: rollBackX * 0.06, y: rollBackY * 0.06 - 6 },
       key: Date.now(),
     });
+
+    // Safety net: if the animationend event were ever missed (a browser
+    // quirk, a tab backgrounded through the whole flight, whatever), he'd
+    // otherwise be stuck standing there forever. Timed comfortably past
+    // the animation's own duration (longer still under reduced motion,
+    // matching .animate-ozho-ball-throw's own slower duration there);
+    // handleBallLanded's own guard makes whichever fires first the only
+    // one that does anything.
+    if (fetchFallbackTimeoutRef.current) clearTimeout(fetchFallbackTimeoutRef.current);
+    fetchFallbackTimeoutRef.current = setTimeout(handleBallLanded, (reducedMotionRef.current ? 1700 : 800) + 200);
   }
 
   function petOzho() {
@@ -1509,25 +1616,38 @@ export function ScoutCompanion() {
   return (
     <>
       {ball && (
-        // Positioned (left/top) at its landing spot; the throw itself is
-        // animated entirely via transform, offset back to where he was
-        // standing at 0% and arcing up through the middle of the flight
-        // (see .animate-ozho-ball-throw in globals.css) -- the same
-        // "position the element at rest, animate transform from a
-        // computed offset" trick the heart-burst above uses. The offsets
-        // themselves are computed in throwBall(), not here.
+        // Positioned (left/top) at its actual resting spot; the whole
+        // toss-and-bounce is animated via transform, offset back through
+        // the flight's parabola and each bounce in turn (see
+        // .animate-ozho-ball-throw in globals.css) -- the same "position
+        // the element at rest, animate transform from a computed offset"
+        // trick the heart-burst above uses. onAnimationEnd is what
+        // actually sends him after it -- see handleBallLanded.
         <div
           key={ball.key}
           aria-hidden
           className="absolute z-40 pointer-events-none text-lg leading-none select-none animate-ozho-ball-throw"
+          onAnimationEnd={handleBallLanded}
           style={
             {
               left: ball.x,
               top: ball.y,
-              "--bx0": `${ball.startDX}px`,
-              "--by0": `${ball.startDY}px`,
-              "--bxm": `${ball.midDX}px`,
-              "--bym": `${ball.midDY}px`,
+              "--p0x": `${ball.f0.x}px`,
+              "--p0y": `${ball.f0.y}px`,
+              "--p1x": `${ball.f1.x}px`,
+              "--p1y": `${ball.f1.y}px`,
+              "--p2x": `${ball.f2.x}px`,
+              "--p2y": `${ball.f2.y}px`,
+              "--p3x": `${ball.f3.x}px`,
+              "--p3y": `${ball.f3.y}px`,
+              "--p4x": `${ball.b0.x}px`,
+              "--p4y": `${ball.b0.y}px`,
+              "--p5x": `${ball.b1.x}px`,
+              "--p5y": `${ball.b1.y}px`,
+              "--p6x": `${ball.b2.x}px`,
+              "--p6y": `${ball.b2.y}px`,
+              "--p7x": `${ball.b3.x}px`,
+              "--p7y": `${ball.b3.y}px`,
             } as CSSProperties
           }
         >

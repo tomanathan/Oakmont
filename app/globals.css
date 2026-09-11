@@ -266,46 +266,53 @@ body {
   animation: ozho-heart 1.15s ease-out forwards;
 }
 
-/* The thrown fetch ball, in two distinct phases: a toss (0%-58%) that
-   actually flies from him to the spot it's landing on, then a real bounce
-   once it gets there (58%-100%) -- an impact squash, a real hop back up,
-   a smaller second touch-down, and a settle -- rather than the toss just
-   fading to a stop. The element sits at its landing spot (left/top);
-   --bx0/--by0 (0% frame) and --bxm/--bym (28% frame, the flight's apex)
-   are the toss's two offsets back toward him, precomputed pixel values
-   set inline per throw -- see throwBall() -- rather than arithmetic done
-   here on the custom properties themselves: multiplying an *unregistered*
-   custom property by a number inside calc() (e.g. `calc(var(--x) * 0.3)`)
-   isn't reliably supported across browsers, while plain addition of an
-   already-computed length (`calc(-50% + var(--x))`) is completely
-   standard. The bounce itself needs no offsets at all -- it's all in the
-   fixed landing frame, just a plain vertical hop each time. */
+/* The thrown fetch ball -- a real parabola out, then a real bounce-and-
+   roll landing, not two frames tweened together.
+   - 0%-39% (--p0..--p3): four samples along the toss's own parabola.
+     Horizontal position advances at a constant rate (no meaningful air
+     resistance over a toss this short); vertical position is that same
+     straight-line fall minus a hump, which is what actually reads as an
+     arc instead of a slide -- see throwBall()'s flightOffset().
+   - 52% (--p4): touchdown -- squashed flat by the impact.
+   - 63% (--p5): the real bounce, a genuine hop back up, already partway
+     rolled forward.
+   - 74% (--p6): second, smaller touch-down, rolled further still.
+   - 85% (--p7): second, smaller bounce.
+   - 100%: fully at rest -- no offset needed, this *is* the element's own
+     fixed position (left/top).
+   Every --pNx/--pNy is a precomputed pixel offset from that fixed resting
+   position, set inline per throw (see throwBall()) rather than
+   arithmetic done here on the custom properties themselves: multiplying
+   an *unregistered* custom property by a number inside calc() (e.g.
+   `calc(var(--x) * 0.3)`) isn't reliably supported across browsers, while
+   plain addition of an already-computed length (`calc(-50% + var(--x))`)
+   is completely standard. Each frame is just that addition. */
 @keyframes ozho-ball-throw {
   0% {
-    transform: translate(calc(-50% + var(--bx0, 0px)), calc(-50% + var(--by0, 0px))) scale(0.55);
+    transform: translate(calc(-50% + var(--p0x, 0px)), calc(-50% + var(--p0y, 0px))) scale(0.55);
     opacity: 0.7;
   }
-  20% {
+  13% {
+    transform: translate(calc(-50% + var(--p1x, 0px)), calc(-50% + var(--p1y, 0px))) scale(0.75);
     opacity: 1;
   }
-  28% {
-    transform: translate(calc(-50% + var(--bxm, 0px)), calc(-50% + var(--bym, 0px))) scale(1);
+  26% {
+    transform: translate(calc(-50% + var(--p2x, 0px)), calc(-50% + var(--p2y, 0px))) scale(0.9);
   }
-  58% {
-    /* Touches down -- squashed flat by the impact. */
-    transform: translate(-50%, -50%) scale(1.22, 0.68);
+  39% {
+    transform: translate(calc(-50% + var(--p3x, 0px)), calc(-50% + var(--p3y, 0px))) scale(1);
   }
-  70% {
-    /* The real bounce: a genuine hop back up off the landing spot. */
-    transform: translate(-50%, calc(-50% - 15px)) scale(0.92, 1.08);
+  52% {
+    transform: translate(calc(-50% + var(--p4x, 0px)), calc(-50% + var(--p4y, 0px))) scale(1.22, 0.68);
   }
-  82% {
-    /* Second, smaller touch-down. */
-    transform: translate(-50%, -50%) scale(1.1, 0.88);
+  63% {
+    transform: translate(calc(-50% + var(--p5x, 0px)), calc(-50% + var(--p5y, 0px))) scale(0.92, 1.08);
   }
-  91% {
-    /* Second, smaller bounce. */
-    transform: translate(-50%, calc(-50% - 5px)) scale(0.97, 1.03);
+  74% {
+    transform: translate(calc(-50% + var(--p6x, 0px)), calc(-50% + var(--p6y, 0px))) scale(1.1, 0.88);
+  }
+  85% {
+    transform: translate(calc(-50% + var(--p7x, 0px)), calc(-50% + var(--p7y, 0px))) scale(0.97, 1.03);
   }
   100% {
     transform: translate(-50%, -50%) scale(1);
@@ -315,7 +322,7 @@ body {
 
 .animate-ozho-ball-throw {
   transform: translate(-50%, -50%);
-  animation: ozho-ball-throw 0.65s ease-out both;
+  animation: ozho-ball-throw 0.8s ease-out both;
 }
 
 /* The "Pet" menu action's own reaction -- a contented little wiggle and
@@ -364,7 +371,10 @@ body {
      brief, in-place wiggles/hops, not motion across the page, so they
      already just play unconditionally. */
   .animate-ozho-ball-throw {
-    animation-duration: 1.5s;
+    /* Matches the fallback timeout in throwBall(), which uses this same
+       1700ms so the "he starts chasing it" trigger and the animation
+       itself settle at (about) the same moment either way. */
+    animation-duration: 1.7s;
     animation-timing-function: ease-in-out;
   }
 }
