@@ -77,10 +77,30 @@ export function SubskillClient({
   // whatever the server actually sent, then shuffling in an effect (client
   // -only, runs after hydration completes) avoids that entirely, at the
   // cost of one imperceptible extra render right after mount.
+  //
+  // Keyed on subskill.id, NOT the `questions` prop itself -- this used to
+  // depend on `questions`, which is exactly what caused the "wrong score"
+  // bug: submitQuiz() calls router.refresh() to pick up the freshly-saved
+  // progress, which re-runs the server component and hands this client
+  // component a brand-new `questions` array. Same subskill, same
+  // questions, same order -- but Server Component props are always a
+  // fresh object across a refresh, deserialized from a new RSC payload
+  // rather than the literal same reference, so a dependency array
+  // comparing `questions` by identity saw that as "the questions changed"
+  // every single time. That re-ran this effect and reshuffled the choices
+  // out from under the answers the student had already picked -- their
+  // `answers` state (a plain choice *index* per question) still pointed
+  // at the old positions, so after the reshuffle it was effectively
+  // scoring against the wrong choice for however many questions the
+  // reshuffle happened to move the correct answer on. subskill.id is a
+  // plain string, compared by value, so it's only ever "different" when
+  // it's actually a different subskill -- a refresh of this same page
+  // leaves it untouched and this effect alone.
   const [quizQuestions, setQuizQuestions] = useState<Question[]>(questions);
   useEffect(() => {
     setQuizQuestions(questions.map(shuffleChoices));
-  }, [questions, shuffleSeed]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subskill.id, shuffleSeed]);
 
   // One entry per quiz question card, so an incomplete submission can jump
   // straight to the first one that's still unanswered instead of leaving
@@ -92,11 +112,19 @@ export function SubskillClient({
   // above stores a plain choice *index* per example, so reshuffling a
   // pattern's examples every time a student steps back to one already
   // viewed would leave that stored index pointing at a different choice
-  // than the one they actually clicked.
+  // than the one they actually clicked. Keyed on subskill.id rather than
+  // `subskill` itself, for exactly the same reason the quiz's own shuffle
+  // effect is keyed on subskill.id and not `questions` -- see that
+  // effect's comment. `subskill` is just as much a fresh-object-every-
+  // refresh Server Component prop as `questions` is, so depending on it
+  // directly reshuffled these choices out from under exampleSelections
+  // any time router.refresh() fired (every quiz submission does exactly
+  // that) while this same subskill was still on screen.
   const [shuffledPatterns, setShuffledPatterns] = useState<Pattern[]>(subskill.patterns);
   useEffect(() => {
     setShuffledPatterns(subskill.patterns.map((p) => ({ ...p, examples: p.examples.map(shuffleChoices) })));
-  }, [subskill]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subskill.id]);
 
   // Marks the currently-open example as viewed, so the pathway UI can show
   // which examples/patterns a student has actually stepped through.
@@ -587,43 +615,55 @@ export function SubskillClient({
           {!submitted && quizQuestions.length > 0 && (
             <QuizProgress answeredCount={Object.keys(answers).length} total={quizQuestions.length} />
           )}
-          {quizQuestions.map((q, i) => (
-            <div
-              key={i}
-              ref={(el) => {
-                questionRefs.current[i] = el;
-              }}
-              className="bg-white border border-[#ece9f7] shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-5 mb-3.5"
-            >
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <div className="text-sm text-ink flex-1 min-w-0">
-                  <PassageText text={q.q} highlight={q.underline} number={i + 1} />
+          {quizQuestions.map((q, i) => {
+            const isCorrect = answers[i] === q.answer;
+            return (
+              <div
+                key={i}
+                ref={(el) => {
+                  questionRefs.current[i] = el;
+                }}
+                className={`border shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-5 mb-3.5 ${
+                  submitted
+                    ? isCorrect
+                      ? "bg-[#fbfefc] border-[#cde8d9]"
+                      : "bg-[#fefbfb] border-[#f0d0d0]"
+                    : "bg-white border-[#ece9f7]"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="text-sm text-ink flex-1 min-w-0">
+                    <PassageText text={q.q} highlight={q.underline} number={i + 1} />
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {submitted && <QuestionResultPill correct={isCorrect} />}
+                    {q.difficulty && <DifficultyPill difficulty={q.difficulty} />}
+                  </div>
                 </div>
-                {q.difficulty && <DifficultyPill difficulty={q.difficulty} />}
-              </div>
-              <ExamChoices
-                choices={q.choices}
-                correctIndex={q.answer}
-                selected={answers[i] ?? null}
-                revealed={submitted}
-                disabled={submitted}
-                onSelect={(ci) => selectAnswer(i, ci)}
-              />
-              {submitted && (
-                <div className="text-[13px] text-gray-500 mt-2.5 leading-relaxed">
-                  <strong className="text-ink">Explanation: </strong>
-                  <MathText text={q.explain} />
-                </div>
-              )}
-              {submitted && answers[i] !== q.answer && q.pattern && (
-                <MethodCallout
-                  patternName={q.pattern}
-                  pattern={subskill.patterns.find((p) => p.name === q.pattern)}
-                  onReview={() => reviewPattern(q.pattern!)}
+                <ExamChoices
+                  choices={q.choices}
+                  correctIndex={q.answer}
+                  selected={answers[i] ?? null}
+                  revealed={submitted}
+                  disabled={submitted}
+                  onSelect={(ci) => selectAnswer(i, ci)}
                 />
-              )}
-            </div>
-          ))}
+                {submitted && (
+                  <div className="text-[13px] text-gray-500 mt-2.5 leading-relaxed">
+                    <strong className="text-ink">Explanation: </strong>
+                    <MathText text={q.explain} />
+                  </div>
+                )}
+                {submitted && !isCorrect && q.pattern && (
+                  <MethodCallout
+                    patternName={q.pattern}
+                    pattern={subskill.patterns.find((p) => p.name === q.pattern)}
+                    onReview={() => reviewPattern(q.pattern!)}
+                  />
+                )}
+              </div>
+            );
+          })}
           {errorMsg && <div className="text-red-700 text-sm mb-3">{errorMsg}</div>}
           {!submitted ? (
             quizQuestions.length > 0 && (
@@ -801,6 +841,27 @@ function DifficultyPill({ difficulty }: { difficulty: "easy" | "medium" | "hard"
       className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-full border ${DIFFICULTY_STYLES[difficulty]}`}
     >
       {DIFFICULTY_LABELS[difficulty]}
+    </span>
+  );
+}
+
+// One per question once results are in -- same easy/hard color pairing
+// DifficultyPill already uses (green for easy, red for hard) rather than
+// a new palette, so right/wrong reads as an extension of the same visual
+// language instead of a second accent system. Sits next to the answer
+// choices' own green/red highlighting (see ExamChoices) as an explicit,
+// at-a-glance label -- a student scanning a long results page shouldn't
+// have to re-read every choice to tell which questions they missed.
+function QuestionResultPill({ correct }: { correct: boolean }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-full border whitespace-nowrap ${
+        correct
+          ? "bg-[#eaf6ef] text-accent border-[#cde8d9]"
+          : "bg-[#fbeaea] text-[#b23b3b] border-[#f0d0d0]"
+      }`}
+    >
+      {correct ? "✓ Correct" : "✗ Incorrect"}
     </span>
   );
 }
