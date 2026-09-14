@@ -88,6 +88,7 @@ export function PixelDog({
   facing = 1,
   dead = false,
   asleep = false,
+  sitting = false,
   costume = null,
   variant = "ozho",
   carryingBall = false,
@@ -116,8 +117,14 @@ export function PixelDog({
   facing?: 1 | -1;
   dead?: boolean;
   asleep?: boolean;
+  // The "Sit" menu action's pose -- haunches down, chest up, tail curled
+  // beside him instead of wagging. Checked after asleep (a sleeping dog
+  // stays curled up, it doesn't sit) and before the standing pose, same
+  // precedence asleep already has over everything below it. Dead always
+  // wins over both, same as it already did over asleep.
+  sitting?: boolean;
   // Wardrobe costume id (see lib/costumes.ts), or null/"none" for bare.
-  // Only drawn on the standing pose -- a dead or sleeping Ozho stays
+  // Drawn on the standing and sitting poses; a dead or sleeping Ozho stays
   // undressed, both to keep the art simple and because neither state is
   // really a "look how far I've come" moment.
   costume?: string | null;
@@ -131,12 +138,20 @@ export function PixelDog({
   // Fetch's return leg: a small ball held at the mouth (drawn in place of
   // the tongue, which a mouth holding something wouldn't also be sticking
   // out) so he's visibly carrying it back rather than just running.
-  // Standing-pose only, like the wardrobe -- there's no version of this
-  // for the asleep/dead poses since neither is ever mid-fetch.
+  // Standing-pose only -- there's no version of this for the asleep/dead/
+  // sitting poses, since none of them are ever mid-fetch (ScoutCompanion
+  // always stands him back up before sending him after a thrown ball).
   carryingBall?: boolean;
   className?: string;
 }) {
   const p = dead ? PALETTE_DEAD : variant === "mochi" ? PALETTE_MOCHI : PALETTE;
+
+  // Computed up here (not just below, where the standing pose used to be
+  // the only thing reading them) since the sitting pose also needs to
+  // know whether the ear's up and the tongue's out -- a sitting dog is
+  // still expressive, just not walking.
+  const earUp = !dead && (mood === "happy" || mood === "neutral");
+  const showTongue = !dead && !carryingBall && mood === "happy";
 
   // Asleep (and not dead -- a dead dog stays in the standing pose below,
   // it doesn't curl up) gets a completely different, compact silhouette
@@ -185,24 +200,96 @@ export function PixelDog({
     );
   }
 
-  // Every other expressive cue below -- ear, tail, tongue, frown -- only
-  // applies to this standing pose (asleep has its own curled-up look
-  // above; dead always stays standing).
-  const earUp = !dead && (mood === "happy" || mood === "neutral");
+  // The "Sit" pose: haunches planted and the chest upright, rather than
+  // the standing pose's horizontal, mid-stride silhouette. Legs (mostly
+  // hidden under the seated body anyway) and the walk cycle's legFrame
+  // don't apply here; the tail gets its own fixed curled position instead
+  // of tailFrame's wag, since a sitting dog's tail rests against the
+  // ground beside him rather than sweeping through the air. Drawn in the
+  // same "facing right" coordinate frame as the standing pose, so the
+  // scaleX(-1) flip below carries it correctly either direction.
+  if (sitting && !dead) {
+    return (
+      <svg
+        viewBox="0 0 64 40"
+        width={size}
+        height={(size * 40) / 64}
+        shapeRendering="crispEdges"
+        style={{ transform: facing === -1 ? "scaleX(-1)" : undefined }}
+        className={className}
+      >
+        <ellipse cx={25} cy={36} rx={18} ry={2.5} fill="#000" opacity={0.12} />
+
+        {/* tail, curled up and resting on top of the haunches, well clear
+            of ground level so it never reads as a third leg or paw */}
+        <rect x={3} y={16} width={7} height={7} fill={p.bodyDark} />
+        <rect x={7} y={12} width={6} height={6} fill={p.bodyDark} />
+
+        {/* haunches -- the seated rear end, low and settled on the
+            ground (deliberately shorter than the upright chest below --
+            that height difference is the main shape cue that reads as
+            "sitting" rather than "standing still") */}
+        <rect x={9} y={22} width={15} height={12} fill={p.body} />
+
+        {/* chest -- upright rather than the standing pose's low, level
+            back, which is the main shape read that says "sitting" rather
+            than "standing still". Same x-span the standing pose's own
+            body-to-head handoff uses (ending at 38, head starting at 34)
+            so the head sits solidly on top of it instead of floating. */}
+        <rect x={14} y={8} width={24} height={18} fill={p.body} />
+        <rect x={14} y={16} width={24} height={8} fill={p.belly} />
+
+        {/* front leg, straight down from the chest to the ground */}
+        <rect x={29} y={24} width={6} height={10} fill={p.bodyDark} />
+
+        {/* head + snout -- the exact same shapes and offsets-from-head-
+            origin the standing pose uses, just carried up with the raised
+            chest instead of sitting low and level with it */}
+        <rect x={34} y={8} width={16} height={16} fill={p.body} />
+        <rect x={48} y={16} width={8} height={8} fill={p.belly} />
+        <rect x={53} y={18} width={3} height={3} fill={p.dark} />
+
+        {earUp ? (
+          <rect x={37} y={2} width={5} height={8} fill={p.bodyDark} />
+        ) : (
+          <rect x={34} y={16} width={5} height={14} fill={p.bodyDark} />
+        )}
+
+        <rect x={42} y={13} width={3} height={3} fill={p.dark} />
+
+        {showTongue && <rect x={51} y={24} width={3} height={5} fill={p.tongue} />}
+
+        {/* collar, right at the base of the neck */}
+        <rect x={33} y={21} width={5} height={6} fill={p.collar} />
+        <circle cx={35} cy={29} r={2} fill={p.tag} />
+
+        {/* wardrobe costume -- unlike asleep/dead, sitting is just an
+            ordinary everyday pose, not a vulnerable or "not himself"
+            moment, so whatever he's earned still shows. Reuses the
+            standing pose's own overlay coordinates as-is; the sitting
+            head sits only 2px lower, close enough at this scale that a
+            second, pose-specific copy of every costume isn't worth it. */}
+        {!dead && costume && costume !== "none" && <CostumeOverlay costume={costume} />}
+      </svg>
+    );
+  }
+
+  // Every other expressive cue below -- tail, frown -- only applies to
+  // the standing pose (asleep and sitting have their own looks above;
+  // dead always stays standing).
   // Tail up (and wagging, in ScoutCompanion) for every mood short of
   // "sad". "sad" is only ever critical (about to die) or dead -- and a
   // dog in real trouble shouldn't look thrilled to see you. Alive-but-sad
   // (critical) tucks the tail down; dead lets it lie limp straight back
   // (see the tail render below). Hungry maps to "tired", not "sad", so a
   // merely-hungry Ozho keeps the tail up -- ScoutCompanion just wags it
-  // slower. Asleep has its own separate curled-up pose above that doesn't
-  // reach this code at all.
+  // slower. Asleep and sitting have their own separate poses above that
+  // don't reach this code at all.
   const tailUp = !dead && mood !== "sad";
   const tailTucked = !dead && mood === "sad";
   // Carrying a ball takes over whatever the mouth would otherwise be
   // doing -- no tongue hanging out, no frown line -- since both are drawn
   // in the same spot the ball itself sits.
-  const showTongue = !dead && !carryingBall && mood === "happy";
   const showFrown = !carryingBall && (dead || mood === "sad");
 
   const backLegDown = legFrame === 0;

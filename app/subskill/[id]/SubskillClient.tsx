@@ -148,9 +148,20 @@ export function SubskillClient({
     setActiveExample(0);
   }
 
-  function isPatternComplete(i: number) {
+  // Whether a student has actually looked at this pattern -- every label
+  // this drives says "viewed" ("X/Y viewed", the outline's checkmarks), so
+  // that's what it checks: has at least one of its examples been opened.
+  // This used to require *every* example in the pattern to have been
+  // viewed (`.every` instead of `.some`), which was the bug where the
+  // counter looked stuck -- clicking through the pattern tabs at the top
+  // of the lesson (a completely normal way to browse) only ever visits
+  // whichever example each one opens on, so a 5-example pattern stayed
+  // uncounted forever unless a student happened to step through all five
+  // of its examples specifically, one by one, which "click through the
+  // question types" was never asking anyone to do.
+  function isPatternViewed(i: number) {
     const p = subskill.patterns[i];
-    return p.examples.every((_, j) => viewedExamples.has(`${i}-${j}`));
+    return p.examples.some((_, j) => viewedExamples.has(`${i}-${j}`));
   }
 
   const pattern = shuffledPatterns[activePattern];
@@ -350,7 +361,7 @@ export function SubskillClient({
               {subskill.patterns.length > 1 && (
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] text-gray-400 whitespace-nowrap">
-                    {subskill.patterns.filter((_, i) => isPatternComplete(i)).length}/
+                    {subskill.patterns.filter((_, i) => isPatternViewed(i)).length}/
                     {subskill.patterns.length} viewed
                   </span>
                   <StepArrows
@@ -366,7 +377,7 @@ export function SubskillClient({
             {subskill.patterns.length > 1 && (
               <div className="lg:hidden flex items-start mb-6 overflow-x-auto pb-1">
                 {subskill.patterns.map((p, i) => {
-                  const complete = isPatternComplete(i);
+                  const complete = isPatternViewed(i);
                   const active = activePattern === i;
                   return (
                     <div key={p.name} className="flex items-start flex-shrink-0">
@@ -963,7 +974,10 @@ function LessonOutline({
       <ol className="flex flex-col gap-0.5">
         {patterns.map((p, i) => {
           const active = i === activePattern;
-          const complete = p.examples.every((_, j) => viewedExamples.has(`${i}-${j}`));
+          // "Viewed" means at least one example opened, not every one of
+          // them -- see isPatternViewed's own comment in the parent for why
+          // requiring all of them was the bug.
+          const complete = p.examples.some((_, j) => viewedExamples.has(`${i}-${j}`));
           return (
             <li key={p.name}>
               <button

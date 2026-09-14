@@ -295,7 +295,7 @@ const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave
 // radial menu of actions around him. Each entry here is one button; the
 // handler for each lives in handleMenuAction below. Kept as plain data so
 // the render just maps over it and the arc math stays in one place.
-type OzhoAction = "pet" | "trick" | "next" | "fetch" | "follow" | "wardrobe";
+type OzhoAction = "pet" | "trick" | "next" | "fetch" | "sit" | "follow" | "wardrobe";
 
 const PET_PHRASES = [
   "Ohh, right there — perfect.",
@@ -328,6 +328,8 @@ const FOLLOW_OFF_PHRASES = [
   "Free to roam again — holler anytime.",
   "Back to my rounds. Nudge me whenever.",
 ];
+const SIT_ON_PHRASES = ["Okay, staying put.", "Parked right here. Take your time.", "Sitting tight."];
+const SIT_OFF_PHRASES = ["Up and at it!", "Okay, back on my feet.", "Stretching my legs again."];
 const NEXT_INTRO = ["Here's what I'd tackle next:", "Let's get after this one:", "Next up on your plan:"];
 const NEXT_CHECKING = ["One sec — checking your plan...", "Let me look at where you're at..."];
 const NEXT_DONE = [
@@ -337,16 +339,17 @@ const NEXT_DONE = [
 const NEXT_ERROR = ["Hmm, couldn't reach your plan. Try the dashboard?", "Plan's not loading for me — the dashboard should have it."];
 
 // The radial menu, in the order they fan out around him. Short, plain
-// verbs/nouns rather than phrases ("What now?" -> "Next") so six buttons
+// verbs/nouns rather than phrases ("What now?" -> "Next") so seven buttons
 // read at a glance instead of needing to be studied one at a time --
 // "Wardrobe" is the one exception, kept to match the exact word Settings
-// already uses for the same thing. `follow` relabels itself once he's
-// already in come-here mode (see the render).
+// already uses for the same thing. `follow` and `sit` both relabel
+// themselves once they're already active (see the render).
 const MENU_ITEMS: { action: OzhoAction; icon: string; label: string }[] = [
   { action: "pet", icon: "🫶", label: "Pet" },
   { action: "trick", icon: "✨", label: "Trick" },
   { action: "next", icon: "🎯", label: "Next" },
   { action: "fetch", icon: "🎾", label: "Fetch" },
+  { action: "sit", icon: "✋", label: "Sit" },
   { action: "follow", icon: "🧭", label: "Follow" },
   { action: "wardrobe", icon: "👒", label: "Wardrobe" },
 ];
@@ -448,6 +451,13 @@ export function ScoutCompanion() {
   // outlive the menu itself: a heart burst (pet) and a thrown ball (fetch).
   const [menuOpen, setMenuOpen] = useState(false);
   const [followMode, setFollowMode] = useState(false);
+  // The "Sit" menu action -- holds him still in the sitting pose
+  // (PixelDog's own `sitting` prop) until he's told to get up, another
+  // action picks him back up (see handleMenuAction), or he has to break
+  // it to dash back into view (see the out-of-view check). Session-only,
+  // not persisted like followMode -- a fresh page load never starts him
+  // already sat down.
+  const [sitting, setSitting] = useState(false);
   const [heartKey, setHeartKey] = useState(0);
   const [showHearts, setShowHearts] = useState(false);
   // x/y is where the ball actually comes to rest (its fixed CSS
@@ -536,6 +546,7 @@ export function ScoutCompanion() {
   // to suppress -- see there).
   const menuOpenRef = useRef(false);
   const followModeRef = useRef(false);
+  const sittingRef = useRef(false);
   const fetchingRef = useRef<"flying" | "chasing" | "back" | null>(null);
   const fetchHomeRef = useRef<{ x: number; y: number } | null>(null);
   // Where the ball is landing -- set the moment it's thrown, acted on
@@ -1125,13 +1136,15 @@ export function ScoutCompanion() {
       // than only in specific states. Skipped entirely once he's in real
       // trouble -- critical (about to die) or dead -- where PixelDog draws
       // the tail down/limp and ignores tailFrame anyway, so this is also
-      // just not wasting the tick. A merely-hungry Ozho still wags, only
-      // noticeably slower, so the drop in energy reads as a gradient
-      // rather than a switch. Reduced motion slows this further rather
-      // than turning it off outright -- same "slow down, don't eliminate"
-      // choice walking itself already makes for that preference (see
-      // SLOW_SPEED vs RUN_SPEED below) -- so it's never fully invisible.
-      if (stageRef.current !== "dead" && stageRef.current !== "critical") {
+      // just not wasting the tick. Same for sitting: that pose draws its
+      // own fixed curled tail and ignores tailFrame too. A merely-hungry
+      // Ozho still wags, only noticeably slower, so the drop in energy
+      // reads as a gradient rather than a switch. Reduced motion slows
+      // this further rather than turning it off outright -- same "slow
+      // down, don't eliminate" choice walking itself already makes for
+      // that preference (see SLOW_SPEED vs RUN_SPEED below) -- so it's
+      // never fully invisible.
+      if (stageRef.current !== "dead" && stageRef.current !== "critical" && !sittingRef.current) {
         tailTimerRef.current += dt;
         const baseSwap = stageRef.current === "hungry" ? TAIL_SWAP_MS * 2.4 : TAIL_SWAP_MS;
         const swapMs = reducedMotionRef.current ? baseSwap * 4 : baseSwap;
@@ -1217,6 +1230,13 @@ export function ScoutCompanion() {
         pos.y > scrollY + vh + OUT_OF_VIEW_MARGIN;
 
       if (outOfView && !returningRef.current && !fetchingRef.current) {
+        // Breaks a "Sit" rather than honoring it here -- staying seated
+        // is a real command, but not one worth becoming permanently
+        // stranded and unclickable off-screen for.
+        if (sittingRef.current) {
+          sittingRef.current = false;
+          setSitting(false);
+        }
         returningRef.current = true;
         beginWalk({ urgent: true, forceTarget: pickReturnTarget() });
         speak(pick(RETURN_PHRASES), 2400);
@@ -1252,8 +1272,17 @@ export function ScoutCompanion() {
       // above: he isn't walking yet (walkingRef.current is already false
       // then, same as ordinary idle), but he does need to actually hold
       // still watching the thrown ball rather than wandering off because
-      // he happened to be standing on a word when he threw it.
-      if (hit && !walkingRef.current && fetchingRef.current !== "flying" && nowMs > textEscapeUntilRef.current) {
+      // he happened to be standing on a word when he threw it. Excludes
+      // sitting for the same reason "Sit" excludes it from the idle-wander
+      // branch below -- staying seated on command shouldn't itself get
+      // interrupted by standing on text.
+      if (
+        hit &&
+        !walkingRef.current &&
+        fetchingRef.current !== "flying" &&
+        !sittingRef.current &&
+        nowMs > textEscapeUntilRef.current
+      ) {
         textEscapeUntilRef.current = nowMs + TEXT_ESCAPE_COOLDOWN_MS;
         beginWalk({ avoid: { x: (hit.left + hit.right) / 2, y: (hit.top + hit.bottom) / 2 } });
       }
@@ -1362,6 +1391,10 @@ export function ScoutCompanion() {
         // "doesn't move until it lands" actually holds. handleBallLanded
         // (fired by the ball's own animationend) is what sends him after
         // it once it's actually down.
+      } else if (sittingRef.current) {
+        // "Sit": stays put, full stop, until he's told to get up (or has
+        // to break it to dash back into view -- see the out-of-view check
+        // above, which clears sittingRef itself when that happens).
       } else if (followModeRef.current) {
         // "Come here" mode: instead of wandering off on the pause timer, he
         // stays inside a comfortable band around whatever's on screen. Only
@@ -1623,10 +1656,29 @@ export function ScoutCompanion() {
     if (next) beginWalk({ forceTarget: followTarget() });
   }
 
+  // "Stay put until told otherwise" -- unlike followMode, this doesn't
+  // move him anywhere itself (there's nowhere it needs to send him,
+  // he just stops where he already is) and isn't persisted to
+  // localStorage: a fresh page load never starts him already sat down.
+  function toggleSit() {
+    const next = !sittingRef.current;
+    sittingRef.current = next;
+    setSitting(next);
+    speak(pick(next ? SIT_ON_PHRASES : SIT_OFF_PHRASES), 2400);
+  }
+
   function handleMenuAction(action: OzhoAction) {
     closeMenu();
     beginWakeUp();
     lastInteractionAtRef.current = Date.now();
+    // Any action besides sit itself means standing back up first --
+    // fetching, doing a trick, or trotting along beside the reader don't
+    // make sense from a seated position. toggleSit handles its own
+    // stand-up case below.
+    if (action !== "sit" && sittingRef.current) {
+      sittingRef.current = false;
+      setSitting(false);
+    }
     switch (action) {
       case "pet":
         petOzho();
@@ -1639,6 +1691,9 @@ export function ScoutCompanion() {
         break;
       case "fetch":
         throwBall();
+        break;
+      case "sit":
+        toggleSit();
         break;
       case "follow":
         toggleFollow();
@@ -1842,6 +1897,7 @@ export function ScoutCompanion() {
           mood={mood}
           dead={stage === "dead"}
           asleep={asleep}
+          sitting={sitting && !isWalking}
           legFrame={isWalking ? legFrame : 0}
           tailFrame={tailFrame}
           facing={facing}
@@ -1882,7 +1938,12 @@ export function ScoutCompanion() {
             const a = MENU_ARC_START + MENU_ARC_SPAN * ((i + 0.5) / MENU_ITEMS.length);
             const dx = Math.cos(a) * MENU_RADIUS;
             const dy = Math.sin(a) * MENU_RADIUS;
-            const label = item.action === "follow" && followMode ? "Roam free" : item.label;
+            const label =
+              item.action === "follow" && followMode
+                ? "Roam free"
+                : item.action === "sit" && sitting
+                ? "Get up"
+                : item.label;
             return (
               // Positioning transform lives on this wrapper; the button
               // only animates scale/opacity, so the two never fight over
