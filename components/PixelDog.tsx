@@ -218,18 +218,30 @@ export function PixelDog({
         style={{ transform: facing === -1 ? "scaleX(-1)" : undefined }}
         className={className}
       >
-        <ellipse cx={25} cy={36} rx={18} ry={2.5} fill="#000" opacity={0.12} />
+        <ellipse cx={24} cy={36} rx={18} ry={2.5} fill="#000" opacity={0.12} />
 
-        {/* tail, curled up and resting on top of the haunches, well clear
-            of ground level so it never reads as a third leg or paw */}
-        <rect x={3} y={16} width={7} height={7} fill={p.bodyDark} />
-        <rect x={7} y={12} width={6} height={6} fill={p.bodyDark} />
+        {/* tail, curled up and resting behind the haunches -- kept as its
+            own clearly separate island (a real gap of empty space on
+            every side) rather than overlapping the haunch or front leg,
+            which is what made an earlier attempt at this pose read as a
+            muddled blob instead of distinct parts. */}
+        <rect x={2} y={19} width={7} height={7} fill={p.bodyDark} />
+        <rect x={6} y={15} width={6} height={6} fill={p.bodyDark} />
 
-        {/* haunches -- the seated rear end, low and settled on the
-            ground (deliberately shorter than the upright chest below --
-            that height difference is the main shape cue that reads as
-            "sitting" rather than "standing still") */}
-        <rect x={9} y={22} width={15} height={12} fill={p.body} />
+        {/* haunches -- the seated rear end. Two stacked bands (narrower on
+            top), the same "step toward a dome" trick the asleep pose above
+            uses, so the rear reads as a rounded curve instead of a hard
+            rectangle -- a plain single block was the main thing that made
+            the first attempt at this pose read as "standing oddly" rather
+            than "sitting". */}
+        <rect x={10} y={22} width={15} height={12} fill={p.body} />
+        <rect x={13} y={17} width={10} height={6} fill={p.body} />
+
+        {/* front leg -- one solid, wide "paws planted" mass rather than
+            the standing pose's thin walking legs, with a real gap of open
+            space between it and the haunches so the two don't blur into a
+            single shape */}
+        <rect x={28} y={23} width={8} height={11} fill={p.bodyDark} />
 
         {/* chest -- upright rather than the standing pose's low, level
             back, which is the main shape read that says "sitting" rather
@@ -239,9 +251,6 @@ export function PixelDog({
         <rect x={14} y={8} width={24} height={18} fill={p.body} />
         <rect x={14} y={16} width={24} height={8} fill={p.belly} />
 
-        {/* front leg, straight down from the chest to the ground */}
-        <rect x={29} y={24} width={6} height={10} fill={p.bodyDark} />
-
         {/* head + snout -- the exact same shapes and offsets-from-head-
             origin the standing pose uses, just carried up with the raised
             chest instead of sitting low and level with it */}
@@ -250,7 +259,11 @@ export function PixelDog({
         <rect x={53} y={18} width={3} height={3} fill={p.dark} />
 
         {earUp ? (
-          <rect x={37} y={2} width={5} height={8} fill={p.bodyDark} />
+          // A pointed triangular ear (rather than the standing pose's
+          // rectangular one) reads noticeably closer to an alert,
+          // sitting-and-watching dog -- the same shorthand the reference
+          // sketch's own upright ears use.
+          <path d="M 37 8 L 42 8 L 39.5 0 Z" fill={p.bodyDark} />
         ) : (
           <rect x={34} y={16} width={5} height={14} fill={p.bodyDark} />
         )}
