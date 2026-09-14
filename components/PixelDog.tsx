@@ -226,7 +226,7 @@ export function PixelDog({
         style={{ transform: facing === -1 ? "scaleX(-1)" : undefined }}
         className={className}
       >
-        <ellipse cx={24} cy={36} rx={19} ry={2.5} fill="#000" opacity={0.12} />
+        <ellipse cx={22} cy={36} rx={17} ry={2.5} fill="#000" opacity={0.12} />
 
         {/* tail -- curls up and back off the haunches' own top edge, the
             way a settled dog actually rests it (held up in a curl, not
@@ -238,7 +238,10 @@ export function PixelDog({
             The base overlaps the haunches' top band by several pixels on
             purpose -- an earlier version of this pose touched the haunch
             by only a single pixel at one corner and read as a separate
-            floating chevron instead of a tail growing out of his back. */}
+            floating chevron instead of a tail growing out of his back.
+            Left untouched by the horizontal shrink below -- it only
+            trims the haunches' front/right edge, not this attachment
+            zone at their back/left. */}
         <rect x={3} y={1} width={7} height={7} fill={p.bodyDark} />
         <rect x={9} y={8} width={7} height={8} fill={p.bodyDark} />
 
@@ -248,70 +251,78 @@ export function PixelDog({
             genuinely tall, rounded mass -- close to shoulder height --
             instead of a squat block sitting low behind him, which was the
             main thing still reading as "standing oddly" rather than
-            "sitting" in the previous attempt at this pose. */}
-        <rect x={6} y={25} width={20} height={9} fill={p.body} />
-        <rect x={9} y={18} width={14} height={7} fill={p.body} />
-        <rect x={13} y={12} width={7} height={6} fill={p.body} />
+            "sitting" in the previous attempt at this pose. Trimmed a
+            little narrower (front/right edge only -- the tail's
+            attachment zone at the back/left is untouched) as part of
+            shrinking his overall horizontal footprint. */}
+        <rect x={6} y={25} width={17} height={9} fill={p.body} />
+        <rect x={9} y={18} width={12} height={7} fill={p.body} />
+        <rect x={13} y={12} width={6} height={6} fill={p.body} />
 
         {/* front legs -- two, side by side, the way a dog sitting square
             actually plants both front paws, rather than one wide
             "standing" mass: a shaded far leg set behind, and a lit near
             leg stepped forward of it, echoing the reference photo's own
-            darker-far/lighter-near front legs. */}
-        <rect x={27} y={20} width={7} height={14} fill={p.bodyDark} />
-        <rect x={33} y={24} width={6} height={10} fill={p.belly} />
+            darker-far/lighter-near front legs. Shifted in with the
+            narrower haunches and chest below. */}
+        <rect x={24} y={20} width={7} height={14} fill={p.bodyDark} />
+        <rect x={30} y={24} width={6} height={10} fill={p.belly} />
 
         {/* chest -- upright rather than the standing pose's low, level
             back, which is the main shape read that says "sitting" rather
-            than "standing still". Same x-span the standing pose's own
-            body-to-head handoff uses (ending at 38, head starting at 34)
-            so the head sits solidly on top of it instead of floating. The
-            lighter belly patch is kept clear of the haunches' own x-range
-            (below 24) -- letting it run further left used to paint a
-            rectangular notch straight through the rounded haunch instead
-            of reading as a chest marking. */}
-        <rect x={18} y={9} width={20} height={16} fill={p.body} />
+            than "standing still". Narrowed from 20 to 16 (as part of the
+            overall horizontal shrink) with its left edge left in place,
+            so the head -- shifted left below to sit more over the neck --
+            still gets a wide, solid overlap with it. The lighter belly
+            patch is kept clear of the haunches' own x-range -- letting it
+            run further left used to paint a rectangular notch straight
+            through the rounded haunch instead of reading as a chest
+            marking -- and its right edge already lines up with the
+            chest's new, narrower one. */}
+        <rect x={18} y={9} width={16} height={16} fill={p.body} />
         <rect x={24} y={16} width={10} height={9} fill={p.belly} />
 
         {/* head + snout -- same shapes and the same offsets-from-head-top
             the standing pose uses, just anchored much higher (head top at
             -8 instead of 8) so he reads as sitting up tall and alert
             rather than holding his head level with a standing dog's
-            back. That's what the taller viewBox above makes room for. */}
-        <rect x={34} y={-8} width={16} height={16} fill={p.body} />
-        <rect x={48} y={0} width={8} height={8} fill={p.belly} />
-        <rect x={53} y={2} width={3} height={3} fill={p.dark} />
+            back, and shifted 6 units left of the standing pose's head so
+            it sits more directly over the neck/chest instead of jutting
+            out in front of it. That's what the taller viewBox above makes
+            room for. */}
+        <rect x={28} y={-8} width={16} height={16} fill={p.body} />
+        <rect x={42} y={0} width={8} height={8} fill={p.belly} />
+        <rect x={47} y={2} width={3} height={3} fill={p.dark} />
 
         {earUp ? (
           // A pointed triangular ear (rather than the standing pose's
           // rectangular one) reads noticeably closer to an alert,
           // sitting-and-watching dog -- the same shorthand the reference
           // sketch's own upright ears use.
-          <path d="M 37 -8 L 42 -8 L 39.5 -16 Z" fill={p.bodyDark} />
+          <path d="M 31 -8 L 36 -8 L 33.5 -16 Z" fill={p.bodyDark} />
         ) : (
-          <rect x={34} y={0} width={5} height={14} fill={p.bodyDark} />
+          <rect x={28} y={0} width={5} height={14} fill={p.bodyDark} />
         )}
 
-        <rect x={42} y={-3} width={3} height={3} fill={p.dark} />
+        <rect x={36} y={-3} width={3} height={3} fill={p.dark} />
 
-        {showTongue && <rect x={51} y={8} width={3} height={5} fill={p.tongue} />}
+        {showTongue && <rect x={45} y={8} width={3} height={5} fill={p.tongue} />}
 
         {/* collar, right at the base of the (now much longer) neck */}
-        <rect x={33} y={5} width={5} height={6} fill={p.collar} />
-        <circle cx={35} cy={13} r={2} fill={p.tag} />
+        <rect x={27} y={5} width={5} height={6} fill={p.collar} />
+        <circle cx={29} cy={13} r={2} fill={p.tag} />
 
         {/* wardrobe costume -- unlike asleep/dead, sitting is just an
             ordinary everyday pose, not a vulnerable or "not himself"
             moment, so whatever he's earned still shows. Reuses the
             standing pose's own overlay coordinates rather than a second,
             pose-specific copy of every costume, but the sitting head now
-            sits 14 units higher than the standing head (top -8 vs top 6,
-            since he holds it up rather than level with his back) --
-            translating the whole overlay up by that same 14 keeps every
-            costume riding on the head/collar instead of floating below
-            it where the standing pose's head used to be. */}
+            sits 14 units higher and 6 units to the left of the standing
+            head (top-left -8,28 vs 6,34) -- translating the whole overlay
+            to match keeps every costume riding on the head/collar instead
+            of floating where the standing pose's head used to be. */}
         {!dead && costume && costume !== "none" && (
-          <g transform="translate(0, -14)">
+          <g transform="translate(-6, -14)">
             <CostumeOverlay costume={costume} />
           </g>
         )}
