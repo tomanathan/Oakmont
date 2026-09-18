@@ -290,6 +290,23 @@ const OUT_OF_VIEW_MARGIN = 40;
 const RETURN_SPEED_MULT = 2.1;
 const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave me behind!", "Hold on, I'm coming!"];
 
+// "Follow" mode: he sticks close to the cursor, obviously and continuously,
+// rather than ambling back into a wide comfort band every 10+ seconds like
+// the old version did (that read as "wanders nearby sometimes", not
+// "following"). FOLLOW_SPEED_MULT is even faster than the dash-back-into-
+// view speed -- keeping up with the mouse needs more urgency than a one-off
+// return trip. FOLLOW_TOLERANCE is how close he has to already be to skip
+// re-pathing (small, so he's constantly correcting toward a moving cursor
+// instead of only reacting once it's drifted far away). FOLLOW_RECHECK_MS
+// is the pause after each short leg completes before he re-aims at the
+// cursor's current spot -- deliberately far shorter than pickPauseMs's
+// multi-second ambient rests, so the chase reads as near-continuous.
+const FOLLOW_SPEED_MULT = 2.6;
+const FOLLOW_TOLERANCE = 50;
+const FOLLOW_RECHECK_MS = 120;
+const FOLLOW_OFFSET_X = 70;
+const FOLLOW_OFFSET_Y = 45;
+
 // ---- Click menu: the "full set of things you can do with Ozho" ----------
 // Clicking Ozho (while he's awake and standing still) fans out a little
 // radial menu of actions around him. Each entry here is one button; the
@@ -361,6 +378,17 @@ const MENU_ITEMS: { action: OzhoAction; icon: string; label: string }[] = [
 const MENU_ARC_START = Math.PI * 0.75; // 135°
 const MENU_ARC_SPAN = Math.PI * 1.5; // 270°
 const MENU_RADIUS = 68;
+// How much room the ring needs from each viewport edge once it's open --
+// used to nudge him on screen before the menu appears (see openMenu) so
+// clicking him near an edge doesn't leave part of the ring rendered off
+// the visible viewport. The two items nearest the arc's open bottom gap
+// point mostly downward (~48px, sin(45°)*MENU_RADIUS) and each carries a
+// label pill hanging further below that -- hence bottom needing the most
+// clearance; top and the sides only ever have a bare button (no label)
+// reaching close to the full radius.
+const MENU_BOTTOM_CLEARANCE = 100;
+const MENU_TOP_CLEARANCE = 90;
+const MENU_SIDE_CLEARANCE = 90;
 
 const FOLLOW_STORAGE_KEY = "ozho:follow-mode";
 const PET_COUNT_KEY = "ozho:pet-count"; // "YYYY-MM-DD:N", resets each day
@@ -1040,10 +1068,13 @@ export function ScoutCompanion() {
   // is picked/validated), bowed sideways by a random amount so the path
   // reads as a natural arc instead of a straight beeline.
   //   - `urgent`: move faster and straighter -- purposeful, not a stroll.
+  //   - `speedMult`: overrides urgent's own default multiplier entirely --
+  //     used by follow mode, which needs to move even more decisively than
+  //     a one-off "dash back into view" (see FOLLOW_SPEED_MULT).
   // The path there is free to cross text along the way (see the render
   // loop) -- resolveTarget only keeps the landing spot itself off of it.
-  function beginWalk(opts: { avoid?: { x: number; y: number } | null; urgent?: boolean; forceTarget?: { x: number; y: number } } = {}) {
-    const { urgent = false } = opts;
+  function beginWalk(opts: { avoid?: { x: number; y: number } | null; urgent?: boolean; speedMult?: number; forceTarget?: { x: number; y: number } } = {}) {
+    const { urgent = false, speedMult } = opts;
     const { start, end, maxX, maxY } = resolveTarget(opts);
 
     const dx = end.x - start.x;
@@ -1066,7 +1097,7 @@ export function ScoutCompanion() {
     targetRef.current = end;
     pathLenRef.current = Math.max(30, dist);
     pathTRef.current = 0;
-    pathSpeedRef.current = urgent ? RETURN_SPEED_MULT + Math.random() * 0.3 : 0.75 + Math.random() * 0.6;
+    pathSpeedRef.current = speedMult !== undefined ? speedMult : urgent ? RETURN_SPEED_MULT + Math.random() * 0.3 : 0.75 + Math.random() * 0.6;
     walkingRef.current = true;
     setIsWalking(true);
   }
@@ -1335,7 +1366,11 @@ export function ScoutCompanion() {
           walkingRef.current = false;
           setIsWalking(false);
           returningRef.current = false;
-          behaviorUntilRef.current = nowMs + pickPauseMs();
+          // Follow mode gets its own short recheck gap instead of the long
+          // ambient rest below -- otherwise every leg of the chase would
+          // end with him just standing there for several seconds even
+          // though the cursor kept moving the whole time.
+          behaviorUntilRef.current = nowMs + (followModeRef.current ? FOLLOW_RECHECK_MS : pickPauseMs());
 
           // Fetch: he's just reached the ball -> pick it up (see
           // carryingBall) and trot back to where he was standing when it
@@ -1396,22 +1431,24 @@ export function ScoutCompanion() {
         // to break it to dash back into view -- see the out-of-view check
         // above, which clears sittingRef itself when that happens).
       } else if (followModeRef.current) {
-        // "Come here" mode: instead of wandering off on the pause timer, he
-        // stays inside a comfortable band around whatever's on screen. Only
-        // strolls when he's drifted well outside it (a big scroll is
-        // already caught by the out-of-view dash above; this covers the
-        // smaller "you scrolled half a screen" case).
+        // "Come here" mode: chase the cursor closely and continuously,
+        // rather than only reacting once he's drifted well outside a wide
+        // comfort band -- that older version shared the ambient wander's
+        // multi-second rest between legs, so most of the time he just sat
+        // there like he does when following is off. FOLLOW_TOLERANCE keeps
+        // this from re-pathing on every single pixel of mouse jitter, and
+        // FOLLOW_RECHECK_MS (set on arrival below, not pickPauseMs's long
+        // ambient rest) keeps the gap between legs short enough that the
+        // chase reads as one continuous motion.
         if (nowMs > behaviorUntilRef.current) {
-          const cx = scrollX + vw / 2;
-          const cy = scrollY + vh * 0.6;
-          const outsideBand =
-            Math.abs(pos.x - cx) > vw * 0.42 || pos.y - cy < -vh * 0.34 || pos.y - cy > vh * 0.4;
-          if (outsideBand) {
-            beginWalk({ forceTarget: followTarget() });
+          const target = followTarget();
+          const d = Math.hypot(pos.x - target.x, pos.y - target.y);
+          if (d > FOLLOW_TOLERANCE) {
+            beginWalk({ forceTarget: target, urgent: true, speedMult: FOLLOW_SPEED_MULT });
           } else {
-            behaviorUntilRef.current = nowMs + 1400 + Math.random() * 1600;
+            behaviorUntilRef.current = nowMs + FOLLOW_RECHECK_MS;
           }
-        } else if (Math.random() < 0.003) {
+        } else if (Math.random() < 0.01) {
           facingRef.current = facingRef.current === 1 ? -1 : 1;
           setFacing(facingRef.current);
         }
@@ -1463,6 +1500,28 @@ export function ScoutCompanion() {
     // exceptions active even after he's just standing here with a menu
     // open.
     returningRef.current = false;
+
+    // Keep the whole 270° ring on the visible screen. Without this, a
+    // click near a viewport edge -- most noticeably the bottom, since
+    // that's where the ring's two downward-leaning items and their label
+    // pills reach furthest -- opened a menu that was only partly there:
+    // present in the DOM, but rendered below the fold with nothing to
+    // indicate it, which just reads as "the menu didn't open". This is an
+    // instant correction, not a walk, so it doesn't fight the freeze
+    // above or trigger a leg-swap animation.
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const sx = window.scrollX;
+    const sy = window.scrollY;
+    const nudgedX = clamp(posRef.current.x, sx + MENU_SIDE_CLEARANCE, sx + vw - MENU_SIDE_CLEARANCE);
+    const nudgedY = clamp(posRef.current.y, sy + MENU_TOP_CLEARANCE, sy + vh - MENU_BOTTOM_CLEARANCE);
+    if (nudgedX !== posRef.current.x || nudgedY !== posRef.current.y) {
+      posRef.current = { x: nudgedX, y: nudgedY };
+      if (wrapperRef.current) {
+        wrapperRef.current.style.left = `${nudgedX}px`;
+        wrapperRef.current.style.top = `${nudgedY}px`;
+      }
+    }
   }
 
   function closeMenu() {
@@ -1470,21 +1529,36 @@ export function ScoutCompanion() {
     menuOpenRef.current = false;
     setMenuOpen(false);
     // Resume normal life with a fresh pause rather than bolting the instant
-    // the menu closes.
-    behaviorUntilRef.current = Date.now() + pickPauseMs();
+    // the menu closes -- except in follow mode, which shouldn't go quiet
+    // for pickPauseMs's multi-second ambient rest just because the menu
+    // happened to open and close (e.g. toggling Follow on in the first
+    // place always does exactly that). Without this branch, follow mode's
+    // own re-checking below stayed blocked by this long pause for however
+    // long pickPauseMs picked, which is what made "obviously following"
+    // actually read as "stands still for several seconds after every menu
+    // interaction".
+    behaviorUntilRef.current = Date.now() + (followModeRef.current ? FOLLOW_RECHECK_MS : pickPauseMs());
   }
 
-  // A spot to trot to for "come here" -- near the reader, off to the side
-  // of the column so he's company, not an obstruction. beginWalk still
+  // A spot to trot to for "come here" -- close beside the actual cursor
+  // (not a wide viewport-relative band that could land him a third of a
+  // screen away from it) so it's obvious he's tracking the mouse itself.
+  // Offset to whichever side of the cursor has more room, so a mouse near
+  // one edge doesn't repeatedly aim him off-page; a little jitter keeps
+  // repeated calls from pathing to the exact same pixel. beginWalk still
   // nudges him clear of any text he'd actually land on.
   function followTarget() {
     const vw = window.innerWidth;
-    const vh = window.innerHeight;
     const sx = window.scrollX;
     const sy = window.scrollY;
-    const nearMouseX = mouseRef.current ? mouseRef.current.x : sx + vw * 0.5;
-    const x = clamp(nearMouseX + (Math.random() < 0.5 ? -1 : 1) * vw * 0.18, sx + vw * 0.12, sx + vw * 0.88);
-    return { x, y: sy + vh * (0.55 + Math.random() * 0.15) };
+    const anchor = mouseRef.current ?? { x: sx + vw * 0.5, y: sy + window.innerHeight * 0.5 };
+    const side = anchor.x - sx > vw / 2 ? -1 : 1;
+    const x = clamp(
+      anchor.x + side * FOLLOW_OFFSET_X + (Math.random() - 0.5) * 24,
+      sx + SIDE_MARGIN,
+      sx + vw - SIDE_MARGIN
+    );
+    return { x, y: anchor.y + FOLLOW_OFFSET_Y + (Math.random() - 0.5) * 20 };
   }
 
   // Fires once the ball's own throw-and-bounce animation actually
@@ -1653,7 +1727,7 @@ export function ScoutCompanion() {
       // ignore -- it just won't persist across reloads
     }
     speak(pick(next ? FOLLOW_ON_PHRASES : FOLLOW_OFF_PHRASES), 2800);
-    if (next) beginWalk({ forceTarget: followTarget() });
+    if (next) beginWalk({ forceTarget: followTarget(), urgent: true, speedMult: FOLLOW_SPEED_MULT });
   }
 
   // "Stay put until told otherwise" -- unlike followMode, this doesn't
