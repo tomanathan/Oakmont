@@ -299,11 +299,14 @@ const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave
 // re-pathing (small, so he's constantly correcting toward a moving cursor
 // instead of only reacting once it's drifted far away). FOLLOW_RECHECK_MS
 // is the pause after each short leg completes before he re-aims at the
-// cursor's current spot -- deliberately far shorter than pickPauseMs's
-// multi-second ambient rests, so the chase reads as near-continuous.
+// cursor's current spot -- kept to about one render tick (not zero, so
+// there's still a well-defined "arrived" instant rather than re-pathing
+// mid-assignment) rather than pickPauseMs's multi-second ambient rests,
+// so back-to-back legs read as one continuous chase instead of a
+// walk-stop-walk stutter.
 const FOLLOW_SPEED_MULT = 2.6;
 const FOLLOW_TOLERANCE = 50;
-const FOLLOW_RECHECK_MS = 120;
+const FOLLOW_RECHECK_MS = 20;
 const FOLLOW_OFFSET_X = 70;
 const FOLLOW_OFFSET_Y = 45;
 
