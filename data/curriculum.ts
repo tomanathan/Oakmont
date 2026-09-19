@@ -80,7 +80,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Whole-Passage Main Idea",
       explanation:
-        "These questions ask what the whole passage is really about. The trap: the main idea is almost never stated in the first sentence — you have to piece it together from the whole passage. After reading, ask yourself: 'If I could keep only one sentence, which one explains why all the others exist?' The right answer covers the whole passage, not just one part of it. It also shouldn't be so broad that it could describe a totally different passage. Wrong answers are usually too narrow (about just one detail) or too broad (vague and generic).",
+        "These questions ask what the whole passage is really about. The trap: the main idea is almost never stated in the first sentence — you have to piece it together from the whole passage. After reading, ask yourself: 'If I could keep only one sentence, which one explains why all the others exist?' The right answer covers the whole passage rather than one part of it, and it shouldn't be so broad that it could describe a totally different passage. Wrong answers are usually too narrow (about just one detail) or too broad (vague and generic).",
       examples: [
         {
           q: "For years, a team of marine biologists monitoring a network of Pacific coral reefs treated rising ocean temperatures as the primary threat to reef survival. But after fifteen years of data, the team's focus shifted: reefs with high genetic diversity consistently survived heat waves that wiped out genetically uniform reefs nearby. The team now argues that conservation policy should prioritize preserving genetic diversity, not just controlling temperature. Which choice best states the main idea of the text?",
@@ -311,7 +311,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Reasonable Conclusions Supported by the Text",
       explanation:
-        "These questions ask what can reasonably be concluded from the text, even though the conclusion itself is never stated outright — 'based on the text, what can be concluded,' 'what does the text most strongly suggest,' or 'what would most likely have been true if X hadn't happened.' This differs from pure detail retrieval: instead of restating one stated fact, you connect two or more stated facts (or a stated fact and its logical consequence) into a conclusion the text supports without spelling out. The right answer follows necessarily, or very nearly necessarily, from what's given — not just plausibly. Wrong answers typically add outside information, overstate the conclusion's certainty, or invert which fact caused which effect.",
+        "These questions ask what can reasonably be concluded from the text, even though the conclusion itself is never stated outright — 'based on the text, what can be concluded,' 'what does the text most strongly suggest,' or 'what would most likely have been true if X hadn't happened.' This differs from pure detail retrieval: instead of restating one stated fact, you connect two or more stated facts (or a stated fact and its logical consequence) into a conclusion the text supports without spelling out. The right answer follows necessarily, or very nearly necessarily, from what's given; a choice that merely sounds plausible isn't enough. Wrong answers typically add outside information, overstate the conclusion's certainty, or invert which fact caused which effect.",
       examples: [
         {
           q: "A city government surveyed residents about a new bike-share program. Of respondents who had used the program at least once, 91% said they would use it again. However, only 12% of all surveyed residents reported having used the program at all. Based on the text, what can reasonably be concluded about the bike-share program?",
@@ -398,7 +398,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Direct Quantitative Support",
       explanation:
-        "This is the most common Command of Evidence pattern: you're given a claim and asked which choice provides the strongest factual support. The winning answer is almost always the one with the most specific, directly relevant number or fact — not just the choice that's 'related' to the topic. Fast filter: cross out any choice that's a general statement about the topic (those are bait). Keep only choices with a specific measurement, comparison, or named data point.",
+        "This is the most common Command of Evidence pattern: you're given a claim and asked which choice provides the strongest factual support. The winning answer is almost always the one with the most specific, directly relevant number or fact; a choice that's merely 'related' to the topic isn't enough. Fast filter: cross out any choice that's a general statement about the topic (those are bait). Keep only choices with a specific measurement, comparison, or named data point.",
       examples: [
         {
           q: "A researcher claims that urban tree cover reduces summer energy costs. Which choice best supports this claim?",
@@ -488,7 +488,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Ruling Out Alternative Explanations",
       explanation:
-        "This is a harder Command of Evidence pattern, used for causal claims. Here, the best evidence isn't just a supporting number — it's a comparison that rules out some other explanation. Look for a control group, a similar-but-different comparison case, or a 'before vs. after' setup with a comparison group. You'll know this pattern applies when the claim uses causal language like 'caused' or 'led to,' not just descriptive language like 'is associated with.'",
+        "This is a harder Command of Evidence pattern, used for causal claims. Here, the best evidence is a comparison that rules out some other explanation, rather than a plain supporting number. Look for a control group, a similar-but-different comparison case, or a 'before vs. after' setup with a comparison group. You'll know this pattern applies when the claim uses causal language like 'caused' or 'led to,' as opposed to merely descriptive language like 'is associated with.'",
       examples: [
         {
           q: "A transportation analyst claims that a city's new bike-share program reduced short-distance car trips. Which choice best supports this claim?",
@@ -500,7 +500,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "This is a causal claim — reduced because of the program, not just 'car trips went down around the same time.' The plain 12%-drop figure alone doesn't rule out other explanations like gas prices or weather that could affect any city that year. The fleet-size and enjoyment figures don't measure car trips at all. Only the first choice reports that same drop while also showing a comparable city without the program saw no such drop, ruling out those other explanations.",
+            "The claim credits the bike-share program itself, so the evidence has to do more than show car trips fell around the same time — it has to rule out other causes. The plain 12%-drop figure alone doesn't rule out things like gas prices or weather that could affect any city that year. The fleet-size and enjoyment figures don't measure car trips at all. Only the first choice reports that same drop while also showing a comparable city without the program saw no such drop, ruling out those other explanations.",
           difficulty: "easy",
         },
         {
@@ -513,7 +513,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "This is a causal claim again — reduced because of the training, not just that injuries happened to drop around the same time. The plain 18%-drop figure alone doesn't rule out something like a slower production period needing less equipment use. The session-length and helpfulness-rating choices don't measure injuries at all. Only the sister-factory comparison rules out a company-wide explanation like a slowdown, by showing a similar factory without the training saw no meaningful change.",
+            "Same setup as before: the training has to be the actual cause, so injuries merely dropping around the same time isn't enough on its own. The plain 18%-drop figure alone doesn't rule out something like a slower production period needing less equipment use. The session-length and helpfulness-rating choices don't measure injuries at all. Only the sister-factory comparison rules out a company-wide explanation like a slowdown, by showing a similar factory without the training saw no meaningful change.",
           difficulty: "medium",
         },
         {
@@ -526,7 +526,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "This is a causal claim — reduced because families joined, not just 'spending went down around the same time.' The plain 15%-decline figure doesn't rule out something like a general drop in food prices that year. The seeds-and-tools and hobby-enjoyment choices don't measure grocery spending. Only the first choice adds a comparison group of similar families who didn't join, ruling out that kind of alternative explanation.",
+            "Joining the program has to be what actually drove the change here, not just something that happened alongside it. The plain 15%-decline figure doesn't rule out something like a general drop in food prices that year. The seeds-and-tools and hobby-enjoyment choices don't measure grocery spending. Only the first choice adds a comparison group of similar families who didn't join, ruling out that kind of alternative explanation.",
           difficulty: "easy",
         },
         {
@@ -564,7 +564,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Reading Data from a Graph or Table",
       explanation:
-        "Many Command of Evidence questions hand you a graph or table directly, then ask one of two things: to complete a statement using the data ('which choice most effectively uses data from the graph to complete the text'), or to identify which choice describes data that supports or weakens a stated conclusion. There's no trick beyond careful, literal reading: find the exact category, time period, or comparison the question asks about, and check every number and label in each answer choice against the data — not just the first choice that looks plausible. Wrong answers are built by swapping a category, a time period, a direction, or a single digit from the real data, or by citing real numbers that don't actually address what the question is asking.",
+        "Many Command of Evidence questions hand you a graph or table directly, then ask one of two things: to complete a statement using the data ('which choice most effectively uses data from the graph to complete the text'), or to identify which choice describes data that supports or weakens a stated conclusion. There's no trick beyond careful, literal reading: find the exact category, time period, or comparison the question asks about, and check every number and label in each answer choice against the data instead of settling for the first choice that looks plausible. Wrong answers are built by swapping a category, a time period, a direction, or a single digit from the real data, or by citing real numbers that don't actually address what the question is asking.",
       examples: [
         {
           q: "A table shows the average commute time, in minutes, for workers in four cities: Denview, 22; Fairhaven, 31; Grantsville, 18; Millbrook, 27. A student writing about commute times notes that among these four cities, the shortest average commute belongs to ______. Which choice most effectively uses data from the table to complete the statement?",
@@ -1238,7 +1238,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Describing the Structure of an Entire Passage",
       explanation:
-        "These questions ask how a whole passage is organized from start to finish — its overall shape — not the role of one sentence or paragraph. Common shapes: a claim followed by an example; a common belief followed by a challenge to it; a problem followed by a solution; a question followed by an answer; or a small story that leads into a bigger point. Before reading the choices, sketch the shape yourself in one short phrase, like 'states a claim, then gives an example.' Then find the choice describing that same sequence of moves in the same order — not just one that mentions the right topic.",
+        "These questions ask how a whole passage is organized from start to finish — its overall shape — not the role of one sentence or paragraph. Common shapes: a claim followed by an example; a common belief followed by a challenge to it; a problem followed by a solution; a question followed by an answer; or a small story that leads into a bigger point. Before reading the choices, sketch the shape yourself in one short phrase, like 'states a claim, then gives an example.' Then find the choice describing that same sequence of moves in the same order, rather than one that simply mentions the right topic.",
       examples: [
         {
           q: "Most migratory songbirds that breed in the Arctic follow strikingly similar north-south routes each year, funneling through the same narrow corridors as their ancestors. The Arctic tern, however, breaks from this pattern entirely: rather than following a direct corridor, its migration traces a wide, looping path that carries it across both the Atlantic and Pacific basins in a single year. Ornithologists still debate whether this looping route evolved to exploit favorable wind patterns or predates the more direct routes used by other species. Which choice best describes the passage's overall structure?",
@@ -1401,7 +1401,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Predicting One Author's Response to the Other's Claim",
       explanation:
-        "This pattern asks how one author would likely respond to a specific claim made in the OTHER passage. You have to apply that author's reasoning and values to a new claim — not just repeat their original argument. Find the core value driving each author's argument (for example, 'depth of connection' for an author focused on isolation). Then predict how that same value would react to the new claim.",
+        "This pattern asks how one author would likely respond to a specific claim made in the OTHER passage. You have to apply that author's reasoning and values to a new claim rather than repeat their original argument. Find the core value driving each author's argument (for example, 'depth of connection' for an author focused on isolation). Then predict how that same value would react to the new claim.",
       examples: [
         {
           q: "Passage 1: Online communities built around shared interests give people meaningful, sustained connection with others who understand them, and for many users, these communities have effectively replaced the real-world social circles they struggled to find locally. \n\nPassage 2: Even the most active online community exchanges tend to be brief and text-based, lacking the shared physical presence, spontaneous conversation, and accumulated small moments that make in-person relationships feel deeply substantial over time.\n\nHow would the author of Passage 2 most likely respond to Passage 1's claim that online communities effectively replace real-world ones?",
@@ -4460,7 +4460,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finding the Vertex of a Quadratic from Standard Form",
       explanation:
-        "When a quadratic is given in standard form, f(x) = ax² + bx + c, instead of vertex form, its vertex isn't visible at a glance — you have to find it. The fastest method: the vertex's x-coordinate is always -b/2a. Substitute that back into the function to get the y-coordinate. Completing the square works too, and rewrites the function in vertex form directly — useful when the question also asks for the rewritten equation, not just the vertex's coordinates.",
+        "When a quadratic is given in standard form, f(x) = ax² + bx + c, instead of vertex form, its vertex isn't visible at a glance — you have to find it. The fastest method: the vertex's x-coordinate is always -b/2a. Substitute that back into the function to get the y-coordinate. Completing the square works too, and rewrites the function in vertex form directly — useful when the question asks for the rewritten equation itself, beyond the vertex's coordinates alone.",
       examples: [
         {
           q: "What is the vertex of f(x) = x² - 6x + 5?",
@@ -5176,7 +5176,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       desmosTrick:
         "Step 1: Click the '+' menu and add a table, then enter the given data points as x1, y1 columns — one point per row. Step 2: On the next line, type a regression template matching the shape you're testing: y1 ~ mx1+b for a straight-line trend, y1 ~ ax1^2+bx1+c for a curve that bends once, or y1 ~ a*b^x1 for growth or decay that speeds up or slows down over time. Step 3: Desmos fits that shape through your points and reports the actual values of m, b, a, and c — so instead of guessing which shape 'looks right' by eye, you can check exactly how well each one fits.",
       explanation:
-        "This pattern asks you to match a scatterplot's shape to the correct model type. A straight-line pattern with a constant rate of change is linear. A pattern that gets increasingly steep is exponential. A pattern with a single peak or trough is quadratic. The key is looking at HOW the rate of change behaves — constant, accelerating, or reversing — not just the general 'up and to the right' shape.",
+        "This pattern asks you to match a scatterplot's shape to the correct model type. A straight-line pattern with a constant rate of change is linear. A pattern that gets increasingly steep is exponential. A pattern with a single peak or trough is quadratic. The key is looking at HOW the rate of change behaves — constant, accelerating, or reversing — rather than the general 'up and to the right' shape alone.",
       examples: [
         {
           q: "A scatterplot shows points rising steadily at a constant rate, forming a straight-line pattern. Which model best fits?",
