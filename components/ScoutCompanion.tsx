@@ -295,17 +295,21 @@ const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave
 // the old version did (that read as "wanders nearby sometimes", not
 // "following"). FOLLOW_SPEED_MULT is even faster than the dash-back-into-
 // view speed -- keeping up with the mouse needs more urgency than a one-off
-// return trip. FOLLOW_TOLERANCE is how close he has to already be to skip
-// re-pathing (small, so he's constantly correcting toward a moving cursor
-// instead of only reacting once it's drifted far away). FOLLOW_RECHECK_MS
-// is the pause after each short leg completes before he re-aims at the
-// cursor's current spot -- kept to about one render tick (not zero, so
-// there's still a well-defined "arrived" instant rather than re-pathing
-// mid-assignment) rather than pickPauseMs's multi-second ambient rests,
-// so back-to-back legs read as one continuous chase instead of a
-// walk-stop-walk stutter.
+// return trip. Every follow-mode leg is also `straight` (see beginWalk) --
+// the normal wander/return-dash bow-sideways-a-bit path reads as drifting
+// or overshooting the cursor instead of beelining to it and actually
+// planting there. FOLLOW_TOLERANCE is how close he has to already be to
+// skip re-pathing -- tight, so "stops" really means stopped right beside
+// the cursor, not just loosely in the neighborhood, while still being
+// forgiving enough that a pixel of mouse jitter doesn't restart a leg.
+// FOLLOW_RECHECK_MS is the pause after each short leg completes before he
+// re-aims at the cursor's current spot -- kept to about one render tick
+// (not zero, so there's still a well-defined "arrived" instant rather than
+// re-pathing mid-assignment) rather than pickPauseMs's multi-second
+// ambient rests, so back-to-back legs read as one continuous chase instead
+// of a walk-stop-walk stutter.
 const FOLLOW_SPEED_MULT = 2.6;
-const FOLLOW_TOLERANCE = 50;
+const FOLLOW_TOLERANCE = 20;
 const FOLLOW_RECHECK_MS = 20;
 const FOLLOW_OFFSET_X = 70;
 const FOLLOW_OFFSET_Y = 45;
@@ -1074,10 +1078,14 @@ export function ScoutCompanion() {
   //   - `speedMult`: overrides urgent's own default multiplier entirely --
   //     used by follow mode, which needs to move even more decisively than
   //     a one-off "dash back into view" (see FOLLOW_SPEED_MULT).
+  //   - `straight`: no bow at all -- a dead-straight line to the target.
+  //     Used by follow mode, where even urgent's reduced bend still reads
+  //     as wandering/overshooting instead of beelining to the cursor and
+  //     actually stopping there.
   // The path there is free to cross text along the way (see the render
   // loop) -- resolveTarget only keeps the landing spot itself off of it.
-  function beginWalk(opts: { avoid?: { x: number; y: number } | null; urgent?: boolean; speedMult?: number; forceTarget?: { x: number; y: number } } = {}) {
-    const { urgent = false, speedMult } = opts;
+  function beginWalk(opts: { avoid?: { x: number; y: number } | null; urgent?: boolean; speedMult?: number; straight?: boolean; forceTarget?: { x: number; y: number } } = {}) {
+    const { urgent = false, speedMult, straight = false } = opts;
     const { start, end, maxX, maxY } = resolveTarget(opts);
 
     const dx = end.x - start.x;
@@ -1085,7 +1093,7 @@ export function ScoutCompanion() {
     const dist = Math.hypot(dx, dy) || 1;
     const perpX = -dy / dist;
     const perpY = dx / dist;
-    const bend = (Math.random() - 0.5) * 2 * Math.min(80, dist * 0.5) * (urgent ? 0.35 : 1);
+    const bend = straight ? 0 : (Math.random() - 0.5) * 2 * Math.min(80, dist * 0.5) * (urgent ? 0.35 : 1);
     // A quadratic Bezier always stays within the convex hull of its three
     // control points, so clamping this one to the same bounds as start/end
     // guarantees the whole curve does too -- otherwise a bend near a page
@@ -1447,7 +1455,7 @@ export function ScoutCompanion() {
           const target = followTarget();
           const d = Math.hypot(pos.x - target.x, pos.y - target.y);
           if (d > FOLLOW_TOLERANCE) {
-            beginWalk({ forceTarget: target, urgent: true, speedMult: FOLLOW_SPEED_MULT });
+            beginWalk({ forceTarget: target, urgent: true, speedMult: FOLLOW_SPEED_MULT, straight: true });
           } else {
             behaviorUntilRef.current = nowMs + FOLLOW_RECHECK_MS;
           }
@@ -1547,21 +1555,23 @@ export function ScoutCompanion() {
   // (not a wide viewport-relative band that could land him a third of a
   // screen away from it) so it's obvious he's tracking the mouse itself.
   // Offset to whichever side of the cursor has more room, so a mouse near
-  // one edge doesn't repeatedly aim him off-page; a little jitter keeps
-  // repeated calls from pathing to the exact same pixel. beginWalk still
-  // nudges him clear of any text he'd actually land on.
+  // one edge doesn't repeatedly aim him off-page. Deliberately no random
+  // jitter -- an earlier version added a little to keep repeated calls
+  // from pathing to the exact same pixel, but paired with a tight
+  // FOLLOW_TOLERANCE that jitter alone was enough to keep exceeding it,
+  // so he never actually settled beside a stationary cursor: every recheck
+  // computed a slightly different spot and set off another short walk,
+  // reading as restless twitching instead of "stops". With a still mouse,
+  // this now returns the exact same point every time, so once he's within
+  // tolerance he stays put instead of endlessly re-correcting.
   function followTarget() {
     const vw = window.innerWidth;
     const sx = window.scrollX;
     const sy = window.scrollY;
     const anchor = mouseRef.current ?? { x: sx + vw * 0.5, y: sy + window.innerHeight * 0.5 };
     const side = anchor.x - sx > vw / 2 ? -1 : 1;
-    const x = clamp(
-      anchor.x + side * FOLLOW_OFFSET_X + (Math.random() - 0.5) * 24,
-      sx + SIDE_MARGIN,
-      sx + vw - SIDE_MARGIN
-    );
-    return { x, y: anchor.y + FOLLOW_OFFSET_Y + (Math.random() - 0.5) * 20 };
+    const x = clamp(anchor.x + side * FOLLOW_OFFSET_X, sx + SIDE_MARGIN, sx + vw - SIDE_MARGIN);
+    return { x, y: anchor.y + FOLLOW_OFFSET_Y };
   }
 
   // Fires once the ball's own throw-and-bounce animation actually
@@ -1730,7 +1740,7 @@ export function ScoutCompanion() {
       // ignore -- it just won't persist across reloads
     }
     speak(pick(next ? FOLLOW_ON_PHRASES : FOLLOW_OFF_PHRASES), 2800);
-    if (next) beginWalk({ forceTarget: followTarget(), urgent: true, speedMult: FOLLOW_SPEED_MULT });
+    if (next) beginWalk({ forceTarget: followTarget(), urgent: true, speedMult: FOLLOW_SPEED_MULT, straight: true });
   }
 
   // "Stay put until told otherwise" -- unlike followMode, this doesn't
