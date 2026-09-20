@@ -36,7 +36,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       "The report took ten years to complete.",
     ],
     answer: 1,
-    explain: "The report's central claim is about what caused success — volunteer coordination over funding — not the incidental facts about lots or duration.", pattern: "Whole-Passage Main Idea",
+    explain: "The report's central claim is about what caused success (volunteer coordination over funding), not the incidental facts about lots or duration.", pattern: "Whole-Passage Main Idea",
   },
   {
     q: "When she first began layering electronic effects over traditional blues scales, critics dismissed the combination as a gimmick unworthy of serious attention. Audiences, however, responded immediately, filling clubs to hear a sound no one else was making. What is the main idea of the text?",
@@ -47,7 +47,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       "Electronic effects are essential to modern jazz.",
     ],
     answer: 1,
-    explain: "The passage centers on the reception arc of her specific innovation — initial critical doubt, audience acceptance — which choice 2 captures precisely.", pattern: "Whole-Passage Main Idea",
+    explain: "The passage centers on the reception arc of her specific innovation (initial critical doubt, audience acceptance), which choice 2 captures precisely.", pattern: "Whole-Passage Main Idea",
   },
   {
     q: "Automation eliminated hundreds of assembly-line jobs at the town's largest factory over the past five years. At the same time, it created a new wave of technician and repair positions, most of which sit unfilled because they require training the laid-off workers never received. Which choice best captures the central idea of the text?",
@@ -102,7 +102,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       "Literary movements are always founded by a single author.",
     ],
     answer: 1,
-    explain: "The passage's arc — rejected innovation becoming foundational — is precisely captured by choice 2, without overreaching into broader claims.", pattern: "Whole-Passage Main Idea",
+    explain: "The passage's arc (rejected innovation becoming foundational) is precisely captured by choice 2, without overreaching into broader claims.", pattern: "Whole-Passage Main Idea",
   },
   {
     q: "The strike's specific demands were, by most historians' accounts, fairly modest and unremarkable for the era. What made the strike succeed was something else entirely: political groups that agreed on almost nothing else found common cause in supporting the workers, producing a unified public pressure rarely seen before or since. Which choice best states the main idea of the text?",
@@ -157,7 +157,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       "Which predatory bird species poses the greatest threat to the ants?",
     ],
     answer: 1,
-    explain: "The text links the early foraging window to survival — later foragers lose more workers to birds — directly explaining why the timing exists. The other questions sound plausible but are never actually addressed.", pattern: "Detail Comprehension in Informational Texts",
+    explain: "The text links the early foraging window to survival (later foragers lose more workers to birds), directly explaining why the timing exists. The other questions sound plausible but are never actually addressed.", pattern: "Detail Comprehension in Informational Texts",
   },
   {
     q: "The following text is from a novel. The narrator is helping her younger brother prepare for his first day at a new school. 'I laid out his shirt the night before, then laid out a second one when he couldn't decide, then a third. In the morning he wore the first one anyway, the one I'd picked before he'd even seen the others.' According to the text, what does the narrator do the night before her brother's first day of school?",

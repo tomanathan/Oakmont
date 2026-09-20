@@ -105,7 +105,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 2,
           explain:
-            "Nothing states a conclusion outright, so build it from what changes across the passage: presented as beautification, but paragraph two reveals a measurable food-access benefit, and paragraph three shows other institutions responding to that practical benefit, not the visual one. Simply restating that a city built the gardens covers only the setup, and noting growing school interest is a downstream detail. Claiming spending fell for most families citywide overstates scope — only participating families, not most families citywide — and is a supporting fact rather than the throughline. Only 'a program framed as a beautification effort ended up producing real, practical benefits for participating families' captures the shift from framing to actual impact.",
+            "Nothing states a conclusion outright, so build it from what changes across the passage: presented as beautification, but paragraph two reveals a measurable food-access benefit, and paragraph three shows other institutions responding to that practical benefit, not the visual one. Simply restating that a city built the gardens covers only the setup, and noting growing school interest is a downstream detail. Claiming spending fell for most families citywide overstates scope (only participating families, not most families citywide), and is a supporting fact rather than the throughline. Only 'a program framed as a beautification effort ended up producing real, practical benefits for participating families' captures the shift from framing to actual impact.",
           difficulty: "medium",
         },
         {
@@ -131,7 +131,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "The passage tracks two outcomes for one project — a financial one (under budget) and an economic one (more customers) — and the main idea has to capture both, not just one. Reporting only that the project cost less than expected covers just the budget half, and noting businesses were initially skeptical reports a detail from the opening, not the passage's point. A broader claim about rail-to-trail conversions generally generalizes beyond what this passage actually supports. Only 'the rail-to-trail conversion succeeded both financially and economically' combines both outcomes into the passage's real claim.",
+            "The passage tracks two outcomes for one project, a financial one (under budget) and an economic one (more customers), and the main idea has to capture both, not just one. Reporting only that the project cost less than expected covers just the budget half, and noting businesses were initially skeptical reports a detail from the opening, not the passage's point. A broader claim about rail-to-trail conversions generally generalizes beyond what this passage actually supports. Only 'the rail-to-trail conversion succeeded both financially and economically' combines both outcomes into the passage's real claim.",
           difficulty: "easy",
         },
         {
@@ -157,7 +157,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Detail Comprehension in Informational Texts",
       explanation:
-        "These questions ask what the text directly states, or reports, about one specific fact, number, finding, or reason — not the whole passage's point, just one piece of it accurately restated. The stems vary: 'According to the text, what is true about X?' 'Why does X believe Y?' 'What did the study find?' 'Which question does the text most directly attempt to answer?' The method is the same regardless of phrasing: locate the exact sentence(s) answering the question, then pick the choice matching what's actually said — no outside knowledge, no reversed direction, and no overstating a modest finding into a stronger one.",
+        "These questions ask what the text directly states, or reports, about one specific fact, number, finding, or reason: not the whole passage's point, just one piece of it accurately restated. The stems vary: 'According to the text, what is true about X?' 'Why does X believe Y?' 'What did the study find?' 'Which question does the text most directly attempt to answer?' The method is the same regardless of phrasing: locate the exact sentence(s) answering the question, then pick the choice matching what's actually said, with no outside knowledge, no reversed direction, and no overstating a modest finding into a stronger one.",
       examples: [
         {
           q: "A marine biologist tagged 40 sea turtles as part of a two-year nesting study. Of those 40, 34 returned to the same nesting beach the following year. According to the text, what did the biologist find?",
@@ -298,7 +298,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "She hesitates in the doorway for 'a long moment' and has to make herself walk in — both signal a reaction strong enough to slow her down, without the text stating exactly what that reaction is. Claiming she feels gratitude invents a feeling never mentioned, and claiming she's annoyed isn't supported; nothing in the text reads as complaint. Claiming she has no emotional response is directly undercut by the pause and the effort it takes her to enter — that's the opposite of no response. Only 'she is more affected by the room than she is ready to act on immediately' matches the hesitation the text actually depicts, without overstating what emotion is behind it.",
+            "She hesitates in the doorway for 'a long moment' and has to make herself walk in; both signal a reaction strong enough to slow her down, without the text stating exactly what that reaction is. Claiming she feels gratitude invents a feeling never mentioned, and claiming she's annoyed isn't supported; nothing in the text reads as complaint. Claiming she has no emotional response is directly undercut by the pause and the effort it takes her to enter: that's the opposite of no response. Only 'she is more affected by the room than she is ready to act on immediately' matches the hesitation the text actually depicts, without overstating what emotion is behind it.",
           difficulty: "hard",
         },
       ],
@@ -349,7 +349,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The tools are what raised weekly output from about three chairs to about nine; without them, that constraint on output would remain. Claiming quality would have suffered is wrong because hand-finishing — the step that actually preserves quality — continued even after the tools were introduced, so quality isn't what the tools changed. Claiming hand-finishing would have stopped inverts the text: hand-finishing is exactly what stayed the same, tools or not. Claiming prices would have risen invents a pricing response never discussed. Only 'the shop would have continued producing far fewer chairs per week than it does now' follows directly from the stated cause of the output increase.",
+            "The tools are what raised weekly output from about three chairs to about nine; without them, that constraint on output would remain. Claiming quality would have suffered is wrong because hand-finishing (the step that actually preserves quality) continued even after the tools were introduced, so quality isn't what the tools changed. Claiming hand-finishing would have stopped inverts the text: hand-finishing is exactly what stayed the same, tools or not. Claiming prices would have risen invents a pricing response never discussed. Only 'the shop would have continued producing far fewer chairs per week than it does now' follows directly from the stated cause of the output increase.",
           difficulty: "medium",
         },
         {
@@ -362,7 +362,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "The schedule applied 'regardless of visible wear' because testing individual condition was too costly — meaning it tracked age, not actual condition — and the sensor data confirms this by showing some cables safely outlasting the schedule by years. Claiming it was created to cut maintenance costs misreads the reasoning: the fixed schedule was a workaround for the cost of testing, not a cost-reduction goal in itself. Claiming it's been proven unsafe overstates the finding into a safety verdict the text never makes; some cables lasting longer doesn't mean the schedule was unsafe. Claiming it's no longer followed anywhere goes beyond what the text describes about un-sensored bridges. Only 'it was based on a fixed timeline rather than each cable's actual condition' follows directly from what the text establishes about the schedule's basis.",
+            "The schedule applied 'regardless of visible wear' because testing individual condition was too costly (meaning it tracked age, not actual condition), and the sensor data confirms this by showing some cables safely outlasting the schedule by years. Claiming it was created to cut maintenance costs misreads the reasoning: the fixed schedule was a workaround for the cost of testing, not a cost-reduction goal in itself. Claiming it's been proven unsafe overstates the finding into a safety verdict the text never makes; some cables lasting longer doesn't mean the schedule was unsafe. Claiming it's no longer followed anywhere goes beyond what the text describes about un-sensored bridges. Only 'it was based on a fixed timeline rather than each cable's actual condition' follows directly from what the text establishes about the schedule's basis.",
           difficulty: "medium",
         },
         {
@@ -423,7 +423,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "What would actually prove this claim is a number about congestion — like commute times — tied to the bike lanes. The cost figure is a real, specific number, but it measures spending, not congestion, so it never touches the actual claim. The mileage figure measures the network's size, not its effect. The safety-feeling choice reports a feeling, not a traffic measurement. Only the commute-time statistic directly measures the claimed outcome.",
+            "What would actually prove this claim is a number about congestion (like commute times) tied to the bike lanes. The cost figure is a real, specific number, but it measures spending, not congestion, so it never touches the actual claim. The mileage figure measures the network's size, not its effect. The safety-feeling choice reports a feeling, not a traffic measurement. Only the commute-time statistic directly measures the claimed outcome.",
           difficulty: "medium",
         },
         {
@@ -436,7 +436,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The claim is specifically about litter decreasing, not about parks in general. The attendance figure is tempting — it's specific, about the same parks and campaign, and 'increased' sounds like good news — but it says nothing about litter, and more visitors could just as easily mean more litter. The poster-awareness figure measures whether people saw the campaign, not whether behavior changed. The activities list describes the campaign's methods, not its effect. Only the litter-count figure measures the right variable in the right direction.",
+            "The claim is specifically about litter decreasing, not about parks in general. The attendance figure is tempting (it's specific, about the same parks and campaign, and 'increased' sounds like good news), but it says nothing about litter, and more visitors could just as easily mean more litter. The poster-awareness figure measures whether people saw the campaign, not whether behavior changed. The activities list describes the campaign's methods, not its effect. Only the litter-count figure measures the right variable in the right direction.",
           difficulty: "hard",
         },
         {
@@ -475,7 +475,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The claim is about an increase caused by the campaign specifically after it launched. The pre-campaign decline is tempting — it's specific and about the exact topic — but it describes the opposite direction, before the campaign even started, so it can't support a claim about the campaign's effect. The advertising-channels and general-trust choices don't measure vaccination rates at all. Only the post-campaign rate increase measures the right variable, in the right direction, during the right time period.",
+            "The claim is about an increase caused by the campaign specifically after it launched. The pre-campaign decline is tempting (it's specific and about the exact topic), but it describes the opposite direction, before the campaign even started, so it can't support a claim about the campaign's effect. The advertising-channels and general-trust choices don't measure vaccination rates at all. Only the post-campaign rate increase measures the right variable, in the right direction, during the right time period.",
           difficulty: "hard",
         },
       ],
@@ -539,7 +539,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The claim is that mentorship, not pre-existing ambition, drove the promotions. The first choice's comparison group — employees who never applied — likely differs in ambition from the start, so it doesn't rule out that alternative explanation. The pairing-description and confidence-survey choices don't measure promotions. The second choice's comparison group applied but wasn't matched only due to limited availability, meaning both groups share the same ambition level and only the mentor-matching differed — that's the comparison that actually controls for the variable that matters.",
+            "The claim is that mentorship, not pre-existing ambition, drove the promotions. The first choice's comparison group (employees who never applied) likely differs in ambition from the start, so it doesn't rule out that alternative explanation. The pairing-description and confidence-survey choices don't measure promotions. The second choice's comparison group applied but wasn't matched only due to limited availability, meaning both groups share the same ambition level and only the mentor-matching differed. That's the comparison that actually controls for the variable that matters.",
           difficulty: "medium",
         },
         {
@@ -552,7 +552,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The claim is specifically about output per hour, caused by the schedule change. The stress-survey choice is tempting — less stress could plausibly raise output — but it never actually measures output. The plain 9%-rise figure and the hours-reduction fact don't rule out an industry-wide trend that year. Only the second choice directly measures output while also ruling out that alternative, using a similar company that kept a five-day week as a comparison.",
+            "The claim is specifically about output per hour, caused by the schedule change. The stress-survey choice is tempting (less stress could plausibly raise output), but it never actually measures output. The plain 9%-rise figure and the hours-reduction fact don't rule out an industry-wide trend that year. Only the second choice directly measures output while also ruling out that alternative, using a similar company that kept a five-day week as a comparison.",
           difficulty: "hard",
         },
       ],
@@ -589,7 +589,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Q3 (4.8) is lower than Q2 (5.1) — a slight fall — and Q4 (6.3) is higher again — a rise. 'Fell in every quarter' overstates that one dip into a full decline through year's end. 'Remained flat' ignores that the values changed at all. 'Rose in every quarter' ignores the Q3 dip entirely.",
+            "Q3 (4.8) is lower than Q2 (5.1), a slight fall, and Q4 (6.3) is higher again, a rise. 'Fell in every quarter' overstates that one dip into a full decline through year's end. 'Remained flat' ignores that the values changed at all. 'Rose in every quarter' ignores the Q3 dip entirely.",
           difficulty: "easy",
         },
         {
@@ -602,7 +602,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "The conclusion is causal — the app specifically drove the improvement — so the strongest support is the size of Chain A's rise (19 points) compared to Chain B's much smaller rise (3 points) without an app, ruling out a general trend affecting both chains equally. Comparing the two chains' raw scores at a single point in time doesn't address which company changed more. Noting that 'both increased' actually undercuts the app's unique effect, since Chain B improved too without one.",
+            "The conclusion is causal (the app specifically drove the improvement), so the strongest support is the size of Chain A's rise (19 points) compared to Chain B's much smaller rise (3 points) without an app, ruling out a general trend affecting both chains equally. Comparing the two chains' raw scores at a single point in time doesn't address which company changed more. Noting that 'both increased' actually undercuts the app's unique effect, since Chain B improved too without one.",
           difficulty: "medium",
         },
         {
@@ -615,7 +615,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "If parks without any new fountains saw almost the same percentage increase, that points to some other citywide factor — like weather or a general rise in park use — driving attendance up everywhere, not the fountains specifically, which weakens the causal claim. The pre-existing attendance gap and the raw increase at the fountain parks are both true but don't address whether the fountains specifically caused the rise. The fountain-count detail is background information, not evidence either way.",
+            "If parks without any new fountains saw almost the same percentage increase, that points to some other citywide factor (like weather or a general rise in park use), driving attendance up everywhere, not the fountains specifically, which weakens the causal claim. The pre-existing attendance gap and the raw increase at the fountain parks are both true but don't address whether the fountains specifically caused the rise. The fountain-count detail is background information, not evidence either way.",
           difficulty: "medium",
         },
         {
@@ -628,7 +628,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "The claim is specifically about variation — which commute type's rate swings more across the three neighborhoods — so the relevant comparison is each variable's range: transit spans 28 points (12% to 40%) while car spans only 7 points (55% to 62%), directly supporting the claim that transit use varies more. The second choice reports the identical two numbers but swaps which variable they belong to, which would actually support the opposite conclusion. The Neighborhood Z choice and the car-is-most-common choice are both true statements, but each describes a single data point or a consistent pattern rather than the spread across neighborhoods the claim is actually about.",
+            "The claim is specifically about variation (which commute type's rate swings more across the three neighborhoods), so the relevant comparison is each variable's range: transit spans 28 points (12% to 40%) while car spans only 7 points (55% to 62%), directly supporting the claim that transit use varies more. The second choice reports the identical two numbers but swaps which variable they belong to, which would actually support the opposite conclusion. The Neighborhood Z choice and the car-is-most-common choice are both true statements, but each describes a single data point or a consistent pattern rather than the spread across neighborhoods the claim is actually about.",
           difficulty: "hard",
         },
       ],
@@ -641,7 +641,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Selecting the Best Supporting Quotation",
       explanation:
-        "This Command of Evidence pattern applies to literary texts, poems, and passages about a historian's or researcher's work. You're given a claim — about a character's feeling, an author's style, a poem's theme, or a scholar's finding — and asked which quotation best supports or illustrates it. There's no data to weigh here. Instead: figure out exactly what quality, emotion, or specific point the claim names, then find the quotation that embodies that specific thing — not just one that mentions the same character, scene, or general topic.",
+        "This Command of Evidence pattern applies to literary texts, poems, and passages about a historian's or researcher's work. You're given a claim (about a character's feeling, an author's style, a poem's theme, or a scholar's finding) and asked which quotation best supports or illustrates it. There's no data to weigh here. Instead: figure out exactly what quality, emotion, or specific point the claim names, then find the quotation that embodies that specific thing, rather than one that merely mentions the same character, scene, or general topic.",
       examples: [
         {
           q: "A short story states that a young sailor feels profound relief upon finally spotting land after weeks lost at sea. Which quotation from the story most effectively illustrates this claim?",
@@ -653,7 +653,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The claim names a specific emotion — relief, after a long ordeal. The gulls quotation shows disbelief and tension, not relief. The sunrise-count and sail-trimming quotations are neutral descriptions with no emotional content at all. Only the second quotation shows the physical release of built-up tension — buckled knees, a broken laugh — capturing the emotional release itself.",
+            "The claim names a specific emotion: relief, after a long ordeal. The gulls quotation shows disbelief and tension, not relief. The sunrise-count and sail-trimming quotations are neutral descriptions with no emotional content at all. Only the second quotation shows the physical release of built-up tension (buckled knees, a broken laugh), capturing the emotional release itself.",
           difficulty: "easy",
         },
         {
@@ -666,7 +666,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 1,
           explain:
-            "The claim names a specific, understated emotion — quiet pride, not loud celebration. The announcement quotation shows pride, but loudly, which doesn't match the claim's specific wording. The doubt quotation shows uncertainty, not pride. The hours-spent quotation is a neutral fact with no emotional content. Only the second quotation shows restrained, private satisfaction — silently smoothing the seam by the window — matching 'quiet' precisely.",
+            "The claim names a specific, understated emotion: quiet pride, not loud celebration. The announcement quotation shows pride, but loudly, which doesn't match the claim's specific wording. The doubt quotation shows uncertainty, not pride. The hours-spent quotation is a neutral fact with no emotional content. Only the second quotation shows restrained, private satisfaction (silently smoothing the seam by the window), matching 'quiet' precisely.",
           difficulty: "easy",
         },
         {
@@ -692,7 +692,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 2,
           explain:
-            "The claim is specific: rooftops are chosen deliberately to keep hives away from pedestrians. The first quotation mentions rooftop experience generally but never states a reason for the choice. The second describes a personal feeling unrelated to location. The fourth describes a general trend in rooftop gardening, not a reason for hive placement. Only the third quotation directly states the beekeeper's actual motivation — distance from pedestrians — matching the claim exactly.",
+            "The claim is specific: rooftops are chosen deliberately to keep hives away from pedestrians. The first quotation mentions rooftop experience generally but never states a reason for the choice. The second describes a personal feeling unrelated to location. The fourth describes a general trend in rooftop gardening, not a reason for hive placement. Only the third quotation directly states the beekeeper's actual motivation (distance from pedestrians), matching the claim exactly.",
           difficulty: "medium",
         },
         {
@@ -718,7 +718,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Evaluating a Hypothetical Finding's Effect on a Claim",
       explanation:
-        "These questions describe a hypothesis or claim, then ask which new fact — one not already in the passage — would most strengthen it, or, just as often, most weaken it. There's no graph to read, and none of the choices are real quotes; they're all hypothetical findings you're judging for logical fit. The method: turn the hypothesis into a prediction ('if this is true, we'd expect to see ___'), then pick the choice that matches that prediction exactly. For a 'weaken' question, pick the choice that reports the opposite of that prediction, or that shows the same outcome would have happened anyway, without the supposed cause.",
+        "These questions describe a hypothesis or claim, then ask which new fact (one not already in the passage) would most strengthen it, or, just as often, most weaken it. There's no graph to read, and none of the choices are real quotes; they're all hypothetical findings you're judging for logical fit. The method: turn the hypothesis into a prediction ('if this is true, we'd expect to see ___'), then pick the choice that matches that prediction exactly. For a 'weaken' question, pick the choice that reports the opposite of that prediction, or that shows the same outcome would have happened anyway, without the supposed cause.",
       examples: [
         {
           q: "Researchers hypothesize that a species of beetle locates rotting fruit primarily by scent rather than by sight. Which finding, if true, would most strongly support this hypothesis?",
@@ -882,7 +882,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Multi-Step and Conditional Inferences",
       explanation:
-        "Some of the hardest Inferences questions don't ask you to extend a single stated fact — they ask you to combine two or more stated facts into one conclusion, rule out a competing explanation the text has quietly set up, or reason forward from a stated hypothesis as if it's true ('assuming this view is correct...', 'if these findings are valid...'). The method is the same discipline as basic completion, just with more moving parts: track each fact separately, notice what a second or third fact rules in or out, and accept any stated premise as true for the purposes of the question, even if it's phrased as someone's belief or assumption. As always, the correct completion is the narrowest one the combined facts actually support — not a sweeping generalization.",
+        "Some of the hardest Inferences questions don't ask you to extend a single stated fact; they ask you to combine two or more stated facts into one conclusion, rule out a competing explanation the text has quietly set up, or reason forward from a stated hypothesis as if it's true ('assuming this view is correct...', 'if these findings are valid...'). The method is the same discipline as basic completion, just with more moving parts: track each fact separately, notice what a second or third fact rules in or out, and accept any stated premise as true for the purposes of the question, even if it's phrased as someone's belief or assumption. As always, the correct completion is the narrowest one the combined facts actually support, not a sweeping generalization.",
       examples: [
         {
           q: "A city's public library recently digitized its entire collection of local newspapers dating back to 1890, making them searchable online for the first time. Historians researching the city's early development had previously needed to visit the library in person and read through physical archives page by page. Now that the newspapers are searchable online, these historians can likely ______. Which choice most logically completes the text?",
@@ -969,7 +969,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Precise Synonym in Context",
       explanation:
-        "You're given a sentence with a blank and four choices that all mean roughly the same thing — but only one fits this sentence's exact tone and logic. The trap: picking the most common synonym instead of the most precise one. Fix: cover the choices, read the sentence, and guess your own word first (often something simple, like 'strict'). Then pick the choice closest to your guess — not the fanciest-sounding option.",
+        "You're given a sentence with a blank and four choices that all mean roughly the same thing, but only one fits this sentence's exact tone and logic. The trap: picking the most common synonym instead of the most precise one. Fix: cover the choices, read the sentence, and guess your own word first (often something simple, like 'strict'). Then pick the choice closest to your guess, not the fanciest-sounding option.",
       examples: [
         {
           q: "The committee's ______ approach to spending drew criticism from departments hoping for expanded budgets. Which choice completes the text with the most logical and precise word or phrase?",
@@ -1008,7 +1008,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["scathing", "exhaustive", "muted", "premature"],
           answer: 1,
           explain:
-            "Predict your own word first: something like 'thorough' or 'detailed,' since the earlier context specifies the report cataloged failures thoroughly, not necessarily with a harsh tone. 'Scathing' is a very tempting choice, since it also describes strong criticism, but it specifically implies a harsh, biting tone the context never establishes. 'Muted' and 'premature' both contradict the thoroughness described. 'Exhaustive' matches the specific quality described — thorough coverage — without importing an assumption about tone.",
+            "Predict your own word first: something like 'thorough' or 'detailed,' since the earlier context specifies the report cataloged failures thoroughly, not necessarily with a harsh tone. 'Scathing' is a very tempting choice, since it also describes strong criticism, but it specifically implies a harsh, biting tone the context never establishes. 'Muted' and 'premature' both contradict the thoroughness described. 'Exhaustive' matches the specific quality described (thorough coverage) without importing an assumption about tone.",
           difficulty: "hard",
         },
       ],
@@ -1027,7 +1027,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["sound", "flawed", "irrelevant", "confusing"],
           answer: 0,
           explain:
-            "The context establishes the argument was brief and well-reasoned, not weak. 'Flawed,' 'irrelevant,' and 'confusing' would all describe a genuinely poor argument, contradicting the established context. 'Sound' — meaning logically valid and well-reasoned, not its more common everyday sense — fits precisely: the argument was logically solid but still didn't address the panel's specific concern.",
+            "The context establishes the argument was brief and well-reasoned, not weak. 'Flawed,' 'irrelevant,' and 'confusing' would all describe a genuinely poor argument, contradicting the established context. 'Sound' (meaning logically valid and well-reasoned, not its more common everyday sense) fits precisely: the argument was logically solid but still didn't address the panel's specific concern.",
           difficulty: "easy",
         },
         {
@@ -1035,7 +1035,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["glowing", "qualified", "dismissive", "brief"],
           answer: 1,
           explain:
-            "'Glowing' and 'dismissive' describe reactions more extreme than what's described — recommending with real flaws noted. 'Brief' doesn't capture the sentence's contrast with the film's wide praise elsewhere. 'Qualified' most commonly means having the right credentials, a meaning that makes no sense next to 'review' — but its secondary meaning, praise held back by reservations, fits precisely: the critic recommended the film while still noting real flaws.",
+            "'Glowing' and 'dismissive' describe reactions more extreme than what's described: recommending with real flaws noted. 'Brief' doesn't capture the sentence's contrast with the film's wide praise elsewhere. 'Qualified' most commonly means having the right credentials, a meaning that makes no sense next to 'review', but its secondary meaning, praise held back by reservations, fits precisely: the critic recommended the film while still noting real flaws.",
           difficulty: "medium",
         },
         {
@@ -1059,7 +1059,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["discriminating", "biased", "simple", "cautious"],
           answer: 0,
           explain:
-            "'Biased' imports an unfair, negative meaning that has nothing to do with tasting food, and 'simple' and 'cautious' both contradict the exceptional precision described. 'Discriminating' most commonly triggers today's association with unfair bias, but its classic, still-valid meaning — having refined judgment, able to make fine distinctions — exactly matches a palate that can tell moments-ago seasoning from ten-minutes-rested seasoning.",
+            "'Biased' imports an unfair, negative meaning that has nothing to do with tasting food, and 'simple' and 'cautious' both contradict the exceptional precision described. 'Discriminating' most commonly triggers today's association with unfair bias, but its classic, still-valid meaning (having refined judgment, able to make fine distinctions) exactly matches a palate that can tell moments-ago seasoning from ten-minutes-rested seasoning.",
           difficulty: "medium",
         },
       ],
@@ -1238,7 +1238,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Describing the Structure of an Entire Passage",
       explanation:
-        "These questions ask how a whole passage is organized from start to finish — its overall shape — not the role of one sentence or paragraph. Common shapes: a claim followed by an example; a common belief followed by a challenge to it; a problem followed by a solution; a question followed by an answer; or a small story that leads into a bigger point. Before reading the choices, sketch the shape yourself in one short phrase, like 'states a claim, then gives an example.' Then find the choice describing that same sequence of moves in the same order, rather than one that simply mentions the right topic.",
+        "These questions ask how a whole passage is organized from start to finish (its overall shape), not the role of one sentence or paragraph. Common shapes: a claim followed by an example; a common belief followed by a challenge to it; a problem followed by a solution; a question followed by an answer; or a small story that leads into a bigger point. Before reading the choices, sketch the shape yourself in one short phrase, like 'states a claim, then gives an example.' Then find the choice describing that same sequence of moves in the same order, rather than one that simply mentions the right topic.",
       examples: [
         {
           q: "Most migratory songbirds that breed in the Arctic follow strikingly similar north-south routes each year, funneling through the same narrow corridors as their ancestors. The Arctic tern, however, breaks from this pattern entirely: rather than following a direct corridor, its migration traces a wide, looping path that carries it across both the Atlantic and Pacific basins in a single year. Ornithologists still debate whether this looping route evolved to exploit favorable wind patterns or predates the more direct routes used by other species. Which choice best describes the passage's overall structure?",
@@ -1267,7 +1267,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "easy",
         },
         {
-          q: "A particular coral species off the coast of a Pacific island survives water temperatures that should, by every existing model, kill it outright. Curious researchers spent three years running a series of laboratory experiments, gradually eliminating possible explanations — first unusually thick tissue, then unusual feeding behavior — before finally isolating a heat-resistant protein produced by algae living inside the coral's own cells. That protein, researchers now believe, is the coral's actual defense. Which choice best describes the passage's overall structure?",
+          q: "A particular coral species off the coast of a Pacific island survives water temperatures that should, by every existing model, kill it outright. Curious researchers spent three years running a series of laboratory experiments, gradually eliminating possible explanations (first unusually thick tissue, then unusual feeding behavior), before finally isolating a heat-resistant protein produced by algae living inside the coral's own cells. That protein, researchers now believe, is the coral's actual defense. Which choice best describes the passage's overall structure?",
           choices: [
             "It presents a puzzling phenomenon, then narrates the experimental process that eventually explains it.",
             "It describes an experiment, then a puzzling phenomenon the experiment failed to explain.",
@@ -1308,7 +1308,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
       traps: [
         "Choosing an answer that correctly names the passage's topic but gets the order of its structural moves wrong (for example, 'example then claim' when the passage actually goes claim then example).",
-        "Choosing an answer that only accounts for part of the passage's structure — often missing a final pivot, complication, or return to an earlier point — rather than describing the whole arc.",
+        "Choosing an answer that only accounts for part of the passage's structure (often missing a final pivot, complication, or return to an earlier point), rather than describing the whole arc.",
         "Overstating how strongly the passage commits to a position (treating 'suggests a different cause' as if it said 'proves the old account wrong'), which usually rules out an otherwise well-shaped answer choice.",
       ],
     },
@@ -1337,7 +1337,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Both authors are discussing the same underlying phenomenon: social media has changed how people interact and participate in public life. Their conclusions differ — engagement versus isolation — but the shared premise, that social media has significantly changed interaction patterns, is something both would accept, since it's the foundation their opposing arguments are built on. Claiming social media increases engagement more than isolation just restates one author's conclusion, and claims about government regulation or in-person relationships becoming obsolete are claims neither passage actually makes.",
+            "Both authors are discussing the same underlying phenomenon: social media has changed how people interact and participate in public life. Their conclusions differ (engagement versus isolation), but the shared premise, that social media has significantly changed interaction patterns, is something both would accept, since it's the foundation their opposing arguments are built on. Claiming social media increases engagement more than isolation just restates one author's conclusion, and claims about government regulation or in-person relationships becoming obsolete are claims neither passage actually makes.",
           difficulty: "easy",
         },
         {
@@ -1350,7 +1350,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Both authors are working from the same observable fact: scores on these tests differ across students from different backgrounds. Their conclusions differ sharply — one trusts the test, one distrusts it — but they disagree about why scores vary, not whether they vary. Claiming tests should be eliminated, or that they're the single best predictor of success, each state only one author's conclusion, and claiming prep access has no effect directly contradicts Passage 2. Only 'test scores vary across students from different backgrounds' is the underlying pattern both authors would accept.",
+            "Both authors are working from the same observable fact: scores on these tests differ across students from different backgrounds. Their conclusions differ sharply (one trusts the test, one distrusts it), but they disagree about why scores vary, not whether they vary. Claiming tests should be eliminated, or that they're the single best predictor of success, each state only one author's conclusion, and claiming prep access has no effect directly contradicts Passage 2. Only 'test scores vary across students from different backgrounds' is the underlying pattern both authors would accept.",
           difficulty: "medium",
         },
         {
@@ -1363,7 +1363,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Both authors are discussing the same underlying phenomenon: the diet produces some effect in the short term. Their conclusions differ — effective versus unsustainable — but the shared premise, that the diet does produce noticeable short-term change, is something both would likely accept, since Passage 2's critique is about long-term sustainability, not about whether short-term effects occur at all. B, C, and D each contradict what one or both passages actually say.",
+            "Both authors are discussing the same underlying phenomenon: the diet produces some effect in the short term. Their conclusions differ (effective versus unsustainable), but the shared premise, that the diet does produce noticeable short-term change, is something both would likely accept, since Passage 2's critique is about long-term sustainability, not about whether short-term effects occur at all. B, C, and D each contradict what one or both passages actually say.",
           difficulty: "easy",
         },
         {
@@ -1376,7 +1376,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Both authors discuss the same underlying fact: the ordinance changed nighttime activity patterns in the city. Their conclusions differ — benefit to residents versus burden on businesses — but the shared premise, that the ordinance measurably reduced nighttime activity and noise, is something both would accept, since it's the shared foundation each side interprets differently. Claiming it's been an unambiguous success, or that it should be repealed immediately, each state only one side's evaluation, and claiming businesses weren't affected contradicts Passage 2 directly.",
+            "Both authors discuss the same underlying fact: the ordinance changed nighttime activity patterns in the city. Their conclusions differ (benefit to residents versus burden on businesses), but the shared premise, that the ordinance measurably reduced nighttime activity and noise, is something both would accept, since it's the shared foundation each side interprets differently. Claiming it's been an unambiguous success, or that it should be repealed immediately, each state only one side's evaluation, and claiming businesses weren't affected contradicts Passage 2 directly.",
           difficulty: "medium",
         },
         {
@@ -1602,7 +1602,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["In addition,", "However,", "As a result,", "For instance,"],
           answer: 2,
           explain:
-            "What's the relationship here? The switch to a local mill directly produced two outcomes — faster deliveries and lower costs — a cause and its effects, not addition or contrast. 'In addition' would suggest these are just two more, separate facts, not results of the switch, and 'however' would suggest a contradiction that isn't there. 'As a result' is the only choice that correctly signals the second sentence describes consequences of the first.",
+            "What's the relationship here? The switch to a local mill directly produced two outcomes (faster deliveries and lower costs), a cause and its effects, not addition or contrast. 'In addition' would suggest these are just two more, separate facts, not results of the switch, and 'however' would suggest a contradiction that isn't there. 'As a result' is the only choice that correctly signals the second sentence describes consequences of the first.",
           difficulty: "medium",
         },
         {
@@ -1610,7 +1610,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["However,", "For example,", "Similarly,", "As a result,"],
           answer: 3,
           explain:
-            "What's the relationship here? Extending hours led directly to a response — more tours — a cause and its effect. 'However' signals contrast, 'for example' signals illustration, and 'similarly' signals comparison, none of which fit. 'As a result' is the only choice matching the actual cause-effect relationship.",
+            "What's the relationship here? Extending hours led directly to a response (more tours), a cause and its effect. 'However' signals contrast, 'for example' signals illustration, and 'similarly' signals comparison, none of which fit. 'As a result' is the only choice matching the actual cause-effect relationship.",
           difficulty: "easy",
         },
         {
@@ -1645,7 +1645,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["Therefore,", "Nonetheless,", "For instance,", "Similarly,"],
           answer: 1,
           explain:
-            "Is this a full contradiction, or an acknowledgment of a difference followed by a shared similarity? It's the latter — the cost difference is acknowledged, but doesn't prevent a shared goal from being true. 'Therefore' implies the second sentence follows as a consequence, which isn't the case here, and 'for instance' and 'similarly' don't fit either. 'Nonetheless' correctly signals a concession — the difference is acknowledged, but the shared goal still holds true despite it.",
+            "Is this a full contradiction, or an acknowledgment of a difference followed by a shared similarity? It's the latter: the cost difference is acknowledged, but doesn't prevent a shared goal from being true. 'Therefore' implies the second sentence follows as a consequence, which isn't the case here, and 'for instance' and 'similarly' don't fit either. 'Nonetheless' correctly signals a concession: the difference is acknowledged, but the shared goal still holds true despite it.",
           difficulty: "easy",
         },
         {
@@ -1653,7 +1653,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["Consequently,", "Nonetheless,", "Similarly,", "For example,"],
           answer: 1,
           explain:
-            "Ask whether the two ideas actually contradict each other, or whether the second is simply true despite the first. Running behind schedule doesn't logically prevent a project from passing inspection later — these aren't direct opposites. 'Consequently' would wrongly suggest the delay caused the successful inspection, and 'similarly' and 'for example' don't fit at all. 'Nonetheless' is correct because nothing is actually being reversed or disproven — a positive result held up despite an earlier problem, exactly what concession language signals.",
+            "Ask whether the two ideas actually contradict each other, or whether the second is simply true despite the first. Running behind schedule doesn't logically prevent a project from passing inspection later; these aren't direct opposites. 'Consequently' would wrongly suggest the delay caused the successful inspection, and 'similarly' and 'for example' don't fit at all. 'Nonetheless' is correct because nothing is actually being reversed or disproven: a positive result held up despite an earlier problem, exactly what concession language signals.",
           difficulty: "hard",
         },
         {
@@ -1661,7 +1661,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["Nonetheless,", "For example,", "As a result,", "Similarly,"],
           answer: 0,
           explain:
-            "Is this a full contradiction, or an acknowledgment of one point followed by agreement on another? It's the latter — disagreeing on policy doesn't prevent a shared commitment on something else. 'As a result' would wrongly imply the disagreement caused the pledge, and 'for example' and 'similarly' don't fit either. 'Nonetheless' correctly signals a concession — the disagreement is acknowledged, but the shared commitment still holds true despite it.",
+            "Is this a full contradiction, or an acknowledgment of one point followed by agreement on another? It's the latter: disagreeing on policy doesn't prevent a shared commitment on something else. 'As a result' would wrongly imply the disagreement caused the pledge, and 'for example' and 'similarly' don't fit either. 'Nonetheless' correctly signals a concession: the disagreement is acknowledged, but the shared commitment still holds true despite it.",
           difficulty: "easy",
         },
         {
@@ -1698,7 +1698,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Independent Clause Joins (Comma, Semicolon, Period, or Conjunction)",
       explanation:
-        "This pattern is about joining two complete, independent clauses — each one could stand alone as its own sentence. Everything hinges on one question: is each side of the punctuation a full independent clause (subject + verb, complete thought)? If both sides are independent, you have exactly four correct options: a period, a semicolon, a comma plus a word like 'and' or 'but,' or a colon (only if the second clause explains the first). A comma by itself joining two independent clauses — a 'comma splice' — is a common wrong answer. Watch for this pattern whenever both clauses could be read as standalone sentences.",
+        "This pattern is about joining two complete, independent clauses — each one could stand alone as its own sentence. Everything hinges on one question: is each side of the punctuation a full independent clause (subject + verb, complete thought)? If both sides are independent, you have exactly four correct options: a period, a semicolon, a comma plus a word like 'and' or 'but,' or a colon (only if the second clause explains the first). A comma by itself joining two independent clauses (a 'comma splice') is a common wrong answer. Watch for this pattern whenever both clauses could be read as standalone sentences.",
       examples: [
         {
           q: "The results were surprising ______ no one had predicted such a sharp decline. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1749,7 +1749,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Semicolon-Separated Lists with Internal Commas",
       explanation:
-        "This pattern covers lists where individual items already contain their own comma — most often a name followed by a description, like 'Chen Liu, a sculptor.' When every list item is a simple word or phrase, ordinary commas work fine. But once one item already has a comma inside it, more commas make it impossible to tell where one item ends and the next begins. That's your signal: introduce the list with a colon and separate items with semicolons instead. Watch for this whenever a sentence lists several people, places, or things — check if any single item already has its own comma.",
+        "This pattern covers lists where individual items already contain their own comma, most often a name followed by a description, like 'Chen Liu, a sculptor.' When every list item is a simple word or phrase, ordinary commas work fine. But once one item already has a comma inside it, more commas make it impossible to tell where one item ends and the next begins. That's your signal: introduce the list with a colon and separate items with semicolons instead. Watch for this whenever a sentence lists several people, places, or things: check if any single item already has its own comma.",
       examples: [
         {
           q: "The museum's newest exhibit features work by three artists______ Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1826,7 +1826,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "None of the items — muffins, scones, croissants — contains its own internal comma, so plain commas between them are perfectly clear on their own, with a comma before 'and' following standard serial-comma convention. Semicolons throughout the list are unnecessary here and would actually be a mistake in the other direction, since there's no ambiguity for them to resolve; dropping punctuation entirely is a plain error.",
+            "None of the items (muffins, scones, croissants) contains its own internal comma, so plain commas between them are perfectly clear on their own, with a comma before 'and' following standard serial-comma convention. Semicolons throughout the list are unnecessary here and would actually be a mistake in the other direction, since there's no ambiguity for them to resolve; dropping punctuation entirely is a plain error.",
           difficulty: "hard",
         },
       ],
@@ -1839,7 +1839,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Nonessential Appositives and Descriptive Phrases",
       explanation:
-        "This pattern covers appositives — a word or phrase that renames or describes a nearby noun, like 'a retired firefighter' describing 'my uncle Raymond.' This isn't about separating list items; it's about correctly bracketing one piece of extra, droppable information. The core test: if the phrase is essential to knowing who or what's being discussed, it gets no commas. If it's just extra detail — the noun is already clear without it — it must be boxed off with commas, on both sides if it's mid-sentence, or one comma if it opens or closes the sentence.",
+        "This pattern covers appositives: a word or phrase that renames or describes a nearby noun, like 'a retired firefighter' describing 'my uncle Raymond.' This isn't about separating list items; it's about correctly bracketing one piece of extra, droppable information. The core test: if the phrase is essential to knowing who or what's being discussed, it gets no commas. If it's just extra detail (the noun is already clear without it), it must be boxed off with commas, on both sides if it's mid-sentence, or one comma if it opens or closes the sentence.",
       examples: [
         {
           q: "My uncle Raymond ______ still volunteers at the local station. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1875,7 +1875,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "'A retired pediatrician who still volunteers twice a week' describes 'Dr. Alvarez,' but the descriptive phrase comes first, before the name it describes. Since there's nothing before the phrase to bracket — it opens the sentence — only one comma is needed, right after the phrase and before the name, not commas on both sides as in a mid-sentence appositive, and not a comma splitting the phrase itself.",
+            "'A retired pediatrician who still volunteers twice a week' describes 'Dr. Alvarez,' but the descriptive phrase comes first, before the name it describes. Since there's nothing before the phrase to bracket (it opens the sentence), only one comma is needed, right after the phrase and before the name, not commas on both sides as in a mid-sentence appositive, and not a comma splitting the phrase itself.",
           difficulty: "medium",
         },
         {
@@ -1908,7 +1908,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["Despite the storm, ", "Despite the storm; ", "Despite the storm ", "Despite, the storm, "],
           answer: 0,
           explain:
-            "'Despite the storm' is not a complete sentence on its own — it's a dependent prepositional phrase — while 'the flight departed on time' is independent. Since only one side is independent, a semicolon (which requires independent clauses on both sides) is wrong. The correct choice uses a single comma after the introductory phrase, before the independent clause begins.",
+            "'Despite the storm' is not a complete sentence on its own (it's a dependent prepositional phrase) while 'the flight departed on time' is independent. Since only one side is independent, a semicolon (which requires independent clauses on both sides) is wrong. The correct choice uses a single comma after the introductory phrase, before the independent clause begins.",
           difficulty: "easy",
         },
         {
@@ -1929,7 +1929,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["After months of planning, ", "After months of planning; ", "After months of planning ", "After, months of planning, "],
           answer: 0,
           explain:
-            "'After months of planning' is not a complete sentence on its own — it's a dependent introductory phrase — while 'the festival finally opened to the public' is independent. Since only one side is independent, a semicolon would be wrong. A single comma after the introductory phrase is correct.",
+            "'After months of planning' is not a complete sentence on its own (it's a dependent introductory phrase) while 'the festival finally opened to the public' is independent. Since only one side is independent, a semicolon would be wrong. A single comma after the introductory phrase is correct.",
           difficulty: "easy",
         },
         {
@@ -1955,7 +1955,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "'Having reviewed every application twice' has no subject of its own — it's a participial phrase describing an implied actor (the committee), not a complete clause — while 'the committee still could not reach a unanimous decision' is independent. This is the same single-boundary case as an introductory phrase beginning with 'despite' or 'although,' even though this one opens with an '-ing' participle: a single comma after the introductory phrase is correct.",
+            "'Having reviewed every application twice' has no subject of its own, since it's a participial phrase describing an implied actor (the committee), not a complete clause, while 'the committee still could not reach a unanimous decision' is independent. This is the same single-boundary case as an introductory phrase beginning with 'despite' or 'although,' even though this one opens with an '-ing' participle: a single comma after the introductory phrase is correct.",
           difficulty: "hard",
         },
       ],
@@ -1990,7 +1990,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["laboratories'", "laboratory's", "laboratories", "laboratorys'"],
           answer: 0,
           explain:
-            "'Combined data' follows the noun — data the laboratories possess together, so this needs a possessive, not a plain plural. The sentence explicitly says 'three separate laboratories,' confirming multiple owners, so the plural possessive is correct: laboratories', apostrophe after the existing -s — not laboratory's, which would wrongly suggest a single lab, and 'laboratorys'' isn't even how the plural is spelled.",
+            "'Combined data' follows the noun: data the laboratories possess together, so this needs a possessive, not a plain plural. The sentence explicitly says 'three separate laboratories,' confirming multiple owners, so the plural possessive is correct: laboratories', apostrophe after the existing -s, not laboratory's, which would wrongly suggest a single lab, and 'laboratorys'' isn't even how the plural is spelled.",
           difficulty: "medium",
         },
         {
@@ -2006,7 +2006,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["artists'", "artist's", "artists", "artist's's"],
           answer: 0,
           explain:
-            "The sentence already correctly uses two other possessives — 'museum's' for one museum, 'sculptor's' for one sculptor — as a model. 'Sketches' follows the blank, and 'several' signals more than one artist possessing them jointly, so the plural possessive matches the pattern: artists', not artist's (one owner) or artists (no ownership at all).",
+            "The sentence already correctly uses two other possessives ('museum's' for one museum, 'sculptor's' for one sculptor) as a model. 'Sketches' follows the blank, and 'several' signals more than one artist possessing them jointly, so the plural possessive matches the pattern: artists', not artist's (one owner) or artists (no ownership at all).",
           difficulty: "hard",
         },
       ],
@@ -2071,7 +2071,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Using a Colon to Introduce a List, Explanation, or Elaboration",
       explanation:
-        "A colon can introduce more than just a second independent clause — it can introduce a list, a phrase that renames something just mentioned, or an explanation. Unlike a semicolon, what follows a colon doesn't need to be a complete sentence; a list or a single explanatory phrase works fine. What matters is the OTHER side: everything before the colon must be a complete, independent clause that could stand on its own — even if what follows it can't.",
+        "A colon can introduce more than just a second independent clause; it can introduce a list, a phrase that renames something just mentioned, or an explanation. Unlike a semicolon, what follows a colon doesn't need to be a complete sentence; a list or a single explanatory phrase works fine. What matters is the OTHER side: everything before the colon must be a complete, independent clause that could stand on its own, even if what follows it can't.",
       examples: [
         {
           q: "The museum's mission statement emphasizes one goal above all others______ preserving the collection for future generations. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2165,7 +2165,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["are", "is", "was", "has been"],
           answer: 0,
           explain:
-            "Cross out both modifying phrases — 'of the survey' and 'conducted across all twelve regions' — neither is the subject. What remains is 'The results ______ still being reviewed,' making 'results' (plural) the true subject, not the nearby singular 'survey.' A plural subject needs a plural verb.",
+            "Cross out both modifying phrases ('of the survey' and 'conducted across all twelve regions') neither is the subject. What remains is 'The results ______ still being reviewed,' making 'results' (plural) the true subject, not the nearby singular 'survey.' A plural subject needs a plural verb.",
           difficulty: "medium",
         },
         {
@@ -2185,7 +2185,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Parallel Structure in Lists and Comparisons",
       explanation:
-        "This pattern tests whether all items in a list — or both sides of a comparison — use matching grammatical forms: all -ing forms, all infinitives, or all plain verbs, never a mix. The trap answer usually shifts form partway through the list (two -ing verbs, then suddenly an infinitive), which sounds subtly 'off' even if you can't name the rule. The fix: find the form used by the first item or two, then require every other item to match it exactly.",
+        "This pattern tests whether all items in a list (or both sides of a comparison) use matching grammatical forms: all -ing forms, all infinitives, or all plain verbs, never a mix. The trap answer usually shifts form partway through the list (two -ing verbs, then suddenly an infinitive), which sounds subtly 'off' even if you can't name the rule. The fix: find the form used by the first item or two, then require every other item to match it exactly.",
       examples: [
         {
           q: "She enjoys hiking, swimming, and ______. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2246,7 +2246,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Pronoun Agreement and Reference",
       explanation:
-        "This pattern checks whether a pronoun correctly matches the noun it refers back to — in number (singular or plural) — and whether that noun is clear and unambiguous. One common trap: words like 'each' and 'neither' are singular, and need singular pronouns, even though they might feel like they're describing a group.",
+        "This pattern checks whether a pronoun correctly matches the noun it refers back to, in number (singular or plural), and whether that noun is clear and unambiguous. One common trap: words like 'each' and 'neither' are singular, and need singular pronouns, even though they might feel like they're describing a group.",
       examples: [
         {
           q: "Each of the students submitted ______ essay by the deadline. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2302,7 +2302,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Verb Tense and Form Consistency",
       explanation:
-        "This pattern is about whether a verb's TENSE or FORM matches the timeline the rest of the sentence sets up — separate from subject-verb agreement. First, figure out the timeline: a single past event, one past event before another, or something continuing up to now. Or check what form a nearby word requires — some verbs need 'to + verb' after them, others need the '-ing' form. Match the verb to that signal, instead of just picking whatever tense sounds natural on its own.",
+        "This pattern is about whether a verb's TENSE or FORM matches the timeline the rest of the sentence sets up, separate from subject-verb agreement. First, figure out the timeline: a single past event, one past event before another, or something continuing up to now. Or check what form a nearby word requires: some verbs need 'to + verb' after them, others need the '-ing' form. Match the verb to that signal, instead of just picking whatever tense sounds natural on its own.",
       examples: [
         {
           q: "By the time the store closed, the clerk ______ every shelf twice. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2341,7 +2341,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["repeated / to abandon", "repeating / to abandon", "repeated / abandoning", "repeat / abandon"],
           answer: 0,
           explain:
-            "The first blank follows 'Having,' which requires a past participle to form a perfect participial phrase showing a completed action before the main clause — 'Having repeated,' not 'having repeating' or 'having repeat.' The second blank follows 'decided,' a verb that requires an infinitive afterward, not a gerund — 'decided to abandon,' not 'decided abandoning.' Each blank follows its own specific rule.",
+            "The first blank follows 'Having,' which requires a past participle to form a perfect participial phrase showing a completed action before the main clause: 'Having repeated,' not 'having repeating' or 'having repeat.' The second blank follows 'decided,' a verb that requires an infinitive afterward, not a gerund: 'decided to abandon,' not 'decided abandoning.' Each blank follows its own specific rule.",
           difficulty: "hard",
         },
       ],
@@ -2354,7 +2354,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Modifier Placement and Dangling Modifiers",
       explanation:
-        "This pattern tests whether an introductory phrase correctly describes the subject right after it. A modifier — usually a phrase without its own subject, often starting with an '-ing' or '-ed' word — is only correctly placed if the noun right after the comma is the thing actually doing what the phrase describes. A 'dangling modifier' happens when the phrase describes someone who never actually shows up as the following subject. The fix is always the same: figure out who or what the modifier is really describing, then make sure that exact noun comes right after it as the sentence's subject.",
+        "This pattern tests whether an introductory phrase correctly describes the subject right after it. A modifier (usually a phrase without its own subject, often starting with an '-ing' or '-ed' word) is only correctly placed if the noun right after the comma is the thing actually doing what the phrase describes. A 'dangling modifier' happens when the phrase describes someone who never actually shows up as the following subject. The fix is always the same: figure out who or what the modifier is really describing, then make sure that exact noun comes right after it as the sentence's subject.",
       examples: [
         {
           q: "______ the museum's new wing finally opened to visitors. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2418,7 +2418,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "'Having ignored those concerns' requires a subject capable of ignoring something — a person or group, like the proposal's authors — not the proposal itself, which can't ignore anything. This dangling-modifier pattern applies to any sentence in a passage, not just the first one. Only the first choice supplies a subject capable of the action the modifier describes.",
+            "'Having ignored those concerns' requires a subject capable of ignoring something (a person or group, like the proposal's authors), not the proposal itself, which can't ignore anything. This dangling-modifier pattern applies to any sentence in a passage, not just the first one. Only the first choice supplies a subject capable of the action the modifier describes.",
           difficulty: "hard",
         },
       ],
@@ -2431,7 +2431,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finite vs. Non-Finite Verb Forms",
       explanation:
-        "A finite verb can be a sentence's complete main verb on its own — it shows tense and matches its subject (runs, ran, is running). A non-finite form — an infinitive ('to run'), a gerund ('running' as a noun), or a participle ('having run,' or '-ing'/'-ed' as a modifier) — can NOT stand alone as the main verb. These questions test which form a spot needs. Two shapes come up constantly: (1) a phrase attaches to an already-complete sentence, and using a finite verb there accidentally creates a run-on — a participle was needed instead; (2) a question gets embedded inside a bigger sentence, which needs plain statement word order (subject, then verb — no inversion, no question mark), not a standalone question's flipped order. The method: find the sentence's one true finite main verb first. Anything else that looks verb-like needs a non-finite form.",
+        "A finite verb can be a sentence's complete main verb on its own; it shows tense and matches its subject (runs, ran, is running). A non-finite form (an infinitive like 'to run,' a gerund like 'running' as a noun, or a participle like 'having run,' or an '-ing'/'-ed' modifier) can NOT stand alone as the main verb. These questions test which form a spot needs. Two shapes come up constantly: (1) a phrase attaches to an already-complete sentence, and using a finite verb there accidentally creates a run-on when a participle was needed instead; (2) a question gets embedded inside a bigger sentence, which needs plain statement word order (subject, then verb, no inversion, no question mark), not a standalone question's flipped order. The method: find the sentence's one true finite main verb first. Anything else that looks verb-like needs a non-finite form.",
       examples: [
         {
           q: "The committee, ______ every application twice, still could not reach a unanimous decision. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2459,7 +2459,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "'Why the machine had stopped' functions as a noun clause — the object of 'explain' — not a standalone question. An embedded clause like this uses ordinary statement word order: subject before its verb, no inversion. The other choices incorrectly apply question-word-order inversion inside an embedded clause.",
+            "'Why the machine had stopped' functions as a noun clause (the object of 'explain'), not a standalone question. An embedded clause like this uses ordinary statement word order: subject before its verb, no inversion. The other choices incorrectly apply question-word-order inversion inside an embedded clause.",
           difficulty: "medium",
         },
         {
@@ -2481,7 +2481,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
       traps: [
         "Using a second finite verb in a phrase that attaches to an already-complete independent clause, accidentally creating a run-on or comma splice instead of the needed participle.",
-        "Inverting the subject and verb — or adding 'do/does/did' — inside an embedded question that functions as a noun clause, rather than using plain statement word order.",
+        "Inverting the subject and verb (or adding 'do/does/did') inside an embedded question that functions as a noun clause, rather than using plain statement word order.",
         "Pairing a verb with the wrong non-finite form (an infinitive where that specific verb requires a gerund, or vice versa) — this sounds subtly wrong but is easy to miss when reading quickly.",
       ],
     },
@@ -2587,7 +2587,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["No solution", "Exactly one solution", "Infinitely many solutions", "Exactly two solutions"],
           answer: 0,
           explain:
-            "Simplify the left side first — distribute and combine like terms: 5x - 3x - 12 = 2x + 3, which becomes 2x - 12 = 2x + 3. The x-terms only visibly match after simplifying, so you have to distribute first to see it. Subtracting 2x from both sides leaves -12 = 3 — false for every value of x, so the equation has no solution.",
+            "Simplify the left side first; distribute and combine like terms: 5x - 3x - 12 = 2x + 3, which becomes 2x - 12 = 2x + 3. The x-terms only visibly match after simplifying, so you have to distribute first to see it. Subtracting 2x from both sides leaves -12 = 3, false for every value of x, so the equation has no solution.",
           difficulty: "medium",
         },
         {
@@ -2611,7 +2611,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving for a Related Expression Without Fully Isolating x",
       explanation:
-        "Some questions ask for the value of an expression involving x — like x − 7 or 2x — instead of x itself. The fast method: manipulate the whole equation so it isolates the exact expression being asked for, instead of solving all the way down to x and substituting afterward. Watch for this whenever the question asks for an expression, not a plain 'what is x.' Dividing, adding, or combining terms to land exactly on that expression is almost always faster than solving for x first.",
+        "Some questions ask for the value of an expression involving x (like x − 7 or 2x), instead of x itself. The fast method: manipulate the whole equation so it isolates the exact expression being asked for, instead of solving all the way down to x and substituting afterward. Watch for this whenever the question asks for an expression, not a plain 'what is x.' Dividing, adding, or combining terms to land exactly on that expression is almost always faster than solving for x first.",
       examples: [
         {
           q: "If 4x - 28 = -24, what is the value of x - 7?",
@@ -2781,7 +2781,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Reading Slope and Intercept Directly from a Graph",
       explanation:
-        "This pattern gives you a line's graph — not an equation or table — and asks for its slope, y-intercept, or a specific value. No algebra needed: read the y-intercept where the line crosses the y-axis. Find the slope by picking two clearly marked points and computing rise over run — count grid squares directly instead of estimating.",
+        "This pattern gives you a line's graph (not an equation or table) and asks for its slope, y-intercept, or a specific value. No algebra needed: read the y-intercept where the line crosses the y-axis. Find the slope by picking two clearly marked points and computing rise over run, counting grid squares directly instead of estimating.",
       examples: [
         {
           q: "A line is graphed passing through the marked points (0, 3) and (2, 7). What is the y-intercept of the line?",
@@ -2838,7 +2838,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finding Slope from Two Points or Function Values",
       explanation:
-        "This pattern gives you two data points — either as coordinate pairs, or as two function values like f(2) and f(5) — and asks for the slope, or asks you to use the slope to find another value. The formula is always change in output divided by change in input. The real skill is correctly telling which numbers are inputs and which are outputs, especially in a word problem instead of plain coordinates.",
+        "This pattern gives you two data points, either as coordinate pairs, or as two function values like f(2) and f(5), and asks for the slope, or asks you to use the slope to find another value. The formula is always change in output divided by change in input. The real skill is correctly telling which numbers are inputs and which are outputs, especially in a word problem instead of plain coordinates.",
       examples: [
         {
           q: "A linear function f has f(0) = 4 and f(3) = 13. What is the slope of f?",
@@ -3068,7 +3068,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Interpreting a Constant or Coefficient in a Real-World Equation",
       explanation:
-        "This pattern gives you a linear equation that already models a real situation, and asks what a specific number in it represents — you're reading backward from a given equation, not building one from scratch. The method: figure out what each variable stands for from the setup, then match the number's role to what that means in context. A number multiplying a variable is a rate tied to that variable. A number standing alone — not multiplying anything — is a fixed amount, present no matter what the variables equal.",
+        "This pattern gives you a linear equation that already models a real situation, and asks what a specific number in it represents: you're reading backward from a given equation, not building one from scratch. The method: figure out what each variable stands for from the setup, then match the number's role to what that means in context. A number multiplying a variable is a rate tied to that variable. A number standing alone (not multiplying anything) is a fixed amount, present no matter what the variables equal.",
       examples: [
         {
           q: "A store's total revenue from selling notebooks is represented by y = 3x + 50, where x is the number of notebooks sold. What does the 50 represent in this equation?",
@@ -3257,7 +3257,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving for a Specific Value via Elimination",
       explanation:
-        "The most common systems pattern asks you to solve for one variable (or a specific expression) using two equations. Elimination — adding or subtracting the equations to cancel one variable — is almost always faster than substitution, especially when the equations are already in a similar form and the coefficients line up or can be easily matched.",
+        "The most common systems pattern asks you to solve for one variable (or a specific expression) using two equations. Elimination (adding or subtracting the equations to cancel one variable) is almost always faster than substitution, especially when the equations are already in a similar form and the coefficients line up or can be easily matched.",
       examples: [
         {
           q: "Solve the system: x + y = 10, x - y = 2. What is x?",
@@ -3363,9 +3363,9 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       name: "Reading the Solution Directly from a Graph",
       desmosCalculator: "graphing",
       desmosTrick:
-        "Step 1: Open Desmos and type the first equation into the first line exactly as it's written — if it's in the form Ax + By = C, you can enter it in that form directly, no need to solve for y first. Step 2: Type the second equation into the next line the same way. Desmos draws both as straight lines. Step 3: Click on the point where the two lines cross (use the +/- zoom buttons if they cross off-screen) — Desmos shows a small label with that point's exact coordinates. Step 4: Read the solution straight off that label: the first number is x, the second is y. No elimination or substitution required.",
+        "Step 1: Open Desmos and type the first equation into the first line exactly as it's written; if it's in the form Ax + By = C, you can enter it in that form directly, no need to solve for y first. Step 2: Type the second equation into the next line the same way. Desmos draws both as straight lines. Step 3: Click on the point where the two lines cross (use the +/- zoom buttons if they cross off-screen); Desmos shows a small label with that point's exact coordinates. Step 4: Read the solution straight off that label: the first number is x, the second is y. No elimination or substitution required.",
       explanation:
-        "This pattern shows the graphs of two lines (or a line and a curve) and asks for the system's solution — the point where they cross. No algebra needed: the solution is just the coordinates of that intersection point, read directly off the grid. This is different from counting solutions (no point needed) and from elimination (solved algebraically, no picture) — here, the graph already shows you the answer.",
+        "This pattern shows the graphs of two lines (or a line and a curve) and asks for the system's solution: the point where they cross. No algebra needed: the solution is just the coordinates of that intersection point, read directly off the grid. This is different from counting solutions (no point needed) and from elimination (solved algebraically, no picture); here, the graph already shows you the answer.",
       examples: [
         {
           q: "The graphs of two linear equations intersect at the point where x = 3 and y = 5, clearly marked on the grid. What is the solution to the system?",
@@ -3534,7 +3534,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Matching a Graph, Table, or Point to an Inequality or System",
       explanation:
-        "These questions run the usual process backward: instead of solving an inequality, you're given a shaded graph region, a table of points, or a single point, and asked which inequality it matches — or whether the point is even a valid solution. For a point and an inequality: substitute the coordinates in and check if the result is true. For a table: every single row must satisfy the inequality for the table to match — one failing row rules it out. For a shaded region: find the boundary line's equation first, then test a point clearly inside the shading to see which direction (greater than or less than) it represents.",
+        "These questions run the usual process backward: instead of solving an inequality, you're given a shaded graph region, a table of points, or a single point, and asked which inequality it matches, or whether the point is even a valid solution. For a point and an inequality: substitute the coordinates in and check if the result is true. For a table: every single row must satisfy the inequality for the table to match; one failing row rules it out. For a shaded region: find the boundary line's equation first, then test a point clearly inside the shading to see which direction (greater than or less than) it represents.",
       examples: [
         {
           q: "Does the point (3, 1) satisfy the inequality y > 2x - 4?",
@@ -3665,7 +3665,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Simplifying Rational Expressions via Factoring",
       explanation:
-        "This pattern involves simplifying a fraction where both the top and bottom are polynomials. The key move is always the same: factor both completely first, then cancel any shared factors. Trying to simplify without factoring first — like dividing term-by-term — is a common source of errors.",
+        "This pattern involves simplifying a fraction where both the top and bottom are polynomials. The key move is always the same: factor both completely first, then cancel any shared factors. Trying to simplify without factoring first (like dividing term-by-term) is a common source of errors.",
       examples: [
         {
           q: "Simplify the rational expression: (x² - 4)/(x - 2)",
@@ -3716,7 +3716,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Applying the Laws of Exponents",
       explanation:
-        "These questions test the rules for combining and rewriting exponents. Multiplying same-base powers: add the exponents (x^a · x^b = x^(a+b)). Dividing: subtract them (x^a / x^b = x^(a-b)). Raising a power to a power: multiply the exponents ((x^a)^b = x^(ab)). A fractional exponent represents a radical: x^(1/n) means the nth root of x, and x^(m/n) means the nth root of x, raised to the m power. Both directions of this conversion — exponent to radical, and back — show up on the test. A negative exponent means reciprocal, not a negative value: x^(-n) = 1/x^n.",
+        "These questions test the rules for combining and rewriting exponents. Multiplying same-base powers: add the exponents (x^a · x^b = x^(a+b)). Dividing: subtract them (x^a / x^b = x^(a-b)). Raising a power to a power: multiply the exponents ((x^a)^b = x^(ab)). A fractional exponent represents a radical: x^(1/n) means the nth root of x, and x^(m/n) means the nth root of x, raised to the m power. Both directions of this conversion (exponent to radical, and back) show up on the test. A negative exponent means reciprocal, not a negative value: x^(-n) = 1/x^n.",
       examples: [
         {
           q: "Simplify: x^5 · x^3",
@@ -3771,7 +3771,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Expanding and Combining Polynomial Expressions",
       explanation:
-        "This is the reverse of factoring: multiplying out (distributing) an expression like (x+3)(x-5), or adding, subtracting, and combining like terms across polynomials. Distribute every term in the first factor across every term in the second — the same idea as FOIL, just extended to any size polynomial — then combine the like terms that result. When adding or subtracting whole polynomials, line up matching powers of x before combining coefficients. Be extra careful to distribute a negative sign across EVERY term when subtracting one polynomial from another.",
+        "This is the reverse of factoring: multiplying out (distributing) an expression like (x+3)(x-5), or adding, subtracting, and combining like terms across polynomials. Distribute every term in the first factor across every term in the second (the same idea as FOIL, just extended to any size polynomial) then combine the like terms that result. When adding or subtracting whole polynomials, line up matching powers of x before combining coefficients. Be extra careful to distribute a negative sign across EVERY term when subtracting one polynomial from another.",
       examples: [
         {
           q: "Simplify: (2x³ - 5x + 1) + (x³ + 4x - 6)",
@@ -4054,7 +4054,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       desmosTrick:
         "Step 1: Type the linear equation into the first line and the quadratic equation into the second line, exactly as given — Desmos accepts input like y = x^2 + 3x - 4 directly. Desmos graphs a line and a parabola. Step 2: Every point where they cross is a solution to the system, so click each crossing point to read off its exact coordinates. Step 3: If the line touches the parabola at exactly one point, there's one solution; if it never touches, there are none. This replaces the whole substitute-and-solve process with reading a picture.",
       explanation:
-        "Some systems pair one linear equation with one nonlinear (usually quadratic) equation. Elimination doesn't really work here the way it does for two linear equations — the reliable method is substitution. Solve the linear equation for one variable, then substitute that expression into the nonlinear equation. This gives you a single-variable equation (often quadratic) to solve. Watch for two valid solutions — a line can cross a parabola at up to two points. Don't stop after finding just one, unless something in the question rules the other out.",
+        "Some systems pair one linear equation with one nonlinear (usually quadratic) equation. Elimination doesn't really work here the way it does for two linear equations; the reliable method is substitution. Solve the linear equation for one variable, then substitute that expression into the nonlinear equation. This gives you a single-variable equation (often quadratic) to solve. Watch for two valid solutions: a line can cross a parabola at up to two points. Don't stop after finding just one, unless something in the question rules the other out.",
       examples: [
         {
           q: "Solve the system: y = x + 1, y = x² - 5. What is the value of x, given x > 0?",
@@ -4110,7 +4110,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finding an Unknown Constant from a Given Root, Then Evaluating",
       explanation:
-        "Some questions give a function in factored form with an unknown constant, tell you one point its graph passes through, and ask you to first solve for that constant — then use it to evaluate the function somewhere else. The method has two stages: substitute the given point into the function to solve for the unknown constant, then substitute that constant back in — along with the NEW input you're asked about — to get the final answer. Don't stop after finding the constant if the question asks for more.",
+        "Some questions give a function in factored form with an unknown constant, tell you one point its graph passes through, and ask you to first solve for that constant, then use it to evaluate the function somewhere else. The method has two stages: substitute the given point into the function to solve for the unknown constant, then substitute that constant back in (along with the NEW input you're asked about) to get the final answer. Don't stop after finding the constant if the question asks for more.",
       examples: [
         {
           q: "The function f is defined by f(x) = (x - 3)(x - k), where k is a constant. The graph of y = f(x) passes through the point (5, 0). What is f(0)?",
@@ -4233,14 +4233,14 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Modeling Growth and Decay with Exponential Functions",
       explanation:
-        "Word problems describing repeated percentage growth or decay — population growth, compound interest, radioactive decay, depreciation — need an exponential function, not a linear one. (Using a linear model here is a common early mistake.) The base of the exponential directly captures the rate: for growth of r% per period, the base is (1 + r/100); for decay of r% per period, it's (1 - r/100).",
+        "Word problems describing repeated percentage growth or decay (population growth, compound interest, radioactive decay, depreciation) need an exponential function, not a linear one. (Using a linear model here is a common early mistake.) The base of the exponential directly captures the rate: for growth of r% per period, the base is (1 + r/100); for decay of r% per period, it's (1 - r/100).",
       examples: [
         {
           q: "A car's value decreases by 12% each year from an initial price of $30,000. Which of the following gives the car's value after 2 years?",
           choices: ["30000(0.88)^2", "30000(0.12)^2", "30000 - 2(0.12)(30000)", "30000(1.12)^2"],
           answer: 0,
           explain:
-            "This is repeated percentage decay, which needs an exponential model, not a linear one that just subtracts a flat amount each year. Since the value decreases by 12% each year, 88% remains each year, giving a base of 0.88 — not the raw rate 0.12 — so 30000(0.88)^2 = 23,232 is correct. 30000(0.12)^2 mistakes the decay rate for the base. 30000 - 2(0.12)(30000) applies the loss linearly, subtracting a flat 12% of the original value each year instead of compounding. 30000(1.12)^2 uses a growth base for a decay scenario.",
+            "This is repeated percentage decay, which needs an exponential model, not a linear one that just subtracts a flat amount each year. Since the value decreases by 12% each year, 88% remains each year, giving a base of 0.88 (not the raw rate 0.12), so 30000(0.88)^2 = 23,232 is correct. 30000(0.12)^2 mistakes the decay rate for the base. 30000 - 2(0.12)(30000) applies the loss linearly, subtracting a flat 12% of the original value each year instead of compounding. 30000(1.12)^2 uses a growth base for a decay scenario.",
           diagram: { kind: "exponentialGraph", growth: false, yInterceptLabel: "$30,000" },
           difficulty: "easy",
         },
@@ -4289,7 +4289,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Reading Linear vs. Exponential Growth From a Table",
       explanation:
-        "This pattern gives you a table of x and y values — not an equation or word problem — and asks whether the function is linear or exponential, and increasing or decreasing. The method: check how the output changes as the input increases by a constant amount. If it changes by the same ADDED amount each time, it's linear. If it changes by the same MULTIPLIED factor each time, it's exponential. Check at least two consecutive differences or ratios before deciding — one matching pair isn't enough to confirm the pattern.",
+        "This pattern gives you a table of x and y values (not an equation or word problem) and asks whether the function is linear or exponential, and increasing or decreasing. The method: check how the output changes as the input increases by a constant amount. If it changes by the same ADDED amount each time, it's linear. If it changes by the same MULTIPLIED factor each time, it's exponential. Check at least two consecutive differences or ratios before deciding — one matching pair isn't enough to confirm the pattern.",
       examples: [
         {
           q: "A table shows x: -1, 0, 1, 2 with f(x): 16, 17, 18, 19. Which best describes f?",
@@ -4390,7 +4390,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "f(x) + 5 is a vertical shift — every point on the original graph moves up by 5, including the asymptote itself, so the asymptote moves from y = 0 to y = 5, and the curve still decreases toward that new level. It's incorrect to think the asymptote stays put; a vertical shift moves every part of the graph, including the level it flattens toward. The overall shape (still decreasing, not increasing) doesn't change, and the asymptote remains horizontal, not vertical — only its vertical position moves.",
+            "f(x) + 5 is a vertical shift: every point on the original graph moves up by 5, including the asymptote itself, so the asymptote moves from y = 0 to y = 5, and the curve still decreases toward that new level. It's incorrect to think the asymptote stays put; a vertical shift moves every part of the graph, including the level it flattens toward. The overall shape (still decreasing, not increasing) doesn't change, and the asymptote remains horizontal, not vertical; only its vertical position moves.",
           difficulty: "hard",
         },
       ],
@@ -4403,7 +4403,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Minimum, Maximum, and Asymptote Reasoning for Exponential Functions",
       explanation:
-        "This pattern asks about the minimum or maximum value of an exponential function, or where it levels off — no vertex form here, since exponential functions don't have vertices. The key fact: for f(x) = a·b^x + c, the graph gets closer and closer to c but never actually reaches it — that's the horizontal asymptote — and c acts as the function's effective floor or ceiling. Whether the function increases or decreases, and whether c is a floor or a ceiling, depends on the signs of a and b — not on c alone.",
+        "This pattern asks about the minimum or maximum value of an exponential function, or where it levels off — no vertex form here, since exponential functions don't have vertices. The key fact: for f(x) = a·b^x + c, the graph gets closer and closer to c but never actually reaches it (that's the horizontal asymptote), and c acts as the function's effective floor or ceiling. Whether the function increases or decreases, and whether c is a floor or a ceiling, depends on the signs of a and b, not on c alone.",
       examples: [
         {
           q: "What value does the function f(x) = 3(2)^x + 4 approach but never reach as x decreases toward negative infinity?",
@@ -4426,7 +4426,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["Only function I", "Only function II", "Both function I and II", "Neither function I nor II"],
           answer: 0,
           explain:
-            "Both functions share the same constant (-3), but that alone doesn't determine max vs. min — the sign of the coefficient does. In function I, the coefficient is -4 (negative); since the base (2) is greater than 1, a negative coefficient means the function approaches -3 from below as x decreases, making -3 a ceiling and thus a maximum. In function II, the coefficient is 4 (positive), so the function approaches -3 from above as x decreases, making -3 a floor, not a maximum — so only function I qualifies.",
+            "Both functions share the same constant (-3), but that alone doesn't determine max vs. min; the sign of the coefficient does. In function I, the coefficient is -4 (negative); since the base (2) is greater than 1, a negative coefficient means the function approaches -3 from below as x decreases, making -3 a ceiling and thus a maximum. In function II, the coefficient is 4 (positive), so the function approaches -3 from above as x decreases, making -3 a floor, not a maximum, so only function I qualifies.",
           difficulty: "medium",
         },
         {
@@ -4447,7 +4447,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "P's base (1.05) is greater than 1, meaning P grows without bound as t increases, with no upper asymptote. Q's base (0.92) is less than 1, meaning Q shrinks toward (but never reaches) 0 as t increases. Comparing the two bases — greater than 1 versus less than 1 — determines the long-term outcome regardless of which starting value was larger, so P eventually overtakes Q permanently. Q's larger starting value (500) doesn't matter for the long-term comparison, since Q is shrinking while P keeps growing. And Q isn't growing at all — its base below 1 means it shrinks, not grows.",
+            "P's base (1.05) is greater than 1, meaning P grows without bound as t increases, with no upper asymptote. Q's base (0.92) is less than 1, meaning Q shrinks toward (but never reaches) 0 as t increases. Comparing the two bases (greater than 1 versus less than 1) determines the long-term outcome regardless of which starting value was larger, so P eventually overtakes Q permanently. Q's larger starting value (500) doesn't matter for the long-term comparison, since Q is shrinking while P keeps growing. And Q isn't growing at all — its base below 1 means it shrinks, not grows.",
           difficulty: "hard",
         },
       ],
@@ -4460,7 +4460,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finding the Vertex of a Quadratic from Standard Form",
       explanation:
-        "When a quadratic is given in standard form, f(x) = ax² + bx + c, instead of vertex form, its vertex isn't visible at a glance — you have to find it. The fastest method: the vertex's x-coordinate is always -b/2a. Substitute that back into the function to get the y-coordinate. Completing the square works too, and rewrites the function in vertex form directly — useful when the question asks for the rewritten equation itself, beyond the vertex's coordinates alone.",
+        "When a quadratic is given in standard form, f(x) = ax² + bx + c, instead of vertex form, its vertex isn't visible at a glance; you have to find it. The fastest method: the vertex's x-coordinate is always -b/2a. Substitute that back into the function to get the y-coordinate. Completing the square works too, and rewrites the function in vertex form directly, useful when the question asks for the rewritten equation itself, beyond the vertex's coordinates alone.",
       examples: [
         {
           q: "What is the vertex of f(x) = x² - 6x + 5?",
@@ -4483,7 +4483,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["(3, -11)", "(6, -11)", "(3, 7)", "(-3, -11)"],
           answer: 0,
           explain:
-            "With a = 2 and b = -12 — the leading coefficient must be included in the formula, not dropped — the x-coordinate is -b/2a = -(-12)/(2·2) = 3. Substituting back in gives g(3) = 2(9) - 36 + 7 = -11, so the vertex is (3, -11). (6, -11) comes from dropping the leading coefficient and computing -b/2 instead of -b/2a. (3, 7) mistakenly uses the constant term c as the y-coordinate. (-3, -11) flips the sign of the x-coordinate.",
+            "With a = 2 and b = -12 (the leading coefficient must be included in the formula, not dropped), the x-coordinate is -b/2a = -(-12)/(2·2) = 3. Substituting back in gives g(3) = 2(9) - 36 + 7 = -11, so the vertex is (3, -11). (6, -11) comes from dropping the leading coefficient and computing -b/2 instead of -b/2a. (3, 7) mistakenly uses the constant term c as the y-coordinate. (-3, -11) flips the sign of the x-coordinate.",
           difficulty: "medium",
         },
         {
@@ -4512,7 +4512,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Evaluating a Function and Interpreting Its Output in Context",
       explanation:
-        "These questions ask you to either compute a quadratic or exponential function's output at a given input, or interpret what an already-computed output means in the real-world scenario it describes. Unlike the vertex, growth-rate, or table patterns, there's no shortcut here beyond careful substitution: plug the input into the function, simplify, and follow order of operations exactly. When interpreting an output, connect the input and output variables back to what they mean in the scenario — like 'time in seconds' and 'height in feet' — and state the result using those units, not just as a bare number.",
+        "These questions ask you to either compute a quadratic or exponential function's output at a given input, or interpret what an already-computed output means in the real-world scenario it describes. Unlike the vertex, growth-rate, or table patterns, there's no shortcut here beyond careful substitution: plug the input into the function, simplify, and follow order of operations exactly. When interpreting an output, connect the input and output variables back to what they mean in the scenario (like 'time in seconds' and 'height in feet'), and state the result using those units, not just as a bare number.",
       examples: [
         {
           q: "The function is defined by f(x) = 2x² - 5x + 1. What is f(3)?",
@@ -4584,7 +4584,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Setting Up Proportions Correctly",
       explanation:
-        "The most reliable trick for ratio and rate word problems: set up two fractions with matching units in matching positions — both numerators are the same kind of quantity, both denominators are the same kind of quantity — then cross-multiply. Errors here almost always come from a mismatched setup, not from the arithmetic itself.",
+        "The most reliable trick for ratio and rate word problems: set up two fractions with matching units in matching positions (both numerators are the same kind of quantity, both denominators are the same kind of quantity) then cross-multiply. Errors here almost always come from a mismatched setup, not from the arithmetic itself.",
       examples: [
         {
           q: "A recipe uses 2 cups of flour for 12 cookies. How many cups are needed for 30 cookies?",
@@ -4635,7 +4635,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Unit Conversion Chains",
       explanation:
-        "This pattern requires converting between units — like miles to feet, or hours to seconds — before or after a rate calculation. The safest method: write out a chain of conversion factors, each one arranged so the unwanted unit cancels out (appearing once on top, once on bottom). That's more reliable than trying to remember whether to multiply or divide by the conversion number.",
+        "This pattern requires converting between units (like miles to feet, or hours to seconds), before or after a rate calculation. The safest method: write out a chain of conversion factors, each one arranged so the unwanted unit cancels out (appearing once on top, once on bottom). That's more reliable than trying to remember whether to multiply or divide by the conversion number.",
       examples: [
         {
           q: "A car travels at 60 miles per hour. What is this speed in feet per minute? (1 mile = 5,280 feet)",
@@ -4748,7 +4748,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Straightforward Percent Change and Discount Problems",
       explanation:
-        "Basic percentage problems — discounts, tax, tips, simple percent change — all follow the same formula: percent change = (new - old)/old × 100. For direct calculations, like 'find the sale price,' it's often faster to think in multipliers: a 25% discount means the customer pays 75% of the original price. Just multiply by 0.75 directly, instead of calculating the discount amount and subtracting it.",
+        "Basic percentage problems (discounts, tax, tips, simple percent change) all follow the same formula: percent change = (new - old)/old × 100. For direct calculations, like 'find the sale price,' it's often faster to think in multipliers: a 25% discount means the customer pays 75% of the original price. Just multiply by 0.75 directly, instead of calculating the discount amount and subtracting it.",
       examples: [
         {
           q: "A shirt originally $40 is discounted 25%. What is the sale price?",
@@ -4850,7 +4850,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Finding What Percent One Number Is of Another",
       explanation:
-        "Not every percentage question involves a change or discount — some just ask what percent one quantity is of another, with no 'before and after' at all. The formula: percent = (part / whole) × 100. The main skill is correctly telling which quantity is the 'part' and which is the 'whole' — the whole is whatever's being compared TO, usually right after the word 'of.'",
+        "Not every percentage question involves a change or discount; some just ask what percent one quantity is of another, with no 'before and after' at all. The formula: percent = (part / whole) × 100. The main skill is correctly telling which quantity is the 'part' and which is the 'whole': the whole is whatever's being compared TO, usually right after the word 'of.'",
       examples: [
         {
           q: "What percent of 300 is 75?",
@@ -4881,7 +4881,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["125%", "80%", "9%", "100%"],
           answer: 0,
           explain:
-            "Identifying the part (45) and the whole (36, following 'of') — the part is larger than the whole here — the ratio is 45/36=1.25, or 125%; a result over 100% is valid and expected whenever the part exceeds the whole. 80% comes from inverting the ratio (36/45) instead of dividing the part by the whole. 9% comes from an unrelated arithmetic slip. 100% incorrectly assumes the two quantities must be treated as equal since they're being compared.",
+            "Identifying the part (45) and the whole (36, following 'of'), noting that the part is larger than the whole here, the ratio is 45/36=1.25, or 125%; a result over 100% is valid and expected whenever the part exceeds the whole. 80% comes from inverting the ratio (36/45) instead of dividing the part by the whole. 9% comes from an unrelated arithmetic slip. 100% incorrectly assumes the two quantities must be treated as equal since they're being compared.",
           difficulty: "medium",
         },
         {
@@ -4932,7 +4932,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["230", "359", "890", "225"],
           answer: 0,
           explain:
-            "Sorting the data first (210, 225, 230, 240, 890) reveals 890 as a clear outlier far above the rest; the mean would be pulled substantially higher by that one sale, while the median — the middle value once sorted, 230 — stays representative of the typical price. 359 is the actual mean of this data set, exactly the distorted value the outlier produces. 890 mistakes the outlier itself for a typical value. 225 comes from picking a value near the middle without correctly sorting the list first.",
+            "Sorting the data first (210, 225, 230, 240, 890) reveals 890 as a clear outlier far above the rest; the mean would be pulled substantially higher by that one sale, while the median (the middle value once sorted, 230) stays representative of the typical price. 359 is the actual mean of this data set, exactly the distorted value the outlier produces. 890 mistakes the outlier itself for a typical value. 225 comes from picking a value near the middle without correctly sorting the list first.",
           difficulty: "medium",
         },
         {
@@ -4961,7 +4961,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Comparing the two values directly, the mean ($420,000) is noticeably higher than the median ($350,000); when the mean exceeds the median, a small number of unusually HIGH values are pulling the average up — right skew — meaning a few unusually expensive homes are inflating the mean while most homes are priced closer to the median. The left-skew option describes the opposite pattern (mean below median), which doesn't match what's given here. Reporting both a mean and median says nothing about symmetry — this large a gap between them is actually a sign of skew, not symmetry. And the median isn't 'incorrect' — in a skewed distribution, the median is the more representative statistic, not a flawed one.",
+            "Comparing the two values directly, the mean ($420,000) is noticeably higher than the median ($350,000); when the mean exceeds the median, a small number of unusually HIGH values are pulling the average up (right skew), meaning a few unusually expensive homes are inflating the mean while most homes are priced closer to the median. The left-skew option describes the opposite pattern (mean below median), which doesn't match what's given here. Reporting both a mean and median says nothing about symmetry; this large a gap between them is actually a sign of skew, not symmetry. And the median isn't 'incorrect': in a skewed distribution, the median is the more representative statistic, not a flawed one.",
           difficulty: "hard",
         },
       ],
@@ -5137,7 +5137,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "With 7 values, the median is the 4th (middle) value; adding one very high value (200) makes 8 values, so the new median is the average of the 4th and 5th values in the new ordering — since 200 just becomes the new maximum, it doesn't affect which values sit in the middle, so the median shifts only slightly, unlike the mean, which the extreme value would pull noticeably higher. Assuming a dramatic jump confuses how the median behaves with how the mean would behave here. Assuming the median never changes when a value is added overstates the median's resistance to change — it's resistant to outliers, not literally frozen. And the median is a measure of the middle of the data, so it can never simply equal the new maximum value.",
+            "With 7 values, the median is the 4th (middle) value; adding one very high value (200) makes 8 values, so the new median is the average of the 4th and 5th values in the new ordering; since 200 just becomes the new maximum, it doesn't affect which values sit in the middle, so the median shifts only slightly, unlike the mean, which the extreme value would pull noticeably higher. Assuming a dramatic jump confuses how the median behaves with how the mean would behave here. Assuming the median never changes when a value is added overstates the median's resistance to change: it's resistant to outliers, not literally frozen. And the median is a measure of the middle of the data, so it can never simply equal the new maximum value.",
           difficulty: "hard",
         },
         {
@@ -5174,16 +5174,16 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       name: "Choosing the Right Model Shape from a Scatterplot's Pattern",
       desmosCalculator: "graphing",
       desmosTrick:
-        "Step 1: Click the '+' menu and add a table, then enter the given data points as x1, y1 columns — one point per row. Step 2: On the next line, type a regression template matching the shape you're testing: y1 ~ mx1+b for a straight-line trend, y1 ~ ax1^2+bx1+c for a curve that bends once, or y1 ~ a*b^x1 for growth or decay that speeds up or slows down over time. Step 3: Desmos fits that shape through your points and reports the actual values of m, b, a, and c — so instead of guessing which shape 'looks right' by eye, you can check exactly how well each one fits.",
+        "Step 1: Click the '+' menu and add a table, then enter the given data points as x1, y1 columns, one point per row. Step 2: On the next line, type a regression template matching the shape you're testing: y1 ~ mx1+b for a straight-line trend, y1 ~ ax1^2+bx1+c for a curve that bends once, or y1 ~ a*b^x1 for growth or decay that speeds up or slows down over time. Step 3: Desmos fits that shape through your points and reports the actual values of m, b, a, and c, so instead of guessing which shape 'looks right' by eye, you can check exactly how well each one fits.",
       explanation:
-        "This pattern asks you to match a scatterplot's shape to the correct model type. A straight-line pattern with a constant rate of change is linear. A pattern that gets increasingly steep is exponential. A pattern with a single peak or trough is quadratic. The key is looking at HOW the rate of change behaves — constant, accelerating, or reversing — rather than the general 'up and to the right' shape alone.",
+        "This pattern asks you to match a scatterplot's shape to the correct model type. A straight-line pattern with a constant rate of change is linear. A pattern that gets increasingly steep is exponential. A pattern with a single peak or trough is quadratic. The key is looking at HOW the rate of change behaves (constant, accelerating, or reversing), rather than the general 'up and to the right' shape alone.",
       examples: [
         {
           q: "A scatterplot shows points rising steadily at a constant rate, forming a straight-line pattern. Which model best fits?",
           choices: ["Linear", "Exponential", "Quadratic", "Cannot be determined"],
           answer: 0,
           explain:
-            "A constant rate of increase forming a straight-line pattern is the defining characteristic of a linear relationship — linear models have a constant rate of change, unlike exponential (accelerating rate) or quadratic (a rate that changes direction at a vertex) models. Exponential is ruled out because its rate of change isn't constant, it grows. Quadratic is ruled out because it changes direction at a peak or trough, which isn't described here. And the description gives enough information — a clear constant-rate straight-line pattern — to determine the model.",
+            "A constant rate of increase forming a straight-line pattern is the defining characteristic of a linear relationship: linear models have a constant rate of change, unlike exponential (accelerating rate) or quadratic (a rate that changes direction at a vertex) models. Exponential is ruled out because its rate of change isn't constant, it grows. Quadratic is ruled out because it changes direction at a peak or trough, which isn't described here. And the description gives enough information (a clear constant-rate straight-line pattern) to determine the model.",
           diagram: { kind: "scatterGraph", trend: "linearPos" },
           difficulty: "easy",
         },
@@ -5192,7 +5192,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["Exponential", "Linear", "Quadratic", "None of these models could produce this pattern"],
           answer: 0,
           explain:
-            "The rate of increase itself keeps growing — each step's jump is bigger than the last — which rules out linear (constant rate) immediately. It's tempting to think 'curving upward' means quadratic, but a quadratic model eventually turns and changes direction at its vertex, while this pattern just keeps accelerating in the same direction without turning around, matching exponential growth specifically. Linear is ruled out by the changing rate. Quadratic is ruled out because nothing here describes a reversal in direction. And this is a textbook match for exponential growth, so it's certainly produced by one of the standard models.",
+            "The rate of increase itself keeps growing (each step's jump is bigger than the last), which rules out linear (constant rate) immediately. It's tempting to think 'curving upward' means quadratic, but a quadratic model eventually turns and changes direction at its vertex, while this pattern just keeps accelerating in the same direction without turning around, matching exponential growth specifically. Linear is ruled out by the changing rate. Quadratic is ruled out because nothing here describes a reversal in direction. And this is a textbook match for exponential growth, so it's certainly produced by one of the standard models.",
           diagram: { kind: "scatterGraph", trend: "exponential" },
           difficulty: "medium",
         },
@@ -5201,7 +5201,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["Quadratic", "Linear", "Exponential", "Cannot be determined without more data"],
           answer: 0,
           explain:
-            "The data doesn't just keep increasing or decreasing — it changes direction once, at a single peak, which is the defining feature of a quadratic model. Linear is ruled out because a constant rate never changes direction. Exponential is ruled out because it keeps accelerating in one direction and never turns around. And the description — a full rise, peak, and fall — is a clear, specific signature that's enough to identify the model shape.",
+            "The data doesn't just keep increasing or decreasing — it changes direction once, at a single peak, which is the defining feature of a quadratic model. Linear is ruled out because a constant rate never changes direction. Exponential is ruled out because it keeps accelerating in one direction and never turns around. And the description (a full rise, peak, and fall) is a clear, specific signature that's enough to identify the model shape.",
           diagram: { kind: "scatterGraph", trend: "quadratic" },
           difficulty: "easy",
         },
@@ -5210,7 +5210,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["Quadratic", "Linear", "Exponential", "Cubic"],
           answer: 0,
           explain:
-            "The rate of increase itself is changing — specifically getting smaller — which rules out a purely linear model (constant rate) and also rules out exponential growth, which would have an ACCELERATING rate, the opposite direction. A rate of increase that's shrinking while still positive matches the rising portion of a quadratic model, before it reaches its peak and turns downward. Linear is ruled out by the changing rate. Exponential moves the wrong direction entirely. Cubic isn't one of the model shapes this method distinguishes between, and the described behavior specifically matches quadratic's pre-vertex behavior.",
+            "The rate of increase itself is changing (specifically getting smaller), which rules out a purely linear model (constant rate) and also rules out exponential growth, which would have an ACCELERATING rate, the opposite direction. A rate of increase that's shrinking while still positive matches the rising portion of a quadratic model, before it reaches its peak and turns downward. Linear is ruled out by the changing rate. Exponential moves the wrong direction entirely. Cubic isn't one of the model shapes this method distinguishes between, and the described behavior specifically matches quadratic's pre-vertex behavior.",
           diagram: { kind: "scatterGraph", trend: "quadratic" },
           difficulty: "medium",
         },
@@ -5224,7 +5224,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "A good linear fit's residuals should scatter randomly above and below zero, with no systematic pattern; here the residuals follow a clear pattern — negative, then positive, then negative again — meaning the linear model consistently over- or under-predicts in a structured way, which is a strong signal that the true relationship is curved (like quadratic), not actually linear. Claiming the fit is perfect ignores that a truly perfect fit would have residuals of zero, not a systematic pattern. Concluding exponential overreaches — this negative-positive-negative shape specifically matches a relationship that turns around, which is quadratic behavior, not accelerating exponential behavior. And a systematic pattern like this is a sign of the wrong model, not necessarily flawed data.",
+            "A good linear fit's residuals should scatter randomly above and below zero, with no systematic pattern; here the residuals follow a clear pattern (negative, then positive, then negative again), meaning the linear model consistently over- or under-predicts in a structured way, which is a strong signal that the true relationship is curved (like quadratic), not actually linear. Claiming the fit is perfect ignores that a truly perfect fit would have residuals of zero, not a systematic pattern. Concluding exponential overreaches: this negative-positive-negative shape specifically matches a relationship that turns around, which is quadratic behavior, not accelerating exponential behavior. And a systematic pattern like this is a sign of the wrong model, not necessarily flawed data.",
           difficulty: "hard",
         },
       ],
@@ -5307,7 +5307,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Basic and Compound Probability",
       explanation:
-        "Simple probability questions use one formula: favorable outcomes divided by total outcomes. Compound probability questions — the ones with 'and' or 'or' — need you to recognize whether events are independent (multiply, for 'and') or need the addition rule (for 'or': add the individual probabilities, then subtract any overlap so you don't double-count).",
+        "Simple probability questions use one formula: favorable outcomes divided by total outcomes. Compound probability questions (the ones with 'and' or 'or') need you to recognize whether events are independent (multiply, for 'and') or need the addition rule (for 'or': add the individual probabilities, then subtract any overlap so you don't double-count).",
       examples: [
         {
           q: "Two independent events A and B have P(A) = 0.5 and P(B) = 0.4. What is P(A and B)?",
@@ -5358,7 +5358,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Conditional Probability",
       explanation:
-        "Conditional probability questions shrink the total sample space down to a specific subgroup — signaled by phrases like 'given that' or 'if we know.' The key move: identify that restricted group first, then calculate probability using ONLY that subgroup as your new total — not the entire original data set.",
+        "Conditional probability questions shrink the total sample space down to a specific subgroup, signaled by phrases like 'given that' or 'if we know.' The key move: identify that restricted group first, then calculate probability using ONLY that subgroup as your new total, not the entire original data set.",
       examples: [
         {
           q: "A deck has 52 cards. What is the probability of drawing a card that is a heart, given that the card drawn is red?",
@@ -5488,7 +5488,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Checking whether the claimed value (27) falls inside the interval (24, 30), it does, so the sample data is consistent with the claim, not contradicting it — though this doesn't PROVE the true mean is exactly 27, since other values in the range are equally plausible. Claiming contradiction because 27 isn't exactly centered misunderstands that any value within the interval, not just the midpoint, is considered plausible. Claiming the data proves the mean cannot be 27 gets the conclusion backwards, since 27 falls inside, not outside, the range. And claiming the data proves the mean IS exactly 27 overstates what a confidence interval can establish — it supports plausibility, not certainty of one exact value.",
+            "Checking whether the claimed value (27) falls inside the interval (24, 30), it does, so the sample data is consistent with the claim, not contradicting it, though this doesn't PROVE the true mean is exactly 27, since other values in the range are equally plausible. Claiming contradiction because 27 isn't exactly centered misunderstands that any value within the interval, not just the midpoint, is considered plausible. Claiming the data proves the mean cannot be 27 gets the conclusion backwards, since 27 falls inside, not outside, the range. And claiming the data proves the mean IS exactly 27 overstates what a confidence interval can establish: it supports plausibility, not certainty of one exact value.",
           difficulty: "hard",
         },
       ],
@@ -5500,7 +5500,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Sample Size's Effect on Margin of Error",
       explanation:
-        "This pattern tests the relationship between sample size and precision: larger samples generally produce smaller margins of error — more precise estimates — as long as the confidence level stays the same. This is worth just memorizing directly, since it shows up often in slightly different phrasings.",
+        "This pattern tests the relationship between sample size and precision: larger samples generally produce smaller margins of error (more precise estimates) as long as the confidence level stays the same. This is worth just memorizing directly, since it shows up often in slightly different phrasings.",
       examples: [
         {
           q: "A researcher increases the sample size from 100 to 400 while keeping the same confidence level. What is the most likely effect on the width of the confidence interval?",
@@ -5551,7 +5551,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Increasing the confidence level runs the OPPOSITE direction from the sample-size relationship — to be more confident (99% vs. 90%) that the interval actually contains the true value, the range needs to be broader, so increasing from 90% to 99% should widen the interval. Claiming it will narrow confuses this with the sample-size relationship, which runs the opposite direction. Claiming no change ignores that confidence level directly affects interval width. And the sample size doesn't change here at all — only the confidence level does.",
+            "Increasing the confidence level runs the OPPOSITE direction from the sample-size relationship: to be more confident (99% vs. 90%) that the interval actually contains the true value, the range needs to be broader, so increasing from 90% to 99% should widen the interval. Claiming it will narrow confuses this with the sample-size relationship, which runs the opposite direction. Claiming no change ignores that confidence level directly affects interval width. And the sample size doesn't change here at all; only the confidence level does.",
           difficulty: "medium",
         },
         {
@@ -5564,7 +5564,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "Larger sample size narrows the interval, but higher confidence level widens it — two changes pushing the interval's width in OPPOSITE directions — so since both changed at once, the net result depends on the size of each change and can't be determined from the sample-size effect alone; the colleague's reasoning is incomplete because it ignores the confidence level's opposing effect. Saying the colleague is 'fully correct' ignores that a second, competing change (confidence level) was also made. Claiming confidence level 'also narrows' the interval gets that specific relationship backwards — confidence level increases widen intervals, they don't narrow them. And it's not true that the changes must happen 'at the exact same rate' to have any effect; it's just that the net direction isn't determinable without knowing those sizes.",
+            "Larger sample size narrows the interval, but higher confidence level widens it (two changes pushing the interval's width in OPPOSITE directions), so since both changed at once, the net result depends on the size of each change and can't be determined from the sample-size effect alone; the colleague's reasoning is incomplete because it ignores the confidence level's opposing effect. Saying the colleague is 'fully correct' ignores that a second, competing change (confidence level) was also made. Claiming confidence level 'also narrows' the interval gets that specific relationship backwards: confidence level increases widen intervals, they don't narrow them. And it's not true that the changes must happen 'at the exact same rate' to have any effect; it's just that the net direction isn't determinable without knowing those sizes.",
           difficulty: "hard",
         },
       ],
@@ -5576,7 +5576,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Estimating a Population Count from a Sample Proportion",
       explanation:
-        "The most common version of this subskill doesn't involve confidence intervals or margin of error at all — it just asks you to scale up a proportion from a random sample to estimate a count in the full population. The method: find the sample's proportion (favorable outcomes divided by sample size), then apply that same proportion to the full population size. This only works reliably when the sample was actually random — always check that before trusting a scaled-up estimate.",
+        "The most common version of this subskill doesn't involve confidence intervals or margin of error at all; it just asks you to scale up a proportion from a random sample to estimate a count in the full population. The method: find the sample's proportion (favorable outcomes divided by sample size), then apply that same proportion to the full population size. This only works reliably when the sample was actually random; always check that before trusting a scaled-up estimate.",
       examples: [
         {
           q: "A researcher randomly selects 20 employees from a company of 400 and finds that 16 of them are enrolled in a wellness program. Based on this sample, what is the best estimate of the number of employees at the company enrolled in the wellness program?",
@@ -5612,7 +5612,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "This is a self-selected online poll — only people who chose to visit the site and respond are included, not a random sample of all adults — so even though 80% is accurate for the poll's respondents, it can't be reliably scaled up to represent all adults nationally, regardless of the sample's size. Claiming validity based on the large sample size (3,000) ignores that sample size doesn't fix a lack of random selection — a big biased sample is still biased. Claiming any online poll can be scaled up as long as the percentage is reported correctly ignores the random-sampling requirement entirely. And there's nothing inherently unrealistic about an 80% figure — the problem is the sampling method, not the size of the percentage itself.",
+            "This is a self-selected online poll (only people who chose to visit the site and respond are included, not a random sample of all adults), so even though 80% is accurate for the poll's respondents, it can't be reliably scaled up to represent all adults nationally, regardless of the sample's size. Claiming validity based on the large sample size (3,000) ignores that sample size doesn't fix a lack of random selection; a big biased sample is still biased. Claiming any online poll can be scaled up as long as the percentage is reported correctly ignores the random-sampling requirement entirely. And there's nothing inherently unrealistic about an 80% figure: the problem is the sampling method, not the size of the percentage itself.",
           difficulty: "medium",
         },
         {
@@ -5643,7 +5643,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
     {
       name: "Distinguishing Correlation from Causation",
       explanation:
-        "This is the single most-tested concept in this subskill: an observational study — no random assignment — can only show correlation, never causation, because some hidden confounding variable could actually explain the relationship. Only a randomized controlled experiment, with random assignment to groups, can support a causal claim. Recognizing which type of study design is described is the entire key to these questions.",
+        "This is the single most-tested concept in this subskill: an observational study (no random assignment) can only show correlation, never causation, because some hidden confounding variable could actually explain the relationship. Only a randomized controlled experiment, with random assignment to groups, can support a causal claim. Recognizing which type of study design is described is the entire key to these questions.",
       examples: [
         {
           q: "An observational study finds ice cream sales correlate with drowning incidents. What's the best interpretation?",
@@ -5668,7 +5668,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           ],
           answer: 0,
           explain:
-            "This is observational — no one randomly assigned coffee shops to neighborhoods — so causation can't be concluded from the correlation alone; a neighborhood becoming more desirable or seeing more investment could independently attract both new coffee shops and rising rents, making that shared trend a far more plausible confounding variable than coffee shops directly driving up rent. Claiming coffee shops directly cause rent increases is exactly the unsupported leap the blogger made. Claiming rents cause coffee shops reverses that same unsupported leap. And dismissing the correlation as purely coincidental ignores that a real, identifiable confounding variable is a much more likely explanation than pure chance.",
+            "This is observational (no one randomly assigned coffee shops to neighborhoods), so causation can't be concluded from the correlation alone; a neighborhood becoming more desirable or seeing more investment could independently attract both new coffee shops and rising rents, making that shared trend a far more plausible confounding variable than coffee shops directly driving up rent. Claiming coffee shops directly cause rent increases is exactly the unsupported leap the blogger made. Claiming rents cause coffee shops reverses that same unsupported leap. And dismissing the correlation as purely coincidental ignores that a real, identifiable confounding variable is a much more likely explanation than pure chance.",
           difficulty: "medium",
         },
         {
@@ -5707,7 +5707,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           ],
           answer: 0,
           explain:
-            "Checking the study design, there was random assignment (yes) and a control (placebo) group (yes), so with both randomization and a control group in place, this design CAN support a causal claim, unlike a purely observational study. Claiming correlation never implies causation 'under any circumstances' overgeneralizes — a properly designed randomized controlled experiment is specifically the tool that CAN support causal claims. Objecting to the sample size misidentifies what actually determines whether a study can support causation, which is the design, not simply how many participants were involved. And crediting the significant result alone, regardless of design, ignores that the same significant result from a poorly designed observational study would NOT support causation — the design is what earns the causal conclusion, not the result's size.",
+            "Checking the study design, there was random assignment (yes) and a control (placebo) group (yes), so with both randomization and a control group in place, this design CAN support a causal claim, unlike a purely observational study. Claiming correlation never implies causation 'under any circumstances' overgeneralizes: a properly designed randomized controlled experiment is specifically the tool that CAN support causal claims. Objecting to the sample size misidentifies what actually determines whether a study can support causation, which is the design, not simply how many participants were involved. And crediting the significant result alone, regardless of design, ignores that the same significant result from a poorly designed observational study would NOT support causation: the design is what earns the causal conclusion, not the result's size.",
           difficulty: "hard",
         },
       ],
@@ -5731,7 +5731,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           ],
           answer: 0,
           explain:
-            "Checking the study design against the causal-claim checklist, there is no control group to compare against, so other explanations for the weight change — like diet changes, exercise changes, or simply time passing — cannot be ruled out; this missing comparison is the primary weakness, not the sample size or any other factor. Random sampling is a different concept from random assignment and isn't the specific issue described here. Blaming sample size misidentifies the actual flaw, which is the missing comparison group. And claiming weight loss can never be measured accurately is an unsupported, overly broad claim unrelated to this study's actual design flaw.",
+            "Checking the study design against the causal-claim checklist, there is no control group to compare against, so other explanations for the weight change (like diet changes, exercise changes, or simply time passing) cannot be ruled out; this missing comparison is the primary weakness, not the sample size or any other factor. Random sampling is a different concept from random assignment and isn't the specific issue described here. Blaming sample size misidentifies the actual flaw, which is the missing comparison group. And claiming weight loss can never be measured accurately is an unsupported, overly broad claim unrelated to this study's actual design flaw.",
           difficulty: "easy",
         },
         {
@@ -5757,11 +5757,11 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           ],
           answer: 0,
           explain:
-            "Checking the study design against the causal-claim checklist, there is no genuine control group tested under the same conditions — this compares the same field across two different years, not two groups under the same conditions — so other factors that changed between years, like weather, rainfall, or soil conditions, can't be ruled out as explanations for any yield difference; this missing same-time comparison is the primary weakness. Blaming the use of only one field misidentifies the flaw, which is the lack of a same-time comparison, not simply the amount of data. Claiming yield comparisons can never measure fertilizer effects is an overly broad claim unrelated to this study's specific flaw. And while random assignment would help, the immediately identifiable weakness here is the missing same-time control, the more specific and direct issue described.",
+            "Checking the study design against the causal-claim checklist, there is no genuine control group tested under the same conditions (this compares the same field across two different years, not two groups under the same conditions), so other factors that changed between years, like weather, rainfall, or soil conditions, can't be ruled out as explanations for any yield difference; this missing same-time comparison is the primary weakness. Blaming the use of only one field misidentifies the flaw, which is the lack of a same-time comparison, not simply the amount of data. Claiming yield comparisons can never measure fertilizer effects is an overly broad claim unrelated to this study's specific flaw. And while random assignment would help, the immediately identifiable weakness here is the missing same-time control, the more specific and direct issue described.",
           difficulty: "easy",
         },
         {
-          q: "Researchers randomly assign participants to either receive a new pain medication or a sugar pill (placebo), but everyone — participants and researchers alike — knows who received which. Pain levels are then assessed through interviews. What is a specific weakness of this design?",
+          q: "Researchers randomly assign participants to either receive a new pain medication or a sugar pill (placebo), but everyone (participants and researchers alike) knows who received which. Pain levels are then assessed through interviews. What is a specific weakness of this design?",
           choices: [
             "The lack of blinding means self-reported outcomes could be biased by knowing who received which treatment",
             "The weakness is that there was no random assignment of participants",
@@ -5770,7 +5770,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           ],
           answer: 0,
           explain:
-            "Checking the checklist, random assignment (yes) and a control/placebo group (yes) are both present, so the study isn't missing those basics; but because everyone knows who received the real medication, participants' self-reported pain levels — and researchers' assessments of them — could be influenced by expectation rather than the medication itself, a lack of 'blinding.' Claiming there was no random assignment contradicts what's explicitly stated in the setup. Claiming there was no placebo group also contradicts the setup, which explicitly includes one. And claiming pain can never be measured through interviews is an overly broad claim unrelated to this study's specific, identifiable flaw.",
+            "Checking the checklist, random assignment (yes) and a control/placebo group (yes) are both present, so the study isn't missing those basics; but because everyone knows who received the real medication, participants' self-reported pain levels (and researchers' assessments of them) could be influenced by expectation rather than the medication itself, a lack of 'blinding.' Claiming there was no random assignment contradicts what's explicitly stated in the setup. Claiming there was no placebo group also contradicts the setup, which explicitly includes one. And claiming pain can never be measured through interviews is an overly broad claim unrelated to this study's specific, identifiable flaw.",
           difficulty: "medium",
         },
         {
@@ -5805,7 +5805,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Scale Factor Effects on Area and Volume",
       explanation:
-        "This pattern tests whether you know that a linear scale factor doesn't apply directly to area or volume. If every linear dimension of a shape scales by a factor of k, area scales by k² — not k — and volume scales by k³ — not k. This is a very common trap: correctly finding the scale factor, then applying it directly to area or volume instead of squaring or cubing it first.",
+        "This pattern tests whether you know that a linear scale factor doesn't apply directly to area or volume. If every linear dimension of a shape scales by a factor of k, area scales by k² (not k), and volume scales by k³ (not k). This is a very common trap: correctly finding the scale factor, then applying it directly to area or volume instead of squaring or cubing it first.",
       examples: [
         {
           q: "If a square's side length doubles, by what factor does its area increase?",
@@ -5917,7 +5917,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Building a Volume Expression Algebraically from a Word Description",
       explanation:
-        "This pattern gives no numeric dimensions at all — it describes a solid's dimensions in words, often with one dimension defined in terms of another using a variable, and asks for a volume FORMULA, not a number. The method: find the correct volume formula for the shape first, then carefully translate each worded dimension into algebra before substituting. Pay close attention to phrases like '3 more than,' 'twice,' or 'half of' — they describe one dimension in terms of another.",
+        "This pattern gives no numeric dimensions at all; it describes a solid's dimensions in words, often with one dimension defined in terms of another using a variable, and asks for a volume FORMULA, not a number. The method: find the correct volume formula for the shape first, then carefully translate each worded dimension into algebra before substituting. Pay close attention to phrases like '3 more than,' 'twice,' or 'half of': they describe one dimension in terms of another.",
       examples: [
         {
           q: "A rectangular box has a length of x, a width of 3, and a height of 5. Which expression gives the volume V of the box, in terms of x?",
@@ -6056,7 +6056,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           choices: ["72°", "108°", "18°", "144°"],
           answer: 0,
           explain:
-            "Alternate exterior angles are equal, not supplementary — the opposite relationship from the co-interior pair — so the alternate exterior angle also measures 72°. 108° mistakenly applies the supplementary rule that belongs to co-interior angles instead of the equal rule for alternate exterior angles. 18° comes from an unrelated miscalculation. 144° comes from doubling the given angle instead of simply restating it.",
+            "Alternate exterior angles are equal, not supplementary (the opposite relationship from the co-interior pair), so the alternate exterior angle also measures 72°. 108° mistakenly applies the supplementary rule that belongs to co-interior angles instead of the equal rule for alternate exterior angles. 18° comes from an unrelated miscalculation. 144° comes from doubling the given angle instead of simply restating it.",
           diagram: { kind: "parallelTransversal", givenLabel: "72°", givenPosition: 1, askedLabel: "?", askedPosition: 8 },
           difficulty: "medium",
         },
@@ -6091,7 +6091,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           choices: ["85°", "15°", "180°", "70°"],
           answer: 0,
           explain:
-            "This classic 'bent path between two parallel lines' setup is solved by drawing an auxiliary line through the bend point B, parallel to both given lines; this splits the angle at B into two pieces, each an alternate interior angle with one of the given angles — one piece equals 35°, the other equals 50° — so the full angle at B is 35+50=85°. 15° comes from subtracting the two given angles instead of adding them. 180° mistakenly treats the two given angles and the unknown as summing to a straight line instead of correctly splitting the unknown into two alternate-interior pieces. 70° comes from doubling one of the given angles instead of adding both distinct pieces.",
+            "This classic 'bent path between two parallel lines' setup is solved by drawing an auxiliary line through the bend point B, parallel to both given lines; this splits the angle at B into two pieces, each an alternate interior angle with one of the given angles (one piece equals 35°, the other equals 50°), so the full angle at B is 35+50=85°. 15° comes from subtracting the two given angles instead of adding them. 180° mistakenly treats the two given angles and the unknown as summing to a straight line instead of correctly splitting the unknown into two alternate-interior pieces. 70° comes from doubling one of the given angles instead of adding both distinct pieces.",
           diagram: { kind: "bentPath", angle1: "35°", angle2: "50°", unknown: "?" },
           difficulty: "hard",
         },
@@ -6104,7 +6104,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
     {
       name: "Similar Triangles and Proportional Sides",
       explanation:
-        "This pattern tests whether corresponding sides of two similar triangles — same shape, possibly different size — keep a constant ratio, called the scale factor. The method: first match each side of one triangle to its corresponding side in the other. Matching is based on the triangles' matching angles, not just which sides look similar in length or happen to be listed near each other. Then set up a proportion using that scale factor to solve for the unknown side. The proportion itself is rarely the hard part — mismatching which sides actually correspond is.",
+        "This pattern tests whether corresponding sides of two similar triangles (same shape, possibly different size) keep a constant ratio, called the scale factor. The method: first match each side of one triangle to its corresponding side in the other. Matching is based on the triangles' matching angles, rather than which sides look similar in length or happen to be listed near each other. Then set up a proportion using that scale factor to solve for the unknown side. The proportion itself is rarely the hard part; mismatching which sides actually correspond is.",
       examples: [
         {
           q: "Triangle ABC is similar to triangle DEF. If AB = 6, DE = 9, and BC = 8, what is EF?",
@@ -6196,7 +6196,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
     {
       name: "Vertical Angles and Basic Angle Relationships",
       explanation:
-        "When two straight lines cross, they form two pairs of vertical angles (directly across from each other) and pairs of adjacent angles along each line. Vertical angles are always exactly equal — no calculation needed once you spot them. Adjacent angles along a straight line are supplementary, adding to 180°, since a straight line always measures 180°. These facts apply with just two crossing lines — no triangle, no parallel-lines setup required, unlike the other patterns in this subskill.",
+        "When two straight lines cross, they form two pairs of vertical angles (directly across from each other) and pairs of adjacent angles along each line. Vertical angles are always exactly equal, no calculation needed once you spot them. Adjacent angles along a straight line are supplementary, adding to 180°, since a straight line always measures 180°. These facts apply with just two crossing lines: no triangle, no parallel-lines setup required, unlike the other patterns in this subskill.",
       examples: [
         {
           q: "Two lines intersect, forming an angle of 65°. What is the measure of the angle vertical to it?",
@@ -6532,7 +6532,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Using the Pythagorean Theorem Alone to Find a Missing Side",
       explanation:
-        "Not every right-triangle question needs a trig ratio — plenty just ask for a missing side length, which the Pythagorean theorem (a² + b² = c²) finds directly. Remember c is always the hypotenuse: opposite the right angle, and always the longest side. If the hypotenuse is missing, add the two legs' squares and take the square root. If a leg is missing, subtract the other leg's square from the hypotenuse's square first. Many answers come out as a simplified radical, not a whole number — know how to simplify a square root (pull out the largest perfect-square factor) instead of leaving it unsimplified or rounding early.",
+        "Not every right-triangle question needs a trig ratio; plenty just ask for a missing side length, which the Pythagorean theorem (a² + b² = c²) finds directly. Remember c is always the hypotenuse: opposite the right angle, and always the longest side. If the hypotenuse is missing, add the two legs' squares and take the square root. If a leg is missing, subtract the other leg's square from the hypotenuse's square first. Many answers come out as a simplified radical, not a whole number: know how to simplify a square root (pull out the largest perfect-square factor) instead of leaving it unsimplified or rounding early.",
       examples: [
         {
           q: "A right triangle has legs of length 6 and 8. What is the length of the hypotenuse?",
@@ -6589,7 +6589,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "The Sine-Cosine Complementary Angle Relationship",
       explanation:
-        "In any right triangle, the two non-right angles are always complementary — they add to 90°. That creates a direct shortcut: the sine of one acute angle always equals the cosine of the other, since each angle's 'opposite' side is the other angle's 'adjacent' side. As an identity: sin(x°) = cos(90° - x°), for any angle x. So a question can hand you sin(x°) = cos(y°) and ask for the relationship between x and y with no triangle and no side lengths at all — the answer is always that x and y add up to 90.",
+        "In any right triangle, the two non-right angles are always complementary: they add to 90°. That creates a direct shortcut: the sine of one acute angle always equals the cosine of the other, since each angle's 'opposite' side is the other angle's 'adjacent' side. As an identity: sin(x°) = cos(90° - x°), for any angle x. So a question can hand you sin(x°) = cos(y°) and ask for the relationship between x and y with no triangle and no side lengths at all; the answer is always that x and y add up to 90.",
       examples: [
         {
           q: "If sin(40°) = cos(y°), what is the value of y?",
