@@ -130,11 +130,10 @@ export function AppShell({
 
           {stats && stats.currentStreak > 0 && (
             <div
-              className="flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/80 rounded-full pl-1.5 pr-2 py-1"
+              className="flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/80 rounded-full pl-2 pr-2.5 py-1"
               title={`${stats.currentStreak}-day streak`}
             >
-              <span className="animate-flame-pulse inline-block">🔥</span>
-              {stats.currentStreak}
+              {stats.currentStreak}-day streak
             </div>
           )}
 

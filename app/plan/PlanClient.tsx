@@ -215,7 +215,7 @@ export function PlanClient({
                           <div className="text-[11px] font-bold text-gray-500">{d.dayName}</div>
                           <div className="text-[10px] text-gray-400">{formatDate(dayDate)}</div>
                           {isExamDay ? (
-                            <div className="text-[9px] font-bold uppercase text-[#9a6a12]">🎯 SAT day</div>
+                            <div className="text-[9px] font-bold uppercase text-[#9a6a12]">SAT day</div>
                           ) : isToday ? (
                             <div className="text-[9px] font-bold uppercase text-[#6d7fd6]">Today</div>
                           ) : null}

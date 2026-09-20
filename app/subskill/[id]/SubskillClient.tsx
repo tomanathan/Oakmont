@@ -248,9 +248,9 @@ export function SubskillClient({
         // happened. The streak count still gets mentioned in Mochi's own
         // message, so nothing from the milestone line is lost.
         const celebration: { message: string; tier: "small" | "big" } | null = data.secondPetJustUnlocked
-          ? { message: `🐾 Someone new wants to meet you — say hi to Mochi! (${data.currentStreak}-day streak, by the way.)`, tier: "big" }
+          ? { message: `Someone new wants to meet you — say hi to Mochi! (${data.currentStreak}-day streak, by the way.)`, tier: "big" }
           : data.streakMilestone
-          ? { message: `🔥 ${data.currentStreak} days straight?! You're unstoppable.`, tier: "big" }
+          ? { message: `${data.currentStreak} days straight?! You're unstoppable.`, tier: "big" }
           : data.justCompletedCurriculum
           ? { message: "You did it — the WHOLE curriculum. Best trick I know, just for this.", tier: "big" }
           : data.justCompletedSection
@@ -500,7 +500,6 @@ export function SubskillClient({
                 {pattern.desmosTrick && (
                   <div className="mt-4 bg-[#eef3f8] border border-[#cddbe8] rounded-lg p-3.5">
                     <div className="flex items-center gap-1.5 mb-1.5">
-                      <span className="text-sm leading-none">🖩</span>
                       <span className="text-[11px] font-bold text-[#3a6690] uppercase tracking-wide">
                         Desmos shortcut for this pattern
                       </span>
@@ -607,7 +606,6 @@ export function SubskillClient({
             // this page) since this reads the same way: a helpful
             // pointer, not an interactive tool embedded in the page.
             <div className="bg-[#fffaf0] border border-[#f0e4c8] rounded-lg p-3.5 mb-3.5 flex items-start gap-2.5">
-              <span className="text-base leading-none flex-shrink-0">💡</span>
               <div className="text-[13px] text-gray-700 leading-relaxed">
                 Once you&apos;ve worked through these, the College Board&apos;s own{" "}
                 <a
@@ -768,7 +766,6 @@ function ResultBanner({
         {result && !saving && result.currentStreak > 0 && (
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 text-[13px] font-semibold text-gray-600">
-              <span className="animate-flame-pulse inline-block">🔥</span>
               {result.currentStreak}-day streak
             </span>
           </div>
@@ -909,7 +906,6 @@ function TipsPanel({ tips, traps }: { tips: string[]; traps?: string[] }) {
     <div className="flex flex-col gap-4">
       <div className="bg-[#fffaf0] border border-[#f0e4c8] rounded-xl p-4">
         <div className="flex items-center gap-1.5 mb-3">
-          <span className="text-base leading-none">💡</span>
           <span className="text-[13px] font-bold text-ink">Tips &amp; tricks</span>
         </div>
         <ul className="space-y-3">

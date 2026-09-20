@@ -16,7 +16,7 @@ const PET_ALERT: Partial<Record<PetStage, { box: string; label: string; labelCla
   },
   critical: {
     box: "bg-[#fbeaea] border-[#f0d0d0]",
-    label: `⚠️ ${PET_NAME} needs you today`,
+    label: `${PET_NAME} needs you today`,
     labelClass: "text-[#b23b3b]",
   },
   dead: {

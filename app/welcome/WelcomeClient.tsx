@@ -56,22 +56,18 @@ export function WelcomeClient({ email }: { email: string }) {
       <div className="text-[15px] font-bold text-ink mb-3">How Oakmont works</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
         <FeatureCard
-          emoji="📚"
           title="Every official subskill"
           body="Lessons are organized by the exact subskills and domains College Board tests, each with worked examples, common traps, and a practice quiz."
         />
         <FeatureCard
-          emoji="🗓️"
           title="A day-by-day plan"
           body="Your 6-month plan breaks every week down by day. Set your test date in Settings and the whole timeline resizes to fit."
         />
         <FeatureCard
-          emoji="📝"
           title="8 full-length practice tests"
           body="All 8 official practice tests are spaced across your plan, not bunched at the end, so you get real feedback the whole way through."
         />
         <FeatureCard
-          emoji="📈"
           title="Score analysis"
           body="Log each practice test's results on your Study plan page to see your subject-by-subject trend over time -- and watch your schedule adjust to focus on it."
         />
@@ -100,11 +96,10 @@ export function WelcomeClient({ email }: { email: string }) {
   );
 }
 
-function FeatureCard({ emoji, title, body }: { emoji: string; title: string; body: string }) {
+function FeatureCard({ title, body }: { title: string; body: string }) {
   return (
     <div className="bg-[#f8f8fb] border border-[#ece9f7] rounded-xl p-4">
-      <div className="text-lg mb-1.5 leading-none">{emoji}</div>
-      <div className="text-sm font-semibold text-ink mb-1">{title}</div>
+      <div className="text-sm font-semibold text-ink mb-1.5">{title}</div>
       <div className="text-xs text-gray-500 leading-relaxed">{body}</div>
     </div>
   );

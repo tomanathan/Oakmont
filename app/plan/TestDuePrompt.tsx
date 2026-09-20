@@ -11,7 +11,7 @@ export function TestDuePrompt({ testNumber }: { testNumber: number }) {
   return (
     <div className="flex items-center justify-between gap-3 bg-[#fffaf0] border border-[#f0e0b0] rounded-xl px-5 py-3.5 mb-5 flex-wrap">
       <div className="text-sm text-ink">
-        <span className="font-semibold">🎯 Practice test {testNumber} of 8 is on your schedule this week.</span>{" "}
+        <span className="font-semibold">Practice test {testNumber} of 8 is on your schedule this week.</span>{" "}
         <span className="text-gray-500">Log your results and the plan below adjusts to fit.</span>
       </div>
       <button
