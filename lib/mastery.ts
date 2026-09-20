@@ -119,8 +119,13 @@ export function isCurriculumComplete(domainMastery: DomainMastery[]): boolean {
  * mastered, which also isn't known) -- see orderSubskillsByWeakness for
  * why that neutral default is what keeps a brand-new student's plan
  * exactly in its original order.
+ *
+ * Exported (not just orderSubskillsByWeakness-internal) so /api/pet/state
+ * can pick out a single "weakest domain worth mentioning" for Ozho's own
+ * progression-aware chatter, using the exact same notion of "weak" the
+ * study plan itself schedules around, rather than inventing a second one.
  */
-function domainWeaknessScore(dm: Pick<DomainMastery, "testPct" | "quizPct"> | undefined): number {
+export function domainWeaknessScore(dm: Pick<DomainMastery, "testPct" | "quizPct"> | undefined): number {
   if (!dm) return 60;
   if (dm.testPct !== null && dm.quizPct !== null) return dm.testPct * 0.65 + dm.quizPct * 0.35;
   if (dm.testPct !== null) return dm.testPct;

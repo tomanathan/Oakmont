@@ -142,6 +142,66 @@ function streakLines(n: number): string[] {
   ];
 }
 
+// Three more progression-aware pools, same idea as streakLines above: real
+// numbers pulled from the student's own account (see the /api/pet/state
+// fetch in the mount effect below), not generic filler. Each one is only
+// ever reached from pickMessage() when the backing data actually exists
+// and means something -- no "0 of 40 mastered", no countdown for a test
+// date nobody set, no "weakest domain" pointed at a domain with zero data
+// (untouched isn't the same as weak).
+function masteryLines(mastered: number, total: number): string[] {
+  return [
+    `${mastered} of ${total} subskills mastered so far. That's real progress.`,
+    `You've fully nailed ${mastered} subskill${mastered === 1 ? "" : "s"} already. On to the next.`,
+    `${mastered}/${total} down. I'm keeping count, even if you're not.`,
+  ];
+}
+
+// Deliberately does NOT name the domain itself as a source of dread --
+// "lagging behind" and "could use some love" both frame it as unfinished
+// business, not a weakness to feel bad about, same low-pressure spirit as
+// the rest of Ozho's voice (see the top-of-file note on that).
+function weakDomainLines(domain: string): string[] {
+  return [
+    `${domain} is lagging a little behind the rest. Want to give it some love?`,
+    `A few more reps in ${domain} and that'll catch right up to everything else.`,
+    `${domain} could use some attention whenever you've got a minute.`,
+  ];
+}
+
+// Tiered by urgency -- the tone shifts from relaxed ("plenty of runway")
+// to focused ("let's make each one count") to a calmer, deliberately
+// non-cram-inducing note right before the test itself, rather than one
+// generic "N days left" line reused at every distance.
+function testCountdownLines(days: number): string[] {
+  if (days === 0) {
+    return ["Today's the day. Deep breath — you've done the work.", "It's today! Go show that test who's boss."];
+  }
+  if (days === 1) {
+    return [
+      "Tomorrow's the big one. Get some real sleep tonight, okay?",
+      "One more day. You've earned a calm evening, not a cram session.",
+    ];
+  }
+  if (days <= 7) {
+    return [
+      `${days} days left. Let's make each one count.`,
+      `Test day's ${days} days out now. Getting real.`,
+      `${days} days to go — steady practice beats a last-minute scramble.`,
+    ];
+  }
+  if (days <= 30) {
+    return [
+      `${days} days until test day. Right on pace to be ready.`,
+      `${days} days out. Keep this rhythm going and you'll walk in ready.`,
+    ];
+  }
+  return [
+    `${days} days until test day. Plenty of runway — let's use it well.`,
+    `${days} days out still. No rush, just steady progress.`,
+  ];
+}
+
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -562,6 +622,18 @@ export function ScoutCompanion() {
   const bubbleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const stageRef = useRef<PetStage | null>(null);
   const streakRef = useRef(0);
+  // Progression data for the mastery/weak-domain/test-countdown chatter
+  // (see masteryLines/weakDomainLines/testCountdownLines above) -- fetched
+  // once alongside stage/streak/costume in the mount effect below and
+  // never refreshed afterward, same staleness tradeoff those already make
+  // (a long session's chatter can lag slightly behind a just-finished
+  // quiz; a reload picks up the real numbers). null/0 defaults mean "no
+  // data yet" or "nothing set", which pickMessage()'s own guards treat as
+  // "don't use this pool" rather than as a real zero/none to announce.
+  const subskillsMasteredRef = useRef(0);
+  const totalSubskillsRef = useRef(0);
+  const daysUntilTestRef = useRef<number | null>(null);
+  const weakestDomainRef = useRef<string | null>(null);
   const hasGreetedRef = useRef(false);
   const hasMountedPathRef = useRef(false);
   const navSpeakTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -627,13 +699,25 @@ export function ScoutCompanion() {
       // storage disabled -- just default to free-roam
     }
 
-    dedupedFetchJson<{ stage: PetStage; currentStreak?: number; costume?: string | null }>("/api/pet/state")
+    dedupedFetchJson<{
+      stage: PetStage;
+      currentStreak?: number;
+      costume?: string | null;
+      subskillsMastered?: number;
+      totalSubskills?: number;
+      daysUntilTest?: number | null;
+      weakestDomain?: string | null;
+    }>("/api/pet/state")
       .then((data) => {
         if (data && data.stage) {
           stageRef.current = data.stage;
           streakRef.current = data.currentStreak ?? 0;
           setStage(data.stage);
           setCostume(data.costume && data.costume !== "none" ? data.costume : null);
+          subskillsMasteredRef.current = data.subskillsMastered ?? 0;
+          totalSubskillsRef.current = data.totalSubskills ?? 0;
+          daysUntilTestRef.current = data.daysUntilTest ?? null;
+          weakestDomainRef.current = data.weakestDomain ?? null;
         }
       })
       .catch(() => {});
@@ -941,12 +1025,30 @@ export function ScoutCompanion() {
     if (streakRef.current >= 2 && (s === "thriving" || s === "content") && roll < 0.22) {
       return pick(streakLines(streakRef.current));
     }
+    // Three more real-progress tiers, same "only fire when the data behind
+    // it actually means something" discipline as the streak check above --
+    // see the refs' own doc comment and masteryLines/testCountdownLines/
+    // weakDomainLines for what each guard is protecting against. Ascending
+    // roll thresholds, same pattern the rest of this function already
+    // uses: whichever bucket the single roll lands in wins, falling
+    // through to the next check only when that bucket's own data isn't
+    // actually there.
+    if (roll < 0.34 && daysUntilTestRef.current !== null && daysUntilTestRef.current >= 0) {
+      const lines = testCountdownLines(daysUntilTestRef.current);
+      if (lines.length) return pick(lines);
+    }
+    if (roll < 0.44 && subskillsMasteredRef.current > 0) {
+      return pick(masteryLines(subskillsMasteredRef.current, totalSubskillsRef.current));
+    }
+    if (roll < 0.52 && weakestDomainRef.current) {
+      return pick(weakDomainLines(weakestDomainRef.current));
+    }
     // Whatever page he's actually standing on gets first crack at a line --
     // see PAGE_LINES above. Falls through to the general pools on pages
     // with no dedicated lines (e.g. /welcome) or when the roll misses.
     const kind = pageKindFor(pathname);
-    if (kind && roll < 0.55) return pick(PAGE_LINES[kind]);
-    if (roll < 0.8) return pick(TIPS);
+    if (kind && roll < 0.7) return pick(PAGE_LINES[kind]);
+    if (roll < 0.88) return pick(TIPS);
     return pick(ENCOURAGEMENTS);
   }
 
