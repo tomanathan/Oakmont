@@ -75,7 +75,7 @@ model User {
 
   // Billing. stripeCustomerId is set the first time this student starts a
   // checkout, for either purchase path below, and is reused after that.
-  // Subscription path (Monthly/Annual prices): subscriptionStatus mirrors
+  // Subscription path (the Monthly price): subscriptionStatus mirrors
   // Stripe's own status string verbatim ("trialing", "active", "past_due",
   // "canceled", etc. -- see lib/subscription.ts) and is the source of
   // truth for access; currentPeriodEnd is display-only ("renews on...").

@@ -17,6 +17,10 @@ export async function getUserStats(userId: string) {
       petDiedAt: true,
       petBornAt: true,
       equippedCostume: true,
+      stripeCustomerId: true,
+      subscriptionStatus: true,
+      currentPeriodEnd: true,
+      accessExpiresAt: true,
     },
   });
   return (
@@ -34,6 +38,10 @@ export async function getUserStats(userId: string) {
       petDiedAt: null,
       petBornAt: new Date(),
       equippedCostume: null,
+      stripeCustomerId: null,
+      subscriptionStatus: null,
+      currentPeriodEnd: null,
+      accessExpiresAt: null,
     }
   );
 }

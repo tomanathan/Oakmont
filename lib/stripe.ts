@@ -13,21 +13,23 @@ function getStripeSecretKey(): string {
 
 export const stripe = new Stripe(getStripeSecretKey());
 
-export type PlanId = "monthly" | "annual" | "sixmonth";
+export type PlanId = "monthly" | "sixmonth";
 
 const PRICE_ENV_VARS: Record<PlanId, string> = {
   monthly: "STRIPE_PRICE_ID_MONTHLY",
-  annual: "STRIPE_PRICE_ID_ANNUAL",
   sixmonth: "STRIPE_PRICE_ID_SIXMONTH",
 };
 
-// The three Prices configured in the Stripe Dashboard, all under one
+// The two Prices configured in the Stripe Dashboard, both under one
 // Product -- looked up lazily (not read at module load) so importing this
 // file for the `stripe` client alone never fails just because one price
-// env var happens to be unset. Monthly and Annual are recurring
-// subscription Prices (7-day trial applied at checkout time, since
-// Stripe's trial mechanic only exists for subscriptions); SixMonth is a
-// one-time Price with no trial.
+// env var happens to be unset. Monthly is a recurring subscription Price
+// (7-day trial applied at checkout time, since Stripe's trial mechanic
+// only exists for subscriptions); SixMonth ("Full Course Access") is a
+// one-time Price with no trial. (An Annual price was created and then
+// deactivated in the sandbox -- $99/yr undercut the $100 six-month pass
+// for twice the access, so it was dropped rather than fixed with mismatched
+// numbers.)
 export function getPriceId(plan: PlanId): string {
   const envVar = PRICE_ENV_VARS[plan];
   const value = process.env[envVar];
@@ -42,3 +44,14 @@ export function getPriceId(plan: PlanId): string {
 // metadata) since app code needs it as a plain number for the
 // accessExpiresAt calculation in the webhook handler.
 export const SIXMONTH_PASS_DAYS = 182;
+
+// Local dev (via `stripe listen`) and the deployed app (via a Dashboard-
+// configured webhook endpoint) each have their OWN signing secret -- see
+// .env.example. Looked up lazily, same reasoning as getPriceId above.
+export function getWebhookSecret(): string {
+  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!secret) {
+    throw new Error("STRIPE_WEBHOOK_SECRET is not set. Add it to your .env file (see .env.example).");
+  }
+  return secret;
+}
