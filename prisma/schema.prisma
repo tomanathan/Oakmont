@@ -72,6 +72,24 @@ model User {
   parentInviteCode String?      @unique
   parentShareToken String?      @unique
   parentLinks      ParentLink[]
+
+  // Billing. stripeCustomerId is set the first time this student starts a
+  // checkout, for either purchase path below, and is reused after that.
+  // Subscription path (Monthly/Annual prices): subscriptionStatus mirrors
+  // Stripe's own status string verbatim ("trialing", "active", "past_due",
+  // "canceled", etc. -- see lib/subscription.ts) and is the source of
+  // truth for access; currentPeriodEnd is display-only ("renews on...").
+  // One-time path (the 6-Month Pass): accessExpiresAt is simply set to
+  // purchase time + 182 days on a successful payment -- independent of
+  // subscriptionStatus, since a one-time payment has no Stripe Subscription
+  // object behind it at all. A student can hold both at once (e.g. bought
+  // the pass, later also subscribes); access is granted if EITHER is
+  // currently valid -- see hasActiveAccess.
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  subscriptionStatus   String?
+  currentPeriodEnd     DateTime?
+  accessExpiresAt      DateTime?
 }
 
 // A parent/guardian account -- entirely separate from User (the student),
