@@ -20,6 +20,9 @@ export function SettingsClient({
   longestStreak,
   secondPetName,
   secondPetUnlockDays,
+  parentInviteCode,
+  parentShareToken,
+  linkedParents,
 }: {
   email: string;
   baselineScore: number | null;
@@ -33,6 +36,9 @@ export function SettingsClient({
   longestStreak: number;
   secondPetName: string;
   secondPetUnlockDays: number;
+  parentInviteCode: string | null;
+  parentShareToken: string | null;
+  linkedParents: { id: string; email: string }[];
 }) {
   const router = useRouter();
   const [baseline, setBaseline] = useState(baselineScore?.toString() ?? "");
@@ -81,6 +87,77 @@ export function SettingsClient({
       }
     } finally {
       setEquipping(null);
+    }
+  }
+
+  const [inviteCode, setInviteCode] = useState(parentInviteCode);
+  const [shareToken, setShareToken] = useState(parentShareToken);
+  const [parents, setParents] = useState(linkedParents);
+  const [generatingCode, setGeneratingCode] = useState(false);
+  const [generatingLink, setGeneratingLink] = useState(false);
+  const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
+  const [copied, setCopied] = useState<"code" | "link" | null>(null);
+
+  function copy(text: string, which: "code" | "link") {
+    // Clipboard access can throw (insecure context, permission denied) --
+    // worst case the button just doesn't flash "Copied", the value is
+    // still shown on screen to copy by hand.
+    navigator.clipboard?.writeText(text).then(
+      () => {
+        setCopied(which);
+        setTimeout(() => setCopied(null), 1800);
+      },
+      () => {}
+    );
+  }
+
+  async function generateInviteCode() {
+    setGeneratingCode(true);
+    try {
+      const res = await fetch("/api/account/parent-invite", { method: "POST" });
+      if (res.ok) setInviteCode((await res.json()).code);
+    } finally {
+      setGeneratingCode(false);
+    }
+  }
+
+  async function turnOffInviteCode() {
+    setGeneratingCode(true);
+    try {
+      const res = await fetch("/api/account/parent-invite", { method: "DELETE" });
+      if (res.ok) setInviteCode(null);
+    } finally {
+      setGeneratingCode(false);
+    }
+  }
+
+  async function generateShareLink() {
+    setGeneratingLink(true);
+    try {
+      const res = await fetch("/api/account/parent-share", { method: "POST" });
+      if (res.ok) setShareToken((await res.json()).token);
+    } finally {
+      setGeneratingLink(false);
+    }
+  }
+
+  async function turnOffShareLink() {
+    setGeneratingLink(true);
+    try {
+      const res = await fetch("/api/account/parent-share", { method: "DELETE" });
+      if (res.ok) setShareToken(null);
+    } finally {
+      setGeneratingLink(false);
+    }
+  }
+
+  async function unlinkParent(id: string) {
+    setUnlinkingId(id);
+    try {
+      const res = await fetch(`/api/account/parent-links/${id}`, { method: "DELETE" });
+      if (res.ok) setParents((prev) => prev.filter((p) => p.id !== id));
+    } finally {
+      setUnlinkingId(null);
     }
   }
 
@@ -287,6 +364,123 @@ export function SettingsClient({
           {saving ? "Saving..." : "Save"}
         </button>
       </form>
+
+      {/* Parent access -- lets a parent see this student's own dashboard
+          (read-only, a separate parent account of their own) two ways: an
+          invite code they type in once while signing up, or a link they
+          can just open. Either can be turned off independently, and
+          linked parents can be individually unlinked -- this is the one
+          place a student controls who besides them can see their data. */}
+      <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Parent access</div>
+      <div className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-6">
+        <div className="text-[15px] font-semibold text-ink mb-1">Invite code</div>
+        <div className="text-xs text-gray-500 mb-3">
+          Give this to a parent -- they'll enter it when they sign up at{" "}
+          <span className="font-mono">/parent/login</span> to see your dashboard (read-only).
+        </div>
+        {inviteCode ? (
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <span className="font-mono text-lg font-semibold text-ink tracking-wide bg-[#f5f4fb] border border-[#e0defa] rounded-lg px-3 py-1.5">
+              {inviteCode}
+            </span>
+            <button
+              onClick={() => copy(inviteCode, "code")}
+              className="text-xs font-semibold text-accent hover:underline"
+            >
+              {copied === "code" ? "Copied!" : "Copy"}
+            </button>
+          </div>
+        ) : (
+          <div className="text-xs text-gray-400 mb-3">No code yet -- generate one to invite a parent.</div>
+        )}
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={generateInviteCode}
+            disabled={generatingCode}
+            className="px-3.5 py-2 rounded-lg border border-[#e0defa] text-ink font-semibold text-xs disabled:opacity-60"
+          >
+            {generatingCode ? "Working..." : inviteCode ? "Generate a new code" : "Generate a code"}
+          </button>
+          {inviteCode && (
+            <button
+              onClick={turnOffInviteCode}
+              disabled={generatingCode}
+              className="px-3.5 py-2 rounded-lg text-gray-400 hover:text-red-700 font-semibold text-xs disabled:opacity-60"
+            >
+              Turn off
+            </button>
+          )}
+        </div>
+
+        <div className="border-t border-[#f0eff9] my-5" />
+
+        <div className="text-[15px] font-semibold text-ink mb-1">Shareable link</div>
+        <div className="text-xs text-gray-500 mb-3">
+          Anyone with this link can see your dashboard, read-only, with no account or sign-in needed.
+        </div>
+        {shareToken ? (
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <span className="font-mono text-xs text-ink bg-[#f5f4fb] border border-[#e0defa] rounded-lg px-3 py-1.5 truncate max-w-[280px]">
+              {typeof window !== "undefined" ? `${window.location.origin}/share/${shareToken}` : `/share/${shareToken}`}
+            </span>
+            <button
+              onClick={() =>
+                copy(
+                  typeof window !== "undefined" ? `${window.location.origin}/share/${shareToken}` : `/share/${shareToken}`,
+                  "link"
+                )
+              }
+              className="text-xs font-semibold text-accent hover:underline"
+            >
+              {copied === "link" ? "Copied!" : "Copy"}
+            </button>
+          </div>
+        ) : (
+          <div className="text-xs text-gray-400 mb-3">No link yet -- create one to share your dashboard.</div>
+        )}
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={generateShareLink}
+            disabled={generatingLink}
+            className="px-3.5 py-2 rounded-lg border border-[#e0defa] text-ink font-semibold text-xs disabled:opacity-60"
+          >
+            {generatingLink ? "Working..." : shareToken ? "Create a new link" : "Create a link"}
+          </button>
+          {shareToken && (
+            <button
+              onClick={turnOffShareLink}
+              disabled={generatingLink}
+              className="px-3.5 py-2 rounded-lg text-gray-400 hover:text-red-700 font-semibold text-xs disabled:opacity-60"
+            >
+              Turn off
+            </button>
+          )}
+        </div>
+
+        {parents.length > 0 && (
+          <>
+            <div className="border-t border-[#f0eff9] my-5" />
+            <div className="text-[15px] font-semibold text-ink mb-2">Linked parents</div>
+            <div className="flex flex-col gap-1.5">
+              {parents.map((p) => (
+                <div
+                  key={p.id}
+                  className="flex items-center justify-between gap-3 px-3 py-2 border border-[#ece9f7] rounded-lg text-sm"
+                >
+                  <span className="text-ink truncate">{p.email}</span>
+                  <button
+                    onClick={() => unlinkParent(p.id)}
+                    disabled={unlinkingId === p.id}
+                    className="text-xs text-gray-400 hover:text-red-700 font-semibold flex-shrink-0 disabled:opacity-60"
+                  >
+                    {unlinkingId === p.id ? "Unlinking..." : "Unlink"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
 
       {/* Account -- neither Ozho's nor the study plan's, so it stays its
           own labeled section rather than trailing after Study plan

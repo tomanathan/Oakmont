@@ -13,9 +13,17 @@ export default async function SettingsPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const [stats, progressRows] = await Promise.all([
+  const [stats, progressRows, parentAccess] = await Promise.all([
     getUserStats(user.userId),
     prisma.progress.findMany({ where: { userId: user.userId } }),
+    prisma.user.findUnique({
+      where: { id: user.userId },
+      select: {
+        parentInviteCode: true,
+        parentShareToken: true,
+        parentLinks: { select: { id: true, parent: { select: { email: true } } }, orderBy: { createdAt: "asc" } },
+      },
+    }),
   ]);
 
   const progress: ProgressMap = {};
@@ -54,6 +62,9 @@ export default async function SettingsPage() {
         longestStreak={stats.longestStreak}
         secondPetName={SECOND_PET_NAME}
         secondPetUnlockDays={SECOND_PET_UNLOCK_STREAK_DAYS}
+        parentInviteCode={parentAccess?.parentInviteCode ?? null}
+        parentShareToken={parentAccess?.parentShareToken ?? null}
+        linkedParents={(parentAccess?.parentLinks ?? []).map((l) => ({ id: l.id, email: l.parent.email }))}
       />
     </AppShell>
   );

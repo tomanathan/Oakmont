@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-import { getCurrentParent } from "@/lib/parentSession";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
 import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
@@ -7,42 +5,30 @@ import { computePetState } from "@/lib/pet";
 import { computeDomainMastery, orderSubskillsByWeakness, type ProgressMap } from "@/lib/mastery";
 import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan } from "@/data/curriculum";
-import { ParentShell } from "@/components/ParentShell";
+import { BrandMark } from "@/components/BrandMark";
 import { StudentProgressView } from "@/components/StudentProgressView";
 
-export default async function ParentDashboardPage({
-  searchParams,
-}: {
-  searchParams: { student?: string };
-}) {
-  const parent = await getCurrentParent();
-  if (!parent) redirect("/parent/login");
+// Public, no-login read-only view -- anyone with the link sees this
+// student's dashboard, the same as a linked parent account would (see
+// app/parent/dashboard/page.tsx, which this mirrors almost exactly, minus
+// the parent-account gate and the student switcher). A student generates
+// or revokes this link from Settings; a wrong or revoked token gets the
+// same generic "not valid" message either way -- never a hint that a
+// token was once real, or that any particular token might be close.
+export default async function SharePage({ params }: { params: { token: string } }) {
+  const student = await prisma.user.findUnique({ where: { parentShareToken: params.token } });
 
-  const links = await prisma.parentLink.findMany({
-    where: { parentId: parent.parentId },
-    include: { student: { select: { id: true, email: true } } },
-    orderBy: { createdAt: "asc" },
-  });
-
-  // Shouldn't normally happen (signup requires a code to create the first
-  // link), but a parent whose only student unlinked them from Settings
-  // lands here instead of a broken/empty dashboard.
-  if (links.length === 0) {
+  if (!student) {
     return (
-      <ParentShell parentEmail={parent.email} students={[]} activeStudentId="">
-        <div className="bg-white border border-[#ece9f7] rounded-2xl p-8 text-center">
-          <div className="text-lg font-semibold text-ink mb-2">No student linked</div>
-          <div className="text-sm text-gray-500">
-            Ask your student for their invite code from Settings &rarr; Parent access, then sign up again with it.
-          </div>
+      <div className="max-w-[480px] mx-auto px-6 py-16 font-sans text-center">
+        <BrandMark size={48} className="mx-auto mb-4" />
+        <div className="text-lg font-semibold text-ink mb-2">This link isn&apos;t valid</div>
+        <div className="text-sm text-gray-500">
+          It may have been turned off, or the link might be mistyped. Ask your student for a fresh one.
         </div>
-      </ParentShell>
+      </div>
     );
   }
-
-  const requestedId = searchParams.student;
-  const activeLink = links.find((l) => l.studentId === requestedId) ?? links[0];
-  const student = activeLink.student;
 
   const [rows, stats, tests] = await Promise.all([
     prisma.progress.findMany({ where: { userId: student.id } }),
@@ -64,10 +50,8 @@ export default async function ParentDashboardPage({
     (tests[0]?.domainScores as Record<string, number> | null) ?? null
   );
 
-  // Everything below mirrors app/dashboard/page.tsx's own computation
-  // exactly (same weakness ordering, same plan build, same "completed in
-  // plan" pacing input) so a parent's numbers always match what their
-  // student sees on their own dashboard for the same account.
+  // Mirrors app/dashboard/page.tsx's own computation exactly -- see
+  // app/parent/dashboard/page.tsx's identical block for why.
   const createdAt = stats.createdAt ?? new Date();
   const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null);
   const weaknessOrderedIds = orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery);
@@ -86,11 +70,12 @@ export default async function ParentDashboardPage({
   const petState = computePetState(stats.lastActiveDate ?? null, stats.petDiedAt ?? null, stats.petBornAt);
 
   return (
-    <ParentShell
-      parentEmail={parent.email}
-      students={links.map((l) => ({ id: l.studentId, email: l.student.email }))}
-      activeStudentId={student.id}
-    >
+    <div className="max-w-[1180px] mx-auto px-4 pb-12 pt-2 font-sans">
+      <header className="flex items-center gap-2.5 py-3 px-4 mb-4">
+        <BrandMark size={26} />
+        <div className="font-display font-semibold text-[14px] text-ink">Oakmont Study Center</div>
+        <span className="text-xs text-gray-400">&middot; shared progress view</span>
+      </header>
       <StudentProgressView
         studentEmail={student.email}
         curriculum={CURRICULUM}
@@ -112,6 +97,7 @@ export default async function ParentDashboardPage({
           domainCounts: t.domainCounts as Record<string, { correct: number; total: number }>,
         }))}
       />
-    </ParentShell>
+      <div className="text-center text-xs text-gray-400 mt-8">Powered by Oakmont Study Center</div>
+    </div>
   );
 }

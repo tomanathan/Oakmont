@@ -44,7 +44,12 @@ const PET_STAGE_LABEL: Record<PetStage, string> = {
   dead: "Gone",
 };
 
-export function ParentDashboardClient({
+// A read-only render of a student's pace/mastery/practice-test data --
+// shared by the parent dashboard (app/parent/dashboard) and the no-login
+// public share view (app/share/[token]), so the two access paths (a linked
+// parent account, or a share link) always show the exact same thing off
+// the exact same data shape, rather than two views drifting apart.
+export function StudentProgressView({
   studentEmail,
   curriculum,
   progress,
