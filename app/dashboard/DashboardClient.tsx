@@ -107,7 +107,10 @@ export function DashboardClient({
         {curriculum.map((sec) => {
           const theme = sectionTheme(sec.section);
           const active = sec.section === subject;
-          const { masteredCount: sectionMastered, total: sectionTotal, pct } = sectionProgress(sec, progress);
+          const { total: sectionTotal, attemptedCount, masteredCount: sectionMastered, avgPct } = sectionProgress(
+            sec,
+            progress
+          );
           const label = sec.section === "Reading and Writing" ? "Reading & Writing" : sec.section;
           return (
             <button
@@ -120,20 +123,32 @@ export function DashboardClient({
                   : "bg-white border-gray-200 opacity-[0.55] hover:opacity-90 hover:border-gray-300"
               }`}
             >
-              <div className={`text-[11px] font-bold uppercase tracking-wide mb-1 ${active ? theme.text : "text-gray-400"}`}>
-                {label}
-              </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-[32px] leading-none font-display font-semibold text-ink">{pct}%</span>
-                <span className="text-xs text-gray-500">
-                  {sectionMastered} of {sectionTotal} mastered
-                </span>
-              </div>
-              <div className="mt-3 h-2 rounded-full bg-black/[0.06] overflow-hidden">
-                <div
-                  className={`h-full rounded-full ${active ? theme.bar : "bg-gray-300"} transition-all duration-300`}
-                  style={{ width: `${pct}%` }}
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <div className={`text-[11px] font-bold uppercase tracking-wide ${active ? theme.text : "text-gray-400"}`}>
+                  {label}
+                </div>
+                <SubjectRing
+                  total={sectionTotal}
+                  attemptedCount={attemptedCount}
+                  masteredCount={sectionMastered}
+                  color={theme.dotHex}
+                  lightColor={theme.barHex}
                 />
+              </div>
+              {avgPct === null ? (
+                <div className="text-sm text-gray-500">Not started yet &mdash; tap in to begin</div>
+              ) : (
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-[32px] leading-none font-display font-semibold text-ink">{avgPct}%</span>
+                  {attemptedCount === 1 ? (
+                    <span className="text-xs text-gray-400">first attempt</span>
+                  ) : (
+                    <span className="text-xs text-gray-500">average score</span>
+                  )}
+                </div>
+              )}
+              <div className="mt-1 text-xs text-gray-500">
+                {attemptedCount} started &middot; {sectionMastered} mastered &middot; {sectionTotal} total
               </div>
             </button>
           );
@@ -384,23 +399,98 @@ function PlanCard({
 /**
  * Real mastery numbers for one whole section (Math, or Reading and
  * Writing), for the subject toggle above -- every subskill across every
- * domain in this section, and how many of them are quizzed to a perfect
- * score. Same "mastered" definition the wardrobe and the header stats use
- * (bestScore === total), just totaled per section instead of per domain
- * or across the whole curriculum.
+ * domain in this section, split into mastered (a perfect quiz score),
+ * attempted-but-not-mastered, and untouched. `avgPct` is the average
+ * score across ATTEMPTED subskills only (untouched subskills are simply
+ * absent from it, not a zero dragging it down) -- an early first attempt
+ * shouldn't read as a near-failing grade just because the rest of the
+ * section hasn't been started yet. `avgPct` is null with zero attempted,
+ * since there's nothing to average and "0%" would misreport "you're
+ * failing" instead of the truth, "you haven't started".
  */
 function sectionProgress(
   section: Section,
   progress: ProgressMap
-): { masteredCount: number; total: number; pct: number } {
+): { total: number; attemptedCount: number; masteredCount: number; avgPct: number | null } {
   const subskillIds = section.domains.flatMap((d) => d.subskills.map((s) => s.id));
-  const masteredCount = subskillIds.filter((id) => {
-    const p = progress[id];
-    return !!p && p.bestScore === p.total;
-  }).length;
-  const total = subskillIds.length;
-  const pct = total > 0 ? Math.round((masteredCount / total) * 100) : 0;
-  return { masteredCount, total, pct };
+  const attempted = subskillIds.filter((id) => !!progress[id]);
+  const masteredCount = attempted.filter((id) => progress[id].bestScore === progress[id].total).length;
+  const avgPct =
+    attempted.length > 0
+      ? Math.round(
+          attempted.reduce((sum, id) => {
+            const p = progress[id];
+            return sum + (p.total > 0 ? (p.bestScore / p.total) * 100 : 0);
+          }, 0) / attempted.length
+        )
+      : null;
+  return { total: subskillIds.length, attemptedCount: attempted.length, masteredCount, avgPct };
+}
+
+/**
+ * The subject toggle's mastery ring -- one thin arc segment per subskill
+ * in the section, in a fixed clockwise order (doesn't need to match any
+ * particular subskill, just needs to sum to `total` without double
+ * counting). Each segment is exactly one of three states: mastered (the
+ * section's full-strength color), attempted but not mastered (its lighter
+ * `bar` shade), or untouched (flat gray) -- `masteredCount` is already a
+ * subset of `attemptedCount` (see sectionProgress), so the first
+ * `masteredCount` segments are colored mastered, the next
+ * `attemptedCount - masteredCount` are colored attempted, and the rest
+ * are untouched, with no subskill ever contributing to two segments.
+ */
+function SubjectRing({
+  total,
+  attemptedCount,
+  masteredCount,
+  color,
+  lightColor,
+  size = 46,
+}: {
+  total: number;
+  attemptedCount: number;
+  masteredCount: number;
+  color: string;
+  lightColor: string;
+  size?: number;
+}) {
+  const strokeWidth = size >= 44 ? 5 : 4;
+  const radius = (size - strokeWidth) / 2;
+  const center = size / 2;
+  const gapDeg = total > 1 ? Math.min(4, 360 / total / 4) : 0;
+  const segDeg = 360 / total;
+
+  function arcPath(startDeg: number, endDeg: number) {
+    const toXY = (deg: number) => {
+      // -90 so segment 0 starts at 12 o'clock, not 3 o'clock.
+      const rad = ((deg - 90) * Math.PI) / 180;
+      return [center + radius * Math.cos(rad), center + radius * Math.sin(rad)];
+    };
+    const [x1, y1] = toXY(startDeg);
+    const [x2, y2] = toXY(endDeg);
+    const largeArc = endDeg - startDeg > 180 ? 1 : 0;
+    return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`;
+  }
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="flex-shrink-0" aria-hidden>
+      {Array.from({ length: total }, (_, i) => {
+        const state = i < masteredCount ? "mastered" : i < attemptedCount ? "attempted" : "untouched";
+        const startDeg = i * segDeg + gapDeg / 2;
+        const endDeg = (i + 1) * segDeg - gapDeg / 2;
+        return (
+          <path
+            key={i}
+            d={arcPath(startDeg, endDeg)}
+            fill="none"
+            stroke={state === "mastered" ? color : state === "attempted" ? lightColor : "#e5e3f0"}
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+          />
+        );
+      })}
+    </svg>
+  );
 }
 
 // findRecommended now lives in @/lib/recommend so the /api/plan/next route
