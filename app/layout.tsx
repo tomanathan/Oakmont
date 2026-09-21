@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
-import { ScoutCompanion } from "@/components/ScoutCompanion";
-import { SecondCompanion } from "@/components/SecondCompanion";
+import { CompanionGate } from "@/components/CompanionGate";
 import { GlobalConfetti } from "@/components/GlobalConfetti";
 
 // A characterful serif reserved for the brand wordmark and page titles
@@ -33,7 +32,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           "ozho:celebrate" from any page so nothing has to render its own
           confetti locally. SecondCompanion (Mochi) renders nothing at all
           until the streak that unlocks it is actually reached -- see its
-          own file. */}
+          own file. CompanionGate hides both companions entirely on
+          parent-facing routes (/parent, /share), where there's no student
+          session for their ambient chatter to be about. */}
       <body className="bg-white text-ink font-sans antialiased">
         {/* The id here is a deliberate hook, not decoration: ScoutCompanion
             measures this element's own height (not document.documentElement's)
@@ -44,8 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             exactly the runaway-downward bug this id exists to prevent (see
             pageContentBottom() in ScoutCompanion.tsx for the full story). */}
         <div id="app-content">{children}</div>
-        <ScoutCompanion />
-        <SecondCompanion />
+        <CompanionGate />
         <GlobalConfetti />
       </body>
     </html>
