@@ -33,6 +33,76 @@ const DESMOS_URLS: Record<"graphing" | "scientific", string> = {
   scientific: "https://www.desmos.com/testing/texas/scientific",
 };
 
+// A quiz in progress is real work a student doesn't want to redo --
+// persisted per subskill so a refresh, a back-button, or navigating away
+// and back restores exactly where they left off. Stores the actual
+// shuffled `quizQuestions` (not just answer indices) because the choice
+// order is re-randomized on every fresh mount (see shuffleChoices below);
+// restoring raw indices against a freshly-reshuffled order would silently
+// score against the wrong choice -- the same failure mode this file's own
+// comments already document for the *questions* prop reshuffling out from
+// under `answers` after a router.refresh(). Restoring the exact shuffled
+// order sidesteps that entirely.
+interface QuizDraft {
+  quizQuestions: Question[];
+  answers: Record<number, number>;
+}
+
+function quizDraftKey(subskillId: string): string {
+  return `oakmont:quiz-draft:${subskillId}`;
+}
+
+// Safari private mode (and any browser with storage disabled) throws on
+// both getItem and setItem, not just setItem -- and this is a phone-first
+// user, so every call here is wrapped rather than just the writes.
+function loadQuizDraft(subskillId: string, expectedQuestionCount: number): QuizDraft | null {
+  try {
+    const raw = window.localStorage.getItem(quizDraftKey(subskillId));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (
+      !parsed ||
+      !Array.isArray(parsed.quizQuestions) ||
+      typeof parsed.answers !== "object" ||
+      parsed.answers === null
+    ) {
+      clearQuizDraft(subskillId);
+      return null;
+    }
+    // The one piece of drift worth guarding against here: the question
+    // bank itself changed (a question added/removed) between visits. A
+    // full content diff isn't worth it for a draft that's discarded
+    // outright on mismatch anyway -- length is enough to catch it. Removed
+    // outright rather than just ignored, so a stale draft doesn't linger
+    // forever if this subskill's question count never changes back.
+    if (parsed.quizQuestions.length !== expectedQuestionCount) {
+      clearQuizDraft(subskillId);
+      return null;
+    }
+    return { quizQuestions: parsed.quizQuestions, answers: parsed.answers };
+  } catch {
+    return null;
+  }
+}
+
+function saveQuizDraft(subskillId: string, quizQuestions: Question[], answers: Record<number, number>) {
+  try {
+    window.localStorage.setItem(quizDraftKey(subskillId), JSON.stringify({ quizQuestions, answers }));
+  } catch {
+    // Private browsing, storage disabled, or quota exceeded -- the quiz
+    // still works this session, it just won't survive a reload. Nothing
+    // to recover from here.
+  }
+}
+
+function clearQuizDraft(subskillId: string) {
+  try {
+    window.localStorage.removeItem(quizDraftKey(subskillId));
+  } catch {
+    // ignore, same as above
+  }
+}
+
 export function SubskillClient({
   subskill,
   questions,
@@ -41,6 +111,11 @@ export function SubskillClient({
   questions: Question[];
 }) {
   const router = useRouter();
+  // Defaults to "lesson" and gets flipped to "practice" in the restore
+  // effect below when a draft with real answers in it is found -- a
+  // student resuming a quiz should land back in the quiz, not on the
+  // lesson tab wondering why their answers "disappeared" when they
+  // haven't actually been touched at all.
   const [mode, setMode] = useState<"lesson" | "practice">("lesson");
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -97,15 +172,43 @@ export function SubskillClient({
   // it's actually a different subskill -- a refresh of this same page
   // leaves it untouched and this effect alone.
   const [quizQuestions, setQuizQuestions] = useState<Question[]>(questions);
+  // One entry per quiz question card, so an incomplete submission can jump
+  // straight to the first one that's still unanswered instead of leaving
+  // the student to hunt for it across a long, multi-screen scroll. Also
+  // what the draft-restore effect below scrolls to, so a resumed quiz
+  // lands on the first thing still left to do instead of the top of a
+  // long page of already-answered questions.
+  const questionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // Set by the restore effect below when a draft has an unanswered
+  // question to jump to; consumed by the effect further down once `mode`
+  // actually flips to "practice". The quiz cards (and questionRefs) only
+  // exist in the DOM once that mode switch has itself committed -- the
+  // section is conditionally rendered (`mode === "practice" && ...`), not
+  // just hidden -- so a plain setTimeout here raced the render and
+  // silently scrolled nothing.
+  const pendingRestoreScrollRef = useRef<number | null>(null);
   useEffect(() => {
+    const draft = loadQuizDraft(subskill.id, questions.length);
+    if (draft) {
+      setQuizQuestions(draft.quizQuestions);
+      setAnswers(draft.answers);
+      if (Object.keys(draft.answers).length > 0) {
+        const firstUnanswered = draft.quizQuestions.findIndex((_, i) => draft.answers[i] === undefined);
+        pendingRestoreScrollRef.current = firstUnanswered === -1 ? 0 : firstUnanswered;
+        setMode("practice");
+      }
+      return;
+    }
     setQuizQuestions(questions.map(shuffleChoices));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subskill.id, shuffleSeed]);
 
-  // One entry per quiz question card, so an incomplete submission can jump
-  // straight to the first one that's still unanswered instead of leaving
-  // the student to hunt for it across a long, multi-screen scroll.
-  const questionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  useEffect(() => {
+    if (mode !== "practice" || pendingRestoreScrollRef.current === null) return;
+    const idx = pendingRestoreScrollRef.current;
+    pendingRestoreScrollRef.current = null;
+    questionRefs.current[idx]?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [mode]);
 
   // Same idea for the lesson's worked examples, shuffled once per page
   // visit (not on every navigation between examples) -- exampleSelections
@@ -180,7 +283,14 @@ export function SubskillClient({
   }
 
   function selectAnswer(qIdx: number, choiceIdx: number) {
-    setAnswers((prev) => ({ ...prev, [qIdx]: choiceIdx }));
+    setAnswers((prev) => {
+      const next = { ...prev, [qIdx]: choiceIdx };
+      // Written against the actual shuffled quizQuestions in scope right
+      // now, so a later restore replays the exact same choice order these
+      // indices were picked against -- see loadQuizDraft's own comment.
+      saveQuizDraft(subskill.id, quizQuestions, next);
+      return next;
+    });
     setErrorMsg("");
   }
 
@@ -198,6 +308,9 @@ export function SubskillClient({
     setResult(null);
     setErrorMsg("");
     setShuffleSeed((s) => s + 1);
+    // Belt and suspenders with the clear in submitQuiz below -- a retake
+    // is a fresh start either way, never a draft to resume.
+    clearQuizDraft(subskill.id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -225,6 +338,11 @@ export function SubskillClient({
         body: JSON.stringify({ subskillId: subskill.id, score, total: quizQuestions.length }),
       });
       if (res.ok) {
+        // The whole reason this existed was to resume an *unsubmitted*
+        // attempt -- a successful submit means there's nothing left to
+        // resume, and a later retake should start from a real reshuffle,
+        // not this now-scored attempt.
+        clearQuizDraft(subskill.id);
         const data = await res.json();
         setResult({
           justMastered: !!data.justMastered,
