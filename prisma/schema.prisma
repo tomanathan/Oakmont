@@ -61,6 +61,45 @@ model User {
   petBornAt              DateTime  @default(now())
   petWarningEmailSentAt  DateTime?
   petDeathEmailSentAt    DateTime?
+
+  // Parent access: a student generates each of these on demand from
+  // Settings (both start null). parentInviteCode is a short code a parent
+  // types in during their own signup to link their account to this
+  // student's -- see ParentLink. parentShareToken is a separate,
+  // unguessable token for the no-login public read-only view at
+  // /share/[token] (app/share/[token]/page.tsx). Neither is required for
+  // the app to work exactly as it does today.
+  parentInviteCode String?      @unique
+  parentShareToken String?      @unique
+  parentLinks      ParentLink[]
+}
+
+// A parent/guardian account -- entirely separate from User (the student),
+// with its own session cookie (see lib/parentAuth.ts) so a parent and their
+// kid can be logged in simultaneously on the same device. Read-only by
+// design: nothing in the parent-facing routes ever writes to a student's
+// Progress/PracticeTest/User rows.
+model Parent {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  passwordHash String
+  createdAt    DateTime     @default(now())
+  links        ParentLink[]
+}
+
+// One parent linked to one student. A parent can link multiple students
+// (one link row each); a student can be linked to multiple parents (e.g.
+// both parents) -- the unique constraint just prevents the same pair from
+// being linked twice, not a cap on either side.
+model ParentLink {
+  id        String   @id @default(cuid())
+  parentId  String
+  parent    Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  studentId String
+  student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([parentId, studentId])
 }
 
 model Progress {
