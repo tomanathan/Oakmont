@@ -4,7 +4,11 @@ import { SignJWT, jwtVerify } from "jose";
 const SESSION_COOKIE = "sat_session";
 const SESSION_DURATION_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
-function getSecretKey() {
+// Exported so lib/parentAuth.ts can sign/verify its own (differently-shaped)
+// session tokens with the same secret, rather than duplicating this
+// "SESSION_SECRET is not set" guard -- a parent and a student are separate
+// cookies/JWT payloads, but there's no reason to manage two secrets for it.
+export function getSecretKey() {
   const secret = process.env.SESSION_SECRET;
   if (!secret) {
     throw new Error(
