@@ -350,6 +350,47 @@ const OUT_OF_VIEW_MARGIN = 40;
 const RETURN_SPEED_MULT = 2.1;
 const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave me behind!", "Hold on, I'm coming!"];
 
+// Below this width, there's no room for him to roam without routing
+// straight over lesson prose, answer choices, or score badges -- a phone
+// screen doesn't have the wide-open margins a desktop viewport does for
+// beginWalk's landing spots to land in. Matches Tailwind's own `sm:`
+// breakpoint, which is also where the rest of the app's layout switches
+// to a single narrow column. Desktop (>= this width) is untouched -- he
+// still roams exactly as before.
+const MOBILE_BREAKPOINT = 640;
+// Docked position on mobile: pinned to the bottom-right corner of the
+// viewport itself (position: fixed, not the page-coordinate absolute
+// positioning his desktop wandering uses), so scrolling never carries page
+// content underneath a spot he still thinks is "empty". Margins chosen so
+// he sits mostly in the page's own edge gutter rather than over the
+// content column.
+// Top-right, not bottom -- tried bottom-right first and it landed him
+// squarely on top of the quiz's answer-choice cards and the Submit button
+// on real devices (both full-width, both able to sit anywhere near the
+// bottom of the viewport depending on scroll position). Content a student
+// is actively reading or about to tap tends to sit mid-to-lower in the
+// viewport (that's just comfortable thumb/eye position on a phone); the
+// top edge is comparatively the least-attended real estate on every one
+// of these pages, closest to how a status bar or app-bar icon reads as
+// "chrome", not "part of the page".
+const MOBILE_DOCK_MARGIN_X = 10;
+const MOBILE_DOCK_MARGIN_Y = 10;
+// Rendered noticeably smaller than his normal 44px sprite -- a small
+// static badge in the corner reads as an icon; at full size he was heavy
+// enough to still feel like he was "sitting on" whatever text happened to
+// be nearby.
+const MOBILE_DOCK_SIZE = 30;
+// Diameter of the opaque circular backdrop behind him while docked, so an
+// incidental line of text passing underneath reads as "there's a badge
+// here" (like any floating chat-launcher icon) rather than a transparent
+// sprite ambiguously sitting mid-sentence.
+const MOBILE_DOCK_BADGE_SIZE = 40;
+// Half the badge's size -- used to translate the fixed-corner dock into
+// an equivalent page coordinate for the moment the action menu is open
+// (see openMenu), since the ring-clamping math below was written for
+// posRef's normal page-coordinate system, not fixed-viewport corners.
+const MOBILE_DOCK_HALF = MOBILE_DOCK_BADGE_SIZE / 2;
+
 // "Follow" mode: he sticks close to the cursor, obviously and continuously,
 // rather than ambling back into a wide comfort band every 10+ seconds like
 // the old version did (that read as "wanders nearby sometimes", not
@@ -556,6 +597,14 @@ export function ScoutCompanion() {
   // outlive the menu itself: a heart burst (pet) and a thrown ball (fetch).
   const [menuOpen, setMenuOpen] = useState(false);
   const [followMode, setFollowMode] = useState(false);
+  // Below MOBILE_BREAKPOINT he's docked in a fixed screen corner instead of
+  // roaming (see the render loop's early-return and the wrapper's own
+  // position:fixed style). Needs both a ref (read inside the tick's
+  // setInterval closure and openMenu, same reason every other behavior
+  // flag in this file has a ref twin) and state (drives the wrapper's
+  // JSX, which a ref alone can't do).
+  const [isMobile, setIsMobile] = useState(false);
+  const isMobileRef = useRef(false);
   // The "Sit" menu action -- holds him still in the sitting pose
   // (PixelDog's own `sitting` prop) until he's told to get up, another
   // action picks him back up (see handleMenuAction), or he has to break
@@ -739,6 +788,14 @@ export function ScoutCompanion() {
     };
     mq.addEventListener?.("change", onMotionChange);
 
+    function checkMobile() {
+      const mobile = window.innerWidth < MOBILE_BREAKPOINT;
+      isMobileRef.current = mobile;
+      setIsMobile(mobile);
+    }
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
     function onMove(e: PointerEvent) {
       mouseRef.current = { x: e.clientX + window.scrollX, y: e.clientY + window.scrollY };
       lastInteractionAtRef.current = Date.now();
@@ -787,6 +844,7 @@ export function ScoutCompanion() {
 
     return () => {
       mq.removeEventListener?.("change", onMotionChange);
+      window.removeEventListener("resize", checkMobile);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("scroll", onInteract);
       window.removeEventListener("keydown", onInteract);
@@ -1250,6 +1308,18 @@ export function ScoutCompanion() {
       // reset above so the next real tick isn't inflated).
       if (window.innerWidth < 50 || window.innerHeight < 50) return;
 
+      // Below MOBILE_BREAKPOINT he's docked to a fixed screen corner (see
+      // the wrapper's own position:fixed style below) instead of running
+      // any of the rest of this loop -- ambient wandering, the
+      // out-of-view dash, and the text-overlap escape all used to walk
+      // him right over lesson prose, answer choices, or score badges,
+      // which a phone screen has no spare margin for him to route around.
+      // Tapping him to open the action menu still works either way, since
+      // that's a plain onClick on the button below, untouched by this
+      // loop. Desktop (>= MOBILE_BREAKPOINT) never hits this and behaves
+      // exactly as before.
+      if (isMobileRef.current) return;
+
       const nowMs = Date.now();
 
       // Idle sleep: no interaction anywhere on the page for a while and he
@@ -1614,6 +1684,23 @@ export function ScoutCompanion() {
       fetchingRef.current = null;
       setBall(null);
       setCarryingBall(false);
+    }
+    if (isMobileRef.current) {
+      // Docked mode renders him via the wrapper's fixed-corner CSS, not
+      // posRef (see the wrapper's own style below), so posRef is stale
+      // here -- point it at the equivalent page coordinate before the
+      // ring-clamp math runs, so that existing logic (written for
+      // posRef's normal page coordinates) has something real to work
+      // from. This doesn't visibly move him: the wrapper's style switches
+      // from fixed-corner to this posRef-driven positioning for as long
+      // as the menu stays open, then switches back the instant it closes.
+      const vw0 = window.innerWidth;
+      const sx0 = window.scrollX;
+      const sy0 = window.scrollY;
+      posRef.current = {
+        x: sx0 + vw0 - MOBILE_DOCK_MARGIN_X - MOBILE_DOCK_HALF,
+        y: sy0 + MOBILE_DOCK_MARGIN_Y + MOBILE_DOCK_HALF,
+      };
     }
     menuOpenRef.current = true;
     setMenuOpen(true);
@@ -2037,12 +2124,22 @@ export function ScoutCompanion() {
       <div
         ref={wrapperRef}
         className="absolute z-40 pointer-events-none transition-opacity duration-200"
-        style={{
-          left: posRef.current.x,
-          top: posRef.current.y,
-          transform: "translate(-50%, -50%)",
-          opacity: behindText ? BEHIND_TEXT_OPACITY : 1,
-        }}
+        style={
+          isMobile && !menuOpen
+            ? // Docked: pinned to the viewport itself (fixed), not the page
+              // (absolute), so scrolling never carries content underneath a
+              // spot he still thinks is empty. Opened with the menu still
+              // closed for real here -- see openMenu, which points posRef at
+              // this same corner (in page coordinates) the instant it opens,
+              // so the branch below takes over without a visible jump.
+              { position: "fixed", right: MOBILE_DOCK_MARGIN_X, top: MOBILE_DOCK_MARGIN_Y, opacity: 1 }
+            : {
+                left: posRef.current.x,
+                top: posRef.current.y,
+                transform: "translate(-50%, -50%)",
+                opacity: behindText ? BEHIND_TEXT_OPACITY : 1,
+              }
+        }
       >
       {bubble && (
         // The bubble is out-of-flow (absolute) and always centers on the
@@ -2087,6 +2184,19 @@ export function ScoutCompanion() {
           </div>
         </div>
       )}
+      {isMobile && !menuOpen && (
+        // An opaque circular backdrop, docked-mode only -- so whatever
+        // line of text happens to be scrolled underneath this corner
+        // reads as "there's a badge here" (the same read as any floating
+        // chat-launcher icon) rather than his transparent-background
+        // sprite ambiguously sitting mid-sentence, which is exactly what
+        // made the old free-roaming version look glitchy rather than cute.
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_2px_8px_rgba(26,26,46,0.18)]"
+          style={{ width: MOBILE_DOCK_BADGE_SIZE, height: MOBILE_DOCK_BADGE_SIZE }}
+          aria-hidden
+        />
+      )}
       <button
         onClick={onClickDog}
         aria-label="Ozho, your study companion"
@@ -2120,10 +2230,16 @@ export function ScoutCompanion() {
             onClick via bubbling), sized and centered independently of the
             sprite, so it doesn't touch this wrapper's own box -- the
             speech bubble, zzz, and radial menu all position off of that,
-            and shouldn't shift just because the hitbox got friendlier. */}
-        <span className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2" aria-hidden />
+            and shouldn't shift just because the hitbox got friendlier.
+            Docked mode skips the extra padding entirely -- he's stationary
+            there, not "mid-stride", so the enlarged hitbox isn't needed,
+            and the smaller it is the less of whatever's underneath (an
+            answer choice, a Submit button) it can end up blocking. */}
+        {!(isMobile && !menuOpen) && (
+          <span className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2" aria-hidden />
+        )}
         <PixelDog
-          size={44}
+          size={isMobile && !menuOpen ? MOBILE_DOCK_SIZE : 44}
           mood={mood}
           dead={stage === "dead"}
           asleep={asleep}
