@@ -5,7 +5,7 @@ import { SESSION_COOKIE_NAME } from "@/lib/auth";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
 import { isCostumeUnlocked } from "@/lib/costumes";
-import { parseDateOnly } from "@/lib/dateOnly";
+import { parseDateOnly, startOfUTCDay } from "@/lib/dateOnly";
 
 export async function PATCH(req: NextRequest) {
   const user = await getCurrentUser();
@@ -68,6 +68,9 @@ export async function PATCH(req: NextRequest) {
     const d = parseDateOnly(targetTestDate);
     if (!d) {
       return NextResponse.json({ error: "Invalid test date." }, { status: 400 });
+    }
+    if (d.getTime() < startOfUTCDay(new Date()).getTime()) {
+      return NextResponse.json({ error: "Test date can't be in the past." }, { status: 400 });
     }
     parsedDate = d;
   }

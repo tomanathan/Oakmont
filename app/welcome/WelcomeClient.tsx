@@ -8,16 +8,111 @@ import { BrandMark } from "@/components/BrandMark";
 
 export function WelcomeClient({ email }: { email: string }) {
   const router = useRouter();
+  const [step, setStep] = useState<"intro" | "goals">("intro");
   const [submitting, setSubmitting] = useState(false);
+  const [baseline, setBaseline] = useState("");
+  const [testDate, setTestDate] = useState("");
+  const [error, setError] = useState("");
 
-  async function getStarted() {
+  // Shared by both the goals form's submit and its "skip" link -- marks
+  // welcome as seen (so a fresh account only lands here once) and moves on.
+  // patchBody is omitted entirely on skip, not sent as nulls, since the
+  // fields are already null on a brand-new account -- there's nothing to
+  // write, just nothing to wait on before leaving.
+  async function finishOnboarding(patchBody?: { baselineScore?: number; targetTestDate?: string }) {
+    setError("");
     setSubmitting(true);
     try {
+      if (patchBody && Object.keys(patchBody).length > 0) {
+        const res = await fetch("/api/account", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(patchBody),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error || "Couldn't save. Please try again.");
+          setSubmitting(false);
+          return;
+        }
+      }
       await fetch("/api/welcome/seen", { method: "POST" });
-    } finally {
       router.push("/dashboard");
       router.refresh();
+    } catch {
+      setError("Couldn't reach the server. Please try again.");
+      setSubmitting(false);
     }
+  }
+
+  function submitGoals(e: React.FormEvent) {
+    e.preventDefault();
+    const patchBody: { baselineScore?: number; targetTestDate?: string } = {};
+    if (baseline) patchBody.baselineScore = Number(baseline);
+    if (testDate) patchBody.targetTestDate = testDate;
+    finishOnboarding(patchBody);
+  }
+
+  if (step === "goals") {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    return (
+      <div className="max-w-[640px] mx-auto px-6 py-12 font-sans">
+        <div className="text-center mb-10">
+          <BrandMark size={64} className="mx-auto mb-4" />
+          <div className="font-display font-semibold text-[24px] text-ink mb-1.5">When's your test?</div>
+          <div className="text-sm text-gray-500">
+            This shapes your study plan. Don't know yet? Skip it and we'll start you on the default
+            6-month plan -- you can always set it later in Settings.
+          </div>
+        </div>
+
+        <form
+          onSubmit={submitGoals}
+          className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-5 shadow-[0_1px_2px_rgba(26,26,46,0.04),0_8px_24px_rgba(26,26,46,0.06)]"
+        >
+          <label className="block text-sm text-gray-700 mb-1">Baseline score (400-1600), if you have one</label>
+          <div className="text-xs text-gray-400 mb-2">A PSAT score works great here.</div>
+          <input
+            type="number"
+            min={400}
+            max={1600}
+            value={baseline}
+            onChange={(e) => setBaseline(e.target.value)}
+            placeholder="e.g. 1120"
+            className="w-full px-3 py-2.5 rounded-lg border border-[#e0defa] mb-4 text-sm focus:outline-none focus:border-[#6d7fd6]"
+          />
+
+          <label className="block text-sm text-gray-700 mb-1">Target SAT test date</label>
+          <input
+            type="date"
+            min={todayStr}
+            value={testDate}
+            onChange={(e) => setTestDate(e.target.value)}
+            className="w-full px-3 py-2.5 rounded-lg border border-[#e0defa] mb-4 text-sm focus:outline-none focus:border-[#6d7fd6]"
+          />
+
+          {error && <div className="text-red-700 text-sm mb-3">{error}</div>}
+
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full py-3 rounded-lg bg-ink text-white font-semibold text-sm disabled:opacity-60"
+          >
+            {submitting ? "Saving..." : "Continue →"}
+          </button>
+        </form>
+
+        <div className="text-center">
+          <button
+            onClick={() => finishOnboarding()}
+            disabled={submitting}
+            className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 disabled:opacity-60"
+          >
+            I don't know yet -- skip for now
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -86,11 +181,10 @@ export function WelcomeClient({ email }: { email: string }) {
       </div>
 
       <button
-        onClick={getStarted}
-        disabled={submitting}
-        className="w-full py-3 rounded-lg bg-ink text-white font-semibold text-sm disabled:opacity-60"
+        onClick={() => setStep("goals")}
+        className="w-full py-3 rounded-lg bg-ink text-white font-semibold text-sm"
       >
-        {submitting ? "Loading..." : "Get started →"}
+        Get started →
       </button>
     </div>
   );
