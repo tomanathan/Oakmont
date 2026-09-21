@@ -7,8 +7,10 @@ import type { Pacing } from "@/lib/pacing";
 import type { DomainMastery } from "@/lib/mastery";
 import { PacingBar, PACE_STATUS_STYLES, paceStatusCopy } from "@/components/PacingBar";
 import { StarRating } from "@/components/StarRating";
+import { SubjectRing } from "@/components/SubjectRing";
 import { sectionTheme } from "@/lib/sectionTheme";
 import { findRecommended } from "@/lib/recommend";
+import { sectionProgress } from "@/lib/subjectProgress";
 
 type ProgressMap = Record<string, { bestScore: number; total: number }>;
 
@@ -396,103 +398,9 @@ function PlanCard({
   );
 }
 
-/**
- * Real mastery numbers for one whole section (Math, or Reading and
- * Writing), for the subject toggle above -- every subskill across every
- * domain in this section, split into mastered (a perfect quiz score),
- * attempted-but-not-mastered, and untouched. `avgPct` is the average
- * score across ATTEMPTED subskills only (untouched subskills are simply
- * absent from it, not a zero dragging it down) -- an early first attempt
- * shouldn't read as a near-failing grade just because the rest of the
- * section hasn't been started yet. `avgPct` is null with zero attempted,
- * since there's nothing to average and "0%" would misreport "you're
- * failing" instead of the truth, "you haven't started".
- */
-function sectionProgress(
-  section: Section,
-  progress: ProgressMap
-): { total: number; attemptedCount: number; masteredCount: number; avgPct: number | null } {
-  const subskillIds = section.domains.flatMap((d) => d.subskills.map((s) => s.id));
-  const attempted = subskillIds.filter((id) => !!progress[id]);
-  const masteredCount = attempted.filter((id) => progress[id].bestScore === progress[id].total).length;
-  const avgPct =
-    attempted.length > 0
-      ? Math.round(
-          attempted.reduce((sum, id) => {
-            const p = progress[id];
-            return sum + (p.total > 0 ? (p.bestScore / p.total) * 100 : 0);
-          }, 0) / attempted.length
-        )
-      : null;
-  return { total: subskillIds.length, attemptedCount: attempted.length, masteredCount, avgPct };
-}
-
-/**
- * The subject toggle's mastery ring -- one thin arc segment per subskill
- * in the section, in a fixed clockwise order (doesn't need to match any
- * particular subskill, just needs to sum to `total` without double
- * counting). Each segment is exactly one of three states: mastered (the
- * section's full-strength color), attempted but not mastered (its lighter
- * `bar` shade), or untouched (flat gray) -- `masteredCount` is already a
- * subset of `attemptedCount` (see sectionProgress), so the first
- * `masteredCount` segments are colored mastered, the next
- * `attemptedCount - masteredCount` are colored attempted, and the rest
- * are untouched, with no subskill ever contributing to two segments.
- */
-function SubjectRing({
-  total,
-  attemptedCount,
-  masteredCount,
-  color,
-  lightColor,
-  size = 46,
-}: {
-  total: number;
-  attemptedCount: number;
-  masteredCount: number;
-  color: string;
-  lightColor: string;
-  size?: number;
-}) {
-  const strokeWidth = size >= 44 ? 5 : 4;
-  const radius = (size - strokeWidth) / 2;
-  const center = size / 2;
-  const gapDeg = total > 1 ? Math.min(4, 360 / total / 4) : 0;
-  const segDeg = 360 / total;
-
-  function arcPath(startDeg: number, endDeg: number) {
-    const toXY = (deg: number) => {
-      // -90 so segment 0 starts at 12 o'clock, not 3 o'clock.
-      const rad = ((deg - 90) * Math.PI) / 180;
-      return [center + radius * Math.cos(rad), center + radius * Math.sin(rad)];
-    };
-    const [x1, y1] = toXY(startDeg);
-    const [x2, y2] = toXY(endDeg);
-    const largeArc = endDeg - startDeg > 180 ? 1 : 0;
-    return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`;
-  }
-
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="flex-shrink-0" aria-hidden>
-      {Array.from({ length: total }, (_, i) => {
-        const state = i < masteredCount ? "mastered" : i < attemptedCount ? "attempted" : "untouched";
-        const startDeg = i * segDeg + gapDeg / 2;
-        const endDeg = (i + 1) * segDeg - gapDeg / 2;
-        return (
-          <path
-            key={i}
-            d={arcPath(startDeg, endDeg)}
-            fill="none"
-            stroke={state === "mastered" ? color : state === "attempted" ? lightColor : "#e5e3f0"}
-            strokeWidth={strokeWidth}
-            strokeLinecap="round"
-          />
-        );
-      })}
-    </svg>
-  );
-}
-
 // findRecommended now lives in @/lib/recommend so the /api/plan/next route
 // (which powers Ozho's "what should I do next?" click action) shares the
-// exact same logic this card uses.
+// exact same logic this card uses. sectionProgress and SubjectRing now live
+// in @/lib/subjectProgress and @/components/SubjectRing so the parent
+// dashboard/share-link view can render the exact same ring off the exact
+// same numbers instead of a second implementation drifting out of sync.
