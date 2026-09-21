@@ -47,7 +47,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       "Electronic effects are essential to modern jazz.",
     ],
     answer: 1,
-    explain: "The passage centers on the reception arc of her specific innovation (initial critical doubt, audience acceptance), which choice 2 captures precisely.", pattern: "Whole-Passage Main Idea",
+    explain: "The passage centers on the reception arc of her specific innovation (initial critical doubt, audience acceptance) -- exactly what's captured by the choice describing her genre-blending approach as initially controversial but ultimately successful with audiences.", pattern: "Whole-Passage Main Idea",
   },
   {
     q: "Automation eliminated hundreds of assembly-line jobs at the town's largest factory over the past five years. At the same time, it created a new wave of technician and repair positions, most of which sit unfilled because they require training the laid-off workers never received. Which choice best captures the central idea of the text?",
@@ -80,7 +80,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       "Migratory birds never change their routes.",
     ],
     answer: 1,
-    explain: "The passage centers on an adaptive behavioral shift tied to a specific cause (insect availability), which choice 2 states most precisely.", pattern: "Whole-Passage Main Idea",
+    explain: "The passage centers on an adaptive behavioral shift tied to a specific cause (insect availability) -- exactly what's stated by the choice describing the bird's migratory behavior as having adapted in response to a specific ecological change.", pattern: "Whole-Passage Main Idea",
   },
   {
     q: "Narrow streets are often assumed to worsen traffic, but the assumption doesn't hold up consistently. Paired with clear sightlines at intersections, narrow streets actually reduce vehicle speeds and improve pedestrian safety; without those sightlines, the safety benefit mostly disappears. What is the main idea of the text?",
@@ -91,7 +91,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       "Cities should eliminate all narrow streets.",
     ],
     answer: 1,
-    explain: "The passage complicates a common assumption by introducing a conditional factor (sightlines), making choice 2 the accurate central idea.", pattern: "Whole-Passage Main Idea",
+    explain: "The passage complicates a common assumption by introducing a conditional factor (sightlines) -- exactly the point made by the choice tying the safety effect of narrow streets to design factors like sightlines rather than width alone.", pattern: "Whole-Passage Main Idea",
   },
   {
     q: "Publishers rejected the novelist's earliest manuscripts as \"too experimental,\" citing the same fragmented, nonlinear style she was known for throughout her career. Decades later, that same style is what literary historians point to when they credit her with founding an entire movement. What is the main idea of the text?",
@@ -102,7 +102,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       "Literary movements are always founded by a single author.",
     ],
     answer: 1,
-    explain: "The passage's arc (rejected innovation becoming foundational) is precisely captured by choice 2, without overreaching into broader claims.", pattern: "Whole-Passage Main Idea",
+    explain: "The passage's arc (rejected innovation becoming foundational) is precisely captured by the choice describing her once-rejected stylistic innovations as coming to define the literary movement she founded, without overreaching into broader claims.", pattern: "Whole-Passage Main Idea",
   },
   {
     q: "The strike's specific demands were, by most historians' accounts, fairly modest and unremarkable for the era. What made the strike succeed was something else entirely: political groups that agreed on almost nothing else found common cause in supporting the workers, producing a unified public pressure rarely seen before or since. Which choice best states the main idea of the text?",
@@ -113,7 +113,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       "The strike ultimately failed to achieve its goals.",
     ],
     answer: 1,
-    explain: "The passage explicitly downplays the demands themselves in favor of the unusual factor of unified public support, matching choice 2.", pattern: "Whole-Passage Main Idea",
+    explain: "The passage explicitly downplays the demands themselves in favor of the unusual factor of unified public support -- matching the choice naming broad, cross-political public support as the key factor in the strike's success.", pattern: "Whole-Passage Main Idea",
   },
   {
     q: "A river restoration project removed an aging dam that had blocked fish migration for over 60 years. Within two years of its removal, biologists counted salmon spawning nearly 40 miles upstream of the former dam site for the first time in decades. According to the text, what did biologists observe after the dam's removal?",
@@ -456,7 +456,7 @@ export const QUESTIONS: Record<string, Question[]> = {
       "The industry employed thousands of workers at the time the tariff was introduced.",
     ],
     answer: 0,
-    explain: "A causal claim needs evidence ruling out other explanations, like a broader slowdown. Only the first choice shows the decline alongside a comparable industry without the tariff that kept growing, isolating the tariff as the likely cause.", pattern: "Evaluating a Hypothetical Finding's Effect on a Claim",
+    explain: "A causal claim needs evidence ruling out other explanations, like a broader slowdown. Only the choice comparing the industry's decline to a similar industry without the tariff that kept growing isolates the tariff as the likely cause.", pattern: "Evaluating a Hypothetical Finding's Effect on a Claim",
   },
   {
     q: "A researcher hypothesizes that a particular species of ant increases its foraging speed specifically because of a chemical trail laid by other ants, rather than for any other reason. Which finding, if true, would most directly weaken this hypothesis?",
