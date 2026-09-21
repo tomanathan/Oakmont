@@ -358,18 +358,28 @@ const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave
 // return trip. Every follow-mode leg is also `straight` (see beginWalk) --
 // the normal wander/return-dash bow-sideways-a-bit path reads as drifting
 // or overshooting the cursor instead of beelining to it and actually
-// planting there. FOLLOW_TOLERANCE is how close he has to already be to
-// skip re-pathing -- tight, so "stops" really means stopped right beside
-// the cursor, not just loosely in the neighborhood, while still being
-// forgiving enough that a pixel of mouse jitter doesn't restart a leg.
-// FOLLOW_RECHECK_MS is the pause after each short leg completes before he
-// re-aims at the cursor's current spot -- kept to about one render tick
-// (not zero, so there's still a well-defined "arrived" instant rather than
-// re-pathing mid-assignment) rather than pickPauseMs's multi-second
-// ambient rests, so back-to-back legs read as one continuous chase instead
-// of a walk-stop-walk stutter.
+// planting there. FOLLOW_TOLERANCE is measured straight to the cursor
+// itself (see followAnchor), not to the offset landing spot beside it --
+// once he's within it he just stays put, full stop, even if that leaves
+// him short of the exact landing spot. Measuring against the landing spot
+// instead used to mean that whenever the cursor sat down right next to
+// him, the landing spot (always offset FOLLOW_OFFSET_X/Y away) was still
+// more than a few pixels off, so he'd set off walking away from a cursor
+// that was already right there just to plant himself at the "correct"
+// offset -- reading exactly like the personal-space flee reflex he isn't
+// supposed to have any more (see the "Cursor behavior" note above). Sized
+// comfortably past the landing spot's own distance from the cursor
+// (~sqrt(70^2+45^2), about 83px) so arriving there reads as "settled",
+// not as still-too-far-and-about-to-move-again. He only sets off toward
+// the landing spot once the cursor has actually drifted outside this
+// radius. FOLLOW_RECHECK_MS is the pause after each short leg completes
+// before he re-aims at the cursor's current spot -- kept to about one
+// render tick (not zero, so there's still a well-defined "arrived" instant
+// rather than re-pathing mid-assignment) rather than pickPauseMs's
+// multi-second ambient rests, so back-to-back legs read as one continuous
+// chase instead of a walk-stop-walk stutter.
 const FOLLOW_SPEED_MULT = 2.6;
-const FOLLOW_TOLERANCE = 20;
+const FOLLOW_TOLERANCE = 110;
 const FOLLOW_RECHECK_MS = 20;
 const FOLLOW_OFFSET_X = 70;
 const FOLLOW_OFFSET_Y = 45;
@@ -1548,16 +1558,21 @@ export function ScoutCompanion() {
         // rather than only reacting once he's drifted well outside a wide
         // comfort band -- that older version shared the ambient wander's
         // multi-second rest between legs, so most of the time he just sat
-        // there like he does when following is off. FOLLOW_TOLERANCE keeps
-        // this from re-pathing on every single pixel of mouse jitter, and
-        // FOLLOW_RECHECK_MS (set on arrival below, not pickPauseMs's long
-        // ambient rest) keeps the gap between legs short enough that the
-        // chase reads as one continuous motion.
+        // there like he does when following is off. Whether he needs to
+        // move at all is judged against the cursor itself (followAnchor),
+        // not the offset spot he'd walk to (followTarget) -- if the cursor
+        // is already within FOLLOW_TOLERANCE of him he just stays put, even
+        // short of that exact offset spot, instead of setting off toward it
+        // and reading as fleeing a cursor that just got close. He only
+        // actually walks once the cursor has drifted outside that radius,
+        // and FOLLOW_RECHECK_MS (set on arrival below, not pickPauseMs's
+        // long ambient rest) keeps the gap between legs short enough that
+        // the chase reads as one continuous motion.
         if (nowMs > behaviorUntilRef.current) {
-          const target = followTarget();
-          const d = Math.hypot(pos.x - target.x, pos.y - target.y);
+          const anchor = followAnchor();
+          const d = Math.hypot(pos.x - anchor.x, pos.y - anchor.y);
           if (d > FOLLOW_TOLERANCE) {
-            beginWalk({ forceTarget: target, urgent: true, speedMult: FOLLOW_SPEED_MULT, straight: true });
+            beginWalk({ forceTarget: followTarget(), urgent: true, speedMult: FOLLOW_SPEED_MULT, straight: true });
           } else {
             behaviorUntilRef.current = nowMs + FOLLOW_RECHECK_MS;
           }
@@ -1653,6 +1668,19 @@ export function ScoutCompanion() {
     behaviorUntilRef.current = Date.now() + (followModeRef.current ? FOLLOW_RECHECK_MS : pickPauseMs());
   }
 
+  // Where "the cursor" actually is for follow purposes -- the real mouse
+  // position once we've seen one, otherwise the viewport center so there's
+  // still a sane point to walk toward before the first mousemove. Shared by
+  // followTarget (the offset spot he actually walks to) and the tick loop's
+  // own "am I already near enough to just stay put" check, so both agree on
+  // what "the cursor" means.
+  function followAnchor() {
+    const vw = window.innerWidth;
+    const sx = window.scrollX;
+    const sy = window.scrollY;
+    return mouseRef.current ?? { x: sx + vw * 0.5, y: sy + window.innerHeight * 0.5 };
+  }
+
   // A spot to trot to for "come here" -- close beside the actual cursor
   // (not a wide viewport-relative band that could land him a third of a
   // screen away from it) so it's obvious he's tracking the mouse itself.
@@ -1660,17 +1688,19 @@ export function ScoutCompanion() {
   // one edge doesn't repeatedly aim him off-page. Deliberately no random
   // jitter -- an earlier version added a little to keep repeated calls
   // from pathing to the exact same pixel, but paired with a tight
-  // FOLLOW_TOLERANCE that jitter alone was enough to keep exceeding it,
-  // so he never actually settled beside a stationary cursor: every recheck
+  // tolerance that jitter alone was enough to keep exceeding it, so he
+  // never actually settled beside a stationary cursor: every recheck
   // computed a slightly different spot and set off another short walk,
   // reading as restless twitching instead of "stops". With a still mouse,
-  // this now returns the exact same point every time, so once he's within
-  // tolerance he stays put instead of endlessly re-correcting.
+  // this now returns the exact same point every time. Only used once the
+  // tick loop (or toggleFollow) has already decided he's outside
+  // FOLLOW_TOLERANCE of followAnchor() and needs to actually walk --
+  // see the note there on why arrival is judged against the cursor itself,
+  // not this offset point.
   function followTarget() {
     const vw = window.innerWidth;
     const sx = window.scrollX;
-    const sy = window.scrollY;
-    const anchor = mouseRef.current ?? { x: sx + vw * 0.5, y: sy + window.innerHeight * 0.5 };
+    const anchor = followAnchor();
     const side = anchor.x - sx > vw / 2 ? -1 : 1;
     const x = clamp(anchor.x + side * FOLLOW_OFFSET_X, sx + SIDE_MARGIN, sx + vw - SIDE_MARGIN);
     return { x, y: anchor.y + FOLLOW_OFFSET_Y };
@@ -1842,7 +1872,18 @@ export function ScoutCompanion() {
       // ignore -- it just won't persist across reloads
     }
     speak(pick(next ? FOLLOW_ON_PHRASES : FOLLOW_OFF_PHRASES), 2800);
-    if (next) beginWalk({ forceTarget: followTarget(), urgent: true, speedMult: FOLLOW_SPEED_MULT, straight: true });
+    if (next) {
+      // Same "already near enough" check the tick loop uses -- turning
+      // follow on while the cursor happens to already be right beside him
+      // shouldn't send him off walking toward the exact offset spot.
+      const anchor = followAnchor();
+      const d = Math.hypot(posRef.current.x - anchor.x, posRef.current.y - anchor.y);
+      if (d > FOLLOW_TOLERANCE) {
+        beginWalk({ forceTarget: followTarget(), urgent: true, speedMult: FOLLOW_SPEED_MULT, straight: true });
+      } else {
+        behaviorUntilRef.current = Date.now() + FOLLOW_RECHECK_MS;
+      }
+    }
   }
 
   // "Stay put until told otherwise" -- unlike followMode, this doesn't
