@@ -6,7 +6,6 @@ import { TestDatePicker } from "./TestDatePicker";
 import { HowItWorks } from "./HowItWorks";
 import { TutorSection } from "./TutorSection";
 import { Pricing } from "./Pricing";
-import { ParentsSection } from "./ParentsSection";
 import { Faq } from "./Faq";
 import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { FinalCta } from "./FinalCta";
@@ -46,6 +45,21 @@ export function LandingPage() {
             Oakmont Study Center
           </span>
         </div>
+        {/* Jump links -- orientation for what is otherwise a single long
+            scroll. Kept to three items and hidden below `sm` so they never
+            compete for space with the brand mark / Log in / Start free,
+            which already fit tightly on narrow phones. */}
+        <div className="hidden sm:flex items-center gap-5 text-sm text-gray-500 flex-shrink-0">
+          <a href="#how-it-works" className="hover:text-ink transition-colors whitespace-nowrap">
+            How it works
+          </a>
+          <a href="#pricing" className="hover:text-ink transition-colors whitespace-nowrap">
+            Pricing
+          </a>
+          <a href="#faq" className="hover:text-ink transition-colors whitespace-nowrap">
+            FAQ
+          </a>
+        </div>
         <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
           <a href="/login" className="text-sm text-gray-500 hover:text-ink transition-colors whitespace-nowrap">
             Log in
@@ -63,26 +77,31 @@ export function LandingPage() {
       {/* Hero and the sample question are immediately visible, no reveal --
           they're the LCP content and the interactive centerpiece, not
           below-the-fold decoration. Everything after gets the one shared
-          fade/slide-up on scroll-into-view (see Reveal.tsx). */}
+          fade/slide-up on scroll-into-view (see Reveal.tsx).
+
+          Order (reworked from the original ship): explain the system while
+          curiosity from the sample question is highest, then credibility
+          (the tutor) lands right after the explanation and before any ask
+          -- it used to come after pricing was half-decided. Personalization
+          (test date) now sits right before price, once the visitor already
+          trusts the plan. "For parents" is folded into Pricing itself
+          rather than its own full-height section -- see Pricing.tsx. */}
       <Hero />
       <SampleQuestion />
-      <Reveal>
-        <TestDatePicker />
-      </Reveal>
       <Reveal>
         <HowItWorks />
       </Reveal>
       <Reveal>
         <TutorSection />
       </Reveal>
+      <Reveal>
+        <TestDatePicker />
+      </Reveal>
       {/* Social proof intentionally omitted: no real testimonials exist yet
           to feature, and fabricated ones aren't an option -- add this
           section back once real, permissioned quotes are collected. */}
       <Reveal>
         <Pricing />
-      </Reveal>
-      <Reveal>
-        <ParentsSection />
       </Reveal>
       <Reveal>
         <Faq />

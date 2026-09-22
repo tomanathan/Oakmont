@@ -7,7 +7,7 @@ export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="px-6 py-16 sm:py-20 bg-white border-y border-[#ece9f7]">
+    <section id="faq" className="px-6 py-16 sm:py-20 bg-white border-y border-[#ece9f7]">
       <div className="max-w-[640px] mx-auto">
         <h2 className="font-display font-semibold text-[26px] sm:text-[30px] text-ink text-center mb-8">
           Frequently asked

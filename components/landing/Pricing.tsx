@@ -12,7 +12,7 @@ export async function Pricing() {
   const monthly = prices[1];
 
   return (
-    <section className="px-6 py-16 sm:py-20 bg-white border-y border-[#ece9f7]">
+    <section id="pricing" className="px-6 py-16 sm:py-20 bg-white border-y border-[#ece9f7]">
       <ViewTracker event="pricing_viewed" />
       <div className="max-w-[640px] mx-auto text-center">
         <h2 className="font-display font-semibold text-[26px] sm:text-[30px] text-ink mb-2">Pricing</h2>
@@ -52,6 +52,19 @@ export async function Pricing() {
         >
           Start free →
         </TrackedLink>
+
+        {/* Folded in from what used to be a standalone "For parents"
+            section -- same message, condensed, and landing exactly where a
+            parent reader is actually deciding rather than after the ask. */}
+        <div className="mt-10 pt-8 border-t border-[#ece9f7] text-left bg-[#faf8f4] rounded-xl p-5">
+          <div className="text-xs font-semibold uppercase tracking-wide text-[#4a5bb0] mb-1.5">For parents</div>
+          <p className="text-sm text-gray-600 leading-relaxed">
+            You can see exactly what your student is studying and how they&apos;re doing, without logging into
+            their account. Once they invite you from their own Settings, you get a read-only view of their pace,
+            subject mastery, and practice-test history — a real structure they follow, whether or not you&apos;re
+            checking in that day.
+          </p>
+        </div>
       </div>
     </section>
   );
