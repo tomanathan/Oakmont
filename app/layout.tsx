@@ -18,6 +18,9 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
+  // Resolves relative OG/Twitter image URLs (e.g. app/opengraph-image.tsx)
+  // against the real domain instead of Next's localhost fallback.
+  metadataBase: new URL("https://oakmontsat.com"),
   title: "Oakmont Study Center",
   description: "A full 6-month SAT curriculum built around every official subskill.",
 };

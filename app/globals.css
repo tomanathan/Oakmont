@@ -391,3 +391,57 @@ body {
    same scale -- no CSS animation involved, so prefers-reduced-motion is
    handled by ScoutCompanion simply not alternating tailFrame at all when
    reducedMotionRef is set, same as it already slows walking. */
+
+/* Landing page hero: decorative, purely CSS-animated PixelDog instances --
+   not the live ScoutCompanion/SecondCompanion, which need a real session's
+   pet data. An entrance hop-in followed by a gentle idle bob. Timing is
+   staggered per-instance via a small fixed set of inline animation-delay
+   values, never a client-random one, so there's no SSR/hydration mismatch. */
+@keyframes landing-pet-in {
+  0% {
+    transform: translateY(40px) scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-6px) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes landing-pet-idle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.animate-landing-pet {
+  /* --pet-delay is set inline per-instance (a small fixed set of values,
+     not client-random) so the cast hops in staggered instead of all at
+     once; the idle bob then starts once that instance's own hop-in ends. */
+  animation:
+    landing-pet-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) var(--pet-delay, 0s) both,
+    landing-pet-idle 2.4s ease-in-out calc(0.6s + var(--pet-delay, 0s)) infinite;
+}
+
+@keyframes landing-scroll-hint {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+.animate-landing-scroll-hint {
+  animation: landing-scroll-hint 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-landing-pet {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .animate-landing-scroll-hint {
+    animation: none;
+  }
+}

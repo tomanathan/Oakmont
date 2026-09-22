@@ -8,11 +8,15 @@ import { SecondCompanion } from "./SecondCompanion";
 // make sense on parent-facing pages (a parent's own dashboard, or the
 // no-login public share view), where there's no student session for their
 // ambient chatter ("your streak", "your next lesson") to actually be
-// about. Kept as its own small client component, rather than making the
-// whole root layout a client component, just to read the current route.
+// about. Also excluded from "/" -- the public landing page for logged-out
+// visitors has its own purely decorative, CSS-animated pet cast (see
+// components/landing/HeroPets.tsx), and the live, session-backed
+// companions would have nothing real to wander/chatter about there anyway.
+// Kept as its own small client component, rather than making the whole
+// root layout a client component, just to read the current route.
 export function CompanionGate() {
   const pathname = usePathname();
-  if (pathname?.startsWith("/parent") || pathname?.startsWith("/share")) return null;
+  if (pathname === "/" || pathname?.startsWith("/parent") || pathname?.startsWith("/share")) return null;
   return (
     <>
       <ScoutCompanion />
