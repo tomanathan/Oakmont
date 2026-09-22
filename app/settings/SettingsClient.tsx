@@ -490,8 +490,8 @@ export function SettingsClient({
       <div className="bg-white border border-red-100 rounded-xl p-6">
         <div className="text-[15px] font-semibold text-red-700 mb-1">Danger zone</div>
         <div className="text-xs text-gray-500 mb-4">
-          Permanently deletes your account, all progress, and all practice test results. This
-          cannot be undone.
+          Permanently deletes your account, all progress, and all practice test results, and
+          cancels any active subscription. This cannot be undone.
         </div>
 
         {!confirmingDelete ? (

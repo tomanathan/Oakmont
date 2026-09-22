@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { SESSION_COOKIE_NAME } from "@/lib/auth";
+import { stripe } from "@/lib/stripe";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
 import { isCostumeUnlocked } from "@/lib/costumes";
@@ -93,6 +94,27 @@ export async function DELETE() {
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "Not logged in." }, { status: 401 });
+  }
+
+  // Cancel any live Stripe subscription *before* the row that references it
+  // disappears -- deleting the account first would leave a subscription with
+  // no way back to the student who's still being charged for it every
+  // month. Immediate cancellation (not at period end): the student is
+  // leaving entirely, not just downgrading. A one-time 6-Month Pass has no
+  // subscription object at all, so most deletions hit the early return
+  // below and never call Stripe.
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.userId },
+    select: { stripeSubscriptionId: true },
+  });
+  if (dbUser?.stripeSubscriptionId) {
+    try {
+      await stripe.subscriptions.cancel(dbUser.stripeSubscriptionId);
+    } catch {
+      // Already canceled, already expired, or Stripe is briefly unreachable
+      // -- none of that should block the student from deleting their own
+      // account, so this is deliberately swallowed rather than surfaced.
+    }
   }
 
   await prisma.user.delete({ where: { id: user.userId } });

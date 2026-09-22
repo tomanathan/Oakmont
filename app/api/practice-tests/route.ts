@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
+import { getUserStats } from "@/lib/user";
+import { hasActiveAccess } from "@/lib/subscription";
 import { validatePracticeTestInput, type PracticeTestInput } from "@/lib/practiceTestValidation";
 
 export async function GET() {
@@ -22,6 +24,10 @@ export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "Not logged in." }, { status: 401 });
+  }
+  const stats = await getUserStats(user.userId);
+  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) {
+    return NextResponse.json({ error: "Your access has expired." }, { status: 402 });
   }
 
   let body: PracticeTestInput;
