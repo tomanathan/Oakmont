@@ -1,6 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { getUserStats } from "@/lib/user";
+import { hasActiveAccess } from "@/lib/subscription";
 import { getSubskill } from "@/data/curriculum";
 import { QUESTIONS } from "@/data/questions";
 import { AppShell } from "@/components/AppShell";
@@ -15,6 +16,7 @@ export default async function SubskillPage({ params }: { params: { id: string } 
 
   const questions = QUESTIONS[params.id] || [];
   const stats = await getUserStats(user.userId);
+  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
 
   return (
     <AppShell email={user.email} stats={stats} wide>

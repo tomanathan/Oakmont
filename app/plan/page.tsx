@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
+import { hasActiveAccess } from "@/lib/subscription";
 import { courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { buildDayPlan } from "@/lib/studyPlan";
 import { addUTCDays, utcDayDiff } from "@/lib/dateOnly";
@@ -26,6 +27,8 @@ export default async function PlanPage() {
     getUserStats(user.userId),
     prisma.practiceTest.findMany({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
   ]);
+  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
+
   const progress: ProgressMap = {};
   for (const row of rows) {
     progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };

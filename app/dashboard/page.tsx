@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
+import { hasActiveAccess } from "@/lib/subscription";
 import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { computePetState } from "@/lib/pet";
 import { computeDomainMastery, orderSubskillsByWeakness, type ProgressMap } from "@/lib/mastery";
@@ -25,6 +26,7 @@ export default async function DashboardPage() {
     getUserStats(user.userId),
     prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
   ]);
+  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
   if (!stats.welcomeSeenAt) redirect("/welcome");
 
   const progress: ProgressMap = {};
