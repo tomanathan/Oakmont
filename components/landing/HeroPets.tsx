@@ -152,6 +152,13 @@ const WOBBLE_FRAC_MIN = 0.04; // a small organic wave, not the old dramatic swoo
 const WOBBLE_FRAC_MAX = 0.12;
 const PAUSE_MS_MIN = 300; // a beat between moves so wandering doesn't read as a metronome
 const PAUSE_MS_MAX = 1600;
+// Region weights for where a wander target lands: the open margins beside
+// the text read much better than pets camping right under the nav bar, so
+// side space is favored well above the top band (bottom is in between --
+// nothing asked to change it, just kept less dominant than the sides).
+const REGION_WEIGHT_SIDE = 0.6;
+const REGION_WEIGHT_TOP = 0.12;
+const REGION_WEIGHT_BOTTOM = 0.28;
 const HOME_LEASH = 90; // how far the thrower is allowed to drift from its spawn point
 const MIN_JOURNEY_FRAC = 0.25; // a fresh journey should cover at least this fraction of the hero's larger dimension -- kept modest since the exclusion box can leave only narrow margins to move through
 const SPRINT_CHANCE = 0.35;
@@ -208,32 +215,83 @@ function randomSafePoint(
   const xMin = opts.side === "right" ? width / 2 : 0;
   const xMax = opts.side === "left" ? width / 2 : width;
 
-  // The band above the text and the band below it are almost never the
-  // same size (the hero's top/bottom padding differ), so sampling y
-  // uniformly across the full height quietly under-visits whichever band
-  // is smaller -- in practice the shorter band below the text, which reads
-  // as "the pets never run down the page." Picking the band itself first,
-  // an even coin flip, is what actually keeps both in play.
-  // TOP_MARGIN keeps the top band from starting flush against the very
-  // edge of the hero -- right below the sticky nav bar -- the same way the
-  // box itself is padded away from.
+  if (opts.near) {
+    for (let attempt = 0; attempt < 20; attempt++) {
+      const angle = Math.random() * Math.PI * 2;
+      const r = Math.random() * opts.near.radius;
+      const x = Math.min(Math.max(opts.near.x + Math.cos(angle) * r, 0), width - PET_SIZE);
+      const y = Math.min(Math.max(opts.near.y + Math.sin(angle) * r, TOP_MARGIN), height - PET_SIZE);
+      const cx = x + PET_SIZE / 2;
+      const cy = y + PET_SIZE / 2;
+      if (cx < excl.xMin || cx > excl.xMax || cy < excl.yMin || cy > excl.yMax) {
+        return { x, y };
+      }
+    }
+    return { x: opts.side === "right" ? width - PET_SIZE : 0, y: height - PET_SIZE };
+  }
+
+  // Three candidate regions within this side's x-range: the open margins
+  // beside the text (outside its x-extent entirely, so any y is safe --
+  // there can be one such margin on each edge of the hero, hence two
+  // ranges), the band above the text, and the band below it. Weighted so
+  // the sides dominate rather than pets camping right under the sticky
+  // nav bar at the very top. TOP_MARGIN keeps the top band (and the side
+  // margins' own y-range) from starting flush against that top edge.
+  const sideRanges: { from: number; to: number }[] = [];
+  const leftMarginTo = Math.min(xMax, excl.xMin);
+  if (leftMarginTo - xMin > PET_SIZE) sideRanges.push({ from: xMin, to: leftMarginTo });
+  const rightMarginFrom = Math.max(xMin, excl.xMax);
+  if (xMax - rightMarginFrom > PET_SIZE) sideRanges.push({ from: rightMarginFrom, to: xMax });
+  const sideWidth = sideRanges.reduce((sum, r) => sum + (r.to - r.from), 0);
+
   const topBand = Math.max(excl.yMin - TOP_MARGIN, 0);
   const bottomBand = Math.max(height - excl.yMax, 0);
-  const useBottomBand = bottomBand > PET_SIZE && (topBand <= PET_SIZE || Math.random() < 0.5);
+
+  const canSide = sideWidth > PET_SIZE;
+  const canTop = topBand > PET_SIZE;
+  const canBottom = bottomBand > PET_SIZE;
+
+  type Region = "side" | "top" | "bottom";
+  const weighted: [Region, number][] = [];
+  if (canSide) weighted.push(["side", REGION_WEIGHT_SIDE]);
+  if (canTop) weighted.push(["top", REGION_WEIGHT_TOP]);
+  if (canBottom) weighted.push(["bottom", REGION_WEIGHT_BOTTOM]);
+  const totalWeight = weighted.reduce((sum, [, w]) => sum + w, 0);
+  let region: Region = "bottom";
+  if (weighted.length > 0) {
+    let roll = Math.random() * totalWeight;
+    region = weighted[weighted.length - 1][0];
+    for (const [r, w] of weighted) {
+      if (roll < w) {
+        region = r;
+        break;
+      }
+      roll -= w;
+    }
+  }
 
   for (let attempt = 0; attempt < 20; attempt++) {
     let x: number;
     let y: number;
-    if (opts.near) {
-      const angle = Math.random() * Math.PI * 2;
-      const r = Math.random() * opts.near.radius;
-      x = Math.min(Math.max(opts.near.x + Math.cos(angle) * r, 0), width - PET_SIZE);
-      y = Math.min(Math.max(opts.near.y + Math.sin(angle) * r, TOP_MARGIN), height - PET_SIZE);
+    if (region === "side" && sideRanges.length > 0) {
+      let pick = Math.random() * sideWidth;
+      let chosen = sideRanges[0];
+      for (const range of sideRanges) {
+        const rangeWidth = range.to - range.from;
+        if (pick < rangeWidth) {
+          chosen = range;
+          break;
+        }
+        pick -= rangeWidth;
+      }
+      x = chosen.from + Math.random() * Math.max(chosen.to - chosen.from - PET_SIZE, 1);
+      y = TOP_MARGIN + Math.random() * Math.max(height - TOP_MARGIN - PET_SIZE, 1);
+    } else if (region === "top") {
+      x = xMin + Math.random() * Math.max(xMax - xMin - PET_SIZE, 1);
+      y = TOP_MARGIN + Math.random() * Math.max(topBand - PET_SIZE, 1);
     } else {
       x = xMin + Math.random() * Math.max(xMax - xMin - PET_SIZE, 1);
-      y = useBottomBand
-        ? excl.yMax + Math.random() * Math.max(bottomBand - PET_SIZE, 1)
-        : TOP_MARGIN + Math.random() * Math.max(topBand - PET_SIZE, 1);
+      y = excl.yMax + Math.random() * Math.max(bottomBand - PET_SIZE, 1);
     }
     const cx = x + PET_SIZE / 2;
     const cy = y + PET_SIZE / 2;
@@ -246,20 +304,53 @@ function randomSafePoint(
 
 // Wraps randomSafePoint with a minimum-distance requirement so a fresh
 // journey reads as a real run across the hero rather than a short local
-// hop -- takes the longest of a few candidate samples instead of the first
-// "good enough" one. Dropping `side` here (used for the ball's throw
-// target) is what lets a throw cross the full width, over to the other
-// half of the hero, rather than always landing on the thrower's own side.
-function pickWanderTarget(bounds: Bounds, from: { x: number; y: number }, opts: { side?: "left" | "right" } = {}) {
+// hop -- gathers a handful of candidate samples rather than settling for
+// the first "good enough" one. Dropping `side` here (used for the ball's
+// throw target) is what lets a throw cross the full width, over to the
+// other half of the hero, rather than always landing on the thrower's
+// own side.
+//
+// `avoid` (other pets' current positions) is the lowest-priority factor
+// here, deliberately: it only ever picks among candidates that already
+// clear the text box and the minimum-distance bar above, choosing
+// whichever of those keeps the most room from every other pet. It never
+// relaxes or overrides those two -- personal space loses to both the
+// text and (for the ball's own target selection) the throw itself.
+function pickWanderTarget(
+  bounds: Bounds,
+  from: { x: number; y: number },
+  opts: { side?: "left" | "right"; avoid?: { x: number; y: number }[] } = {}
+) {
   const minDist = Math.max(bounds.width, bounds.height) * MIN_JOURNEY_FRAC;
-  let best = randomSafePoint(bounds, opts);
+  const candidates: { x: number; y: number }[] = [];
+  for (let attempt = 0; attempt < 7; attempt++) {
+    candidates.push(randomSafePoint(bounds, opts));
+  }
+
+  const longEnough = candidates.filter((c) => Math.hypot(c.x - from.x, c.y - from.y) >= minDist);
+  const pool = longEnough.length > 0 ? longEnough : candidates;
+
+  const avoid = opts.avoid;
+  if (avoid && avoid.length > 0) {
+    let best = pool[0];
+    let bestSpacing = -Infinity;
+    for (const c of pool) {
+      const spacing = Math.min(...avoid.map((o) => Math.hypot(c.x - o.x, c.y - o.y)));
+      if (spacing > bestSpacing) {
+        bestSpacing = spacing;
+        best = c;
+      }
+    }
+    return best;
+  }
+
+  let best = pool[0];
   let bestDist = Math.hypot(best.x - from.x, best.y - from.y);
-  for (let attempt = 0; attempt < 6 && bestDist < minDist; attempt++) {
-    const candidate = randomSafePoint(bounds, opts);
-    const dist = Math.hypot(candidate.x - from.x, candidate.y - from.y);
+  for (const c of pool) {
+    const dist = Math.hypot(c.x - from.x, c.y - from.y);
     if (dist > bestDist) {
-      best = candidate;
       bestDist = dist;
+      best = c;
     }
   }
   return best;
@@ -582,8 +673,13 @@ export function HeroPets() {
             thrower.carryingBall = false;
             // No `side` here -- unlike a wanderer's own roaming, a thrown
             // ball should be able to sail across to the other half of the
-            // hero, not just land back on the thrower's own side.
-            const t = pickWanderTarget(bounds, thrower);
+            // hero, not just land back on the thrower's own side. `avoid`
+            // still only breaks ties among otherwise-valid landing spots,
+            // so it can't steer the ball away from a legitimately good
+            // throw just because another pet happens to be nearby.
+            const t = pickWanderTarget(bounds, thrower, {
+              avoid: pets.filter((p) => p !== thrower).map((p) => ({ x: p.x, y: p.y })),
+            });
             // The recipient (fetcher) doesn't move yet -- it only gives
             // chase once the ball actually lands (see the "watching" ->
             // "out" transition below), so the throw reads as sender ->
@@ -682,7 +778,10 @@ export function HeroPets() {
             const next =
               pet.role === "thrower"
                 ? randomSafePoint(bounds, { near: { x: pet.homeX, y: pet.homeY, radius: HOME_LEASH } })
-                : pickWanderTarget(bounds, pet, { side: pet.side });
+                : pickWanderTarget(bounds, pet, {
+                    side: pet.side,
+                    avoid: pets.filter((p) => p !== pet).map((p) => ({ x: p.x, y: p.y })),
+                  });
             startJourney(pet, next, bounds);
             pet.pauseMs = -1;
           }
