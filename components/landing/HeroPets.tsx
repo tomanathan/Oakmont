@@ -117,6 +117,7 @@ const BALL_FLIGHT_S = 0.4; // faster than the fetcher's run so the ball lands an
 const BALL_ARC_HEIGHT = 34;
 const EXCLUSION_PAD = 22;
 const HOME_LEASH = 90; // how far the thrower is allowed to drift from its spawn point
+const MIN_JOURNEY_FRAC = 0.45; // a fresh journey should cover at least this fraction of the hero's larger dimension
 const SPRINT_CHANCE = 0.35;
 const SPRINT_MULT = 2.1;
 const BOUNCE_AMP = 6;
@@ -170,6 +171,17 @@ function randomSafePoint(
   const { width, height, excl } = bounds;
   const xMin = opts.side === "right" ? width / 2 : 0;
   const xMax = opts.side === "left" ? width / 2 : width;
+
+  // The band above the text and the band below it are almost never the
+  // same size (the hero's top/bottom padding differ), so sampling y
+  // uniformly across the full height quietly under-visits whichever band
+  // is smaller -- in practice the shorter band below the text, which reads
+  // as "the pets never run down the page." Picking the band itself first,
+  // an even coin flip, is what actually keeps both in play.
+  const topBand = Math.max(excl.yMin, 0);
+  const bottomBand = Math.max(height - excl.yMax, 0);
+  const useBottomBand = bottomBand > PET_SIZE && (topBand <= PET_SIZE || Math.random() < 0.5);
+
   for (let attempt = 0; attempt < 20; attempt++) {
     let x: number;
     let y: number;
@@ -180,7 +192,9 @@ function randomSafePoint(
       y = Math.min(Math.max(opts.near.y + Math.sin(angle) * r, 0), height - PET_SIZE);
     } else {
       x = xMin + Math.random() * Math.max(xMax - xMin - PET_SIZE, 1);
-      y = Math.random() * Math.max(height - PET_SIZE, 1);
+      y = useBottomBand
+        ? excl.yMax + Math.random() * Math.max(bottomBand - PET_SIZE, 1)
+        : Math.random() * Math.max(topBand - PET_SIZE, 1);
     }
     const cx = x + PET_SIZE / 2;
     const cy = y + PET_SIZE / 2;
@@ -189,6 +203,27 @@ function randomSafePoint(
     }
   }
   return { x: opts.side === "right" ? width - PET_SIZE : 0, y: height - PET_SIZE }; // safe fallback: a corner
+}
+
+// Wraps randomSafePoint with a minimum-distance requirement so a fresh
+// journey reads as a real run across the hero rather than a short local
+// hop -- takes the longest of a few candidate samples instead of the first
+// "good enough" one. Dropping `side` here (used for the ball's throw
+// target) is what lets a throw cross the full width, over to the other
+// half of the hero, rather than always landing on the thrower's own side.
+function pickWanderTarget(bounds: Bounds, from: { x: number; y: number }, opts: { side?: "left" | "right" } = {}) {
+  const minDist = Math.max(bounds.width, bounds.height) * MIN_JOURNEY_FRAC;
+  let best = randomSafePoint(bounds, opts);
+  let bestDist = Math.hypot(best.x - from.x, best.y - from.y);
+  for (let attempt = 0; attempt < 6 && bestDist < minDist; attempt++) {
+    const candidate = randomSafePoint(bounds, opts);
+    const dist = Math.hypot(candidate.x - from.x, candidate.y - from.y);
+    if (dist > bestDist) {
+      best = candidate;
+      bestDist = dist;
+    }
+  }
+  return best;
 }
 
 // Starts a fresh curved journey from wherever the pet currently is toward
@@ -290,7 +325,7 @@ export function HeroPets() {
     // treat it as having reached a throw point it never actually ran to.
     const seedFetcher = simRef.current.find((p) => p.role === "fetcher");
     if (seedFetcher) {
-      startJourney(seedFetcher, randomSafePoint(bounds, { side: seedFetcher.side }), 1.3);
+      startJourney(seedFetcher, pickWanderTarget(bounds, seedFetcher, { side: seedFetcher.side }), 1.3);
     }
     fetchPhaseRef.current = "out";
 
@@ -338,7 +373,10 @@ export function HeroPets() {
           pauseMsRef.current -= dt * 1000;
           if (pauseMsRef.current <= 0) {
             thrower.carryingBall = false;
-            const t = randomSafePoint(bounds, { side: thrower.side });
+            // No `side` here -- unlike a wanderer's own roaming, a thrown
+            // ball should be able to sail across to the other half of the
+            // hero, not just land back on the thrower's own side.
+            const t = pickWanderTarget(bounds, thrower);
             fetchPhaseRef.current = "out";
             startJourney(fetcher, t, 1.3);
             // The actual throw: the ball visibly arcs from the thrower to the
@@ -378,7 +416,7 @@ export function HeroPets() {
           const next =
             pet.role === "thrower"
               ? randomSafePoint(bounds, { near: { x: pet.homeX, y: pet.homeY, radius: HOME_LEASH } })
-              : randomSafePoint(bounds, { side: pet.side });
+              : pickWanderTarget(bounds, pet, { side: pet.side });
           startJourney(pet, next);
         }
 
