@@ -11,16 +11,29 @@ import { PixelDog } from "@/components/PixelDog";
 //
 // Movement is journey-based, not simple point-seeking: each leg of travel
 // is a quadratic Bezier curve (same idea ScoutCompanion.tsx uses for its
-// own walk paths -- randomized "bow" control point, not a reuse of that
-// component) sampled at an eased progress, so pets swing along natural
-// arcs and ease in/out of a stop instead of gliding in perfectly straight
-// lines at constant speed. A vertical bounce riding on top of that (tied
-// to the leg-swap timer) reads as an actual trot/sprint, and journeys
-// randomly roll a "sprinting" burst at higher speed for real zoomies
-// energy. Position is written straight to each pet's DOM node via a ref on
-// a `setInterval` tick, never through React state -- the slower-changing
-// *pose* props PixelDog actually needs as React props (legFrame, facing,
-// carryingBall) update on their own, much coarser interval instead.
+// own walk paths, not a reuse of that component) sampled at an eased
+// progress, with a small randomized "wobble" control-point offset -- just
+// enough organic waver to not look like a ruler-straight glide, not the
+// dramatic swooping bow an earlier version used, which read as unnatural
+// cornering. A vertical bounce riding on top of that (tied to the leg-swap
+// timer) reads as an actual trot/sprint, and journeys randomly roll a
+// "sprinting" burst at higher speed for real zoomies energy. Every pet
+// pauses for a randomized beat after each leg before rolling the next one
+// (see PAUSE_MS_MIN/MAX) so wandering reads as a dog actually deciding
+// where to go next, not a metronome. Position is written straight to each
+// pet's DOM node via a ref on a `setInterval` tick, never through React
+// state -- the slower-changing *pose* props PixelDog actually needs as
+// React props (legFrame, facing, carryingBall) update on their own, much
+// coarser interval instead.
+//
+// A journey's start and target are always pre-vetted clear of the
+// exclusion box around the hero's headline text, but the straight line
+// between them isn't -- if it would cut through the box, the pet first
+// routes via whichever box corner costs the least detour (see
+// bestWaypoint) before continuing on to the real destination, rather than
+// hoping a curved bow happens to swing wide enough. See journeyDone for
+// how the rest of this file tells "reached a waypoint" apart from "truly
+// arrived."
 //
 // Mood switches to "happy" for a beat when the sample question below is
 // answered correctly (see SampleQuestion.tsx's "landing:correct" dispatch).
@@ -62,12 +75,15 @@ interface PetSim {
   startY: number;
   curveX: number;
   curveY: number;
-  targetX: number;
+  targetX: number; // this LEG's endpoint -- may be an intermediate waypoint, see finalTargetX/Y
   targetY: number;
+  finalTargetX: number; // the actual destination; equal to targetX/Y unless routing around the exclusion box
+  finalTargetY: number;
   t: number;
   duration: number;
   sprinting: boolean;
-  speedMult: number; // the multiplier the current journey started with, so an exclusion re-route can keep the same pace
+  speedMult: number; // the multiplier the current journey started with, so a continuation/re-route can keep the same pace
+  pauseMs: number; // -1 = not yet rolled for this arrival, >0 = idling before the next move, 0 = ready to go
   x: number; // last-sampled render position (ground truth for exclusion checks)
   y: number;
   facing: 1 | -1;
@@ -124,8 +140,14 @@ const BALL_MAX_FLIGHT_S = 1.5;
 const BALL_ARC_FRAC = 0.3; // arc height as a fraction of throw distance
 const BALL_MAX_ARC = 140;
 const EXCLUSION_PAD = 22;
+const TOP_MARGIN = 20; // keeps pets clear of the very top edge (right below the sticky nav bar); already padded for the hop bounce below, which can lift the rendered position further up than a pet's own logical y
+const WAYPOINT_MARGIN = 26; // clearance a routed-around waypoint keeps outside the exclusion box
+const WOBBLE_FRAC_MIN = 0.04; // a small organic wave, not the old dramatic swooping bow -- reads as a real run, not cornering
+const WOBBLE_FRAC_MAX = 0.12;
+const PAUSE_MS_MIN = 300; // a beat between moves so wandering doesn't read as a metronome
+const PAUSE_MS_MAX = 1600;
 const HOME_LEASH = 90; // how far the thrower is allowed to drift from its spawn point
-const MIN_JOURNEY_FRAC = 0.45; // a fresh journey should cover at least this fraction of the hero's larger dimension
+const MIN_JOURNEY_FRAC = 0.25; // a fresh journey should cover at least this fraction of the hero's larger dimension -- kept modest since the exclusion box can leave only narrow margins to move through
 const SPRINT_CHANCE = 0.35;
 const SPRINT_MULT = 2.1;
 const BOUNCE_AMP = 6;
@@ -186,7 +208,10 @@ function randomSafePoint(
   // is smaller -- in practice the shorter band below the text, which reads
   // as "the pets never run down the page." Picking the band itself first,
   // an even coin flip, is what actually keeps both in play.
-  const topBand = Math.max(excl.yMin, 0);
+  // TOP_MARGIN keeps the top band from starting flush against the very
+  // edge of the hero -- right below the sticky nav bar -- the same way the
+  // box itself is padded away from.
+  const topBand = Math.max(excl.yMin - TOP_MARGIN, 0);
   const bottomBand = Math.max(height - excl.yMax, 0);
   const useBottomBand = bottomBand > PET_SIZE && (topBand <= PET_SIZE || Math.random() < 0.5);
 
@@ -197,12 +222,12 @@ function randomSafePoint(
       const angle = Math.random() * Math.PI * 2;
       const r = Math.random() * opts.near.radius;
       x = Math.min(Math.max(opts.near.x + Math.cos(angle) * r, 0), width - PET_SIZE);
-      y = Math.min(Math.max(opts.near.y + Math.sin(angle) * r, 0), height - PET_SIZE);
+      y = Math.min(Math.max(opts.near.y + Math.sin(angle) * r, TOP_MARGIN), height - PET_SIZE);
     } else {
       x = xMin + Math.random() * Math.max(xMax - xMin - PET_SIZE, 1);
       y = useBottomBand
         ? excl.yMax + Math.random() * Math.max(bottomBand - PET_SIZE, 1)
-        : Math.random() * Math.max(topBand - PET_SIZE, 1);
+        : TOP_MARGIN + Math.random() * Math.max(topBand - PET_SIZE, 1);
     }
     const cx = x + PET_SIZE / 2;
     const cy = y + PET_SIZE / 2;
@@ -238,90 +263,137 @@ function pickWanderTarget(bounds: Bounds, from: { x: number; y: number }, opts: 
 // plenty precise for a decorative background) falls inside the exclusion
 // box. Endpoints are skipped since start/target are always pre-vetted safe
 // by randomSafePoint; only the curve's middle is ever at risk.
+//
+// x0/y0/cx/cy/x1/y1 are all in the pet's top-left convention (same as
+// pet.x/pet.y everywhere else), but collision is checked against the
+// pet's *center* -- consistent with randomSafePoint's own rejection test
+// and the mid-tick safety net below. Missing that PET_SIZE/2 offset here
+// used to mean this function could wave a curve through as "safe" while
+// the (correctly center-based) safety net immediately disagreed on the
+// very next tick, re-triggering it and resetting the journey before it
+// ever covered real ground -- the exact stuck-jittering bug this exists
+// to prevent, just reintroduced by a units mismatch instead of a bad bow.
 function curveHitsBox(x0: number, y0: number, cx: number, cy: number, x1: number, y1: number, excl: ExclusionBox) {
   const steps = 8;
   for (let i = 1; i < steps; i++) {
     const p = bezierPoint(x0, y0, cx, cy, x1, y1, i / steps);
-    if (p.x >= excl.xMin && p.x <= excl.xMax && p.y >= excl.yMin && p.y <= excl.yMax) return true;
+    const px = p.x + PET_SIZE / 2;
+    const py = p.y + PET_SIZE / 2;
+    if (px >= excl.xMin && px <= excl.xMax && py >= excl.yMin && py <= excl.yMax) return true;
   }
   return false;
 }
 
-// Starts a fresh curved journey from wherever the pet currently is toward
-// `target`. The control point is offset perpendicular to the straight line
-// between start and target by a randomized "bow," same idea as
-// ScoutCompanion's own quadratic-Bezier walk paths -- this alone is most of
-// why the movement reads as a natural running arc instead of a robotic
-// straight-line glide.
+// Picks whichever corner of the exclusion box (pushed out by `margin` plus
+// half a pet's width -- corners are in top-left convention but clearance
+// is a center-to-box distance, same as curveHitsBox -- then clamped into
+// the hero) costs the least combined detour for a trip from `from` to
+// `target` that has to go around the box. Routing through an explicit,
+// real waypoint like this -- rather than hoping a big curved bow happens
+// to swing wide enough -- is what actually gets a pet fully clear of the
+// box before it changes direction again. The old bow-only approach could
+// leave a pet hugging the box's edge, re-clipping it on almost every
+// attempt when start and target straddled it; that read as the pet
+// getting stuck jittering in a "tunnel" right along the text.
+function bestWaypoint(from: { x: number; y: number }, target: { x: number; y: number }, bounds: Bounds, margin: number) {
+  const { excl, width, height } = bounds;
+  const clear = margin + PET_SIZE / 2;
+  const rawCorners = [
+    { x: excl.xMin - clear, y: excl.yMin - clear },
+    { x: excl.xMax + clear, y: excl.yMin - clear },
+    { x: excl.xMin - clear, y: excl.yMax + clear },
+    { x: excl.xMax + clear, y: excl.yMax + clear },
+  ];
+  const corners = rawCorners.map((c) => ({
+    x: Math.min(Math.max(c.x, 0), width - PET_SIZE),
+    y: Math.min(Math.max(c.y, TOP_MARGIN), height - PET_SIZE),
+  }));
+  let best = corners[0];
+  let bestCost = Infinity;
+  for (const c of corners) {
+    const cost = Math.hypot(from.x - c.x, from.y - c.y) + Math.hypot(target.x - c.x, target.y - c.y);
+    if (cost < bestCost) {
+      bestCost = cost;
+      best = c;
+    }
+  }
+  return best;
+}
+
+// True once a pet has actually reached its real destination -- as opposed
+// to merely finishing the current leg, which might be an intermediate
+// waypoint routed around the exclusion box. Everything outside this file's
+// tick loop (the fetch state machine, the generic wander reroll) should
+// only ever treat `journeyDone` as "arrived"; a bare `pet.t >= 1` can mean
+// "just reached the waypoint, one more leg to go."
+function journeyDone(pet: PetSim) {
+  return pet.t >= 1 && pet.targetX === pet.finalTargetX && pet.targetY === pet.finalTargetY;
+}
+
+// Starts a fresh journey from wherever the pet currently is toward
+// `finalTarget`. If the direct line between them would cut through the
+// exclusion box, this first routes via whichever box corner costs the
+// least detour (see bestWaypoint) -- the tick loop's continuation check
+// automatically starts the second leg once the waypoint is reached, using
+// the same speedMult so pace doesn't change mid-route.
 //
-// When start and target straddle the exclusion box, though, a small random
-// bow will often still clip it -- and re-trying with another small random
-// bow after the fact (the old approach: nudge position, then re-route) was
-// no better, since almost any modest bow between two points on opposite
-// sides of a big central box still crosses it. That's what caused a stuck
-// pet to reset its journey every single tick, reading as a jittering
-// teleport rather than actually going anywhere. So this checks the curve
-// up front and, if it clips, swings the bow wide enough on whichever side
-// clears the box -- widening further on each retry -- before ever handing
-// back a journey to run.
-function startJourney(pet: PetSim, target: { x: number; y: number }, bounds: Bounds, speedMult = 1) {
-  const dx = target.x - pet.x;
-  const dy = target.y - pet.y;
+// Each leg gets a small, randomized organic wobble (not the old dramatic
+// swooping bow, which read as unnatural race-car cornering on what should
+// look like a dog just running somewhere) via a quadratic Bezier control
+// point offset perpendicular to the leg's straight line -- same idea
+// ScoutCompanion.tsx uses for its own walk paths, just with a much
+// subtler magnitude. On the rare chance even that small wobble clips the
+// box, it flattens to a straight line for this leg rather than escalating
+// -- a straight line between two already-safe points essentially never
+// clips a box neither of them is inside.
+function startJourney(pet: PetSim, finalTarget: { x: number; y: number }, bounds: Bounds, speedMult = 1) {
+  const excl = bounds.excl;
+  pet.finalTargetX = finalTarget.x;
+  pet.finalTargetY = finalTarget.y;
+
+  const straightHits = curveHitsBox(
+    pet.x,
+    pet.y,
+    (pet.x + finalTarget.x) / 2,
+    (pet.y + finalTarget.y) / 2,
+    finalTarget.x,
+    finalTarget.y,
+    excl
+  );
+  const legTarget = straightHits ? bestWaypoint(pet, finalTarget, bounds, WAYPOINT_MARGIN) : finalTarget;
+
+  const dx = legTarget.x - pet.x;
+  const dy = legTarget.y - pet.y;
   const dist = Math.max(Math.hypot(dx, dy), 1);
-  // perpendicular unit vector
   const px = -dy / dist;
   const py = dx / dist;
-  const excl = bounds.excl;
 
-  let midX = 0;
-  let midY = 0;
-  for (let attempt = 0; attempt < 5; attempt++) {
-    let bow: number;
-    if (attempt === 0) {
-      bow = dist * (0.18 + Math.random() * 0.4) * (Math.random() < 0.5 ? 1 : -1);
-    } else {
-      // Widen on each retry, and pick the side that actually points away
-      // from the box's center rather than guessing randomly again. Capped
-      // relative to this journey's own distance -- otherwise a short hop
-      // near the box (the thrower's tight home leash, in particular) could
-      // get a detour sized off the box itself rather than the hop, curving
-      // wildly far out of proportion to how far it's actually going.
-      const clearance = Math.min(
-        Math.max(excl.xMax - excl.xMin, excl.yMax - excl.yMin) / 2 + EXCLUSION_PAD + 20 * attempt,
-        dist * 1.8
-      );
-      const boxCx = (excl.xMin + excl.xMax) / 2;
-      const boxCy = (excl.yMin + excl.yMax) / 2;
-      const midXStraight = (pet.x + target.x) / 2;
-      const midYStraight = (pet.y + target.y) / 2;
-      const towardBoxSign = px * (boxCx - midXStraight) + py * (boxCy - midYStraight);
-      bow = towardBoxSign > 0 ? -clearance : clearance;
-    }
-    midX = (pet.x + target.x) / 2 + px * bow;
-    midY = (pet.y + target.y) / 2 + py * bow;
-    if (!curveHitsBox(pet.x, pet.y, midX, midY, target.x, target.y, excl)) break;
+  let bow = dist * (WOBBLE_FRAC_MIN + Math.random() * (WOBBLE_FRAC_MAX - WOBBLE_FRAC_MIN)) * (Math.random() < 0.5 ? 1 : -1);
+  let midX = (pet.x + legTarget.x) / 2 + px * bow;
+  let midY = (pet.y + legTarget.y) / 2 + py * bow;
+  if (curveHitsBox(pet.x, pet.y, midX, midY, legTarget.x, legTarget.y, excl)) {
+    bow = 0;
+    midX = (pet.x + legTarget.x) / 2;
+    midY = (pet.y + legTarget.y) / 2;
   }
 
   pet.startX = pet.x;
   pet.startY = pet.y;
   pet.curveX = midX;
   pet.curveY = midY;
-  pet.targetX = target.x;
-  pet.targetY = target.y;
+  pet.targetX = legTarget.x;
+  pet.targetY = legTarget.y;
   pet.t = 0;
   pet.speedMult = speedMult;
   pet.sprinting = Math.random() < SPRINT_CHANCE;
   const speed = pet.baseSpeed * speedMult * (pet.sprinting ? SPRINT_MULT : 1);
-  // Sampled rather than a flat "1.2x the straight distance" fudge factor --
-  // that approximation quietly broke once box-avoidance could pick a bow
-  // much bigger than the straight distance (a short hop detouring around
-  // the text box): the pet would then have far more actual curve to cover
-  // than the duration accounted for, and had to race through it, reading
-  // as a jump rather than a run.
+  // Sampled arc length rather than a flat straight-distance fudge factor,
+  // so speed stays consistent regardless of how much a leg's wobble (or a
+  // waypoint detour) makes the actual curve longer than the straight line.
   let arcLength = 0;
   let prevPoint = { x: pet.x, y: pet.y };
   for (let i = 1; i <= 10; i++) {
-    const p = bezierPoint(pet.startX, pet.startY, midX, midY, target.x, target.y, i / 10);
+    const p = bezierPoint(pet.startX, pet.startY, midX, midY, legTarget.x, legTarget.y, i / 10);
     arcLength += Math.hypot(p.x - prevPoint.x, p.y - prevPoint.y);
     prevPoint = p;
   }
@@ -384,9 +456,12 @@ export function HeroPets() {
         curveY: start.y,
         targetX: start.x,
         targetY: start.y,
-        t: 1, // already "arrived" so the tick loop immediately rolls a real journey
+        finalTargetX: start.x,
+        finalTargetY: start.y,
+        t: 1, // already "arrived" (journeyDone) so the tick loop rolls a real journey after one pause
         duration: 1,
         speedMult: 1,
+        pauseMs: -1,
         sprinting: false,
         x: start.x,
         y: start.y,
@@ -429,6 +504,20 @@ export function HeroPets() {
       lastTime = now;
 
       const pets = simRef.current;
+
+      // A pet whose current leg just finished but isn't actually at its
+      // real destination yet has only reached an intermediate waypoint
+      // (routed around the exclusion box) -- immediately continue on to
+      // the final target, before anything below ever observes `t >= 1` as
+      // "arrived." Without this, the fetch state machine's own arrival
+      // checks further down could fire a leg early, off the waypoint
+      // rather than the ball/thrower's actual position.
+      for (const pet of pets) {
+        if (pet.t >= 1 && !journeyDone(pet)) {
+          startJourney(pet, { x: pet.finalTargetX, y: pet.finalTargetY }, bounds, pet.speedMult);
+        }
+      }
+
       const thrower = pets.find((p) => p.role === "thrower");
       const fetcher = pets.find((p) => p.role === "fetcher");
 
@@ -517,17 +606,32 @@ export function HeroPets() {
       }
 
       for (const pet of pets) {
-        // Roll a fresh journey on arrival. Wanderers pick anywhere safe on
-        // their side; the thrower stays on a short leash around its own
-        // spawn point so it reads as "home base," not frozen in place, and
-        // the fetcher's journeys are driven entirely by the state machine
-        // above instead.
-        if (pet.t >= 1 && pet.role !== "fetcher") {
-          const next =
-            pet.role === "thrower"
-              ? randomSafePoint(bounds, { near: { x: pet.homeX, y: pet.homeY, radius: HOME_LEASH } })
-              : pickWanderTarget(bounds, pet, { side: pet.side });
-          startJourney(pet, next, bounds);
+        // Roll a fresh journey once truly arrived (not just at a waypoint)
+        // -- but only after a randomized pause, not the instant it stops.
+        // Immediately launching the next leg is what made wandering read
+        // as a metronome; a real dog pauses, sniffs, decides, then goes.
+        // Wanderers pick anywhere safe on their side; the thrower stays on
+        // a short leash around its own spawn point so it reads as "home
+        // base," not frozen in place; the fetcher's journeys are driven
+        // entirely by the state machine above instead.
+        if (journeyDone(pet) && pet.role !== "fetcher") {
+          if (pet.pauseMs < 0) {
+            pet.pauseMs = PAUSE_MS_MIN + Math.random() * (PAUSE_MS_MAX - PAUSE_MS_MIN);
+          } else if (pet.pauseMs > 0) {
+            // Clamped at 0, not left to run negative -- otherwise the next
+            // tick would read it as the -1 "not yet decided" sentinel and
+            // re-roll a brand new pause forever instead of ever reaching
+            // the "ready" branch below, leaving the pet stuck standing
+            // still indefinitely.
+            pet.pauseMs = Math.max(pet.pauseMs - dt * 1000, 0);
+          } else {
+            const next =
+              pet.role === "thrower"
+                ? randomSafePoint(bounds, { near: { x: pet.homeX, y: pet.homeY, radius: HOME_LEASH } })
+                : pickWanderTarget(bounds, pet, { side: pet.side });
+            startJourney(pet, next, bounds);
+            pet.pauseMs = -1;
+          }
         }
 
         pet.t = Math.min(pet.t + dt / pet.duration, 1);
@@ -536,6 +640,14 @@ export function HeroPets() {
         const prevX = pet.x;
         pet.x = sample.x;
         pet.y = sample.y;
+        // Defensive clamp regardless of what the curve produced -- start/
+        // target/waypoints are all pre-vetted safe, but a wobble offset
+        // near an edge could still sample a few px past it. The top edge
+        // matters most: it sits right against the sticky nav bar above
+        // the hero, so keep a firm gap there rather than risk a pet
+        // visually brushing up against it.
+        pet.x = Math.min(Math.max(pet.x, 0), bounds.width - PET_SIZE);
+        pet.y = Math.min(Math.max(pet.y, TOP_MARGIN), bounds.height - PET_SIZE);
 
         const moving = pet.t < 1;
         if (moving) {
@@ -561,22 +673,13 @@ export function HeroPets() {
           pet.legFrame = 0;
         }
 
-        // A pet's curved path can still clip the exclusion box on an
-        // unlucky bow. Nudging x/y alone isn't enough: next tick's sample
-        // comes straight back from the untouched Bezier curve (startX/
-        // curveX/targetX), so the pet would snap right back onto the old
-        // path -- a visible teleport-in-place every frame it's inside the
-        // box. Forcing the journey to "arrived" (t=1) instead -- the
-        // previous fix -- traded that for a worse bug: for the fetcher/
-        // thrower, arrival is what the fetch state machine watches to
-        // decide "caught the ball" / "back home," so an exclusion nudge
-        // could fire that a tick early from an unrelated edge position,
-        // hijacking the state machine (ball vanishing before the fetcher
-        // visibly reached it, fetcher lurching off toward the thrower from
-        // wherever the nudge happened to land it) -- which itself reads as
-        // teleporting. Re-curving toward the *same* target instead keeps
-        // the state machine's notion of "arrived" meaningful: the pet just
-        // takes a fresh, differently-bowed path the rest of the way there.
+        // Safety net, not the primary defense: startJourney now checks its
+        // curve against the box up front and routes around it via a real
+        // waypoint (see bestWaypoint), so this should rarely fire. It stays
+        // as a backstop for anything that still slips through -- nudge back
+        // out along the nearest edge, then re-plan the rest of the trip
+        // from here toward the pet's real final target (not just its
+        // current leg's endpoint, which could itself have been a waypoint).
         const excl = bounds.excl;
         const cx = pet.x + PET_SIZE / 2;
         const cy = pet.y + PET_SIZE / 2;
@@ -585,12 +688,17 @@ export function HeroPets() {
           const distRight = excl.xMax - cx;
           const distTop = cy - excl.yMin;
           const distBottom = excl.yMax - cy;
+          // A real gap, not just barely-technically-clear -- pushing out
+          // by only a couple px left the very next tick's small wobble
+          // free to tip straight back in, re-triggering this every frame
+          // near the edge instead of actually resolving it.
           const min = Math.min(distLeft, distRight, distTop, distBottom);
-          if (min === distLeft) pet.x = excl.xMin - PET_SIZE / 2 - 2;
-          else if (min === distRight) pet.x = excl.xMax - PET_SIZE / 2 + 2;
-          else if (min === distTop) pet.y = excl.yMin - PET_SIZE / 2 - 2;
-          else pet.y = excl.yMax - PET_SIZE / 2 + 2;
-          startJourney(pet, { x: pet.targetX, y: pet.targetY }, bounds, pet.speedMult);
+          const clear = EXCLUSION_PAD / 2;
+          if (min === distLeft) pet.x = excl.xMin - PET_SIZE / 2 - clear;
+          else if (min === distRight) pet.x = excl.xMax - PET_SIZE / 2 + clear;
+          else if (min === distTop) pet.y = excl.yMin - PET_SIZE / 2 - clear;
+          else pet.y = excl.yMax - PET_SIZE / 2 + clear;
+          startJourney(pet, { x: pet.finalTargetX, y: pet.finalTargetY }, bounds, pet.speedMult);
         }
       }
 
