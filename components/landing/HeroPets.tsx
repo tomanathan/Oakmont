@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { PixelDog } from "@/components/PixelDog";
 
 // Purely decorative: a small cast of PixelDog instances that wander,
@@ -20,6 +20,13 @@ import { PixelDog } from "@/components/PixelDog";
 //
 // Mood switches to "happy" for a beat when the sample question below is
 // answered correctly (see SampleQuestion.tsx's "landing:correct" dispatch).
+//
+// Deliberately does NOT respect prefers-reduced-motion -- an explicit,
+// informed choice for this specific decorative cast (not an oversight):
+// continuously-wandering animation is a real trigger for some users'
+// motion sensitivity, and that tradeoff was raised directly, but the
+// product call here is that these pets should always be lively regardless
+// of that OS/browser setting.
 
 type Variant = "ozho" | "mochi";
 type Role = "wander" | "thrower" | "fetcher";
@@ -143,62 +150,14 @@ function deflectFromExclusion(pet: PetSim, excl: ExclusionBox) {
   else pet.y = excl.yMax - PET_SIZE / 2 + 2;
 }
 
-function StaticPetCast({ happy }: { happy: boolean }) {
-  // Reduced-motion fallback: the original hop-in-once-then-idle-bob
-  // behavior, unchanged, via the .animate-landing-pet CSS keyframes.
-  const cast = [
-    { variant: "ozho" as const, costume: "sunglasses", facing: 1 as const, className: "left-[2%] top-[8%]", delay: "0s" },
-    { variant: "mochi" as const, costume: null, facing: -1 as const, className: "right-[4%] top-[2%]", delay: "0.15s" },
-    {
-      variant: "ozho" as const,
-      costume: null,
-      facing: -1 as const,
-      className: "right-[0%] bottom-[4%] hidden sm:block",
-      delay: "0.3s",
-    },
-    {
-      variant: "mochi" as const,
-      costume: "bowtie",
-      facing: 1 as const,
-      className: "left-[0%] bottom-[0%] hidden sm:block",
-      delay: "0.45s",
-    },
-    {
-      variant: "ozho" as const,
-      costume: "scarf",
-      facing: 1 as const,
-      className: "left-[44%] top-[-4%] hidden md:block",
-      delay: "0.6s",
-    },
-  ];
-  return (
-    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-      {cast.map((pet, i) => (
-        <div
-          key={i}
-          className={`absolute animate-landing-pet ${pet.className}`}
-          style={{ "--pet-delay": pet.delay } as React.CSSProperties}
-        >
-          <PixelDog size={44} variant={pet.variant} costume={pet.costume} facing={pet.facing} mood={happy ? "happy" : "neutral"} />
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export function HeroPets() {
   const [happy, setHappy] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState<boolean | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const petRefs = useRef<(HTMLDivElement | null)[]>([]);
   const simRef = useRef<PetSim[]>([]);
   const fetchPhaseRef = useRef<"out" | "back" | "pause">("out");
   const pauseMsRef = useRef(0);
   const [poses, setPoses] = useState<Pose[] | null>(null);
-
-  useEffect(() => {
-    setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-  }, []);
 
   useEffect(() => {
     function onCorrect() {
@@ -209,8 +168,10 @@ export function HeroPets() {
     return () => window.removeEventListener("landing:correct", onCorrect);
   }, []);
 
-  useEffect(() => {
-    if (reducedMotion !== false) return;
+  useLayoutEffect(() => {
+    // Layout effect (not a plain effect) so initial positions are written
+    // before the browser paints -- otherwise the pets would flash stacked
+    // at the container's origin for one frame before their real spots land.
     const container = containerRef.current;
     if (!container) return;
     const bounds = measureBounds(container);
@@ -350,10 +311,7 @@ export function HeroPets() {
       window.clearInterval(positionInterval);
       window.clearInterval(poseInterval);
     };
-  }, [reducedMotion]);
-
-  if (reducedMotion === null) return null; // avoid a flash before we know
-  if (reducedMotion) return <StaticPetCast happy={happy} />;
+  }, []);
 
   return (
     <div ref={containerRef} className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
