@@ -86,6 +86,21 @@ interface Pose {
   carryingBall: boolean;
 }
 
+// The thrown ball itself, tracked separately from any one pet so it can be
+// visibly mid-air (or waiting on the ground) during the "out" leg of a
+// fetch, instead of only ever existing invisibly in whichever dog's mouth
+// currently has carryingBall set.
+interface BallSim {
+  phase: "hidden" | "flying" | "ground";
+  fromX: number;
+  fromY: number;
+  toX: number;
+  toY: number;
+  x: number;
+  y: number;
+  t: number;
+}
+
 const CAST_CONFIG: { variant: Variant; costume: string | null; role: Role; side: "left" | "right" }[] = [
   { variant: "ozho", costume: "sunglasses", role: "wander", side: "left" },
   { variant: "mochi", costume: "scarf", role: "wander", side: "right" },
@@ -97,6 +112,9 @@ const CAST_CONFIG: { variant: Variant; costume: string | null; role: Role; side:
 const POSITION_TICK_MS = 33; // ~30fps -- smooth enough for curves+bounce, still cheap for 5 elements
 const POSE_TICK_MS = 110;
 const PET_SIZE = 44;
+const BALL_SIZE = 16;
+const BALL_FLIGHT_S = 0.4; // faster than the fetcher's run so the ball lands and waits, instead of arriving with it
+const BALL_ARC_HEIGHT = 34;
 const EXCLUSION_PAD = 22;
 const HOME_LEASH = 90; // how far the thrower is allowed to drift from its spawn point
 const SPRINT_CHANCE = 0.35;
@@ -210,7 +228,9 @@ export function HeroPets() {
   const [happy, setHappy] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const petRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const ballElRef = useRef<HTMLDivElement>(null);
   const simRef = useRef<PetSim[]>([]);
+  const ballRef = useRef<BallSim>({ phase: "hidden", fromX: 0, fromY: 0, toX: 0, toY: 0, x: 0, y: 0, t: 1 });
   const fetchPhaseRef = useRef<"out" | "back" | "pause">("out");
   const pauseMsRef = useRef(0);
   const [poses, setPoses] = useState<Pose[] | null>(null);
@@ -281,6 +301,7 @@ export function HeroPets() {
       const el = petRefs.current[i];
       if (el) el.style.transform = `translate(${pet.x}px, ${pet.y}px)`;
     });
+    if (ballElRef.current) ballElRef.current.style.opacity = "0";
 
     let lastTime = performance.now();
     const positionInterval = window.setInterval(() => {
@@ -298,11 +319,13 @@ export function HeroPets() {
       // is a real moving target, not a fixed spot), a quick handoff pause,
       // then goes again -- kept snappy (short pause, higher speed) so the
       // whole loop reads as eager rather than a slow errand.
+      const ball = ballRef.current;
       if (thrower && fetcher) {
         if (fetchPhaseRef.current === "out" && fetcher.t >= 1) {
           fetcher.carryingBall = true;
           fetchPhaseRef.current = "back";
           startJourney(fetcher, { x: thrower.x, y: thrower.y }, 1.3);
+          ball.phase = "hidden"; // picked up -- now lives invisibly in the fetcher's mouth again
         } else if (fetchPhaseRef.current === "back") {
           const dist = Math.hypot(fetcher.x - thrower.x, fetcher.y - thrower.y);
           if (dist < PET_SIZE * 0.7) {
@@ -318,7 +341,30 @@ export function HeroPets() {
             const t = randomSafePoint(bounds, { side: thrower.side });
             fetchPhaseRef.current = "out";
             startJourney(fetcher, t, 1.3);
+            // The actual throw: the ball visibly arcs from the thrower to the
+            // landing spot on its own short flight, arriving well before the
+            // fetcher does -- otherwise the fetch reads as two dogs running
+            // laps with no ball ever on screen.
+            const ballOffset = PET_SIZE / 2 - BALL_SIZE / 2;
+            ball.fromX = thrower.x + ballOffset;
+            ball.fromY = thrower.y + ballOffset;
+            ball.toX = t.x + ballOffset;
+            ball.toY = t.y + ballOffset;
+            ball.t = 0;
+            ball.phase = "flying";
           }
+        }
+      }
+
+      if (ball.phase === "flying") {
+        ball.t = Math.min(ball.t + dt / BALL_FLIGHT_S, 1);
+        const arc = Math.sin(ball.t * Math.PI) * BALL_ARC_HEIGHT;
+        ball.x = ball.fromX + (ball.toX - ball.fromX) * ball.t;
+        ball.y = ball.fromY + (ball.toY - ball.fromY) * ball.t - arc;
+        if (ball.t >= 1) {
+          ball.phase = "ground";
+          ball.x = ball.toX;
+          ball.y = ball.toY;
         }
       }
 
@@ -368,9 +414,13 @@ export function HeroPets() {
         }
 
         // A pet's curved path can still clip the exclusion box on an
-        // unlucky bow -- nudge it back out along the nearest edge rather
-        // than routing around it. Cheap, and invisible at 30fps since it's
-        // a small correction, not a teleport.
+        // unlucky bow. Nudging x/y alone isn't enough: next tick's sample
+        // comes straight back from the untouched Bezier curve (startX/
+        // curveX/targetX), so the pet would snap right back onto the old
+        // path -- reading as a teleport-in-place every frame it's inside
+        // the box. Forcing t to 1 as well makes the nudge stick: the next
+        // tick's "roll a fresh journey on arrival" branch starts the new
+        // curve from this corrected, already-safe point instead.
         const excl = bounds.excl;
         const cx = pet.x + PET_SIZE / 2;
         const cy = pet.y + PET_SIZE / 2;
@@ -384,6 +434,7 @@ export function HeroPets() {
           else if (min === distRight) pet.x = excl.xMax - PET_SIZE / 2 + 2;
           else if (min === distTop) pet.y = excl.yMin - PET_SIZE / 2 - 2;
           else pet.y = excl.yMax - PET_SIZE / 2 + 2;
+          pet.t = 1;
         }
       }
 
@@ -393,6 +444,16 @@ export function HeroPets() {
         const bounceY = pet.t < 1 ? -Math.abs(Math.sin(pet.bouncePhaseMs * BOUNCE_FREQ)) * BOUNCE_AMP : 0;
         el.style.transform = `translate(${pet.x}px, ${pet.y + bounceY}px)`;
       });
+
+      const ballEl = ballElRef.current;
+      if (ballEl) {
+        if (ball.phase === "hidden") {
+          ballEl.style.opacity = "0";
+        } else {
+          ballEl.style.opacity = "1";
+          ballEl.style.transform = `translate(${ball.x}px, ${ball.y}px)`;
+        }
+      }
     }, POSITION_TICK_MS);
 
     const poseInterval = window.setInterval(() => {
@@ -437,6 +498,18 @@ export function HeroPets() {
           </div>
         );
       })}
+      {/* the loose ball itself -- visible only mid-air on the throw and
+          while it waits on the ground for the fetcher; hidden the rest of
+          the time since it's otherwise drawn in whichever dog's mouth has
+          it (PixelDog's own carryingBall rendering). Same tennis-ball
+          colors/seam as that mouth-held version for visual continuity. */}
+      <div ref={ballElRef} className="absolute top-0 left-0 will-change-transform" style={{ opacity: 0 }}>
+        <svg width={BALL_SIZE} height={BALL_SIZE} viewBox="0 0 16 16">
+          <circle cx={8} cy={8} r={6.5} fill="#cddc39" />
+          <path d="M 2 8 Q 8 3 14 8" stroke="#eef5c0" strokeWidth={1.1} fill="none" strokeLinecap="round" />
+          <path d="M 2 8 Q 8 13 14 8" stroke="#eef5c0" strokeWidth={1.1} fill="none" strokeLinecap="round" />
+        </svg>
+      </div>
     </div>
   );
 }
