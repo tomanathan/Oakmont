@@ -8,7 +8,7 @@ const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 // Falls back to the known production URL so the reset link still points
 // somewhere real if APP_URL isn't set -- same convention as the pet-alert
 // emails in app/api/cron/pet-check/route.ts.
-const APP_URL = process.env.APP_URL || "https://oakmont-chi.vercel.app";
+const APP_URL = process.env.APP_URL || "https://oakmontsat.com";
 
 function generateToken(): string {
   return crypto.randomBytes(32).toString("base64url");

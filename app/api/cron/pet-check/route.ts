@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
 // Falls back to the known production URL so emails still link somewhere
 // sensible if APP_URL isn't set, but prefers the env var so this keeps
 // working if the domain ever changes.
-const APP_URL = process.env.APP_URL || "https://oakmont-chi.vercel.app";
+const APP_URL = process.env.APP_URL || "https://oakmontsat.com";
 
 function warningEmailHtml(): string {
   return `

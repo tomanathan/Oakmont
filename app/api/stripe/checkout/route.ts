@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
 
-const APP_URL = process.env.APP_URL || "https://oakmont-chi.vercel.app";
+const APP_URL = process.env.APP_URL || "https://oakmontsat.com";
 const PLAN_IDS: PlanId[] = ["monthly", "sixmonth"];
 
 export async function POST(req: NextRequest) {
