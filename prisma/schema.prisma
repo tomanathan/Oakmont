@@ -90,6 +90,15 @@ model User {
   subscriptionStatus   String?
   currentPeriodEnd     DateTime?
   accessExpiresAt      DateTime?
+
+  // Forgot-password: both null until a reset is requested. The token itself
+  // (not a hash of it) is what's stored -- same convention as
+  // parentShareToken above -- with the short expiry doing the real work of
+  // limiting exposure if the database were ever read by someone it
+  // shouldn't be. Cleared the moment it's used or replaced by a newer
+  // request, so a stale link never has a lingering valid token to reuse.
+  passwordResetToken   String?   @unique
+  passwordResetExpires DateTime?
 }
 
 // A parent/guardian account -- entirely separate from User (the student),
