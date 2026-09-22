@@ -3,30 +3,34 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { PixelDog } from "@/components/PixelDog";
 
-// Purely decorative: a small cast of PixelDog instances that wander,
-// run, and (two of them) play fetch with each other around the hero. These
-// are NOT the live ScoutCompanion/SecondCompanion -- no pet-state fetch, no
-// session needed, which is exactly right for a visitor who hasn't signed
-// up yet.
+// Purely decorative: a small cast of PixelDog instances that dash, curve,
+// bounce, and (two of them) play fetch with each other around the hero.
+// These are NOT the live ScoutCompanion/SecondCompanion -- no pet-state
+// fetch, no session needed, which is exactly right for a visitor who
+// hasn't signed up yet.
 //
-// Movement technique borrowed from ScoutCompanion.tsx's own proven
-// approach (not a reuse of that component itself -- no cursor-avoidance or
-// text-overlap detection needed here, just the core idea): position is
-// written straight to each pet's DOM node via a ref on a `setInterval` tick,
-// never through React state, so 20fps wandering for five pets doesn't mean
-// five re-renders a frame. The slower-changing *pose* props that PixelDog
-// actually needs as React props (legFrame, facing, carryingBall) update on
-// their own, much coarser interval instead.
+// Movement is journey-based, not simple point-seeking: each leg of travel
+// is a quadratic Bezier curve (same idea ScoutCompanion.tsx uses for its
+// own walk paths -- randomized "bow" control point, not a reuse of that
+// component) sampled at an eased progress, so pets swing along natural
+// arcs and ease in/out of a stop instead of gliding in perfectly straight
+// lines at constant speed. A vertical bounce riding on top of that (tied
+// to the leg-swap timer) reads as an actual trot/sprint, and journeys
+// randomly roll a "sprinting" burst at higher speed for real zoomies
+// energy. Position is written straight to each pet's DOM node via a ref on
+// a `setInterval` tick, never through React state -- the slower-changing
+// *pose* props PixelDog actually needs as React props (legFrame, facing,
+// carryingBall) update on their own, much coarser interval instead.
 //
 // Mood switches to "happy" for a beat when the sample question below is
 // answered correctly (see SampleQuestion.tsx's "landing:correct" dispatch).
 //
 // Deliberately does NOT respect prefers-reduced-motion -- an explicit,
 // informed choice for this specific decorative cast (not an oversight):
-// continuously-wandering animation is a real trigger for some users'
-// motion sensitivity, and that tradeoff was raised directly, but the
-// product call here is that these pets should always be lively regardless
-// of that OS/browser setting.
+// continuously-moving animation is a real trigger for some users' motion
+// sensitivity, and that tradeoff was raised directly, but the product call
+// here is that these pets should always be lively regardless of that
+// OS/browser setting.
 
 type Variant = "ozho" | "mochi";
 type Role = "wander" | "thrower" | "fetcher";
@@ -48,16 +52,30 @@ interface PetSim {
   costume: string | null;
   role: Role;
   side: "left" | "right"; // which half of the hero this pet mostly stays on
-  x: number;
-  y: number;
+  homeX: number;
+  homeY: number; // the thrower's anchor point; unused by other roles
+  baseSpeed: number; // this pet's own personality -- some are just zoomier
+  // Current journey: a quadratic Bezier from (startX,startY) through
+  // (curveX,curveY) to (targetX,targetY), progress `t` 0..1 over `duration`
+  // seconds. Re-rolled every time a journey completes.
+  startX: number;
+  startY: number;
+  curveX: number;
+  curveY: number;
   targetX: number;
   targetY: number;
-  speed: number;
+  t: number;
+  duration: number;
+  sprinting: boolean;
+  x: number; // last-sampled render position (ground truth for exclusion checks)
+  y: number;
   facing: 1 | -1;
   legFrame: 0 | 1;
   legTimerMs: number;
+  legIntervalMs: number;
   tailFrame: number;
   tailDir: 1 | -1;
+  bouncePhaseMs: number;
   carryingBall: boolean;
 }
 
@@ -76,11 +94,27 @@ const CAST_CONFIG: { variant: Variant; costume: string | null; role: Role; side:
   { variant: "mochi", costume: null, role: "fetcher", side: "left" },
 ];
 
-const POSITION_TICK_MS = 50;
-const POSE_TICK_MS = 160;
-const ARRIVE_DIST = 8;
+const POSITION_TICK_MS = 33; // ~30fps -- smooth enough for curves+bounce, still cheap for 5 elements
+const POSE_TICK_MS = 110;
 const PET_SIZE = 44;
 const EXCLUSION_PAD = 22;
+const HOME_LEASH = 90; // how far the thrower is allowed to drift from its spawn point
+const SPRINT_CHANCE = 0.35;
+const SPRINT_MULT = 2.1;
+const BOUNCE_AMP = 6;
+const BOUNCE_FREQ = 0.017; // rad per ms while trotting; scales with sprint below
+
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function bezierPoint(x0: number, y0: number, cx: number, cy: number, x1: number, y1: number, t: number) {
+  const mt = 1 - t;
+  return {
+    x: mt * mt * x0 + 2 * mt * t * cx + t * t * x1,
+    y: mt * mt * y0 + 2 * mt * t * cy + t * t * y1,
+  };
+}
 
 // Measures the *real* rendered text block (Hero.tsx's `data-hero-content`
 // div) rather than guessing a percentage box -- so the exclusion zone
@@ -109,45 +143,67 @@ function measureBounds(container: HTMLDivElement): Bounds | null {
 }
 
 // Rejection-samples a point anywhere in the hero (optionally restricted to
-// one horizontal half, so a fetch run stays a confined back-and-forth
-// rather than a diagonal sprint across the whole hero) that doesn't fall
-// inside the exclusion box.
-function randomSafePoint(bounds: Bounds, side?: "left" | "right") {
+// one horizontal half, or a tight radius around a "home" point for the
+// thrower's short leash) that doesn't fall inside the exclusion box.
+function randomSafePoint(
+  bounds: Bounds,
+  opts: { side?: "left" | "right"; near?: { x: number; y: number; radius: number } } = {}
+) {
   const { width, height, excl } = bounds;
-  const xMin = side === "right" ? width / 2 : 0;
-  const xMax = side === "left" ? width / 2 : width;
-  const spanX = Math.max(xMax - xMin - PET_SIZE, 1);
-  const spanY = Math.max(height - PET_SIZE, 1);
+  const xMin = opts.side === "right" ? width / 2 : 0;
+  const xMax = opts.side === "left" ? width / 2 : width;
   for (let attempt = 0; attempt < 20; attempt++) {
-    const x = xMin + Math.random() * spanX;
-    const y = Math.random() * spanY;
+    let x: number;
+    let y: number;
+    if (opts.near) {
+      const angle = Math.random() * Math.PI * 2;
+      const r = Math.random() * opts.near.radius;
+      x = Math.min(Math.max(opts.near.x + Math.cos(angle) * r, 0), width - PET_SIZE);
+      y = Math.min(Math.max(opts.near.y + Math.sin(angle) * r, 0), height - PET_SIZE);
+    } else {
+      x = xMin + Math.random() * Math.max(xMax - xMin - PET_SIZE, 1);
+      y = Math.random() * Math.max(height - PET_SIZE, 1);
+    }
     const cx = x + PET_SIZE / 2;
     const cy = y + PET_SIZE / 2;
     if (cx < excl.xMin || cx > excl.xMax || cy < excl.yMin || cy > excl.yMax) {
       return { x, y };
     }
   }
-  return { x: side === "right" ? width - PET_SIZE : 0, y: height - PET_SIZE }; // safe fallback: a corner
+  return { x: opts.side === "right" ? width - PET_SIZE : 0, y: height - PET_SIZE }; // safe fallback: a corner
 }
 
-// A pet's straight-line path between two safe points can still clip the
-// exclusion box (e.g. top-to-bottom on the same side). Rather than route
-// around it, just nudge anyone caught inside it back out along whichever
-// edge is closest -- cheap, and invisible at 20fps since it's a small
-// correction, not a teleport.
-function deflectFromExclusion(pet: PetSim, excl: ExclusionBox) {
-  const cx = pet.x + PET_SIZE / 2;
-  const cy = pet.y + PET_SIZE / 2;
-  if (cx < excl.xMin || cx > excl.xMax || cy < excl.yMin || cy > excl.yMax) return;
-  const distLeft = cx - excl.xMin;
-  const distRight = excl.xMax - cx;
-  const distTop = cy - excl.yMin;
-  const distBottom = excl.yMax - cy;
-  const min = Math.min(distLeft, distRight, distTop, distBottom);
-  if (min === distLeft) pet.x = excl.xMin - PET_SIZE / 2 - 2;
-  else if (min === distRight) pet.x = excl.xMax - PET_SIZE / 2 + 2;
-  else if (min === distTop) pet.y = excl.yMin - PET_SIZE / 2 - 2;
-  else pet.y = excl.yMax - PET_SIZE / 2 + 2;
+// Starts a fresh curved journey from wherever the pet currently is toward
+// `target`. The control point is offset perpendicular to the straight line
+// between start and target by a randomized "bow," same idea as
+// ScoutCompanion's own quadratic-Bezier walk paths -- this alone is most of
+// why the movement reads as a natural running arc instead of a robotic
+// straight-line glide.
+function startJourney(pet: PetSim, target: { x: number; y: number }, speedMult = 1) {
+  const dx = target.x - pet.x;
+  const dy = target.y - pet.y;
+  const dist = Math.max(Math.hypot(dx, dy), 1);
+  const bow = dist * (0.18 + Math.random() * 0.4) * (Math.random() < 0.5 ? 1 : -1);
+  // perpendicular unit vector
+  const px = -dy / dist;
+  const py = dx / dist;
+  const midX = (pet.x + target.x) / 2 + px * bow;
+  const midY = (pet.y + target.y) / 2 + py * bow;
+
+  pet.startX = pet.x;
+  pet.startY = pet.y;
+  pet.curveX = midX;
+  pet.curveY = midY;
+  pet.targetX = target.x;
+  pet.targetY = target.y;
+  pet.t = 0;
+  pet.sprinting = Math.random() < SPRINT_CHANCE;
+  const speed = pet.baseSpeed * speedMult * (pet.sprinting ? SPRINT_MULT : 1);
+  // Bezier arc length runs a bit longer than the straight distance -- 1.2x
+  // is a good-enough approximation rather than an exact arc-length integral,
+  // which would be overkill for a decorative background.
+  pet.duration = Math.max((dist * 1.2) / speed, 0.25);
+  pet.legIntervalMs = pet.sprinting ? 85 : 150;
 }
 
 export function HeroPets() {
@@ -178,42 +234,48 @@ export function HeroPets() {
     if (!bounds) return;
 
     simRef.current = CAST_CONFIG.map((cfg) => {
-      const start = randomSafePoint(bounds, cfg.side);
+      const start = randomSafePoint(bounds, { side: cfg.side });
       return {
         ...cfg,
-        x: start.x,
-        y: start.y,
+        homeX: start.x,
+        homeY: start.y,
+        baseSpeed: 90 + Math.random() * 60,
+        startX: start.x,
+        startY: start.y,
+        curveX: start.x,
+        curveY: start.y,
         targetX: start.x,
         targetY: start.y,
-        speed: 50 + Math.random() * 30,
+        t: 1, // already "arrived" so the tick loop immediately rolls a real journey
+        duration: 1,
+        sprinting: false,
+        x: start.x,
+        y: start.y,
         facing: 1,
         legFrame: 0,
         legTimerMs: 0,
+        legIntervalMs: 150,
         tailFrame: 0,
         tailDir: 1,
+        bouncePhaseMs: Math.random() * 1000,
         carryingBall: cfg.role === "thrower",
       };
     });
-    // Give the wanderers (and the fetcher) a real first destination -- the
-    // thrower deliberately keeps its spawn point as "home" and never
-    // wanders off it.
-    for (const pet of simRef.current) {
-      if (pet.role === "wander") {
-        const t = randomSafePoint(bounds, pet.side);
-        pet.targetX = t.x;
-        pet.targetY = t.y;
-      }
-    }
-    const initialFetcher = simRef.current.find((p) => p.role === "fetcher");
-    const initialThrower = simRef.current.find((p) => p.role === "thrower");
-    if (initialFetcher && initialThrower) {
-      const t = randomSafePoint(bounds, initialThrower.side);
-      initialFetcher.targetX = t.x;
-      initialFetcher.targetY = t.y;
-    }
 
-    // Write the freshly-computed starting positions immediately, before
-    // the first interval tick, so there's no one-frame flash of every pet
+    // The fetcher is excluded from the generic "roll a new journey on
+    // arrival" loop below (its journeys are driven entirely by the fetch
+    // state machine instead), so unlike every other pet it needs an actual
+    // first journey seeded here -- otherwise, since it spawns already
+    // "arrived" (t=1), the state machine's first tick would immediately
+    // treat it as having reached a throw point it never actually ran to.
+    const seedFetcher = simRef.current.find((p) => p.role === "fetcher");
+    if (seedFetcher) {
+      startJourney(seedFetcher, randomSafePoint(bounds, { side: seedFetcher.side }), 1.3);
+    }
+    fetchPhaseRef.current = "out";
+
+    // Write the freshly-computed starting positions immediately, before the
+    // first interval tick, so there's no one-frame flash of every pet
     // stacked at the container's origin.
     simRef.current.forEach((pet, i) => {
       const el = petRefs.current[i];
@@ -230,69 +292,106 @@ export function HeroPets() {
       const thrower = pets.find((p) => p.role === "thrower");
       const fetcher = pets.find((p) => p.role === "fetcher");
 
+      // Fetch state machine: the fetcher runs out to a thrown point, grabs
+      // the ball, sprints it back to wherever the thrower currently is
+      // (the thrower keeps drifting on its own short leash below, so this
+      // is a real moving target, not a fixed spot), a quick handoff pause,
+      // then goes again -- kept snappy (short pause, higher speed) so the
+      // whole loop reads as eager rather than a slow errand.
       if (thrower && fetcher) {
-        if (fetchPhaseRef.current === "out") {
-          const dist = Math.hypot(fetcher.x - fetcher.targetX, fetcher.y - fetcher.targetY);
-          if (dist < ARRIVE_DIST) {
-            fetcher.carryingBall = true;
-            fetchPhaseRef.current = "back";
-          }
+        if (fetchPhaseRef.current === "out" && fetcher.t >= 1) {
+          fetcher.carryingBall = true;
+          fetchPhaseRef.current = "back";
+          startJourney(fetcher, { x: thrower.x, y: thrower.y }, 1.3);
         } else if (fetchPhaseRef.current === "back") {
-          fetcher.targetX = thrower.x;
-          fetcher.targetY = thrower.y;
           const dist = Math.hypot(fetcher.x - thrower.x, fetcher.y - thrower.y);
-          if (dist < ARRIVE_DIST + PET_SIZE * 0.6) {
+          if (dist < PET_SIZE * 0.7) {
             fetcher.carryingBall = false;
             thrower.carryingBall = true;
             fetchPhaseRef.current = "pause";
-            pauseMsRef.current = 700 + Math.random() * 500;
+            pauseMsRef.current = 250 + Math.random() * 250;
           }
-        } else {
+        } else if (fetchPhaseRef.current === "pause") {
           pauseMsRef.current -= dt * 1000;
           if (pauseMsRef.current <= 0) {
             thrower.carryingBall = false;
-            const t = randomSafePoint(bounds, thrower.side);
-            fetcher.targetX = t.x;
-            fetcher.targetY = t.y;
+            const t = randomSafePoint(bounds, { side: thrower.side });
             fetchPhaseRef.current = "out";
+            startJourney(fetcher, t, 1.3);
           }
         }
       }
 
       for (const pet of pets) {
-        const dx = pet.targetX - pet.x;
-        const dy = pet.targetY - pet.y;
-        const dist = Math.hypot(dx, dy);
-
-        if (pet.role === "wander" && dist < ARRIVE_DIST) {
-          const t = randomSafePoint(bounds, pet.side);
-          pet.targetX = t.x;
-          pet.targetY = t.y;
+        // Roll a fresh journey on arrival. Wanderers pick anywhere safe on
+        // their side; the thrower stays on a short leash around its own
+        // spawn point so it reads as "home base," not frozen in place, and
+        // the fetcher's journeys are driven entirely by the state machine
+        // above instead.
+        if (pet.t >= 1 && pet.role !== "fetcher") {
+          const next =
+            pet.role === "thrower"
+              ? randomSafePoint(bounds, { near: { x: pet.homeX, y: pet.homeY, radius: HOME_LEASH } })
+              : randomSafePoint(bounds, { side: pet.side });
+          startJourney(pet, next);
         }
 
-        const moving = dist > 1;
+        pet.t = Math.min(pet.t + dt / pet.duration, 1);
+        const eased = easeInOutCubic(pet.t);
+        const sample = bezierPoint(pet.startX, pet.startY, pet.curveX, pet.curveY, pet.targetX, pet.targetY, eased);
+        const prevX = pet.x;
+        pet.x = sample.x;
+        pet.y = sample.y;
+
+        const moving = pet.t < 1;
         if (moving) {
-          const step = Math.min(pet.speed * dt, dist);
-          pet.x += (dx / dist) * step;
-          pet.y += (dy / dist) * step;
-          if (Math.abs(dx) > 2) pet.facing = dx > 0 ? 1 : -1;
+          if (Math.abs(pet.x - prevX) > 0.3) pet.facing = pet.x > prevX ? 1 : -1;
           pet.legTimerMs += dt * 1000;
-          if (pet.legTimerMs > 160) {
+          if (pet.legTimerMs > pet.legIntervalMs) {
             pet.legTimerMs = 0;
             pet.legFrame = pet.legFrame === 0 ? 1 : 0;
           }
-          pet.tailFrame += pet.tailDir;
-          if (pet.tailFrame >= 5 || pet.tailFrame <= 0) pet.tailDir = (pet.tailDir * -1) as 1 | -1;
+          // Clamp (not just detect-and-reverse) since a sprinting +2 step
+          // can overshoot the valid 0-5 range in one tick -- an unclamped
+          // out-of-range value crashes PixelDog's tail-frame lookup.
+          pet.tailFrame += pet.tailDir * (pet.sprinting ? 2 : 1);
+          if (pet.tailFrame >= 5) {
+            pet.tailFrame = 5;
+            pet.tailDir = -1;
+          } else if (pet.tailFrame <= 0) {
+            pet.tailFrame = 0;
+            pet.tailDir = 1;
+          }
+          pet.bouncePhaseMs += dt * 1000 * (pet.sprinting ? 1.6 : 1);
         } else {
           pet.legFrame = 0;
         }
 
-        deflectFromExclusion(pet, bounds.excl);
+        // A pet's curved path can still clip the exclusion box on an
+        // unlucky bow -- nudge it back out along the nearest edge rather
+        // than routing around it. Cheap, and invisible at 30fps since it's
+        // a small correction, not a teleport.
+        const excl = bounds.excl;
+        const cx = pet.x + PET_SIZE / 2;
+        const cy = pet.y + PET_SIZE / 2;
+        if (cx >= excl.xMin && cx <= excl.xMax && cy >= excl.yMin && cy <= excl.yMax) {
+          const distLeft = cx - excl.xMin;
+          const distRight = excl.xMax - cx;
+          const distTop = cy - excl.yMin;
+          const distBottom = excl.yMax - cy;
+          const min = Math.min(distLeft, distRight, distTop, distBottom);
+          if (min === distLeft) pet.x = excl.xMin - PET_SIZE / 2 - 2;
+          else if (min === distRight) pet.x = excl.xMax - PET_SIZE / 2 + 2;
+          else if (min === distTop) pet.y = excl.yMin - PET_SIZE / 2 - 2;
+          else pet.y = excl.yMax - PET_SIZE / 2 + 2;
+        }
       }
 
       pets.forEach((pet, i) => {
         const el = petRefs.current[i];
-        if (el) el.style.transform = `translate(${pet.x}px, ${pet.y}px)`;
+        if (!el) return;
+        const bounceY = pet.t < 1 ? -Math.abs(Math.sin(pet.bouncePhaseMs * BOUNCE_FREQ)) * BOUNCE_AMP : 0;
+        el.style.transform = `translate(${pet.x}px, ${pet.y + bounceY}px)`;
       });
     }, POSITION_TICK_MS);
 
