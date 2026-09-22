@@ -118,7 +118,10 @@ interface BallSim {
   t: number;
   duration: number; // scaled to this throw's distance -- a cross-hero throw takes longer than a short toss
   arcHeight: number; // scaled to distance too, so long throws visibly arc higher than short ones
-  landingPetX: number; // the pre-offset point the fetcher should path to once this ball lands (see ballOffset below)
+  bouncesLeft: number; // secondary bounces still to play before the ball actually settles
+  bounceDirX: number; // unit direction of the original throw, reused for every bounce's residual forward drift
+  bounceDirY: number;
+  landingPetX: number; // the pre-offset point the fetcher should path to once this ball settles (see BALL_OFFSET)
   landingPetY: number;
 }
 
@@ -139,6 +142,9 @@ const BALL_MIN_FLIGHT_S = 0.6;
 const BALL_MAX_FLIGHT_S = 1.5;
 const BALL_ARC_FRAC = 0.3; // arc height as a fraction of throw distance
 const BALL_MAX_ARC = 140;
+const BALL_OFFSET = PET_SIZE / 2 - BALL_SIZE / 2; // centers the ball within a pet's box, for both the throw and every bounce afterward
+const BALL_BOUNCE_COUNT = 2; // secondary bounces after the main throw arc, before the ball actually settles
+const BALL_BOUNCE_DECAY = 0.42; // each bounce's height, duration, and forward drift are this fraction of the previous one's
 const EXCLUSION_PAD = 22;
 const TOP_MARGIN = 20; // keeps pets clear of the very top edge (right below the sticky nav bar); already padded for the hop bounce below, which can lift the rendered position further up than a pet's own logical y
 const WAYPOINT_MARGIN = 26; // clearance a routed-around waypoint keeps outside the exclusion box
@@ -308,9 +314,23 @@ function bestWaypoint(from: { x: number; y: number }, target: { x: number; y: nu
     x: Math.min(Math.max(c.x, 0), width - PET_SIZE),
     y: Math.min(Math.max(c.y, TOP_MARGIN), height - PET_SIZE),
   }));
-  let best = corners[0];
+
+  // Prefer a corner whose OWN straight line onward to the final target is
+  // clear -- picking purely by total distance can choose a corner that
+  // still needs its own detour, and since the closest corner FROM there
+  // can turn out to be the one we just left, two corners on opposite
+  // sides of the box can each look cheapest from the other's position,
+  // and the pet ping-pongs between them forever without ever reaching
+  // the target. Falling back to plain distance only when no corner's
+  // second leg is clear (rare enough not to be worth solving further).
+  const viable = corners.filter(
+    (c) => !curveHitsBox(c.x, c.y, (c.x + target.x) / 2, (c.y + target.y) / 2, target.x, target.y, excl)
+  );
+  const candidates = viable.length > 0 ? viable : corners;
+
+  let best = candidates[0];
   let bestCost = Infinity;
-  for (const c of corners) {
+  for (const c of candidates) {
     const cost = Math.hypot(from.x - c.x, from.y - c.y) + Math.hypot(target.x - c.x, target.y - c.y);
     if (cost < bestCost) {
       bestCost = cost;
@@ -418,6 +438,9 @@ export function HeroPets() {
     t: 1,
     duration: 1,
     arcHeight: 0,
+    bouncesLeft: 0,
+    bounceDirX: 0,
+    bounceDirY: 0,
     landingPetX: 0,
     landingPetY: 0,
   });
@@ -567,13 +590,10 @@ export function HeroPets() {
             // ball flight -> recipient reacts, not two dogs already
             // running in parallel with the throw.
             fetchPhaseRef.current = "watching";
-            const ballOffset = PET_SIZE / 2 - BALL_SIZE / 2;
-            ball.fromX = thrower.x + ballOffset;
-            ball.fromY = thrower.y + ballOffset;
-            ball.toX = t.x + ballOffset;
-            ball.toY = t.y + ballOffset;
-            ball.landingPetX = t.x;
-            ball.landingPetY = t.y;
+            ball.fromX = thrower.x + BALL_OFFSET;
+            ball.fromY = thrower.y + BALL_OFFSET;
+            ball.toX = t.x + BALL_OFFSET;
+            ball.toY = t.y + BALL_OFFSET;
             ball.t = 0;
             // Flight time and arc height both scale with distance -- a
             // throw across the whole hero should visibly take longer and
@@ -582,6 +602,19 @@ export function HeroPets() {
             const throwDist = Math.hypot(ball.toX - ball.fromX, ball.toY - ball.fromY);
             ball.duration = Math.min(Math.max(throwDist / BALL_SPEED, BALL_MIN_FLIGHT_S), BALL_MAX_FLIGHT_S);
             ball.arcHeight = Math.min(throwDist * BALL_ARC_FRAC, BALL_MAX_ARC);
+            // Direction is reused for every bounce's residual forward
+            // drift after landing -- a real thrown ball doesn't stop dead
+            // on impact, it keeps skidding forward a bit, decaying with
+            // each bounce.
+            ball.bounceDirX = (ball.toX - ball.fromX) / Math.max(throwDist, 1);
+            ball.bounceDirY = (ball.toY - ball.fromY) / Math.max(throwDist, 1);
+            ball.bouncesLeft = BALL_BOUNCE_COUNT;
+            // landingPetX/Y (the fetcher's eventual target) starts as the
+            // main arc's landing spot, but gets pushed forward again after
+            // each bounce below to track wherever the ball actually ends
+            // up once it fully settles.
+            ball.landingPetX = t.x;
+            ball.landingPetY = t.y;
             ball.phase = "flying";
           }
         }
@@ -593,14 +626,35 @@ export function HeroPets() {
         ball.x = ball.fromX + (ball.toX - ball.fromX) * ball.t;
         ball.y = ball.fromY + (ball.toY - ball.fromY) * ball.t - arc;
         if (ball.t >= 1) {
-          ball.phase = "ground";
-          ball.x = ball.toX;
-          ball.y = ball.toY;
-          // The ball has landed -- only now does the recipient start
-          // running toward its actual resting spot.
-          if (fetcher && fetchPhaseRef.current === "watching") {
-            fetchPhaseRef.current = "out";
-            startJourney(fetcher, { x: ball.landingPetX, y: ball.landingPetY }, bounds, 1.3);
+          if (ball.bouncesLeft > 0) {
+            // Reuses this same from/to/arc/duration flight machinery for
+            // each bounce, just decaying every quantity -- height,
+            // duration, and how far it skids forward -- by the same
+            // factor each time, so the bounces quickly settle down
+            // instead of repeating identically forever.
+            const landX = ball.toX;
+            const landY = ball.toY;
+            const drift = Math.hypot(ball.toX - ball.fromX, ball.toY - ball.fromY) * BALL_BOUNCE_DECAY;
+            ball.bouncesLeft -= 1;
+            ball.arcHeight *= BALL_BOUNCE_DECAY;
+            ball.duration = Math.max(ball.duration * BALL_BOUNCE_DECAY, 0.12);
+            ball.fromX = landX;
+            ball.fromY = landY;
+            ball.toX = landX + ball.bounceDirX * drift;
+            ball.toY = landY + ball.bounceDirY * drift;
+            ball.landingPetX = ball.toX - BALL_OFFSET;
+            ball.landingPetY = ball.toY - BALL_OFFSET;
+            ball.t = 0;
+          } else {
+            ball.phase = "ground";
+            ball.x = ball.toX;
+            ball.y = ball.toY;
+            // The ball has fully settled -- only now does the recipient
+            // start running toward its actual resting spot.
+            if (fetcher && fetchPhaseRef.current === "watching") {
+              fetchPhaseRef.current = "out";
+              startJourney(fetcher, { x: ball.landingPetX, y: ball.landingPetY }, bounds, 1.3);
+            }
           }
         }
       }
