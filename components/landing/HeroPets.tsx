@@ -67,6 +67,7 @@ interface PetSim {
   t: number;
   duration: number;
   sprinting: boolean;
+  speedMult: number; // the multiplier the current journey started with, so an exclusion re-route can keep the same pace
   x: number; // last-sampled render position (ground truth for exclusion checks)
   y: number;
   facing: 1 | -1;
@@ -99,6 +100,10 @@ interface BallSim {
   x: number;
   y: number;
   t: number;
+  duration: number; // scaled to this throw's distance -- a cross-hero throw takes longer than a short toss
+  arcHeight: number; // scaled to distance too, so long throws visibly arc higher than short ones
+  landingPetX: number; // the pre-offset point the fetcher should path to once this ball lands (see ballOffset below)
+  landingPetY: number;
 }
 
 const CAST_CONFIG: { variant: Variant; costume: string | null; role: Role; side: "left" | "right" }[] = [
@@ -113,8 +118,11 @@ const POSITION_TICK_MS = 33; // ~30fps -- smooth enough for curves+bounce, still
 const POSE_TICK_MS = 110;
 const PET_SIZE = 44;
 const BALL_SIZE = 16;
-const BALL_FLIGHT_S = 0.4; // faster than the fetcher's run so the ball lands and waits, instead of arriving with it
-const BALL_ARC_HEIGHT = 34;
+const BALL_SPEED = 620; // px/s -- flight duration scales with distance instead of being fixed, so a cross-hero throw takes visibly longer than a short toss
+const BALL_MIN_FLIGHT_S = 0.6;
+const BALL_MAX_FLIGHT_S = 1.5;
+const BALL_ARC_FRAC = 0.3; // arc height as a fraction of throw distance
+const BALL_MAX_ARC = 140;
 const EXCLUSION_PAD = 22;
 const HOME_LEASH = 90; // how far the thrower is allowed to drift from its spawn point
 const MIN_JOURNEY_FRAC = 0.45; // a fresh journey should cover at least this fraction of the hero's larger dimension
@@ -226,22 +234,73 @@ function pickWanderTarget(bounds: Bounds, from: { x: number; y: number }, opts: 
   return best;
 }
 
+// True if any point along a quadratic Bezier (sampled, not solved exactly --
+// plenty precise for a decorative background) falls inside the exclusion
+// box. Endpoints are skipped since start/target are always pre-vetted safe
+// by randomSafePoint; only the curve's middle is ever at risk.
+function curveHitsBox(x0: number, y0: number, cx: number, cy: number, x1: number, y1: number, excl: ExclusionBox) {
+  const steps = 8;
+  for (let i = 1; i < steps; i++) {
+    const p = bezierPoint(x0, y0, cx, cy, x1, y1, i / steps);
+    if (p.x >= excl.xMin && p.x <= excl.xMax && p.y >= excl.yMin && p.y <= excl.yMax) return true;
+  }
+  return false;
+}
+
 // Starts a fresh curved journey from wherever the pet currently is toward
 // `target`. The control point is offset perpendicular to the straight line
 // between start and target by a randomized "bow," same idea as
 // ScoutCompanion's own quadratic-Bezier walk paths -- this alone is most of
 // why the movement reads as a natural running arc instead of a robotic
 // straight-line glide.
-function startJourney(pet: PetSim, target: { x: number; y: number }, speedMult = 1) {
+//
+// When start and target straddle the exclusion box, though, a small random
+// bow will often still clip it -- and re-trying with another small random
+// bow after the fact (the old approach: nudge position, then re-route) was
+// no better, since almost any modest bow between two points on opposite
+// sides of a big central box still crosses it. That's what caused a stuck
+// pet to reset its journey every single tick, reading as a jittering
+// teleport rather than actually going anywhere. So this checks the curve
+// up front and, if it clips, swings the bow wide enough on whichever side
+// clears the box -- widening further on each retry -- before ever handing
+// back a journey to run.
+function startJourney(pet: PetSim, target: { x: number; y: number }, bounds: Bounds, speedMult = 1) {
   const dx = target.x - pet.x;
   const dy = target.y - pet.y;
   const dist = Math.max(Math.hypot(dx, dy), 1);
-  const bow = dist * (0.18 + Math.random() * 0.4) * (Math.random() < 0.5 ? 1 : -1);
   // perpendicular unit vector
   const px = -dy / dist;
   const py = dx / dist;
-  const midX = (pet.x + target.x) / 2 + px * bow;
-  const midY = (pet.y + target.y) / 2 + py * bow;
+  const excl = bounds.excl;
+
+  let midX = 0;
+  let midY = 0;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    let bow: number;
+    if (attempt === 0) {
+      bow = dist * (0.18 + Math.random() * 0.4) * (Math.random() < 0.5 ? 1 : -1);
+    } else {
+      // Widen on each retry, and pick the side that actually points away
+      // from the box's center rather than guessing randomly again. Capped
+      // relative to this journey's own distance -- otherwise a short hop
+      // near the box (the thrower's tight home leash, in particular) could
+      // get a detour sized off the box itself rather than the hop, curving
+      // wildly far out of proportion to how far it's actually going.
+      const clearance = Math.min(
+        Math.max(excl.xMax - excl.xMin, excl.yMax - excl.yMin) / 2 + EXCLUSION_PAD + 20 * attempt,
+        dist * 1.8
+      );
+      const boxCx = (excl.xMin + excl.xMax) / 2;
+      const boxCy = (excl.yMin + excl.yMax) / 2;
+      const midXStraight = (pet.x + target.x) / 2;
+      const midYStraight = (pet.y + target.y) / 2;
+      const towardBoxSign = px * (boxCx - midXStraight) + py * (boxCy - midYStraight);
+      bow = towardBoxSign > 0 ? -clearance : clearance;
+    }
+    midX = (pet.x + target.x) / 2 + px * bow;
+    midY = (pet.y + target.y) / 2 + py * bow;
+    if (!curveHitsBox(pet.x, pet.y, midX, midY, target.x, target.y, excl)) break;
+  }
 
   pet.startX = pet.x;
   pet.startY = pet.y;
@@ -250,12 +309,23 @@ function startJourney(pet: PetSim, target: { x: number; y: number }, speedMult =
   pet.targetX = target.x;
   pet.targetY = target.y;
   pet.t = 0;
+  pet.speedMult = speedMult;
   pet.sprinting = Math.random() < SPRINT_CHANCE;
   const speed = pet.baseSpeed * speedMult * (pet.sprinting ? SPRINT_MULT : 1);
-  // Bezier arc length runs a bit longer than the straight distance -- 1.2x
-  // is a good-enough approximation rather than an exact arc-length integral,
-  // which would be overkill for a decorative background.
-  pet.duration = Math.max((dist * 1.2) / speed, 0.25);
+  // Sampled rather than a flat "1.2x the straight distance" fudge factor --
+  // that approximation quietly broke once box-avoidance could pick a bow
+  // much bigger than the straight distance (a short hop detouring around
+  // the text box): the pet would then have far more actual curve to cover
+  // than the duration accounted for, and had to race through it, reading
+  // as a jump rather than a run.
+  let arcLength = 0;
+  let prevPoint = { x: pet.x, y: pet.y };
+  for (let i = 1; i <= 10; i++) {
+    const p = bezierPoint(pet.startX, pet.startY, midX, midY, target.x, target.y, i / 10);
+    arcLength += Math.hypot(p.x - prevPoint.x, p.y - prevPoint.y);
+    prevPoint = p;
+  }
+  pet.duration = Math.max(arcLength / speed, 0.25);
   pet.legIntervalMs = pet.sprinting ? 85 : 150;
 }
 
@@ -265,8 +335,21 @@ export function HeroPets() {
   const petRefs = useRef<(HTMLDivElement | null)[]>([]);
   const ballElRef = useRef<HTMLDivElement>(null);
   const simRef = useRef<PetSim[]>([]);
-  const ballRef = useRef<BallSim>({ phase: "hidden", fromX: 0, fromY: 0, toX: 0, toY: 0, x: 0, y: 0, t: 1 });
-  const fetchPhaseRef = useRef<"out" | "back" | "pause">("out");
+  const ballRef = useRef<BallSim>({
+    phase: "hidden",
+    fromX: 0,
+    fromY: 0,
+    toX: 0,
+    toY: 0,
+    x: 0,
+    y: 0,
+    t: 1,
+    duration: 1,
+    arcHeight: 0,
+    landingPetX: 0,
+    landingPetY: 0,
+  });
+  const fetchPhaseRef = useRef<"watching" | "out" | "back" | "pause">("out");
   const pauseMsRef = useRef(0);
   const [poses, setPoses] = useState<Pose[] | null>(null);
 
@@ -303,6 +386,7 @@ export function HeroPets() {
         targetY: start.y,
         t: 1, // already "arrived" so the tick loop immediately rolls a real journey
         duration: 1,
+        speedMult: 1,
         sprinting: false,
         x: start.x,
         y: start.y,
@@ -325,7 +409,7 @@ export function HeroPets() {
     // treat it as having reached a throw point it never actually ran to.
     const seedFetcher = simRef.current.find((p) => p.role === "fetcher");
     if (seedFetcher) {
-      startJourney(seedFetcher, pickWanderTarget(bounds, seedFetcher, { side: seedFetcher.side }), 1.3);
+      startJourney(seedFetcher, pickWanderTarget(bounds, seedFetcher, { side: seedFetcher.side }), bounds, 1.3);
     }
     fetchPhaseRef.current = "out";
 
@@ -359,7 +443,7 @@ export function HeroPets() {
         if (fetchPhaseRef.current === "out" && fetcher.t >= 1) {
           fetcher.carryingBall = true;
           fetchPhaseRef.current = "back";
-          startJourney(fetcher, { x: thrower.x, y: thrower.y }, 1.3);
+          startJourney(fetcher, { x: thrower.x, y: thrower.y }, bounds, 1.3);
           ball.phase = "hidden"; // picked up -- now lives invisibly in the fetcher's mouth again
         } else if (fetchPhaseRef.current === "back") {
           const dist = Math.hypot(fetcher.x - thrower.x, fetcher.y - thrower.y);
@@ -368,6 +452,17 @@ export function HeroPets() {
             thrower.carryingBall = true;
             fetchPhaseRef.current = "pause";
             pauseMsRef.current = 250 + Math.random() * 250;
+          } else if (fetcher.t >= 1) {
+            // The thrower keeps drifting on its own leash while the
+            // fetcher runs the handoff leg, so the target set when "back"
+            // began is a stale snapshot. Without this, a fetcher that
+            // "arrives" just short of a thrower that has since wandered
+            // off stalls there forever -- fetcher.t>=1 with role
+            // "fetcher" is deliberately excluded from the generic
+            // reroll-on-arrival loop below, since its journeys are meant
+            // to be driven entirely from here. Re-aim at wherever the
+            // thrower actually is now instead.
+            startJourney(fetcher, { x: thrower.x, y: thrower.y }, bounds, 1.3);
           }
         } else if (fetchPhaseRef.current === "pause") {
           pauseMsRef.current -= dt * 1000;
@@ -377,32 +472,47 @@ export function HeroPets() {
             // ball should be able to sail across to the other half of the
             // hero, not just land back on the thrower's own side.
             const t = pickWanderTarget(bounds, thrower);
-            fetchPhaseRef.current = "out";
-            startJourney(fetcher, t, 1.3);
-            // The actual throw: the ball visibly arcs from the thrower to the
-            // landing spot on its own short flight, arriving well before the
-            // fetcher does -- otherwise the fetch reads as two dogs running
-            // laps with no ball ever on screen.
+            // The recipient (fetcher) doesn't move yet -- it only gives
+            // chase once the ball actually lands (see the "watching" ->
+            // "out" transition below), so the throw reads as sender ->
+            // ball flight -> recipient reacts, not two dogs already
+            // running in parallel with the throw.
+            fetchPhaseRef.current = "watching";
             const ballOffset = PET_SIZE / 2 - BALL_SIZE / 2;
             ball.fromX = thrower.x + ballOffset;
             ball.fromY = thrower.y + ballOffset;
             ball.toX = t.x + ballOffset;
             ball.toY = t.y + ballOffset;
+            ball.landingPetX = t.x;
+            ball.landingPetY = t.y;
             ball.t = 0;
+            // Flight time and arc height both scale with distance -- a
+            // throw across the whole hero should visibly take longer and
+            // climb higher than a short toss, instead of both covering
+            // their distance in the same fixed blink.
+            const throwDist = Math.hypot(ball.toX - ball.fromX, ball.toY - ball.fromY);
+            ball.duration = Math.min(Math.max(throwDist / BALL_SPEED, BALL_MIN_FLIGHT_S), BALL_MAX_FLIGHT_S);
+            ball.arcHeight = Math.min(throwDist * BALL_ARC_FRAC, BALL_MAX_ARC);
             ball.phase = "flying";
           }
         }
       }
 
       if (ball.phase === "flying") {
-        ball.t = Math.min(ball.t + dt / BALL_FLIGHT_S, 1);
-        const arc = Math.sin(ball.t * Math.PI) * BALL_ARC_HEIGHT;
+        ball.t = Math.min(ball.t + dt / ball.duration, 1);
+        const arc = Math.sin(ball.t * Math.PI) * ball.arcHeight;
         ball.x = ball.fromX + (ball.toX - ball.fromX) * ball.t;
         ball.y = ball.fromY + (ball.toY - ball.fromY) * ball.t - arc;
         if (ball.t >= 1) {
           ball.phase = "ground";
           ball.x = ball.toX;
           ball.y = ball.toY;
+          // The ball has landed -- only now does the recipient start
+          // running toward its actual resting spot.
+          if (fetcher && fetchPhaseRef.current === "watching") {
+            fetchPhaseRef.current = "out";
+            startJourney(fetcher, { x: ball.landingPetX, y: ball.landingPetY }, bounds, 1.3);
+          }
         }
       }
 
@@ -417,7 +527,7 @@ export function HeroPets() {
             pet.role === "thrower"
               ? randomSafePoint(bounds, { near: { x: pet.homeX, y: pet.homeY, radius: HOME_LEASH } })
               : pickWanderTarget(bounds, pet, { side: pet.side });
-          startJourney(pet, next);
+          startJourney(pet, next, bounds);
         }
 
         pet.t = Math.min(pet.t + dt / pet.duration, 1);
@@ -455,10 +565,18 @@ export function HeroPets() {
         // unlucky bow. Nudging x/y alone isn't enough: next tick's sample
         // comes straight back from the untouched Bezier curve (startX/
         // curveX/targetX), so the pet would snap right back onto the old
-        // path -- reading as a teleport-in-place every frame it's inside
-        // the box. Forcing t to 1 as well makes the nudge stick: the next
-        // tick's "roll a fresh journey on arrival" branch starts the new
-        // curve from this corrected, already-safe point instead.
+        // path -- a visible teleport-in-place every frame it's inside the
+        // box. Forcing the journey to "arrived" (t=1) instead -- the
+        // previous fix -- traded that for a worse bug: for the fetcher/
+        // thrower, arrival is what the fetch state machine watches to
+        // decide "caught the ball" / "back home," so an exclusion nudge
+        // could fire that a tick early from an unrelated edge position,
+        // hijacking the state machine (ball vanishing before the fetcher
+        // visibly reached it, fetcher lurching off toward the thrower from
+        // wherever the nudge happened to land it) -- which itself reads as
+        // teleporting. Re-curving toward the *same* target instead keeps
+        // the state machine's notion of "arrived" meaningful: the pet just
+        // takes a fresh, differently-bowed path the rest of the way there.
         const excl = bounds.excl;
         const cx = pet.x + PET_SIZE / 2;
         const cy = pet.y + PET_SIZE / 2;
@@ -472,7 +590,7 @@ export function HeroPets() {
           else if (min === distRight) pet.x = excl.xMax - PET_SIZE / 2 + 2;
           else if (min === distTop) pet.y = excl.yMin - PET_SIZE / 2 - 2;
           else pet.y = excl.yMax - PET_SIZE / 2 + 2;
-          pet.t = 1;
+          startJourney(pet, { x: pet.targetX, y: pet.targetY }, bounds, pet.speedMult);
         }
       }
 
