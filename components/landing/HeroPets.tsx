@@ -739,21 +739,10 @@ export function HeroPets() {
 
             // A bounce's residual drift keeps skidding in the throw's own
             // direction, which can carry it past the hero's edge on a
-            // throw that happened to land close to one side. Reflect off
-            // the wall instead of letting it sail offscreen -- same idea
-            // as a real ball bouncing off a wall -- by flipping whichever
-            // axis would overshoot, and keep that flipped direction for
-            // any bounces still left after this one.
-            let nextToX = landX + ball.bounceDirX * drift;
-            let nextToY = landY + ball.bounceDirY * drift;
-            if (nextToX < 0 || nextToX > bounds.width - BALL_SIZE) {
-              ball.bounceDirX = -ball.bounceDirX;
-              nextToX = landX + ball.bounceDirX * drift;
-            }
-            if (nextToY < 0 || nextToY > bounds.height - BALL_SIZE) {
-              ball.bounceDirY = -ball.bounceDirY;
-              nextToY = landY + ball.bounceDirY * drift;
-            }
+            // throw that happened to land close to one side -- clamp it
+            // back into bounds rather than letting it sail offscreen.
+            const nextToX = landX + ball.bounceDirX * drift;
+            const nextToY = landY + ball.bounceDirY * drift;
             ball.toX = Math.min(Math.max(nextToX, 0), bounds.width - BALL_SIZE);
             ball.toY = Math.min(Math.max(nextToY, 0), bounds.height - BALL_SIZE);
             ball.landingPetX = ball.toX - BALL_OFFSET;
