@@ -10,7 +10,10 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden px-6 pt-20 pb-16 sm:pt-28 sm:pb-24">
       <HeroPets />
-      <div className="relative z-10 max-w-[720px] mx-auto text-center">
+      {/* data-hero-content: the real exclusion zone HeroPets measures so its
+          wandering pets never cross over this text, rather than a guessed
+          percentage box. */}
+      <div data-hero-content className="relative z-10 max-w-[720px] mx-auto text-center">
         <BrandMark size={48} className="mx-auto mb-5 animate-pop-in" />
         <h1 className="font-display font-semibold text-[34px] sm:text-[46px] leading-[1.1] text-ink mb-4 text-balance">
           Every SAT skill. One week at a time.
