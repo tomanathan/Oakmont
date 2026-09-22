@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
+import { Analytics } from "@vercel/analytics/next";
 import { CompanionGate } from "@/components/CompanionGate";
 import { GlobalConfetti } from "@/components/GlobalConfetti";
 
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div id="app-content">{children}</div>
         <CompanionGate />
         <GlobalConfetti />
+        <Analytics />
       </body>
     </html>
   );

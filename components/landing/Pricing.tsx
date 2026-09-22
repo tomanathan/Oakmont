@@ -1,4 +1,6 @@
 import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
+import { TrackedLink } from "./TrackedLink";
+import { ViewTracker } from "./ViewTracker";
 
 // Reads the exact same live Stripe Prices /subscribe uses -- one source of
 // truth for what things cost, never a second hard-coded number that could
@@ -11,6 +13,7 @@ export async function Pricing() {
 
   return (
     <section className="px-6 py-16 sm:py-20 bg-white border-y border-[#ece9f7]">
+      <ViewTracker event="pricing_viewed" />
       <div className="max-w-[640px] mx-auto text-center">
         <h2 className="font-display font-semibold text-[26px] sm:text-[30px] text-ink mb-2">Pricing</h2>
         <p className="text-sm text-gray-500 mb-2">
@@ -42,12 +45,13 @@ export async function Pricing() {
           </div>
         </div>
 
-        <a
+        <TrackedLink
           href="/login?mode=signup"
+          event="signup_started"
           className="inline-block mt-8 px-6 py-3 rounded-lg bg-ink text-white font-semibold text-sm hover:opacity-90 transition-opacity"
         >
           Start free →
-        </a>
+        </TrackedLink>
       </div>
     </section>
   );

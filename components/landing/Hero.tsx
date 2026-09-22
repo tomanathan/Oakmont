@@ -1,5 +1,6 @@
 import { BrandMark } from "@/components/BrandMark";
 import { HeroPets } from "./HeroPets";
+import { TrackedLink } from "./TrackedLink";
 
 // Server-rendered so the headline and CTA are in the initial HTML -- this is
 // the page's LCP element, so it must never start at opacity: 0. Only the
@@ -18,12 +19,13 @@ export function Hero() {
           Built on all 29 official SAT subskills · 361 original practice questions · made by a 6-year SAT tutor.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a
+          <TrackedLink
             href="#try-a-question"
+            event="hero_cta_click"
             className="w-full sm:w-auto px-6 py-3 rounded-lg bg-ink text-white font-semibold text-sm hover:opacity-90 transition-opacity"
           >
             Try a free question →
-          </a>
+          </TrackedLink>
           <a href="#how-it-works" className="text-sm text-gray-500 hover:text-ink transition-colors">
             See how it works
           </a>

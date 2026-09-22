@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "@vercel/analytics";
 import { upcomingSatDates, weeksUntil } from "@/lib/satDates";
 
 // Real urgency from a real date, not a fake countdown -- dates come from
@@ -20,7 +21,10 @@ export function TestDatePicker() {
           {dates.map((d) => (
             <button
               key={d.date}
-              onClick={() => setSelected(d.date)}
+              onClick={() => {
+                setSelected(d.date);
+                track("test_date_selected", { date: d.date });
+              }}
               className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors ${
                 selected === d.date
                   ? "bg-ink text-white border-ink"

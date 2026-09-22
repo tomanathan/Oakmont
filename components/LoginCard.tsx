@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 
 // The actual log in / sign up / forgot-password card -- extracted out of
 // app/login/page.tsx (pure move, no behavior change) so the landing page's
@@ -34,6 +35,7 @@ export function LoginCard({ initialMode = "login" }: { initialMode?: "login" | "
         setSubmitting(false);
         return;
       }
+      if (mode === "signup") track("signup_completed");
       router.push(mode === "signup" ? "/welcome" : "/dashboard");
       router.refresh();
     } catch {

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "@vercel/analytics";
 import { LANDING_QUESTIONS } from "@/lib/landingQuestions";
+import { TrackedLink } from "./TrackedLink";
 
 const TOTAL_QUESTIONS = 361;
 
@@ -20,7 +22,9 @@ export function SampleQuestion() {
   function selectChoice(i: number) {
     if (answered) return;
     setSelected(i);
-    if (i === question.answer) {
+    const isCorrect = i === question.answer;
+    track("sample_answered", { correct: isCorrect });
+    if (isCorrect) {
       // Reuses the app's existing celebration event (GlobalConfetti is
       // already mounted globally in app/layout.tsx and listens for this)
       // and a landing-page-only event that switches the hero pets' mood --
@@ -31,6 +35,7 @@ export function SampleQuestion() {
   }
 
   function tryAnother() {
+    track("sample_try_another");
     setSelected(null);
     setIndex((i) => (i + 1) % LANDING_QUESTIONS.length);
   }
@@ -84,12 +89,13 @@ export function SampleQuestion() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
           {answered && (
-            <a
+            <TrackedLink
               href="/login?mode=signup"
+              event="signup_started"
               className="w-full sm:w-auto text-center px-6 py-3 rounded-lg bg-ink text-white font-semibold text-sm hover:opacity-90 transition-opacity"
             >
               That&apos;s 1 of {TOTAL_QUESTIONS}. Get the full plan →
-            </a>
+            </TrackedLink>
           )}
           <button
             onClick={tryAnother}

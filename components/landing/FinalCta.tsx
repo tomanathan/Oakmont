@@ -1,4 +1,5 @@
 import { PixelDog } from "@/components/PixelDog";
+import { TrackedLink } from "./TrackedLink";
 
 export function FinalCta() {
   return (
@@ -11,12 +12,13 @@ export function FinalCta() {
           Every SAT skill. One week at a time.
         </h2>
         <p className="text-sm text-gray-500 mb-6">Start free — the plan and the first quiz cost nothing to try.</p>
-        <a
+        <TrackedLink
           href="/login?mode=signup"
+          event="signup_started"
           className="inline-block px-7 py-3 rounded-lg bg-ink text-white font-semibold text-sm hover:opacity-90 transition-opacity"
         >
           Start free →
-        </a>
+        </TrackedLink>
       </div>
     </section>
   );

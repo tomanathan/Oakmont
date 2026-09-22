@@ -10,6 +10,8 @@ import { ParentsSection } from "./ParentsSection";
 import { Faq } from "./Faq";
 import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { FinalCta } from "./FinalCta";
+import { Reveal } from "./Reveal";
+import { TrackedLink } from "./TrackedLink";
 
 // The public, logged-out front door at oakmontsat.com -- server-rendered so
 // the value proposition (not just a login form) is what search engines and
@@ -48,27 +50,46 @@ export function LandingPage() {
           <a href="/login" className="text-sm text-gray-500 hover:text-ink transition-colors whitespace-nowrap">
             Log in
           </a>
-          <a
+          <TrackedLink
             href="/login?mode=signup"
+            event="signup_started"
             className="px-3.5 py-1.5 rounded-lg bg-ink text-white text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
           >
             Start free
-          </a>
+          </TrackedLink>
         </div>
       </nav>
 
+      {/* Hero and the sample question are immediately visible, no reveal --
+          they're the LCP content and the interactive centerpiece, not
+          below-the-fold decoration. Everything after gets the one shared
+          fade/slide-up on scroll-into-view (see Reveal.tsx). */}
       <Hero />
       <SampleQuestion />
-      <TestDatePicker />
-      <HowItWorks />
-      <TutorSection />
+      <Reveal>
+        <TestDatePicker />
+      </Reveal>
+      <Reveal>
+        <HowItWorks />
+      </Reveal>
+      <Reveal>
+        <TutorSection />
+      </Reveal>
       {/* Social proof intentionally omitted: no real testimonials exist yet
           to feature, and fabricated ones aren't an option -- add this
           section back once real, permissioned quotes are collected. */}
-      <Pricing />
-      <ParentsSection />
-      <Faq />
-      <FinalCta />
+      <Reveal>
+        <Pricing />
+      </Reveal>
+      <Reveal>
+        <ParentsSection />
+      </Reveal>
+      <Reveal>
+        <Faq />
+      </Reveal>
+      <Reveal>
+        <FinalCta />
+      </Reveal>
 
       <footer className="px-6 py-10 text-center">
         <LegalFooter />
