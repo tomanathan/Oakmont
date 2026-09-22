@@ -8,6 +8,7 @@ import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
 import { PET_NAME, type PetStage } from "@/lib/pet";
 import { dedupedFetchJson } from "@/lib/dedupeFetch";
+import { LegalFooter } from "./LegalFooter";
 
 const STAGE_PILL: Record<PetStage, string> = {
   thriving: "bg-[#eaf6ef] border-[#cde8d9] text-[#2f6f4f]",
@@ -169,6 +170,7 @@ export function AppShell({
         </div>
       </header>
       {children}
+      <LegalFooter className="mt-10" />
     </div>
   );
 }

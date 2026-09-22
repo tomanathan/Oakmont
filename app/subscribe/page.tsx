@@ -4,6 +4,7 @@ import { getUserStats } from "@/lib/user";
 import { hasActiveAccess } from "@/lib/subscription";
 import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
 import { BrandMark } from "@/components/BrandMark";
+import { LegalFooter } from "@/components/LegalFooter";
 import { SubscribeClient, type PlanOption } from "./SubscribeClient";
 
 export default async function SubscribePage() {
@@ -40,6 +41,11 @@ export default async function SubscribePage() {
         </div>
       </div>
       <SubscribeClient plans={plans} />
+      <div className="text-center text-xs text-gray-400 mt-6">
+        See our <a href="/terms" className="underline hover:text-ink">Terms</a> for full billing and refund
+        details.
+      </div>
+      <LegalFooter className="mt-6" />
     </div>
   );
 }

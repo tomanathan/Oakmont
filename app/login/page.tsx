@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { BrandMark } from "@/components/BrandMark";
+import { LegalFooter } from "@/components/LegalFooter";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -97,6 +98,7 @@ export default function LoginPage() {
       <div className="text-center text-xs text-gray-400 mt-4">
         Your progress is saved automatically and syncs whenever you log back in.
       </div>
+      <LegalFooter className="mt-6" />
     </div>
   );
 }
