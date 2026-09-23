@@ -963,7 +963,7 @@ export function SubskillClient({
               >
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="text-sm text-ink flex-1 min-w-0">
-                    <PassageText text={q.q} highlight={q.underline} number={i + 1} />
+                    <PassageText text={q.q} highlight={q.underline} number={i + 1} figure={q.figure} />
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {submitted && <QuestionResultPill correct={isCorrect} />}

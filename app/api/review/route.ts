@@ -45,6 +45,7 @@ export async function GET() {
       q: it.q,
       choices: it.choices,
       underline: it.underline ?? null,
+      figure: it.figure ?? null,
       section: it.section,
       pace: paceFor(it.section),
     })),

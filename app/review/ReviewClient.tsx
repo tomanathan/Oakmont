@@ -13,12 +13,14 @@ import { PixelDog } from "@/components/PixelDog";
 import { shuffled } from "@/lib/shuffle";
 import { TrapNote, TrapToWatch, topRepeatedTrap } from "@/components/TrapNote";
 import type { Confidence } from "@/lib/items";
+import type { FigureSpec } from "@/lib/figureTypes";
 
 interface ReviewItem {
   id: string;
   q: string;
   choices: string[]; // authored order
   underline: string | null;
+  figure: FigureSpec | null;
   section: string;
   pace: number;
   shown: string[]; // this sitting's shuffled order
@@ -423,7 +425,7 @@ export function ReviewClient() {
 
         <div className="rounded-2xl border border-[#ece9f7] bg-white p-5 shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] sm:p-6">
           <div className="mb-4 text-[15px] text-ink">
-            <PassageText text={it.q} highlight={it.underline ?? undefined} />
+            <PassageText text={it.q} highlight={it.underline ?? undefined} figure={it.figure} />
           </div>
           <ExamChoices
             choices={it.shown}
@@ -696,7 +698,7 @@ function ReviewResults({
                 )}
               </div>
               <div className="mb-3 text-sm text-ink">
-                <PassageText text={it.q} highlight={it.underline ?? undefined} />
+                <PassageText text={it.q} highlight={it.underline ?? undefined} figure={it.figure} />
               </div>
               <ExamChoices
                 choices={it.shown}

@@ -1,4 +1,6 @@
+import type { FigureSpec } from "@/lib/figureTypes";
 import { MathText } from "./MathText";
+import { QuestionFigure } from "./QuestionFigure";
 
 /**
  * Underlines one exact substring of `text` -- the tested word in a Words in
@@ -39,19 +41,24 @@ const PASSAGE_LABEL_RE = /^(Passage \d+(?:\s*\([^)]+\))?)\s*:\s*/i;
  * `number` (if given) inline as "1. " -- multi-paragraph text moves that
  * same number to a small heading above the stacked paragraphs instead,
  * since there's no longer one single line to prefix it onto.
+ *
+ * A `figure` (table, graph, plot) goes where the SAT puts it: after the
+ * setup and before the question itself, i.e. ahead of the last paragraph.
  */
 export function PassageText({
   text,
   highlight,
   number,
+  figure,
 }: {
   text: string;
   highlight?: string;
   number?: number;
+  figure?: FigureSpec | null;
 }) {
   const paragraphs = text.split(/\n\n+/).filter(Boolean);
 
-  if (paragraphs.length <= 1) {
+  if (paragraphs.length <= 1 && !figure) {
     return (
       <p className="leading-relaxed">
         {number !== undefined && `${number}. `}
@@ -84,10 +91,20 @@ export function PassageText({
               </div>
             );
           }
-          return (
+          const p = (
             <p key={i} className="leading-relaxed font-medium whitespace-pre-line">
               <HighlightedText text={para} highlight={highlight} />
             </p>
+          );
+          const figureHere = figure && i === Math.max(paragraphs.length - 2, 0);
+          return figureHere ? (
+            <div key={i} className="flex flex-col gap-3">
+              {paragraphs.length === 1 ? null : p}
+              <QuestionFigure spec={figure} />
+              {paragraphs.length === 1 ? p : null}
+            </div>
+          ) : (
+            p
           );
         })}
       </div>
