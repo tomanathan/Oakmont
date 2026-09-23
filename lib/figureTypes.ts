@@ -52,4 +52,53 @@ export interface DotPlotFigure {
   values: number[];
 }
 
-export type FigureSpec = TableFigure | ScatterFigure | BarFigure | HistogramFigure | DotPlotFigure;
+// Plane geometry drawn from real coordinates, so every length and angle in
+// the figure is the one the question states (the build checks each numeric
+// side and angle label against the coordinates).
+export interface GeometryFigure {
+  kind: "geometry";
+  title?: string;
+  points: Record<string, [number, number]>;
+  // Points drawn with a dot and/or a name. Unlisted points are construction
+  // helpers (ray directions, line ends) and stay invisible.
+  names?: string[];
+  dots?: string[];
+  // Override where a name sits: direction in degrees (0 = right, 90 = up).
+  namePos?: Record<string, number>;
+  segments?: {
+    from: string;
+    to: string;
+    label?: string;
+    side?: 1 | -1; // which side of the segment the label sits on (default: away from the figure's center)
+    ticks?: number; // congruence marks
+    dashed?: boolean;
+    arrows?: boolean; // a line, not a segment: arrowheads at both ends
+  }[];
+  polygons?: { points: string[]; shade?: boolean }[];
+  circles?: { center: string; radius: number; shade?: boolean; blank?: boolean }[];
+  arcs?: { center: string; radius: number; from: number; to: number }[]; // degrees, counterclockwise
+  angles?: { vertex: string; from: string; to: string; label?: string; right?: boolean; marks?: number }[];
+  axes?: { x: [number, number]; y: [number, number]; step?: number };
+}
+
+// Solids in oblique projection, drawn to their stated dimensions.
+export interface SolidFigure {
+  kind: "solid";
+  title?: string;
+  shape: "cylinder" | "cone" | "prism";
+  // cylinder/cone: radius and height; prism: length (across), width (depth), height
+  radius?: number;
+  height: number;
+  length?: number;
+  width?: number;
+  labels: { radius?: string; diameter?: string; height?: string; length?: string; width?: string; slant?: string };
+}
+
+export type FigureSpec =
+  | TableFigure
+  | ScatterFigure
+  | BarFigure
+  | HistogramFigure
+  | DotPlotFigure
+  | GeometryFigure
+  | SolidFigure;

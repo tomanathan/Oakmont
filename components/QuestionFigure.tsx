@@ -1,4 +1,5 @@
 import type { Axis, FigureSpec } from "@/lib/figureTypes";
+import { PlaneFigure, SolidShape } from "./PlaneFigure";
 
 // Drawn to scale from the figure's data (see lib/figureTypes.ts). Colors
 // follow the geometry diagrams: ink strokes, a quiet grid, one accent.
@@ -199,6 +200,8 @@ function describe(spec: FigureSpec): string {
       return `Histogram of ${spec.x.label}: ` + spec.bins.map((b) => `${fmt(b.from)} to ${fmt(b.to)}: ${b.count}`).join(", ");
     case "dotplot":
       return `Dot plot of ${spec.x.label}: ` + spec.values.map(fmt).join(", ");
+    default:
+      return "";
   }
 }
 
@@ -217,7 +220,11 @@ export function QuestionFigure({ spec }: { spec: FigureSpec }) {
       {spec.title && (
         <figcaption className="mb-2 text-center text-[12.5px] font-semibold text-ink">{spec.title}</figcaption>
       )}
-      {spec.kind === "table" ? (
+      {spec.kind === "geometry" ? (
+        <PlaneFigure spec={spec} />
+      ) : spec.kind === "solid" ? (
+        <SolidShape spec={spec} />
+      ) : spec.kind === "table" ? (
         <div className="overflow-x-auto">
           <table className="mx-auto border-collapse text-[13px] tabular-nums text-ink">
             <thead>
