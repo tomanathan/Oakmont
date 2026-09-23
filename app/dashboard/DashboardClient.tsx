@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Section } from "@/data/curriculum";
 import type { Pacing } from "@/lib/pacing";
@@ -11,6 +11,8 @@ import { SubjectRing } from "@/components/SubjectRing";
 import { sectionTheme } from "@/lib/sectionTheme";
 import { findRecommended } from "@/lib/recommend";
 import { sectionProgress } from "@/lib/subjectProgress";
+import { CompanionCard } from "@/components/CompanionCard";
+import type { CompanionSummary } from "@/lib/companionSummary";
 
 type ProgressMap = Record<string, { bestScore: number; total: number }>;
 
@@ -37,6 +39,7 @@ export function DashboardClient({
   today,
   daysUntilTest,
   thisWeek,
+  companion,
 }: {
   curriculum: Section[];
   progress: ProgressMap;
@@ -45,6 +48,7 @@ export function DashboardClient({
   today: TodayPlan | null;
   daysUntilTest: number | null;
   thisWeek: { done: number; total: number };
+  companion: CompanionSummary;
 }) {
   const router = useRouter();
   const completedCount = Object.keys(progress).length;
@@ -83,17 +87,24 @@ export function DashboardClient({
           action used to be a separate full-width dark bar above this card
           that just repeated today's first subskill; folding it in kills
           that duplication and a lot of dead space. */}
-      {(today || thisWeek.total > 0 || recommended) && (
-        <PlanCard
-          today={today}
-          progress={progress}
-          daysUntilTest={daysUntilTest}
-          thisWeek={thisWeek}
-          pacing={pacing}
-          recommended={recommended}
-          hasStarted={completedCount > 0}
-        />
-      )}
+      <Greeting />
+
+      {/* Today's plan and Ozho side by side on wide screens -- what to do,
+          and who's counting on it -- stacked on phones with the plan first. */}
+      <div className="mb-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+        {(today || thisWeek.total > 0 || recommended) && (
+          <PlanCard
+            today={today}
+            progress={progress}
+            daysUntilTest={daysUntilTest}
+            thisWeek={thisWeek}
+            pacing={pacing}
+            recommended={recommended}
+            hasStarted={completedCount > 0}
+          />
+        )}
+        <CompanionCard companion={companion} />
+      </div>
 
       {/* Subject toggle -- these two sections are the entire test, and the
           two halves of everything below this point, so the control that
@@ -122,7 +133,7 @@ export function DashboardClient({
               className={`relative overflow-hidden rounded-2xl border-2 p-5 text-left transition-all duration-200 ${
                 active
                   ? `${theme.cardBg} ${theme.cardBorder.split(" ")[0]} shadow-[0_4px_18px_rgba(26,26,46,0.1)] scale-[1.02]`
-                  : "bg-white border-gray-200 opacity-[0.55] hover:opacity-90 hover:border-gray-300"
+                  : "bg-white border-[#ece9f7] hover:border-[#d9d6ef] hover:shadow-[0_2px_10px_rgba(26,26,46,0.06)]"
               }`}
             >
               <div className="flex items-start justify-between gap-2 mb-2">
@@ -194,9 +205,15 @@ export function DashboardClient({
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
                     <StarRating stars={starsFor(d.domain)} />
-                    <span className={`text-gray-300 text-xs transition-transform ${isOpen ? "rotate-90" : ""}`}>
-                      &#9656;
-                    </span>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      aria-hidden="true"
+                      className={`text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
+                    >
+                      <path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
                   </div>
                 </button>
 
@@ -251,6 +268,26 @@ export function DashboardClient({
   );
 }
 
+// Time-of-day greeting and today's date, in the student's own timezone --
+// so it's filled in after mount rather than server-rendered in UTC.
+function Greeting() {
+  const [text, setText] = useState<{ hello: string; date: string } | null>(null);
+  useEffect(() => {
+    const now = new Date();
+    const h = now.getHours();
+    setText({
+      hello: h < 5 ? "Up late?" : h < 12 ? "Good morning." : h < 18 ? "Good afternoon." : "Good evening.",
+      date: now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" }),
+    });
+  }, []);
+  return (
+    <div className="mb-4 flex min-h-[40px] items-baseline justify-between gap-3 flex-wrap">
+      <h1 className="font-display text-[26px] font-semibold leading-tight text-ink">{text?.hello ?? "Welcome back."}</h1>
+      {text && <span className="text-[13px] text-gray-400">{text.date}</span>}
+    </div>
+  );
+}
+
 const DAY_TYPE_COPY: Record<TodayPlan["type"], string> = {
   lesson: "Today's plan",
   review: "Today's review",
@@ -292,14 +329,14 @@ function PlanCard({
       : [];
 
   return (
-    <div className="bg-white border border-[#ece9f7] rounded-2xl p-4 mb-4 shadow-[0_1px_3px_rgba(26,26,46,0.03)]">
+    <div className="flex flex-col bg-white border border-[#ece9f7] rounded-2xl p-4 shadow-[0_1px_3px_rgba(26,26,46,0.03)]">
       {(today || recommended || daysUntilTest !== null) && (
         <div className="flex items-center justify-between gap-3 mb-2.5 flex-wrap">
           <div className="flex items-baseline gap-2">
             <span className={eyebrow}>{today ? DAY_TYPE_COPY[today.type] : recommended ? "Up next" : "Countdown"}</span>
             {today && (
               <span className="text-[11px] text-gray-300">
-                {today.dayName}, week {today.week}
+                Week {today.week} of {pacing.totalWeeks}
               </span>
             )}
           </div>
@@ -371,7 +408,10 @@ function PlanCard({
       {/* Pace: status is the headline, week/overall counts are quiet
           context under the bar. This week's completion and the
           whole-course trajectory each appear exactly once. */}
-      <div className="mt-3 pt-3 border-t border-gray-100">
+      {/* Pinned to the bottom when the card is stretched to match Ozho's
+          card beside it, so the space falls above the pace, not below. */}
+      <div className="h-3 flex-shrink-0" />
+      <div className="mt-auto pt-3 border-t border-gray-100">
         <div className="flex items-baseline justify-between gap-3 mb-1">
           <span className={eyebrow}>Your pace</span>
           <span className={`text-xs font-semibold ${PACE_STATUS_STYLES[pacing.status]}`}>

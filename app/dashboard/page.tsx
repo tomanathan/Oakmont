@@ -5,7 +5,8 @@ import { getUserStats } from "@/lib/user";
 import { hasActiveAccess } from "@/lib/subscription";
 import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { computePetState } from "@/lib/pet";
-import { computeDomainMastery, orderSubskillsByWeakness, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, completedDomainCount, orderSubskillsByWeakness, type ProgressMap } from "@/lib/mastery";
+import { companionSummary } from "@/lib/companionSummary";
 import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
@@ -145,6 +146,15 @@ export default async function DashboardPage() {
         today={today}
         daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
         thisWeek={{ done: weekDone, total: weekTotal }}
+        companion={companionSummary({
+          lastActiveDate: stats.lastActiveDate ?? null,
+          petDiedAt: stats.petDiedAt ?? null,
+          petBornAt: stats.petBornAt,
+          currentStreak: stats.currentStreak,
+          longestStreak: stats.longestStreak,
+          equippedCostume: stats.equippedCostume ?? null,
+          domainsCompleted: completedDomainCount(domainMastery),
+        })}
       />
     </AppShell>
   );

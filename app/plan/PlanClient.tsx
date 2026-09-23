@@ -212,7 +212,12 @@ export function PlanClient({
                         }`}
                       >
                         <div className="w-14 flex-shrink-0 pt-0.5">
-                          <div className="text-[11px] font-bold text-gray-500">{d.dayName}</div>
+                          {/* The real weekday of this date -- the plan's own dayName is just
+                              the slot's position in the course week (slot 1 is
+                              "Mon" whatever day the course started on). */}
+                          <div className="text-[11px] font-bold text-gray-500">
+                            {formatUTCDate(dayDate, { weekday: "short" })}
+                          </div>
                           <div className="text-[10px] text-gray-400">{formatDate(dayDate)}</div>
                           {isExamDay ? (
                             <div className="text-[9px] font-bold uppercase text-[#9a6a12]">SAT day</div>

@@ -1046,7 +1046,7 @@ function ResultsCard({
           )}
           {result.newCostume && (
             <a
-              href="/settings"
+              href="/settings#wardrobe"
               className="inline-flex items-center gap-2 rounded-full bg-[#fbf3dc] py-0.5 pl-1 pr-3 text-[12.5px] font-semibold text-[#8a5f0c] transition-colors hover:bg-[#f7eac6]"
             >
               <span className="-my-1">

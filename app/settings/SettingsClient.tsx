@@ -227,7 +227,7 @@ export function SettingsClient({
 
       <PetCard petName={petName} state={petState} costume={costume !== "none" ? costume : null} />
 
-      <div className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-6">
+      <div id="wardrobe" className="scroll-mt-6 bg-white border border-[#ece9f7] rounded-xl p-6 mb-6">
         <div className="flex items-center justify-between gap-2 mb-1">
           <div className="text-[15px] font-semibold text-ink">Ozho&apos;s wardrobe</div>
           <div className="flex items-center gap-1" aria-label={`${sectionsCompleted} of ${totalSections} sections completed`}>
