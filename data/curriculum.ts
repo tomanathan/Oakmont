@@ -877,6 +877,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       traps: [
         "Choosing the most dramatic or interesting-sounding completion rather than the most logically necessary one.",
         "Choosing an answer that requires assuming something not stated (e.g., that the lab has unlimited funding, or that other labs already tried to replicate it).",
+        "Choosing a completion that goes further than the evidence allows: 'likely' becomes 'proves,' or one case becomes 'always' or 'every.'",
       ],
     },
     {
@@ -954,6 +955,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Using only the passage's first fact and ignoring a second fact that changes or complicates the picture.",
         "Treating a stated hypothesis or assumption ('if this view is correct...', 'assuming this analysis is accurate...') as something to question, rather than accepting it as true and reasoning forward from it.",
         "Picking a conclusion that resolves only part of the tension between two facts, instead of the choice that accounts for both.",
+        "Choosing a completion that goes further than the evidence allows: 'likely' becomes 'proves,' or one case becomes 'always' or 'every.'",
       ],
     },
   ],
