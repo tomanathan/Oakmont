@@ -85,7 +85,7 @@ export function PassageText({
             );
           }
           return (
-            <p key={i} className="leading-relaxed font-medium">
+            <p key={i} className="leading-relaxed font-medium whitespace-pre-line">
               <HighlightedText text={para} highlight={highlight} />
             </p>
           );
