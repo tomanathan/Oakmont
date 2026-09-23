@@ -22,9 +22,9 @@ function ticks(a: Axis): number[] {
   return Array.from({ length: n + 1 }, (_, i) => +(a.min + i * a.step).toFixed(6));
 }
 
-// 1200 -> "1,200"; 2.50 -> "2.5"
-function fmt(v: number): string {
-  return v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+// 1200 -> "1,200"; 2.50 -> "2.5"; plain: 2016 -> "2016"
+function fmt(v: number, plain = false): string {
+  return v.toLocaleString("en-US", { maximumFractionDigits: 4, useGrouping: !plain });
 }
 
 function scaleX(a: Axis) {
@@ -42,7 +42,7 @@ function YAxis({ a, grid = true }: { a: Axis; grid?: boolean }) {
         <g key={t}>
           {grid && <line x1={M.left} x2={M.left + PW} y1={sy(t)} y2={sy(t)} stroke={GRID} />}
           <text x={M.left - 7} y={sy(t) + 4} fontSize={11} textAnchor="end" fill={MUTED}>
-            {fmt(t)}
+            {fmt(t, a.plain)}
           </text>
         </g>
       ))}
@@ -68,7 +68,7 @@ function XAxis({ a, grid = true }: { a: Axis; grid?: boolean }) {
         <g key={t}>
           {grid && <line x1={sx(t)} x2={sx(t)} y1={M.top} y2={M.top + PH} stroke={GRID} />}
           <text x={sx(t)} y={M.top + PH + 16} fontSize={11} textAnchor="middle" fill={MUTED}>
-            {fmt(t)}
+            {fmt(t, a.plain)}
           </text>
         </g>
       ))}
@@ -108,6 +108,15 @@ function Scatter({ spec }: { spec: Extract<FigureSpec, { kind: "scatter" }> }) {
           y2={sy(line.slope * spec.x.max + line.intercept)}
           stroke={LINE}
           strokeWidth={2}
+        />
+      )}
+      {spec.connect && (
+        <polyline
+          points={spec.points.map(([px, py]) => `${sx(px)},${sy(py)}`).join(" ")}
+          fill="none"
+          stroke={POINT}
+          strokeWidth={2}
+          strokeLinejoin="round"
         />
       )}
       {spec.points.map(([px, py], i) => (
@@ -199,7 +208,7 @@ function describe(spec: FigureSpec): string {
     case "histogram":
       return `Histogram of ${spec.x.label}: ` + spec.bins.map((b) => `${fmt(b.from)} to ${fmt(b.to)}: ${b.count}`).join(", ");
     case "dotplot":
-      return `Dot plot of ${spec.x.label}: ` + spec.values.map(fmt).join(", ");
+      return `Dot plot of ${spec.x.label}: ` + spec.values.map((v) => fmt(v)).join(", ");
     default:
       return "";
   }

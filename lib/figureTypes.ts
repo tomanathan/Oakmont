@@ -10,6 +10,7 @@ export interface Axis {
   min: number;
   max: number;
   step: number; // gridline and tick spacing; must divide (max - min)
+  plain?: boolean; // print ticks without thousands separators (years)
 }
 
 export interface TableFigure {
@@ -27,6 +28,8 @@ export interface ScatterFigure {
   points: [number, number][];
   // Line of best fit, drawn across the plot and clipped to it.
   line?: { slope: number; intercept: number };
+  // Join the points in order: a line graph (e.g., a value over time).
+  connect?: boolean;
 }
 
 export interface BarFigure {
@@ -78,7 +81,14 @@ export interface GeometryFigure {
   circles?: { center: string; radius: number; shade?: boolean; blank?: boolean }[];
   arcs?: { center: string; radius: number; from: number; to: number }[]; // degrees, counterclockwise
   angles?: { vertex: string; from: string; to: string; label?: string; right?: boolean; marks?: number }[];
-  axes?: { x: [number, number]; y: [number, number]; step?: number };
+  axes?: { x: [number, number]; y: [number, number]; step?: number; labelEvery?: number };
+  // Graphs on the axes: polylines in problem units (a line is two points,
+  // a curve is a dense sample), clipped to the axes window.
+  paths?: { points: [number, number][]; dashed?: boolean; arrows?: boolean }[];
+  // Shaded regions in problem units (e.g., an inequality's half-plane).
+  regions?: [number, number][][];
+  // Text placed at a spot in problem units (e.g., "y = f(x)" beside a curve).
+  notes?: { at: [number, number]; text: string }[];
 }
 
 // Solids in oblique projection, drawn to their stated dimensions.

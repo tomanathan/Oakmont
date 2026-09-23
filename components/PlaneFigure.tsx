@@ -59,6 +59,8 @@ export function PlaneFigure({ spec }: { spec: GeometryFigure }) {
   if (spec.axes) {
     xs.push(...spec.axes.x);
     ys.push(...spec.axes.y);
+  } else {
+    (spec.paths ?? []).forEach((pa) => pa.points.forEach(([x, y]) => (xs.push(x), ys.push(y))));
   }
   const minX = Math.min(...xs);
   const maxX = Math.max(...xs);
@@ -70,6 +72,10 @@ export function PlaneFigure({ spec }: { spec: GeometryFigure }) {
   const tx = (x: number) => offX + (x - minX) * k;
   const ty = (y: number) => H - PAD - (y - minY) * k;
   const S = (name: string): Pt => [tx(P[name][0]), ty(P[name][1])];
+  const T = (p: [number, number]): Pt => [tx(p[0]), ty(p[1])];
+  // Unique per figure: several figures share a page, and a clip id reused
+  // across them would clip one graph to another graph's window.
+  const clipId = `geo-clip-${hash(JSON.stringify(spec))}`;
 
   // Screen-space center of the named points, for pushing labels outward.
   const shown = spec.names ?? [];
@@ -79,14 +85,29 @@ export function PlaneFigure({ spec }: { spec: GeometryFigure }) {
 
   const axes = spec.axes;
   const step = axes?.step ?? 1;
+  const every = axes?.labelEvery ?? step;
+  const labeled = (v: number) => Math.abs(v / every - Math.round(v / every)) < 1e-6;
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto h-auto w-full max-w-[400px]" role="img" aria-label={describePlane(spec)}>
       <defs>
+        {axes && (
+          <clipPath id={clipId}>
+            <rect x={tx(axes.x[0])} y={ty(axes.y[1])} width={tx(axes.x[1]) - tx(axes.x[0])} height={ty(axes.y[0]) - ty(axes.y[1])} />
+          </clipPath>
+        )}
         <marker id="geo-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <path d="M 0 1 L 9 5 L 0 9 z" fill={INK} />
         </marker>
       </defs>
+
+      {spec.regions && (
+        <g clipPath={axes ? `url(#${clipId})` : undefined}>
+          {spec.regions.map((rg, i) => (
+            <polygon key={`rg${i}`} points={rg.map((p) => T(p).join(",")).join(" ")} fill={SHADE} stroke="none" />
+          ))}
+        </g>
+      )}
 
       {axes && (
         <g>
@@ -101,18 +122,37 @@ export function PlaneFigure({ spec }: { spec: GeometryFigure }) {
           <text x={tx(axes.x[1]) - 2} y={ty(0) - 7} fontSize={12} fontStyle="italic" fill={INK} textAnchor="end">x</text>
           <text x={tx(0) + 7} y={ty(axes.y[1]) + 10} fontSize={12} fontStyle="italic" fill={INK}>y</text>
           {range(Math.ceil(axes.x[0] / step) * step, axes.x[1], step)
-            .filter((v) => v !== 0 && v !== axes.x[1] && v !== axes.x[0])
+            .filter((v) => v !== 0 && v !== axes.x[1] && v !== axes.x[0] && labeled(v))
             .map((v) => (
               <text key={`lx${v}`} x={tx(v)} y={ty(0) + 13} fontSize={9.5} fill={MUTED} textAnchor="middle">{v}</text>
             ))}
           {range(Math.ceil(axes.y[0] / step) * step, axes.y[1], step)
-            .filter((v) => v !== 0 && v !== axes.y[1] && v !== axes.y[0])
+            .filter((v) => v !== 0 && v !== axes.y[1] && v !== axes.y[0] && labeled(v))
             .map((v) => (
               <text key={`ly${v}`} x={tx(0) - 5} y={ty(v) + 3.5} fontSize={9.5} fill={MUTED} textAnchor="end">{v}</text>
             ))}
           <text x={tx(0) - 5} y={ty(0) + 13} fontSize={9.5} fill={MUTED} textAnchor="end">0</text>
         </g>
       )}
+
+      <g clipPath={axes ? `url(#${clipId})` : undefined}>
+        {(spec.paths ?? []).map((pa, i) => (
+          <polyline
+            key={`pa${i}`}
+            points={pa.points.map((p) => T(p).join(",")).join(" ")}
+            fill="none"
+            stroke={INK}
+            strokeWidth={1.8}
+            strokeLinejoin="round"
+            strokeDasharray={pa.dashed ? "6 4" : undefined}
+            markerStart={pa.arrows ? "url(#geo-arrow)" : undefined}
+            markerEnd={pa.arrows ? "url(#geo-arrow)" : undefined}
+          />
+        ))}
+      </g>
+      {(spec.notes ?? []).map((nt, i) => (
+        <Label key={`nt${i}`} x={T(nt.at)[0]} y={T(nt.at)[1]} text={nt.text} size={12.5} />
+      ))}
 
       {(spec.polygons ?? []).map((pg, i) => (
         <polygon
@@ -234,6 +274,12 @@ export function PlaneFigure({ spec }: { spec: GeometryFigure }) {
       })}
     </svg>
   );
+}
+
+function hash(text: string): string {
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
+  return (h >>> 0).toString(36);
 }
 
 function range(from: number, to: number, step: number): number[] {
