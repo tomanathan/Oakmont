@@ -10,3 +10,6 @@ dev.db-journal
 *.tsbuildinfo
 .vercel
 .env*
+
+# Local backup written by the lifetime-access testing script (account IDs)
+access-backup.json
