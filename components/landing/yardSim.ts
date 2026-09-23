@@ -45,7 +45,8 @@ type Task =
   | { kind: "enter"; delay: number; x: number; z: number; started: boolean }
   | { kind: "idle"; until: number; nextLook: number; sniffUntil: number }
   | { kind: "sit"; until: number }
-  | { kind: "nap"; until: number }
+  | { kind: "nap"; until: number; lieAt: number }
+  | { kind: "stretch"; until: number }
   | { kind: "move" }
   | { kind: "zoom"; legs: number; hopAt: number }
   | { kind: "bow"; until: number; partner: number }
@@ -279,6 +280,7 @@ export function celebrate(y: Yard) {
   for (const d of y.dogs) {
     d.happyUntil = y.t + 3.5;
     if (d.entered) d.hopsQueued = 2;
+    if (d.task.kind === "nap" || d.task.kind === "stretch") d.task = idleTask(y, d, 1.5, 3);
   }
 }
 
@@ -297,18 +299,26 @@ function goTo(y: Yard, d: Dog, x: number, z: number | null, gait: Gait) {
   d.goalX = d.entered ? clamp(x, xMin(y), xMax(y)) : x;
   if (z !== null) d.goalZ = clamp(z, 0, 1);
   d.gait = gait;
-  d.pose = "stand";
+  setPose(d, "stand");
 }
 
 function halt(d: Dog) {
   d.goalX = null;
 }
 
+// Poses swap as whole sprites, so each change gets a little squash to read
+// as a motion -- a plop when settling down, a lighter one standing back up.
+function setPose(d: Dog, pose: Pose) {
+  if (d.pose === pose) return;
+  d.squash = Math.max(d.squash, pose === "stand" ? 0.35 : 0.7);
+  d.pose = pose;
+}
+
 const settled = (d: Dog) => d.goalX === null && Math.abs(d.vx) < 12;
 
 function hop(d: Dog, v: number) {
   if (d.jump !== "none" || d.h > 0) return;
-  d.pose = "stand";
+  setPose(d, "stand");
   d.jump = "crouch";
   d.jumpT = 0.08;
   d.jumpV = v;
@@ -379,7 +389,7 @@ function move(y: Yard, d: Dog, dt: number) {
   d.dip += (d.dipTarget - d.dip) * Math.min(1, dt * 16);
 
   const happy = y.t < d.happyUntil;
-  const rate = d.pose === "stand" ? (happy ? 15 : y.t < d.wagBurstUntil ? 9 : 0) : 0;
+  const rate = d.pose !== "sleep" ? (happy ? 15 : y.t < d.wagBurstUntil ? 9 : 0) : 0;
   if (rate > 0) {
     d.wagClock += dt * rate;
     while (d.wagClock >= 1) {
@@ -484,14 +494,16 @@ function pickNext(y: Yard, d: Dog) {
   switch (kind) {
     case "sit":
       halt(d);
-      d.pose = "sit";
+      setPose(d, "sit");
       d.task = { kind: "sit", until: t + lerp(2.5, 6, y.rng()) };
       break;
     case "nap":
+      // Sits first, then lies down -- straight from standing to curled up
+      // reads as a pop.
       halt(d);
-      d.pose = "sleep";
+      setPose(d, "sit");
       d.cool.nap = t + 35 + y.rng() * 25;
-      d.task = { kind: "nap", until: t + lerp(5, 9, y.rng()) };
+      d.task = { kind: "nap", until: t + lerp(5.5, 9.5, y.rng()), lieAt: t + 0.7 + y.rng() * 0.5 };
       break;
     case "stroll": {
       const s = pickSpot(y, d, 50, 200);
@@ -521,12 +533,12 @@ function pickNext(y: Yard, d: Dog) {
     case "play": {
       const p = partner!;
       halt(d);
-      d.pose = "stand";
+      setPose(d, "stand");
       d.happyUntil = t + 6;
       d.cool.play = t + 18 + y.rng() * 10;
       d.task = { kind: "bow", until: t + 0.6, partner: p.id };
       halt(p);
-      p.pose = "stand";
+      setPose(p, "stand");
       p.happyUntil = t + 6;
       p.cool.play = d.cool.play;
       p.task = { kind: "notice", partner: d.id };
@@ -590,9 +602,26 @@ function think(y: Yard, d: Dog, dt: number) {
       break;
 
     case "sit":
-    case "nap":
       if (t >= task.until) {
-        d.pose = "stand";
+        setPose(d, "stand");
+        pickNext(y, d);
+      }
+      break;
+
+    case "nap":
+      if (d.pose === "sit" && t >= task.lieAt) setPose(d, "sleep");
+      if (t >= task.until) {
+        // Wakes with a stretch: front end down, rump up, then carries on.
+        setPose(d, "stand");
+        d.dipTarget = 1;
+        d.task = { kind: "stretch", until: t + 0.7 };
+      }
+      break;
+
+    case "stretch":
+      if (t >= task.until) {
+        d.dipTarget = 0;
+        d.wagBurstUntil = t + 1;
         pickNext(y, d);
       }
       break;
@@ -673,7 +702,7 @@ function think(y: Yard, d: Dog, dt: number) {
     case "hi": {
       const p = y.pointer;
       if (!p || !pointerNear(y) || Math.abs(p.x - d.x) > 260 || t >= task.until) {
-        d.pose = "stand";
+        setPose(d, "stand");
         d.task = idleTask(y, d, 0.8, 1.6);
         break;
       }
@@ -684,7 +713,7 @@ function think(y: Yard, d: Dog, dt: number) {
       if (Math.abs(spot - d.x) > 24) goTo(y, d, spot, 1, "trot");
       else if (settled(d)) {
         halt(d);
-        d.pose = "sit";
+        setPose(d, "sit");
       }
       break;
     }
@@ -942,7 +971,7 @@ function stepGame(y: Yard, g: Game, dt: number) {
         if (g.carryMode === "return") {
           g.approachSide = (Math.sign(partner.x - d.x) || 1) as 1 | -1;
           halt(partner);
-          if (y.rng() < 0.35) partner.pose = "sit";
+          if (y.rng() < 0.35) setPose(partner, "sit");
         } else {
           const room = d.x < y.stage.width / 2 ? 1 : -1;
           goTo(y, d, d.x + room * (70 + y.rng() * 110), clamp(d.z + (y.rng() - 0.5) * 0.4, 0, 1), "trot");
@@ -1009,15 +1038,15 @@ function stepGame(y: Yard, g: Game, dt: number) {
         for (const d of [holder, other]) {
           if (settled(d) && d.jump === "none") {
             halt(d);
-            d.pose = "sit";
+            setPose(d, "sit");
             d.lookX = d === holder ? other.x : holder.x;
             d.happyUntil = t + 0.5;
           }
         }
       }
       if (t >= g.breakUntil) {
-        holder.pose = "stand";
-        other.pose = "stand";
+        setPose(holder, "stand");
+        setPose(other, "stand");
         g.phase = "regrab";
         g.t = 0;
       }
@@ -1152,6 +1181,11 @@ export function viewDog(y: Yard, d: Dog): DogView {
   if (d.jump === "air" && d.vh > 0) {
     sy *= 1.06;
     sx *= 0.96;
+  }
+  if (d.pose === "sleep") {
+    const breath = Math.sin((y.t + d.id * 0.7) * ((2 * Math.PI) / 2.6));
+    sy *= 1 + 0.035 * breath;
+    sx *= 1 - 0.012 * breath;
   }
   return {
     x: d.x,

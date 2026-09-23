@@ -136,6 +136,18 @@ const DogSprite = memo(function DogSprite({ cfg, size, slot }: { cfg: DogConfig;
           mood={pose.mood}
         />
       </div>
+      {pose.asleep && (
+        // Same drifting z's as the in-app companion, over the resting head.
+        <div
+          className="absolute"
+          style={{ bottom: size * 0.4, left: pose.facing === 1 ? size * 0.6 : size * 0.1, width: size * 0.4, height: size * 0.4 }}
+        >
+          <span className="absolute bottom-0 left-0 text-[7px] font-bold text-[#9694b0] animate-zzz">z</span>
+          <span className="absolute bottom-0 left-[6px] text-[9px] font-bold text-[#9694b0] animate-zzz" style={{ animationDelay: "0.7s" }}>
+            z
+          </span>
+        </div>
+      )}
     </div>
   );
 });
