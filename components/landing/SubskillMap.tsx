@@ -1,12 +1,7 @@
-"use client";
-
-import { motion, useReducedMotion } from "motion/react";
 import { ALL_SUBSKILLS } from "@/data/curriculum";
 
-// "We cover everything," made concrete -- every one of the 29 official
-// subskills, grouped the way the real dashboard groups them, computed from
-// the same curriculum data the app itself studies from (never a separately
-// maintained count that could drift out of sync).
+// Every official subskill, grouped the way the dashboard groups them and
+// counted from the same curriculum data the app studies from.
 function groupedByDomain() {
   const sections: Record<string, Record<string, number>> = {};
   for (const s of ALL_SUBSKILLS) {
@@ -16,63 +11,31 @@ function groupedByDomain() {
   return sections;
 }
 
-// Functions of reduceMotion (not module-level constants) so the reduced-
-// motion case collapses stagger/duration to 0 -- but `initial`/`variants`
-// themselves stay unconditionally present on every render (see Reveal.tsx's
-// comment on why: conditioning whether `initial` is set at all, rather than
-// just its transition durations, is what causes a server/client hydration
-// mismatch the moment a real browser has reduced-motion already on).
-function containerVariants(reduceMotion: boolean) {
-  return { hidden: {}, show: { transition: { staggerChildren: reduceMotion ? 0 : 0.08 } } };
-}
-function cardVariants(reduceMotion: boolean) {
-  return {
-    hidden: { opacity: 0, y: 14 },
-    show: { opacity: 1, y: 0, transition: { duration: reduceMotion ? 0 : 0.4, ease: [0.34, 0.56, 0.64, 1] as const } },
-  };
-}
-
 export function SubskillMap() {
   const sections = groupedByDomain();
-  const total = ALL_SUBSKILLS.length;
-  const reduceMotion = !!useReducedMotion();
-
   return (
-    <motion.div
-      className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[720px] mx-auto"
-      variants={containerVariants(reduceMotion)}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: "-60px" }}
-    >
+    <div className="grid gap-6 sm:grid-cols-2">
       {Object.entries(sections).map(([section, domains]) => {
-        const sectionTotal = Object.values(domains).reduce((a, b) => a + b, 0);
+        const total = Object.values(domains).reduce((a, b) => a + b, 0);
         return (
-          <motion.div
-            key={section}
-            variants={cardVariants(reduceMotion)}
-            className="bg-white border border-[#ece9f7] rounded-xl p-5"
-          >
-            <div className="flex items-baseline justify-between mb-3">
-              <div className="font-display font-semibold text-[15px] text-ink">{section}</div>
-              <div className="text-xs text-gray-400">{sectionTotal} subskills</div>
+          <div key={section}>
+            <div className="mb-2 flex items-baseline justify-between border-b border-[#ece9f7] pb-2">
+              <div className="text-sm font-semibold">{section}</div>
+              <div className="text-xs tabular-nums text-gray-400">{total} subskills</div>
             </div>
-            <div className="flex flex-col gap-2">
+            <ul className="flex flex-col">
               {Object.entries(domains).map(([domain, count]) => (
-                <div key={domain} className="flex items-center justify-between text-sm">
+                <li key={domain} className="flex items-center justify-between py-1.5 text-[13px]">
                   <span className="text-gray-600">{domain}</span>
-                  <span className="text-xs font-semibold text-[#4a5bb0] bg-[#f0eff9] rounded-full px-2 py-0.5">
+                  <span className="min-w-[26px] rounded-full bg-[#f3f2fc] px-2 py-0.5 text-center text-xs font-semibold tabular-nums text-[#4a5bb0]">
                     {count}
                   </span>
-                </div>
+                </li>
               ))}
-            </div>
-          </motion.div>
+            </ul>
+          </div>
         );
       })}
-      <div className="sm:col-span-2 text-center text-xs text-gray-400 mt-1">
-        {total} official subskills, covered in full — nothing skipped.
-      </div>
-    </motion.div>
+    </div>
   );
 }

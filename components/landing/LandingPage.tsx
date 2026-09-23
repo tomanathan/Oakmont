@@ -1,28 +1,31 @@
 import { BrandMark } from "@/components/BrandMark";
 import { LegalFooter } from "@/components/LegalFooter";
+import { ALL_SUBSKILLS } from "@/data/curriculum";
+import { QUESTIONS } from "@/data/questions";
+import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { Hero } from "./Hero";
+import { ProofStrip } from "./ProofStrip";
 import { SampleQuestion } from "./SampleQuestion";
-import { TestDatePicker } from "./TestDatePicker";
 import { HowItWorks } from "./HowItWorks";
+import { Features } from "./Features";
 import { TutorSection } from "./TutorSection";
 import { Pricing } from "./Pricing";
 import { Faq } from "./Faq";
-import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { FinalCta } from "./FinalCta";
 import { Reveal } from "./Reveal";
 import { TrackedLink } from "./TrackedLink";
 
-// The public, logged-out front door at oakmontsat.com -- server-rendered so
-// the value proposition (not just a login form) is what search engines and
-// shared links actually see. Composes the sections in the order laid out
-// in the landing-page plan; see app/page.tsx for where this is mounted
-// (the logged-out branch only -- an authenticated visit to "/" still
-// redirects straight to /dashboard or /subscribe, unchanged).
+// The public, logged-out front door at oakmontsat.com (see app/page.tsx --
+// signed-in visits redirect before this renders). Server-rendered so the
+// pitch, not a login form, is what search engines and shared links see.
 //
-// Note: no page-load "seen" flag and no scroll-jacked intro -- the earlier
-// splash-screen design was deliberately replaced by this real landing page;
-// see the plan file's Context section for why.
+// Story order: promise (hero) -> proof it's real (numbers, a live question)
+// -> how the plan works -> everything that's inside, including why there
+// are dogs -> who built it -> price -> objections -> ask again.
 export function LandingPage() {
+  const questionCount = Object.values(QUESTIONS).reduce((n, qs) => n + qs.length, 0);
+  const subskillCount = ALL_SUBSKILLS.length;
+
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -34,88 +37,80 @@ export function LandingPage() {
   };
 
   return (
-    <div className="font-sans">
+    <div className="font-sans text-ink">
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
-      <nav className="sticky top-0 z-20 flex items-center justify-between gap-3 px-4 sm:px-6 py-3 bg-[#faf8f4]/90 backdrop-blur border-b border-[#ece9f7]">
-        <div className="flex items-center gap-2 min-w-0">
-          <BrandMark size={26} className="flex-shrink-0" />
-          <span className="font-display font-semibold text-sm text-ink truncate hidden sm:inline">
-            Oakmont Study Center
-          </span>
-        </div>
-        {/* Jump links -- orientation for what is otherwise a single long
-            scroll. Kept to three items and hidden below `sm` so they never
-            compete for space with the brand mark / Log in / Start free,
-            which already fit tightly on narrow phones. */}
-        <div className="hidden sm:flex items-center gap-5 text-sm text-gray-500 flex-shrink-0">
-          <a href="#how-it-works" className="hover:text-ink transition-colors whitespace-nowrap">
-            How it works
+      <nav className="sticky top-0 z-30 border-b border-[#ece9f7]/80 bg-white/85 backdrop-blur-md">
+        <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <a href="#top" className="flex min-w-0 items-center gap-2">
+            <BrandMark size={26} className="flex-shrink-0" />
+            <span className="hidden truncate font-display text-[15px] font-semibold sm:inline">Oakmont Study Center</span>
           </a>
-          <a href="#pricing" className="hover:text-ink transition-colors whitespace-nowrap">
-            Pricing
-          </a>
-          <a href="#faq" className="hover:text-ink transition-colors whitespace-nowrap">
-            FAQ
-          </a>
-        </div>
-        <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-          <a href="/login" className="text-sm text-gray-500 hover:text-ink transition-colors whitespace-nowrap">
-            Log in
-          </a>
-          <TrackedLink
-            href="/login?mode=signup"
-            event="signup_started"
-            className="px-3.5 py-1.5 rounded-lg bg-ink text-white text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
-          >
-            Start free
-          </TrackedLink>
+          <div className="hidden items-center gap-7 text-sm text-gray-500 md:flex">
+            <a href="#how-it-works" className="transition-colors hover:text-ink">
+              How it works
+            </a>
+            <a href="#inside" className="transition-colors hover:text-ink">
+              What&apos;s inside
+            </a>
+            <a href="#pricing" className="transition-colors hover:text-ink">
+              Pricing
+            </a>
+            <a href="#faq" className="transition-colors hover:text-ink">
+              FAQ
+            </a>
+          </div>
+          <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
+            <a href="/login" className="rounded-lg px-3 py-1.5 text-sm text-gray-600 transition-colors hover:text-ink">
+              Log in
+            </a>
+            <TrackedLink
+              href="/login?mode=signup"
+              event="signup_started"
+              className="whitespace-nowrap rounded-lg bg-ink px-3.5 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            >
+              Start free
+            </TrackedLink>
+          </div>
         </div>
       </nav>
 
-      {/* Hero and the sample question are immediately visible, no reveal --
-          they're the LCP content and the interactive centerpiece, not
-          below-the-fold decoration. Everything after gets the one shared
-          fade/slide-up on scroll-into-view (see Reveal.tsx).
-
-          Order (reworked from the original ship): explain the system while
-          curiosity from the sample question is highest, then credibility
-          (the tutor) lands right after the explanation and before any ask
-          -- it used to come after pricing was half-decided. Personalization
-          (test date) now sits right before price, once the visitor already
-          trusts the plan. "For parents" is folded into Pricing itself
-          rather than its own full-height section -- see Pricing.tsx. */}
-      <Hero />
-      <SampleQuestion />
-      <Reveal>
-        <HowItWorks />
-      </Reveal>
-      <Reveal>
-        <TutorSection />
-      </Reveal>
-      <Reveal>
-        <TestDatePicker />
-      </Reveal>
-      {/* Social proof intentionally omitted: no real testimonials exist yet
-          to feature, and fabricated ones aren't an option -- add this
-          section back once real, permissioned quotes are collected. */}
-      <Reveal>
-        <Pricing />
-      </Reveal>
-      <Reveal>
-        <Faq />
-      </Reveal>
-      <Reveal>
+      <main id="top">
+        <Hero questionCount={questionCount} subskillCount={subskillCount} />
+        <ProofStrip questionCount={questionCount} subskillCount={subskillCount} />
+        <SampleQuestion questionCount={questionCount} />
+        <Reveal>
+          <HowItWorks subskillCount={subskillCount} />
+        </Reveal>
+        <Reveal>
+          <Features subskillCount={subskillCount} />
+        </Reveal>
+        <Reveal>
+          <TutorSection />
+        </Reveal>
+        {/* No testimonials section until real, permissioned quotes exist. */}
+        <Reveal>
+          <Pricing />
+        </Reveal>
+        <Reveal>
+          <Faq />
+        </Reveal>
         <FinalCta />
-      </Reveal>
+      </main>
 
-      <footer className="px-6 py-10 text-center">
-        <LegalFooter />
-        <div className="text-[11px] text-gray-400 mt-4 max-w-[480px] mx-auto">
-          SAT® is a trademark registered by the College Board, which is not affiliated with, and does not endorse,
-          this product.
+      <footer className="border-t border-[#ece9f7] bg-white">
+        <div className="mx-auto flex max-w-[1120px] flex-col gap-6 px-6 py-10 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <BrandMark size={22} />
+            <span className="font-display text-sm font-semibold">Oakmont Study Center</span>
+          </div>
+          <LegalFooter className="sm:justify-end" />
         </div>
+        <p className="mx-auto max-w-[1120px] px-6 pb-10 text-[11px] leading-relaxed text-gray-400">
+          SAT® is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this
+          product.
+        </p>
       </footer>
     </div>
   );

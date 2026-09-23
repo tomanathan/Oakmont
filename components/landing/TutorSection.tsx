@@ -1,26 +1,34 @@
-// TODO before launch: swap the monogram below for a real photo, and this
-// bio for Aman's own words (2-3 sentences) -- see the plan's "Before
-// launch" checklist. Kept as a plain, honest placeholder rather than
-// inventing quotes or specifics that aren't real.
+// TODO before launch: swap the monogram for a real photo, and the note for
+// Aman's own words. Kept as an honest placeholder -- no invented quotes.
 export function TutorSection() {
   return (
-    <section className="px-6 py-16 sm:py-20">
-      <div className="max-w-[640px] mx-auto flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-        <div
-          className="w-20 h-20 rounded-full bg-ink text-white font-display font-semibold text-2xl flex items-center justify-center flex-shrink-0"
-          aria-hidden="true"
-        >
-          A
-        </div>
+    <section className="bg-white px-6 py-20 sm:py-28">
+      <div className="mx-auto grid max-w-[1120px] items-center gap-8 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
         <div>
-          <div className="font-display font-semibold text-[18px] text-ink mb-0.5">Meet your tutor</div>
-          <div className="text-xs text-gray-400 mb-3">Aman · Founder, Oakmont Study Center · 6 years tutoring the SAT</div>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            I built Oakmont around the same week-by-week plan I&apos;ve used with tutoring students for six years —
-            every official subskill, in the order that actually moves a score, not a generic syllabus. This is that
-            structure, available without an hourly rate.
-          </p>
+          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">Who&apos;s behind it</div>
+          <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[40px]">
+            Built by a tutor, not a test-prep factory.
+          </h2>
         </div>
+        <figure className="rounded-2xl border border-[#ece9f7] bg-[#faf8f4] p-7 sm:p-9">
+          <blockquote className="font-display text-[19px] leading-[1.55] sm:text-[21px]">
+            I built Oakmont around the same week-by-week plan I&apos;ve used with my tutoring students for six years —
+            every official subskill, in the order that actually moves a score. This is that structure, without the
+            hourly rate.
+          </blockquote>
+          <figcaption className="mt-6 flex items-center gap-3">
+            <div
+              className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-ink font-display text-[17px] font-semibold text-white"
+              aria-hidden="true"
+            >
+              A
+            </div>
+            <div>
+              <div className="text-sm font-semibold">Aman</div>
+              <div className="text-xs text-gray-500">Founder · 6 years tutoring the SAT</div>
+            </div>
+          </figcaption>
+        </figure>
       </div>
     </section>
   );

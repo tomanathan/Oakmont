@@ -1,69 +1,106 @@
+import { ALL_SUBSKILLS } from "@/data/curriculum";
 import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
 import { TrackedLink } from "./TrackedLink";
 import { ViewTracker } from "./ViewTracker";
 
-// Reads the exact same live Stripe Prices /subscribe uses -- one source of
-// truth for what things cost, never a second hard-coded number that could
-// drift from what Checkout will actually charge.
+function Check() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 12 12" className="mt-[3px] flex-shrink-0" aria-hidden="true">
+      <path d="M2.5 6.2 5 8.5l4.5-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// Reads the same live Stripe Prices /subscribe uses -- one source of truth
+// for what things cost, never a hard-coded number that could drift.
 export async function Pricing() {
   const planIds: PlanId[] = ["sixmonth", "monthly"];
-  const prices = await Promise.all(planIds.map((id) => stripe.prices.retrieve(getPriceId(id))));
-  const sixmonth = prices[0];
-  const monthly = prices[1];
+  const [sixmonth, monthly] = await Promise.all(planIds.map((id) => stripe.prices.retrieve(getPriceId(id))));
+  const sixTotal = (sixmonth.unit_amount ?? 0) / 100;
+  const monthlyPrice = (monthly.unit_amount ?? 0) / 100;
+
+  const included = [
+    "Your week-by-week plan, paced to your test date",
+    `Lessons, worked examples and quizzes for all ${ALL_SUBSKILLS.length} subskills`,
+    "8 full-length practice tests with review",
+    "Ozho, streaks and the costume wardrobe",
+    "Read-only parent view",
+  ];
 
   return (
-    <section id="pricing" className="px-6 py-16 sm:py-20 bg-white border-y border-[#ece9f7]">
+    <section id="pricing" className="scroll-mt-16 bg-[#faf8f4] px-6 py-20 sm:py-28">
       <ViewTracker event="pricing_viewed" />
-      <div className="max-w-[640px] mx-auto text-center">
-        <h2 className="font-display font-semibold text-[26px] sm:text-[30px] text-ink mb-2">Pricing</h2>
-        <p className="text-sm text-gray-500 mb-2">
-          Self-paced SAT courses typically run a few hundred dollars. Private tutoring runs far more, per hour.
-        </p>
-        <p className="text-sm text-gray-500 mb-8">This is a tutor&apos;s full plan, priced like neither.</p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="relative bg-[#faf8f4] border-2 border-ink rounded-2xl p-6 text-left">
-            <div className="absolute -top-3 left-6 bg-ink text-white text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
-              Full course access
-            </div>
-            <div className="mt-2 mb-1 flex items-baseline gap-1.5">
-              <span className="text-[32px] leading-none font-display font-semibold text-ink">
-                ${((sixmonth.unit_amount ?? 0) / 100).toFixed(0)}
-              </span>
-              <span className="text-sm text-gray-500">one time</span>
-            </div>
-            <div className="text-sm text-gray-500">6 months of access. One payment, nothing to cancel.</div>
-          </div>
-          <div className="bg-[#faf8f4] border border-[#ece9f7] rounded-2xl p-6 text-left">
-            <div className="mb-1 flex items-baseline gap-1.5">
-              <span className="text-[32px] leading-none font-display font-semibold text-ink">
-                ${((monthly.unit_amount ?? 0) / 100).toFixed(0)}
-              </span>
-              <span className="text-sm text-gray-500">/month</span>
-            </div>
-            <div className="text-sm text-gray-500">Cancel anytime. Starts with a 7-day free trial.</div>
-          </div>
+      <div className="mx-auto max-w-[1120px]">
+        <div className="mx-auto mb-12 max-w-[620px] text-center">
+          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">Pricing</div>
+          <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[40px]">
+            Everything included, either way.
+          </h2>
+          <p className="mt-4 text-[15px] text-gray-600">
+            Self-paced courses usually run a few hundred dollars, and private tutoring far more, per hour.
+          </p>
         </div>
 
-        <TrackedLink
-          href="/login?mode=signup"
-          event="signup_started"
-          className="inline-block mt-8 px-6 py-3 rounded-lg bg-ink text-white font-semibold text-sm hover:opacity-90 transition-opacity"
-        >
-          Start free →
-        </TrackedLink>
+        <div className="mx-auto grid max-w-[860px] gap-4 md:grid-cols-2">
+          <div className="relative flex flex-col rounded-2xl bg-ink p-7 text-white shadow-[0_24px_60px_-30px_rgba(26,26,46,0.7)] sm:p-8">
+            <div className="mb-6 flex items-center justify-between">
+              <div className="text-sm font-semibold">6-month pass</div>
+              <div className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide">
+                Best value
+              </div>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="font-display text-[46px] font-semibold leading-none">${sixTotal.toFixed(0)}</span>
+              <span className="text-sm text-white/60">one time</span>
+            </div>
+            <div className="mt-2 text-sm text-white/60">
+              About ${(sixTotal / 6).toFixed(0)}/month · one payment, nothing to cancel
+            </div>
+            <ul className="mt-7 flex flex-1 flex-col gap-2.5 text-sm text-white/85">
+              {included.map((item) => (
+                <li key={item} className="flex gap-2.5">
+                  <Check />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <TrackedLink
+              href="/login?mode=signup"
+              event="signup_started"
+              className="mt-8 rounded-xl bg-white px-6 py-3.5 text-center text-sm font-semibold text-ink transition-opacity hover:opacity-90"
+            >
+              Get the 6-month pass
+            </TrackedLink>
+          </div>
 
-        {/* Folded in from what used to be a standalone "For parents"
-            section -- same message, condensed, and landing exactly where a
-            parent reader is actually deciding rather than after the ask. */}
-        <div className="mt-10 pt-8 border-t border-[#ece9f7] text-left bg-[#faf8f4] rounded-xl p-5">
-          <div className="text-xs font-semibold uppercase tracking-wide text-[#4a5bb0] mb-1.5">For parents</div>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            You can see exactly what your student is studying and how they&apos;re doing, without logging into
-            their account. Once they invite you from their own Settings, you get a read-only view of their pace,
-            subject mastery, and practice-test history — a real structure they follow, whether or not you&apos;re
-            checking in that day.
-          </p>
+          <div className="flex flex-col rounded-2xl border border-[#e6e4f5] bg-white p-7 sm:p-8">
+            <div className="mb-6 flex items-center justify-between">
+              <div className="text-sm font-semibold">Monthly</div>
+              <div className="rounded-full bg-[#eef7f1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#2f6f4f]">
+                7-day free trial
+              </div>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="font-display text-[46px] font-semibold leading-none">${monthlyPrice.toFixed(0)}</span>
+              <span className="text-sm text-gray-500">/month</span>
+            </div>
+            <div className="mt-2 text-sm text-gray-500">Cancel anytime from Settings</div>
+            <ul className="mt-7 flex flex-1 flex-col gap-2.5 text-sm text-gray-700">
+              {included.map((item) => (
+                <li key={item} className="flex gap-2.5 text-[#2f6f4f]">
+                  <Check />
+                  <span className="text-gray-700">{item}</span>
+                </li>
+              ))}
+            </ul>
+            <TrackedLink
+              href="/login?mode=signup"
+              event="signup_started"
+              className="mt-8 rounded-xl border border-[#e0defa] px-6 py-3.5 text-center text-sm font-semibold text-ink transition-colors hover:border-[#c9c6ee]"
+            >
+              Start free trial
+            </TrackedLink>
+          </div>
         </div>
       </div>
     </section>

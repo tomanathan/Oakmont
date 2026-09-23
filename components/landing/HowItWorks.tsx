@@ -1,39 +1,44 @@
-import { SubskillMap } from "./SubskillMap";
+import { TestDatePicker } from "./TestDatePicker";
 
-const STEPS = [
-  {
-    title: "Diagnose",
-    body: "Set a baseline score and test date. Oakmont builds your personal week-by-week timeline from there.",
-  },
-  {
-    title: "Follow your weekly plan",
-    body: "Every week targets specific subskills, in the order that actually helps you most, not a fixed syllabus.",
-  },
-  {
-    title: "Master every subskill",
-    body: "Lessons, worked examples, and a practice quiz for each of the 29 official subskills — Reading & Writing and Math.",
-  },
-];
+export function HowItWorks({ subskillCount }: { subskillCount: number }) {
+  const steps = [
+    {
+      title: "Set your test date",
+      body: "Add a baseline score if you have one. Your week-by-week timeline is built from there.",
+    },
+    {
+      title: "Follow one week at a time",
+      body: "Each week targets specific subskills, in the order that moves your score most — not a fixed syllabus.",
+    },
+    {
+      title: "Learn, practice, test",
+      body: `Lessons, worked examples and a quiz for all ${subskillCount} subskills, with 8 full-length practice tests along the way.`,
+    },
+  ];
 
-export function HowItWorks() {
   return (
-    <section id="how-it-works" className="px-6 py-16 sm:py-20 bg-white border-y border-[#ece9f7]">
-      <div className="max-w-[880px] mx-auto">
-        <h2 className="font-display font-semibold text-[26px] sm:text-[30px] text-ink text-center mb-10">
-          How it works
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-14">
-          {STEPS.map((step, i) => (
-            <div key={step.title} className="text-center sm:text-left">
-              <div className="w-8 h-8 rounded-full bg-ink text-white text-sm font-semibold flex items-center justify-center mb-3 mx-auto sm:mx-0">
+    <section id="how-it-works" className="scroll-mt-16 bg-white px-6 py-20 sm:py-28">
+      <div className="mx-auto max-w-[1120px]">
+        <div className="mb-12 max-w-[620px]">
+          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">How it works</div>
+          <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[40px]">
+            A tutor&apos;s plan, without the hourly rate.
+          </h2>
+        </div>
+
+        <ol className="grid gap-4 md:grid-cols-3">
+          {steps.map((step, i) => (
+            <li key={step.title} className="rounded-2xl border border-[#ece9f7] bg-white p-6">
+              <div className="mb-5 flex h-9 w-9 items-center justify-center rounded-full bg-[#f3f2fc] font-display text-[15px] font-semibold text-[#4a5bb0]">
                 {i + 1}
               </div>
-              <div className="font-display font-semibold text-[16px] text-ink mb-1.5">{step.title}</div>
-              <p className="text-sm text-gray-600">{step.body}</p>
-            </div>
+              <h3 className="mb-2 font-display text-[18px] font-semibold">{step.title}</h3>
+              <p className="text-[14px] leading-relaxed text-gray-600">{step.body}</p>
+            </li>
           ))}
-        </div>
-        <SubskillMap />
+        </ol>
+
+        <TestDatePicker subskillCount={subskillCount} />
       </div>
     </section>
   );
