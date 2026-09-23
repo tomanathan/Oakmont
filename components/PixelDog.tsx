@@ -92,6 +92,7 @@ export function PixelDog({
   costume = null,
   variant = "ozho",
   carryingBall = false,
+  shadow = true,
   className = "",
 }: {
   size?: number;
@@ -142,6 +143,9 @@ export function PixelDog({
   // sitting poses, since none of them are ever mid-fetch (ScoutCompanion
   // always stands him back up before sending him after a thrown ball).
   carryingBall?: boolean;
+  // Off when the caller draws its own ground shadow -- one baked into the
+  // sprite rises with it on a jump instead of staying on the floor.
+  shadow?: boolean;
   className?: string;
 }) {
   const p = dead ? PALETTE_DEAD : variant === "mochi" ? PALETTE_MOCHI : PALETTE;
@@ -169,7 +173,7 @@ export function PixelDog({
         style={{ transform: facing === -1 ? "scaleX(-1)" : undefined }}
         className={className}
       >
-        <ellipse cx={32} cy={38} rx={19} ry={2} fill="#000" opacity={0.12} />
+        {shadow && <ellipse cx={32} cy={38} rx={19} ry={2} fill="#000" opacity={0.12} />}
 
         {/* body -- four stacked bands narrowing toward the top fake a
             rounded, curled-up dome using the same flat-rect language as
@@ -226,7 +230,7 @@ export function PixelDog({
         style={{ transform: facing === -1 ? "scaleX(-1)" : undefined }}
         className={className}
       >
-        <ellipse cx={22} cy={36} rx={17} ry={2.5} fill="#000" opacity={0.12} />
+        {shadow && <ellipse cx={22} cy={36} rx={17} ry={2.5} fill="#000" opacity={0.12} />}
 
         {/* tail -- curls up and back off the haunches' own top edge, the
             way a settled dog actually rests it (held up in a curl, not
@@ -359,7 +363,7 @@ export function PixelDog({
       style={{ transform: facing === -1 ? "scaleX(-1)" : undefined }}
       className={className}
     >
-      <ellipse cx={32} cy={38} rx={20} ry={2} fill="#000" opacity={0.12} />
+      {shadow && <ellipse cx={32} cy={38} rx={20} ry={2} fill="#000" opacity={0.12} />}
 
       {/* tail. Three poses:
           - up (tailUp): one of the six TAIL_WAG_FRAMES positions, stepped
