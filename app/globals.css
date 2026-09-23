@@ -114,6 +114,52 @@ body {
   .animate-ozho-hop { animation: none; }
 }
 
+/* Ozho's panel (components/OzhoPanel.tsx): a quick lift-in beside him on
+   desktop, a slide-up sheet on phones. */
+@keyframes ozho-panel {
+  from { opacity: 0; transform: translateY(6px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+.animate-ozho-panel {
+  animation: ozho-panel 0.18s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+@keyframes ozho-sheet {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-ozho-sheet {
+  animation: ozho-sheet 0.24s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-ozho-panel,
+  .animate-ozho-sheet { animation: none; }
+}
+
+/* Ozho between walks: nose down to the ground and a couple of quick
+   sniffs, tipped toward whichever way he faces (--face is 1 or -1); and a
+   play-bow stretch when he gets up from a proper rest. */
+@keyframes ozho-sniff {
+  0%, 100% { transform: rotate(0) translateY(0); }
+  18%, 58% { transform: rotate(calc(var(--face, 1) * 7deg)) translateY(2px); }
+  34%, 74% { transform: rotate(calc(var(--face, 1) * 5deg)) translateY(1px); }
+}
+.animate-ozho-sniff {
+  animation: ozho-sniff 1.3s ease-in-out;
+  transform-origin: 50% 100%;
+}
+@keyframes ozho-stretch {
+  0%, 100% { transform: none; }
+  45% { transform: rotate(calc(var(--face, 1) * 9deg)) scaleX(1.08) translateY(2px); }
+}
+.animate-ozho-stretch {
+  animation: ozho-stretch 0.7s ease-in-out;
+  transform-origin: 50% 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-ozho-sniff,
+  .animate-ozho-stretch { animation: none; }
+}
+
 @keyframes zzz-float {
   0% {
     transform: translate(0, 6px) scale(0.5);

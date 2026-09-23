@@ -123,6 +123,7 @@ export function SubskillClient({
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [extras, setExtras] = useState<ResultExtras | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const submitRef = useRef<HTMLButtonElement>(null);
   const [tipsOpenMobile, setTipsOpenMobile] = useState(false);
   const [activePattern, setActivePattern] = useState(0);
   const [activeExample, setActiveExample] = useState(0);
@@ -284,6 +285,21 @@ export function SubskillClient({
   }
 
   function selectAnswer(qIdx: number, choiceIdx: number) {
+    // The last unanswered question just got an answer: Ozho trots over to
+    // the Submit button to say so -- on a long quiz it's many screens down.
+    if (answers[qIdx] === undefined && Object.keys(answers).length + 1 === quizQuestions.length) {
+      requestAnimationFrame(() => {
+        const r = submitRef.current?.getBoundingClientRect();
+        window.dispatchEvent(
+          new CustomEvent("ozho:say", {
+            detail: {
+              message: "That's every question! Submit whenever you're ready.",
+              near: r ? { x: r.right + window.scrollX + 70, y: r.top + window.scrollY + r.height / 2 } : undefined,
+            },
+          })
+        );
+      });
+    }
     setAnswers((prev) => {
       const next = { ...prev, [qIdx]: choiceIdx };
       // Written against the actual shuffled quizQuestions in scope right
@@ -852,6 +868,7 @@ export function SubskillClient({
           {!submitted ? (
             quizQuestions.length > 0 && (
               <button
+                ref={submitRef}
                 onClick={submitQuiz}
                 className="px-5 py-2.5 rounded-lg bg-ink text-white font-semibold text-sm"
               >

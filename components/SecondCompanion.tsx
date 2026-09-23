@@ -75,6 +75,7 @@ export function SecondCompanion() {
   const [isWalking, setIsWalking] = useState(false);
   const [perk, setPerk] = useState(false);
   const [behindText, setBehindText] = useState(false);
+  const [sitting, setSitting] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -92,6 +93,7 @@ export function SecondCompanion() {
   const tailDirRef = useRef<1 | -1>(1);
   const lastFrameRef = useRef<number | null>(null);
   const behindTextRef = useRef(false);
+  const sittingRef = useRef(false);
   const isMobileRef = useRef(false);
   const perkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -270,7 +272,10 @@ export function SecondCompanion() {
         // Resting, but he's wandered off -- don't wait out the whole pause.
         const pos = posRef.current;
         const leftBehind = o && Math.hypot(o.x - pos.x, o.y - pos.y) > CATCH_UP_DIST;
-        if (nowMs > pauseUntilRef.current || (leftBehind && nowMs > pauseUntilRef.current - PAUSE_MIN_MS)) {
+        // Sitting with him while he rests: she stays until he gets up.
+        if (sittingRef.current && !leftBehind) {
+          pauseUntilRef.current = Math.max(pauseUntilRef.current, nowMs + 600);
+        } else if (nowMs > pauseUntilRef.current || (leftBehind && nowMs > pauseUntilRef.current - PAUSE_MIN_MS)) {
           pickNewTarget();
         }
       } else if (o && followingRef.current) {
@@ -305,6 +310,15 @@ export function SecondCompanion() {
           pos.x += (dx / dist) * step;
           pos.y += (dy / dist) * step;
         }
+      }
+
+      // Settled beside him while he rests: she sits too.
+      const pos = posRef.current;
+      const sitNow =
+        !walkingRef.current && !!o?.resting && Math.hypot(o.x - pos.x, o.y - pos.y) < CATCH_UP_DIST * 0.8;
+      if (sitNow !== sittingRef.current) {
+        sittingRef.current = sitNow;
+        setSitting(sitNow);
       }
 
       const nowBehind = onText(posRef.current.x, posRef.current.y);
@@ -381,6 +395,7 @@ export function SecondCompanion() {
           mood="happy"
           variant="mochi"
           legFrame={isWalking && !isMobile ? legFrame : 0}
+          sitting={sitting && !isWalking && !isMobile}
           tailFrame={tailFrame}
           facing={isMobile ? 1 : facing}
           shadow={!isMobile}

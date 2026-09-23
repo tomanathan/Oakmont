@@ -39,7 +39,10 @@ export function SubjectRing({
     const toXY = (deg: number) => {
       // -90 so segment 0 starts at 12 o'clock, not 3 o'clock.
       const rad = ((deg - 90) * Math.PI) / 180;
-      return [center + radius * Math.cos(rad), center + radius * Math.sin(rad)];
+      // Rounded: server and browser Math.sin/cos can differ in the last
+      // few bits, which React flags as a hydration mismatch on the path.
+      const r3 = (v: number) => Math.round(v * 1000) / 1000;
+      return [r3(center + radius * Math.cos(rad)), r3(center + radius * Math.sin(rad))];
     };
     const [x1, y1] = toXY(startDeg);
     const [x2, y2] = toXY(endDeg);

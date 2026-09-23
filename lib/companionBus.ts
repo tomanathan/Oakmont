@@ -17,7 +17,8 @@ export const companionBus: {
   // Ozho's position in page coordinates, stamped every frame he's
   // free-roaming. `at` lets a reader tell a live position from a stale
   // one (he's unmounted, or docked on mobile and not writing it).
-  ozho: { x: number; y: number; at: number } | null;
+  // `resting`: sat down (on his own or told to) -- Mochi sits with him.
+  ozho: { x: number; y: number; at: number; resting: boolean } | null;
   // Every element with its own visible text, in page coordinates --
   // refreshed by Ozho on scroll/resize/DOM change.
   textRects: PageRect[];

@@ -7,6 +7,7 @@ import { MOOD_BY_STAGE } from "./PetAvatar";
 import { PET_NAME, type PetStage } from "@/lib/pet";
 import { dedupedFetchJson } from "@/lib/dedupeFetch";
 import { companionBus } from "@/lib/companionBus";
+import { OzhoPanel, type OzhoAction } from "./OzhoPanel";
 
 // Ozho's whole voice, in one place. The character: an enthusiastic,
 // slightly goofy study buddy who treats prep like something the two of you
@@ -304,7 +305,26 @@ const SIDE_MARGIN = BUBBLE_HALF_W;
 const BOTTOM_MARGIN = 24;
 const RUN_SPEED = 150; // px/sec, before per-walk random variation
 const SLOW_SPEED = 60; // px/sec, used when the OS prefers reduced motion
-const LEG_SWAP_MS = 110;
+// Locomotion is steered, not scripted: he has a velocity, accelerates
+// toward where he wants to be at a limited rate, eases off as he arrives,
+// and his legs swap per distance covered rather than on a clock -- so a
+// stroll, a trot and a sprint each read as their own gait, starts and
+// stops have weight, and a change of mind mid-walk turns him around
+// instead of snapping him onto a new curve.
+const ACCEL = 520; // px/s^2
+const ARRIVE_RADIUS = 80; // starts easing off inside this distance
+const MIN_ARRIVE_SPEED = 38;
+// Stride per leg swap grows with speed, like a real dog lengthening its
+// stride before quickening it.
+const strideFor = (speed: number) => 9 + speed * 0.07;
+// A gentle, slowly swinging heading offset on ordinary strolls, fading out
+// near the target -- the meander a dog has when it isn't in a hurry.
+const MEANDER_RAD = 0.38;
+const MEANDER_HZ = 0.14;
+
+type IdleAct = "none" | "sniff" | "rest" | "stretch";
+const SNIFF_MS = 1300;
+const STRETCH_MS = 700;
 // The tail wag's own cadence -- deliberately independent of the leg swap
 // (and of walking at all): see the tailFrame prop's doc in PixelDog.tsx
 // for why this is a drawn-position swap rather than a CSS animation, and
@@ -428,12 +448,9 @@ const FOLLOW_RECHECK_MS = 20;
 const FOLLOW_OFFSET_X = 70;
 const FOLLOW_OFFSET_Y = 45;
 
-// ---- Click menu: the "full set of things you can do with Ozho" ----------
-// Clicking Ozho (while he's awake and standing still) fans out a little
-// radial menu of actions around him. Each entry here is one button; the
-// handler for each lives in handleMenuAction below. Kept as plain data so
-// the render just maps over it and the arc math stays in one place.
-type OzhoAction = "pet" | "trick" | "next" | "fetch" | "sit" | "follow" | "wardrobe";
+// ---- Click panel: the "full set of things you can do with Ozho" ---------
+// Clicking Ozho opens his panel (components/OzhoPanel.tsx); each action
+// there is handled in handleMenuAction below.
 
 const PET_PHRASES = [
   "Ohh, right there — perfect.",
@@ -468,55 +485,12 @@ const FOLLOW_OFF_PHRASES = [
 ];
 const SIT_ON_PHRASES = ["Okay, staying put.", "Parked right here. Take your time.", "Sitting tight."];
 const SIT_OFF_PHRASES = ["Up and at it!", "Okay, back on my feet.", "Stretching my legs again."];
-const NEXT_INTRO = ["Here's what I'd tackle next:", "Let's get after this one:", "Next up on your plan:"];
-const NEXT_CHECKING = ["One sec — checking your plan...", "Let me look at where you're at..."];
-const NEXT_DONE = [
-  "You're all caught up — genuinely, nice work. Review anything you want.",
-  "Nothing left on the schedule right now. Pick whatever you feel like revisiting.",
-];
-const NEXT_ERROR = ["Hmm, couldn't reach your plan. Try the dashboard?", "Plan's not loading for me — the dashboard should have it."];
-
-// The radial menu, in the order they fan out around him. Short, plain
-// verbs/nouns rather than phrases ("What now?" -> "Next") so seven buttons
-// read at a glance instead of needing to be studied one at a time --
-// "Wardrobe" is the one exception, kept to match the exact word Settings
-// already uses for the same thing. `follow` and `sit` both relabel
-// themselves once they're already active (see the render).
-const MENU_ITEMS: { action: OzhoAction; icon: string; label: string }[] = [
-  { action: "pet", icon: "🫶", label: "Pet" },
-  { action: "trick", icon: "✨", label: "Trick" },
-  { action: "next", icon: "🎯", label: "Next" },
-  { action: "fetch", icon: "🎾", label: "Fetch" },
-  { action: "sit", icon: "✋", label: "Sit" },
-  { action: "follow", icon: "🧭", label: "Follow" },
-  { action: "wardrobe", icon: "👒", label: "Wardrobe" },
-];
-// The menu fans out through 270° around him -- left side, all the way over
-// the top, to the right side -- leaving a 90° gap centered straight down
-// (where his own body/feet are, and where a button would have nowhere
-// good to sit anyway). Wider than a plain semicircle so six buttons get
-// real breathing room between them instead of crowding into a tight arc.
-const MENU_ARC_START = Math.PI * 0.75; // 135°
-const MENU_ARC_SPAN = Math.PI * 1.5; // 270°
-const MENU_RADIUS = 68;
-// How much room the ring needs from each viewport edge once it's open --
-// used to nudge him on screen before the menu appears (see openMenu) so
-// clicking him near an edge doesn't leave part of the ring rendered off
-// the visible viewport. The two items nearest the arc's open bottom gap
-// point mostly downward (~48px, sin(45°)*MENU_RADIUS) and each carries a
-// label pill hanging further below that -- hence bottom needing the most
-// clearance; top and the sides only ever have a bare button (no label)
-// reaching close to the full radius.
-const MENU_BOTTOM_CLEARANCE = 100;
-const MENU_TOP_CLEARANCE = 90;
-const MENU_SIDE_CLEARANCE = 90;
+const NEXT_INTRO = ["Let's go!", "On it. Follow me!", "Great pick. Let's get after it."];
 
 const FOLLOW_STORAGE_KEY = "ozho:follow-mode";
 const PET_COUNT_KEY = "ozho:pet-count"; // "YYYY-MM-DD:N", resets each day
 const PET_LOTS_THRESHOLD = 4;
-// How long the open menu waits with no choice made before it dismisses
-// itself, so a stray click doesn't leave it hanging over the page.
-const MENU_AUTO_DISMISS_MS = 6000;
+
 
 // Talking is now mostly reactive (a new page = a new problem, or new
 // results to react to) rather than on a chatty ambient timer. The ambient
@@ -599,6 +573,14 @@ export function ScoutCompanion() {
   // The click menu, plus the two effects a couple of its actions have that
   // outlive the menu itself: a heart burst (pet) and a thrown ball (fetch).
   const [menuOpen, setMenuOpen] = useState(false);
+  // What he does with himself between walks, besides standing there: a
+  // sniff at the ground, sitting down for a longer rest (then a stretch
+  // before setting off again). Glancing around is just a facing flip.
+  const [idleAct, setIdleAct] = useState<IdleAct>("none");
+  const [panelAnchor, setPanelAnchor] = useState<{ x: number; y: number } | null>(null);
+  // Read off /api/pet/state for the panel's status line.
+  const [streak, setStreak] = useState(0);
+  const [fedToday, setFedToday] = useState(false);
   const [followMode, setFollowMode] = useState(false);
   // Below MOBILE_BREAKPOINT he's docked in a fixed screen corner instead of
   // roaming (see the render loop's early-return and the wrapper's own
@@ -649,10 +631,12 @@ export function ScoutCompanion() {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const posRef = useRef({ x: 80, y: 400 });
   const targetRef = useRef({ x: 80, y: 400 });
-  const pathStartRef = useRef({ x: 80, y: 400 });
-  const pathControlRef = useRef({ x: 80, y: 400 });
-  const pathTRef = useRef(1);
-  const pathLenRef = useRef(1);
+  const velRef = useRef({ x: 0, y: 0 });
+  const idleActRef = useRef<IdleAct>("none");
+  const idleEndRef = useRef(0);
+  const nextIdleAtRef = useRef(0);
+  const meanderRef = useRef({ amp: 0, phase: 0 });
+  const strideRef = useRef(0);
   const pathSpeedRef = useRef(1);
   const mouseRef = useRef<{ x: number; y: number } | null>(null);
   const mouseAnchorRef = useRef<{ x: number; y: number } | null>(null);
@@ -673,7 +657,6 @@ export function ScoutCompanion() {
   const reducedMotionRef = useRef(false);
   const behaviorUntilRef = useRef(0);
   const speakAtRef = useRef(0);
-  const legTimerRef = useRef(0);
   const tailTimerRef = useRef(0);
   // Which way tailFrame is currently stepping (see the ping-pong logic
   // below) -- mirrored in a ref, not just derived from tailFrame state,
@@ -743,7 +726,6 @@ export function ScoutCompanion() {
     const startY = window.scrollY + Math.min(vh0 - 120, vh0 * 0.55);
     posRef.current = { x: startX, y: startY };
     targetRef.current = { x: startX, y: startY };
-    pathTRef.current = 1;
     speakAtRef.current =
       Date.now() + AMBIENT_SPEAK_MIN_MS + Math.random() * (AMBIENT_SPEAK_MAX_MS - AMBIENT_SPEAK_MIN_MS);
     behaviorUntilRef.current = Date.now() + 900 + Math.random() * 900;
@@ -769,11 +751,14 @@ export function ScoutCompanion() {
       totalSubskills?: number;
       daysUntilTest?: number | null;
       weakestDomain?: string | null;
+      fedToday?: boolean;
     }>("/api/pet/state")
       .then((data) => {
         if (data && data.stage) {
           stageRef.current = data.stage;
           streakRef.current = data.currentStreak ?? 0;
+          setStreak(data.currentStreak ?? 0);
+          setFedToday(!!data.fedToday);
           setStage(data.stage);
           setCostume(data.costume && data.costume !== "none" ? data.costume : null);
           subskillsMasteredRef.current = data.subskillsMastered ?? 0;
@@ -813,6 +798,23 @@ export function ScoutCompanion() {
       lastInteractionAtRef.current = Date.now();
     }
     window.addEventListener("scroll", onInteract, { passive: true });
+
+    // Picking an answer (a quiz choice or a worked example's): he turns to
+    // look, and now and then his ears perk -- he's paying attention.
+    function onGlance(e: PointerEvent) {
+      const choice = (e.target as Element | null)?.closest?.('[role="radio"]');
+      if (!choice || walkingRef.current || menuOpenRef.current || asleepRef.current || isMobileRef.current) return;
+      const r = choice.getBoundingClientRect();
+      const f: 1 | -1 = r.left + r.width / 2 + window.scrollX >= posRef.current.x ? 1 : -1;
+      facingRef.current = f;
+      setFacing(f);
+      if (Math.random() < 0.35) {
+        if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
+        setPerk(true);
+        perkTimeoutRef.current = setTimeout(() => setPerk(false), 260);
+      }
+    }
+    window.addEventListener("pointerdown", onGlance);
     window.addEventListener("keydown", onInteract);
     window.addEventListener("click", onInteract);
 
@@ -828,6 +830,10 @@ export function ScoutCompanion() {
     // cursor, since each of those is a place the reader put him.
     function comeTo(near?: { x: number; y: number }) {
       if (!near || isMobileRef.current || sittingRef.current || followModeRef.current || menuOpenRef.current) return;
+      enterFromEdge(near);
+      // Flagged as a return so the out-of-view check doesn't swap this
+      // destination for a random on-screen one while he's on his way.
+      returningRef.current = true;
       beginWalk({ urgent: true, forceTarget: near });
     }
     function onCelebrate(e: Event) {
@@ -873,6 +879,7 @@ export function ScoutCompanion() {
       window.removeEventListener("resize", checkMobile);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("scroll", onInteract);
+      window.removeEventListener("pointerdown", onGlance);
       window.removeEventListener("keydown", onInteract);
       window.removeEventListener("click", onInteract);
       window.removeEventListener("ozho:celebrate", onCelebrate);
@@ -1268,45 +1275,60 @@ export function ScoutCompanion() {
     return { start, end, maxX, maxY };
   }
 
-  // Lays out a new curved leg of the walk: a quadratic Bezier from the
-  // current spot to a fresh target (see resolveTarget for how that target
-  // is picked/validated), bowed sideways by a random amount so the path
-  // reads as a natural arc instead of a straight beeline.
-  //   - `urgent`: move faster and straighter -- purposeful, not a stroll.
-  //   - `speedMult`: overrides urgent's own default multiplier entirely --
-  //     used by follow mode, which needs to move even more decisively than
-  //     a one-off "dash back into view" (see FOLLOW_SPEED_MULT).
-  //   - `straight`: no bow at all -- a dead-straight line to the target.
-  //     Used by follow mode, where even urgent's reduced bend still reads
-  //     as wandering/overshooting instead of beelining to the cursor and
-  //     actually stopping there.
-  // The path there is free to cross text along the way (see the render
-  // loop) -- resolveTarget only keeps the landing spot itself off of it.
+  // Left a whole screen or more behind (the reader scrolled a long way):
+  // rather than a multi-second sprint across the page, he pops in at the
+  // nearest edge of the screen, already running toward `target`.
+  function enterFromEdge(target: { x: number; y: number }) {
+    const sy = window.scrollY;
+    const vh = window.innerHeight;
+    const pos = posRef.current;
+    const farAbove = pos.y < sy - vh * 0.5;
+    const farBelow = pos.y > sy + vh * 1.5;
+    if (!farAbove && !farBelow) return;
+    pos.y = farAbove ? sy - 20 : sy + vh + 20;
+    pos.x = clamp(
+      target.x + (Math.random() - 0.5) * 160,
+      SIDE_MARGIN,
+      Math.max(SIDE_MARGIN, document.documentElement.clientWidth - SIDE_MARGIN)
+    );
+    velRef.current = { x: 0, y: farAbove ? 220 : -220 };
+    walkingRef.current = true;
+  }
+
+  function setIdle(a: IdleAct) {
+    if (idleActRef.current === a) return;
+    idleActRef.current = a;
+    setIdleAct(a);
+  }
+
+  // Sets off toward a new spot (see resolveTarget for how it's picked and
+  // kept off text); the render loop steers him there.
+  //   - `urgent`: faster and more direct -- purposeful, not a stroll.
+  //   - `speedMult`: overrides urgent's own default speed entirely -- used
+  //     by follow mode, which needs to move even more decisively than a
+  //     one-off "dash back into view" (see FOLLOW_SPEED_MULT).
+  //   - `straight`: no meander at all -- follow mode beelines to the
+  //     cursor and actually stops there.
+  // The way there is free to cross text (see the render loop) --
+  // resolveTarget only keeps the landing spot itself off of it.
   function beginWalk(opts: { avoid?: { x: number; y: number } | null; urgent?: boolean; speedMult?: number; straight?: boolean; forceTarget?: { x: number; y: number } } = {}) {
     const { urgent = false, speedMult, straight = false } = opts;
-    const { start, end, maxX, maxY } = resolveTarget(opts);
+    const { end } = resolveTarget(opts);
+    const wasWalking = walkingRef.current;
+    setIdle("none");
 
-    const dx = end.x - start.x;
-    const dy = end.y - start.y;
-    const dist = Math.hypot(dx, dy) || 1;
-    const perpX = -dy / dist;
-    const perpY = dx / dist;
-    const bend = straight ? 0 : (Math.random() - 0.5) * 2 * Math.min(80, dist * 0.5) * (urgent ? 0.35 : 1);
-    // A quadratic Bezier always stays within the convex hull of its three
-    // control points, so clamping this one to the same bounds as start/end
-    // guarantees the whole curve does too -- otherwise a bend near a page
-    // edge can bow the path off-page even though both endpoints are valid.
-    const control = {
-      x: clamp((start.x + end.x) / 2 + perpX * bend, SIDE_MARGIN, maxX),
-      y: clamp((start.y + end.y) / 2 + perpY * bend, TOP_MARGIN, maxY),
-    };
-
-    pathStartRef.current = start;
-    pathControlRef.current = control;
     targetRef.current = end;
-    pathLenRef.current = Math.max(30, dist);
-    pathTRef.current = 0;
     pathSpeedRef.current = speedMult !== undefined ? speedMult : urgent ? RETURN_SPEED_MULT + Math.random() * 0.3 : 0.75 + Math.random() * 0.6;
+    meanderRef.current = {
+      amp: straight ? 0 : (urgent ? 0.25 : 1) * MEANDER_RAD * (Math.random() < 0.5 ? -1 : 1) * (0.5 + Math.random() * 0.5),
+      phase: Math.random() * Math.PI * 2,
+    };
+    // Bursting into a sprint from a standstill gets a little launch hop.
+    if (!wasWalking && urgent && !reducedMotionRef.current) {
+      if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
+      setPerk(true);
+      perkTimeoutRef.current = setTimeout(() => setPerk(false), 260);
+    }
     walkingRef.current = true;
     setIsWalking(true);
   }
@@ -1428,7 +1450,7 @@ export function ScoutCompanion() {
           wrapperRef.current.style.left = `${posRef.current.x}px`;
           wrapperRef.current.style.top = `${posRef.current.y}px`;
         }
-        if (!isMobileRef.current) companionBus.ozho = { ...posRef.current, at: Date.now() };
+        if (!isMobileRef.current) companionBus.ozho = { ...posRef.current, at: Date.now(), resting: false };
         return;
       }
 
@@ -1491,7 +1513,9 @@ export function ScoutCompanion() {
           setSitting(false);
         }
         returningRef.current = true;
-        beginWalk({ urgent: true, forceTarget: pickReturnTarget() });
+        const back = pickReturnTarget();
+        enterFromEdge(back);
+        beginWalk({ urgent: true, forceTarget: back });
         speak(pick(RETURN_PHRASES), 2400);
       }
 
@@ -1570,6 +1594,10 @@ export function ScoutCompanion() {
         }
       }
 
+      // Anything that stops him without arriving (opening the panel,
+      // sitting) leaves no momentum behind for the next walk.
+      if (!walkingRef.current && (velRef.current.x || velRef.current.y)) velRef.current = { x: 0, y: 0 };
+
       if (walkingRef.current) {
         const speed =
           (reducedMotionRef.current ? SLOW_SPEED : RUN_SPEED) *
@@ -1580,11 +1608,19 @@ export function ScoutCompanion() {
           // and shiver. Not applied to the urgent dash back into view
           // (returningRef), which should still look purposeful.
           (stageRef.current === "critical" && !returningRef.current ? 0.5 : 1);
-        pathTRef.current += (speed * (dt / 1000)) / pathLenRef.current;
+        const sec = dt / 1000;
+        const v = velRef.current;
+        const tgt = targetRef.current;
+        const tdx = tgt.x - pos.x;
+        const tdy = tgt.y - pos.y;
+        const tdist = Math.hypot(tdx, tdy);
+        const curSpeed = Math.hypot(v.x, v.y);
 
-        if (pathTRef.current >= 1) {
+        // Arrived: this frame's step would reach (or pass) the spot.
+        if (tdist < 1.5 || Math.max(curSpeed, MIN_ARRIVE_SPEED) * sec >= tdist) {
           pos.x = targetRef.current.x;
           pos.y = targetRef.current.y;
+          velRef.current = { x: 0, y: 0 };
           walkingRef.current = false;
           setIsWalking(false);
           returningRef.current = false;
@@ -1612,34 +1648,43 @@ export function ScoutCompanion() {
             setCarryingBall(false);
           }
         } else {
-          const t = pathTRef.current;
-          const mt = 1 - t;
-          const s = pathStartRef.current;
-          const c = pathControlRef.current;
-          const e = targetRef.current;
+          // Arrive: full speed until ARRIVE_RADIUS, then ease off.
+          // The easing zone grows with top speed, so a sprint brakes early
+          // enough to stop on the spot instead of overshooting and circling.
+          const arriveR = Math.max(ARRIVE_RADIUS, ((speed * speed) / (2 * ACCEL)) * 1.3);
+          const want = Math.max(MIN_ARRIVE_SPEED, speed * Math.min(1, tdist / arriveR));
+          const m = meanderRef.current;
+          m.phase += sec * MEANDER_HZ * Math.PI * 2;
+          const heading = Math.atan2(tdy, tdx) + m.amp * Math.sin(m.phase) * Math.min(1, tdist / 160);
+          const ax = Math.cos(heading) * want - v.x;
+          const ay = Math.sin(heading) * want - v.y;
+          const amag = Math.hypot(ax, ay);
+          // Speeding up and turning are limited; slowing down is allowed
+          // to be quicker, so he never overshoots his spot.
+          const limit = (want < curSpeed ? ACCEL * 1.8 : ACCEL) * (reducedMotionRef.current ? 0.6 : 1) * sec;
+          const k = amag > limit ? limit / amag : 1;
+          v.x += ax * k;
+          v.y += ay * k;
           pos.x = clamp(
-            mt * mt * s.x + 2 * mt * t * c.x + t * t * e.x,
+            pos.x + v.x * sec,
             SIDE_MARGIN,
             Math.max(SIDE_MARGIN, document.documentElement.clientWidth - SIDE_MARGIN)
           );
-          pos.y = clamp(
-            mt * mt * s.y + 2 * mt * t * c.y + t * t * e.y,
-            TOP_MARGIN,
-            Math.max(TOP_MARGIN, pageContentBottom() - BOTTOM_MARGIN)
-          );
-          const tangentX = 2 * mt * (c.x - s.x) + 2 * t * (e.x - c.x);
-          if (Math.abs(tangentX) > 0.5) {
-            facingRef.current = tangentX > 0 ? 1 : -1;
-            setFacing(facingRef.current);
+          pos.y = clamp(pos.y + v.y * sec, TOP_MARGIN, Math.max(TOP_MARGIN, pageContentBottom() - BOTTOM_MARGIN));
+          if (Math.abs(v.x) > 12) {
+            const f: 1 | -1 = v.x > 0 ? 1 : -1;
+            if (f !== facingRef.current) {
+              facingRef.current = f;
+              setFacing(f);
+            }
           }
         }
 
-        // Faster movement gets faster leg-swaps too, so a return dash reads
-        // as a run rather than a fast slide.
-        legTimerRef.current += dt;
-        const legSwapThreshold = LEG_SWAP_MS / Math.max(0.6, pathSpeedRef.current);
-        if (legTimerRef.current > legSwapThreshold) {
-          legTimerRef.current = 0;
+        // Legs swap per distance covered, so feet never skate.
+        const moved = Math.hypot(velRef.current.x, velRef.current.y);
+        strideRef.current += moved * sec;
+        if (strideRef.current > strideFor(moved)) {
+          strideRef.current = 0;
           setLegFrame((f) => (f === 0 ? 1 : 0));
         }
       } else if (fetchingRef.current === "flying") {
@@ -1680,9 +1725,31 @@ export function ScoutCompanion() {
           setFacing(facingRef.current);
         }
       } else {
+        const act = idleActRef.current;
         if (nowMs > behaviorUntilRef.current) {
-          beginWalk();
-        } else if (Math.random() < 0.003) {
+          if (act === "rest") {
+            // Up from a proper rest: a stretch first, then off he goes.
+            setIdle("stretch");
+            behaviorUntilRef.current = nowMs + STRETCH_MS;
+          } else {
+            beginWalk();
+          }
+        } else if (act === "sniff" && nowMs > idleEndRef.current) {
+          setIdle("none");
+        } else if (act === "none" && nowMs > nextIdleAtRef.current) {
+          nextIdleAtRef.current = nowMs + 1800 + Math.random() * 2600;
+          const left = behaviorUntilRef.current - nowMs;
+          const r = Math.random();
+          if (left > 5000 && r < 0.5) {
+            setIdle("rest");
+          } else if (left > SNIFF_MS + 300 && r < 0.8 && !reducedMotionRef.current) {
+            setIdle("sniff");
+            idleEndRef.current = nowMs + SNIFF_MS;
+          } else {
+            facingRef.current = facingRef.current === 1 ? -1 : 1;
+            setFacing(facingRef.current);
+          }
+        } else if (act === "none" && Math.random() < 0.002) {
           // An idle glance side to side -- small, infrequent, alive.
           facingRef.current = facingRef.current === 1 ? -1 : 1;
           setFacing(facingRef.current);
@@ -1694,7 +1761,13 @@ export function ScoutCompanion() {
         wrapperRef.current.style.top = `${pos.y}px`;
       }
       // Mochi follows whatever this says -- see lib/companionBus.ts.
-      if (!isMobileRef.current) companionBus.ozho = { x: pos.x, y: pos.y, at: Date.now() };
+      if (!isMobileRef.current)
+        companionBus.ozho = {
+          x: pos.x,
+          y: pos.y,
+          at: Date.now(),
+          resting: !walkingRef.current && (idleActRef.current === "rest" || sittingRef.current),
+        };
     }, 16);
     return () => clearInterval(intervalId);
   }, []);
@@ -1716,26 +1789,14 @@ export function ScoutCompanion() {
       setBall(null);
       setCarryingBall(false);
     }
-    if (isMobileRef.current) {
-      // Docked mode renders him via the wrapper's fixed-corner CSS, not
-      // posRef (see the wrapper's own style below), so posRef is stale
-      // here -- point it at the equivalent page coordinate before the
-      // ring-clamp math runs, so that existing logic (written for
-      // posRef's normal page coordinates) has something real to work
-      // from. This doesn't visibly move him: the wrapper's style switches
-      // from fixed-corner to this posRef-driven positioning for as long
-      // as the menu stays open, then switches back the instant it closes.
-      const vw0 = window.innerWidth;
-      const sx0 = window.scrollX;
-      const sy0 = window.scrollY;
-      posRef.current = {
-        x: sx0 + vw0 - MOBILE_DOCK_MARGIN_X - MOBILE_DOCK_HALF,
-        y: sy0 + MOBILE_DOCK_MARGIN_Y + MOBILE_DOCK_HALF,
-      };
-    }
+    // Beside him on desktop (viewport coordinates -- the panel is fixed);
+    // null on phones, where he's docked and the panel is a bottom sheet.
+    setPanelAnchor(
+      isMobileRef.current ? null : { x: posRef.current.x - window.scrollX, y: posRef.current.y - window.scrollY }
+    );
     menuOpenRef.current = true;
     setMenuOpen(true);
-    // Clear any lingering bubble so it doesn't sit on top of the arc, and
+    // Clear any lingering bubble so it doesn't sit on top of the panel, and
     // stop him where he is (the render loop freezes him while it's open).
     if (bubbleTimeoutRef.current) clearTimeout(bubbleTimeoutRef.current);
     setBubble(null);
@@ -1746,28 +1807,6 @@ export function ScoutCompanion() {
     // exceptions active even after he's just standing here with a menu
     // open.
     returningRef.current = false;
-
-    // Keep the whole 270° ring on the visible screen. Without this, a
-    // click near a viewport edge -- most noticeably the bottom, since
-    // that's where the ring's two downward-leaning items and their label
-    // pills reach furthest -- opened a menu that was only partly there:
-    // present in the DOM, but rendered below the fold with nothing to
-    // indicate it, which just reads as "the menu didn't open". This is an
-    // instant correction, not a walk, so it doesn't fight the freeze
-    // above or trigger a leg-swap animation.
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const sx = window.scrollX;
-    const sy = window.scrollY;
-    const nudgedX = clamp(posRef.current.x, sx + MENU_SIDE_CLEARANCE, sx + vw - MENU_SIDE_CLEARANCE);
-    const nudgedY = clamp(posRef.current.y, sy + MENU_TOP_CLEARANCE, sy + vh - MENU_BOTTOM_CLEARANCE);
-    if (nudgedX !== posRef.current.x || nudgedY !== posRef.current.y) {
-      posRef.current = { x: nudgedX, y: nudgedY };
-      if (wrapperRef.current) {
-        wrapperRef.current.style.left = `${nudgedX}px`;
-        wrapperRef.current.style.top = `${nudgedY}px`;
-      }
-    }
   }
 
   function closeMenu() {
@@ -1965,19 +2004,14 @@ export function ScoutCompanion() {
     speak(pick(CELEBRATION_PHRASES), 2600);
   }
 
-  function askWhatsNext() {
-    speak(pick(NEXT_CHECKING), 2200);
-    dedupedFetchJson<{ recommendation: { label: string; href: string } | null }>("/api/plan/next")
-      .then((data) => {
-        const rec = data?.recommendation;
-        if (!rec) {
-          speak(pick(NEXT_DONE), 4200);
-          return;
-        }
-        speak(`${pick(NEXT_INTRO)} ${rec.label}. Taking you there…`, 3400);
-        setTimeout(() => router.push(rec.href), 1500);
-      })
-      .catch(() => speak(pick(NEXT_ERROR), 3600));
+  // The panel's "Up next" link: he cheers and you're off -- the panel
+  // already showed what it is, so there's nothing left to announce.
+  function goNext(href: string) {
+    closeMenu();
+    beginWakeUp();
+    lastInteractionAtRef.current = Date.now();
+    speak(pick(NEXT_INTRO), 1800);
+    router.push(href);
   }
 
   function toggleFollow() {
@@ -2034,9 +2068,6 @@ export function ScoutCompanion() {
       case "trick":
         doTrick();
         break;
-      case "next":
-        askWhatsNext();
-        break;
       case "fetch":
         throwBall();
         break;
@@ -2048,7 +2079,7 @@ export function ScoutCompanion() {
         break;
       case "wardrobe":
         speak("Wardrobe time. After you.", 2000);
-        setTimeout(() => router.push("/settings"), 700);
+        setTimeout(() => router.push("/settings#wardrobe"), 700);
         break;
     }
   }
@@ -2084,18 +2115,20 @@ export function ScoutCompanion() {
   useEffect(() => {
     if (!menuOpen) return;
     function onDown(e: PointerEvent) {
-      if (!wrapperRef.current?.contains(e.target as Node)) closeMenu();
+      const t = e.target as Element;
+      if (!wrapperRef.current?.contains(t) && !t.closest?.("[data-ozho-panel]")) closeMenu();
     }
+    // The desktop panel is pinned beside where he stood; once the page
+    // scrolls it would be pinned beside nothing. The phone sheet doesn't
+    // point at anything, so it stays.
     function onScroll() {
-      closeMenu();
+      if (!isMobileRef.current) closeMenu();
     }
     window.addEventListener("pointerdown", onDown);
     window.addEventListener("scroll", onScroll, { passive: true });
-    const t = setTimeout(closeMenu, MENU_AUTO_DISMISS_MS);
     return () => {
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("scroll", onScroll);
-      clearTimeout(t);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuOpen]);
@@ -2156,7 +2189,7 @@ export function ScoutCompanion() {
         ref={wrapperRef}
         className="absolute z-40 pointer-events-none transition-opacity duration-200"
         style={
-          isMobile && !menuOpen
+          isMobile
             ? // Docked: pinned to the viewport itself (fixed), not the page
               // (absolute), so scrolling never carries content underneath a
               // spot he still thinks is empty. Opened with the menu still
@@ -2215,7 +2248,7 @@ export function ScoutCompanion() {
           </div>
         </div>
       )}
-      {isMobile && !menuOpen && (
+      {isMobile && (
         // An opaque circular backdrop, docked-mode only -- so whatever
         // line of text happens to be scrolled underneath this corner
         // reads as "there's a badge here" (the same read as any floating
@@ -2244,9 +2277,14 @@ export function ScoutCompanion() {
             ? "animate-perk"
             : stage === "critical" && !isWalking
             ? "animate-worried"
+            : idleAct === "sniff" && !isWalking
+            ? "animate-ozho-sniff"
+            : idleAct === "stretch" && !isWalking
+            ? "animate-ozho-stretch"
             : ""
         }`}
         style={{
+          ["--face" as string]: facing,
           transform:
             !trick && isWalking
               ? `translateY(${legFrame === 1 ? -3 : 0}px) rotate(${legFrame === 1 ? (facing === 1 ? 2 : -2) : 0}deg)`
@@ -2266,15 +2304,15 @@ export function ScoutCompanion() {
             there, not "mid-stride", so the enlarged hitbox isn't needed,
             and the smaller it is the less of whatever's underneath (an
             answer choice, a Submit button) it can end up blocking. */}
-        {!(isMobile && !menuOpen) && (
+        {!isMobile && (
           <span className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2" aria-hidden />
         )}
         <PixelDog
-          size={isMobile && !menuOpen ? MOBILE_DOCK_SIZE : 44}
+          size={isMobile ? MOBILE_DOCK_SIZE : 44}
           mood={mood}
           dead={stage === "dead"}
           asleep={asleep}
-          sitting={sitting && !isWalking}
+          sitting={(sitting || idleAct === "rest") && !isWalking}
           legFrame={isWalking ? legFrame : 0}
           tailFrame={tailFrame}
           facing={facing}
@@ -2304,50 +2342,26 @@ export function ScoutCompanion() {
         </div>
       )}
 
+      </div>
       {menuOpen && (
-        // The action menu: buttons fan out in a 270° ring around him (see
-        // MENU_ARC_START/MENU_ARC_SPAN), open only at the bottom where he's
-        // standing. pointer-events-auto only on the buttons themselves so
-        // the rest of the (pointer-events-none) wrapper still lets clicks
-        // through to the page behind him.
-        <div className="absolute left-1/2 top-1/2 pointer-events-none" role="menu" aria-label={`${PET_NAME} actions`}>
-          {MENU_ITEMS.map((item, i) => {
-            const a = MENU_ARC_START + MENU_ARC_SPAN * ((i + 0.5) / MENU_ITEMS.length);
-            const dx = Math.cos(a) * MENU_RADIUS;
-            const dy = Math.sin(a) * MENU_RADIUS;
-            const label =
-              item.action === "follow" && followMode
-                ? "Roam free"
-                : item.action === "sit" && sitting
-                ? "Get up"
-                : item.label;
-            return (
-              // Positioning transform lives on this wrapper; the button
-              // only animates scale/opacity, so the two never fight over
-              // the `transform` property.
-              <div
-                key={item.action}
-                className="absolute"
-                style={{ left: 0, top: 0, transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))` }}
-              >
-                <button
-                  onClick={() => handleMenuAction(item.action)}
-                  aria-label={label}
-                  title={label}
-                  className="pointer-events-auto relative flex h-9 w-9 items-center justify-center rounded-full border border-[#ece9f7] bg-white text-base leading-none shadow-[0_4px_14px_rgba(26,26,46,0.16)] transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6d7fd6] animate-ozho-menu-item"
-                  style={{ animationDelay: `${i * 26}ms` }}
-                >
-                  <span aria-hidden>{item.icon}</span>
-                  <span className="pointer-events-none absolute top-full left-1/2 mt-1 -translate-x-1/2 whitespace-nowrap rounded-md border border-[#ece9f7] bg-white px-1.5 py-0.5 text-[10px] font-semibold text-ink shadow-sm">
-                    {label}
-                  </span>
-                </button>
-              </div>
-            );
-          })}
+        // A sibling of the wrapper, not a child: the wrapper carries a
+        // transform, which would make this fixed-position panel position
+        // itself against him instead of the viewport.
+        <div data-ozho-panel>
+          <OzhoPanel
+            anchor={panelAnchor}
+            stage={stage}
+            streak={streak}
+            fedToday={fedToday}
+            sitting={sitting}
+            following={followMode}
+            docked={isMobile}
+            onAction={handleMenuAction}
+            onGo={goNext}
+            onClose={closeMenu}
+          />
         </div>
       )}
-      </div>
     </>
   );
 }
