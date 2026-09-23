@@ -17,25 +17,65 @@ const BALL_PIXELS = [
 ];
 const BALL_COLORS: Record<string, string> = { b: "#cfdc3a", d: "#a4b21f", h: "#eef5b0", s: "#fbfdf0" };
 
+// Lighting (the highlight and the shaded underside) stays put while the
+// ball rolls -- only the seam turns. Rotating the whole sprite swung its
+// shaded side around with it, which read as the shadow spinning.
+const SEAM: [number, number][] = [];
+BALL_PIXELS.forEach((row, j) => [...row].forEach((c, i) => c === "s" && SEAM.push([i, j])));
+// The seam after `turn` quarter turns about the ball's center; 8x8 keeps
+// every rotated pixel on the grid.
+function seamAt(turn: number): [number, number][] {
+  return SEAM.map(([i, j]) => {
+    let x = i;
+    let y = j;
+    for (let k = 0; k < turn; k++) [x, y] = [7 - y, x];
+    return [x, y];
+  });
+}
+
 /** The ball's pixels as rects, placed at (x, y) in whatever SVG they're drawn into. */
-export function ballRects(x: number, y: number, keyPrefix = "ball") {
+export function ballRects(x: number, y: number, keyPrefix = "ball", turn = 0) {
   const out: JSX.Element[] = [];
   BALL_PIXELS.forEach((row, j) => {
     for (let i = 0; i < row.length; i++) {
       const c = row[i];
       if (c === ".") continue;
-      out.push(<rect key={`${keyPrefix}-${i}-${j}`} x={x + i} y={y + j} width={1} height={1} fill={BALL_COLORS[c]} />);
+      // Under the seam: whatever the lighting there would be.
+      const base = c === "s" ? (j >= 7 || (i >= 6 && j >= 5) ? "d" : "b") : c;
+      out.push(<rect key={`${keyPrefix}-${i}-${j}`} x={x + i} y={y + j} width={1} height={1} fill={BALL_COLORS[base]} />);
     }
   });
+  for (const [i, j] of seamAt(turn)) {
+    out.push(<rect key={`${keyPrefix}-s-${i}-${j}`} x={x + i} y={y + j} width={1} height={1} fill={BALL_COLORS.s} />);
+  }
   return out;
 }
 
+/**
+ * The free ball. All four seam positions are drawn up front and one is
+ * shown at a time (see setBallTurn), so rolling it is a cheap DOM toggle
+ * rather than a React re-render every frame.
+ */
 export function PixelBall({ size }: { size: number }) {
   return (
     <svg viewBox="0 0 8 8" width={size} height={size} shapeRendering="crispEdges" style={{ display: "block" }}>
-      {ballRects(0, 0)}
+      {[0, 1, 2, 3].map((t) => (
+        <g key={t} data-turn={t} style={{ display: t === 0 ? undefined : "none" }}>
+          {ballRects(0, 0, `t${t}`, t)}
+        </g>
+      ))}
     </svg>
   );
+}
+
+/** Shows the seam position for `spin` degrees rolled. */
+export function setBallTurn(svgParent: HTMLElement, spin: number) {
+  const turn = (((Math.round(spin / 90) % 4) + 4) % 4).toString();
+  if (svgParent.dataset.turn === turn) return;
+  svgParent.dataset.turn = turn;
+  svgParent.querySelectorAll<SVGGElement>("g[data-turn]").forEach((g) => {
+    g.style.display = g.dataset.turn === turn ? "" : "none";
+  });
 }
 
 // ---- physics ---------------------------------------------------------------

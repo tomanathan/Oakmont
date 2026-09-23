@@ -8,7 +8,7 @@ import { PET_NAME, type PetStage } from "@/lib/pet";
 import { dedupedFetchJson } from "@/lib/dedupeFetch";
 import { companionBus } from "@/lib/companionBus";
 import { OzhoPanel, type OzhoAction } from "./OzhoPanel";
-import { PixelBall, planToss, stepBall, ballGround, type BallSim } from "./ozhoBall";
+import { PixelBall, planToss, stepBall, ballGround, setBallTurn, type BallSim } from "./ozhoBall";
 
 // Ozho's whole voice, in one place. The character: an enthusiastic,
 // slightly goofy study buddy who treats prep like something the two of you
@@ -614,6 +614,7 @@ export function ScoutCompanion() {
   const ballBodyElRef = useRef<HTMLDivElement | null>(null);
   const ballShadowElRef = useRef<HTMLDivElement | null>(null);
   const ballTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const ballTurnRef = useRef({ turn: 0, spin: 0, at: 0 });
   // True for the whole return leg of a fetch (see the walk-complete branch
   // below) -- draws the ball held at his mouth on PixelDog instead of
   // sitting out on the page, since he's carrying it, not chasing it.
@@ -1889,9 +1890,20 @@ export function ScoutCompanion() {
     const footY = g.y + BALL_FOOT;
     el.style.opacity = "1";
     el.style.transform = `translate3d(${Math.round(g.x - BALL_SIZE / 2)}px, ${Math.round(footY - BALL_SIZE - b.h)}px, 0)`;
-    // Squash on impact; the spin snaps to quarter turns so the pixel art
-    // stays crisp while it rolls.
-    body.style.transform = `scale(${(1 + 0.3 * b.squash).toFixed(3)}, ${(1 - 0.3 * b.squash).toFixed(3)}) rotate(${Math.round(b.spin / 90) * 90}deg)`;
+    // Squash on impact. The roll turns only the seam, in quarter turns so
+    // the pixels stay crisp; its lighting and shadow never rotate.
+    body.style.transform = `scale(${(1 + 0.3 * b.squash).toFixed(3)}, ${(1 - 0.3 * b.squash).toFixed(3)})`;
+    // A real roll is many quarter turns per frame at speed, which strobes
+    // (and can look like it's spinning backwards). One step per ~55ms at
+    // most reads as a smooth, fast roll instead.
+    const tr = ballTurnRef.current;
+    const now = performance.now();
+    if (b.spin - tr.spin >= 90 && now - tr.at > 55) {
+      tr.turn = (tr.turn + 1) % 4;
+      tr.spin = b.spin;
+      tr.at = now;
+    }
+    setBallTurn(body, tr.turn * 90);
     const lift = Math.min(1, b.h / 120);
     shadow.style.opacity = (0.16 * (1 - 0.6 * lift)).toFixed(3);
     shadow.style.transform = `translate3d(${Math.round(g.x - (BALL_SIZE * 0.6))}px, ${Math.round(footY - 2)}px, 0) scale(${(1 - 0.45 * lift).toFixed(3)})`;
@@ -1922,6 +1934,7 @@ export function ScoutCompanion() {
 
     if (ballTimerRef.current) clearInterval(ballTimerRef.current);
     ballSimRef.current = planToss(origin, rest);
+    ballTurnRef.current = { turn: 0, spin: 0, at: 0 };
     setBallShown(true);
     let last = performance.now();
     ballTimerRef.current = setInterval(() => {
