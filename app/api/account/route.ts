@@ -4,7 +4,8 @@ import { getCurrentUser } from "@/lib/session";
 import { SESSION_COOKIE_NAME } from "@/lib/auth";
 import { stripe } from "@/lib/stripe";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
-import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, completedDomainCount } from "@/lib/mastery";
+import { progressMapFromRows } from "@/lib/progressState";
 import { isCostumeUnlocked } from "@/lib/costumes";
 import { parseDateOnly, startOfUTCDay } from "@/lib/dateOnly";
 
@@ -34,8 +35,7 @@ export async function PATCH(req: NextRequest) {
       prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
       prisma.user.findUnique({ where: { id: user.userId }, select: { longestStreak: true } }),
     ]);
-    const progress: ProgressMap = {};
-    for (const row of progressRows) progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
+    const progress = progressMapFromRows(progressRows);
     const subskillsByDomain: Record<string, string[]> = {};
     for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
     const mastery = computeDomainMastery(

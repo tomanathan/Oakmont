@@ -11,8 +11,8 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
       body: "Each week targets specific subskills, in the order that moves your score most — not a fixed syllabus.",
     },
     {
-      title: "Learn, practice, test",
-      body: `Lessons, worked examples and a quiz for all ${subskillCount} subskills, with 8 full-length practice tests along the way.`,
+      title: "Learn, practice, review",
+      body: `Lessons and a quiz for all ${subskillCount} subskills, then short mixed reviews at SAT pace that keep every skill fresh until test day. Plus 8 full-length practice tests.`,
     },
   ];
 

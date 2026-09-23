@@ -1,9 +1,10 @@
 import type { Section } from "@/data/curriculum";
-import type { ProgressMap } from "./mastery";
+import { isMastered, isPassed, type ProgressMap } from "./progressState";
 
 export interface SectionProgress {
   total: number;
   attemptedCount: number;
+  passedCount: number; // passed or mastered
   masteredCount: number;
   avgPct: number | null;
 }
@@ -11,8 +12,8 @@ export interface SectionProgress {
 /**
  * Real mastery numbers for one whole section (Math, or Reading and
  * Writing) -- every subskill across every domain in this section, split
- * into mastered (a perfect quiz score), attempted-but-not-mastered, and
- * untouched. `avgPct` is the average score across ATTEMPTED subskills
+ * into mastered (see lib/progressState.ts), attempted-but-not-mastered,
+ * and untouched. `avgPct` is the average score across ATTEMPTED subskills
  * only (untouched subskills are simply absent from it, not a zero
  * dragging it down) -- an early first attempt shouldn't read as a
  * near-failing grade just because the rest of the section hasn't been
@@ -28,7 +29,8 @@ export interface SectionProgress {
 export function sectionProgress(section: Section, progress: ProgressMap): SectionProgress {
   const subskillIds = section.domains.flatMap((d) => d.subskills.map((s) => s.id));
   const attempted = subskillIds.filter((id) => !!progress[id]);
-  const masteredCount = attempted.filter((id) => progress[id].bestScore === progress[id].total).length;
+  const masteredCount = attempted.filter((id) => isMastered(progress[id])).length;
+  const passedCount = attempted.filter((id) => isPassed(progress[id])).length;
   const avgPct =
     attempted.length > 0
       ? Math.round(
@@ -38,5 +40,5 @@ export function sectionProgress(section: Section, progress: ProgressMap): Sectio
           }, 0) / attempted.length
         )
       : null;
-  return { total: subskillIds.length, attemptedCount: attempted.length, masteredCount, avgPct };
+  return { total: subskillIds.length, attemptedCount: attempted.length, passedCount, masteredCount, avgPct };
 }

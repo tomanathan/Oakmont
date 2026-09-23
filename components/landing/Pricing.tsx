@@ -22,6 +22,7 @@ export async function Pricing() {
   const included = [
     "Your week-by-week plan, paced to your test date",
     `Lessons, worked examples and quizzes for all ${ALL_SUBSKILLS.length} subskills`,
+    "Mixed review at SAT pace that brings back what you'd otherwise forget",
     "8 full-length practice tests with review",
     "Ozho, streaks and the costume wardrobe",
     "Read-only parent view",

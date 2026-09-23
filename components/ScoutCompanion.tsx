@@ -92,7 +92,7 @@ const TIPS = [
 // coming" on the plan -- instead of the same wherever-you-are filler on
 // every screen. pickMessage() below also folds these into its ambient rolls
 // while sitting on that page, not just on arrival.
-type PageKind = "dashboard" | "plan" | "subskill" | "settings";
+type PageKind = "dashboard" | "plan" | "subskill" | "settings" | "review";
 
 const PAGE_LINES: Record<PageKind, string[]> = {
   dashboard: [
@@ -116,6 +116,11 @@ const PAGE_LINES: Record<PageKind, string[]> = {
     "No timer on this one. Take all the time you want.",
     "Got one wrong? Perfect. Now we know what to practice.",
   ],
+  review: [
+    "No labels here. Sniff out what each question wants first.",
+    "Not sure? Say so. That's how I know what to bring back.",
+    "Old skills, new order. This is how they stick.",
+  ],
   settings: [
     "Set your test date and the whole plan resizes around it.",
     "The wardrobe's in here. I have opinions about the scarf.",
@@ -133,6 +138,7 @@ function pageKindFor(pathname: string | null): PageKind | null {
   if (pathname.startsWith("/plan") || pathname.startsWith("/analysis")) return "plan";
   if (pathname.startsWith("/subskill")) return "subskill";
   if (pathname.startsWith("/settings")) return "settings";
+  if (pathname.startsWith("/review")) return "review";
   return null;
 }
 

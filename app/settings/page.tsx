@@ -3,7 +3,8 @@ import { getCurrentUser } from "@/lib/session";
 import { getUserStats } from "@/lib/user";
 import { prisma } from "@/lib/prisma";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
-import { computeDomainMastery, completedDomainCount, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, completedDomainCount } from "@/lib/mastery";
+import { progressMapFromRows } from "@/lib/progressState";
 import { isCostumeUnlocked, bestUnlockedCostume } from "@/lib/costumes";
 import { computePetState, PET_NAME, SECOND_PET_NAME, SECOND_PET_UNLOCK_STREAK_DAYS } from "@/lib/pet";
 import { AppShell } from "@/components/AppShell";
@@ -26,8 +27,7 @@ export default async function SettingsPage() {
     }),
   ]);
 
-  const progress: ProgressMap = {};
-  for (const row of progressRows) progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
+  const progress = progressMapFromRows(progressRows);
   const subskillsByDomain: Record<string, string[]> = {};
   for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
   // Wardrobe unlocks don't depend on practice-test scores at all, so this

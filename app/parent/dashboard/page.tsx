@@ -4,7 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
 import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { computePetState } from "@/lib/pet";
-import { computeDomainMastery, orderSubskillsByWeakness, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, orderSubskillsByWeakness } from "@/lib/mastery";
+import { progressMapFromRows, isPassed } from "@/lib/progressState";
 import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan } from "@/data/curriculum";
 import { ParentShell } from "@/components/ParentShell";
@@ -50,10 +51,7 @@ export default async function ParentDashboardPage({
     prisma.practiceTest.findMany({ where: { userId: student.id }, orderBy: { takenAt: "desc" } }),
   ]);
 
-  const progress: ProgressMap = {};
-  for (const row of rows) {
-    progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
-  }
+  const progress = progressMapFromRows(rows);
 
   const subskillsByDomain: Record<string, string[]> = {};
   for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
@@ -74,7 +72,7 @@ export default async function ParentDashboardPage({
   const studyPlan = buildStudyPlan(Math.ceil(courseLengthDays / 7), weaknessOrderedIds);
   const planSubskillIds = new Set(studyPlan.flatMap((w) => w.subskillIds));
   const completedInPlan = Object.entries(progress).filter(
-    ([id, p]) => planSubskillIds.has(id) && p.bestScore === p.total
+    ([id, p]) => planSubskillIds.has(id) && isPassed(p)
   ).length;
   const pacing = computePacing(createdAt, new Date(), planSubskillIds.size, completedInPlan, courseLengthDays);
 

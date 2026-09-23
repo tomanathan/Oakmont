@@ -13,8 +13,10 @@ import { findRecommended } from "@/lib/recommend";
 import { sectionProgress } from "@/lib/subjectProgress";
 import { CompanionCard } from "@/components/CompanionCard";
 import type { CompanionSummary } from "@/lib/companionSummary";
+import { statusOf, type ProgressMap } from "@/lib/progressState";
+import { SubskillStatusBadge, STATUS_CARD } from "@/components/SubskillStatusBadge";
+import type { Recommendation } from "@/lib/recommend";
 
-type ProgressMap = Record<string, { bestScore: number; total: number }>;
 
 interface TodaySubskill {
   id: string;
@@ -40,6 +42,8 @@ export function DashboardClient({
   daysUntilTest,
   thisWeek,
   companion,
+  planOrder,
+  review,
 }: {
   curriculum: Section[];
   progress: ProgressMap;
@@ -49,6 +53,8 @@ export function DashboardClient({
   daysUntilTest: number | null;
   thisWeek: { done: number; total: number };
   companion: CompanionSummary;
+  planOrder: string[];
+  review: { ready: boolean; toConfirm: number; refreshers: number };
 }) {
   const router = useRouter();
   const completedCount = Object.keys(progress).length;
@@ -56,7 +62,7 @@ export function DashboardClient({
   const [subject, setSubject] = useState(curriculum[0]?.section ?? "");
   const activeSection = curriculum.find((s) => s.section === subject) ?? curriculum[0];
 
-  const recommended = findRecommended(curriculum, progress, today);
+  const recommended = findRecommended(curriculum, progress, today, { order: planOrder, reviewReady: review.ready });
 
   const [openDomains, setOpenDomains] = useState<Set<string>>(() => {
     // Start with whichever domain holds today's recommended module already
@@ -100,6 +106,7 @@ export function DashboardClient({
             thisWeek={thisWeek}
             pacing={pacing}
             recommended={recommended}
+            review={review}
             hasStarted={completedCount > 0}
           />
         )}
@@ -120,7 +127,7 @@ export function DashboardClient({
         {curriculum.map((sec) => {
           const theme = sectionTheme(sec.section);
           const active = sec.section === subject;
-          const { total: sectionTotal, attemptedCount, masteredCount: sectionMastered, avgPct } = sectionProgress(
+          const { total: sectionTotal, attemptedCount, passedCount, masteredCount: sectionMastered, avgPct } = sectionProgress(
             sec,
             progress
           );
@@ -161,7 +168,8 @@ export function DashboardClient({
                 </div>
               )}
               <div className="mt-1 text-xs text-gray-500">
-                {attemptedCount} started &middot; {sectionMastered} mastered &middot; {sectionTotal} total
+                {attemptedCount} started &middot; {passedCount} passed &middot; {sectionMastered} mastered &middot;{" "}
+                {sectionTotal} total
               </div>
             </button>
           );
@@ -227,30 +235,18 @@ export function DashboardClient({
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
                       {d.subskills.map((s) => {
                         const p = progress[s.id];
-                        const mastered = p && p.bestScore === p.total;
+                        const status = statusOf(p);
                         return (
                           <div
                             key={s.id}
                             onClick={() => router.push(`/subskill/${s.id}`)}
                             className={`border rounded-xl p-3.5 cursor-pointer transition-colors ${
-                              mastered
-                                ? "bg-[#fffaf0] border-[#f0e0b0] hover:border-[#e8d29a]"
-                                : p
-                                ? "bg-[#f0f7f2] border-gray-200 hover:border-gray-300"
-                                : `${theme.cardBg} ${theme.cardBorder}`
+                              status === "new" ? `${theme.cardBg} ${theme.cardBorder}` : STATUS_CARD[status]
                             }`}
                           >
-                            <div className="flex justify-between items-start">
+                            <div className="flex justify-between items-start gap-2">
                               <span className="text-sm font-medium text-ink">{s.name}</span>
-                              {mastered ? (
-                                <span className="text-[11px] text-[#c9971b] font-semibold whitespace-nowrap ml-2">
-                                  ★ Mastered
-                                </span>
-                              ) : p ? (
-                                <span className="text-[11px] text-accent font-semibold whitespace-nowrap ml-2">
-                                  ✓ {p.bestScore}/{p.total}
-                                </span>
-                              ) : null}
+                              <SubskillStatusBadge progress={p} />
                             </div>
                             <div className="text-xs text-gray-400 mt-1">{s.blurb}</div>
                           </div>
@@ -302,6 +298,7 @@ function PlanCard({
   thisWeek,
   pacing,
   recommended,
+  review,
   hasStarted,
 }: {
   today: TodayPlan | null;
@@ -309,7 +306,8 @@ function PlanCard({
   daysUntilTest: number | null;
   thisWeek: { done: number; total: number };
   pacing: Pacing;
-  recommended: { label: string; href: string; domain?: string } | null;
+  recommended: Recommendation | null;
+  review: { ready: boolean; toConfirm: number; refreshers: number };
   hasStarted: boolean;
 }) {
   const router = useRouter();
@@ -368,7 +366,13 @@ function PlanCard({
         >
           <div className="flex-1 min-w-0">
             <div className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-white/45">
-              {today?.type === "test" ? "Today" : hasStarted ? "Jump back in" : "Start here"}
+              {recommended.kind === "review"
+                ? "Mixed · every skill so far"
+                : today?.type === "test"
+                ? "Today"
+                : hasStarted
+                ? "Jump back in"
+                : "Start here"}
             </div>
             <div className="text-[15px] font-display font-semibold truncate">{recommended.label}</div>
           </div>
@@ -382,7 +386,6 @@ function PlanCard({
         <div className="mt-1.5 flex flex-col">
           {alsoToday.map((s) => {
             const p = progress[s.id];
-            const mastered = p && p.bestScore === p.total;
             return (
               <div
                 key={s.id}
@@ -390,11 +393,9 @@ function PlanCard({
                 className="flex items-center justify-between gap-3 px-3 py-1.5 -mx-1 rounded-lg cursor-pointer text-sm hover:bg-[#faf9ff] transition-colors"
               >
                 <span className="text-ink truncate">{s.name}</span>
-                {mastered ? (
-                  <span className="text-[11px] text-[#c9971b] font-semibold flex-shrink-0">★ Mastered</span>
-                ) : p ? (
-                  <span className="text-[11px] text-accent font-semibold flex-shrink-0">
-                    ✓ {p.bestScore}/{p.total}
+                {p ? (
+                  <span className="flex-shrink-0">
+                    <SubskillStatusBadge progress={p} />
                   </span>
                 ) : (
                   <span className="text-[11px] text-gray-300 flex-shrink-0">Also today</span>
@@ -403,6 +404,28 @@ function PlanCard({
             );
           })}
         </div>
+      )}
+
+      {/* Mixed review, when it isn't already the main action but has
+          something waiting: skills to master, or refreshers due. */}
+      {review.ready && recommended?.kind !== "review" && review.toConfirm + review.refreshers > 0 && (
+        <button
+          onClick={() => router.push("/review")}
+          className="mt-2 flex w-full items-center justify-between gap-3 rounded-xl border border-[#e0defa] px-4 py-2.5 text-left transition-colors hover:border-[#c9c6ee] hover:bg-[#faf9ff]"
+        >
+          <div className="min-w-0">
+            <div className="text-[13.5px] font-semibold text-ink">Mixed review</div>
+            <div className="text-[12px] text-gray-500">
+              {[
+                review.toConfirm > 0 && `${review.toConfirm} ready to master`,
+                review.refreshers > 0 && `${review.refreshers} due for a refresher`,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </div>
+          </div>
+          <span className="flex-shrink-0 text-gray-400">&rarr;</span>
+        </button>
       )}
 
       {/* Pace: status is the headline, week/overall counts are quiet

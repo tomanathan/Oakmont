@@ -6,7 +6,8 @@ import { hasActiveAccess } from "@/lib/subscription";
 import { courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { buildDayPlan } from "@/lib/studyPlan";
 import { addUTCDays, utcDayDiff } from "@/lib/dateOnly";
-import { computeDomainMastery, orderSubskillsByWeakness, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, orderSubskillsByWeakness } from "@/lib/mastery";
+import { progressMapFromRows } from "@/lib/progressState";
 import { buildStudyPlan, getSubskill, ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
 import { PlanClient } from "./PlanClient";
@@ -29,10 +30,7 @@ export default async function PlanPage() {
   ]);
   if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
 
-  const progress: ProgressMap = {};
-  for (const row of rows) {
-    progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
-  }
+  const progress = progressMapFromRows(rows);
 
   const subskillsByDomain: Record<string, string[]> = {};
   for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);

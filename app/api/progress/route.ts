@@ -3,18 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { getUserStats } from "@/lib/user";
 import { hasActiveAccess } from "@/lib/subscription";
-import { getSubskill, ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
+import { getSubskill } from "@/data/curriculum";
 import { QUESTIONS } from "@/data/questions";
-import { updateStreak, isStreakMilestone } from "@/lib/gamification";
-import {
-  computeDomainMastery,
-  completedDomainCount,
-  isSectionComplete,
-  isCurriculumComplete,
-  type ProgressMap,
-} from "@/lib/mastery";
-import { bestUnlockedCostume } from "@/lib/costumes";
-import { isSecondPetUnlocked } from "@/lib/pet";
+import { gradeItems } from "@/lib/items";
+import { finishActivity, logItemAttempts } from "@/lib/activity";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -38,9 +30,10 @@ export async function GET() {
   return NextResponse.json({ progress });
 }
 
-const SUBSKILLS_BY_DOMAIN: Record<string, string[]> = {};
-for (const s of ALL_SUBSKILLS) (SUBSKILLS_BY_DOMAIN[s.domain] ??= []).push(s.id);
-
+// A finished subskill quiz. Each answer is graded here against the bank
+// (the client reports which choice it picked, never whether it was right)
+// and logged per item; a perfect score marks the subskill passed. Passing
+// is the first of two steps to mastered -- see lib/progressState.ts.
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) {
@@ -51,147 +44,83 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Your access has expired." }, { status: 402 });
   }
 
-  let body: { subskillId?: string; score?: number; total?: number };
+  let body: { subskillId?: string; score?: number; items?: unknown };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const { subskillId, score } = body;
+  const { subskillId } = body;
   const subskill = subskillId ? getSubskill(subskillId) : null;
   if (!subskillId || !subskill) {
     return NextResponse.json({ error: "Unknown subskill." }, { status: 400 });
   }
-  // The real question count for this subskill, from the curriculum data --
-  // never the client's `total`. Trusting a client-supplied total let a
-  // request claim any score against any total (e.g. 999/999), and separately
-  // meant a bestScore from one quiz length could get compared against a
-  // different one, corrupting mastery -- see the ratio comparison below.
+  // The real question count, from the bank -- never the client's.
   const realTotal = QUESTIONS[subskillId]?.length ?? 0;
   if (realTotal <= 0) {
     return NextResponse.json({ error: "This subskill has no quiz yet." }, { status: 400 });
   }
-  if (typeof score !== "number" || !Number.isInteger(score) || score < 0 || score > realTotal) {
-    return NextResponse.json({ error: "Invalid score data." }, { status: 400 });
+
+  // Current clients send every answer; the bare `score` path only exists
+  // for a page loaded before this version deployed.
+  const graded = gradeItems(body.items, subskillId);
+  let score: number;
+  if (graded.length > 0) {
+    if (graded.length !== realTotal) {
+      return NextResponse.json({ error: "Answer every question before submitting." }, { status: 400 });
+    }
+    score = graded.filter((g) => g.correct).length;
+  } else {
+    score = body.score as number;
+    if (typeof score !== "number" || !Number.isInteger(score) || score < 0 || score > realTotal) {
+      return NextResponse.json({ error: "Invalid score data." }, { status: 400 });
+    }
   }
 
-  // Fetched once and reused both to find this subskill's prior best (below)
-  // and to compute domain mastery before/after this submission (further
-  // down), rather than querying progress twice.
   const rowsBefore = await prisma.progress.findMany({ where: { userId: user.userId } });
   const existing = rowsBefore.find((r) => r.subskillId === subskillId);
 
-  // Compare by RATIO, not raw score -- a subskill's question count can
-  // change between attempts (the question bank grows), and a prior
-  // bestScore belongs to whatever total was current *then*. Comparing raw
-  // scores across two different totals (e.g. keeping an old "15" against a
-  // new quiz's total of 10) used to let bestScore exceed total outright,
-  // permanently blocking `bestScore === total` from ever being true again --
-  // i.e. the student could never re-master that subskill. bestScore and
-  // total are now always written together, from the same attempt.
+  // Best score is compared as a ratio, not a raw count, so a quiz whose
+  // length changed since the last attempt can't wedge it.
   const previousRatio = existing ? existing.bestScore / existing.total : 0;
-  const newRatio = score / realTotal;
-  const thisAttemptIsNewBest = newRatio >= previousRatio;
-  const newBest = thisAttemptIsNewBest ? score : existing!.bestScore;
-  const bestTotal = thisAttemptIsNewBest ? realTotal : existing!.total;
+  const thisAttemptIsNewBest = score / realTotal >= previousRatio;
+  const perfect = score === realTotal;
+  const now = new Date();
+  const justPassed = perfect && !existing?.passedAt && !existing?.masteredAt;
 
   const progressResult = existing
     ? await prisma.progress.update({
         where: { userId_subskillId: { userId: user.userId, subskillId } },
         data: {
-          bestScore: newBest,
-          total: bestTotal,
+          bestScore: thisAttemptIsNewBest ? score : existing.bestScore,
+          total: thisAttemptIsNewBest ? realTotal : existing.total,
           attempts: existing.attempts + 1,
-          lastAttempt: new Date(),
+          lastAttempt: now,
+          ...(justPassed ? { passedAt: now } : {}),
         },
       })
     : await prisma.progress.create({
-        data: { userId: user.userId, subskillId, bestScore: score, total: realTotal, attempts: 1 },
+        data: {
+          userId: user.userId,
+          subskillId,
+          bestScore: score,
+          total: realTotal,
+          attempts: 1,
+          passedAt: perfect ? now : null,
+        },
       });
 
-  const wasMastered = previousRatio >= 1;
-  const justMastered = !wasMastered && newBest === bestTotal;
-
-  // Did this submission just finish an entire domain ("section" in the
-  // dashboard's language) -- every subskill in it now at a perfect score --
-  // and did that ripple up into finishing the whole subject it belongs to,
-  // or the entire curriculum? Each compared before vs. after this one
-  // update rather than just checking the after state, so these only fire
-  // on the actual transition, not on every later quiz taken in an
-  // already-finished domain/subject. Also whether it pushed the student's
-  // completed-domain count into a new wardrobe tier.
-  const progressBefore: ProgressMap = {};
-  for (const row of rowsBefore) progressBefore[row.subskillId] = { bestScore: row.bestScore, total: row.total };
-  const progressAfter: ProgressMap = { ...progressBefore, [subskillId]: { bestScore: newBest, total: bestTotal } };
-
-  const masteryBefore = computeDomainMastery(ALL_DOMAINS, SUBSKILLS_BY_DOMAIN, progressBefore, null);
-  const masteryAfter = computeDomainMastery(ALL_DOMAINS, SUBSKILLS_BY_DOMAIN, progressAfter, null);
-  const domainBefore = masteryBefore.find((d) => d.domain === subskill.domain);
-  const domainAfter = masteryAfter.find((d) => d.domain === subskill.domain);
-  const justCompletedDomain = !domainBefore?.completed && domainAfter?.completed ? subskill.domain : null;
-
-  const justCompletedSection =
-    !isSectionComplete(masteryBefore, subskill.section) && isSectionComplete(masteryAfter, subskill.section)
-      ? subskill.section
-      : null;
-  const justCompletedCurriculum = !isCurriculumComplete(masteryBefore) && isCurriculumComplete(masteryAfter);
-
-  // Fetched before the costume before/after comparison (not just before the
-  // streak update below) because a costume's unlock can now depend on
-  // longestStreak too, not just domain count -- see lib/costumes.ts. A quiz
-  // submitted today can simultaneously push the streak past one of those
-  // thresholds AND finish a domain, so both currencies' "before" snapshots
-  // have to come from the same pre-update read.
-  const dbUser = await prisma.user.findUnique({ where: { id: user.userId } });
-  const streak = updateStreak(
-    dbUser?.lastActiveDate ?? null,
-    dbUser?.currentStreak ?? 0,
-    dbUser?.longestStreak ?? 0
-  );
-
-  const costumeBefore = bestUnlockedCostume({
-    domainsCompleted: completedDomainCount(masteryBefore),
-    longestStreak: dbUser?.longestStreak ?? 0,
-  });
-  const costumeAfter = bestUnlockedCostume({
-    domainsCompleted: completedDomainCount(masteryAfter),
-    longestStreak: streak.longestStreak,
-  });
-  const newCostume = costumeAfter.id !== costumeBefore.id ? costumeAfter : null;
-
-  // Same before/after shape as the costume and domain checks above --
-  // Mochi is a one-time reward, so this only fires true on the exact
-  // submission that first crosses the threshold, never again after.
-  const secondPetJustUnlocked =
-    !isSecondPetUnlocked(dbUser?.longestStreak ?? 0) && isSecondPetUnlocked(streak.longestStreak);
-
-  // Only a genuine milestone moment if the streak actually changed today
-  // (not a second quiz on a day that already counted), so this can't fire
-  // more than once on the day a milestone is actually reached.
-  const streakMilestone =
-    streak.currentStreak !== (dbUser?.currentStreak ?? 0) && isStreakMilestone(streak.currentStreak);
-
-  const updatedUser = await prisma.user.update({
-    where: { id: user.userId },
-    data: {
-      currentStreak: streak.currentStreak,
-      longestStreak: streak.longestStreak,
-      lastActiveDate: streak.lastActiveDate,
-    },
-  });
+  await logItemAttempts(user.userId, "quiz", graded);
+  const outcome = await finishActivity(user.userId, rowsBefore);
 
   return NextResponse.json({
     ok: true,
     progress: progressResult,
-    justMastered,
-    justCompletedDomain,
-    justCompletedSection,
-    justCompletedCurriculum,
-    newCostume: newCostume ? { id: newCostume.id, name: newCostume.name } : null,
-    secondPetJustUnlocked,
-    currentStreak: updatedUser.currentStreak,
-    longestStreak: updatedUser.longestStreak,
-    streakMilestone,
+    score,
+    total: realTotal,
+    justPassed,
+    alreadyMastered: !!existing?.masteredAt,
+    ...outcome,
   });
 }

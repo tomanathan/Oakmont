@@ -241,8 +241,8 @@ export function SettingsClient({
         </div>
         <div className="text-xs text-gray-500 mb-4">
           {sectionsCompleted} of {totalSections} sections completed &mdash; every subskill in a domain
-          quizzed to a perfect score. Two ways to unlock a new look: finish a section, or keep your
-          daily practice streak going. Pick whichever unlocked look you want Ozho to wear.
+          mastered. Two ways to unlock a new look: finish a section, or keep your daily practice
+          streak going. Pick whichever unlocked look you want Ozho to wear.
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {COSTUMES.map((c) => {

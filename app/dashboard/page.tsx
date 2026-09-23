@@ -5,7 +5,9 @@ import { getUserStats } from "@/lib/user";
 import { hasActiveAccess } from "@/lib/subscription";
 import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { computePetState } from "@/lib/pet";
-import { computeDomainMastery, completedDomainCount, orderSubskillsByWeakness, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, completedDomainCount, orderSubskillsByWeakness } from "@/lib/mastery";
+import { progressMapFromRows, isPassed } from "@/lib/progressState";
+import { reviewCounts } from "@/lib/reviewSet";
 import { companionSummary } from "@/lib/companionSummary";
 import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
@@ -30,10 +32,7 @@ export default async function DashboardPage() {
   if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
   if (!stats.welcomeSeenAt) redirect("/welcome");
 
-  const progress: ProgressMap = {};
-  for (const row of rows) {
-    progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
-  }
+  const progress = progressMapFromRows(rows);
   const createdAt = stats.createdAt ?? new Date();
   const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null);
 
@@ -62,15 +61,11 @@ export default async function DashboardPage() {
   const studyPlan = buildStudyPlan(Math.ceil(courseLengthDays / 7), weaknessOrderedIds);
   // Pace against the plan's actual scope (the subskills it schedules
   // week-by-week), not the full subskill bank, so the numbers line up with
-  // what /plan shows. Counts MASTERED subskills (a perfect quiz score), not
-  // merely-attempted ones -- otherwise the pace bar and "N ahead of pace"
-  // status reward guessing through every quiz once instead of actually
-  // learning the material, and disagree with the "mastered" count shown
-  // right below it on the same card.
+  // what /plan shows. Counts PASSED subskills (a perfect quiz), not merely
+  // attempted ones -- the plan's pace is about working through new
+  // material; mastering it is mixed review's job, on its own schedule.
   const planSubskillIds = new Set(studyPlan.flatMap((w) => w.subskillIds));
-  const completedInPlan = Object.entries(progress).filter(
-    ([id, p]) => planSubskillIds.has(id) && p.bestScore === p.total
-  ).length;
+  const completedInPlan = Object.entries(progress).filter(([id, p]) => planSubskillIds.has(id) && isPassed(p)).length;
   const pacing = computePacing(
     createdAt,
     new Date(),
@@ -108,10 +103,10 @@ export default async function DashboardPage() {
     const to = stats.lastLoginAt.getTime();
     for (const row of rows) {
       const t = row.lastAttempt.getTime();
-      if (t >= from && t < to) {
-        quizzesLastSession++;
-        if (row.bestScore === row.total) masteredLastSession++;
-      }
+      if (t >= from && t < to) quizzesLastSession++;
+      // Mastery now lands in mixed review, which doesn't touch lastAttempt.
+      const m = row.masteredAt?.getTime();
+      if (m !== undefined && m >= from && m < to) masteredLastSession++;
     }
   }
   const showWelcomeBack =
@@ -146,6 +141,8 @@ export default async function DashboardPage() {
         today={today}
         daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
         thisWeek={{ done: weekDone, total: weekTotal }}
+        planOrder={weaknessOrderedIds}
+        review={reviewCounts(progress)}
         companion={companionSummary({
           lastActiveDate: stats.lastActiveDate ?? null,
           petDiedAt: stats.petDiedAt ?? null,

@@ -4,20 +4,30 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Subskill, Pattern } from "@/data/curriculum";
 import type { Question } from "@/data/questions";
-import { useCountUp } from "@/components/CountUp";
+import { ScoreRing } from "@/components/ScoreRing";
 import { StepList, ProseText } from "@/components/StepList";
 import { MathText } from "@/components/MathText";
+import { PassageText } from "@/components/PassageText";
+import { shuffleChoices, shuffled } from "@/lib/shuffle";
+import { paceFor, type Confidence } from "@/lib/items";
+import { ConfidencePicker, CONFIDENCE_OPTIONS } from "@/components/ConfidencePicker";
+import { PaceClock, formatSeconds, useElapsed } from "@/components/PaceClock";
 import { GeometryDiagram } from "@/components/GeometryDiagram";
 import { ExamChoices } from "@/components/ExamChoices";
 import { PixelDog } from "@/components/PixelDog";
 import { sectionTheme } from "@/lib/sectionTheme";
 
 interface SubmitResult {
-  justMastered: boolean;
+  justPassed: boolean;
+  alreadyMastered: boolean;
   currentStreak: number;
   justCompletedDomain: string | null;
   newCostume: { id: string; name: string } | null;
 }
+
+// A practice question with its stable id (lib/items.ts), so each answer
+// can be logged against the exact question it was.
+type QuizQuestion = Question & { id: string };
 
 // The digital SAT actually gives students two different built-in Desmos
 // tools depending on the question -- a full graphing calculator on Math
@@ -27,6 +37,10 @@ interface SubmitResult {
 // data/curriculum.ts's Pattern type) says which one its trick actually
 // needs, so the link below can send students to the matching tool instead
 // of always defaulting to graphing regardless of the pattern.
+// Worked examples from this index on (0-based) start with the pattern's
+// method folded away -- see the fading note where it renders.
+const FADE_FROM_EXAMPLE = 2;
+
 const DESMOS_URLS: Record<"graphing" | "scientific", string> = {
   graphing: "https://www.desmos.com/testing/texas/graphing",
   scientific: "https://www.desmos.com/testing/texas/scientific",
@@ -43,8 +57,9 @@ const DESMOS_URLS: Record<"graphing" | "scientific", string> = {
 // under `answers` after a router.refresh(). Restoring the exact shuffled
 // order sidesteps that entirely.
 interface QuizDraft {
-  quizQuestions: Question[];
+  quizQuestions: QuizQuestion[];
   answers: Record<number, number>;
+  confidence?: Record<number, Confidence>;
 }
 
 function quizDraftKey(subskillId: string): string {
@@ -74,19 +89,29 @@ function loadQuizDraft(subskillId: string, expectedQuestionCount: number): QuizD
     // outright on mismatch anyway -- length is enough to catch it. Removed
     // outright rather than just ignored, so a stale draft doesn't linger
     // forever if this subskill's question count never changes back.
-    if (parsed.quizQuestions.length !== expectedQuestionCount) {
+    // Drafts saved before questions carried ids can't be logged per item;
+    // start those fresh rather than resuming them.
+    if (
+      parsed.quizQuestions.length !== expectedQuestionCount ||
+      !parsed.quizQuestions.every((q: { id?: unknown }) => typeof q.id === "string")
+    ) {
       clearQuizDraft(subskillId);
       return null;
     }
-    return { quizQuestions: parsed.quizQuestions, answers: parsed.answers };
+    return { quizQuestions: parsed.quizQuestions, answers: parsed.answers, confidence: parsed.confidence ?? {} };
   } catch {
     return null;
   }
 }
 
-function saveQuizDraft(subskillId: string, quizQuestions: Question[], answers: Record<number, number>) {
+function saveQuizDraft(
+  subskillId: string,
+  quizQuestions: QuizQuestion[],
+  answers: Record<number, number>,
+  confidence: Record<number, Confidence> = {}
+) {
   try {
-    window.localStorage.setItem(quizDraftKey(subskillId), JSON.stringify({ quizQuestions, answers }));
+    window.localStorage.setItem(quizDraftKey(subskillId), JSON.stringify({ quizQuestions, answers, confidence }));
   } catch {
     // Private browsing, storage disabled, or quota exceeded -- the quiz
     // still works this session, it just won't survive a reload. Nothing
@@ -107,7 +132,7 @@ export function SubskillClient({
   questions,
 }: {
   subskill: Subskill;
-  questions: Question[];
+  questions: QuizQuestion[];
 }) {
   const router = useRouter();
   // Defaults to "lesson" and gets flipped to "practice" in the restore
@@ -121,12 +146,20 @@ export function SubskillClient({
   const [errorMsg, setErrorMsg] = useState("");
   const [saving, setSaving] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
+  // How sure she was of each answer, and how long each first answer took
+  // (the gap since the previous one) -- both logged per question, both
+  // shown back on the results card.
+  const [confidence, setConfidence] = useState<Record<number, Confidence>>({});
+  const [itemMs, setItemMs] = useState<Record<number, number>>({});
+  const [quizStartedAt, setQuizStartedAt] = useState<number | null>(null);
+  const lastMarkRef = useRef<number | null>(null);
   const [extras, setExtras] = useState<ResultExtras | null>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   const submitRef = useRef<HTMLButtonElement>(null);
   const [tipsOpenMobile, setTipsOpenMobile] = useState(false);
   const [activePattern, setActivePattern] = useState(0);
   const [activeExample, setActiveExample] = useState(0);
+  const [methodShown, setMethodShown] = useState(false);
   const [viewedExamples, setViewedExamples] = useState<Set<string>>(new Set());
   // Which choice (if any) the student has clicked for each worked example,
   // keyed the same way as viewedExamples -- clicking one reveals correct/
@@ -173,7 +206,7 @@ export function SubskillClient({
   // plain string, compared by value, so it's only ever "different" when
   // it's actually a different subskill -- a refresh of this same page
   // leaves it untouched and this effect alone.
-  const [quizQuestions, setQuizQuestions] = useState<Question[]>(questions);
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>(questions);
   // One entry per quiz question card, so an incomplete submission can jump
   // straight to the first one that's still unanswered instead of leaving
   // the student to hunt for it across a long, multi-screen scroll. Also
@@ -194,6 +227,7 @@ export function SubskillClient({
     if (draft) {
       setQuizQuestions(draft.quizQuestions);
       setAnswers(draft.answers);
+      setConfidence(draft.confidence ?? {});
       if (Object.keys(draft.answers).length > 0) {
         const firstUnanswered = draft.quizQuestions.findIndex((_, i) => draft.answers[i] === undefined);
         pendingRestoreScrollRef.current = firstUnanswered === -1 ? 0 : firstUnanswered;
@@ -201,9 +235,31 @@ export function SubskillClient({
       }
       return;
     }
-    setQuizQuestions(questions.map(shuffleChoices));
+    // Question order is reshuffled too, not just each question's choices:
+    // a retake in the same order is a memory test of the last attempt.
+    setQuizQuestions(shuffled(questions).map(shuffleChoices));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subskill.id, shuffleSeed]);
+
+  // `?pattern=Name` opens the lesson on that pattern -- where a missed
+  // question in mixed review sends her to relearn what it tested.
+  useEffect(() => {
+    const name = new URLSearchParams(window.location.search).get("pattern");
+    if (!name) return;
+    const i = subskill.patterns.findIndex((p) => p.name === name);
+    if (i >= 0) {
+      setActivePattern(i);
+      setActiveExample(0);
+      setMode("lesson");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subskill.id]);
+
+  // The quiz clock starts the first time the quiz is opened this visit.
+  useEffect(() => {
+    if (mode === "practice" && quizStartedAt === null && !submitted) setQuizStartedAt(Date.now());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
 
   useEffect(() => {
     if (mode !== "practice" || pendingRestoreScrollRef.current === null) return;
@@ -234,6 +290,7 @@ export function SubskillClient({
   // Marks the currently-open example as viewed, so the pathway UI can show
   // which examples/patterns a student has actually stepped through.
   useEffect(() => {
+    setMethodShown(false);
     const key = `${activePattern}-${activeExample}`;
     setViewedExamples((prev) => (prev.has(key) ? prev : new Set(prev).add(key)));
   }, [activePattern, activeExample]);
@@ -300,15 +357,31 @@ export function SubskillClient({
         );
       });
     }
+    // A question's time is the gap since the previous first answer (or
+    // since the quiz opened) -- changing an answer later doesn't add to it.
+    if (answers[qIdx] === undefined) {
+      const now = Date.now();
+      const since = lastMarkRef.current ?? quizStartedAt ?? now;
+      setItemMs((m) => ({ ...m, [qIdx]: now - since }));
+      lastMarkRef.current = now;
+    }
     setAnswers((prev) => {
       const next = { ...prev, [qIdx]: choiceIdx };
       // Written against the actual shuffled quizQuestions in scope right
       // now, so a later restore replays the exact same choice order these
       // indices were picked against -- see loadQuizDraft's own comment.
-      saveQuizDraft(subskill.id, quizQuestions, next);
+      saveQuizDraft(subskill.id, quizQuestions, next, confidence);
       return next;
     });
     setErrorMsg("");
+  }
+
+  function selectConfidence(qIdx: number, c: Confidence) {
+    setConfidence((prev) => {
+      const next = { ...prev, [qIdx]: c };
+      saveQuizDraft(subskill.id, quizQuestions, answers, next);
+      return next;
+    });
   }
 
   function reviewPattern(patternName: string) {
@@ -326,6 +399,10 @@ export function SubskillClient({
 
   function retakeQuiz() {
     setAnswers({});
+    setConfidence({});
+    setItemMs({});
+    setQuizStartedAt(Date.now());
+    lastMarkRef.current = null;
     setSubmitted(false);
     setResult(null);
     setExtras(null);
@@ -362,7 +439,16 @@ export function SubskillClient({
       const res = await fetch("/api/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subskillId: subskill.id, score, total: quizQuestions.length }),
+        body: JSON.stringify({
+          subskillId: subskill.id,
+          score,
+          items: quizQuestions.map((q, i) => ({
+            itemId: q.id,
+            choiceText: q.choices[answers[i]],
+            ms: itemMs[i],
+            confidence: confidence[i],
+          })),
+        }),
       });
       if (res.ok) {
         // The whole reason this existed was to resume an *unsubmitted*
@@ -372,7 +458,8 @@ export function SubskillClient({
         clearQuizDraft(subskill.id);
         const data = await res.json();
         setResult({
-          justMastered: !!data.justMastered,
+          justPassed: !!data.justPassed,
+          alreadyMastered: !!data.alreadyMastered,
           currentStreak: data.currentStreak ?? 0,
           justCompletedDomain: data.justCompletedDomain ?? null,
           newCostume: data.newCostume ?? null,
@@ -413,8 +500,8 @@ export function SubskillClient({
             }
           : data.justCompletedDomain
           ? { message: `${data.justCompletedDomain}, mastered! What's next?`, tier: "small" }
-          : data.justMastered
-          ? { message: `${subskill.name}, mastered! Tail at max speed.`, tier: "small" }
+          : data.justPassed
+          ? { message: `${subskill.name}, passed! Now nail it in a mixed review to master it.`, tier: "small" }
           : null;
         // Either way Ozho comes over to the results card to react: the
         // big moments above as a celebration, anything else as a plain
@@ -425,7 +512,7 @@ export function SubskillClient({
         } else {
           window.dispatchEvent(
             new CustomEvent("ozho:say", {
-              detail: { message: resultCopy(score, quizQuestions.length, false).ozho, near },
+              detail: { message: resultCopy(score, quizQuestions.length, "retake").ozho, near },
             })
           );
         }
@@ -598,7 +685,26 @@ export function SubskillClient({
             {pattern && (
               <div>
                 <div className="text-[17px] font-bold text-ink mb-2.5">{pattern.name}</div>
-                <ProseText text={pattern.explanation} className="text-sm text-gray-700 mb-5" />
+                {/* Fading: the first two examples are solved with the method
+                    right there; from the third on it's folded away, so she
+                    has to call it up herself -- following a method and
+                    producing it are different skills, and the test only
+                    asks for the second. One click brings it back. */}
+                {activeExample >= FADE_FROM_EXAMPLE && !methodShown ? (
+                  <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-[#dcd9ef] px-3.5 py-2.5">
+                    <span className="text-[13px] text-gray-600">
+                      Try this one from memory. The method is folded away.
+                    </span>
+                    <button
+                      onClick={() => setMethodShown(true)}
+                      className="text-[12.5px] font-semibold text-[#4a5bb0] hover:underline"
+                    >
+                      Show the method
+                    </button>
+                  </div>
+                ) : (
+                  <ProseText text={pattern.explanation} className="text-sm text-gray-700 mb-5" />
+                )}
 
                 <div className="bg-[#f8f8fb] rounded-lg p-4 mb-4">
                   <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
@@ -784,6 +890,15 @@ export function SubskillClient({
               currentSubskillId={subskill.id}
               onReview={reviewMisses}
               onRetake={retakeQuiz}
+              avgSeconds={
+                Object.keys(itemMs).length
+                  ? Object.values(itemMs).reduce((a, b) => a + b, 0) / 1000 / Object.keys(itemMs).length
+                  : null
+              }
+              paceSeconds={paceFor(subskill.section)}
+              unsureRight={
+                quizQuestions.filter((q, i) => answers[i] === q.answer && confidence[i] && confidence[i] !== "sure").length
+              }
             />
           )}
           {quizQuestions.length > 0 && (
@@ -813,7 +928,12 @@ export function SubskillClient({
             </div>
           )}
           {!submitted && quizQuestions.length > 0 && (
-            <QuizProgress answeredCount={Object.keys(answers).length} total={quizQuestions.length} />
+            <QuizProgress
+              answeredCount={Object.keys(answers).length}
+              total={quizQuestions.length}
+              startedAt={quizStartedAt}
+              paceTotal={quizQuestions.length * paceFor(subskill.section)}
+            />
           )}
           {quizQuestions.map((q, i) => {
             const isCorrect = answers[i] === q.answer;
@@ -837,7 +957,9 @@ export function SubskillClient({
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {submitted && <QuestionResultPill correct={isCorrect} />}
-                    {q.difficulty && <DifficultyPill difficulty={q.difficulty} />}
+                    {/* After submitting only: a "Hard" label before she's
+                        answered primes her for a trick that may not be there. */}
+                    {submitted && q.difficulty && <DifficultyPill difficulty={q.difficulty} />}
                   </div>
                 </div>
                 <ExamChoices
@@ -848,6 +970,15 @@ export function SubskillClient({
                   disabled={submitted}
                   onSelect={(ci) => selectAnswer(i, ci)}
                 />
+                {!submitted && answers[i] !== undefined && (
+                  <ConfidencePicker value={confidence[i] ?? null} onChange={(c) => selectConfidence(i, c)} />
+                )}
+                {submitted && confidence[i] && (
+                  <div className="mt-2 text-[11.5px] text-gray-400">
+                    You said: {CONFIDENCE_OPTIONS.find((o) => o.value === confidence[i])?.label}
+                    {isCorrect && confidence[i] !== "sure" ? " · this one will come back in mixed review" : ""}
+                  </div>
+                )}
                 {submitted && (
                   <div className="text-[13px] text-gray-500 mt-2.5 leading-relaxed">
                     <strong className="text-ink">Explanation: </strong>
@@ -907,22 +1038,33 @@ export function SubskillClient({
 // how far along you were or how much was left -- just a stack of cards and
 // a submit button many screens down. Sticky so it stays visible while
 // scrolling through the questions themselves.
-function QuizProgress({ answeredCount, total }: { answeredCount: number; total: number }) {
+function QuizProgress({
+  answeredCount,
+  total,
+  startedAt,
+  paceTotal,
+}: {
+  answeredCount: number;
+  total: number;
+  startedAt: number | null;
+  paceTotal: number;
+}) {
   const pct = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
+  const elapsed = useElapsed(startedAt, startedAt !== null);
   return (
-    <div className="sticky top-[62px] z-10 bg-white/95 backdrop-blur-sm border border-[#ece9f7] rounded-lg px-3.5 py-2 mb-3.5 shadow-[0_1px_2px_rgba(26,26,46,0.03)]">
-      <div className="flex justify-between items-baseline mb-1">
-        <span className="text-xs font-semibold text-ink">
-          {answeredCount} of {total} answered
-        </span>
-        <span className="text-xs text-gray-400">{pct}%</span>
+    <div className="sticky top-[62px] z-10 mb-3.5 flex items-center gap-4 rounded-lg border border-[#ece9f7] bg-white/95 px-3.5 py-2 shadow-[0_1px_2px_rgba(26,26,46,0.03)] backdrop-blur-sm">
+      <div className="min-w-0 flex-1">
+        <div className="mb-1 flex items-baseline justify-between">
+          <span className="text-xs font-semibold text-ink">
+            {answeredCount} of {total} answered
+          </span>
+          <span className="text-xs text-gray-400">{pct}%</span>
+        </div>
+        <div className="h-1.5 overflow-hidden rounded-md bg-[#f0eff9]">
+          <div className="h-full bg-[#6d7fd6] transition-all duration-300 ease-out" style={{ width: `${pct}%` }} />
+        </div>
       </div>
-      <div className="h-1.5 bg-[#f0eff9] rounded-md overflow-hidden">
-        <div
-          className="h-full bg-[#6d7fd6] transition-all duration-300 ease-out"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
+      {startedAt !== null && <PaceClock elapsed={elapsed} target={paceTotal} label="whole quiz" />}
     </div>
   );
 }
@@ -942,27 +1084,36 @@ function ozhoSpotBeside(el: HTMLElement | null): { x: number; y: number } | unde
   return { x: r.right + window.scrollX - 90, y: r.top + window.scrollY + 140 };
 }
 
-function resultCopy(score: number, total: number, justMastered: boolean) {
+// `perfectKind` only matters for a perfect score: the first one passes
+// the subskill, and mastering it takes a mixed review too (see
+// lib/progressState.ts), so the copy points her there.
+function resultCopy(score: number, total: number, perfectKind: "passed" | "mastered" | "retake") {
   const missed = total - score;
   const ratio = total > 0 ? score / total : 0;
   if (missed === 0) {
-    return justMastered
-      ? {
-          headline: "Mastered.",
-          body: "Every question right, so this subskill is checked off your plan.",
-          ozho: "Every single one! I need to sit down. No I don't, let's go again.",
-        }
-      : {
-          headline: "Perfect, again.",
-          body: "Still sharp. A clean run like this is exactly what sticks on test day.",
-          ozho: "Perfect again? Now you're just showing off.",
-        };
+    if (perfectKind === "passed")
+      return {
+        headline: "Passed.",
+        body: "Every question right. One step to mastered: get it right in a mixed review, where nothing says what's being tested.",
+        ozho: "Every single one! Now let's see if you can spot it in the wild.",
+      };
+    if (perfectKind === "mastered")
+      return {
+        headline: "Perfect, again.",
+        body: "Still sharp. Mixed review keeps checking in on it every few weeks so it stays that way.",
+        ozho: "Perfect again? Now you're just showing off.",
+      };
+    return {
+      headline: "Perfect again.",
+      body: "It's passed. Mixed review is where it becomes mastered.",
+      ozho: "Perfect again! Mixed review is the next step.",
+    };
   }
   const misses = `${missed} ${missed === 1 ? "question" : "questions"}`;
   if (ratio >= 0.8)
     return {
       headline: "So close.",
-      body: `Mastery takes a perfect score. Look over the ${misses} you missed, then take it again.`,
+      body: `Passing takes a perfect score. Look over the ${misses} you missed, then take it again. The order changes each time.`,
       ozho: "So close I can smell it. One more go?",
     };
   if (ratio >= 0.5)
@@ -978,37 +1129,6 @@ function resultCopy(score: number, total: number, justMastered: boolean) {
   };
 }
 
-function ScoreRing({ score, total }: { score: number; total: number }) {
-  const pct = total > 0 ? Math.round((score / total) * 100) : 0;
-  const shown = useCountUp(pct, 900);
-  const r = 34;
-  const c = 2 * Math.PI * r;
-  const color = pct === 100 ? "#c9971b" : pct >= 50 ? "#2f6f4f" : "#6d7fd6";
-  return (
-    <div className="relative h-[88px] w-[88px] flex-shrink-0">
-      <svg viewBox="0 0 80 80" className="h-full w-full -rotate-90" aria-hidden="true">
-        <circle cx="40" cy="40" r={r} fill="none" stroke="#f0eff9" strokeWidth="7" />
-        <circle
-          cx="40"
-          cy="40"
-          r={r}
-          fill="none"
-          stroke={color}
-          strokeWidth="7"
-          strokeLinecap="round"
-          strokeDasharray={c}
-          strokeDashoffset={c * (1 - shown / 100)}
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-display text-[22px] font-semibold leading-none text-ink tabular-nums">{shown}%</span>
-        <span className="mt-1 text-[11px] text-gray-400 tabular-nums">
-          {score}/{total}
-        </span>
-      </div>
-    </div>
-  );
-}
 
 // The results moment, shown at the top of the quiz the instant it's
 // submitted (and scrolled to), instead of a grey score line under a
@@ -1026,6 +1146,9 @@ function ResultsCard({
   currentSubskillId,
   onReview,
   onRetake,
+  avgSeconds,
+  paceSeconds,
+  unsureRight,
 }: {
   cardRef: React.Ref<HTMLDivElement>;
   score: number;
@@ -1036,10 +1159,17 @@ function ResultsCard({
   currentSubskillId: string;
   onReview: () => void;
   onRetake: () => void;
+  avgSeconds: number | null;
+  paceSeconds: number;
+  unsureRight: number;
 }) {
   const perfect = total > 0 && score === total;
   const missed = total - score;
-  const copy = resultCopy(score, total, !!result?.justMastered);
+  const copy = resultCopy(
+    score,
+    total,
+    result?.justPassed ? "passed" : result?.alreadyMastered ? "mastered" : "retake"
+  );
   // The planner can legitimately recommend the subskill just taken (it's
   // still the first unmastered one) -- "Up next" pointing back at this
   // same page would read as a bug, and Retake already covers it.
@@ -1062,6 +1192,23 @@ function ResultsCard({
           <p className="mt-1 max-w-[46ch] text-sm leading-relaxed text-gray-600">{copy.body}</p>
         </div>
       </div>
+
+      {!saving && (avgSeconds !== null || unsureRight > 0) && (
+        <div className="flex flex-wrap gap-x-6 gap-y-1.5 border-t border-[#f2f0fa] px-5 py-3 text-[13px] text-gray-600 sm:px-6">
+          {avgSeconds !== null && (
+            <span>
+              <span className="font-semibold tabular-nums text-ink">{formatSeconds(avgSeconds)}</span> per question
+              <span className="text-gray-400"> · SAT pace {formatSeconds(paceSeconds)}</span>
+            </span>
+          )}
+          {unsureRight > 0 && (
+            <span>
+              <span className="font-semibold text-ink">{unsureRight}</span> right but not sure. Those come back in mixed
+              review.
+            </span>
+          )}
+        </div>
+      )}
 
       {result && !saving && (result.currentStreak > 0 || result.newCostume || result.justCompletedDomain) && (
         <div className="flex flex-wrap gap-2 border-t border-[#f2f0fa] px-5 py-3 sm:px-6">
@@ -1100,11 +1247,19 @@ function ResultsCard({
               Review {missed} {missed === 1 ? "miss" : "misses"} ↓
             </button>
           )}
+          {perfect && result && !result.alreadyMastered && (
+            <a
+              href="/review"
+              className="rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            >
+              Master it in mixed review →
+            </a>
+          )}
           {nextUp && (
             <a
               href={nextUp.href}
               className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
-                missed === 0
+                missed === 0 && result?.alreadyMastered
                   ? "bg-ink text-white hover:opacity-90"
                   : "border border-[#e0defa] bg-white text-ink hover:border-[#c9c6ee]"
               }`}
@@ -1118,7 +1273,7 @@ function ResultsCard({
           >
             Retake quiz
           </button>
-          {!nextUp && missed === 0 && (
+          {!nextUp && missed === 0 && result?.alreadyMastered && (
             <a
               href="/dashboard"
               className="rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
@@ -1369,116 +1524,3 @@ function LessonOutline({
   );
 }
 
-/**
- * Underlines one exact substring of `text` -- the tested word in a Words in
- * Context question, or the specific sentence a text-structure question is
- * asking about (both via `highlight`) -- so the student sees it highlighted
- * directly in the passage instead of having to relocate it, matching how
- * the real exam marks it. Falls back to a plain MathText render when
- * there's nothing to highlight, or it can't be found verbatim.
- */
-function HighlightedText({ text, highlight }: { text: string; highlight?: string }) {
-  if (!highlight) return <MathText text={text} />;
-  const idx = text.toLowerCase().indexOf(highlight.toLowerCase());
-  if (idx === -1) return <MathText text={text} />;
-  const before = text.slice(0, idx);
-  const match = text.slice(idx, idx + highlight.length);
-  const after = text.slice(idx + highlight.length);
-  return (
-    <>
-      <MathText text={before} />
-      <u className="decoration-2 decoration-accent underline-offset-2">{match}</u>
-      <MathText text={after} />
-    </>
-  );
-}
-
-// Matches a leading "Passage 1:", "Passage 2 (a historian):" etc. at the
-// start of a paragraph -- see PassageText below.
-const PASSAGE_LABEL_RE = /^(Passage \d+(?:\s*\([^)]+\))?)\s*:\s*/i;
-
-/**
- * Renders a question's full text, splitting on blank lines (`\n\n`) into
- * real, visually separated paragraphs instead of one dense run-on block --
- * and, when a paragraph starts with "Passage 1:"/"Passage 2:" (Cross-Text
- * Connections), pulling that label out into its own small heading above a
- * distinctly boxed passage, so each passage and the question itself read as
- * clearly separate pieces rather than one blob of text. Single-paragraph
- * text (the vast majority of questions) renders exactly as before, with
- * `number` (if given) inline as "1. " -- multi-paragraph text moves that
- * same number to a small heading above the stacked paragraphs instead,
- * since there's no longer one single line to prefix it onto.
- */
-function PassageText({
-  text,
-  highlight,
-  number,
-}: {
-  text: string;
-  highlight?: string;
-  number?: number;
-}) {
-  const paragraphs = text.split(/\n\n+/).filter(Boolean);
-
-  if (paragraphs.length <= 1) {
-    return (
-      <p className="leading-relaxed">
-        {number !== undefined && `${number}. `}
-        <HighlightedText text={text} highlight={highlight} />
-      </p>
-    );
-  }
-
-  return (
-    <div>
-      {number !== undefined && (
-        <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
-          Question {number}
-        </div>
-      )}
-      <div className="flex flex-col gap-3">
-        {paragraphs.map((para, i) => {
-          const m = para.match(PASSAGE_LABEL_RE);
-          if (m) {
-            const label = m[1];
-            const body = para.slice(m[0].length);
-            return (
-              <div key={i} className="bg-[#f8f8fb] border border-[#ece9f7] rounded-lg px-3.5 py-3">
-                <div className="text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-1.5">
-                  {label}
-                </div>
-                <p className="leading-relaxed">
-                  <HighlightedText text={body} highlight={highlight} />
-                </p>
-              </div>
-            );
-          }
-          return (
-            <p key={i} className="leading-relaxed font-medium">
-              <HighlightedText text={para} highlight={highlight} />
-            </p>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Reshuffles a question's or worked example's choices (Fisher-Yates) and
- * remaps `answer` to match, so the correct choice doesn't always land
- * wherever it was authored -- every item in data/questions.ts and
- * data/curriculum.ts is written with the correct choice at index 0 for
- * authoring clarity, and shown unshuffled that would just train students
- * to click the first option. Generic over both Question and WorkedExample
- * since both share the same {choices, answer} shape; every other field is
- * passed through untouched.
- */
-function shuffleChoices<T extends { choices: string[]; answer: number }>(item: T): T {
-  const order = [0, 1, 2, 3].slice(0, item.choices.length);
-  for (let i = order.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [order[i], order[j]] = [order[j], order[i]];
-  }
-  return { ...item, choices: order.map((idx) => item.choices[idx]), answer: order.indexOf(item.answer) };
-}

@@ -26,6 +26,7 @@ model User {
   createdAt DateTime   @default(now())
   progress  Progress[]
   practiceTests PracticeTest[]
+  itemAttempts ItemAttempt[]
 
   // Daily practice streak (consecutive calendar days with at least one quiz
   // submission). Computed in app/api/progress/route.ts on each submission.
@@ -139,7 +140,40 @@ model Progress {
   attempts     Int      @default(1)
   lastAttempt  DateTime @default(now())
 
+  // Mastery is earned in two steps (see lib/progressState.ts): a perfect
+  // quiz makes a subskill "passed"; answering it correctly later, in a
+  // mixed review where nothing says which skill is being tested, makes it
+  // "mastered". A mastered subskill then comes due for a refresher on a
+  // widening interval, so a skill learned in week 2 is still being checked
+  // in week 20 -- it's flagged, never un-mastered.
+  passedAt       DateTime?
+  masteredAt     DateTime?
+  reviewDueAt    DateTime?
+  reviewInterval Int       @default(21) // days until the next refresher
+
   @@unique([userId, subskillId])
+}
+
+// One answered question, from a subskill quiz or a mixed review. The
+// per-item record the aggregate Progress row can't provide: which exact
+// items she's seen, which she missed, how long each took and how sure she
+// was -- what mixed review selects from, and what tells a skill apart
+// from a memorized quiz.
+model ItemAttempt {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subskillId String
+  itemId     String // lib/items.ts: stable id derived from the question text
+  source     String // "quiz" | "review"
+  correct    Boolean
+  choice     Int // index into the item's authored (unshuffled) choices
+  confidence String? // "sure" | "unsure" | "guessed"
+  ms         Int? // time spent on the question
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([userId, itemId])
 }
 
 // A self-reported result from a full-length practice test (e.g. Bluebook or

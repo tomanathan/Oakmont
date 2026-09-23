@@ -13,8 +13,8 @@ import { PET_NAME } from "@/lib/pet";
 import { sectionTheme } from "@/lib/sectionTheme";
 import { sectionProgress } from "@/lib/subjectProgress";
 import { formatUTCDate } from "@/lib/dateOnly";
+import type { ProgressMap } from "@/lib/progressState";
 
-type ProgressMap = Record<string, { bestScore: number; total: number }>;
 
 interface DomainCount {
   correct: number;
@@ -140,7 +140,7 @@ export function StudentProgressView({
         {curriculum.map((sec) => {
           const theme = sectionTheme(sec.section);
           const active = sec.section === subject;
-          const { total: sectionTotal, attemptedCount, masteredCount, avgPct } = sectionProgress(sec, progress);
+          const { total: sectionTotal, attemptedCount, passedCount, masteredCount, avgPct } = sectionProgress(sec, progress);
           const label = sec.section === "Reading and Writing" ? "Reading & Writing" : sec.section;
           return (
             <button
@@ -178,7 +178,7 @@ export function StudentProgressView({
                 </div>
               )}
               <div className="mt-1 text-xs text-gray-500">
-                {attemptedCount} started &middot; {masteredCount} mastered &middot; {sectionTotal} total
+                {attemptedCount} started &middot; {passedCount} passed &middot; {masteredCount} mastered &middot; {sectionTotal} total
               </div>
             </button>
           );

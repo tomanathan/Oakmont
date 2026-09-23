@@ -1,3 +1,9 @@
+import type { ProgressMap } from "./progressState";
+import { isMastered } from "./progressState";
+import { subskillWeight } from "./testWeights";
+
+export type { ProgressMap } from "./progressState";
+
 // Per-domain quiz mastery: the single source of truth for the star ratings
 // shown on the dashboard, analysis page, and the wardrobe -- and for which
 // domains count as "completed" for costume unlocks (see lib/costumes.ts).
@@ -28,16 +34,10 @@ export interface DomainMastery extends DomainInfo {
   quizPct: number | null; // 0-100, average best-score % across this domain's subskill quizzes
   testPct: number | null; // 0-100, this domain's subscore on the latest logged practice test
   stars: number; // 0-5, from quizPct alone
-  // Every subskill in this domain has been quizzed to a perfect score --
+  // Every subskill in this domain is mastered (see lib/progressState.ts) --
   // the "completed a section" moment that unlocks a wardrobe costume.
   completed: boolean;
 }
-
-/**
- * Per-subskill quiz best-score %, keyed by subskill id -- the shared input
- * shape both quiz-mastery and pacing calculations read from.
- */
-export type ProgressMap = Record<string, { bestScore: number; total: number }>;
 
 function quizPctForDomain(subskillIds: string[], progress: ProgressMap): number | null {
   const attempted = subskillIds.map((id) => progress[id]).filter(Boolean) as {
@@ -51,10 +51,7 @@ function quizPctForDomain(subskillIds: string[], progress: ProgressMap): number 
 
 function isDomainComplete(subskillIds: string[], progress: ProgressMap): boolean {
   if (subskillIds.length === 0) return false;
-  return subskillIds.every((id) => {
-    const p = progress[id];
-    return !!p && p.bestScore === p.total;
-  });
+  return subskillIds.every((id) => isMastered(progress[id]));
 }
 
 /**
@@ -134,28 +131,49 @@ export function domainWeaknessScore(dm: Pick<DomainMastery, "testPct" | "quizPct
 }
 
 /**
- * Reorders a list of subskills so the ones in weaker domains come first --
- * this is what makes the study plan actually reflect practice-test and
- * quiz performance, not just the curriculum's original authoring order
- * and the target test date. Two things are deliberately preserved:
+ * The order the study plan introduces subskills in. Three rules:
  *
- * - Stable within ties: a domain's own subskills keep their original
- *   relative order (that order is already easy -> hard), and a brand-new
- *   student with no quiz or test data at all gets back the *exact*
- *   original order -- every domain scores the same neutral default, so
- *   nothing moves until real performance data exists to move it.
- * - A pure reordering, never a filter: the result is always the same
- *   subskills, just resequenced, so buildStudyPlan's guarantee that every
- *   subskill gets scheduled exactly once still holds no matter what
- *   domainMastery says.
+ * - Sections alternate. Reading and Writing and Math are interleaved by
+ *   how much of the score each subskill carries (see lib/testWeights.ts),
+ *   rather than finishing one section before starting the other -- which
+ *   left one half of the test untouched for months before test day.
+ * - Within a section, domains a logged practice test shows are weaker come
+ *   first; untested domains keep their authored order. Subskills within a
+ *   domain always keep theirs (it runs easy -> hard).
+ * - Only practice tests move it. Quiz scores deliberately don't: a quiz
+ *   retaken until perfect says little about the skill, and letting quiz
+ *   results re-sort the plan meant it reshuffled itself after every quiz.
+ *   So the plan holds still between practice tests.
+ *
+ * Always a pure reordering: every subskill appears exactly once.
  */
-export function orderSubskillsByWeakness<T extends { id: string; domain: string }>(
+export function orderSubskillsByWeakness<T extends { id: string; domain: string; section: string }>(
   subskills: T[],
   domainMastery: DomainMastery[]
 ): string[] {
-  const scoreByDomain = new Map(domainMastery.map((d) => [d.domain, domainWeaknessScore(d)]));
-  return subskills
-    .map((s, i) => ({ id: s.id, i, score: scoreByDomain.get(s.domain) ?? 60 }))
-    .sort((a, b) => a.score - b.score || a.i - b.i)
-    .map((x) => x.id);
+  const testByDomain = new Map(domainMastery.map((d) => [d.domain, d.testPct]));
+  const sections: string[] = [];
+  const bySection = new Map<string, { s: T; i: number; score: number }[]>();
+  subskills.forEach((s, i) => {
+    if (!bySection.has(s.section)) {
+      bySection.set(s.section, []);
+      sections.push(s.section);
+    }
+    bySection.get(s.section)!.push({ s, i, score: testByDomain.get(s.domain) ?? 60 });
+  });
+  for (const list of bySection.values()) list.sort((a, b) => a.score - b.score || a.i - b.i);
+
+  const cum = new Map(sections.map((sec) => [sec, 0]));
+  const out: string[] = [];
+  while (out.length < subskills.length) {
+    let pickSec: string | null = null;
+    for (const sec of sections) {
+      if (!bySection.get(sec)!.length) continue;
+      if (pickSec === null || cum.get(sec)! < cum.get(pickSec)!) pickSec = sec;
+    }
+    const next = bySection.get(pickSec!)!.shift()!;
+    out.push(next.s.id);
+    cum.set(pickSec!, cum.get(pickSec!)! + subskillWeight(next.s));
+  }
+  return out;
 }

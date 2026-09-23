@@ -6,6 +6,8 @@ import { sectionTheme } from "@/lib/sectionTheme";
 import { addUTCDays, formatUTCDate, utcDayDiff } from "@/lib/dateOnly";
 import { TIGHT_TIMELINE_DAYS } from "@/lib/pacing";
 import type { DayType } from "@/lib/studyPlan";
+import { isMastered, isPassed, statusOf, type ProgressMap } from "@/lib/progressState";
+import { SubskillStatusBadge, STATUS_CARD } from "@/components/SubskillStatusBadge";
 
 interface WeekSubskill {
   id: string;
@@ -41,14 +43,15 @@ export function PlanClient({
   daysUntilTest,
 }: {
   weeks: WeekItem[];
-  progress: Record<string, { bestScore: number; total: number }>;
+  progress: ProgressMap;
   courseStartDate: string;
   targetTestDate: string | null;
   daysUntilTest: number | null;
 }) {
   const router = useRouter();
   const allSubskills = weeks.flatMap((w) => w.subskills);
-  const doneSubskills = allSubskills.filter((s) => progress[s.id]).length;
+  const doneSubskills = allSubskills.filter((s) => isPassed(progress[s.id])).length;
+  const masteredSubskills = allSubskills.filter((s) => isMastered(progress[s.id])).length;
   const weekPct =
     allSubskills.length > 0 ? Math.round((doneSubskills / allSubskills.length) * 100) : 0;
   const totalTests = weeks.reduce((acc, w) => acc + w.testNumbers.length, 0);
@@ -119,7 +122,7 @@ export function PlanClient({
         <div className="flex justify-between items-baseline mb-2">
           <span className="text-sm font-semibold text-ink">Overall progress</span>
           <span className="text-sm text-[#6b6f8e]">
-            {doneSubskills} / {allSubskills.length} subskills &middot;{" "}
+            {doneSubskills} / {allSubskills.length} passed &middot; {masteredSubskills} mastered &middot;{" "}
             <span className="text-accent font-semibold">{weekPct}%</span>
           </span>
         </div>
@@ -139,7 +142,7 @@ export function PlanClient({
           // (see app/plan/page.tsx), so this naturally lines up with the
           // real target date instead of always assuming a full 7 days.
           const weekEnd = addUTCDays(weekStart, w.days.length - 1);
-          const doneInWeek = w.subskills.filter((s) => progress[s.id]).length;
+          const doneInWeek = w.subskills.filter((s) => isPassed(progress[s.id])).length;
 
           return (
             <div
@@ -167,7 +170,7 @@ export function PlanClient({
                   {w.subskills.length > 0 && (
                     <span className="text-[13px] text-gray-600">
                       {w.subskills.length} subskill{w.subskills.length === 1 ? "" : "s"}
-                      {doneInWeek > 0 && ` · ${doneInWeek} done`}
+                      {doneInWeek > 0 && ` · ${doneInWeek} passed`}
                     </span>
                   )}
                   {w.testNumbers.map((n) => (
@@ -240,7 +243,7 @@ function DayContent({
   onNavigate,
 }: {
   day: DayItem;
-  progress: Record<string, { bestScore: number; total: number }>;
+  progress: ProgressMap;
   onNavigate: (path: string) => void;
 }) {
   if (day.type === "rest") {
@@ -270,27 +273,32 @@ function DayContent({
       </button>
     );
   }
+  if (day.type === "review") {
+    return (
+      <button
+        onClick={() => onNavigate("/review")}
+        className="flex w-full items-center gap-3 rounded-lg bg-[#f6f5fd] px-2.5 py-1.5 text-left transition-colors hover:bg-[#efedfb]"
+      >
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-medium text-ink">Mixed review</div>
+          <div className="text-xs text-gray-400">A short set across everything you&apos;ve studied, no labels</div>
+        </div>
+        <span className="text-gray-400">&rarr;</span>
+      </button>
+    );
+  }
   return (
     <div className="flex flex-col gap-1">
-      {day.type === "review" && (
-        <div className="text-[10px] font-bold uppercase tracking-wide text-gray-400 mb-0.5">
-          Review
-        </div>
-      )}
       {day.subskills.map((s) => {
         const p = progress[s.id];
-        const mastered = p && p.bestScore === p.total;
+        const status = statusOf(p);
         const theme = sectionTheme(s.section ?? "");
         return (
           <div
             key={s.id}
             onClick={() => onNavigate(`/subskill/${s.id}`)}
-            className={`flex items-center gap-3 px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors ${
-              mastered
-                ? "bg-[#fffaf0] hover:bg-[#fdf3df]"
-                : p
-                ? "bg-[#f0f7f2] hover:bg-[#e6f1e9]"
-                : `${theme.cardBg} hover:opacity-80`
+            className={`flex items-center gap-3 px-2.5 py-1.5 rounded-lg border cursor-pointer transition-colors ${
+              status === "new" ? `${theme.cardBg} border-transparent hover:opacity-80` : STATUS_CARD[status]
             }`}
           >
             <div className="flex-1 min-w-0">
@@ -299,15 +307,7 @@ function DayContent({
                 {s.section} &middot; {s.domain}
               </div>
             </div>
-            {mastered ? (
-              <span className="text-[11px] text-[#c9971b] font-semibold whitespace-nowrap">
-                ★ Mastered
-              </span>
-            ) : p ? (
-              <span className="text-[11px] text-accent font-semibold whitespace-nowrap">
-                ✓ {p.bestScore}/{p.total}
-              </span>
-            ) : null}
+            <SubskillStatusBadge progress={p} />
           </div>
         );
       })}

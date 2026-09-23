@@ -7,7 +7,7 @@ export interface PlanDay {
   day: number; // 1-7
   dayName: string;
   type: DayType;
-  subskillIds: string[]; // for "lesson" and "review" days
+  subskillIds: string[]; // the day's new subskills ("lesson"); empty for mixed "review" days
   testNumber?: number; // for "test" days
 }
 
@@ -21,11 +21,11 @@ const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
  * itself rather than eating a separate day.
  *
  * The remaining days get that week's new subskills first, spread evenly.
- * Once those run out, leftover days cycle through a review pass (this
- * week's subskills, then earlier weeks' via `priorSubskillIds`) instead of
- * sitting empty -- a week with only one new subskill still gets real
- * practice on every day. At most one day per week is held back as an
- * actual rest day, and only when there's enough room to spare one.
+ * Once those run out, leftover days are mixed review days (see the loop
+ * below) instead of sitting empty -- a week with only one new subskill
+ * still gets real practice on every day. At most one day per week is held
+ * back as an actual rest day, and only when there's enough room to spare
+ * one.
  */
 export function buildDayPlan(week: PlanWeek, priorSubskillIds: string[] = [], dayCount: number = 7): PlanDay[] {
   // Only the plan's very last week is ever shorter than 7 days (truncated
@@ -61,9 +61,17 @@ export function buildDayPlan(week: PlanWeek, priorSubskillIds: string[] = [], da
     assigned += count;
   }
 
-  const reviewPool = [...week.subskillIds, ...priorSubskillIds];
-  for (let r = 0; d < activeDayCount && reviewPool.length > 0; d++, r++) {
-    days[d] = { ...days[d], type: "review", subskillIds: [reviewPool[r % reviewPool.length]] };
+  // Every remaining working day is a mixed review day: a short set drawn
+  // across everything introduced so far (see lib/reviewSet.ts), weighted
+  // toward what's due, shaky, or worth the most points -- not one named
+  // subskill. (This used to walk a list of earlier subskills from the top
+  // every week, which sent nearly every review day to the same first few.)
+  // Only once something has actually been introduced, by this week or an
+  // earlier one.
+  if (week.subskillIds.length > 0 || priorSubskillIds.length > 0) {
+    for (; d < activeDayCount; d++) {
+      days[d] = { ...days[d], type: "review", subskillIds: [] };
+    }
   }
 
   return days;

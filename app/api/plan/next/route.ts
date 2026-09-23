@@ -3,10 +3,12 @@ import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats } from "@/lib/user";
 import { courseLengthDaysForUser } from "@/lib/pacing";
-import { computeDomainMastery, orderSubskillsByWeakness, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, orderSubskillsByWeakness } from "@/lib/mastery";
+import { progressMapFromRows } from "@/lib/progressState";
 import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { findRecommended } from "@/lib/recommend";
+import { reviewReady } from "@/lib/reviewSet";
 
 // Powers Ozho's "what should I do next?" click action. Mirrors the same
 // pipeline the dashboard runs server-side (weakness-ordered plan ->
@@ -22,8 +24,7 @@ export async function GET() {
     prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
   ]);
 
-  const progress: ProgressMap = {};
-  for (const row of rows) progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
+  const progress = progressMapFromRows(rows);
 
   const createdAt = stats.createdAt ?? new Date();
   const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null);
@@ -51,5 +52,10 @@ export async function GET() {
       }
     : null;
 
-  return NextResponse.json({ recommendation: findRecommended(CURRICULUM, progress, today) });
+  return NextResponse.json({
+    recommendation: findRecommended(CURRICULUM, progress, today, {
+      order: weaknessOrderedIds,
+      reviewReady: reviewReady(progress),
+    }),
+  });
 }

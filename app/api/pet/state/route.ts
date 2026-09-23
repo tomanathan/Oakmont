@@ -3,7 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { computePetState, isSecondPetUnlocked } from "@/lib/pet";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
-import { computeDomainMastery, completedDomainCount, domainWeaknessScore, type ProgressMap } from "@/lib/mastery";
+import { computeDomainMastery, completedDomainCount, domainWeaknessScore } from "@/lib/mastery";
+import { progressMapFromRows, isMastered } from "@/lib/progressState";
 import { isCostumeUnlocked, bestUnlockedCostume } from "@/lib/costumes";
 import { daysUntilTest } from "@/lib/pacing";
 
@@ -35,8 +36,7 @@ export async function GET() {
 
   const state = computePetState(stats.lastActiveDate, stats.petDiedAt, stats.petBornAt);
 
-  const progress: ProgressMap = {};
-  for (const row of progressRows) progress[row.subskillId] = { bestScore: row.bestScore, total: row.total };
+  const progress = progressMapFromRows(progressRows);
   const subskillsByDomain: Record<string, string[]> = {};
   for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
   const mastery = computeDomainMastery(
@@ -56,15 +56,11 @@ export async function GET() {
       ? stats.equippedCostume
       : bestUnlockedCostume(unlockProgress).id;
 
-  // A single "fully quizzed to a perfect score" count -- the same bar
-  // isDomainComplete uses per-domain, just tallied per-subskill instead, so
-  // Ozho's own mastery chatter (see components/ScoutCompanion.tsx) can cite
-  // a real "X of Y" number without needing its own separate definition of
-  // "mastered".
-  const subskillsMastered = ALL_SUBSKILLS.filter((s) => {
-    const p = progress[s.id];
-    return !!p && p.bestScore === p.total;
-  }).length;
+  // How many subskills are mastered (lib/progressState.ts) -- the same bar
+  // isDomainComplete uses per-domain, tallied per-subskill, so Ozho's own
+  // mastery chatter (see components/ScoutCompanion.tsx) cites a real
+  // "X of Y" without a separate definition of "mastered".
+  const subskillsMastered = ALL_SUBSKILLS.filter((s) => isMastered(progress[s.id])).length;
 
   // The single domain most worth a nudge toward, using the exact same
   // weakness score the study plan itself schedules around (see
