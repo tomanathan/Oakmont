@@ -327,14 +327,42 @@ const strideFor = (speed: number) => 9 + speed * 0.07;
 const MEANDER_RAD = 0.38;
 const MEANDER_HZ = 0.14;
 
-type IdleAct = "none" | "sniff" | "rest" | "stretch";
+type IdleAct = "none" | "sniff" | "rest" | "stretch" | "bow" | "tilt" | "hop" | "spin";
+
+// Gaits. Each walk picks one, and the body's bob and lean follow from it:
+// a stroll barely rises, a trot bounces, a gallop bounds in a real arc and
+// rocks nose-to-tail with each stride.
+type Gait = "stroll" | "trot" | "gallop";
+const GAIT_BOB: Record<Gait, number> = { stroll: 1.2, trot: 2.6, gallop: 5.5 };
+const GAIT_ROCK: Record<Gait, number> = { stroll: 0, trot: 1.5, gallop: 5 };
+// How far he leans into speeding up or braking, at most.
+const MAX_LEAN_DEG = 7;
+
+// Short idle bits between walks, each a CSS animation (see globals.css)
+// that runs for this long.
+const IDLE_ACT_MS: Partial<Record<IdleAct, number>> = {
+  sniff: 1300,
+  bow: 950,
+  tilt: 1100,
+  hop: 720,
+  spin: 1000,
+};
+// Tail-chasing: he flips to face the other way this often during a spin.
+const SPIN_FLIP_MS = 110;
+
+// Zoomies: every so often a healthy Ozho tears around in a burst of quick,
+// short gallops, then flops down. Mochi (who follows him) gets swept along.
+const ZOOMIES_MIN_MS = 55000;
+const ZOOMIES_MAX_MS = 120000;
+const ZOOMIES_PHRASES = ["Zoomies!", "Can't stop! Won't stop!", "Nyoom.", "Wheee!"];
+// A landing that follows a run this fast gets a little squash.
+const LAND_SPEED = 190;
 
 // The fetch ball, drawn a little bigger than the one in his mouth so it
 // reads at a glance out on the page; its ground contact is level with his
 // feet, BALL_FOOT below his center.
 const BALL_SIZE = 12;
 const BALL_FOOT = 13;
-const SNIFF_MS = 1300;
 const STRETCH_MS = 700;
 // The tail wag's own cadence -- deliberately independent of the leg swap
 // (and of walking at all): see the tailFrame prop's doc in PixelDog.tsx
@@ -579,6 +607,27 @@ export function ScoutCompanion() {
   // sniff at the ground, sitting down for a longer rest (then a stretch
   // before setting off again). Glancing around is just a facing flip.
   const [idleAct, setIdleAct] = useState<IdleAct>("none");
+  // A quick squash when he pulls up from a fast run.
+  const [land, setLand] = useState(false);
+  const landTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // The sprite's own wrapper: the render loop writes his gait bob and lean
+  // straight to it each tick, underneath whatever CSS animation the button
+  // above it is playing.
+  const bodyRef = useRef<HTMLSpanElement>(null);
+  const gaitRef = useRef<Gait>("trot");
+  const bobPhaseRef = useRef(0);
+  const prevSpeedRef = useRef(0);
+  // Top speed reached on the current walk -- he's braked to a crawl by the
+  // time he arrives, so the landing squash keys off this instead.
+  const peakSpeedRef = useRef(0);
+  const leanRef = useRef(0);
+  // Zoomies: legs left in the current burst, and when the next can start.
+  const zoomLegsRef = useRef(0);
+  const zoomiesAtRef = useRef(Date.now() + ZOOMIES_MIN_MS * 0.6 + Math.random() * ZOOMIES_MIN_MS);
+  // What a play bow leads into: a dash, a pounce at the cursor, or nothing.
+  const afterBowRef = useRef<"dash" | "pounce" | null>(null);
+  const spinFlipAtRef = useRef(0);
+  const zoomingRef = useRef(false);
   const [panelAnchor, setPanelAnchor] = useState<{ x: number; y: number } | null>(null);
   // Read off /api/pet/state for the panel's status line.
   const [streak, setStreak] = useState(0);
@@ -1167,9 +1216,40 @@ export function ScoutCompanion() {
       if (r < 0.55) return 9000 + Math.random() * 9000;
       return 4000 + Math.random() * 4000;
     }
-    if (r < 0.2) return 8000 + Math.random() * 8000; // a real rest
-    if (r < 0.55) return 3500 + Math.random() * 3500; // a normal beat
-    return 1500 + Math.random() * 2000; // a brief pause
+    // Hungry: still gets up and about, just with more and longer rests.
+    if (stageRef.current === "hungry") {
+      if (r < 0.2) return 8000 + Math.random() * 8000;
+      if (r < 0.55) return 3500 + Math.random() * 3500;
+      return 1500 + Math.random() * 2000;
+    }
+    // Well fed: mostly short beats, the occasional proper lie-down. The
+    // idle bits (sniffs, bows, hops, head tilts) fill the longer ones, so
+    // even standing still he isn't static.
+    if (r < 0.08) return 7000 + Math.random() * 5000; // a real rest
+    if (r < 0.3) return 3500 + Math.random() * 2500; // a longer beat
+    if (r < 0.7) return 1500 + Math.random() * 2000; // a normal beat
+    return 500 + Math.random() * 900; // barely stopping
+  }
+
+  // How he gets there. Healthy dogs mix all three gaits; a hungry or
+  // struggling one doesn't gallop.
+  function pickGait(): Gait {
+    const r = Math.random();
+    const energetic = stageRef.current === "thriving" || stageRef.current === "content" || stageRef.current === null;
+    if (!energetic || reducedMotionRef.current) return r < 0.45 ? "stroll" : "trot";
+    if (r < 0.25) return "stroll";
+    if (r < 0.72) return "trot";
+    return "gallop";
+  }
+
+  function gaitSpeed(g: Gait): number {
+    if (g === "stroll") return 0.6 + Math.random() * 0.25;
+    if (g === "trot") return 1.0 + Math.random() * 0.35;
+    return 1.75 + Math.random() * 0.5;
+  }
+
+  function gaitForSpeed(mult: number): Gait {
+    return mult < 0.95 ? "stroll" : mult < 1.6 ? "trot" : "gallop";
   }
 
   // Resolves what beginWalk would send him to next, WITHOUT actually
@@ -1300,6 +1380,91 @@ export function ScoutCompanion() {
     setIdleAct(a);
   }
 
+  // A timed idle bit (sniff, bow, tilt, hop, spin): plays for its length,
+  // and the rest he's in stretches to fit it if it has to.
+  function startAct(a: IdleAct) {
+    const ms = IDLE_ACT_MS[a] ?? 1000;
+    const now = Date.now();
+    setIdle(a);
+    idleEndRef.current = now + ms;
+    behaviorUntilRef.current = Math.max(behaviorUntilRef.current, now + ms + 150);
+  }
+
+  // Well fed and not asked to keep motion down: the full repertoire.
+  function isLively(): boolean {
+    const st = stageRef.current;
+    return !reducedMotionRef.current && (st === "thriving" || st === "content" || st === null);
+  }
+
+  // Picks what he does with a spare moment between walks. `left` is how
+  // long the current rest still has to run.
+  function pickIdleAct(left: number) {
+    if (left > 5000 && Math.random() < 0.3) {
+      setIdle("rest");
+      return;
+    }
+    const lively = isLively();
+    const options: [IdleAct | "glance", number][] = [
+      ["sniff", reducedMotionRef.current ? 0 : 3],
+      ["tilt", 2.2],
+      ["glance", 2],
+      ["bow", lively ? 1.4 : 0],
+      ["hop", lively ? 1.2 : 0],
+      ["spin", lively && stageRef.current !== "content" ? 0.8 : 0],
+    ];
+    const total = options.reduce((t, [, w]) => t + w, 0);
+    let r = Math.random() * total;
+    let choice: IdleAct | "glance" = "glance";
+    for (const [a, w] of options) {
+      if ((r -= w) <= 0) {
+        choice = a;
+        break;
+      }
+    }
+    if (choice === "glance" || left < (IDLE_ACT_MS[choice] ?? 0) + 200) {
+      facingRef.current = facingRef.current === 1 ? -1 : 1;
+      setFacing(facingRef.current);
+      return;
+    }
+    if (choice === "bow") afterBowRef.current = Math.random() < 0.5 ? "dash" : null;
+    if (choice === "spin") spinFlipAtRef.current = 0;
+    startAct(choice);
+  }
+
+  // Zoomies: a burst of three to five short, fast gallops in random
+  // directions with barely a pause between them (the arrival handler in
+  // the render loop chains them), ending in a flop or a head tilt.
+  function startZoomies() {
+    zoomiesAtRef.current = Date.now() + ZOOMIES_MIN_MS + Math.random() * (ZOOMIES_MAX_MS - ZOOMIES_MIN_MS);
+    zoomingRef.current = true;
+    zoomLegsRef.current = 3 + Math.floor(Math.random() * 3);
+    if (Math.random() < 0.4) speak(pick(ZOOMIES_PHRASES), 1800);
+    startZoomLeg();
+  }
+
+  function startZoomLeg() {
+    zoomLegsRef.current -= 1;
+    const p = posRef.current;
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 110 + Math.random() * 130;
+    beginWalk({
+      speedMult: 2.2 + Math.random() * 0.5,
+      forceTarget: { x: p.x + Math.cos(angle) * radius, y: p.y + Math.sin(angle) * radius * 0.7 },
+    });
+  }
+
+  // Back to a neutral stance: no bob, no lean.
+  function resetBody() {
+    prevSpeedRef.current = 0;
+    leanRef.current = 0;
+    if (bodyRef.current && bodyRef.current.style.transform) bodyRef.current.style.transform = "";
+  }
+
+  function cancelZoomies() {
+    zoomingRef.current = false;
+    zoomLegsRef.current = 0;
+  }
+
   // Sets off toward a new spot (see resolveTarget for how it's picked and
   // kept off text); the render loop steers him there.
   //   - `urgent`: faster and more direct -- purposeful, not a stroll.
@@ -1310,20 +1475,28 @@ export function ScoutCompanion() {
   //     cursor and actually stops there.
   // The way there is free to cross text (see the render loop) --
   // resolveTarget only keeps the landing spot itself off of it.
-  function beginWalk(opts: { avoid?: { x: number; y: number } | null; urgent?: boolean; speedMult?: number; straight?: boolean; forceTarget?: { x: number; y: number } } = {}) {
+  function beginWalk(opts: { avoid?: { x: number; y: number } | null; urgent?: boolean; speedMult?: number; straight?: boolean; forceTarget?: { x: number; y: number }; gait?: Gait } = {}) {
     const { urgent = false, speedMult, straight = false } = opts;
+    if (urgent) cancelZoomies();
     const { end } = resolveTarget(opts);
     const wasWalking = walkingRef.current;
     setIdle("none");
 
     targetRef.current = end;
-    pathSpeedRef.current = speedMult !== undefined ? speedMult : urgent ? RETURN_SPEED_MULT + Math.random() * 0.3 : 0.75 + Math.random() * 0.6;
+    peakSpeedRef.current = 0;
+    const gait = opts.gait ?? (speedMult !== undefined || urgent ? null : pickGait());
+    pathSpeedRef.current =
+      speedMult !== undefined ? speedMult : urgent ? RETURN_SPEED_MULT + Math.random() * 0.3 : gaitSpeed(gait ?? "trot");
+    gaitRef.current = gait ?? gaitForSpeed(pathSpeedRef.current);
+    // Strolls wander; trots less so; gallops and dashes go more or less
+    // straight at it.
+    const meanderScale = straight ? 0 : urgent || gaitRef.current === "gallop" ? 0.25 : gaitRef.current === "trot" ? 0.7 : 1;
     meanderRef.current = {
-      amp: straight ? 0 : (urgent ? 0.25 : 1) * MEANDER_RAD * (Math.random() < 0.5 ? -1 : 1) * (0.5 + Math.random() * 0.5),
+      amp: meanderScale * MEANDER_RAD * (Math.random() < 0.5 ? -1 : 1) * (0.5 + Math.random() * 0.5),
       phase: Math.random() * Math.PI * 2,
     };
     // Bursting into a sprint from a standstill gets a little launch hop.
-    if (!wasWalking && urgent && !reducedMotionRef.current) {
+    if (!wasWalking && (urgent || gaitRef.current === "gallop") && !reducedMotionRef.current) {
       if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
       setPerk(true);
       perkTimeoutRef.current = setTimeout(() => setPerk(false), 260);
@@ -1445,6 +1618,7 @@ export function ScoutCompanion() {
       // target would slide out from under the buttons) but keeps wagging,
       // which the block above already handled. Nothing else this tick.
       if (menuOpenRef.current) {
+        resetBody();
         if (wrapperRef.current) {
           wrapperRef.current.style.left = `${posRef.current.x}px`;
           wrapperRef.current.style.top = `${posRef.current.y}px`;
@@ -1581,7 +1755,11 @@ export function ScoutCompanion() {
           noticeCooldownRef.current = nowMs + NOTICE_COOLDOWN_MS;
           facingRef.current = mouseRef.current.x >= pos.x ? 1 : -1;
           setFacing(facingRef.current);
-          if (Math.random() < 0.5) {
+          if (isLively() && idleActRef.current === "none" && Math.random() < 0.35) {
+            // Play! Front end down, rear up, then a pounce at the cursor.
+            afterBowRef.current = "pounce";
+            startAct("bow");
+          } else if (Math.random() < 0.5) {
             // speak() already gives him the same little happy hop -- no
             // need to trigger it a second time here.
             speak(pick(NOTICE_PHRASES), 2200);
@@ -1623,11 +1801,30 @@ export function ScoutCompanion() {
           walkingRef.current = false;
           setIsWalking(false);
           returningRef.current = false;
+          resetBody();
+          if (peakSpeedRef.current > LAND_SPEED && !reducedMotionRef.current && zoomLegsRef.current === 0) {
+            if (landTimeoutRef.current) clearTimeout(landTimeoutRef.current);
+            setLand(true);
+            landTimeoutRef.current = setTimeout(() => setLand(false), 260);
+          }
           // Follow mode gets its own short recheck gap instead of the long
           // ambient rest below -- otherwise every leg of the chase would
           // end with him just standing there for several seconds even
           // though the cursor kept moving the whole time.
           behaviorUntilRef.current = nowMs + (followModeRef.current ? FOLLOW_RECHECK_MS : pickPauseMs());
+          if (zoomingRef.current) {
+            if (zoomLegsRef.current > 0) {
+              // Mid-zoomies: barely a beat before the next burst.
+              behaviorUntilRef.current = nowMs + 60 + Math.random() * 140;
+            } else {
+              // Done: flop down for a breather, or stand there panting
+              // with a head tilt like nothing happened.
+              zoomingRef.current = false;
+              behaviorUntilRef.current = nowMs + 4000 + Math.random() * 3000;
+              if (Math.random() < 0.6) setIdle("rest");
+              else startAct("tilt");
+            }
+          }
 
           // Fetch: he's just reached the ball -> pick it up (see
           // carryingBall) and trot back to where he was standing when it
@@ -1686,6 +1883,23 @@ export function ScoutCompanion() {
           strideRef.current = 0;
           setLegFrame((f) => (f === 0 ? 1 : 0));
         }
+        // The body rises once per leg swap (a full bounding arc at a
+        // gallop), rocks nose-to-tail with the stride, and leans into
+        // speeding up or braking -- so each gait has its own rhythm and
+        // starts and stops have weight.
+        if (walkingRef.current && bodyRef.current) {
+          const g = gaitRef.current;
+          bobPhaseRef.current += ((moved * sec) / strideFor(Math.max(moved, 1))) * Math.PI;
+          const amt = Math.min(1, moved / 60) * (reducedMotionRef.current ? 0.4 : 1);
+          const bob = GAIT_BOB[g] * Math.abs(Math.sin(bobPhaseRef.current)) * amt;
+          const rock = GAIT_ROCK[g] * Math.cos(bobPhaseRef.current) * amt;
+          peakSpeedRef.current = Math.max(peakSpeedRef.current, moved);
+          const accel = (moved - prevSpeedRef.current) / Math.max(sec, 0.001);
+          prevSpeedRef.current = moved;
+          const leanTarget = clamp((accel / ACCEL) * MAX_LEAN_DEG, -MAX_LEAN_DEG, MAX_LEAN_DEG);
+          leanRef.current += (leanTarget - leanRef.current) * Math.min(1, sec * 10);
+          bodyRef.current.style.transform = `translateY(${(-bob).toFixed(2)}px) rotate(${((leanRef.current + rock) * facingRef.current).toFixed(2)}deg)`;
+        }
       } else if (fetchingRef.current === "flying") {
         // The thrown ball is still in the air/bouncing -- he watches from
         // right where he threw it from rather than wandering off, so
@@ -1725,29 +1939,42 @@ export function ScoutCompanion() {
         }
       } else {
         const act = idleActRef.current;
+        const timed = IDLE_ACT_MS[act] !== undefined;
         if (nowMs > behaviorUntilRef.current) {
           if (act === "rest") {
             // Up from a proper rest: a stretch first, then off he goes.
             setIdle("stretch");
             behaviorUntilRef.current = nowMs + STRETCH_MS;
+          } else if (zoomLegsRef.current > 0) {
+            startZoomLeg();
           } else {
             beginWalk();
           }
-        } else if (act === "sniff" && nowMs > idleEndRef.current) {
+        } else if (timed && nowMs > idleEndRef.current) {
           setIdle("none");
-        } else if (act === "none" && nowMs > nextIdleAtRef.current) {
-          nextIdleAtRef.current = nowMs + 1800 + Math.random() * 2600;
-          const left = behaviorUntilRef.current - nowMs;
-          const r = Math.random();
-          if (left > 5000 && r < 0.5) {
-            setIdle("rest");
-          } else if (left > SNIFF_MS + 300 && r < 0.8 && !reducedMotionRef.current) {
-            setIdle("sniff");
-            idleEndRef.current = nowMs + SNIFF_MS;
-          } else {
+          const next = afterBowRef.current;
+          afterBowRef.current = null;
+          // A play bow is an invitation: sometimes he takes himself up on
+          // it and bolts, or pounces at the cursor that caught his eye.
+          if (act === "bow" && next === "dash") {
+            beginWalk({ gait: "gallop" });
+          } else if (act === "bow" && next === "pounce" && mouseRef.current) {
+            const m = mouseRef.current;
+            beginWalk({ urgent: true, straight: true, speedMult: 2.4, forceTarget: { x: m.x - facingRef.current * 28, y: m.y + 18 } });
+          }
+        } else if (act === "spin") {
+          // Chasing his tail: whips around to face the other way, over
+          // and over, while the CSS spin-wobble plays on top.
+          if (nowMs > spinFlipAtRef.current) {
+            spinFlipAtRef.current = nowMs + SPIN_FLIP_MS;
             facingRef.current = facingRef.current === 1 ? -1 : 1;
             setFacing(facingRef.current);
           }
+        } else if (act === "none" && nowMs > zoomiesAtRef.current && isLively() && !onTextRef.current) {
+          startZoomies();
+        } else if (act === "none" && nowMs > nextIdleAtRef.current) {
+          nextIdleAtRef.current = nowMs + 1300 + Math.random() * 2000;
+          pickIdleAct(behaviorUntilRef.current - nowMs);
         } else if (act === "none" && Math.random() < 0.002) {
           // An idle glance side to side -- small, infrequent, alive.
           facingRef.current = facingRef.current === 1 ? -1 : 1;
@@ -1774,6 +2001,8 @@ export function ScoutCompanion() {
   // ---- Click menu plumbing ----------------------------------------------
 
   function openMenu() {
+    cancelZoomies();
+    afterBowRef.current = null;
     // A click now stops him wherever he is -- see onClickDog -- including
     // mid-fetch. Chasing or trotting a ball back are both real walks
     // (walkingRef.current), so the stop below already halts him; this is
@@ -2246,21 +2475,27 @@ export function ScoutCompanion() {
             ? "animate-ozho-pet"
             : perk
             ? "animate-perk"
+            : land && !isWalking
+            ? "animate-ozho-land"
             : stage === "critical" && !isWalking
             ? "animate-worried"
-            : idleAct === "sniff" && !isWalking
+            : isWalking
+            ? ""
+            : idleAct === "sniff"
             ? "animate-ozho-sniff"
-            : idleAct === "stretch" && !isWalking
+            : idleAct === "stretch"
             ? "animate-ozho-stretch"
+            : idleAct === "bow"
+            ? "animate-ozho-bow"
+            : idleAct === "tilt"
+            ? "animate-ozho-tilt"
+            : idleAct === "hop"
+            ? "animate-ozho-hops"
+            : idleAct === "spin"
+            ? "animate-ozho-spin"
             : ""
         }`}
-        style={{
-          ["--face" as string]: facing,
-          transform:
-            !trick && isWalking
-              ? `translateY(${legFrame === 1 ? -3 : 0}px) rotate(${legFrame === 1 ? (facing === 1 ? 2 : -2) : 0}deg)`
-              : undefined,
-        }}
+        style={{ ["--face" as string]: facing }}
       >
         {/* An invisible, generously-sized hit area centered over him --
             his actual sprite is only 44x27.5 and an odd, non-square shape
@@ -2278,6 +2513,8 @@ export function ScoutCompanion() {
         {!isMobile && (
           <span className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2" aria-hidden />
         )}
+        {/* Gait bob and lean land here, written by the render loop. */}
+        <span ref={bodyRef} className="block" style={{ transformOrigin: "50% 80%" }}>
         <PixelDog
           size={isMobile ? MOBILE_DOCK_SIZE : 44}
           mood={mood}
@@ -2292,6 +2529,7 @@ export function ScoutCompanion() {
           costume={costume}
           carryingBall={carryingBall}
         />
+        </span>
       </button>
 
       {showHearts && (
