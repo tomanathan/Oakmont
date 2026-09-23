@@ -375,7 +375,9 @@ const MOBILE_BREAKPOINT = 640;
 // of these pages, closest to how a status bar or app-bar icon reads as
 // "chrome", not "part of the page".
 const MOBILE_DOCK_MARGIN_X = 10;
-const MOBILE_DOCK_MARGIN_Y = 10;
+// 17, not 10: centers his badge on the app's sticky header bar (see
+// AppShell), which leaves this corner clear for him on phones.
+const MOBILE_DOCK_MARGIN_Y = 17;
 // Rendered noticeably smaller than his normal 44px sprite -- a small
 // static badge in the corner reads as an icon; at full size he was heavy
 // enough to still feel like he was "sitting on" whatever text happened to

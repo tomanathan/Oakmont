@@ -112,7 +112,7 @@ export default async function PlanPage() {
         daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
       />
 
-      <div className="mt-10" id="practice-tests">
+      <div className="mt-10 scroll-mt-[72px]" id="practice-tests">
         <AnalysisClient
           domains={ALL_DOMAINS}
           domainMastery={domainMastery}

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { NavButton } from "./NavButton";
 import { BrandMark } from "./BrandMark";
 import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
@@ -98,79 +98,157 @@ export function AppShell({
     router.refresh();
   }
 
+  const width = wide ? "max-w-[1180px]" : "max-w-[900px]";
+
   return (
-    <div className={`${wide ? "max-w-[1180px]" : "max-w-[900px]"} mx-auto px-4 pb-12 pt-2 font-sans`}>
-      <header className="flex items-center justify-between gap-3 py-2 px-4 bg-white rounded-xl shadow-[0_1px_2px_rgba(26,26,46,0.04),0_6px_20px_rgba(26,26,46,0.05)] border border-stone-200 mb-4 flex-wrap">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <BrandMark size={28} />
-          <div className="min-w-0">
-            <div className="font-display font-semibold text-[14px] text-ink leading-tight truncate">
-              Oakmont Study Center
-            </div>
-            <div className="text-[10.5px] text-stone-400 truncate">{email}</div>
-          </div>
-        </div>
+    <>
+      {/* Sticky and full-bleed, the same frosted bar as the public site's
+          nav, so moving from the landing page into the app feels like the
+          same product. On phones the right edge is left clear: that's
+          where Ozho (and Mochi, once earned) dock as fixed badges -- see
+          ScoutCompanion's MOBILE_DOCK_* and SecondCompanion's DOCK_*. */}
+      <header className="sticky top-0 z-30 border-b border-[#ece9f7]/80 bg-white/85 backdrop-blur-md font-sans">
+        <div className={`${width} mx-auto flex items-center gap-2 pl-4 pr-[100px] py-2.5 sm:gap-3 sm:pr-4`}>
+          <Link href="/dashboard" className="flex flex-shrink-0 items-center gap-2" aria-label="Oakmont Study Center, dashboard">
+            <BrandMark size={26} />
+            <span className="hidden font-display text-[15px] font-semibold text-ink md:inline">Oakmont</span>
+          </Link>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {pet && (
-            <button
-              onClick={() => router.push("/settings")}
-              className={`flex items-center gap-1.5 pl-1 pr-2.5 py-0.5 rounded-full border text-[11px] font-semibold transition-opacity hover:opacity-75 ${STAGE_PILL[pet.stage]}`}
-              title={`${PET_NAME} is ${STAGE_LABEL[pet.stage].toLowerCase()} -- click to manage in Settings`}
-            >
-              <PixelDog
-                size={22}
-                mood={MOOD_BY_STAGE[pet.stage]}
-                dead={pet.stage === "dead"}
-                costume={pet.costume}
-                className={pet.stage === "critical" ? "animate-worried" : ""}
-              />
-              {STAGE_LABEL[pet.stage]}
-            </button>
-          )}
-
-          {stats && stats.currentStreak > 0 && (
-            <div
-              className="flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/80 rounded-full pl-2 pr-2.5 py-1"
-              title={`${stats.currentStreak}-day streak`}
-            >
-              {stats.currentStreak}-day streak
-            </div>
-          )}
-
-          <nav className="flex items-center gap-1.5 flex-wrap">
-            <NavButton active={pathname === "/dashboard"} onClick={() => router.push("/dashboard")}>
-              Dashboard
-            </NavButton>
+          <nav className="ml-1 flex items-center gap-0.5 sm:ml-3">
             {/* One nav item now covers what used to be two separate pages
                 (6-month plan, practice exam analysis) -- see app/plan/
                 page.tsx's own comment on why logging scores and seeing the
                 schedule they drive belong on one page, not two. /analysis
                 still resolves (see app/analysis/page.tsx) as a redirect
                 here for anyone with an old bookmark. */}
-            <NavButton active={pathname === "/plan"} onClick={() => router.push("/plan")}>
-              Study plan
-            </NavButton>
+            <Tab href="/dashboard" active={pathname === "/dashboard" || !!pathname?.startsWith("/subskill")}>
+              <span className="sm:hidden">Home</span>
+              <span className="hidden sm:inline">Dashboard</span>
+            </Tab>
+            <Tab href="/plan" active={pathname === "/plan"}>
+              <span className="sm:hidden">Plan</span>
+              <span className="hidden sm:inline">Study plan</span>
+            </Tab>
           </nav>
 
-          {/* No divider border here on purpose -- on narrow viewports this
-              group wraps onto its own line, and a left border would show
-              up as an orphaned tick with nothing to actually divide from. */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.push("/settings")}
-              className="text-xs text-stone-400 hover:text-ink transition-colors"
-            >
-              Settings
-            </button>
-            <button onClick={handleLogout} className="text-xs text-stone-400 hover:text-ink transition-colors">
-              Log out
-            </button>
+          <div className="ml-auto flex items-center gap-2">
+            {pet && (
+              <Link
+                href="/settings#wardrobe"
+                className={`hidden items-center gap-1.5 rounded-full border py-0.5 pl-1 pr-2.5 text-[11px] font-semibold transition-opacity hover:opacity-75 sm:flex ${STAGE_PILL[pet.stage]}`}
+                title={`${PET_NAME} is ${STAGE_LABEL[pet.stage].toLowerCase()}`}
+              >
+                <PixelDog
+                  size={22}
+                  mood={MOOD_BY_STAGE[pet.stage]}
+                  dead={pet.stage === "dead"}
+                  costume={pet.costume}
+                  shadow={false}
+                  className={pet.stage === "critical" ? "animate-worried" : ""}
+                />
+                {STAGE_LABEL[pet.stage]}
+              </Link>
+            )}
+
+            {stats && stats.currentStreak > 0 && (
+              <div
+                className="hidden items-center gap-1 rounded-full bg-[#fff4e6] py-1 pl-2 pr-2.5 text-[11px] font-semibold text-[#b4541a] sm:flex"
+                title={`${stats.currentStreak}-day streak`}
+              >
+                <svg width="10" height="12" viewBox="0 0 12 14" aria-hidden="true">
+                  <path
+                    d="M6 0.5c.6 2.3 3.2 3.6 3.2 7a3.2 3.2 0 0 1-6.4 0c0-1.4.7-2.3 1.4-3 .1 1 .6 1.7 1.3 1.9C5 4.6 5 2.4 6 .5Z"
+                    fill="currentColor"
+                  />
+                </svg>
+                {stats.currentStreak}
+                <span className="font-medium opacity-80">day{stats.currentStreak === 1 ? "" : "s"}</span>
+              </div>
+            )}
+
+            <AccountMenu email={email} onLogout={handleLogout} />
           </div>
         </div>
       </header>
+      <div className={`${width} mx-auto px-4 pb-12 pt-5 font-sans`}>
+        {children}
+        <LegalFooter className="mt-10" />
+      </div>
+    </>
+  );
+}
+
+function Tab({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
+        active ? "bg-[#f1f0fb] font-semibold text-ink" : "text-gray-500 hover:text-ink"
+      }`}
+    >
       {children}
-      <LegalFooter className="mt-10" />
+    </Link>
+  );
+}
+
+// The account's initial in a circle, opening a small menu with who's
+// signed in, Settings and Log out -- the three things that used to sit
+// loose across the header as small grey text.
+function AccountMenu({ email, onLogout }: { email: string; onLogout: () => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e: PointerEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    window.addEventListener("pointerdown", onDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label="Account"
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-[13px] font-semibold uppercase text-white transition-opacity hover:opacity-85"
+      >
+        {email.trim()[0] ?? "?"}
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-xl border border-[#ece9f7] bg-white py-1 shadow-[0_12px_32px_-8px_rgba(26,26,46,0.2)]"
+        >
+          <div className="border-b border-[#f2f0fa] px-3.5 py-2.5">
+            <div className="text-[11px] text-gray-400">Signed in as</div>
+            <div className="truncate text-[13px] font-medium text-ink">{email}</div>
+          </div>
+          <Link role="menuitem" href="/settings" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-gray-700 hover:bg-[#f7f6fd]">
+            Settings
+          </Link>
+          <Link role="menuitem" href="/settings#wardrobe" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-gray-700 hover:bg-[#f7f6fd]">
+            {PET_NAME}&apos;s wardrobe
+          </Link>
+          <button
+            role="menuitem"
+            onClick={onLogout}
+            className="block w-full px-3.5 py-2 text-left text-sm text-gray-700 hover:bg-[#f7f6fd]"
+          >
+            Log out
+          </button>
+        </div>
+      )}
     </div>
   );
 }

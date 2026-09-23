@@ -54,12 +54,12 @@ const BODY_BELOW = 14;
 const BEHIND_TEXT_OPACITY = 0.4;
 // Docked beside Ozho's phone badge, which (see ScoutCompanion's
 // MOBILE_DOCK_*) is a 40px circle centered on his 30px sprite pinned 10px
-// from the top-right -- i.e. spanning top 0 and right 5. Hers sits level
-// with it, 6px further in.
+// 10px from the right and 17px from the top -- i.e. spanning top 7 and
+// right 5. Hers sits level with it, 6px further in.
 const MOBILE_BREAKPOINT = 640;
 const DOCK_BADGE = 40;
 const DOCK_RIGHT = 5 + DOCK_BADGE + 6;
-const DOCK_TOP = 0;
+const DOCK_TOP = 7;
 
 function clamp(v: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, v));

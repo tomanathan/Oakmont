@@ -729,7 +729,7 @@ export function SubskillClient({
           </div>
 
           {/* Desktop persistent sidebar */}
-          <div className="hidden lg:block lg:sticky lg:top-6">
+          <div className="hidden lg:block lg:sticky lg:top-[72px]">
             <TipsPanel tips={subskill.tipsAndTricks} traps={pattern?.traps} />
           </div>
         </div>
@@ -792,7 +792,7 @@ export function SubskillClient({
                 ref={(el) => {
                   questionRefs.current[i] = el;
                 }}
-                className={`border shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-5 mb-3.5 ${
+                className={`scroll-mt-[72px] border shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-5 mb-3.5 ${
                   submitted
                     ? isCorrect
                       ? "bg-[#fbfefc] border-[#cde8d9]"
@@ -878,7 +878,7 @@ export function SubskillClient({
 function QuizProgress({ answeredCount, total }: { answeredCount: number; total: number }) {
   const pct = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
   return (
-    <div className="sticky top-2 z-10 bg-white/95 backdrop-blur-sm border border-[#ece9f7] rounded-lg px-3.5 py-2 mb-3.5 shadow-[0_1px_2px_rgba(26,26,46,0.03)]">
+    <div className="sticky top-[62px] z-10 bg-white/95 backdrop-blur-sm border border-[#ece9f7] rounded-lg px-3.5 py-2 mb-3.5 shadow-[0_1px_2px_rgba(26,26,46,0.03)]">
       <div className="flex justify-between items-baseline mb-1">
         <span className="text-xs font-semibold text-ink">
           {answeredCount} of {total} answered
@@ -1017,7 +1017,7 @@ function ResultsCard({
   return (
     <div
       ref={cardRef}
-      className={`scroll-mt-4 mb-5 overflow-hidden rounded-2xl border bg-white shadow-[0_1px_2px_rgba(26,26,46,0.04),0_12px_32px_-12px_rgba(26,26,46,0.14)] ${
+      className={`scroll-mt-[72px] mb-5 overflow-hidden rounded-2xl border bg-white shadow-[0_1px_2px_rgba(26,26,46,0.04),0_12px_32px_-12px_rgba(26,26,46,0.14)] ${
         perfect ? "border-[#f0e0b0]" : "border-[#ece9f7]"
       }`}
       aria-live="polite"
@@ -1278,7 +1278,7 @@ function LessonOutline({
   onSelectExample: (patternIdx: number, exampleIdx: number) => void;
 }) {
   return (
-    <nav className="hidden lg:block lg:sticky lg:top-6 pr-3 border-r border-[#ece9f7] self-start">
+    <nav className="hidden lg:block lg:sticky lg:top-[72px] pr-3 border-r border-[#ece9f7] self-start">
       <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2 px-2">
         On this lesson
       </div>
