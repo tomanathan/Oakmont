@@ -1,3 +1,5 @@
+import { ballRects } from "./ozhoBall";
+
 export type DogMood = "happy" | "neutral" | "tired" | "sad";
 
 const PALETTE = {
@@ -372,12 +374,8 @@ export function PixelDog({
           "facing right" coordinate frame as everything else, so the
           scaleX(-1) flip above carries it to the correct side of his face
           automatically when he's facing left. */}
-      {carryingBall && (
-        <>
-          <circle cx={55.5} cy={25} r={3.6} fill="#cddc39" />
-          <path d="M 52.3 25 Q 55.5 22.4 58.7 25" stroke="#eef5c0" strokeWidth={0.8} fill="none" strokeLinecap="round" />
-        </>
-      )}
+      {/* the fetch ball -- the same pixel art as the thrown one (ozhoBall.tsx) */}
+      {carryingBall && ballRects(52, 21, "mouth")}
 
       {/* collar */}
       <rect x={33} y={19} width={5} height={6} fill={p.collar} />

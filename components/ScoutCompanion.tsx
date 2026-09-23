@@ -8,6 +8,7 @@ import { PET_NAME, type PetStage } from "@/lib/pet";
 import { dedupedFetchJson } from "@/lib/dedupeFetch";
 import { companionBus } from "@/lib/companionBus";
 import { OzhoPanel, type OzhoAction } from "./OzhoPanel";
+import { PixelBall, planToss, stepBall, ballGround, type BallSim } from "./ozhoBall";
 
 // Ozho's whole voice, in one place. The character: an enthusiastic,
 // slightly goofy study buddy who treats prep like something the two of you
@@ -323,6 +324,12 @@ const MEANDER_RAD = 0.38;
 const MEANDER_HZ = 0.14;
 
 type IdleAct = "none" | "sniff" | "rest" | "stretch";
+
+// The fetch ball, drawn a little bigger than the one in his mouth so it
+// reads at a glance out on the page; its ground contact is level with his
+// feet, BALL_FOOT below his center.
+const BALL_SIZE = 12;
+const BALL_FOOT = 13;
 const SNIFF_MS = 1300;
 const STRETCH_MS = 700;
 // The tail wag's own cadence -- deliberately independent of the leg swap
@@ -599,28 +606,14 @@ export function ScoutCompanion() {
   const [sitting, setSitting] = useState(false);
   const [heartKey, setHeartKey] = useState(0);
   const [showHearts, setShowHearts] = useState(false);
-  // x/y is where the ball actually comes to rest (its fixed CSS
-  // position); f0-f3 are the flight's own parabola sampled at four points
-  // and b0-b3 are touchdown plus each bounce after it, all as offsets
-  // from x/y -- precomputed here in JS rather than left for the CSS
-  // keyframes to compute, see throwBall() and .animate-ozho-ball-throw in
-  // globals.css for why (browser support for arithmetic on an
-  // unregistered custom property inside calc() is inconsistent; plain
-  // addition of a precomputed length is not) and for what each point is.
-  type BallOffset = { x: number; y: number };
-  const [ball, setBall] = useState<{
-    x: number;
-    y: number;
-    f0: BallOffset;
-    f1: BallOffset;
-    f2: BallOffset;
-    f3: BallOffset;
-    b0: BallOffset;
-    b1: BallOffset;
-    b2: BallOffset;
-    b3: BallOffset;
-    key: number;
-  } | null>(null);
+  // The thrown ball (components/ozhoBall.tsx): simulated in its own little
+  // loop while it's out, drawn by writing straight to these nodes.
+  const [ballShown, setBallShown] = useState(false);
+  const ballSimRef = useRef<BallSim | null>(null);
+  const ballElRef = useRef<HTMLDivElement | null>(null);
+  const ballBodyElRef = useRef<HTMLDivElement | null>(null);
+  const ballShadowElRef = useRef<HTMLDivElement | null>(null);
+  const ballTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   // True for the whole return leg of a fetch (see the walk-complete branch
   // below) -- draws the ball held at his mouth on PixelDog instead of
   // sitting out on the page, since he's carrying it, not chasing it.
@@ -705,7 +698,6 @@ export function ScoutCompanion() {
   // (via beginWalk) only once handleBallLanded fires, so he's not walking
   // toward it while it's still mid-flight.
   const fetchLandingRef = useRef<{ x: number; y: number } | null>(null);
-  const fetchFallbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const heartsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // One-time setup: pick a starting spot in page coordinates and fetch
@@ -838,13 +830,14 @@ export function ScoutCompanion() {
     }
     function onCelebrate(e: Event) {
       lastInteractionAtRef.current = Date.now();
+      holdIdle();
       beginWakeUp();
       const detail = (e as CustomEvent<{ message?: string; near?: { x: number; y: number } }>).detail;
       comeTo(detail?.near);
       speak(detail?.message || pick(CELEBRATION_PHRASES), 3200);
       if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
       setTrick(true);
-      trickTimeoutRef.current = setTimeout(() => setTrick(false), 700);
+      trickTimeoutRef.current = setTimeout(() => setTrick(false), 760);
     }
     window.addEventListener("ozho:celebrate", onCelebrate);
 
@@ -889,7 +882,7 @@ export function ScoutCompanion() {
       if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
       if (pettingTimeoutRef.current) clearTimeout(pettingTimeoutRef.current);
       if (heartsTimeoutRef.current) clearTimeout(heartsTimeoutRef.current);
-      if (fetchFallbackTimeoutRef.current) clearTimeout(fetchFallbackTimeoutRef.current);
+      if (ballTimerRef.current) clearInterval(ballTimerRef.current);
     };
   }, []);
 
@@ -1295,6 +1288,14 @@ export function ScoutCompanion() {
     walkingRef.current = true;
   }
 
+  // Right after you've interacted with him (a trick, a pet, closing his
+  // panel) he stays up and attentive for a bit instead of immediately
+  // sitting down for a rest or wandering off to sniff something.
+  function holdIdle(ms = 3000) {
+    setIdle("none");
+    nextIdleAtRef.current = Date.now() + ms + Math.random() * 1500;
+  }
+
   function setIdle(a: IdleAct) {
     if (idleActRef.current === a) return;
     idleActRef.current = a;
@@ -1638,7 +1639,7 @@ export function ScoutCompanion() {
           // yet at that point.)
           if (fetchingRef.current === "chasing") {
             fetchingRef.current = "back";
-            setBall(null);
+            stopBall();
             setCarryingBall(true);
             speak(pick(FETCH_RETURN_PHRASES), 2600);
             const home = fetchHomeRef.current ?? pickReturnTarget();
@@ -1691,8 +1692,8 @@ export function ScoutCompanion() {
         // The thrown ball is still in the air/bouncing -- he watches from
         // right where he threw it from rather than wandering off, so
         // "doesn't move until it lands" actually holds. handleBallLanded
-        // (fired by the ball's own animationend) is what sends him after
-        // it once it's actually down.
+        // (called by the ball's sim once it's come to rest) is what sends
+        // him after it.
       } else if (sittingRef.current) {
         // "Sit": stays put, full stop, until he's told to get up (or has
         // to break it to dash back into view -- see the out-of-view check
@@ -1786,7 +1787,7 @@ export function ScoutCompanion() {
     // at that point, and the ball plays itself out independent of him.)
     if (fetchingRef.current === "chasing" || fetchingRef.current === "back") {
       fetchingRef.current = null;
-      setBall(null);
+      stopBall();
       setCarryingBall(false);
     }
     // Beside him on desktop (viewport coordinates -- the panel is fixed);
@@ -1813,6 +1814,7 @@ export function ScoutCompanion() {
     if (!menuOpenRef.current) return;
     menuOpenRef.current = false;
     setMenuOpen(false);
+    holdIdle();
     // Resume normal life with a fresh pause rather than bolting the instant
     // the menu closes -- except in follow mode, which shouldn't go quiet
     // for pickPauseMs's multi-second ambient rest just because the menu
@@ -1863,44 +1865,54 @@ export function ScoutCompanion() {
     return { x, y: anchor.y + FOLLOW_OFFSET_Y };
   }
 
-  // Fires once the ball's own throw-and-bounce animation actually
-  // finishes (see the ball's onAnimationEnd, and the setTimeout fallback
-  // in throwBall in case that event is ever missed) -- this is the one
-  // and only place he actually starts moving toward it. Guarded on
-  // fetchingRef still being "flying" so a stray extra call (the fallback
-  // firing after the real event already has, say) is a harmless no-op.
+  // Called once the thrown ball has come to rest (see throwBall) -- the
+  // one place he actually starts moving toward it. Guarded on fetchingRef
+  // still being "flying" so a stray extra call is a harmless no-op.
   function handleBallLanded() {
     if (fetchingRef.current !== "flying") return;
-    if (fetchFallbackTimeoutRef.current) {
-      clearTimeout(fetchFallbackTimeoutRef.current);
-      fetchFallbackTimeoutRef.current = null;
-    }
     fetchingRef.current = "chasing";
     const landing = fetchLandingRef.current;
     fetchLandingRef.current = null;
     if (landing) beginWalk({ urgent: true, forceTarget: landing });
   }
 
+  // Positions the ball and its shadow from the sim. The ball's ground
+  // contact sits level with his feet (BALL_FOOT below his center), so
+  // when he trots to the resting spot, it's right at his paws.
+  function drawBall() {
+    const b = ballSimRef.current;
+    const el = ballElRef.current;
+    const body = ballBodyElRef.current;
+    const shadow = ballShadowElRef.current;
+    if (!b || !el || !body || !shadow) return;
+    const g = ballGround(b);
+    const footY = g.y + BALL_FOOT;
+    el.style.opacity = "1";
+    el.style.transform = `translate3d(${Math.round(g.x - BALL_SIZE / 2)}px, ${Math.round(footY - BALL_SIZE - b.h)}px, 0)`;
+    // Squash on impact; the spin snaps to quarter turns so the pixel art
+    // stays crisp while it rolls.
+    body.style.transform = `scale(${(1 + 0.3 * b.squash).toFixed(3)}, ${(1 - 0.3 * b.squash).toFixed(3)}) rotate(${Math.round(b.spin / 90) * 90}deg)`;
+    const lift = Math.min(1, b.h / 120);
+    shadow.style.opacity = (0.16 * (1 - 0.6 * lift)).toFixed(3);
+    shadow.style.transform = `translate3d(${Math.round(g.x - (BALL_SIZE * 0.6))}px, ${Math.round(footY - 2)}px, 0) scale(${(1 - 0.45 * lift).toFixed(3)})`;
+  }
+
+  function stopBall() {
+    if (ballTimerRef.current) clearInterval(ballTimerRef.current);
+    ballTimerRef.current = null;
+    ballSimRef.current = null;
+    setBallShown(false);
+  }
+
+  // Fetch: the ball is thrown from where he stands to a spot that's free
+  // to stand on (resolveTarget), really flies there -- arc, a couple of
+  // bounces, a roll -- and only once it's still does he go after it. He
+  // watches it the whole way.
   function throwBall() {
     const origin = { x: posRef.current.x, y: posRef.current.y };
-    // Thrown a real distance from wherever he's actually standing -- a
-    // fixed radius around him and a random direction, not a spot picked
-    // from the viewport at large -- so it always reads as an
-    // honest-to-goodness throw.
     const angle = Math.random() * Math.PI * 2;
-    const throwDist = 260 + Math.random() * 220;
-    const dirX = Math.cos(angle);
-    const dirY = Math.sin(angle);
-    const rawTarget = { x: origin.x + dirX * throwDist, y: origin.y + dirY * throwDist };
-    // Resolved through the exact same validity/clamping rules beginWalk
-    // itself uses (page margins, clear of text) -- this is where the ball
-    // actually ends up at rest, and so where he'll need to walk once it
-    // gets there. Doesn't start him walking, though -- see the "flying"
-    // branch in the render loop -- he stays put watching until it
-    // actually lands (handleBallLanded above, fired by the ball's own
-    // animationend), which calls beginWalk again with this same point;
-    // that re-resolves identically since neither his position nor the
-    // page has changed in the meantime.
+    const throwDist = 240 + Math.random() * 240;
+    const rawTarget = { x: origin.x + Math.cos(angle) * throwDist, y: origin.y + Math.sin(angle) * throwDist };
     const { end: rest } = resolveTarget({ forceTarget: rawTarget });
 
     fetchHomeRef.current = origin;
@@ -1908,67 +1920,34 @@ export function ScoutCompanion() {
     fetchLandingRef.current = rest;
     speak(pick(FETCH_THROW_PHRASES), 1800);
 
-    // A real bounce keeps a little of the throw's own momentum rather
-    // than stopping dead -- `roll` is how much further it travels, in
-    // the same direction, after first touching down. `rest` above -- what
-    // the ball's own fixed left/top actually are -- is where it ends up
-    // once that roll is spent, which is `roll` past the literal spot the
-    // toss's parabola first meets the ground.
-    const roll = Math.min(46, throwDist * 0.09);
-    const touchdown = { x: rest.x - dirX * roll, y: rest.y - dirY * roll };
-
-    // A longer throw arcs higher -- the same "more force, bigger arc" a
-    // real toss has -- capped so a very long one doesn't sail absurdly
-    // high.
-    const arcHeight = Math.min(150, 42 + throwDist * 0.22);
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-    // Samples the flight's own parabola at t (0 = it just left his mouth,
-    // 1 = touchdown), as an offset from `rest` -- everything the
-    // keyframes draw is relative to the ball's actual fixed position
-    // (rest), not the origin or the touchdown point. Horizontal position
-    // moves at a constant rate (no real air resistance over a toss this
-    // short); vertical position is that same straight-line fall minus a
-    // hump, which is what actually reads as an arc instead of a slide.
-    const flightOffset = (t: number) => ({
-      x: lerp(origin.x, touchdown.x, t) - rest.x,
-      y: lerp(origin.y, touchdown.y, t) - arcHeight * 4 * t * (1 - t) - rest.y,
-    });
-
-    // Touchdown, and each bounce after it, converge from the full
-    // roll-back offset toward (0, 0) -- i.e. toward actually being at
-    // rest -- popping up briefly each time for the bounce itself. All of
-    // this (see .animate-ozho-ball-throw) is computed here in plain JS
-    // rather than asking the CSS keyframes to multiply a custom property
-    // by a number themselves -- see that rule's own comment for why.
-    const rollBackX = touchdown.x - rest.x;
-    const rollBackY = touchdown.y - rest.y;
-
-    setBall({
-      x: rest.x,
-      y: rest.y,
-      f0: flightOffset(0),
-      f1: flightOffset(0.25),
-      f2: flightOffset(0.5),
-      f3: flightOffset(0.75),
-      b0: { x: rollBackX, y: rollBackY },
-      b1: { x: rollBackX * 0.55, y: rollBackY * 0.55 - 15 },
-      b2: { x: rollBackX * 0.22, y: rollBackY * 0.22 },
-      b3: { x: rollBackX * 0.06, y: rollBackY * 0.06 - 6 },
-      key: Date.now(),
-    });
-
-    // Safety net: if the animationend event were ever missed (a browser
-    // quirk, a tab backgrounded through the whole flight, whatever), he'd
-    // otherwise be stuck standing there forever. Timed comfortably past
-    // the animation's own duration (longer still under reduced motion,
-    // matching .animate-ozho-ball-throw's own slower duration there);
-    // handleBallLanded's own guard makes whichever fires first the only
-    // one that does anything.
-    if (fetchFallbackTimeoutRef.current) clearTimeout(fetchFallbackTimeoutRef.current);
-    fetchFallbackTimeoutRef.current = setTimeout(handleBallLanded, (reducedMotionRef.current ? 1700 : 800) + 200);
+    if (ballTimerRef.current) clearInterval(ballTimerRef.current);
+    ballSimRef.current = planToss(origin, rest);
+    setBallShown(true);
+    let last = performance.now();
+    ballTimerRef.current = setInterval(() => {
+      const b = ballSimRef.current;
+      if (!b) return;
+      const now = performance.now();
+      stepBall(b, ((now - last) / 1000) * (reducedMotionRef.current ? 0.6 : 1));
+      last = now;
+      drawBall();
+      if (fetchingRef.current === "flying") {
+        const f: 1 | -1 = ballGround(b).x >= posRef.current.x ? 1 : -1;
+        if (f !== facingRef.current) {
+          facingRef.current = f;
+          setFacing(f);
+        }
+      }
+      if (b.resting) {
+        if (ballTimerRef.current) clearInterval(ballTimerRef.current);
+        ballTimerRef.current = null;
+        handleBallLanded();
+      }
+    }, 16);
   }
 
   function petOzho() {
+    holdIdle();
     const today = new Date().toISOString().slice(0, 10);
     let n = 0;
     try {
@@ -1998,9 +1977,10 @@ export function ScoutCompanion() {
   }
 
   function doTrick() {
+    holdIdle();
     if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
     setTrick(true);
-    trickTimeoutRef.current = setTimeout(() => setTrick(false), 700);
+    trickTimeoutRef.current = setTimeout(() => setTrick(false), 760);
     speak(pick(CELEBRATION_PHRASES), 2600);
   }
 
@@ -2146,44 +2126,25 @@ export function ScoutCompanion() {
   // coordinates, independent of where Ozho currently is.
   return (
     <>
-      {ball && (
-        // Positioned (left/top) at its actual resting spot; the whole
-        // toss-and-bounce is animated via transform, offset back through
-        // the flight's parabola and each bounce in turn (see
-        // .animate-ozho-ball-throw in globals.css) -- the same "position
-        // the element at rest, animate transform from a computed offset"
-        // trick the heart-burst above uses. onAnimationEnd is what
-        // actually sends him after it -- see handleBallLanded.
-        <div
-          key={ball.key}
-          aria-hidden
-          className="absolute z-40 pointer-events-none text-lg leading-none select-none animate-ozho-ball-throw"
-          onAnimationEnd={handleBallLanded}
-          style={
-            {
-              left: ball.x,
-              top: ball.y,
-              "--p0x": `${ball.f0.x}px`,
-              "--p0y": `${ball.f0.y}px`,
-              "--p1x": `${ball.f1.x}px`,
-              "--p1y": `${ball.f1.y}px`,
-              "--p2x": `${ball.f2.x}px`,
-              "--p2y": `${ball.f2.y}px`,
-              "--p3x": `${ball.f3.x}px`,
-              "--p3y": `${ball.f3.y}px`,
-              "--p4x": `${ball.b0.x}px`,
-              "--p4y": `${ball.b0.y}px`,
-              "--p5x": `${ball.b1.x}px`,
-              "--p5y": `${ball.b1.y}px`,
-              "--p6x": `${ball.b2.x}px`,
-              "--p6y": `${ball.b2.y}px`,
-              "--p7x": `${ball.b3.x}px`,
-              "--p7y": `${ball.b3.y}px`,
-            } as CSSProperties
-          }
-        >
-          🎾
-        </div>
+      {ballShown && (
+        <>
+          <div
+            ref={ballShadowElRef}
+            aria-hidden
+            className="absolute left-0 top-0 z-30 pointer-events-none rounded-[50%] bg-black"
+            style={{ width: BALL_SIZE * 1.2, height: 3, opacity: 0 }}
+          />
+          <div
+            ref={ballElRef}
+            aria-hidden
+            className="absolute left-0 top-0 z-40 pointer-events-none will-change-transform"
+            style={{ width: BALL_SIZE, height: BALL_SIZE, opacity: 0 }}
+          >
+            <div ref={ballBodyElRef} style={{ transformOrigin: "50% 100%" }}>
+              <PixelBall size={BALL_SIZE} />
+            </div>
+          </div>
+        </>
       )}
       <div
         ref={wrapperRef}
@@ -2312,7 +2273,9 @@ export function ScoutCompanion() {
           mood={mood}
           dead={stage === "dead"}
           asleep={asleep}
-          sitting={(sitting || idleAct === "rest") && !isWalking}
+          // The trick is a jump-spin from standing, even if he was sitting;
+          // a "Sit" he was told resumes once he lands.
+          sitting={(sitting || idleAct === "rest") && !isWalking && !trick}
           legFrame={isWalking ? legFrame : 0}
           tailFrame={tailFrame}
           facing={facing}
