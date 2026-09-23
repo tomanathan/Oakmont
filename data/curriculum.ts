@@ -1015,6 +1015,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       traps: [
         "Choosing a word that's a synonym for a different, more common meaning of the word rather than the meaning that fits this sentence.",
         "Choosing the answer that sounds most sophisticated rather than the one that's actually most logically precise.",
+        "Choosing a word that points in the right direction but has the wrong strength or tone (for example, 'hostile' where the context only supports 'skeptical').",
       ],
     },
     {
@@ -1157,6 +1158,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       traps: [
         "Describing what the sentence says rather than what job it's doing in the passage's structure.",
         "Confusing a qualifying/complicating sentence with a full contradiction of the main argument.",
+        "Overstating what a sentence does, such as calling supporting evidence proof or calling a qualification a refutation.",
       ],
     },
     {
@@ -1472,6 +1474,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       traps: [
         "Having the author agree with a claim that directly contradicts their passage's established position.",
         "Predicting a response using generic reasoning rather than the specific concern that drives that particular author's argument.",
+        "Having the author reject the other text's evidence outright, when their position can accept the evidence and reinterpret it.",
       ],
     },
   ],
@@ -1572,6 +1575,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
         "Picking a true, well-written sentence that doesn't actually serve the specific stated goal.",
         "Picking a sentence that uses information not present in the given notes (even if it sounds plausible).",
         "Combining notes in a way that answers a different, related-sounding goal instead of the one actually stated.",
+        "Missing a stated audience (\"an audience unfamiliar with...\") and choosing a sentence that uses a term or name the audience wouldn't know without explanation.",
       ],
     },
   ],
@@ -1633,6 +1637,8 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       traps: [
         "Picking a transition that 'sounds fine' grammatically without checking if it matches the actual logical relationship.",
         "Confusing near-synonyms with different logical force (e.g., 'however' signals direct contrast, while 'nonetheless' signals contrast despite an acknowledged point — subtly different uses).",
+        "Choosing a cause-and-effect transition ('therefore,' 'as a result') when the second sentence only adds information or follows in time, rather than resulting from the first.",
+        "Choosing an example transition ('for instance') when the second sentence isn't an example of the first.",
       ],
     },
     {
@@ -1683,6 +1689,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
       traps: [
         "Treating all 'contrast-flavored' transitions as interchangeable, when concession words specifically signal 'despite this, still...' rather than a flat contradiction.",
+        "Choosing a cause-and-effect transition ('therefore,' 'accordingly') when the second sentence is true despite the first, not because of it.",
       ],
     },
   ],
