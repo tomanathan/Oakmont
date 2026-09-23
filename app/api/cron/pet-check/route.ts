@@ -81,7 +81,7 @@ function warningEmailHtml(): string {
   return `
     <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
       <h2 style="color: #1a1a2e;">${PET_NAME} misses you</h2>
-      <p style="color: #444;">It's been a few days since your last practice session. ${PET_NAME} has 2 days left before it's gone for good -- complete one quiz on Oakmont Study Center today to bring it back to full health.</p>
+      <p style="color: #444;">It's been a few days since your last practice session. ${PET_NAME} has 2 days left before it's gone for good — complete one quiz on Oakmont Study Center today to bring it back to full health.</p>
       <p><a href="${APP_URL}/dashboard" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Open Oakmont Study Center</a></p>
     </div>
   `;

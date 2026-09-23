@@ -33,7 +33,7 @@ export const LANDING_QUESTIONS: LandingQuestion[] = [
     q: "As used in the text, 'the negotiations reached an impasse' most nearly means the negotiations:",
     choices: ["concluded successfully", "were temporarily halted by disagreement", "began for the first time", "were made public"],
     answer: 1,
-    explain: "An 'impasse' is a point where progress becomes impossible due to disagreement -- a standstill.",
+    explain: "An 'impasse' is a point where progress becomes impossible due to disagreement — a standstill.",
     pattern: "Precise Synonym in Context",
   },
   {

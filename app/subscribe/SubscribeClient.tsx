@@ -65,7 +65,7 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
               <span className="text-sm text-gray-500">one time</span>
             </div>
             <div className="text-sm text-gray-500 mb-5">
-              6 months of access -- plenty for most students' whole prep window. One payment, nothing to
+              6 months of access — plenty for most students' whole prep window. One payment, nothing to
               remember to cancel.
             </div>
             <button
@@ -87,7 +87,7 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
               <span className="text-sm text-gray-500">/month</span>
             </div>
             <div className="text-sm text-gray-500 mb-5">
-              Pay month to month, cancel anytime. Starts with a 7-day free trial -- your card isn&apos;t
+              Pay month to month, cancel anytime. Starts with a 7-day free trial — your card isn&apos;t
               charged until it ends.
             </div>
             <button

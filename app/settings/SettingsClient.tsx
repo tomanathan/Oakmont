@@ -375,7 +375,7 @@ export function SettingsClient({
       <div className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-6">
         <div className="text-[15px] font-semibold text-ink mb-1">Invite code</div>
         <div className="text-xs text-gray-500 mb-3">
-          Give this to a parent -- they'll enter it when they sign up at{" "}
+          Give this to a parent — they'll enter it when they sign up at{" "}
           <span className="font-mono">/parent/login</span> to see your dashboard (read-only).
         </div>
         {inviteCode ? (
@@ -391,7 +391,7 @@ export function SettingsClient({
             </button>
           </div>
         ) : (
-          <div className="text-xs text-gray-400 mb-3">No code yet -- generate one to invite a parent.</div>
+          <div className="text-xs text-gray-400 mb-3">No code yet — generate one to invite a parent.</div>
         )}
         <div className="flex gap-2 flex-wrap">
           <button
@@ -436,7 +436,7 @@ export function SettingsClient({
             </button>
           </div>
         ) : (
-          <div className="text-xs text-gray-400 mb-3">No link yet -- create one to share your dashboard.</div>
+          <div className="text-xs text-gray-400 mb-3">No link yet — create one to share your dashboard.</div>
         )}
         <div className="flex gap-2 flex-wrap">
           <button

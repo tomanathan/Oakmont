@@ -1,7 +1,7 @@
 import { LegalPageShell } from "@/components/LegalPageShell";
 import { SUPPORT_EMAIL } from "@/components/LegalFooter";
 
-export const metadata = { title: "Privacy Policy -- Oakmont Study Center" };
+export const metadata = { title: "Privacy Policy — Oakmont Study Center" };
 
 export default function PrivacyPage() {
   return (
@@ -28,7 +28,7 @@ export default function PrivacyPage() {
       <h2>2. Payment information</h2>
       <p>
         Payments are handled entirely by Stripe. When you subscribe or buy a pass, Stripe processes your card
-        directly -- Oakmont&apos;s own servers never receive or store your card number. We keep only a Stripe
+        directly — Oakmont&apos;s own servers never receive or store your card number. We keep only a Stripe
         customer ID and your plan status (active, trial, canceled, etc.) so we know your account has access.
       </p>
 
@@ -38,18 +38,18 @@ export default function PrivacyPage() {
         whoever has that code or link can view a read-only summary of your practice scores, subject mastery, and
         test history. This is off by default, entirely your choice, and can be turned off at any time from
         Settings, which immediately revokes access. Because the public link doesn&apos;t require logging in,
-        treat it like a password -- anyone who has the link can see the data behind it.
+        treat it like a password — anyone who has the link can see the data behind it.
       </p>
 
       <h2>4. Who else sees data, and why</h2>
       <ul>
-        <li><strong>Stripe</strong> -- processes payments (see above).</li>
+        <li><strong>Stripe</strong> — processes payments (see above).</li>
         <li>
-          <strong>Resend</strong> -- sends the occasional study-streak email, only if that feature is enabled on
+          <strong>Resend</strong> — sends the occasional study-streak email, only if that feature is enabled on
           your account.
         </li>
         <li>
-          <strong>Supabase and Vercel</strong> -- host our database and the app itself. They store data on our
+          <strong>Supabase and Vercel</strong> — host our database and the app itself. They store data on our
           behalf; they don&apos;t use it for anything of their own.
         </li>
       </ul>
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
 
       <h2>6. Kids &amp; teenagers</h2>
       <p>
-        Oakmont is built for students preparing for the SAT -- typically high schoolers -- and isn&apos;t
+        Oakmont is built for students preparing for the SAT — typically high schoolers — and isn&apos;t
         intended for children under 13. If you believe a child under 13 has created an account, contact us and
         we&apos;ll delete it.
       </p>

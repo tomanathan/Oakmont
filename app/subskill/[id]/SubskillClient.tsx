@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Subskill, Pattern } from "@/data/curriculum";
 import type { Question } from "@/data/questions";
-import { NavButton } from "@/components/NavButton";
 import { useCountUp } from "@/components/CountUp";
 import { StepList, ProseText } from "@/components/StepList";
 import { MathText } from "@/components/MathText";
@@ -454,24 +453,40 @@ export function SubskillClient({
     <div>
       <button
         onClick={() => router.push("/dashboard")}
-        className="bg-transparent border-none text-gray-500 text-sm mb-4 p-0 cursor-pointer hover:text-gray-700"
+        className="bg-transparent border-none text-gray-500 text-sm mb-4 p-0 cursor-pointer hover:text-ink"
       >
         &larr; Back to dashboard
       </button>
-      <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-1">
+      <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-1.5">
         <span className={`w-1.5 h-1.5 rounded-full ${sectionTheme(subskill.section).dot}`} />
         {subskill.section} · {subskill.domain}
       </div>
-      <div className="text-[22px] font-bold text-ink mb-1">{subskill.name}</div>
+      <h1 className="font-display text-[28px] font-semibold leading-tight text-ink mb-1.5">{subskill.name}</h1>
       <div className="text-sm text-gray-500 mb-5">{subskill.blurb}</div>
 
-      <div className="flex gap-2 mb-5">
-        <NavButton active={mode === "lesson"} onClick={() => setMode("lesson")}>
-          Lesson
-        </NavButton>
-        <NavButton active={mode === "practice"} onClick={() => setMode("practice")}>
-          Practice quiz
-        </NavButton>
+      {/* Two views of one subskill, not two destinations -- a segmented
+          control says that better than a pair of separate buttons. */}
+      <div role="tablist" aria-label="Lesson or quiz" className="mb-5 inline-flex rounded-xl bg-[#f1f0f8] p-1">
+        {(
+          [
+            ["lesson", "Lesson"],
+            ["practice", `Practice quiz${questions.length ? ` · ${questions.length}` : ""}`],
+          ] as const
+        ).map(([m, label]) => (
+          <button
+            key={m}
+            role="tab"
+            aria-selected={mode === m}
+            onClick={() => setMode(m)}
+            className={`rounded-lg px-4 py-2 text-sm transition-all ${
+              mode === m
+                ? "bg-white font-semibold text-ink shadow-[0_1px_3px_rgba(26,26,46,0.12)]"
+                : "font-medium text-gray-500 hover:text-ink"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {mode === "lesson" && (

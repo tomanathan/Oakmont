@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PET_NAME } from "@/lib/pet";
+import { PET_NAME, SECOND_PET_NAME } from "@/lib/pet";
 import { PetAvatar } from "@/components/PetAvatar";
 import { BrandMark } from "@/components/BrandMark";
 
@@ -62,7 +62,7 @@ export function WelcomeClient({ email }: { email: string }) {
           <div className="font-display font-semibold text-[24px] text-ink mb-1.5">When's your test?</div>
           <div className="text-sm text-gray-500">
             This shapes your study plan. Don't know yet? Skip it and we'll start you on the default
-            6-month plan -- you can always set it later in Settings.
+            6-month plan — you can always set it later in Settings.
           </div>
         </div>
 
@@ -108,7 +108,7 @@ export function WelcomeClient({ email }: { email: string }) {
             disabled={submitting}
             className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 disabled:opacity-60"
           >
-            I don't know yet -- skip for now
+            I don't know yet — skip for now
           </button>
         </div>
       </div>
@@ -164,21 +164,11 @@ export function WelcomeClient({ email }: { email: string }) {
         />
         <FeatureCard
           title="Score analysis"
-          body="Log each practice test's results on your Study plan page to see your subject-by-subject trend over time -- and watch your schedule adjust to focus on it."
+          body="Log each practice test's results on your Study plan page to see your subject-by-subject trend over time — and watch your schedule adjust to focus on it."
         />
       </div>
 
-      <div className="bg-[#fef8f2] border border-[#f0d0b3] rounded-xl p-6 mb-8 flex items-center gap-5">
-        <PetAvatar stage="thriving" size={72} />
-        <div>
-          <div className="text-[15px] font-bold text-ink mb-1">Meet {PET_NAME}</div>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            {PET_NAME} is your study buddy — it stays happy as long as you complete at least one
-            quiz every few days. Go a full week without practicing, though, and {PET_NAME} won't
-            make it. Keep your streak up to keep {PET_NAME} around.
-          </p>
-        </div>
-      </div>
+      <MeetOzho />
 
       <button
         onClick={() => setStep("goals")}
@@ -186,6 +176,67 @@ export function WelcomeClient({ email }: { email: string }) {
       >
         Get started →
       </button>
+    </div>
+  );
+}
+
+// The first proper introduction to Ozho: what feeds him, what he earns,
+// and the one real stake -- said plainly, not as a threat. "Say hi" sends
+// the roaming Ozho (already wandering this page) over to the card.
+function MeetOzho() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [greeted, setGreeted] = useState(false);
+  function sayHi() {
+    const r = ref.current?.getBoundingClientRect();
+    const near = r ? { x: r.right + window.scrollX - 60, y: r.top + window.scrollY - 10 } : undefined;
+    window.dispatchEvent(
+      new CustomEvent(greeted ? "ozho:say" : "ozho:celebrate", {
+        detail: {
+          message: greeted ? "Still here! Let's go do a quiz." : "Hi hi hi! I'm Ozho. We're gonna crush this.",
+          tier: "small",
+          near,
+        },
+      })
+    );
+    setGreeted(true);
+  }
+  const facts = [
+    { title: "Feed him", body: "Every quiz you finish is a meal. One a day keeps him thriving." },
+    { title: "Dress him up", body: "Streaks and mastered domains unlock outfits for his wardrobe." },
+    { title: "Make a friend", body: `Hit a 30-day streak and ${SECOND_PET_NAME} comes to stay.` },
+  ];
+  return (
+    <div ref={ref} className="mb-8 rounded-xl border border-[#f0d0b3] bg-[#fef8f2] p-6">
+      <div className="flex items-center gap-5">
+        <div className="flex h-[92px] w-[92px] flex-shrink-0 items-end justify-center rounded-2xl bg-white/70 pb-2">
+          <PetAvatar stage="thriving" size={76} />
+        </div>
+        <div className="min-w-0">
+          <div className="font-display text-[20px] font-semibold text-ink">Meet {PET_NAME}</div>
+          <p className="mt-1 text-sm leading-relaxed text-gray-600">
+            Your study buddy. He&apos;ll wander around while you work, cheer when you nail something, and
+            nudge you when it&apos;s been a while.
+          </p>
+          <button
+            onClick={sayHi}
+            className="mt-2.5 rounded-lg border border-[#f0d0b3] bg-white px-3.5 py-1.5 text-[13px] font-semibold text-[#9a5a1c] transition-colors hover:border-[#e6b98f]"
+          >
+            {greeted ? "Say hi again" : `Say hi to ${PET_NAME}`}
+          </button>
+        </div>
+      </div>
+      <div className="mt-5 grid gap-2.5 sm:grid-cols-3">
+        {facts.map((f) => (
+          <div key={f.title} className="rounded-lg bg-white/70 px-3.5 py-3">
+            <div className="text-[13px] font-semibold text-ink">{f.title}</div>
+            <div className="mt-0.5 text-xs leading-relaxed text-gray-500">{f.body}</div>
+          </div>
+        ))}
+      </div>
+      <p className="mt-4 text-xs leading-relaxed text-gray-500">
+        One honest warning: he depends on you. After a few days without practice he gets hungry, and a
+        full week without any means starting over with a new pet.
+      </p>
     </div>
   );
 }

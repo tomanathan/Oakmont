@@ -158,7 +158,7 @@ export function AnalysisClient({
       </div>
       <div className="text-sm text-gray-500 mb-6">
         {dueTestNumber !== null
-          ? `Practice test ${dueTestNumber} of 8 was scheduled for this week -- log your results below.`
+          ? `Practice test ${dueTestNumber} of 8 was scheduled for this week — log your results below.`
           : "Log your full-length practice test results here and see how each subject is trending."}
       </div>
 

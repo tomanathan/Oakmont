@@ -1,7 +1,7 @@
 import { LegalPageShell } from "@/components/LegalPageShell";
 import { SUPPORT_EMAIL } from "@/components/LegalFooter";
 
-export const metadata = { title: "Terms of Service -- Oakmont Study Center" };
+export const metadata = { title: "Terms of Service — Oakmont Study Center" };
 
 export default function TermsPage() {
   return (
@@ -15,14 +15,14 @@ export default function TermsPage() {
       <h2>1. What Oakmont is</h2>
       <p>
         Oakmont is a self-guided study tool: lessons and practice quizzes organized by official SAT subskill, a
-        day-by-day plan, and space to log full-length practice tests. It&apos;s a study aid, not a guarantee --
+        day-by-day plan, and space to log full-length practice tests. It&apos;s a study aid, not a guarantee —
         we don&apos;t promise any particular score, and the SAT is a trademark of the College Board, which doesn&apos;t
         endorse or sponsor Oakmont.
       </p>
 
       <h2>2. Your account</h2>
       <p>
-        Keep your login private and use a real email address you check -- it&apos;s how we&apos;d reach you about
+        Keep your login private and use a real email address you check — it&apos;s how we&apos;d reach you about
         your account or billing. You&apos;re responsible for what happens under your account.
       </p>
 
@@ -32,7 +32,7 @@ export default function TermsPage() {
         <li>
           <strong>Monthly ($25/month):</strong> starts with a 7-day free trial. Your card isn&apos;t charged until
           the trial ends, and it renews automatically each month after that until you cancel. Cancel anytime from
-          Settings -- access continues through the end of the period you already paid for.
+          Settings — access continues through the end of the period you already paid for.
         </li>
         <li>
           <strong>Full Course Access ($100 one time):</strong> a single payment that unlocks everything for 182
@@ -45,7 +45,7 @@ export default function TermsPage() {
       <p>
         <strong>Full Course Access:</strong> if it&apos;s within 3 days of your purchase and you haven&apos;t
         gotten meaningfully into the material, email us and we&apos;ll refund it in full, no hassle. After that, or
-        with heavier use, reach out anyway -- we look at these individually rather than applying a hard rule.
+        with heavier use, reach out anyway — we look at these individually rather than applying a hard rule.
       </p>
       <p>
         <strong>Monthly:</strong> the 7-day trial exists so you can decide before anything is charged. Once a
@@ -59,7 +59,7 @@ export default function TermsPage() {
       <h2>5. Letting a parent see your progress</h2>
       <p>
         From Settings, you can optionally generate an invite code (for a parent to make their own account) or a
-        public link -- either one shows a read-only view of your practice scores, subject mastery, and test
+        public link — either one shows a read-only view of your practice scores, subject mastery, and test
         history. This is entirely your choice: nothing is shared until you generate one of these, and turning it
         off in Settings revokes access right away.
       </p>

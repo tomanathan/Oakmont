@@ -37,7 +37,7 @@ export default async function SubscribePage() {
         <div className="font-display font-semibold text-[28px] text-ink mb-1.5">Choose your plan</div>
         <div className="text-sm text-gray-500 max-w-[520px] mx-auto">
           Every plan includes the full curriculum, all 8 practice tests, your adaptive study plan, and Ozho.
-          The monthly plan starts with a 7-day free trial -- your card won't be charged until it ends.
+          The monthly plan starts with a 7-day free trial — your card won't be charged until it ends.
         </div>
       </div>
       <SubscribeClient plans={plans} />

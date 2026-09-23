@@ -75,31 +75,16 @@ export function PlanClient({
 
   return (
     <div>
-      <div className="text-xl font-bold text-ink mb-1.5">Study plan</div>
-      <div className="text-sm text-gray-500 mb-4">
-        {weeks.length} weeks, broken down day by day. All {totalTests} full-length practice
-        tests are spaced throughout based on how much time you have, not bunched up at the end,
-        and the schedule automatically leans more of your remaining time toward whatever domains
-        your practice-test and quiz scores show you're weakest in.{" "}
-        {targetTestDate ? (
-          <>
-            Change your target date any time in{" "}
-            <button onClick={() => router.push("/settings")} className="underline hover:text-ink">
-              Settings
-            </button>{" "}
-            and this timeline resizes to fit.
-          </>
-        ) : (
-          <>
-            Set a target SAT date in{" "}
-            <button onClick={() => router.push("/settings")} className="underline hover:text-ink">
-              Settings
-            </button>{" "}
-            to custom-fit this timeline.
-          </>
-        )}{" "}
-        Click a week to see the day-by-day plan.
-      </div>
+      <h1 className="font-display text-[28px] font-semibold leading-tight text-ink mb-1.5">Study plan</h1>
+      <p className="max-w-[62ch] text-sm leading-relaxed text-gray-500 mb-5">
+        {weeks.length} weeks, day by day. All {totalTests} practice tests are spread across it, and the
+        schedule leans toward whichever domains your scores say need the most work.{" "}
+        {targetTestDate ? "Change your test date" : "Set a test date"} in{" "}
+        <button onClick={() => router.push("/settings")} className="underline hover:text-ink">
+          Settings
+        </button>{" "}
+        {targetTestDate ? "and it resizes to fit." : "to fit it to your timeline."}
+      </p>
 
       {targetTestDate && daysUntilTest !== null && (
         <div className="flex items-center justify-between gap-3 bg-[#fffaf0] border border-[#f0e0b0] rounded-xl px-5 py-3.5 mb-5 flex-wrap">
@@ -122,7 +107,7 @@ export function PlanClient({
                 Update your test date in Settings
               </button>
             ) : daysUntilTest < TIGHT_TIMELINE_DAYS ? (
-              "That's a tight runway -- this plan is compressed to fit it, not stretched past it."
+              "That's a tight runway — this plan is compressed to fit it, not stretched past it."
             ) : (
               "This plan is paced to finish exactly by then, not before or after."
             )}
@@ -194,7 +179,15 @@ export function PlanClient({
                     </span>
                   ))}
                 </div>
-                <span className="text-gray-300 text-xs flex-shrink-0">{isOpen ? "▾" : "▸"}</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  aria-hidden="true"
+                  className={`flex-shrink-0 text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
+                >
+                  <path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </button>
 
               {isOpen && (

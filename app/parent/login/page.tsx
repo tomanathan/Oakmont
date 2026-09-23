@@ -45,7 +45,7 @@ export default function ParentLoginPage() {
         <BrandMark size={56} className="mx-auto mb-3" />
         <div className="font-display font-semibold text-[28px] text-ink mb-1">Oakmont for Parents</div>
         <div className="text-sm text-gray-500">
-          See exactly how your student's SAT prep is going -- pace, mastery, and practice test scores.
+          See exactly how your student's SAT prep is going — pace, mastery, and practice test scores.
         </div>
       </div>
       <div className="bg-white border border-[#ece9f7] rounded-xl p-7 shadow-[0_1px_2px_rgba(26,26,46,0.04),0_8px_24px_rgba(26,26,46,0.06)]">
