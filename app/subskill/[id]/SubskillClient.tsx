@@ -122,6 +122,8 @@ export function SubskillClient({
   const [errorMsg, setErrorMsg] = useState("");
   const [saving, setSaving] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
+  const [extras, setExtras] = useState<ResultExtras | null>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
   const [tipsOpenMobile, setTipsOpenMobile] = useState(false);
   const [activePattern, setActivePattern] = useState(0);
   const [activeExample, setActiveExample] = useState(0);
@@ -302,10 +304,16 @@ export function SubskillClient({
     setMode("lesson");
   }
 
+  function reviewMisses() {
+    const first = quizQuestions.findIndex((q, i) => answers[i] !== q.answer);
+    questionRefs.current[first]?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   function retakeQuiz() {
     setAnswers({});
     setSubmitted(false);
     setResult(null);
+    setExtras(null);
     setErrorMsg("");
     setShuffleSeed((s) => s + 1);
     // Belt and suspenders with the clear in submitQuiz below -- a retake
@@ -317,7 +325,7 @@ export function SubskillClient({
   async function submitQuiz() {
     if (Object.keys(answers).length < quizQuestions.length) {
       const firstUnanswered = quizQuestions.findIndex((_, i) => answers[i] === undefined);
-      setErrorMsg("Answer every question before submitting -- jumped you to the first one left.");
+      setErrorMsg("Answer every question before submitting. We jumped you to the first one left.");
       const el = questionRefs.current[firstUnanswered];
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -331,6 +339,10 @@ export function SubskillClient({
     const score = quizQuestions.reduce((acc, q, i) => acc + (answers[i] === q.answer ? 1 : 0), 0);
     setSubmitted(true);
     setSaving(true);
+    // The results card renders at the top of the quiz, a long scroll up
+    // from the submit button -- bring it into view on the next frame, once
+    // it actually exists in the DOM.
+    requestAnimationFrame(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
     try {
       const res = await fetch("/api/progress", {
         method: "POST",
@@ -389,8 +401,18 @@ export function SubskillClient({
           : data.justMastered
           ? { message: `${subskill.name}: mastered! Nice work.`, tier: "small" }
           : null;
+        // Either way Ozho comes over to the results card to react: the
+        // big moments above as a celebration, anything else as a plain
+        // line about the score (see resultCopy's `ozho`).
+        const near = ozhoSpotBeside(resultsRef.current);
         if (celebration) {
-          window.dispatchEvent(new CustomEvent("ozho:celebrate", { detail: celebration }));
+          window.dispatchEvent(new CustomEvent("ozho:celebrate", { detail: { ...celebration, near } }));
+        } else {
+          window.dispatchEvent(
+            new CustomEvent("ozho:say", {
+              detail: { message: resultCopy(score, quizQuestions.length, false).ozho, near },
+            })
+          );
         }
         // A freshly unlocked costume becomes the worn one automatically
         // (same fallback Settings and the header pill use) unless the
@@ -406,6 +428,13 @@ export function SubskillClient({
         if (data.secondPetJustUnlocked) {
           window.dispatchEvent(new CustomEvent("ozho:mochi-unlocked"));
         }
+        // What the results card points at next -- read *after* the save
+        // so a just-mastered subskill drops out of the recommendation. Not
+        // essential, so a failure just leaves the card without it.
+        fetch("/api/plan/next")
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null)
+          .then((plan) => setExtras({ nextUp: plan?.recommendation ?? null }));
         // Refreshes server-fetched data (like the streak badge in AppShell)
         // in place, without discarding this page's client-side quiz state.
         router.refresh();
@@ -713,6 +742,19 @@ export function SubskillClient({
               No practice questions are available for this subskill yet.
             </div>
           )}
+          {submitted && (
+            <ResultsCard
+              cardRef={resultsRef}
+              score={score ?? 0}
+              total={quizQuestions.length}
+              saving={saving}
+              result={result}
+              extras={extras}
+              currentSubskillId={subskill.id}
+              onReview={reviewMisses}
+              onRetake={retakeQuiz}
+            />
+          )}
           {quizQuestions.length > 0 && (
             // Shown regardless of submitted state -- not gated with
             // QuizProgress below, which only makes sense pre-submission.
@@ -802,22 +844,26 @@ export function SubskillClient({
               </button>
             )
           ) : (
-            <>
-              <ResultBanner
-                score={score ?? 0}
-                total={quizQuestions.length}
-                saving={saving}
-                result={result}
-              />
+            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#ece9f7] bg-white px-4 py-3">
+              <span className="text-sm font-semibold text-ink tabular-nums">
+                {score ?? 0} / {quizQuestions.length} correct
+              </span>
+              <span className="text-gray-300">·</span>
+              <button
+                onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                className="text-sm text-gray-500 hover:text-ink"
+              >
+                Back to results ↑
+              </button>
               {!saving && (
                 <button
                   onClick={retakeQuiz}
-                  className="mt-3 px-5 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-medium hover:border-gray-300"
+                  className="ml-auto rounded-lg border border-[#e0defa] px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:border-[#c9c6ee] hover:text-ink"
                 >
                   Retake quiz
                 </button>
               )}
-            </>
+            </div>
           )}
         </div>
       )}
@@ -849,68 +895,219 @@ function QuizProgress({ answeredCount, total }: { answeredCount: number; total: 
   );
 }
 
-function ResultBanner({
+// What the quiz's results moment reads from beyond the score itself --
+// fetched once the save lands, so "Up next" points somewhere real.
+interface ResultExtras {
+  nextUp: { label: string; href: string } | null;
+}
+
+// A page-coordinate point inside the results card, down its right side
+// by the chips row -- so his speech bubble lands in the empty space to
+// the right of the headline -- for Ozho to trot to when he reacts.
+function ozhoSpotBeside(el: HTMLElement | null): { x: number; y: number } | undefined {
+  if (!el) return undefined;
+  const r = el.getBoundingClientRect();
+  return { x: r.right + window.scrollX - 90, y: r.top + window.scrollY + 140 };
+}
+
+function resultCopy(score: number, total: number, justMastered: boolean) {
+  const missed = total - score;
+  const ratio = total > 0 ? score / total : 0;
+  if (missed === 0) {
+    return justMastered
+      ? {
+          headline: "Mastered.",
+          body: "Every question right, so this subskill is checked off your plan.",
+          ozho: "Every single one! My tail hasn't stopped.",
+        }
+      : {
+          headline: "Perfect, again.",
+          body: "Still sharp. A clean run like this is exactly what sticks on test day.",
+          ozho: "Showing off now, huh? I love it.",
+        };
+  }
+  const misses = `${missed} ${missed === 1 ? "question" : "questions"}`;
+  if (ratio >= 0.8)
+    return {
+      headline: "So close.",
+      body: `Mastery takes a perfect score. Look over the ${misses} you missed, then take it again.`,
+      ozho: "One more go? I can smell the finish line.",
+    };
+  if (ratio >= 0.5)
+    return {
+      headline: "Getting there.",
+      body: `Each of the ${misses} you missed links back to the pattern it tests. Start there.`,
+      ozho: "Let's sniff out those misses together.",
+    };
+  return {
+    headline: "A tough round.",
+    body: "That's what the lesson is for. Revisit the patterns behind your misses, then retake.",
+    ozho: "Rough one. The lesson's right there, I'll wait.",
+  };
+}
+
+function ScoreRing({ score, total }: { score: number; total: number }) {
+  const pct = total > 0 ? Math.round((score / total) * 100) : 0;
+  const shown = useCountUp(pct, 900);
+  const r = 34;
+  const c = 2 * Math.PI * r;
+  const color = pct === 100 ? "#c9971b" : pct >= 50 ? "#2f6f4f" : "#6d7fd6";
+  return (
+    <div className="relative h-[88px] w-[88px] flex-shrink-0">
+      <svg viewBox="0 0 80 80" className="h-full w-full -rotate-90" aria-hidden="true">
+        <circle cx="40" cy="40" r={r} fill="none" stroke="#f0eff9" strokeWidth="7" />
+        <circle
+          cx="40"
+          cy="40"
+          r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth="7"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - shown / 100)}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="font-display text-[22px] font-semibold leading-none text-ink tabular-nums">{shown}%</span>
+        <span className="mt-1 text-[11px] text-gray-400 tabular-nums">
+          {score}/{total}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// The results moment, shown at the top of the quiz the instant it's
+// submitted (and scrolled to), instead of a grey score line under a
+// dozen screens of questions. Leads with the score, then says what it
+// means and what to do about it -- review, move on, or go again. Ozho
+// himself (the roaming companion, not a copy drawn in here) trots over to
+// the card and says his piece -- see ozhoResultLine / submitQuiz.
+function ResultsCard({
+  cardRef,
   score,
   total,
   saving,
   result,
+  extras,
+  currentSubskillId,
+  onReview,
+  onRetake,
 }: {
+  cardRef: React.Ref<HTMLDivElement>;
   score: number;
   total: number;
   saving: boolean;
   result: SubmitResult | null;
+  extras: ResultExtras | null;
+  currentSubskillId: string;
+  onReview: () => void;
+  onRetake: () => void;
 }) {
-  const displayScore = useCountUp(score, 600);
-  const perfect = result?.justMastered || (total > 0 && score === total);
+  const perfect = total > 0 && score === total;
+  const missed = total - score;
+  const copy = resultCopy(score, total, !!result?.justMastered);
+  // The planner can legitimately recommend the subskill just taken (it's
+  // still the first unmastered one) -- "Up next" pointing back at this
+  // same page would read as a bug, and Retake already covers it.
+  const nextUp =
+    extras?.nextUp && !extras.nextUp.href.endsWith(`/${currentSubskillId}`) ? extras.nextUp : null;
 
   return (
     <div
-      className={`relative overflow-hidden rounded-[10px] px-5 py-4 ${
-        perfect ? "bg-[#fffaf0] border border-[#f0e0b0]" : "bg-[#f8f8fb]"
+      ref={cardRef}
+      className={`scroll-mt-4 mb-5 overflow-hidden rounded-2xl border bg-white shadow-[0_1px_2px_rgba(26,26,46,0.04),0_12px_32px_-12px_rgba(26,26,46,0.14)] ${
+        perfect ? "border-[#f0e0b0]" : "border-[#ece9f7]"
       }`}
+      aria-live="polite"
     >
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="text-[15px] font-semibold text-ink">
-          {perfect && <span className="text-[#c9971b] mr-1.5">★</span>}
-          Score: {displayScore} / {total}
-          {perfect && (
-            <span className="ml-2 text-[13px] font-semibold text-[#c9971b]">
-              {result?.justMastered ? "Mastered!" : "Perfect!"}
-            </span>
-          )}
-          {saving && <span className="text-xs text-gray-400 font-normal ml-2">Saving...</span>}
+      <div className={`flex flex-wrap items-center gap-5 p-5 sm:p-6 ${perfect ? "bg-[#fffcf3]" : ""}`}>
+        <ScoreRing score={score} total={total} />
+        <div className="min-w-[200px] flex-1">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400">Quiz results</div>
+          <div className="mt-1 font-display text-[26px] font-semibold leading-tight text-ink">{copy.headline}</div>
+          <p className="mt-1 max-w-[46ch] text-sm leading-relaxed text-gray-600">{copy.body}</p>
         </div>
-
-        {result && !saving && result.currentStreak > 0 && (
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 text-[13px] font-semibold text-gray-600">
-              {result.currentStreak}-day streak
-            </span>
-          </div>
-        )}
       </div>
 
-      {result?.justCompletedDomain && !saving && (
-        <div className="mt-3 pt-3 border-t border-[#f0e0b0] flex items-center gap-3">
-          {result.newCostume && <PixelDog size={36} costume={result.newCostume.id} />}
-          <div className="text-[13px] text-[#9a6a12]">
-            <span className="font-semibold">{result.justCompletedDomain} complete!</span>{" "}
-            {result.newCostume ? (
-              <>
-                Ozho unlocked a new outfit: <span className="font-semibold">{result.newCostume.name}</span>.
-                Equip it from{" "}
-                <a href="/settings" className="underline hover:text-[#7a5410]">
-                  Settings
-                </a>
-                .
-              </>
-            ) : (
-              "Every subskill in this section is now mastered."
-            )}
-          </div>
+      {result && !saving && (result.currentStreak > 0 || result.newCostume || result.justCompletedDomain) && (
+        <div className="flex flex-wrap gap-2 border-t border-[#f2f0fa] px-5 py-3 sm:px-6">
+          {result.currentStreak > 0 && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#fff4e6] px-3 py-1 text-[12.5px] font-semibold text-[#b4541a]">
+              <FlameIcon />
+              {result.currentStreak}-day streak
+            </span>
+          )}
+          {result.justCompletedDomain && (
+            <span className="inline-flex items-center rounded-full bg-[#eaf6ef] px-3 py-1 text-[12.5px] font-semibold text-accent">
+              {result.justCompletedDomain} complete
+            </span>
+          )}
+          {result.newCostume && (
+            <a
+              href="/settings"
+              className="inline-flex items-center gap-2 rounded-full bg-[#fbf3dc] py-0.5 pl-1 pr-3 text-[12.5px] font-semibold text-[#8a5f0c] transition-colors hover:bg-[#f7eac6]"
+            >
+              <span className="-my-1">
+                <PixelDog size={26} costume={result.newCostume.id} shadow={false} />
+              </span>
+              New outfit: {result.newCostume.name} · see wardrobe →
+            </a>
+          )}
+        </div>
+      )}
+
+      {!saving && (
+        <div className="flex flex-wrap gap-2 border-t border-[#f2f0fa] bg-[#fafafd] px-5 py-3.5 sm:px-6">
+          {missed > 0 && (
+            <button
+              onClick={onReview}
+              className="rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            >
+              Review {missed} {missed === 1 ? "miss" : "misses"} ↓
+            </button>
+          )}
+          {nextUp && (
+            <a
+              href={nextUp.href}
+              className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
+                missed === 0
+                  ? "bg-ink text-white hover:opacity-90"
+                  : "border border-[#e0defa] bg-white text-ink hover:border-[#c9c6ee]"
+              }`}
+            >
+              Up next: {nextUp.label} →
+            </a>
+          )}
+          <button
+            onClick={onRetake}
+            className="rounded-lg border border-[#e0defa] bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:border-[#c9c6ee] hover:text-ink"
+          >
+            Retake quiz
+          </button>
+          {!nextUp && missed === 0 && (
+            <a
+              href="/dashboard"
+              className="rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            >
+              Back to dashboard →
+            </a>
+          )}
         </div>
       )}
     </div>
+  );
+}
+
+function FlameIcon() {
+  return (
+    <svg width="12" height="14" viewBox="0 0 12 14" aria-hidden="true">
+      <path
+        d="M6 0.5c.6 2.3 3.2 3.6 3.2 7a3.2 3.2 0 0 1-6.4 0c0-1.4.7-2.3 1.4-3 .1 1 .6 1.7 1.3 1.9C5 4.6 5 2.4 6 .5Z"
+        fill="currentColor"
+      />
+    </svg>
   );
 }
 

@@ -6,6 +6,7 @@ import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
 import { PET_NAME, type PetStage } from "@/lib/pet";
 import { dedupedFetchJson } from "@/lib/dedupeFetch";
+import { companionBus } from "@/lib/companionBus";
 
 // Ozho's whole voice, in one place. The character: an enthusiastic,
 // slightly goofy study buddy who treats prep like something the two of you
@@ -818,16 +819,39 @@ export function ScoutCompanion() {
     // subskill, a streak milestone, unlocking a wardrobe costume. Kept as
     // a window event rather than a prop/context because ScoutCompanion is
     // mounted once at the root layout, far from whatever page triggers it.
+    // Either event can pass `near` (a page-coordinate point) to have him
+    // trot over to whatever just happened -- the quiz results card, say --
+    // instead of reacting from wherever he happened to be wandering. Skipped
+    // while he's docked (mobile), told to sit, or trotting after the
+    // cursor, since each of those is a place the reader put him.
+    function comeTo(near?: { x: number; y: number }) {
+      if (!near || isMobileRef.current || sittingRef.current || followModeRef.current || menuOpenRef.current) return;
+      beginWalk({ urgent: true, forceTarget: near });
+    }
     function onCelebrate(e: Event) {
       lastInteractionAtRef.current = Date.now();
       beginWakeUp();
-      const detail = (e as CustomEvent<{ message?: string }>).detail;
+      const detail = (e as CustomEvent<{ message?: string; near?: { x: number; y: number } }>).detail;
+      comeTo(detail?.near);
       speak(detail?.message || pick(CELEBRATION_PHRASES), 3200);
       if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
       setTrick(true);
       trickTimeoutRef.current = setTimeout(() => setTrick(false), 700);
     }
     window.addEventListener("ozho:celebrate", onCelebrate);
+
+    // A quieter sibling of ozho:celebrate: a line in his voice, no trick
+    // and no confetti -- for moments worth a reaction that aren't wins
+    // (a so-so quiz score, a nudge to review).
+    function onSay(e: Event) {
+      const detail = (e as CustomEvent<{ message: string; near?: { x: number; y: number } }>).detail;
+      if (!detail?.message) return;
+      lastInteractionAtRef.current = Date.now();
+      beginWakeUp();
+      comeTo(detail.near);
+      speak(detail.message, 4200);
+    }
+    window.addEventListener("ozho:say", onSay);
 
     // Keeps the costume he's actually wearing current after an equip in
     // Settings. ScoutCompanion only ever fetches /api/pet/state once, on
@@ -850,6 +874,7 @@ export function ScoutCompanion() {
       window.removeEventListener("keydown", onInteract);
       window.removeEventListener("click", onInteract);
       window.removeEventListener("ozho:celebrate", onCelebrate);
+      window.removeEventListener("ozho:say", onSay);
       window.removeEventListener("ozho:costume", onCostumeChange);
       if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
       if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
@@ -911,6 +936,7 @@ export function ScoutCompanion() {
       }
     }
     textRectsRef.current = rects;
+    companionBus.textRects = rects;
     headingRectsRef.current = headingRects;
   }
 
@@ -1400,6 +1426,7 @@ export function ScoutCompanion() {
           wrapperRef.current.style.left = `${posRef.current.x}px`;
           wrapperRef.current.style.top = `${posRef.current.y}px`;
         }
+        if (!isMobileRef.current) companionBus.ozho = { ...posRef.current, at: Date.now() };
         return;
       }
 
@@ -1664,6 +1691,8 @@ export function ScoutCompanion() {
         wrapperRef.current.style.left = `${pos.x}px`;
         wrapperRef.current.style.top = `${pos.y}px`;
       }
+      // Mochi follows whatever this says -- see lib/companionBus.ts.
+      if (!isMobileRef.current) companionBus.ozho = { x: pos.x, y: pos.y, at: Date.now() };
     }, 16);
     return () => clearInterval(intervalId);
   }, []);
