@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Subskill, Pattern } from "@/data/curriculum";
 import type { Question } from "@/data/questions";
 import { ScoreRing } from "@/components/ScoreRing";
+import { TrapNote, TrapToWatch, topRepeatedTrap } from "@/components/TrapNote";
 import { StepList, ProseText } from "@/components/StepList";
 import { MathText } from "@/components/MathText";
 import { PassageText } from "@/components/PassageText";
@@ -390,6 +391,14 @@ export function SubskillClient({
     setActivePattern(i);
     setActiveExample(0);
     setMode("lesson");
+  }
+
+  // The trap a wrong answer fell into, from the question's trap tags and
+  // its pattern's trap list (see Question.trapFor).
+  function trapOf(q: QuizQuestion, i: number): string | null {
+    const idx = answers[i] === undefined ? null : q.trapFor?.[answers[i]];
+    if (idx === null || idx === undefined || !q.pattern) return null;
+    return subskill.patterns.find((p) => p.name === q.pattern)?.traps[idx] ?? null;
   }
 
   function reviewMisses() {
@@ -899,6 +908,7 @@ export function SubskillClient({
               unsureRight={
                 quizQuestions.filter((q, i) => answers[i] === q.answer && confidence[i] && confidence[i] !== "sure").length
               }
+              repeatedTrap={topRepeatedTrap(quizQuestions.map((q, i) => (answers[i] !== q.answer ? trapOf(q, i) : null)))}
             />
           )}
           {quizQuestions.length > 0 && (
@@ -985,6 +995,7 @@ export function SubskillClient({
                     <MathText text={q.explain} />
                   </div>
                 )}
+                {submitted && !isCorrect && trapOf(q, i) && <TrapNote trap={trapOf(q, i)!} />}
                 {submitted && !isCorrect && q.pattern && (
                   <MethodCallout
                     patternName={q.pattern}
@@ -1149,6 +1160,7 @@ function ResultsCard({
   avgSeconds,
   paceSeconds,
   unsureRight,
+  repeatedTrap,
 }: {
   cardRef: React.Ref<HTMLDivElement>;
   score: number;
@@ -1162,6 +1174,7 @@ function ResultsCard({
   avgSeconds: number | null;
   paceSeconds: number;
   unsureRight: number;
+  repeatedTrap: { trap: string; count: number } | null;
 }) {
   const perfect = total > 0 && score === total;
   const missed = total - score;
@@ -1209,6 +1222,8 @@ function ResultsCard({
           )}
         </div>
       )}
+
+      {!saving && repeatedTrap && <TrapToWatch trap={repeatedTrap.trap} count={repeatedTrap.count} />}
 
       {result && !saving && (result.currentStreak > 0 || result.newCostume || result.justCompletedDomain) && (
         <div className="flex flex-wrap gap-2 border-t border-[#f2f0fa] px-5 py-3 sm:px-6">

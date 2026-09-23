@@ -6,6 +6,7 @@ import { hasActiveAccess } from "@/lib/subscription";
 import { getSubskill } from "@/data/curriculum";
 import { QUESTIONS } from "@/data/questions";
 import { gradeItems } from "@/lib/items";
+import { quizSizeFor } from "@/lib/quizSet";
 import { finishActivity, logItemAttempts } from "@/lib/activity";
 
 export async function GET() {
@@ -62,15 +63,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "This subskill has no quiz yet." }, { status: 400 });
   }
 
-  // Current clients send every answer; the bare `score` path only exists
-  // for a page loaded before this version deployed.
+  // Current clients send every answer of their quiz (a draw from the bank,
+  // see lib/quizSet.ts); the bare `score` path only exists for a page loaded
+  // before this version deployed.
   const graded = gradeItems(body.items, subskillId);
   let score: number;
+  let total = realTotal;
   if (graded.length > 0) {
-    if (graded.length !== realTotal) {
+    if (graded.length !== quizSizeFor(realTotal)) {
       return NextResponse.json({ error: "Answer every question before submitting." }, { status: 400 });
     }
     score = graded.filter((g) => g.correct).length;
+    total = graded.length;
   } else {
     score = body.score as number;
     if (typeof score !== "number" || !Number.isInteger(score) || score < 0 || score > realTotal) {
@@ -84,8 +88,8 @@ export async function POST(req: NextRequest) {
   // Best score is compared as a ratio, not a raw count, so a quiz whose
   // length changed since the last attempt can't wedge it.
   const previousRatio = existing ? existing.bestScore / existing.total : 0;
-  const thisAttemptIsNewBest = score / realTotal >= previousRatio;
-  const perfect = score === realTotal;
+  const thisAttemptIsNewBest = score / total >= previousRatio;
+  const perfect = score === total;
   const now = new Date();
   const justPassed = perfect && !existing?.passedAt && !existing?.masteredAt;
 
@@ -94,7 +98,7 @@ export async function POST(req: NextRequest) {
         where: { userId_subskillId: { userId: user.userId, subskillId } },
         data: {
           bestScore: thisAttemptIsNewBest ? score : existing.bestScore,
-          total: thisAttemptIsNewBest ? realTotal : existing.total,
+          total: thisAttemptIsNewBest ? total : existing.total,
           attempts: existing.attempts + 1,
           lastAttempt: now,
           ...(justPassed ? { passedAt: now } : {}),
@@ -105,7 +109,7 @@ export async function POST(req: NextRequest) {
           userId: user.userId,
           subskillId,
           bestScore: score,
-          total: realTotal,
+          total,
           attempts: 1,
           passedAt: perfect ? now : null,
         },
@@ -118,7 +122,7 @@ export async function POST(req: NextRequest) {
     ok: true,
     progress: progressResult,
     score,
-    total: realTotal,
+    total,
     justPassed,
     alreadyMastered: !!existing?.masteredAt,
     ...outcome,

@@ -45,6 +45,18 @@ export function getItem(id: string): BankItem | undefined {
   return byId.get(id);
 }
 
+/**
+ * The trap a chosen wrong answer represents (see Question.trapFor), as the
+ * lesson words it -- or null when the choice isn't tagged. `choice` is an
+ * index into the item's authored choices.
+ */
+export function trapFor(item: BankItem, choice: number): string | null {
+  const idx = item.trapFor?.[choice];
+  if (idx === null || idx === undefined || !item.pattern) return null;
+  const pattern = getSubskill(item.subskillId)?.patterns.find((p) => p.name === item.pattern);
+  return pattern?.traps[idx] ?? null;
+}
+
 export function itemsForSubskill(subskillId: string): BankItem[] {
   return bySubskill.get(subskillId) ?? [];
 }

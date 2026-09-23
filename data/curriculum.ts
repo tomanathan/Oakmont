@@ -1744,6 +1744,8 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       traps: [
         "Choosing a lone comma between two independent clauses (a comma splice) — one of the most common wrong answers on this pattern.",
         "Missing that a dependent clause (starting with 'because,' 'although,' 'since,' etc.) is NOT independent, even though it may look like a full sentence.",
+        "Running two independent clauses together with no punctuation at all (a fused sentence).",
+        "Pairing a semicolon with 'and,' 'but,' or 'so' ('; and'), or moving the comma after the conjunction ('and,') — the pattern is a comma before the conjunction, or a semicolon alone.",
       ],
     },
     {
@@ -2118,6 +2120,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Assuming a colon always needs a full independent clause on both sides, the way a semicolon does — a colon only requires that of the clause before it.",
         "Choosing a semicolon when the relationship between the two sides is 'this explains/defines that' rather than 'these are two separate, equally weighted points' — that explanatory relationship is a colon's specific job.",
         "Using a colon after an incomplete introductory phrase (like 'such as' or 'including') that isn't itself a full independent clause.",
+        "Using a comma, or no punctuation, after a complete sentence that introduces a list or explanation — that 'here's what I mean' job belongs to a colon.",
       ],
     },
   ],
@@ -2180,6 +2183,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       traps: [
         "Matching the verb to the nearest noun (often inside a prepositional phrase) instead of the sentence's true subject.",
         "Getting tripped up by collective nouns (like 'data' or 'the committee') that can take either singular or plural verbs depending on formal usage conventions.",
+        "With 'either... or' and 'neither... nor,' matching the verb to the first subject instead of the one closest to the verb.",
       ],
     },
     {
@@ -2297,6 +2301,8 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       traps: [
         "Matching a pronoun to a nearby plural noun (like 'students') instead of the true, singular antecedent ('each').",
         "Overlooking ambiguous pronoun references, where it's unclear which of two nouns a pronoun is meant to replace.",
+        "Using 'they' or 'their' for a singular group noun like 'the company' or 'the orchestra,' which takes 'it' and 'its.'",
+        "Mixing up sound-alikes — its/it's, their/there/they're — where only one spelling is the possessive pronoun.",
       ],
     },
     {
@@ -3816,6 +3822,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Forgetting to distribute a negative sign across every term of the second polynomial when subtracting one polynomial from another — only flipping the first term's sign.",
         "Combining terms with different powers of x as if they were like terms (for example, adding x² and x directly).",
         "Making a sign error while distributing a binomial across a longer polynomial, especially when the binomial itself contains a subtraction.",
+        "Squaring a binomial term by term — (x + 4)² is not x² + 16; the middle term 2·4·x is required.",
       ],
     },
   ],

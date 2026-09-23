@@ -11,6 +11,7 @@ import { PaceClock, formatSeconds, useElapsed } from "@/components/PaceClock";
 import { CONFIDENCE_OPTIONS } from "@/components/ConfidencePicker";
 import { PixelDog } from "@/components/PixelDog";
 import { shuffled } from "@/lib/shuffle";
+import { TrapNote, TrapToWatch, topRepeatedTrap } from "@/components/TrapNote";
 import type { Confidence } from "@/lib/items";
 
 interface ReviewItem {
@@ -30,6 +31,7 @@ interface ItemResult {
   answer: number;
   explain: string;
   pattern: string | null;
+  trap: string | null;
   subskillId: string;
   subskillName: string;
   domain: string;
@@ -547,6 +549,7 @@ function ReviewResults({
   const target = items.reduce((acc, it) => acc + it.pace, 0);
   const shaky = items.filter((it, i) => byId.get(it.id)?.correct && conf[i] && conf[i] !== "sure");
   const firstMiss = items.findIndex((it) => !byId.get(it.id)?.correct);
+  const repeatedTrap = topRepeatedTrap(res.results.map((r) => r.trap));
   const listRef = useRef<(HTMLDivElement | null)[]>([]);
 
   return (
@@ -592,6 +595,8 @@ function ReviewResults({
             </div>
           </div>
         </div>
+
+        {repeatedTrap && <TrapToWatch trap={repeatedTrap.trap} count={repeatedTrap.count} />}
 
         {(res.mastered.length > 0 || res.refreshed.length > 0 || res.flagged.length > 0 || res.newCostume || res.currentStreak > 0) && (
           <div className="flex flex-wrap gap-2 border-t border-[#f2f0fa] px-5 py-3 sm:px-6">
@@ -705,6 +710,7 @@ function ReviewResults({
                 <strong className="text-ink">Explanation: </strong>
                 <MathText text={r.explain} />
               </div>
+              {!r.correct && r.trap && <TrapNote trap={r.trap} />}
               {!r.correct && (
                 <Link
                   href={`/subskill/${r.subskillId}${r.pattern ? `?pattern=${encodeURIComponent(r.pattern)}` : ""}`}

@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/lib/session";
 import { getUserStats } from "@/lib/user";
 import { hasActiveAccess } from "@/lib/subscription";
 import { getSubskill } from "@/data/curriculum";
-import { gradeItems, paceFor } from "@/lib/items";
+import { gradeItems, paceFor, trapFor } from "@/lib/items";
 import { progressMapFromRows, nextReviewInterval, addDays, FIRST_REVIEW_INTERVAL_DAYS } from "@/lib/progressState";
 import { buildReviewSet } from "@/lib/reviewSet";
 import { finishActivity, logItemAttempts } from "@/lib/activity";
@@ -132,6 +132,7 @@ export async function POST(req: NextRequest) {
         answer: it.item.answer,
         explain: it.item.explain,
         pattern: it.item.pattern ?? null,
+        trap: it.correct ? null : trapFor(it.item, it.choice),
         subskillId: it.item.subskillId,
         subskillName: sub?.name ?? it.item.subskillId,
         domain: it.item.domain,
