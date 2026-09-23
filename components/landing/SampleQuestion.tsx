@@ -100,7 +100,7 @@ export function SampleQuestion({ questionCount }: { questionCount: number }) {
             </div>
 
             {answered && (
-              <div className="mt-6 animate-pop-in rounded-xl bg-[#faf8f4] p-5">
+              <div className="mt-6 animate-fade-up rounded-xl bg-[#faf8f4] p-5">
                 <div className={`mb-2 text-sm font-semibold ${correct ? "text-[#2f6f4f]" : "text-ink"}`}>
                   {correct ? "Correct." : "Not quite."} This is a {question.subskillName} question.
                 </div>

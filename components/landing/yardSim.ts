@@ -124,6 +124,11 @@ interface Game {
   rounds: number;
   nextBreakAt: number;
   breakUntil: number;
+  // When the thrown ball first touched down, and how long each chaser
+  // takes to react to that -- so two dogs racing for it don't set off on
+  // the very same frame.
+  landedAt: number | null;
+  react: Record<number, number>;
 }
 
 export interface Yard {
@@ -253,6 +258,8 @@ export function createYard(stage: Stage, cast: DogConfig[], rng: Rng): Yard {
       rounds: 0,
       nextBreakAt: 3 + Math.floor(rng() * 3),
       breakUntil: 0,
+      landedAt: null,
+      react: {},
     };
   } else {
     y.ball.state = "rest";
@@ -279,7 +286,9 @@ export function setPointer(y: Yard, p: { x: number; y: number } | null) {
 export function celebrate(y: Yard) {
   for (const d of y.dogs) {
     d.happyUntil = y.t + 3.5;
-    if (d.entered) d.hopsQueued = 2;
+    // Each dog reacts on its own beat -- one or two hops, a moment apart
+    // from the others -- rather than the whole yard jumping as one.
+    if (d.entered) queueHops(y, d, y.rng() < 0.55 ? 2 : 1, 0.05, 1.1);
     if (d.task.kind === "nap" || d.task.kind === "stretch") d.task = idleTask(y, d, 1.5, 3);
   }
 }
@@ -315,6 +324,14 @@ function setPose(d: Dog, pose: Pose) {
 }
 
 const settled = (d: Dog) => d.goalX === null && Math.abs(d.vx) < 12;
+
+// Queues hops after a random delay in [minDelay, maxDelay). Anything that
+// makes several dogs hop on the same tick goes through here, so they
+// never jump in unison.
+function queueHops(y: Yard, d: Dog, n: number, minDelay = 0, maxDelay = 0.25) {
+  d.hopsQueued = Math.max(d.hopsQueued, n);
+  d.hopGap = Math.max(d.hopGap, lerp(minDelay, maxDelay, y.rng()));
+}
 
 function hop(d: Dog, v: number) {
   if (d.jump !== "none" || d.h > 0) return;
@@ -526,7 +543,7 @@ function pickNext(y: Yard, d: Dog) {
       break;
     }
     case "hop":
-      d.hopsQueued = y.rng() < 0.4 ? 2 : 1;
+      queueHops(y, d, y.rng() < 0.4 ? 2 : 1, 0, 0.1);
       d.happyUntil = t + 1.5;
       d.task = idleTask(y, d, 1, 2);
       break;
@@ -564,7 +581,7 @@ function think(y: Yard, d: Dog, dt: number) {
     if (d.hopGap <= 0) {
       hop(d, 230 + y.rng() * 70);
       d.hopsQueued--;
-      d.hopGap = 0.16;
+      d.hopGap = 0.13 + y.rng() * 0.14;
     }
   }
 
@@ -672,11 +689,11 @@ function think(y: Yard, d: Dog, dt: number) {
       const close = Math.abs(p.x - d.x) < 50;
       if (t >= task.until || p.task.kind !== "chase") {
         halt(d);
-        d.hopsQueued = 1;
+        queueHops(y, d, 1, 0.05, 0.2);
         d.task = idleTask(y, d, 1, 2);
         if (p.task.kind === "chase") {
           halt(p);
-          p.hopsQueued = 1;
+          queueHops(y, p, 1, 0.3, 0.6);
           p.task = idleTask(y, p, 1, 2);
         }
       } else if (d.goalX === null || (close && task.jukes > 0 && y.rng() < dt * 3)) {
@@ -694,8 +711,11 @@ function think(y: Yard, d: Dog, dt: number) {
         d.task = idleTask(y, d, 0.5, 1.5);
         break;
       }
+      // Not a mirror image of the dog it's after: the gap breathes, and it
+      // eases to a trot whenever it's closed in.
       const side = Math.sign(p.x - d.x) || 1;
-      goTo(y, d, p.x - side * 34, p.z, "run");
+      const gap = 34 + 22 * Math.sin(t * 1.7 + d.id * 2.1);
+      goTo(y, d, p.x - side * gap, p.z, Math.abs(p.x - d.x) < 60 ? "trot" : "run");
       break;
     }
 
@@ -855,7 +875,7 @@ function startPickup(y: Yard, g: Game, id: number, next: "carry" | "hold") {
     const loser = y.dogs[c];
     halt(loser);
     loser.lookX = d.x;
-    if (y.rng() < 0.5) loser.hopsQueued = 1;
+    if (y.rng() < 0.5) queueHops(y, loser, 1, 0.1, 0.35);
   }
 }
 
@@ -904,6 +924,9 @@ function stepGame(y: Yard, g: Game, dt: number) {
         holder.dip = -0.6;
         holder.dipTarget = 0;
         g.chasers = y.rng() < 0.22 ? [g.other, g.holder] : [g.other];
+        g.landedAt = null;
+        g.react = {};
+        for (const id of g.chasers) g.react[id] = 0.05 + y.rng() * 0.35;
         g.phase = "flight";
         g.t = 0;
         y.stats.tosses++;
@@ -912,9 +935,11 @@ function stepGame(y: Yard, g: Game, dt: number) {
 
     case "flight": {
       const landed = b.bounces > 0 || b.state !== "air";
+      if (landed && g.landedAt === null) g.landedAt = t;
       for (const d of [holder, other]) {
         const chasing = g.chasers.includes(d.id);
-        if (!chasing || !landed || (d.id === g.holder && g.t < 0.35)) {
+        const reacted = landed && t - (g.landedAt ?? t) >= (g.react[d.id] ?? 0);
+        if (!chasing || !reacted || (d.id === g.holder && g.t < 0.35)) {
           halt(d);
           d.lookX = b.x;
           d.goalZ = chasing ? b.z : d.goalZ;
@@ -975,7 +1000,7 @@ function stepGame(y: Yard, g: Game, dt: number) {
         } else {
           const room = d.x < y.stage.width / 2 ? 1 : -1;
           goTo(y, d, d.x + room * (70 + y.rng() * 110), clamp(d.z + (y.rng() - 0.5) * 0.4, 0, 1), "trot");
-          if (y.rng() < 0.45) d.hopsQueued = 1;
+          if (y.rng() < 0.45) queueHops(y, d, 1, 0.1, 0.3);
         }
       }
       break;

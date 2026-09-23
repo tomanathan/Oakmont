@@ -41,12 +41,12 @@ export function TestDatePicker({ subskillCount }: { subskillCount: number }) {
             none skipped.
           </p>
         ) : (
-          <div key={selected} className="animate-pop-in">
+          <div key={selected} className="animate-fade-up">
             <div className="font-display text-[34px] font-semibold leading-none">
               {weeks} <span className="text-[18px] text-white/70">{weeks === 1 ? "week" : "weeks"} to go</span>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-white/70">
-              Your plan paces all {subskillCount} subskills into exactly that — {weeks <= 8 ? "a faster pace, " : ""}
+              Your plan paces all {subskillCount} subskills into exactly that — {weeks <= 4 ? "a sprint, " : weeks <= 8 ? "a faster pace, " : ""}
               nothing skipped.
             </p>
           </div>
