@@ -78,8 +78,8 @@ export function SettingsClient({
               // two apart by truthiness, has to check the id directly.
               message:
                 id === "none"
-                  ? "Back to basics. Still handsome, if I do say so."
-                  : `The ${name}? Very me. How do I look?`,
+                  ? "Back to the classic look. Still handsome."
+                  : `The ${name}? Oh, this is very me.`,
             },
           })
         );

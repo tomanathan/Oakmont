@@ -192,7 +192,7 @@ function MeetOzho() {
     window.dispatchEvent(
       new CustomEvent(greeted ? "ozho:say" : "ozho:celebrate", {
         detail: {
-          message: greeted ? "Still here! Let's go do a quiz." : "Hi hi hi! I'm Ozho. We're gonna crush this.",
+          message: greeted ? "Still here! Still excited!" : "Hi hi hi! I'm Ozho. We're going to be a great team.",
           tier: "small",
           near,
         },

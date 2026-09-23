@@ -293,7 +293,7 @@ export function SubskillClient({
         window.dispatchEvent(
           new CustomEvent("ozho:say", {
             detail: {
-              message: "That's every question! Submit whenever you're ready.",
+              message: "That's every question! Submit when you're ready. I'll wait. Barely.",
               near: r ? { x: r.right + window.scrollX + 70, y: r.top + window.scrollY + r.height / 2 } : undefined,
             },
           })
@@ -393,13 +393,13 @@ export function SubskillClient({
         // happened. The streak count still gets mentioned in Mochi's own
         // message, so nothing from the milestone line is lost.
         const celebration: { message: string; tier: "small" | "big" } | null = data.secondPetJustUnlocked
-          ? { message: `Someone new wants to meet you — say hi to Mochi! (${data.currentStreak}-day streak, by the way.)`, tier: "big" }
+          ? { message: `${data.currentStreak} days straight, and look who showed up. Say hi to Mochi!`, tier: "big" }
           : data.streakMilestone
-          ? { message: `${data.currentStreak} days straight?! You're unstoppable.`, tier: "big" }
+          ? { message: `${data.currentStreak} days straight! Victory lap!`, tier: "big" }
           : data.justCompletedCurriculum
-          ? { message: "You did it — the WHOLE curriculum. Best trick I know, just for this.", tier: "big" }
+          ? { message: "The WHOLE curriculum. This calls for my best trick.", tier: "big" }
           : data.justCompletedSection
-          ? { message: `${data.justCompletedSection}: fully mastered, every domain. That's huge.`, tier: "big" }
+          ? { message: `All of ${data.justCompletedSection}, mastered. That's huge.`, tier: "big" }
           : data.newCostume
           ? {
               // justCompletedDomain can be null here now -- costumes can
@@ -407,14 +407,14 @@ export function SubskillClient({
               // domain (see lib/costumes.ts) -- so the message branches on
               // which currency actually earned it instead of assuming.
               message: data.justCompletedDomain
-                ? `${data.justCompletedDomain}: mastered! And look what that unlocked — the ${data.newCostume.name}.`
-                : `Look what that streak just unlocked — the ${data.newCostume.name}.`,
+                ? `${data.justCompletedDomain}, mastered! And I got the ${data.newCostume.name}. How do I look?`
+                : `That streak just earned me the ${data.newCostume.name}. How do I look?`,
               tier: "big",
             }
           : data.justCompletedDomain
-          ? { message: `${data.justCompletedDomain}: mastered! On to the next one.`, tier: "small" }
+          ? { message: `${data.justCompletedDomain}, mastered! What's next?`, tier: "small" }
           : data.justMastered
-          ? { message: `${subskill.name}: mastered! Nice work.`, tier: "small" }
+          ? { message: `${subskill.name}, mastered! Tail at max speed.`, tier: "small" }
           : null;
         // Either way Ozho comes over to the results card to react: the
         // big moments above as a celebration, anything else as a plain
@@ -950,12 +950,12 @@ function resultCopy(score: number, total: number, justMastered: boolean) {
       ? {
           headline: "Mastered.",
           body: "Every question right, so this subskill is checked off your plan.",
-          ozho: "Every single one! My tail hasn't stopped.",
+          ozho: "Every single one! I need to sit down. No I don't, let's go again.",
         }
       : {
           headline: "Perfect, again.",
           body: "Still sharp. A clean run like this is exactly what sticks on test day.",
-          ozho: "Showing off now, huh? I love it.",
+          ozho: "Perfect again? Now you're just showing off.",
         };
   }
   const misses = `${missed} ${missed === 1 ? "question" : "questions"}`;
@@ -963,18 +963,18 @@ function resultCopy(score: number, total: number, justMastered: boolean) {
     return {
       headline: "So close.",
       body: `Mastery takes a perfect score. Look over the ${misses} you missed, then take it again.`,
-      ozho: "One more go? I can smell the finish line.",
+      ozho: "So close I can smell it. One more go?",
     };
   if (ratio >= 0.5)
     return {
       headline: "Getting there.",
       body: `Each of the ${misses} you missed links back to the pattern it tests. Start there.`,
-      ozho: "Let's sniff out those misses together.",
+      ozho: "Let's dig up those misses together.",
     };
   return {
     headline: "A tough round.",
     body: "That's what the lesson is for. Revisit the patterns behind your misses, then retake.",
-    ozho: "Rough one. The lesson's right there, I'll wait.",
+    ozho: "Rough one. Happens to every dog. The lesson's right there.",
   };
 }
 

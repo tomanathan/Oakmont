@@ -10,55 +10,57 @@ import { companionBus } from "@/lib/companionBus";
 import { OzhoPanel, type OzhoAction } from "./OzhoPanel";
 import { PixelBall, planToss, stepBall, ballGround, setBallTurn, type BallSim } from "./ozhoBall";
 
-// Ozho's whole voice, in one place. The character: an enthusiastic,
-// slightly goofy study buddy who treats prep like something the two of you
-// are doing together, not a chore he's supervising -- warm and a little
-// funny rather than a flat "good job" narrator, but never so jokey it
-// drowns out the actual encouragement. Kept warm and low-pressure on
-// purpose -- Ozho is a companion, not a nag. Even the "hungry"/"critical"
-// pool below invites rather than guilt-trips, regardless of how urgent the
-// pet-death countdown actually is.
+// Ozho's whole voice, in one place. The character: a real dog -- ball-
+// obsessed, easily delighted, a little smug about his own tricks -- who
+// applies dog logic to SAT prep (sniffing out traps, quizzes are meals,
+// mistakes are just things to dig up) and genuinely believes in you. Short
+// lines, one idea each, funny where it's natural, never at the expense of
+// being encouraging. Warm and low-pressure on purpose: he's a companion,
+// not a nag, so even the hungry/critical pools invite rather than
+// guilt-trip, however close the pet-death countdown actually is. Study
+// tips he gives are real SAT strategy, never made-up claims.
 //
-// Kept free of anything presupposing a *return* visit (no "good to see you
-// back," "welcome back," etc.) -- this same pool is what plays on a brand
-// new account's very first session, seconds after signing up, so nothing
-// here can be wrong the first time it's ever said. It's also what plays
-// every time you click him while he's awake, so it has to hold up as a
-// repeatable "you got my attention" line, not just a first hello.
+// Kept free of anything presupposing a *return* visit (no "welcome back")
+// -- this same pool plays on a brand-new account's very first session,
+// seconds after signing up, so nothing here can be wrong the first time
+// it's ever said.
 const GREETINGS = [
-  "Woof! Tail's already wagging.",
-  "Hey there — ready when you are.",
-  "Oh, hi! Perfect timing.",
-  "I'm rooting for you today.",
-  "You rang? Let's do this.",
-  "Hi! Nudge me anytime, I don't mind.",
+  "Hi! I saved you a spot.",
+  "Oh good, you're here. I was running out of tail to chase.",
+  "Hey! Want to get something done together?",
+  "Ready when you are. I'm always ready. It's a dog thing.",
+  "Hi hi. Click me if you need anything.",
+];
+// Swapped in for the greeting at the edges of the day.
+const MORNING_GREETINGS = ["Morning! Best time of day for a quick quiz.", "Good morning! I've been up for hours. Mostly sniffing."];
+const LATE_GREETINGS = [
+  "Up late? A short session, then sleep. Sleep is studying too.",
+  "Night owl, huh? Me too. Let's keep it quick.",
 ];
 // The general-purpose ambient pool -- fires when there's no page-specific
 // line to reach for (see PAGE_LINES below) or the roll just lands here.
-// Genuine encouragement first, personality second.
 const ENCOURAGEMENTS = [
-  "Every problem you crack makes test day a little less scary.",
-  "Small steps still count — one quiz is still a win.",
-  "Proud of you for showing up today. That's most of the battle.",
-  "Take a breather if you need one — I'm not going anywhere.",
-  "One question at a time. That's the whole trick.",
-  "You don't have to be perfect today. Just a little better than yesterday.",
-  "I believe in you more than I believe in squirrels being fast.",
+  "One good quiz a day adds up faster than you'd think.",
+  "Stuck? Walk away for a minute. Works for me every time.",
+  "You don't need a perfect day. A decent one is plenty.",
+  "I can't read, and I still believe in you.",
+  "Every mistake you make here is one you won't make on test day.",
+  "Deep breath. The SAT is just a lot of small questions.",
+  "Showing up is the hard part, and you already did it.",
 ];
 const NUDGES = [
-  "I'd love a little study time with you today, if you've got a minute.",
-  "No pressure at all — even five minutes counts.",
-  "Whenever you're ready, I'll come along for the ride.",
-  "A quick quiz would make my tail very happy.",
+  "Tummy's rumbling a little. One quiz would fix that.",
+  "No pressure, but a quiz would really make my day.",
+  "Even a five-minute quiz counts as dinner for me.",
+  "I'll be right here. Quiz whenever you're ready.",
 ];
 // What he says if you click him awake -- distinct from the normal
 // click-to-greet pool so waking him up actually feels like waking him up.
 const SLEEPY_WAKE_PHRASES = [
-  "*yawn* ...oh, hi!",
-  "Huh? Oh — welcome back!",
-  "Mmm... must've dozed off. Hi!",
-  "*stretch* Okay, okay, I'm up!",
-  "Wha— oh, it's you! Perfect timing.",
+  "*yawn* I wasn't asleep. I was resting my eyes.",
+  "Mm? Oh! Hi. I was dreaming about tennis balls.",
+  "*big stretch* Okay. Awake. Mostly.",
+  "Huh? Oh, it's you. Best way to wake up.",
 ];
 // What he says while doing his trick -- fired by a window "ozho:celebrate"
 // event (mastering a subskill, a streak milestone, unlocking a wardrobe
@@ -67,21 +69,21 @@ const SLEEPY_WAKE_PHRASES = [
 // AnalysisClient.tsx, SettingsClient.tsx); this is just the fallback when
 // none is given.
 const CELEBRATION_PHRASES = [
-  "Woo! Nailed it!",
-  "Watch this!",
-  "Yes!! Let's go!",
-  "That's how it's done!",
-  "Okay, THAT deserved a spin.",
-  "Did you see that?! I mean — did YOU see what you just did?",
+  "Yes! Spin time!",
+  "Did you SEE that? That was all you.",
+  "That's the stuff. Tail at max speed.",
+  "Okay, that earned a victory lap.",
+  "Woo! Do that again!",
 ];
-// Cross-cutting reminders that hold up no matter where he says them.
-// Anything specific enough to only make sense on one page lives in
-// PAGE_LINES instead, below.
+// Real SAT strategy, true on any page.
 const TIPS = [
-  "You can retake any quiz to lock in what you learned.",
-  "Missed one? Read the explanation before moving on — it really does stick better.",
-  "A few minutes today beats one big cram session later.",
-  "Every practice test earns a real spot in your plan — none of it's just for show.",
+  "Read the question's last line twice. That's where traps hide.",
+  "On reading questions, the passage always proves the answer.",
+  "Math question looks scary? Try plugging in the answer choices.",
+  "Desmos is built into the test. It can graph you out of a lot of algebra.",
+  "Cross off the choices you know are wrong first. Then sniff the rest.",
+  "Missed one? The explanation is where the learning actually happens.",
+  "Retakes are free. Take a quiz again once the pattern clicks.",
 ];
 
 // One line-pool per page, so what he says while nav-speak fires (see the
@@ -94,33 +96,30 @@ type PageKind = "dashboard" | "plan" | "subskill" | "settings";
 
 const PAGE_LINES: Record<PageKind, string[]> = {
   dashboard: [
-    "Your plan's lined up for today — let's knock it out.",
-    "One quiz at a time. I'll be right here.",
-    "Today's a good day to get a little better than yesterday.",
-    "Curious how your practice tests are trending? Your plan page has the full story.",
+    "Today's plan is right there. Want to knock out the first one?",
+    "The dark button is your next step. I'd press it. If I had thumbs.",
+    "Little by little. That's how the whole plan gets done.",
+    "My card's over there, if you want to see how I'm doing.",
   ],
-  // Merged from the old separate "analysis" page's lines when the two
-  // became one page (see app/plan/page.tsx) -- the schedule further down
-  // this page now actually reacts to the scores logged at the top of it,
-  // so both halves' lines live together here too.
+  // The plan page also holds practice-test logging (see app/plan/page.tsx),
+  // so both halves' lines live here.
   plan: [
-    "This is the whole road to test day — one week at a time.",
-    "Click into any week to see it broken down day by day.",
-    "All your practice tests are already scheduled in here, spaced out on purpose.",
-    "Every week you finish here is one less thing to worry about later.",
-    "Every test you log up top reshapes the schedule below it — weaker spots move earlier.",
-    "A rough practice test just means we now know exactly what to fix.",
+    "This is the whole road to test day. We're taking it a week at a time.",
+    "Open any week to see it day by day.",
+    "Practice tests are spread out on purpose. No scary pile at the end.",
+    "Log a practice test up top and the plan leans toward your weak spots.",
+    "A rough practice test is useful. It tells us exactly where to dig.",
   ],
   subskill: [
-    "Alright, let's dig into this one.",
-    "Read close — the trick's usually hiding in the details.",
-    "Take your time. I'm not timing you, promise.",
-    "You've got this. I'll be cheering from right here.",
+    "New pattern? Sniff out the worked examples first.",
+    "Read slowly. Traps love a rushed reader.",
+    "No timer on this one. Take all the time you want.",
+    "Got one wrong? Perfect. Now we know what to practice.",
   ],
   settings: [
-    "Set a target date here and your whole plan resizes to fit it.",
-    "Go on, dress me up. I really don't mind.",
-    "A clear goal makes the whole plan make more sense.",
+    "Set your test date and the whole plan resizes around it.",
+    "The wardrobe's in here. I have opinions about the scarf.",
+    "Change anything you like. I'll keep up.",
   ],
 };
 
@@ -139,9 +138,9 @@ function pageKindFor(pathname: string | null): PageKind | null {
 
 function streakLines(n: number): string[] {
   return [
-    `${n}-day streak?! Look at you go.`,
-    `${n} days in a row — I'm impressed.`,
-    `Still going strong at ${n} days. Love it.`,
+    `${n} days in a row! My tail can't keep up.`,
+    `${n}-day streak. That's a real habit now.`,
+    `Streak's at ${n}. I'm very proud and a little smug.`,
   ];
 }
 
@@ -154,9 +153,9 @@ function streakLines(n: number): string[] {
 // (untouched isn't the same as weak).
 function masteryLines(mastered: number, total: number): string[] {
   return [
-    `${mastered} of ${total} subskills mastered so far. That's real progress.`,
-    `You've fully nailed ${mastered} subskill${mastered === 1 ? "" : "s"} already. On to the next.`,
-    `${mastered}/${total} down. I'm keeping count, even if you're not.`,
+    `${mastered} of ${total} subskills mastered. I'm keeping count.`,
+    `${mastered} down, ${total - mastered} to go. We're getting there.`,
+    `You've mastered ${mastered} subskill${mastered === 1 ? "" : "s"}. That's ${mastered === 1 ? "one less thing" : `${mastered} fewer things`} to worry about.`,
   ];
 }
 
@@ -166,9 +165,9 @@ function masteryLines(mastered: number, total: number): string[] {
 // the rest of Ozho's voice (see the top-of-file note on that).
 function weakDomainLines(domain: string): string[] {
   return [
-    `${domain} is lagging a little behind the rest. Want to give it some love?`,
-    `A few more reps in ${domain} and that'll catch right up to everything else.`,
-    `${domain} could use some attention whenever you've got a minute.`,
+    `${domain} could use some love. Want to dig in there next?`,
+    `A few more reps in ${domain} and it'll catch up with the rest.`,
+    `My nose says ${domain} is the spot to practice next.`,
   ];
 }
 
@@ -178,30 +177,29 @@ function weakDomainLines(domain: string): string[] {
 // generic "N days left" line reused at every distance.
 function testCountdownLines(days: number): string[] {
   if (days === 0) {
-    return ["Today's the day. Deep breath — you've done the work.", "It's today! Go show that test who's boss."];
+    return ["It's test day. You've done the work. Go get 'em.", "Today's the day! Breathe, read carefully, trust your prep."];
   }
   if (days === 1) {
     return [
-      "Tomorrow's the big one. Get some real sleep tonight, okay?",
-      "One more day. You've earned a calm evening, not a cram session.",
+      "Test's tomorrow. Tonight's job: real sleep, no cramming.",
+      "One more sleep. Charge your device, pack your stuff, rest up.",
     ];
   }
   if (days <= 7) {
     return [
-      `${days} days left. Let's make each one count.`,
-      `Test day's ${days} days out now. Getting real.`,
-      `${days} days to go — steady practice beats a last-minute scramble.`,
+      `${days} days to go. Short, steady sessions from here.`,
+      `${days} days out. Your old mistakes are the best study guide now.`,
     ];
   }
   if (days <= 30) {
     return [
-      `${days} days until test day. Right on pace to be ready.`,
-      `${days} days out. Keep this rhythm going and you'll walk in ready.`,
+      `${days} days until test day. This is where showing up pays off.`,
+      `${days} days left. Plenty of time if we keep at it.`,
     ];
   }
   return [
-    `${days} days until test day. Plenty of runway — let's use it well.`,
-    `${days} days out still. No rush, just steady progress.`,
+    `${days} days until the test. Lots of runway, so let's use it well.`,
+    `${days} days out. No rush, just steady progress.`,
   ];
 }
 
@@ -358,7 +356,7 @@ const MOUSE_CHECK_MS = 7000; // how often he reconsiders wandering toward the cu
 // own, bigger reaction).
 const NOTICE_DIST = 70;
 const NOTICE_COOLDOWN_MS = 8000;
-const NOTICE_PHRASES = ["Oh, hi!", "Hey, didn't see you there.", "*ears perk up*", "Hi again!", "Oh! Hello."];
+const NOTICE_PHRASES = ["Oh! Hi.", "*ears perk up*", "Hey, you.", "Was that a treat? No? Okay.", "*sniff sniff* Hi!"];
 
 // Only used now for the "landed somewhere bad" recovery walk (e.g. right
 // after a page change) -- crossing text mid-walk no longer triggers a
@@ -376,7 +374,7 @@ const BEHIND_TEXT_SPEED_MULT = 1.8;
 // and dashes back, and how much faster that dash is than his normal pace.
 const OUT_OF_VIEW_MARGIN = 40;
 const RETURN_SPEED_MULT = 2.1;
-const RETURN_PHRASES = ["Wait up!", "Coming!", "Right behind you!", "Don't leave me behind!", "Hold on, I'm coming!"];
+const RETURN_PHRASES = ["Wait for me!", "Coming, coming!", "Don't scroll without me!", "Right behind you!", "Zoomies!"];
 
 // Below this width, there's no room for him to roam without routing
 // straight over lesson prose, answer choices, or score badges -- a phone
@@ -460,39 +458,30 @@ const FOLLOW_OFFSET_Y = 45;
 // there is handled in handleMenuAction below.
 
 const PET_PHRASES = [
-  "Ohh, right there — perfect.",
-  "*tail thumping the floor*",
-  "You give the best ear scratches.",
-  "Okay, I'm officially recharged.",
-  "Mmm. Ten out of ten, would be pet again.",
-  "This is the good stuff.",
+  "Ohh, right behind the ears. Perfect.",
+  "*tail thumping*",
+  "Ten out of ten. Would be pet again.",
+  "Okay, fully recharged.",
+  "You're very good at this.",
+  "*happy wiggle*",
 ];
-// Said instead once you've petted him a bunch in one day -- he's had his
-// fill and would like to get back to work with you.
+// After a lot of petting in one day -- see PET_LOTS_THRESHOLD.
 const PET_PHRASES_LOTS = [
-  "Okay, okay — I'm thoroughly pet, thank you!",
+  "I am officially the most pet dog alive.",
+  "Best study break ever. Quiz next, though?",
   "You really like me, huh? Feeling's mutual.",
-  "I could do this all day. Should we do a quiz first, though?",
 ];
-const FETCH_THROW_PHRASES = ["Ooh, throw it! Throw it!", "I got this — watch me.", "Fetch is my whole personality."];
-const FETCH_RETURN_PHRASES = [
-  "Got it! Did you see that?",
-  "Here! Go on, throw it again.",
-  "Retrieved. I'm extremely good at this.",
-];
-const FOLLOW_ON_PHRASES = [
-  "Right by your side. Lead the way.",
-  "Okay, I'll stick close.",
-  "Wherever you're reading, that's where I'll be.",
-];
+const FETCH_THROW_PHRASES = ["Ball! Ball ball ball!", "Throw it far. I dare you.", "Watch this. I'm very fast."];
+const FETCH_RETURN_PHRASES = ["Got it! Again?", "Retrieved. I'm a professional.", "Here! It's only a little slobbery."];
+const FOLLOW_ON_PHRASES = ["Right by your side.", "Lead the way. I'll keep up.", "Sticking close. Good boy behavior."];
 const FOLLOW_OFF_PHRASES = [
-  "I'll be around if you need me.",
-  "Free to roam again — holler anytime.",
-  "Back to my rounds. Nudge me whenever.",
+  "Off to sniff around. Call me anytime.",
+  "Back to patrolling. Holler if you need me.",
+  "I'll be nearby.",
 ];
-const SIT_ON_PHRASES = ["Okay, staying put.", "Parked right here. Take your time.", "Sitting tight."];
-const SIT_OFF_PHRASES = ["Up and at it!", "Okay, back on my feet.", "Stretching my legs again."];
-const NEXT_INTRO = ["Let's go!", "On it. Follow me!", "Great pick. Let's get after it."];
+const SIT_ON_PHRASES = ["Sitting. Very well, too.", "Staying right here.", "Good sit, right? Right."];
+const SIT_OFF_PHRASES = ["Free! Legs stretched.", "Back on my paws.", "Up and ready."];
+const NEXT_INTRO = ["Let's go! Follow me.", "Great pick. On it.", "This one? Let's do it."];
 
 const FOLLOW_STORAGE_KEY = "ozho:follow-mode";
 const PET_COUNT_KEY = "ozho:pet-count"; // "YYYY-MM-DD:N", resets each day
@@ -1153,7 +1142,9 @@ export function ScoutCompanion() {
   useEffect(() => {
     if (stage === null || hasGreetedRef.current) return;
     hasGreetedRef.current = true;
-    const t = setTimeout(() => speak(pick(GREETINGS), 4000), 1200);
+    const h = new Date().getHours();
+    const pool = h >= 23 || h < 4 ? LATE_GREETINGS : h >= 5 && h < 10 && Math.random() < 0.6 ? MORNING_GREETINGS : GREETINGS;
+    const t = setTimeout(() => speak(pick(pool), 4000), 1200);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
@@ -2071,7 +2062,7 @@ export function ScoutCompanion() {
         toggleFollow();
         break;
       case "wardrobe":
-        speak("Wardrobe time. After you.", 2000);
+        speak("Wardrobe! I'll try not to take forever.", 2000);
         setTimeout(() => router.push("/settings#wardrobe"), 700);
         break;
     }

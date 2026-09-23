@@ -55,12 +55,12 @@ function statusCopy(c: CompanionSummary): { headline: string; body: string } {
 // Lines he says when called over from the card -- the same voice as the
 // rest of his dialogue (see ScoutCompanion), keyed to how he's doing.
 function callLine(c: CompanionSummary): string {
-  if (c.stage === "critical") return "I'm here... a little wobbly. Quiz? Please?";
-  if (c.stage === "hungry") return "Did someone say quiz? I'm starving.";
-  if (c.stage === "content") return "Here! Haven't eaten yet today, just saying.";
+  if (c.stage === "critical") return "I'm here. A little wobbly. One quiz would help a lot.";
+  if (c.stage === "hungry") return "Did someone say quiz? I'm so hungry.";
+  if (c.stage === "content") return "Here! Haven't had my quiz yet today. Just saying.";
   if (c.nextStreakCostume && c.currentStreak > 0 && c.nextStreakCostume.days - c.longestStreak === 1)
     return `One more day and I get the ${c.nextStreakCostume.name}. No pressure.`;
-  return "Right here! Ready when you are.";
+  return "You called? I came. I always come.";
 }
 
 function Meter({ value, max, color }: { value: number; max: number; color: string }) {

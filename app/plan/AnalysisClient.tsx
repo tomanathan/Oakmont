@@ -480,8 +480,8 @@ function SubmitTestForm({
           new CustomEvent("ozho:celebrate", {
             detail: {
               message: isNewBest
-                ? `New personal best: ${compositeNum}! I knew you had it in you.`
-                : "Test logged! That's one more data point in your favor.",
+                ? `New personal best: ${compositeNum}! I knew it. I always know.`
+                : "Test logged. Now I know exactly where to point your plan.",
               tier: isNewBest ? "big" : "small",
             },
           })
