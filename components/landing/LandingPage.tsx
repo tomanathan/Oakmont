@@ -9,8 +9,6 @@ import { ProofStrip } from "./ProofStrip";
 import { SampleQuestion } from "./SampleQuestion";
 import { ParentsSection } from "./ParentsSection";
 import { HowItWorks } from "./HowItWorks";
-import { Features } from "./Features";
-import { TutorSection } from "./TutorSection";
 import { Pricing } from "./Pricing";
 import { Faq } from "./Faq";
 import { FinalCta } from "./FinalCta";
@@ -21,10 +19,9 @@ import { TrackedLink } from "./TrackedLink";
 // signed-in visits redirect before this renders). Server-rendered so the
 // pitch, not a login form, is what search engines and shared links see.
 //
-// Story order: promise (hero) -> proof it's real (numbers, a live question)
-// -> what parents get (often the ones deciding) -> how the plan works ->
-// everything that's inside, including why there are dogs -> who built it
-// -> price -> objections -> ask again.
+// Story order, kept short on purpose: promise (hero) -> what parents get
+// (often the ones deciding) -> a live question -> how the plan works and
+// who built it -> price -> objections -> ask again.
 export function LandingPage() {
   const questionCount = Object.values(QUESTIONS).reduce((n, qs) => n + qs.length, 0);
   const subskillCount = ALL_SUBSKILLS.length;
@@ -58,9 +55,6 @@ export function LandingPage() {
             <a href="#how-it-works" className="transition-colors hover:text-ink">
               How it works
             </a>
-            <a href="#inside" className="transition-colors hover:text-ink">
-              What&apos;s inside
-            </a>
             <a href="#pricing" className="transition-colors hover:text-ink">
               Pricing
             </a>
@@ -89,16 +83,10 @@ export function LandingPage() {
       <main id="top">
         <Hero questionCount={questionCount} subskillCount={subskillCount} />
         <ProofStrip questionCount={questionCount} subskillCount={subskillCount} />
-        <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} />
         <ParentsSection />
+        <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} />
         <Reveal>
           <HowItWorks subskillCount={subskillCount} />
-        </Reveal>
-        <Reveal>
-          <Features subskillCount={subskillCount} />
-        </Reveal>
-        <Reveal>
-          <TutorSection />
         </Reveal>
         {/* No testimonials section until real, permissioned quotes exist. */}
         <Reveal>

@@ -22,24 +22,20 @@ export async function Pricing() {
   const included = [
     "Your week-by-week plan, paced to your test date",
     `Lessons, worked examples and quizzes for all ${ALL_SUBSKILLS.length} SAT skills`,
-    "Mixed review at SAT pace that brings back what you'd otherwise forget",
-    "8 full-length practice tests with review",
+        "8 full-length practice tests with review",
     "Ozho, streaks and the costume wardrobe",
     "Parent dashboard and Sunday email report (parent accounts are free)",
   ];
 
   return (
-    <section id="pricing" className="scroll-mt-16 bg-[#faf8f4] px-6 py-20 sm:py-28">
+    <section id="pricing" className="scroll-mt-16 bg-[#faf8f4] px-6 py-16 sm:py-20">
       <ViewTracker event="pricing_viewed" />
       <div className="mx-auto max-w-[1120px]">
-        <div className="mx-auto mb-12 max-w-[620px] text-center">
+        <div className="mx-auto mb-10 max-w-[620px] text-center">
           <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">Pricing</div>
           <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[40px]">
             Everything included, either way.
           </h2>
-          <p className="mt-4 text-[15px] text-gray-600">
-            Self-paced courses usually run a few hundred dollars, and private tutoring far more, per hour.
-          </p>
         </div>
 
         <div className="mx-auto grid max-w-[860px] gap-4 md:grid-cols-2">

@@ -1,13 +1,11 @@
 import Link from "next/link";
 import { sampleParentReport } from "@/lib/parentDemo";
-import type { ParentReport, TalkingPoint } from "@/lib/parentInsights";
-import { ActivityCalendar, ScoreTrend, PctBar } from "@/components/parent/charts";
+import type { ParentReport } from "@/lib/parentInsights";
 import { TrackedLink } from "./TrackedLink";
 
-// The parent pitch, told with the real report's own pieces: a composed
-// snapshot up top, then one tile per thing a parent learns, each drawn
-// from the same sample student ("Maya", invented and labeled as such).
-// The whole report lives at /parents/sample for anyone who wants it all.
+// The parent pitch: what a parent sees, next to a composed snapshot of the
+// real report (sample student "Maya", invented and labeled as such). The
+// whole report lives at /parents/sample.
 
 const GREEN = "#2f6f4f";
 
@@ -145,198 +143,64 @@ function Kpi({ label, value, delta }: { label: string; value: string; delta: Rea
   );
 }
 
-// ---- the tiles ---------------------------------------------------------------------
+// ---- the section ----------------------------------------------------------------
 
-function Tile({ title, body, className = "", children }: { title: string; body: string; className?: string; children: React.ReactNode }) {
-  return (
-    <div className={`flex flex-col rounded-2xl border border-[#e6e3f3] bg-white p-5 sm:p-6 ${className}`}>
-      <h3 className="font-display text-[19px] font-semibold leading-snug text-ink">{title}</h3>
-      <p className="mt-1 text-[13.5px] leading-relaxed text-gray-500">{body}</p>
-      <div className="mt-5 flex-1">{children}</div>
-    </div>
-  );
-}
-
-const STATUS_PILL: Record<string, { label: string; cls: string }> = {
-  mastered: { label: "Mastered", cls: "bg-[#eaf6ef] text-accent" },
-  due: { label: "Refresher due", cls: "bg-[#fbf1df] text-[#9a6a12]" },
-  passed: { label: "Passed quiz", cls: "bg-[#eef0fc] text-[#4a5bb0]" },
-  attempted: { label: "In progress", cls: "bg-[#f3f2f7] text-gray-600" },
-  new: { label: "Not started", cls: "bg-white text-gray-400 ring-1 ring-[#ece9f7]" },
-};
-
-const TALK: Record<TalkingPoint["kind"], { label: string; cls: string }> = {
-  celebrate: { label: "Celebrate", cls: "bg-[#eaf6ef] text-accent" },
-  ask: { label: "Ask about", cls: "bg-[#eef0fc] text-[#4a5bb0]" },
-  nudge: { label: "Nudge", cls: "bg-[#fbf1df] text-[#9a6a12]" },
-  plan: { label: "Plan", cls: "bg-[#f3f2f7] text-gray-600" },
-};
-
-function trimTalk(text: string): string {
-  const first = text.split(/(?<=\.)\s/)[0];
-  return first.length > 150 ? `${first.slice(0, 147)}...` : first;
-}
-
-const STEPS = [
-  { title: "Your student adds you", body: "They enter your email while setting up their account." },
-  { title: "You set a password", body: "From the email we send you. Parent accounts are free." },
-  { title: "Follow along", body: "Your report updates as they study, with a summary every Sunday." },
+const YOU_SEE = [
+  { title: "Every study session", body: "When they studied, for how long, and what they covered." },
+  { title: "All 29 skills", body: "Which ones are mastered, which need work, and what's next." },
+  { title: "Scores against the goal", body: "Each practice test plotted against their target score." },
+  { title: "What to say", body: "A Sunday email with what to praise and what to ask about." },
 ];
 
 export function ParentsSection() {
   const r = sampleParentReport(new Date());
-  const skills = [...r.strengths.slice(0, 2), ...r.focus.slice(0, 2)];
-  const conf = r.confidence;
-  const mathPace = r.pace.find((p) => p.section === "Math");
-  const talk = r.talkingPoints.filter((t) => t.kind !== "plan").slice(0, 2);
 
   return (
-    <section id="parents" className="scroll-mt-16 overflow-hidden bg-[#f3f2fa] px-4 py-20 sm:px-6 sm:py-28">
-      <div className="mx-auto max-w-[1120px]">
-        {/* Pitch + snapshot. */}
-        <div className="grid items-center gap-14 lg:grid-cols-[1fr_520px] lg:gap-16">
-          <div>
-            <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">For parents</div>
-            <h2 className="text-balance font-display text-[34px] font-semibold leading-[1.06] tracking-[-0.01em] text-ink sm:text-[48px]">
-              Know how SAT prep is going without having to ask.
-            </h2>
-            <p className="mt-5 max-w-[46ch] text-[16px] leading-relaxed text-gray-600">
-              A free parent account shows every study session, every skill and every practice score, updated each time your student
-              practices. Every Sunday, a short email tells you how the week went and what to say about it.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <TrackedLink
-                href="/parent/login?mode=signup"
-                event="parent_signup_started"
-                className="rounded-xl bg-ink px-6 py-3.5 text-center text-sm font-semibold text-white transition-opacity hover:opacity-90"
-              >
-                Create a free parent account
-              </TrackedLink>
-              <Link
-                href="/parents/sample"
-                className="rounded-xl px-5 py-3.5 text-center text-sm font-semibold text-ink ring-1 ring-[#d9d6ee] transition-colors hover:bg-white"
-              >
-                Open the full sample report &rarr;
-              </Link>
-            </div>
+    <section id="parents" className="scroll-mt-16 overflow-hidden bg-[#f3f2fa] px-4 py-16 sm:px-6 sm:py-24">
+      <div className="mx-auto grid max-w-[1120px] items-center gap-12 lg:grid-cols-[1fr_520px] lg:gap-16">
+        <div>
+          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">For parents</div>
+          <h2 className="text-balance font-display text-[32px] font-semibold leading-[1.06] tracking-[-0.01em] text-ink sm:text-[44px]">
+            Know how SAT prep is going without having to ask.
+          </h2>
+          <p className="mt-4 max-w-[46ch] text-[16px] leading-relaxed text-gray-600">
+            Your own free dashboard updates every time your student practices.
+          </p>
+          <ul className="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
+            {YOU_SEE.map((f) => (
+              <li key={f.title} className="flex gap-2.5">
+                <span className="mt-[7px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent" aria-hidden />
+                <span>
+                  <span className="block text-[14.5px] font-semibold text-ink">{f.title}</span>
+                  <span className="block text-[13.5px] leading-snug text-gray-600">{f.body}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <TrackedLink
+              href="/parent/login?mode=signup"
+              event="parent_signup_started"
+              className="rounded-xl bg-ink px-6 py-3.5 text-center text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            >
+              Create a free parent account
+            </TrackedLink>
+            <Link
+              href="/parents/sample"
+              className="rounded-xl px-5 py-3.5 text-center text-sm font-semibold text-ink ring-1 ring-[#d9d6ee] transition-colors hover:bg-white"
+            >
+              See a full sample report &rarr;
+            </Link>
           </div>
-          <div className="sm:pb-32 sm:pl-10">
-            <Snapshot r={r} />
-          </div>
+          <p className="mt-4 text-[13px] text-gray-500">Your student adds your email when they sign up. You set a password from the email we send.</p>
         </div>
-
-        {/* What a parent learns, one tile each. */}
-        <div className="mt-24 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Tile
-            className="md:col-span-2"
-            title="Every study session"
-            body="When they studied, for how long, and what they covered: lessons read, quizzes taken and the score on each."
-          >
-            <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
-              <div className="overflow-x-auto">
-                <ActivityCalendar days={r.calendar} />
-              </div>
-              <ul className="flex flex-col gap-2">
-                {r.sessions.slice(0, 3).map((ses) => (
-                  <li key={ses.start} className="rounded-xl bg-[#faf9fd] px-3.5 py-2.5">
-                    <div className="flex items-baseline justify-between gap-2 text-[12px]">
-                      <span className="font-semibold text-ink">
-                        {new Date(ses.start).toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit", timeZone: r.timeZone })}
-                      </span>
-                      <span className="tabular-nums text-gray-500">{ses.minutes} min</span>
-                    </div>
-                    <div className="mt-0.5 truncate text-[12px] text-gray-500">
-                      {ses.subskills.slice(0, 2).join(", ") || "Mixed review"}
-                      {ses.questions > 0 && ` \u00b7 ${ses.correct}/${ses.questions} correct`}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Tile>
-
-          <Tile title="All 29 skills, one by one" body="Not started, in progress, passed or mastered, with accuracy on each.">
-            <ul className="flex flex-col gap-3.5">
-              {skills.map((s) => (
-                <li key={s.id}>
-                  <div className="mb-1.5 flex items-center justify-between gap-2">
-                    <span className="truncate text-[13px] font-medium text-ink">{s.name}</span>
-                    <span className={`whitespace-nowrap rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${STATUS_PILL[s.status].cls}`}>
-                      {STATUS_PILL[s.status].label}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <PctBar value={s.accuracy} color={(s.accuracy ?? 0) < 60 ? "#c9971b" : GREEN} />
-                    <span className="w-9 text-right text-[11px] tabular-nums text-gray-500">{s.accuracy}%</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Tile>
-
-          <Tile title="Scores against the goal" body="Every practice test they log, plotted from their starting point toward their target.">
-            <ScoreTrend tests={r.scores.tests} baseline={r.scores.baseline} goal={r.scores.goal} />
-          </Tile>
-
-          <Tile title="Habits you'd never see" body="Whether they're guessing, confidently wrong, or rushing compared with real SAT pace.">
-            <ul className="flex flex-col gap-3">
-              {conf.map((c) => (
-                <li key={c.level}>
-                  <div className="mb-1 flex justify-between text-[12px]">
-                    <span className="text-gray-600">
-                      Marked <span className="font-semibold text-ink">{c.level}</span>
-                    </span>
-                    <span className="tabular-nums text-gray-500">{c.accuracy}% right</span>
-                  </div>
-                  <PctBar value={c.accuracy} color={c.level === "sure" ? GREEN : c.level === "unsure" ? "#6d7fd6" : "#c9971b"} />
-                </li>
-              ))}
-            </ul>
-            {mathPace && mathPace.rushedAccuracy !== null && (
-              <p className="mt-4 rounded-lg bg-[#faf9fd] px-3 py-2 text-[12px] leading-relaxed text-gray-600">
-                Rushed Math answers: <span className="font-semibold text-ink">{mathPace.rushedAccuracy}% right</span>, against{" "}
-                {mathPace.steadyAccuracy}% when they take their time.
-              </p>
-            )}
-          </Tile>
-
-          <Tile title="What to say this week" body="Specific suggestions from the week's data: what to praise, and what to ask about.">
-            <ul className="flex flex-col gap-3">
-              {talk.map((t, i) => (
-                <li key={i} className="rounded-xl bg-[#faf9fd] p-3">
-                  <span className={`rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${TALK[t.kind].cls}`}>{TALK[t.kind].label}</span>
-                  <p className="mt-1.5 text-[12.5px] leading-relaxed text-gray-600">{trimTalk(t.text)}</p>
-                </li>
-              ))}
-            </ul>
-          </Tile>
-        </div>
-        <p className="mt-4 text-center text-[12px] text-gray-400">
-          Sample data. &ldquo;Maya&rdquo; is invented, and her numbers are generated to show what a real report looks like.
-        </p>
-
-        {/* How connecting works. */}
-        <div className="mt-14 rounded-3xl bg-ink p-6 text-white sm:p-10">
-          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.6fr] lg:items-center">
-            <div>
-              <h3 className="font-display text-[26px] font-semibold leading-snug">Set up in two minutes</h3>
-              <p className="mt-2 text-[13.5px] leading-relaxed text-white/65">
-                Your dashboard is tied to your student&apos;s account from day one, so it fills in the moment they start. Signing up first?
-                Create your account and send them a link.
-              </p>
-            </div>
-            <ol className="grid gap-3 sm:grid-cols-3">
-              {STEPS.map((s, i) => (
-                <li key={s.title} className="rounded-2xl bg-white/[0.06] p-4 ring-1 ring-white/10">
-                  <div className="text-[11px] font-bold tabular-nums text-[#b7bdea]">Step {i + 1}</div>
-                  <div className="mt-1 text-[15px] font-semibold leading-snug">{s.title}</div>
-                  <p className="mt-1 text-[12.5px] leading-relaxed text-white/60">{s.body}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
+        <div className="sm:pb-32 sm:pl-10">
+          <Snapshot r={r} />
         </div>
       </div>
+      <p className="mx-auto mt-10 max-w-[1120px] text-center text-[12px] text-gray-400">
+        Sample data. &ldquo;Maya&rdquo; is invented, and her numbers are generated to show what a real report looks like.
+      </p>
     </section>
   );
 }

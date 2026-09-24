@@ -53,7 +53,7 @@ export function SampleQuestion({
   }
 
   return (
-    <section id="try-a-question" className="scroll-mt-16 bg-[#faf8f4] px-6 py-20 sm:py-28">
+    <section id="try-a-question" className="scroll-mt-16 bg-[#faf8f4] px-6 py-16 sm:py-20">
       <div className="mx-auto grid max-w-[1120px] items-start gap-10 lg:grid-cols-[1fr_1.25fr] lg:gap-16">
         <div className="lg:sticky lg:top-24">
           <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">Try it now</div>

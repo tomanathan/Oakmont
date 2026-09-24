@@ -14,35 +14,19 @@ export const FAQ_ITEMS = [
     a: "Khan Academy is a free, general question bank. Oakmont is a structured week-by-week plan built by a tutor. It tells your student exactly what to study each week based on their test date and their actual weak spots, and explains every question step by step.",
   },
   {
-    q: "How long does it take?",
-    a: "We recommend about six months: enough time to learn all 29 skills, review them, and take all 8 practice tests without cramming. If the test is sooner, enter the date and the plan fits everything into the weeks that are left. No date yet? It starts with the recommended six-month plan.",
+    q: "How long does it take? What if the test is soon?",
+    a: "We recommend about six months: enough time to learn all 29 skills, review them, and take all 8 practice tests without cramming. If the test is sooner, enter the date and the plan fits every skill into the weeks that are left, at a faster pace, with practice tests in the final weeks.",
   },
   {
-    q: "What if my test is in 6 weeks?",
-    a: "The plan fits itself to the time you actually have. It covers every skill at a faster pace rather than skipping any, and schedules practice tests in the weeks before the exam.",
-  },
-  {
-    q: "What can parents see?",
-    a: "A detailed report: every study session (when, how long, what was covered), questions answered and accuracy week by week, progress on all 29 skills, whether mastered skills are sticking, confidence and pace habits, mistakes that keep repeating, and practice test scores against the goal. A summary email arrives every Sunday.",
-  },
-  {
-    q: "How up to date is the parent dashboard?",
-    a: "It updates every time your student practices: each lesson, quiz, review and logged practice test shows up right away, and the Sunday email sums up the week.",
-  },
-  {
-    q: "Do parents need to pay or have their own plan?",
-    a: "No. Parent accounts are free. The parent dashboard and weekly email are included with your student's plan, and one parent account can follow more than one student.",
+    q: "What can parents see, and does it cost extra?",
+    a: "Parent accounts are free. The dashboard updates every time your student practices: every study session (when, how long, what was covered), progress on all 29 skills, practice test scores against the goal, and mistakes that keep repeating. A summary email arrives every Sunday. One parent account can follow more than one student.",
   },
   {
     q: "How do I connect to my student's account?",
-    a: "The easiest way: when your student signs up, they choose parent supervision and enter your email. You'll get an email to set a password, and their report is waiting. If you'd rather start yourself, create a parent account and send them an invite link to approve, or enter the code from their Settings.",
+    a: "When your student signs up, they choose parent supervision and enter your email. You'll get an email to set a password, and their report is waiting. If you'd rather start yourself, create a parent account and send them an invite link, or enter the code from their Settings.",
   },
   {
-    q: "Can I cancel?",
-    a: "Yes, anytime, from Settings. The monthly plan stops billing immediately going forward; the one-time 6-month pass simply runs until it expires.",
-  },
-  {
-    q: "Is there a free trial?",
-    a: "The monthly plan includes a 7-day free trial — your card isn't charged until it ends. You can also try a real question above with no account at all.",
+    q: "Is there a free trial? Can I cancel?",
+    a: "The monthly plan includes a 7-day free trial, and your card isn't charged until it ends. Cancel anytime from Settings; the monthly plan stops billing going forward, and the one-time 6-month pass simply runs until it expires.",
   },
 ];
