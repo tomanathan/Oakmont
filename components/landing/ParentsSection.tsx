@@ -146,17 +146,17 @@ function Kpi({ label, value, delta }: { label: string; value: string; delta: Rea
 // ---- the section ----------------------------------------------------------------
 
 const YOU_SEE = [
-  { title: "Every study session", body: "When they studied, for how long, and what they covered." },
-  { title: "All 29 skills", body: "Which ones are mastered, which need work, and what's next." },
-  { title: "Scores against the goal", body: "Each practice test plotted against their target score." },
-  { title: "What to say", body: "A Sunday email with what to praise and what to ask about." },
+  { title: "Every study session", body: "When they studied, for how long, and what they covered.", tone: "bg-pastel-sky text-pastelInk-sky" },
+  { title: "All 29 skills", body: "Which ones are mastered, which need work, and what's next.", tone: "bg-pastel-mint text-pastelInk-mint" },
+  { title: "Scores against the goal", body: "Each practice test plotted against their target score.", tone: "bg-pastel-butter text-pastelInk-butter" },
+  { title: "What to say", body: "A Sunday email with what to praise and what to ask about.", tone: "bg-pastel-peach text-pastelInk-peach" },
 ];
 
 export function ParentsSection() {
   const r = sampleParentReport(new Date());
 
   return (
-    <section id="parents" className="scroll-mt-20 overflow-hidden bg-[#f3f2fa] px-4 py-16 sm:px-6 sm:py-24">
+    <section id="parents" className="scroll-mt-20 overflow-hidden bg-pastel-lilac/70 px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto grid max-w-[1120px] items-center gap-12 lg:grid-cols-[1fr_520px] lg:gap-16">
         <div>
           <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">For parents</div>
@@ -168,8 +168,12 @@ export function ParentsSection() {
           </p>
           <ul className="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
             {YOU_SEE.map((f) => (
-              <li key={f.title} className="flex gap-2.5">
-                <span className="mt-[7px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent" aria-hidden />
+              <li key={f.title} className="flex gap-3">
+                <span className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md ${f.tone}`} aria-hidden>
+                  <svg width="12" height="12" viewBox="0 0 12 12">
+                    <path d="M2.5 6.2 5 8.5l4.5-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
                 <span>
                   <span className="block text-[14.5px] font-semibold text-ink">{f.title}</span>
                   <span className="block text-[13.5px] leading-snug text-gray-600">{f.body}</span>

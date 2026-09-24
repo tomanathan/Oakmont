@@ -28,7 +28,7 @@ export async function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="scroll-mt-20 bg-[#faf8f4] px-6 py-16 sm:py-20">
+    <section id="pricing" className="scroll-mt-20 bg-pastel-mint/60 px-6 py-16 sm:py-20">
       <ViewTracker event="pricing_viewed" />
       <div className="mx-auto max-w-[1120px]">
         <div className="mx-auto mb-10 max-w-[620px] text-center">

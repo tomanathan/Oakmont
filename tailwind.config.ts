@@ -11,6 +11,24 @@ const config: Config = {
       colors: {
         ink: "#1a1a2e",
         accent: "#2f6f4f",
+        // Homepage pastels: a soft ground plus a deeper ink of the same hue
+        // for numbers, icons and labels that sit on it.
+        pastel: {
+          lilac: "#ece8fb",
+          sky: "#e2effb",
+          mint: "#dff3e7",
+          butter: "#fcf1c9",
+          peach: "#fde5d6",
+          blush: "#fbe2ec",
+        },
+        pastelInk: {
+          lilac: "#4a5bb0",
+          sky: "#2b6497",
+          mint: "#2f6f4f",
+          butter: "#8a6510",
+          peach: "#a44d23",
+          blush: "#a23d69",
+        },
       },
       fontFamily: {
         // Reserved for the brand wordmark and page titles -- see

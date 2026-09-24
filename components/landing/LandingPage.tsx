@@ -43,37 +43,41 @@ export function LandingPage() {
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
-      <nav className="sticky top-0 z-30 border-b border-[#ece9f7]/80 bg-white/85 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
-          <a href="#top" className="flex min-w-0 items-center gap-2.5">
-            <BrandMark size={38} className="flex-shrink-0" />
-            <span className="hidden truncate font-display text-[20px] font-semibold tracking-[-0.01em] sm:inline">Oakmont Study Center</span>
-          </a>
-          <div className="hidden items-center gap-8 whitespace-nowrap text-[16px] text-gray-500 lg:flex">
-            <a href="#parents" className="font-medium text-[#4a5bb0] transition-colors hover:text-ink">
-              For parents
-            </a>
-            <a href="#how-it-works" className="transition-colors hover:text-ink">
-              How it works
-            </a>
-            <a href="#pricing" className="transition-colors hover:text-ink">
-              Pricing
-            </a>
-            <a href="#faq" className="transition-colors hover:text-ink">
-              FAQ
-            </a>
-          </div>
-          <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
-            <a href="#parents" className="rounded-lg px-2 py-1.5 text-[15px] font-medium text-[#4a5bb0] lg:hidden">
+      {/* Brand centered, Khan Academy style: page links on the left, account
+          actions on the right, the mark between them. */}
+      <nav className="sticky top-0 z-30 border-b border-[#ece9f7]/80 bg-white/90 backdrop-blur-md">
+        <div className="mx-auto grid max-w-[1120px] grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 py-3 sm:gap-3 sm:px-6">
+          <div className="flex min-w-0 items-center">
+            <div className="hidden items-center gap-6 whitespace-nowrap text-[15px] text-gray-500 lg:flex xl:gap-8 xl:text-[16px]">
+              <a href="#parents" className="font-medium text-pastelInk-lilac transition-colors hover:text-ink">
+                For parents
+              </a>
+              <a href="#how-it-works" className="transition-colors hover:text-ink">
+                How it works
+              </a>
+              <a href="#pricing" className="transition-colors hover:text-ink">
+                Pricing
+              </a>
+              <a href="#faq" className="transition-colors hover:text-ink">
+                FAQ
+              </a>
+            </div>
+            <a href="#parents" className="-ml-1 rounded-lg px-1 py-1.5 text-[14px] font-medium text-pastelInk-lilac sm:text-[15px] lg:hidden">
               Parents
             </a>
-            <a href="/login" className="rounded-lg px-3 py-2 text-[15px] text-gray-600 transition-colors hover:text-ink sm:text-[16px]">
+          </div>
+          <a href="#top" className="flex items-center justify-center gap-2.5" aria-label="Oakmont Study Center, back to top">
+            <BrandMark size={40} className="flex-shrink-0" />
+            <span className="hidden whitespace-nowrap font-display text-[21px] font-semibold tracking-[-0.01em] sm:inline">Oakmont Study Center</span>
+          </a>
+          <div className="flex items-center justify-end gap-1 sm:gap-3">
+            <a href="/login" className="rounded-lg px-2 py-2 text-[14px] text-gray-600 transition-colors hover:text-ink sm:px-3 sm:text-[16px]">
               Log in
             </a>
             <TrackedLink
               href="/login?mode=signup"
               event="signup_started"
-              className="whitespace-nowrap rounded-lg bg-ink px-4 py-2 text-[15px] font-semibold sm:text-[16px] text-white transition-opacity hover:opacity-90"
+              className="whitespace-nowrap rounded-lg bg-ink px-3 py-2 text-[14px] font-semibold text-white transition-opacity hover:opacity-90 sm:px-4 sm:text-[16px]"
             >
               Start free
             </TrackedLink>

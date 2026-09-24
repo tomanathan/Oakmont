@@ -55,7 +55,7 @@ export function SampleQuestion({
   }
 
   return (
-    <section id="try-a-question" className="scroll-mt-20 bg-[#faf8f4] px-6 py-16 sm:py-20">
+    <section id="try-a-question" className="scroll-mt-20 bg-pastel-sky/60 px-6 py-16 sm:py-20">
       <div className="mx-auto grid max-w-[1120px] items-start gap-10 lg:grid-cols-[1fr_1.25fr] lg:gap-16">
         <div className="lg:sticky lg:top-24">
           <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">Try a question</div>
@@ -68,10 +68,10 @@ export function SampleQuestion({
           </p>
           <Ladder
             steps={[
-              { n: 2, label: "test sections" },
-              { n: domainCount, label: "subject areas" },
-              { n: subskillCount, label: "skills" },
-              { n: typeCount, label: "question types" },
+              { n: 2, label: "test sections", tone: "bg-pastel-lilac text-pastelInk-lilac" },
+              { n: domainCount, label: "subject areas", tone: "bg-pastel-mint text-pastelInk-mint" },
+              { n: subskillCount, label: "skills", tone: "bg-pastel-butter text-pastelInk-butter" },
+              { n: typeCount, label: "question types", tone: "bg-ink text-white" },
             ]}
           />
           {/* Beside the question on wide screens; below it on phones (see
@@ -191,18 +191,15 @@ export function SampleQuestion({
 
 // The whole breakdown in four numbers, the last one (the level Oakmont
 // teaches at) picked out.
-function Ladder({ steps }: { steps: { n: number; label: string }[] }) {
+function Ladder({ steps }: { steps: { n: number; label: string; tone: string }[] }) {
   return (
-    <ol className="grid max-w-[460px] grid-cols-4 lg:mb-8 overflow-hidden rounded-xl ring-1 ring-[#ece9f7]" aria-label="How the SAT breaks down">
+    <ol className="grid max-w-[460px] grid-cols-4 gap-2 lg:mb-8" aria-label="How the SAT breaks down">
       {steps.map((s, i) => {
         const last = i === steps.length - 1;
         return (
-          <li
-            key={s.label}
-            className={`relative px-3 py-3 ${last ? "bg-ink text-white" : "bg-white"} ${i > 0 && !last ? "border-l border-[#ece9f7]" : ""}`}
-          >
-            <div className={`font-display text-[24px] font-semibold leading-none tabular-nums ${last ? "" : "text-ink"}`}>{s.n}</div>
-            <div className={`mt-1 text-[11.5px] leading-tight ${last ? "text-white/75" : "text-gray-500"}`}>{s.label}</div>
+          <li key={s.label} className={`rounded-xl px-3 py-3 ${s.tone}`}>
+            <div className="font-display text-[24px] font-semibold leading-none tabular-nums">{s.n}</div>
+            <div className={`mt-1 text-[11.5px] leading-tight ${last ? "text-white/75" : "text-gray-600"}`}>{s.label}</div>
           </li>
         );
       })}

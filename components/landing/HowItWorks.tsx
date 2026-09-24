@@ -8,14 +8,20 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
     {
       title: "Set your test date",
       body: "We recommend six months, but the week-by-week plan sizes itself to the time you have.",
+      tone: "bg-pastel-mint",
+      ink: "text-pastelInk-mint",
     },
     {
       title: "Follow one week at a time",
       body: "Each week focuses on a few skills, starting with the ones that will raise the score most.",
+      tone: "bg-pastel-butter",
+      ink: "text-pastelInk-butter",
     },
     {
       title: "Learn, practice, review",
       body: `A short lesson and quiz for each of the ${subskillCount} skills, then quick mixed reviews that keep every skill fresh until test day.`,
+      tone: "bg-pastel-peach",
+      ink: "text-pastelInk-peach",
     },
   ];
 
@@ -23,14 +29,19 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
     {
       title: "Explanations that teach",
       body: "Every wrong answer tells your student why it's wrong, and names the pattern behind the question.",
+      tone: "bg-pastel-sky text-pastelInk-sky",
+      icon: "?",
     },
     {
       title: "8 full-length practice tests",
       body: "Scheduled into the plan so test day feels familiar.",
+      tone: "bg-pastel-blush text-pastelInk-blush",
+      icon: "8",
     },
     {
       title: "Ozho, the study buddy",
       body: "Streaks keep him happy and earn costumes. It's a small reason to show up every day.",
+      tone: "bg-pastel-lilac",
       dog: true,
     },
   ];
@@ -50,12 +61,12 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
 
         <ol className="grid gap-4 md:grid-cols-3">
           {steps.map((step, i) => (
-            <li key={step.title} className="rounded-2xl border border-[#ece9f7] bg-white p-6">
-              <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#f3f2fc] font-display text-[15px] font-semibold text-[#4a5bb0]">
+            <li key={step.title} className={`rounded-2xl p-6 ${step.tone}`}>
+              <div className={`mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-white font-display text-[15px] font-semibold ${step.ink}`}>
                 {i + 1}
               </div>
               <h3 className="mb-2 font-display text-[18px] font-semibold">{step.title}</h3>
-              <p className="text-[14px] leading-relaxed text-gray-600">{step.body}</p>
+              <p className="text-[14px] leading-relaxed text-gray-700">{step.body}</p>
             </li>
           ))}
         </ol>
@@ -65,11 +76,13 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
         <div className="mt-10 grid gap-6 border-t border-[#ece9f7] pt-8 md:grid-cols-3">
           {extras.map((x) => (
             <div key={x.title} className="flex gap-3">
-              {x.dog ? (
-                <div className="-mt-2 flex-shrink-0" aria-hidden="true">
-                  <PixelDog size={44} mood="happy" costume="bowtie" shadow={false} />
-                </div>
-              ) : null}
+              <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl ${x.tone}`} aria-hidden="true">
+                {x.dog ? (
+                  <PixelDog size={36} mood="happy" costume="bowtie" shadow={false} />
+                ) : (
+                  <span className="font-display text-[20px] font-semibold">{x.icon}</span>
+                )}
+              </div>
               <div>
                 <h3 className="text-[15px] font-semibold text-ink">{x.title}</h3>
                 <p className="mt-1 text-[14px] leading-relaxed text-gray-600">{x.body}</p>
