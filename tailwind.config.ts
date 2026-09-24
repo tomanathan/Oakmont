@@ -17,13 +17,13 @@ const config: Config = {
         ivory: "#faf6ec",
         parchment: "#f2eadb",
         forest: {
-          DEFAULT: "#1f3b2d",
-          600: "#2c4c3b",
-          900: "#142219",
+          DEFAULT: "#16402c",
+          600: "#1f5a3d",
+          900: "#0c2618",
         },
         brass: {
-          DEFAULT: "#a8834b",
-          light: "#d9c7a0",
+          DEFAULT: "#a9803a",
+          light: "#e6cf95",
         },
       },
       fontFamily: {

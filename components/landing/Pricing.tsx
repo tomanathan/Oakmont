@@ -2,7 +2,7 @@ import { ALL_SUBSKILLS } from "@/data/curriculum";
 import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
 import { TrackedLink } from "./TrackedLink";
 import { ViewTracker } from "./ViewTracker";
-import { Eyebrow } from "./Flourish";
+import { Eyebrow, Highlight, PINSTRIPE } from "./Flourish";
 
 function Check() {
   return (
@@ -29,13 +29,14 @@ export async function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="scroll-mt-20 bg-gradient-to-b from-forest-600 to-forest-900 px-6 py-16 text-ivory sm:py-20">
+    <section id="pricing" className="relative scroll-mt-20 bg-gradient-to-b from-forest to-forest-900 px-6 py-16 text-ivory sm:py-20">
       <ViewTracker event="pricing_viewed" />
-      <div className="mx-auto max-w-[1120px]">
+      <div className="pointer-events-none absolute inset-0" style={PINSTRIPE} aria-hidden="true" />
+      <div className="relative mx-auto max-w-[1120px]">
         <div className="mx-auto mb-10 max-w-[620px] text-center">
           <Eyebrow center light>Pricing</Eyebrow>
           <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[42px]">
-            <em className="font-medium italic text-brass-light">Everything included</em>, either way.
+            <Highlight dark>Everything included</Highlight>, either way.
           </h2>
         </div>
 
@@ -43,7 +44,7 @@ export async function Pricing() {
           <div className="relative flex flex-col rounded-lg bg-ivory p-7 text-forest-900 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.6)] ring-1 ring-brass/60 ring-offset-4 ring-offset-ivory sm:p-8">
             <div className="mb-6 flex items-center justify-between">
               <div className="font-display text-[19px] font-semibold">6-month pass</div>
-              <div className="rounded-full bg-brass px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-white">
+              <div className="rounded-full bg-[linear-gradient(180deg,#e6cf95,#b98f45)] px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.14em] text-forest-900">
                 Best value
               </div>
             </div>
