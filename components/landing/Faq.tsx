@@ -3,27 +3,28 @@
 import { useState } from "react";
 import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { SUPPORT_EMAIL } from "@/components/LegalFooter";
+import { Eyebrow } from "./Flourish";
 
 export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="scroll-mt-20 bg-white px-6 py-16 sm:py-20">
+    <section id="faq" className="scroll-mt-20 bg-ivory px-6 py-16 sm:py-20">
       <div className="mx-auto grid max-w-[1120px] gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
         <div>
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">FAQ</div>
-          <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[40px]">
+          <Eyebrow>FAQ</Eyebrow>
+          <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] text-forest-900 sm:text-[42px]">
             Questions, answered.
           </h2>
           <p className="mt-4 text-sm text-gray-500">
             Something else?{" "}
-            <a href={`mailto:${SUPPORT_EMAIL}`} className="font-medium text-ink underline decoration-[#c9c6ee] underline-offset-4 hover:decoration-ink">
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="font-medium text-ink underline decoration-sage/60 underline-offset-4 hover:decoration-forest">
               Email us
             </a>
             .
           </p>
         </div>
-        <div className="divide-y divide-[#ece9f7] border-y border-[#ece9f7]">
+        <div className="divide-y divide-sage/25 border-y border-sage/30">
           {FAQ_ITEMS.map((item, i) => {
             const open = openIndex === i;
             return (
