@@ -58,11 +58,12 @@ export function SampleQuestion({
         <div className="lg:sticky lg:top-24">
           <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">Try it now</div>
           <h2 className="mb-4 text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[40px]">
-            Not just a question. One exact question type.
+            Try a real SAT question. See exactly what it practices.
           </h2>
           <p className="mb-6 max-w-[460px] text-[15px] leading-relaxed text-gray-600">
-            The SAT has 2 sections, {domainCount} domains and {subskillCount} skills. Oakmont goes a level further: every skill is split
-            into the specific question types it&apos;s built from, and each type gets its own method, its own traps and its own practice.
+            The SAT has 2 sections, {domainCount} subject areas and {subskillCount} skills. Oakmont goes one level further: each skill is
+            broken into the handful of question types the test actually asks, and each type gets its own lesson, its own practice and its own
+            common mistakes to watch for.
           </p>
           {/* Beside the question on wide screens; below it on phones (see
               the second copy), so the question itself isn't pushed down. */}
@@ -75,7 +76,7 @@ export function SampleQuestion({
           <div className="rounded-2xl bg-white p-6 shadow-[0_1px_2px_rgba(26,26,46,0.04),0_12px_40px_-20px_rgba(26,26,46,0.25)] ring-1 ring-[#ece9f7] sm:p-8">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-2 text-xs">
               <span className="rounded-full bg-[#f3f2fc] px-2.5 py-1 font-semibold text-[#4a5bb0]">
-                {question.skill} &middot; Type {typeIndex + 1} of {question.types.length}
+                {question.skill} &middot; question type {typeIndex + 1} of {question.types.length}
               </span>
               <span className="text-gray-400">No account needed</span>
             </div>
@@ -116,8 +117,8 @@ export function SampleQuestion({
             {answered && (
               <div className="mt-6 animate-fade-up rounded-xl bg-[#faf8f4] p-5">
                 <div className={`mb-2 text-sm font-semibold ${correct ? "text-[#2f6f4f]" : "text-ink"}`}>
-                  {correct ? "Correct." : "Not quite."} This is question type {typeIndex + 1} of {question.types.length} in {question.skill}:{" "}
-                  {question.type}.
+                  {correct ? "Correct." : "Not quite."} This is one of {question.types.length} kinds of {question.skill} questions:
+                  &ldquo;{question.type}.&rdquo;
                 </div>
                 {!correct && selected !== null && question.why[selected] ? (
                   <>
@@ -190,12 +191,12 @@ function TaxonomyMap({ q, typeIndex }: { q: LandingQuestion; typeIndex: number }
     }`;
   return (
     <div key={q.q} className="animate-fade-up rounded-2xl bg-white p-5 ring-1 ring-[#ece9f7]">
-      <div className="mb-4 text-[10.5px] font-bold uppercase tracking-[0.12em] text-gray-400">Where this question lives</div>
+      <div className="mb-4 text-[10.5px] font-bold uppercase tracking-[0.12em] text-gray-400">Where this question fits</div>
       <ol className="relative flex flex-col gap-4 border-l border-dashed border-[#d9d6ee] pl-5">
-        <Level label="Section" count={null}>
+        <Level label="Test section" count={null}>
           <span className="text-[14px] font-semibold text-ink">{q.section}</span>
         </Level>
-        <Level label="Domain" count={`${domainIndex + 1} of ${q.domains.length}`}>
+        <Level label="Subject area" count={`${domainIndex + 1} of ${q.domains.length}`}>
           <div className="flex flex-wrap gap-1.5">
             {q.domains.map((d) => (
               <span key={d} className={chip(d === q.domain)}>
@@ -230,7 +231,7 @@ function TaxonomyMap({ q, typeIndex }: { q: LandingQuestion; typeIndex: number }
         </Level>
       </ol>
       <p className="mt-4 text-[12px] text-gray-400">
-        {q.skillQuestionCount} practice questions for {q.skill} alone, each tagged with its type.
+        {q.skillQuestionCount} practice questions for this one skill alone.
       </p>
     </div>
   );

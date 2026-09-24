@@ -21,8 +21,8 @@ export function Hero({ questionCount, subskillCount }: { questionCount: number; 
           One week at a time.
         </h1>
         <p className="mx-auto mb-8 max-w-[560px] text-[16px] leading-relaxed text-gray-600 sm:text-[17px]">
-          A tutor&apos;s week-by-week plan for all {subskillCount} official subskills — lessons, {questionCount}{" "}
-          original practice questions, and full-length tests, paced to your test date.
+          A complete SAT plan built around your test date, whether it&apos;s months away or weeks away. Lessons for all{" "}
+          {subskillCount} skills on the test, {questionCount} original practice questions, and full-length practice tests.
         </p>
         {/* data-hero-actions: HeroPets caps the ball's arc just above this row. */}
         <div data-hero-actions className="flex flex-col items-center justify-center gap-3 sm:flex-row">

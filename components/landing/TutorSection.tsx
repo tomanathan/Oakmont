@@ -13,7 +13,7 @@ export function TutorSection() {
         <figure className="rounded-2xl border border-[#ece9f7] bg-[#faf8f4] p-7 sm:p-9">
           <blockquote className="font-display text-[19px] leading-[1.55] sm:text-[21px]">
             I built Oakmont around the same week-by-week plan I&apos;ve used with my tutoring students for six years —
-            every official subskill, in the order that actually moves a score. This is that structure, without the
+            every skill the SAT tests, in the order that actually moves a score. This is that structure, without the
             hourly rate.
           </blockquote>
           <figcaption className="mt-6 flex items-center gap-3">

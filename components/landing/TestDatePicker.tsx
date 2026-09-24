@@ -41,7 +41,7 @@ export function TestDatePicker({ subskillCount }: { subskillCount: number }) {
       <div className="min-h-[112px] rounded-xl bg-white/[0.06] p-5 ring-1 ring-white/10" aria-live="polite">
         {weeks === null ? (
           <p className="text-sm leading-relaxed text-white/60">
-            Your plan compresses to fit whatever time is left — every one of the {subskillCount} subskills covered,
+            Your plan fits itself to whatever time is left, with all {subskillCount} skills covered and
             none skipped.
           </p>
         ) : (
@@ -50,7 +50,7 @@ export function TestDatePicker({ subskillCount }: { subskillCount: number }) {
               {weeks} <span className="text-[18px] text-white/70">{weeks === 1 ? "week" : "weeks"} to go</span>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-white/70">
-              Your plan paces all {subskillCount} subskills into exactly that — {weeks <= 4 ? "a sprint, " : weeks <= 8 ? "a faster pace, " : ""}
+              Your plan paces all {subskillCount} skills into exactly that: {weeks <= 4 ? "a sprint, " : weeks <= 8 ? "a faster pace, " : ""}
               nothing skipped.
             </p>
           </div>

@@ -4,15 +4,15 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
   const steps = [
     {
       title: "Set your test date",
-      body: "Add a baseline score if you have one. Your week-by-week timeline is built from there.",
+      body: "Six months away or six weeks, the week-by-week plan is sized to the time you have. Add a recent score if you have one.",
     },
     {
       title: "Follow one week at a time",
-      body: "Each week targets specific subskills, in the order that moves your score most — not a fixed syllabus.",
+      body: "Each week focuses on a few skills, starting with the ones that will raise the score most.",
     },
     {
       title: "Learn, practice, review",
-      body: `Lessons and a quiz for all ${subskillCount} subskills, then short mixed reviews at SAT pace that keep every skill fresh until test day. Plus 8 full-length practice tests.`,
+      body: `A short lesson and quiz for each of the ${subskillCount} skills, then quick mixed reviews at real SAT pace that keep every skill fresh until test day. Plus 8 full-length practice tests.`,
     },
   ];
 

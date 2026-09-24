@@ -21,7 +21,7 @@ export function SubskillMap() {
           <div key={section}>
             <div className="mb-2 flex items-baseline justify-between border-b border-[#ece9f7] pb-2">
               <div className="text-sm font-semibold">{section}</div>
-              <div className="text-xs tabular-nums text-gray-400">{total} subskills</div>
+              <div className="text-xs tabular-nums text-gray-400">{total} skills</div>
             </div>
             <ul className="flex flex-col">
               {Object.entries(domains).map(([domain, count]) => (

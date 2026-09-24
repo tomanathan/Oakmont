@@ -11,15 +11,15 @@ export const FAQ_ITEMS = [
   },
   {
     q: "How is this different from Khan Academy?",
-    a: "Khan Academy is a free, general question bank. Oakmont is a structured week-by-week plan built by a tutor — it tells you exactly what to study each week based on your test date and your actual weak spots, with a pattern-based explanation for every question.",
+    a: "Khan Academy is a free, general question bank. Oakmont is a structured week-by-week plan built by a tutor. It tells your student exactly what to study each week based on their test date and their actual weak spots, and explains every question step by step.",
   },
   {
     q: "How long does it take?",
-    a: "The full plan is 6 months, but it automatically compresses to fit whatever time is actually left before your test date — see the test-date picker above.",
+    a: "As long as you have. Enter your test date and the plan fits all 29 SAT skills into the weeks that are left, whether that's six months or six weeks. No date yet? It starts at a steady default pace, and you can add a date any time.",
   },
   {
     q: "What if my test is in 6 weeks?",
-    a: "The plan condenses to your actual timeline instead of assuming a full 6 months, covering every subskill at a faster pace rather than skipping any.",
+    a: "The plan fits itself to the time you actually have. It covers every skill at a faster pace rather than skipping any, and schedules practice tests in the weeks before the exam.",
   },
   {
     q: "What can parents see?",

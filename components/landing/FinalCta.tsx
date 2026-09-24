@@ -18,7 +18,7 @@ export function FinalCta() {
             Your first week is ready when you are.
           </h2>
           <p className="mx-auto mt-4 max-w-[460px] text-[15px] text-white/65">
-            Set your test date, meet Ozho, and start on the subskills that matter most for your score.
+            Set your test date, meet Ozho, and start on the skills that matter most for your score.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <TrackedLink

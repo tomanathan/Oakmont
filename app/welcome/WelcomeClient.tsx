@@ -298,7 +298,7 @@ export function WelcomeClient(props: Props) {
               </button>
               <button onClick={() => setDateChoice({ kind: "unsure" })} className={chip(dateChoice.kind === "unsure")} aria-pressed={dateChoice.kind === "unsure"}>
                 <div className="text-[14px] font-semibold">Not sure yet</div>
-                <div className={`text-[12px] ${dateChoice.kind === "unsure" ? "text-white/70" : "text-gray-500"}`}>Use a 6-month plan</div>
+                <div className={`text-[12px] ${dateChoice.kind === "unsure" ? "text-white/70" : "text-gray-500"}`}>Start with a steady default pace</div>
               </button>
             </div>
             {dateChoice.kind === "other" && (

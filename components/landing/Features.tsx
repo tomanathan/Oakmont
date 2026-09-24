@@ -79,7 +79,7 @@ export function Features({ subskillCount }: { subskillCount: number }) {
             <div className="mb-5 flex flex-wrap items-baseline justify-between gap-2">
               <div>
                 <div className={eyebrow}>Full coverage</div>
-                <h3 className={title}>All {subskillCount} official subskills, mapped.</h3>
+                <h3 className={title}>All {subskillCount} SAT skills, mapped.</h3>
               </div>
               <p className="text-xs text-gray-400">Lessons, worked examples and a quiz for each — nothing skipped.</p>
             </div>

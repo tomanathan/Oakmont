@@ -324,8 +324,8 @@ export function SettingsClient({
       >
         <div className="text-[15px] font-semibold text-ink mb-1">You and your goals</div>
         <div className="text-xs text-gray-500 mb-4">
-          Set a baseline score, a goal score, and your SAT test date, and your 6-month plan will
-          resize to fit the time you actually have.
+          Set a baseline score, a goal score, and your SAT test date, and your plan will resize to fit
+          the time you actually have.
         </div>
 
         <label className="block text-sm text-gray-700 mb-1">First name</label>

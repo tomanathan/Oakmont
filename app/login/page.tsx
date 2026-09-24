@@ -25,7 +25,7 @@ function LoginPageContent() {
         </Link>
         <div className="font-display font-semibold text-[28px] text-ink mb-1">Oakmont Study Center</div>
         <div className="text-sm text-gray-500">
-          A full 6-month SAT curriculum, built around every official subskill.
+          A complete SAT plan, paced to your test date.
         </div>
       </div>
       {/* Ozho doesn't roam on this page (see ScoutCompanion's HIDDEN_ON),

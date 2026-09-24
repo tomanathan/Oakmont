@@ -8,12 +8,12 @@ import { LandingPage } from "@/components/landing/LandingPage";
 export const metadata: Metadata = {
   title: "Oakmont Study Center — Every SAT skill, one week at a time",
   description:
-    "A complete 6-month SAT plan covering all 29 official subskills, built by a 6-year SAT tutor. Try a real question free, no account needed.",
+    "A complete SAT plan sized to the time you have, covering all 29 official SAT skills, built by a 6-year SAT tutor. Try a real question free, no account needed.",
   alternates: { canonical: "https://oakmontsat.com" },
   openGraph: {
     title: "Oakmont Study Center — Every SAT skill, one week at a time",
     description:
-      "A complete 6-month SAT plan covering all 29 official subskills, built by a 6-year SAT tutor. Try a real question free, no account needed.",
+      "A complete SAT plan sized to the time you have, covering all 29 official SAT skills, built by a 6-year SAT tutor. Try a real question free, no account needed.",
     url: "https://oakmontsat.com",
     siteName: "Oakmont Study Center",
     type: "website",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Oakmont Study Center — Every SAT skill, one week at a time",
-    description: "A complete 6-month SAT plan covering all 29 official subskills, built by a 6-year SAT tutor.",
+    description: "A complete SAT plan sized to the time you have, covering all 29 official SAT skills, built by a 6-year SAT tutor.",
   },
 };
 

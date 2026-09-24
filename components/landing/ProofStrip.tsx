@@ -2,7 +2,7 @@
 // time (see LandingPage) so they can't drift from what's actually inside.
 export function ProofStrip({ questionCount, subskillCount }: { questionCount: number; subskillCount: number }) {
   const stats = [
-    { value: String(subskillCount), label: "official SAT subskills, all covered" },
+    { value: String(subskillCount), label: "SAT skills, every one covered" },
     { value: String(questionCount), label: "original practice questions" },
     { value: "8", label: "full-length practice tests" },
     { value: "6 yrs", label: "of SAT tutoring behind the plan" },
