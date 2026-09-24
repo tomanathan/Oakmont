@@ -2,7 +2,7 @@ import Link from "next/link";
 import { sampleParentReport } from "@/lib/parentDemo";
 import type { ParentReport } from "@/lib/parentInsights";
 import { TrackedLink } from "./TrackedLink";
-import { Eyebrow, Highlight, PINSTRIPE } from "./Flourish";
+import { Eyebrow, Highlight } from "./Flourish";
 
 // The parent pitch: what a parent sees, next to a composed snapshot of the
 // real report (sample student "Maya", invented and labeled as such). The
@@ -52,7 +52,7 @@ function Snapshot({ r }: { r: ParentReport }) {
   return (
     <div className="relative mx-auto w-full max-w-[520px] lg:mx-0">
       {/* The report card. */}
-      <div className="relative z-10 rounded-2xl border border-[#e8dfcc] bg-white p-5 shadow-[0_2px_4px_rgba(26,26,46,0.04),0_24px_60px_-20px_rgba(26,26,46,0.25)] sm:p-6">
+      <div className="relative z-10 rounded-2xl border border-[#e6e3f3] bg-white p-5 shadow-[0_2px_4px_rgba(26,26,46,0.04),0_24px_60px_-20px_rgba(26,26,46,0.25)] sm:p-6">
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-gray-400">Study report</div>
@@ -107,8 +107,8 @@ function Snapshot({ r }: { r: ParentReport }) {
 
       {/* A mastery moment, pinned to the corner. */}
       {mastered && (
-        <div className="relative z-20 mx-auto -mt-2 w-fit rounded-md bg-forest-900 px-3.5 py-2.5 text-ivory shadow-lg ring-1 ring-brass/50 sm:absolute sm:-bottom-12 sm:-right-6 sm:mt-0">
-          <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#e6c46a]">★ Mastered</div>
+        <div className="relative z-20 mx-auto -mt-2 w-fit rounded-md bg-forest-900 px-3.5 py-2.5 text-ivory shadow-lg ring-1 ring-sage/50 sm:absolute sm:-bottom-12 sm:-right-6 sm:mt-0">
+          <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-pastel-butter">★ Mastered</div>
           <div className="text-[13px] font-semibold">{mastered.name}</div>
         </div>
       )}
@@ -147,10 +147,10 @@ function Kpi({ label, value, delta }: { label: string; value: string; delta: Rea
 // ---- the section ----------------------------------------------------------------
 
 const YOU_SEE = [
-  { title: "Every study session", body: "When they studied, for how long, and what they covered." },
-  { title: "All 29 skills", body: "Which ones are mastered, which need work, and what's next." },
-  { title: "Scores against the goal", body: "Each practice test plotted against their target score." },
-  { title: "What to say", body: "A Sunday email with what to praise and what to ask about." },
+  { title: "Every study session", body: "When they studied, for how long, and what they covered.", tone: "bg-pastel-sage" },
+  { title: "All 29 skills", body: "Which ones are mastered, which need work, and what's next.", tone: "bg-pastel-sky" },
+  { title: "Scores against the goal", body: "Each practice test plotted against their target score.", tone: "bg-pastel-butter" },
+  { title: "What to say", body: "A Sunday email with what to praise and what to ask about.", tone: "bg-pastel-blush" },
 ];
 
 export function ParentsSection() {
@@ -170,7 +170,7 @@ export function ParentsSection() {
           <ul className="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
             {YOU_SEE.map((f) => (
               <li key={f.title} className="flex gap-3">
-                <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-parchment text-forest ring-1 ring-brass/40" aria-hidden>
+                <span className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-forest ${f.tone}`} aria-hidden>
                   <svg width="12" height="12" viewBox="0 0 12 12">
                     <path d="M2.5 6.2 5 8.5l4.5-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -192,21 +192,14 @@ export function ParentsSection() {
             </TrackedLink>
             <Link
               href="/parents/sample"
-              className="rounded-md bg-white/60 px-5 py-3.5 text-center text-sm font-semibold tracking-wide text-forest ring-1 ring-brass/45 transition-colors hover:bg-white"
+              className="rounded-md bg-white/60 px-5 py-3.5 text-center text-sm font-semibold tracking-wide text-forest ring-1 ring-sage/45 transition-colors hover:bg-white"
             >
               See a full sample report &rarr;
             </Link>
           </div>
           <p className="mt-4 text-[13px] text-gray-500">Your student adds your email when they sign up. You set a password from the email we send.</p>
         </div>
-        <div className="relative sm:pb-32 sm:pl-10">
-          <div
-            className="absolute -inset-x-4 -bottom-4 top-10 hidden rounded-lg bg-gradient-to-br from-forest-600 to-forest-900 shadow-[0_30px_60px_-30px_rgba(12,38,24,0.8)] sm:block lg:-right-10 lg:left-20"
-            aria-hidden="true"
-          >
-            <div className="absolute inset-0 rounded-lg" style={PINSTRIPE} />
-            <div className="absolute inset-2 rounded-md border border-brass-light/30" />
-          </div>
+        <div className="sm:pb-32 sm:pl-10">
           <Snapshot r={r} />
         </div>
       </div>

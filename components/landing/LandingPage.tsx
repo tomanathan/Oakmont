@@ -45,11 +45,11 @@ export function LandingPage() {
 
       {/* Brand centered, Khan Academy style: page links on the left, account
           actions on the right, the mark between them. */}
-      <nav className="sticky top-0 z-30 border-b border-brass/30 bg-ivory/90 backdrop-blur-md">
+      <nav className="sticky top-0 z-30 border-b border-sage/30 bg-ivory/90 backdrop-blur-md">
         <div className="mx-auto grid max-w-[1120px] grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 py-3 sm:gap-3 sm:px-6">
           <div className="flex min-w-0 items-center">
             <div className="hidden items-center gap-6 whitespace-nowrap text-[15px] text-gray-500 lg:flex xl:gap-8 xl:text-[16px]">
-              <a href="#parents" className="font-medium text-forest transition-colors hover:text-brass">
+              <a href="#parents" className="font-medium text-forest transition-colors hover:text-sage">
                 For parents
               </a>
               <a href="#how-it-works" className="transition-colors hover:text-ink">
@@ -103,7 +103,7 @@ export function LandingPage() {
         <FinalCta />
       </main>
 
-      <footer className="border-t border-brass/30 bg-parchment">
+      <footer className="border-t border-sage/30 bg-parchment">
         <div className="mx-auto flex max-w-[1120px] flex-col gap-6 px-6 py-10 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <BrandMark size={22} />

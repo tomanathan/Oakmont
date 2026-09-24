@@ -39,9 +39,11 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
   ];
 
   const numerals = ["I", "II", "III"];
+  const stripes = ["bg-pastel-sage", "bg-pastel-sky", "bg-pastel-blush"];
+  const dots = ["bg-pastel-butter", "bg-pastel-sky", "bg-pastel-sage"];
 
   return (
-    <section id="how-it-works" className="scroll-mt-20 border-t border-brass/30 bg-ivory px-6 py-16 sm:py-20">
+    <section id="how-it-works" className="scroll-mt-20 border-t border-sage/30 bg-ivory px-6 py-16 sm:py-20">
       <div className="mx-auto max-w-[1120px]">
         <div className="mb-10 max-w-[680px]">
           <Eyebrow>How it works</Eyebrow>
@@ -55,8 +57,9 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
 
         <ol className="grid gap-4 md:grid-cols-3">
           {steps.map((step, i) => (
-            <li key={step.title} className="rounded-lg bg-white/80 p-6 shadow-[0_12px_30px_-22px_rgba(60,42,15,0.5)] ring-1 ring-brass/25">
-              <div className="mb-3 font-display text-[26px] font-medium italic leading-none text-brass">{numerals[i]}.</div>
+            <li key={step.title} className="overflow-hidden rounded-lg bg-white/80 p-6 pt-0 shadow-[0_12px_30px_-22px_rgba(60,42,15,0.5)] ring-1 ring-sage/25">
+              <div className={`-mx-6 mb-5 h-2 ${stripes[i]}`} aria-hidden="true" />
+              <div className="mb-3 font-display text-[26px] font-medium italic leading-none text-sage">{numerals[i]}.</div>
               <h3 className="mb-2 font-display text-[19px] font-semibold text-forest-900">{step.title}</h3>
               <p className="text-[14px] leading-relaxed text-stone-600">{step.body}</p>
             </li>
@@ -65,10 +68,10 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
 
         <TestDatePicker subskillCount={subskillCount} />
 
-        <div className="mt-10 grid gap-6 border-t border-brass/30 pt-8 md:grid-cols-3">
-          {extras.map((x) => (
+        <div className="mt-10 grid gap-6 border-t border-sage/30 pt-8 md:grid-cols-3">
+          {extras.map((x, i) => (
             <div key={x.title} className="flex gap-3">
-              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-parchment text-forest ring-1 ring-brass/40" aria-hidden="true">
+              <div className={`flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-full text-forest ${dots[i]}`} aria-hidden="true">
                 {x.dog ? (
                   <PixelDog size={34} mood="happy" costume="bowtie" shadow={false} />
                 ) : (

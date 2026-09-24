@@ -56,7 +56,7 @@ export function SampleQuestion({
   }
 
   return (
-    <section id="try-a-question" className="scroll-mt-20 border-t border-brass/30 bg-parchment px-6 py-16 sm:py-20">
+    <section id="try-a-question" className="scroll-mt-20 border-t border-sage/30 bg-parchment px-6 py-16 sm:py-20">
       <div className="mx-auto grid max-w-[1120px] items-start gap-10 lg:grid-cols-[1fr_1.25fr] lg:gap-16">
         <div className="lg:sticky lg:top-24">
           <Eyebrow>Try a question</Eyebrow>
@@ -69,9 +69,9 @@ export function SampleQuestion({
           </p>
           <Ladder
             steps={[
-              { n: 2, label: "test sections", tone: "bg-ivory text-forest" },
-              { n: domainCount, label: "subject areas", tone: "bg-ivory text-forest" },
-              { n: subskillCount, label: "skills", tone: "bg-ivory text-forest" },
+              { n: 2, label: "test sections", tone: "bg-pastel-sky text-forest" },
+              { n: domainCount, label: "subject areas", tone: "bg-pastel-sage text-forest" },
+              { n: subskillCount, label: "skills", tone: "bg-pastel-butter text-forest" },
               { n: typeCount, label: "question types", tone: "bg-forest text-ivory" },
             ]}
           />
@@ -83,9 +83,9 @@ export function SampleQuestion({
         </div>
 
         <div>
-          <div className="rounded-lg bg-white p-6 shadow-[0_1px_2px_rgba(60,42,15,0.05),0_16px_40px_-22px_rgba(60,42,15,0.45)] ring-1 ring-brass/25 sm:p-8">
+          <div className="rounded-lg bg-white p-6 shadow-[0_1px_2px_rgba(60,42,15,0.05),0_16px_40px_-22px_rgba(60,42,15,0.45)] ring-1 ring-sage/25 sm:p-8">
             <div className="mb-5 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <span className="rounded-full bg-parchment px-2.5 py-1 font-semibold text-forest ring-1 ring-brass/30">
+              <span className="rounded-full bg-parchment px-2.5 py-1 font-semibold text-forest ring-1 ring-sage/30">
                 {question.skill} &middot; question type {typeIndex + 1} of {question.types.length}
               </span>
               <span className="text-gray-400">No account needed</span>
@@ -97,7 +97,7 @@ export function SampleQuestion({
               {question.choices.map((choice, i) => {
                 const isCorrectChoice = i === question.answer;
                 const isSelected = i === selected;
-                let tone = "border-[#e8dfcc] bg-white hover:border-brass hover:bg-ivory";
+                let tone = "border-[#e8dfcc] bg-white hover:border-sage hover:bg-ivory";
                 let badge = "bg-parchment text-forest";
                 if (answered && isCorrectChoice) {
                   tone = "border-[#2f6f4f] bg-[#eef7f1] text-[#1f5a3c]";
@@ -176,7 +176,7 @@ export function SampleQuestion({
             )}
             <button
               onClick={tryAnother}
-              className="w-full rounded-md bg-white/70 px-6 py-3.5 text-sm font-semibold tracking-wide text-forest ring-1 ring-brass/45 transition-colors hover:bg-white sm:w-auto"
+              className="w-full rounded-md bg-white/70 px-6 py-3.5 text-sm font-semibold tracking-wide text-forest ring-1 ring-sage/45 transition-colors hover:bg-white sm:w-auto"
             >
               {answered ? "Try a different type" : "Skip to a different type"}
             </button>
@@ -198,9 +198,9 @@ function Ladder({ steps }: { steps: { n: number; label: string; tone: string }[]
       {steps.map((s, i) => {
         const last = i === steps.length - 1;
         return (
-          <li key={s.label} className={`rounded-md px-3 py-3 ring-1 ring-brass/35 shadow-[0_10px_24px_-18px_rgba(60,42,15,0.5)] ${s.tone}`}>
+          <li key={s.label} className={`rounded-md px-3 py-3 ring-1 ring-sage/35 shadow-[0_10px_24px_-18px_rgba(60,42,15,0.5)] ${s.tone}`}>
             <div className="font-display text-[24px] font-semibold leading-none tabular-nums">{s.n}</div>
-            <div className={`mt-1 text-[11.5px] leading-tight ${last ? "text-brass-light" : "text-stone-500"}`}>{s.label}</div>
+            <div className={`mt-1 text-[11.5px] leading-tight ${last ? "text-pastel-sage" : "text-stone-600"}`}>{s.label}</div>
           </li>
         );
       })}
@@ -215,12 +215,12 @@ function TaxonomyMap({ q, typeIndex }: { q: LandingQuestion; typeIndex: number }
   const skillIndex = q.skills.indexOf(q.skill);
   const chip = (on: boolean) =>
     `rounded-md px-2 py-1 text-[12px] leading-tight transition-colors ${
-      on ? "bg-forest font-semibold text-ivory" : "bg-white text-stone-500 ring-1 ring-brass/20"
+      on ? "bg-forest font-semibold text-ivory" : "bg-white text-stone-500 ring-1 ring-sage/20"
     }`;
   return (
-    <div key={q.q} className="animate-fade-up rounded-lg bg-white/80 p-5 ring-1 ring-brass/25">
+    <div key={q.q} className="animate-fade-up rounded-lg bg-white/80 p-5 ring-1 ring-sage/25">
       <div className="mb-4 text-[10.5px] font-bold uppercase tracking-[0.12em] text-gray-400">Where this question fits</div>
-      <ol className="relative flex flex-col gap-4 border-l border-dashed border-brass/40 pl-5">
+      <ol className="relative flex flex-col gap-4 border-l border-dashed border-sage/40 pl-5">
         <Level label="Test section" count={null}>
           <span className="text-[14px] font-semibold text-ink">{q.section}</span>
         </Level>
@@ -269,12 +269,12 @@ function Level({ label, count, last = false, children }: { label: string; count:
   return (
     <li className="relative">
       <span
-        className={`absolute -left-[25px] top-[3px] h-2.5 w-2.5 rounded-full ring-4 ring-white ${last ? "bg-forest" : "bg-brass-light"}`}
+        className={`absolute -left-[25px] top-[3px] h-2.5 w-2.5 rounded-full ring-4 ring-white ${last ? "bg-forest" : "bg-sage-light"}`}
         aria-hidden
       />
       <div className="mb-1.5 flex items-baseline gap-2">
         <span className="text-[10.5px] font-bold uppercase tracking-[0.1em] text-gray-400">{label}</span>
-        {count && <span className="text-[11px] font-semibold tabular-nums text-brass">{count}</span>}
+        {count && <span className="text-[11px] font-semibold tabular-nums text-sage">{count}</span>}
       </div>
       {children}
     </li>

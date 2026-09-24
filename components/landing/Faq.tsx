@@ -18,13 +18,13 @@ export function Faq() {
           </h2>
           <p className="mt-4 text-sm text-gray-500">
             Something else?{" "}
-            <a href={`mailto:${SUPPORT_EMAIL}`} className="font-medium text-ink underline decoration-brass/60 underline-offset-4 hover:decoration-forest">
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="font-medium text-ink underline decoration-sage/60 underline-offset-4 hover:decoration-forest">
               Email us
             </a>
             .
           </p>
         </div>
-        <div className="divide-y divide-brass/25 border-y border-brass/30">
+        <div className="divide-y divide-sage/25 border-y border-sage/30">
           {FAQ_ITEMS.map((item, i) => {
             const open = openIndex === i;
             return (
