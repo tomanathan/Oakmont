@@ -25,6 +25,7 @@ import { TrackedLink } from "./TrackedLink";
 export function LandingPage() {
   const questionCount = Object.values(QUESTIONS).reduce((n, qs) => n + qs.length, 0);
   const subskillCount = ALL_SUBSKILLS.length;
+  const typeCount = ALL_SUBSKILLS.reduce((n, s) => n + s.patterns.length, 0);
   const sampleQuestions = landingQuestions();
 
   const faqJsonLd = {
@@ -84,7 +85,7 @@ export function LandingPage() {
         <Hero questionCount={questionCount} subskillCount={subskillCount} />
         <ProofStrip questionCount={questionCount} subskillCount={subskillCount} />
         <ParentsSection />
-        <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} />
+        <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} typeCount={typeCount} />
         <Reveal>
           <HowItWorks subskillCount={subskillCount} />
         </Reveal>

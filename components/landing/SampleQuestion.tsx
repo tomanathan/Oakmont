@@ -8,20 +8,22 @@ import { TrackedLink } from "./TrackedLink";
 
 const LETTERS = ["A", "B", "C", "D"];
 
-// The page's centerpiece: a real question from the bank, answerable with no
-// login, shown with exactly where it sits in the test -- section, domain,
-// skill and the specific question type -- so the granularity is visible,
-// not just claimed. Questions arrive as props from the server.
+// The breakdown is the pitch; the question is the proof. The section leads
+// with how finely the test is split (sections -> subject areas -> skills ->
+// question types), then lets a visitor answer a real bank question and see
+// exactly where it sits. Questions arrive as props from the server.
 export function SampleQuestion({
   questionCount,
   questions,
   subskillCount,
   domainCount,
+  typeCount,
 }: {
   questionCount: number;
   questions: LandingQuestion[];
   subskillCount: number;
   domainCount: number;
+  typeCount: number;
 }) {
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -56,15 +58,22 @@ export function SampleQuestion({
     <section id="try-a-question" className="scroll-mt-16 bg-[#faf8f4] px-6 py-16 sm:py-20">
       <div className="mx-auto grid max-w-[1120px] items-start gap-10 lg:grid-cols-[1fr_1.25fr] lg:gap-16">
         <div className="lg:sticky lg:top-24">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">Try it now</div>
+          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">Try a question</div>
           <h2 className="mb-4 text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[40px]">
-            Try a real SAT question. See exactly what it practices.
+            The SAT, broken down to every kind of question it asks.
           </h2>
           <p className="mb-6 max-w-[460px] text-[15px] leading-relaxed text-gray-600">
-            The SAT has 2 sections, {domainCount} subject areas and {subskillCount} skills. Oakmont goes one level further: each skill is
-            broken into the handful of question types the test actually asks, and each type gets its own lesson, its own practice and its own
-            common mistakes to watch for.
+            &ldquo;Reading and math&rdquo; is really {subskillCount} skills, and each skill shows up as a few specific kinds of
+            question. Oakmont teaches every kind on its own, with a lesson, practice and the common mistakes to watch for.
           </p>
+          <Ladder
+            steps={[
+              { n: 2, label: "test sections" },
+              { n: domainCount, label: "subject areas" },
+              { n: subskillCount, label: "skills" },
+              { n: typeCount, label: "question types" },
+            ]}
+          />
           {/* Beside the question on wide screens; below it on phones (see
               the second copy), so the question itself isn't pushed down. */}
           <div className="hidden lg:block">
@@ -177,6 +186,27 @@ export function SampleQuestion({
         </div>
       </div>
     </section>
+  );
+}
+
+// The whole breakdown in four numbers, the last one (the level Oakmont
+// teaches at) picked out.
+function Ladder({ steps }: { steps: { n: number; label: string }[] }) {
+  return (
+    <ol className="grid max-w-[460px] grid-cols-4 lg:mb-8 overflow-hidden rounded-xl ring-1 ring-[#ece9f7]" aria-label="How the SAT breaks down">
+      {steps.map((s, i) => {
+        const last = i === steps.length - 1;
+        return (
+          <li
+            key={s.label}
+            className={`relative px-3 py-3 ${last ? "bg-ink text-white" : "bg-white"} ${i > 0 && !last ? "border-l border-[#ece9f7]" : ""}`}
+          >
+            <div className={`font-display text-[24px] font-semibold leading-none tabular-nums ${last ? "" : "text-ink"}`}>{s.n}</div>
+            <div className={`mt-1 text-[11.5px] leading-tight ${last ? "text-white/75" : "text-gray-500"}`}>{s.label}</div>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
