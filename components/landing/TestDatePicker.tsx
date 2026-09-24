@@ -41,7 +41,7 @@ export function TestDatePicker({ subskillCount }: { subskillCount: number }) {
       <div className="min-h-[112px] rounded-xl bg-white/[0.06] p-5 ring-1 ring-white/10" aria-live="polite">
         {weeks === null ? (
           <p className="text-sm leading-relaxed text-white/60">
-            Your plan fits itself to whatever time is left, with all {subskillCount} skills covered and
+            Six months is ideal, but your plan fits itself to whatever time is left, with all {subskillCount} skills covered and
             none skipped.
           </p>
         ) : (

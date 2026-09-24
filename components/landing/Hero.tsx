@@ -21,7 +21,7 @@ export function Hero({ questionCount, subskillCount }: { questionCount: number; 
           One week at a time.
         </h1>
         <p className="mx-auto mb-8 max-w-[560px] text-[16px] leading-relaxed text-gray-600 sm:text-[17px]">
-          A complete SAT plan built around your test date, whether it&apos;s months away or weeks away. Lessons for all{" "}
+          A complete SAT plan built around your test date. We recommend six months, but the plan fits whatever time you have. Lessons for all{" "}
           {subskillCount} skills on the test, {questionCount} original practice questions, and full-length practice tests.
         </p>
         {/* data-hero-actions: HeroPets caps the ball's arc just above this row. */}

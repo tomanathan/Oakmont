@@ -298,7 +298,7 @@ export function WelcomeClient(props: Props) {
               </button>
               <button onClick={() => setDateChoice({ kind: "unsure" })} className={chip(dateChoice.kind === "unsure")} aria-pressed={dateChoice.kind === "unsure"}>
                 <div className="text-[14px] font-semibold">Not sure yet</div>
-                <div className={`text-[12px] ${dateChoice.kind === "unsure" ? "text-white/70" : "text-gray-500"}`}>Start with a steady default pace</div>
+                <div className={`text-[12px] ${dateChoice.kind === "unsure" ? "text-white/70" : "text-gray-500"}`}>Use the recommended 6 months</div>
               </button>
             </div>
             {dateChoice.kind === "other" && (
@@ -317,7 +317,7 @@ export function WelcomeClient(props: Props) {
                 {planWeeks} <span className="text-[15px] font-normal text-gray-500">{planWeeks === 1 ? "week" : "weeks"} of study</span>
               </div>
               <p className="mt-2 text-[13px] leading-relaxed text-gray-600">
-                {chosenDate ? `Through ${formatDate(chosenDate)}. ` : "A steady default you can shorten once you pick a date. "}
+                {chosenDate ? `Through ${formatDate(chosenDate)}. ` : "The recommended length. It resizes once you pick a date. "}
                 All {skills.length} skills and {practiceTests} full practice tests, about {skillsPerWeek} new{" "}
                 {skillsPerWeek === 1 ? "skill" : "skills"} a week.
                 {chosenDate && planWeeks <= TIGHT_WEEKS ? " That's a sprint: expect daily sessions." : ""}

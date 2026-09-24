@@ -15,7 +15,7 @@ export const FAQ_ITEMS = [
   },
   {
     q: "How long does it take?",
-    a: "As long as you have. Enter your test date and the plan fits all 29 SAT skills into the weeks that are left, whether that's six months or six weeks. No date yet? It starts at a steady default pace, and you can add a date any time.",
+    a: "We recommend about six months: enough time to learn all 29 skills, review them, and take all 8 practice tests without cramming. If the test is sooner, enter the date and the plan fits everything into the weeks that are left. No date yet? It starts with the recommended six-month plan.",
   },
   {
     q: "What if my test is in 6 weeks?",

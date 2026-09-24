@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   // against the real domain instead of Next's localhost fallback.
   metadataBase: new URL("https://oakmontsat.com"),
   title: "Oakmont Study Center",
-  description: "A complete SAT plan sized to the time you have, covering every official SAT skill.",
+  description: "A complete SAT plan: six months recommended, sized to fit your test date, covering every official SAT skill.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

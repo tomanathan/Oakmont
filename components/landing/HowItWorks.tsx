@@ -4,7 +4,7 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
   const steps = [
     {
       title: "Set your test date",
-      body: "Six months away or six weeks, the week-by-week plan is sized to the time you have. Add a recent score if you have one.",
+      body: "We recommend six months, but the week-by-week plan sizes itself to the time you have. Add a recent score if you have one.",
     },
     {
       title: "Follow one week at a time",
