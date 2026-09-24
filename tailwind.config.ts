@@ -11,28 +11,23 @@ const config: Config = {
       colors: {
         ink: "#1a1a2e",
         accent: "#2f6f4f",
-        // Homepage theme, following 60-30-10: ivory and parchment grounds
-        // (~60%), hunter green for type, buttons and a few panels (~30%),
-        // and a small set of muted pastels (~10%) used only as fills behind
-        // dark text -- never as text on light grounds, which fails contrast.
-        // Sage (deep for small text, light for hairlines) does the quiet
-        // structural work: labels, rules, ornaments.
-        ivory: "#faf6ec",
-        parchment: "#f2eadb",
-        forest: {
-          DEFAULT: "#1f3b2d",
-          600: "#2c4c3b",
-          900: "#142219",
-        },
-        sage: {
-          DEFAULT: "#587356",
-          light: "#c9d8c2",
-        },
+        // Homepage pastels: a soft ground plus a deeper ink of the same hue
+        // for numbers, icons and labels that sit on it.
         pastel: {
-          sage: "#dfe9d8",
-          sky: "#dde8f1",
-          blush: "#f4e1dc",
-          butter: "#f5ecc9",
+          lilac: "#ece8fb",
+          sky: "#e2effb",
+          mint: "#dff3e7",
+          butter: "#fcf1c9",
+          peach: "#fde5d6",
+          blush: "#fbe2ec",
+        },
+        pastelInk: {
+          lilac: "#4a5bb0",
+          sky: "#2b6497",
+          mint: "#2f6f4f",
+          butter: "#8a6510",
+          peach: "#a44d23",
+          blush: "#a23d69",
         },
       },
       fontFamily: {

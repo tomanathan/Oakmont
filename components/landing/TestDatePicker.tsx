@@ -13,7 +13,7 @@ export function TestDatePicker({ subskillCount }: { subskillCount: number }) {
   if (dates.length === 0) return null;
 
   return (
-    <div className="mt-4 grid items-center gap-6 rounded-lg bg-gradient-to-br from-forest-600 to-forest-900 p-6 text-ivory shadow-[0_20px_50px_-28px_rgba(20,34,25,0.9)] ring-1 ring-sage/40 sm:p-8 md:grid-cols-[1fr_1.1fr]">
+    <div className="mt-4 grid items-center gap-6 rounded-2xl bg-ink p-6 text-white sm:p-8 md:grid-cols-[1fr_1.1fr]">
       <div>
         <div className="font-display text-[22px] font-semibold leading-tight">When&apos;s your test?</div>
         <p className="mt-1.5 text-sm text-white/65">Pick a date to see how your plan fits the time you have.</p>
@@ -30,7 +30,7 @@ export function TestDatePicker({ subskillCount }: { subskillCount: number }) {
                 track("test_date_selected", { date: d.date });
               }}
               className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${
-                selected === d.date ? "bg-pastel-blush text-forest-900" : "bg-white/10 text-ivory ring-1 ring-sage-light/25 hover:bg-white/20"
+                selected === d.date ? "bg-white text-ink" : "bg-white/10 text-white hover:bg-white/20"
               }`}
             >
               {d.label}
