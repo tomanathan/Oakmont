@@ -44,12 +44,12 @@ export function LandingPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
       <nav className="sticky top-0 z-30 border-b border-[#ece9f7]/80 bg-white/85 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <a href="#top" className="flex min-w-0 items-center gap-2">
-            <BrandMark size={26} className="flex-shrink-0" />
-            <span className="hidden truncate font-display text-[15px] font-semibold sm:inline">Oakmont Study Center</span>
+        <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
+          <a href="#top" className="flex min-w-0 items-center gap-2.5">
+            <BrandMark size={38} className="flex-shrink-0" />
+            <span className="hidden truncate font-display text-[20px] font-semibold tracking-[-0.01em] sm:inline">Oakmont Study Center</span>
           </a>
-          <div className="hidden items-center gap-7 text-sm text-gray-500 md:flex">
+          <div className="hidden items-center gap-8 whitespace-nowrap text-[16px] text-gray-500 lg:flex">
             <a href="#parents" className="font-medium text-[#4a5bb0] transition-colors hover:text-ink">
               For parents
             </a>
@@ -64,16 +64,16 @@ export function LandingPage() {
             </a>
           </div>
           <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
-            <a href="#parents" className="rounded-lg px-2 py-1.5 text-sm font-medium text-[#4a5bb0] md:hidden">
+            <a href="#parents" className="rounded-lg px-2 py-1.5 text-[15px] font-medium text-[#4a5bb0] lg:hidden">
               Parents
             </a>
-            <a href="/login" className="rounded-lg px-3 py-1.5 text-sm text-gray-600 transition-colors hover:text-ink">
+            <a href="/login" className="rounded-lg px-3 py-2 text-[15px] text-gray-600 transition-colors hover:text-ink sm:text-[16px]">
               Log in
             </a>
             <TrackedLink
               href="/login?mode=signup"
               event="signup_started"
-              className="whitespace-nowrap rounded-lg bg-ink px-3.5 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              className="whitespace-nowrap rounded-lg bg-ink px-4 py-2 text-[15px] font-semibold sm:text-[16px] text-white transition-opacity hover:opacity-90"
             >
               Start free
             </TrackedLink>

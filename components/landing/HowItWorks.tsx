@@ -36,7 +36,7 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
   ];
 
   return (
-    <section id="how-it-works" className="scroll-mt-16 bg-white px-6 py-16 sm:py-20">
+    <section id="how-it-works" className="scroll-mt-20 bg-white px-6 py-16 sm:py-20">
       <div className="mx-auto max-w-[1120px]">
         <div className="mb-10 max-w-[680px]">
           <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">How it works</div>

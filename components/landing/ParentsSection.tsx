@@ -156,7 +156,7 @@ export function ParentsSection() {
   const r = sampleParentReport(new Date());
 
   return (
-    <section id="parents" className="scroll-mt-16 overflow-hidden bg-[#f3f2fa] px-4 py-16 sm:px-6 sm:py-24">
+    <section id="parents" className="scroll-mt-20 overflow-hidden bg-[#f3f2fa] px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto grid max-w-[1120px] items-center gap-12 lg:grid-cols-[1fr_520px] lg:gap-16">
         <div>
           <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">For parents</div>
