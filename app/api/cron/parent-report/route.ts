@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const cutoff = new Date(now.getTime() - 6 * 86400000);
   const parents = await prisma.parent.findMany({
     where: { weeklyReport: true, links: { some: {} }, OR: [{ lastReportSentAt: null }, { lastReportSentAt: { lt: cutoff } }] },
-    select: { id: true, email: true, timeZone: true, links: { select: { studentId: true, nickname: true, student: { select: { email: true } } } } },
+    select: { id: true, email: true, timeZone: true, links: { select: { studentId: true, nickname: true, student: { select: { email: true, firstName: true } } } } },
   });
 
   let sent = 0;
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     try {
       const students = [];
       for (const l of p.links) {
-        const report = await loadParentReport(l.studentId, { name: displayName(l.nickname, l.student.email), timeZone: p.timeZone, now });
+        const report = await loadParentReport(l.studentId, { name: displayName(l.nickname || l.student.firstName, l.student.email), timeZone: p.timeZone, now });
         students.push({ id: l.studentId, report });
       }
       const { subject, html } = parentWeeklyEmail(students);

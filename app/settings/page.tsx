@@ -51,6 +51,7 @@ export default async function SettingsPage() {
     <AppShell email={user.email} stats={stats}>
       <SettingsClient
         email={user.email}
+        firstName={stats.firstName ?? null}
         baselineScore={stats.baselineScore}
         goalScore={stats.goalScore}
         targetTestDate={stats.targetTestDate ? stats.targetTestDate.toISOString().slice(0, 10) : null}

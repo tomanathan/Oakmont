@@ -19,7 +19,7 @@ function ParentLoginContent() {
   const [mode, setMode] = useState<"login" | "signup">(params.get("mode") === "signup" ? "signup" : "login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [studentName, setStudentName] = useState("");
+  const [studentName, setStudentName] = useState(params.get("name") ?? "");
   const [inviteCode, setInviteCode] = useState(params.get("code") ?? "");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);

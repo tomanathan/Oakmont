@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 // close. Days are shown in US Eastern time, since there's no viewer
 // account to take a time zone from.
 export default async function SharePage({ params }: { params: { token: string } }) {
-  const student = await prisma.user.findUnique({ where: { parentShareToken: params.token }, select: { id: true, email: true } });
+  const student = await prisma.user.findUnique({ where: { parentShareToken: params.token }, select: { id: true, email: true, firstName: true } });
 
   if (!student) {
     return (
@@ -25,7 +25,7 @@ export default async function SharePage({ params }: { params: { token: string } 
     );
   }
 
-  const report = await loadParentReport(student.id, { name: displayName(null, student.email) });
+  const report = await loadParentReport(student.id, { name: displayName(student.firstName, student.email) });
 
   return (
     <div className="mx-auto max-w-[1180px] px-4 pb-16 pt-2 font-sans">

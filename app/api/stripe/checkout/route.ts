@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     customer: customerId,
     line_items: [{ price: getPriceId(plan), quantity: 1 }],
     client_reference_id: user.userId,
-    success_url: `${APP_URL}/welcome?checkout=success`,
+    success_url: `${APP_URL}/dashboard?checkout=success`,
     cancel_url: `${APP_URL}/subscribe?checkout=cancelled`,
     // This account has Managed Payments (Stripe acting as merchant of
     // record, handling tax/compliance) enabled by default -- explicitly

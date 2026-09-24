@@ -23,6 +23,10 @@ export function TestDatePicker({ subskillCount }: { subskillCount: number }) {
               key={d.date}
               onClick={() => {
                 setSelected(d.date);
+                // Remembered so onboarding can start with this date picked.
+                try {
+                  localStorage.setItem("oakmont:test-date", d.date);
+                } catch {}
                 track("test_date_selected", { date: d.date });
               }}
               className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors ${

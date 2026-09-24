@@ -5,6 +5,7 @@ import { hasActiveAccess } from "@/lib/subscription";
 import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
 import { BrandMark } from "@/components/BrandMark";
 import { LegalFooter } from "@/components/LegalFooter";
+import { courseLengthDaysForUser } from "@/lib/pacing";
 import { SubscribeClient, type PlanOption } from "./SubscribeClient";
 
 export default async function SubscribePage() {
@@ -30,10 +31,24 @@ export default async function SubscribePage() {
     interval: p.recurring?.interval ?? null,
   }));
 
+  // Fresh from onboarding: remind them what they just set up.
+  const planWeeks = Math.ceil(courseLengthDaysForUser(stats.createdAt ?? new Date(), stats.targetTestDate ?? null) / 7);
+  const planLine = stats.welcomeSeenAt
+    ? `${stats.firstName ? `${stats.firstName}, your` : "Your"} ${planWeeks}-week plan${
+        stats.goalScore ? ` to ${stats.goalScore}` : ""
+      } is ready.`
+    : null;
+
   return (
     <div className="max-w-[760px] mx-auto px-6 py-12 font-sans">
       <div className="text-center mb-10">
         <BrandMark size={56} className="mx-auto mb-3" />
+        {planLine && (
+          <div className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full bg-[#eef6f1] px-3.5 py-1.5 text-[13px] font-medium text-[#2f6b4a]">
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
+            {planLine}
+          </div>
+        )}
         <div className="font-display font-semibold text-[28px] text-ink mb-1.5">Choose your plan</div>
         <div className="text-sm text-gray-500 max-w-[520px] mx-auto">
           Every plan includes the full curriculum, all 8 practice tests, your adaptive study plan, and Ozho.

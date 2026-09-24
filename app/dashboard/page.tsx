@@ -13,6 +13,7 @@ import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
+import { type ChecklistItem } from "@/components/GettingStarted";
 import { DashboardClient } from "./DashboardClient";
 
 // Only worth a "welcome back" recap if there was an actual gap since the
@@ -29,8 +30,9 @@ export default async function DashboardPage() {
     getUserStats(user.userId),
     prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
   ]);
-  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
+  // Onboarding comes before choosing a plan, so check it first.
   if (!stats.welcomeSeenAt) redirect("/welcome");
+  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
 
   const progress = progressMapFromRows(rows);
   const createdAt = stats.createdAt ?? new Date();
@@ -120,6 +122,61 @@ export default async function DashboardPage() {
   // header pill use.
   const petState = computePetState(stats.lastActiveDate ?? null, stats.petDiedAt ?? null, stats.petBornAt);
 
+  // Getting-started checklist: each item checked off by real activity.
+  let checklist: ChecklistItem[] | null = null;
+  if (!stats.onboardingChecklistDismissedAt) {
+    const [lessonViews, reviewAttempts, parentLinks] = await Promise.all([
+      prisma.lessonView.count({ where: { userId: user.userId } }),
+      prisma.itemAttempt.count({ where: { userId: user.userId, source: "review" } }),
+      prisma.parentLink.count({ where: { studentId: user.userId } }),
+    ]);
+    const firstId = todayItem?.day.subskillIds[0] ?? weaknessOrderedIds[0];
+    checklist = [
+      {
+        id: "goals",
+        title: "Set your test date and goal",
+        body: "Your plan resizes to fit the time you have.",
+        href: "/welcome?step=date",
+        done: !!stats.targetTestDate && stats.goalScore !== null,
+      },
+      {
+        id: "lesson",
+        title: "Read your first lesson",
+        body: "Short, with worked examples and the traps to avoid.",
+        href: `/subskill/${firstId}`,
+        done: lessonViews > 0,
+      },
+      {
+        id: "quiz",
+        title: "Pass your first quiz",
+        body: "Get every question right to pass a skill.",
+        href: `/subskill/${firstId}`,
+        done: Object.values(progress).some((p) => isPassed(p)),
+      },
+      {
+        id: "review",
+        title: "Try a mixed review",
+        body: "Passed skills come back mixed together. Right again means mastered.",
+        href: "/review",
+        done: reviewAttempts > 0,
+      },
+      {
+        id: "test",
+        title: "Log a practice test",
+        body: "Take one in Bluebook, then enter your scores. Your plan adapts.",
+        href: "/plan#practice-tests",
+        done: !!latestTest,
+      },
+      {
+        id: "parent",
+        title: "Connect a parent",
+        body: "Optional. They get a read-only report and a Sunday email.",
+        href: "/welcome?step=parent",
+        done: parentLinks > 0,
+      },
+    ];
+  }
+
   return (
     <AppShell email={user.email} stats={stats} wide>
       {showWelcomeBack && stats.previousLoginAt && stats.lastLoginAt && (
@@ -134,6 +191,8 @@ export default async function DashboardPage() {
         />
       )}
       <DashboardClient
+        firstName={stats.firstName ?? null}
+        checklist={checklist}
         curriculum={CURRICULUM}
         progress={progress}
         pacing={pacing}

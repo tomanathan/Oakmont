@@ -4,11 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PixelDog } from "@/components/PixelDog";
 import { PetCard } from "@/components/PetCard";
+import { EmailParentInvite } from "@/components/EmailParentInvite";
 import { COSTUMES } from "@/lib/costumes";
 import type { PetState } from "@/lib/pet";
 
 export function SettingsClient({
   email,
+  firstName,
   baselineScore,
   goalScore,
   targetTestDate,
@@ -25,6 +27,7 @@ export function SettingsClient({
   linkedParents,
 }: {
   email: string;
+  firstName: string | null;
   baselineScore: number | null;
   goalScore: number | null;
   targetTestDate: string | null;
@@ -41,6 +44,7 @@ export function SettingsClient({
   linkedParents: { id: string; email: string }[];
 }) {
   const router = useRouter();
+  const [name, setName] = useState(firstName ?? "");
   const [baseline, setBaseline] = useState(baselineScore?.toString() ?? "");
   const [goal, setGoal] = useState(goalScore?.toString() ?? "");
   const [testDate, setTestDate] = useState(targetTestDate ?? "");
@@ -176,6 +180,7 @@ export function SettingsClient({
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          firstName: name,
           baselineScore: baseline ? Number(baseline) : null,
           goalScore: goal ? Number(goal) : null,
           targetTestDate: testDate || null,
@@ -317,11 +322,21 @@ export function SettingsClient({
         onSubmit={saveGoals}
         className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-6"
       >
-        <div className="text-[15px] font-semibold text-ink mb-1">Study goals</div>
+        <div className="text-[15px] font-semibold text-ink mb-1">You and your goals</div>
         <div className="text-xs text-gray-500 mb-4">
           Set a baseline score, a goal score, and your SAT test date, and your 6-month plan will
           resize to fit the time you actually have.
         </div>
+
+        <label className="block text-sm text-gray-700 mb-1">First name</label>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          maxLength={40}
+          autoComplete="given-name"
+          placeholder="What should we call you?"
+          className="w-full px-3 py-2.5 rounded-lg border border-[#e0defa] mb-3.5 text-sm focus:outline-none focus:border-[#6d7fd6]"
+        />
 
         <label className="block text-sm text-gray-700 mb-1">Baseline score (400-1600)</label>
         <input
@@ -379,6 +394,14 @@ export function SettingsClient({
           on answers, mistakes that repeat, and the practice test scores, goal and test date you enter. They get a summary email on
           Sundays. They can&apos;t change anything or answer for you.
         </div>
+        <div className="text-[15px] font-semibold text-ink mb-1">Email a parent an invite</div>
+        <div className="text-xs text-gray-500 mb-3">
+          They get a link to a free parent account, already connected to yours. Nothing else to set up.
+        </div>
+        <EmailParentInvite onSent={({ code }) => setInviteCode(code)} />
+
+        <div className="border-t border-[#f0eff9] my-5" />
+
         <div className="text-[15px] font-semibold text-ink mb-1">Invite code</div>
         <div className="text-xs text-gray-500 mb-3">
           Give this to a parent — they'll enter it when they sign up at{" "}

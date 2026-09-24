@@ -12,6 +12,7 @@ import { sectionTheme } from "@/lib/sectionTheme";
 import { findRecommended } from "@/lib/recommend";
 import { sectionProgress } from "@/lib/subjectProgress";
 import { CompanionCard } from "@/components/CompanionCard";
+import { GettingStarted, type ChecklistItem } from "@/components/GettingStarted";
 import type { CompanionSummary } from "@/lib/companionSummary";
 import { statusOf, type ProgressMap } from "@/lib/progressState";
 import { SubskillStatusBadge, STATUS_CARD } from "@/components/SubskillStatusBadge";
@@ -34,6 +35,8 @@ interface TodayPlan {
 }
 
 export function DashboardClient({
+  firstName,
+  checklist,
   curriculum,
   progress,
   pacing,
@@ -45,6 +48,8 @@ export function DashboardClient({
   planOrder,
   review,
 }: {
+  firstName: string | null;
+  checklist: ChecklistItem[] | null;
   curriculum: Section[];
   progress: ProgressMap;
   pacing: Pacing;
@@ -93,7 +98,7 @@ export function DashboardClient({
           action used to be a separate full-width dark bar above this card
           that just repeated today's first subskill; folding it in kills
           that duplication and a lot of dead space. */}
-      <Greeting />
+      <Greeting name={firstName} />
 
       {/* Today's plan and Ozho side by side on wide screens -- what to do,
           and who's counting on it -- stacked on phones with the plan first. */}
@@ -112,6 +117,8 @@ export function DashboardClient({
         )}
         <CompanionCard companion={companion} />
       </div>
+
+      {checklist && <GettingStarted items={checklist} />}
 
       {/* Subject toggle -- these two sections are the entire test, and the
           two halves of everything below this point, so the control that
@@ -266,19 +273,20 @@ export function DashboardClient({
 
 // Time-of-day greeting and today's date, in the student's own timezone --
 // so it's filled in after mount rather than server-rendered in UTC.
-function Greeting() {
+function Greeting({ name }: { name: string | null }) {
   const [text, setText] = useState<{ hello: string; date: string } | null>(null);
   useEffect(() => {
     const now = new Date();
     const h = now.getHours();
+    const to = name ? `, ${name}` : "";
     setText({
-      hello: h < 5 ? "Up late?" : h < 12 ? "Good morning." : h < 18 ? "Good afternoon." : "Good evening.",
+      hello: h < 5 ? `Up late${to}?` : h < 12 ? `Good morning${to}.` : h < 18 ? `Good afternoon${to}.` : `Good evening${to}.`,
       date: now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" }),
     });
-  }, []);
+  }, [name]);
   return (
     <div className="mb-4 flex min-h-[40px] items-baseline justify-between gap-3 flex-wrap">
-      <h1 className="font-display text-[26px] font-semibold leading-tight text-ink">{text?.hello ?? "Welcome back."}</h1>
+      <h1 className="font-display text-[26px] font-semibold leading-tight text-ink">{text?.hello ?? (name ? `Welcome back, ${name}.` : "Welcome back.")}</h1>
       {text && <span className="text-[13px] text-gray-400">{text.date}</span>}
     </div>
   );

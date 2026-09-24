@@ -21,13 +21,13 @@ export default async function ParentDashboardPage({
     prisma.parent.findUnique({ where: { id: session.parentId }, select: { timeZone: true, weeklyReport: true } }),
     prisma.parentLink.findMany({
       where: { parentId: session.parentId },
-      include: { student: { select: { id: true, email: true } } },
+      include: { student: { select: { id: true, email: true, firstName: true } } },
       orderBy: { createdAt: "asc" },
     }),
   ]);
   if (!account) redirect("/parent/login");
 
-  const students = links.map((l) => ({ id: l.studentId, name: displayName(l.nickname, l.student.email) }));
+  const students = links.map((l) => ({ id: l.studentId, name: displayName(l.nickname || l.student.firstName, l.student.email) }));
 
   if (links.length === 0 || searchParams.add) {
     return (
@@ -38,7 +38,7 @@ export default async function ParentDashboardPage({
   }
 
   const active = links.find((l) => l.studentId === searchParams.student) ?? links[0];
-  const name = displayName(active.nickname, active.student.email);
+  const name = displayName(active.nickname || active.student.firstName, active.student.email);
   const report = await loadParentReport(active.studentId, { name, timeZone: account.timeZone });
 
   return (

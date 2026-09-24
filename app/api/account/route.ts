@@ -20,6 +20,8 @@ export async function PATCH(req: NextRequest) {
     goalScore?: number | null;
     targetTestDate?: string | null;
     equippedCostume?: string | null;
+    firstName?: string | null;
+    dismissChecklist?: boolean;
   };
   try {
     body = await req.json();
@@ -27,7 +29,15 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const { baselineScore, goalScore, targetTestDate, equippedCostume } = body;
+  const { baselineScore, goalScore, targetTestDate, equippedCostume, dismissChecklist } = body;
+
+  let firstName: string | null | undefined = undefined;
+  if (body.firstName !== undefined) {
+    if (body.firstName !== null && typeof body.firstName !== "string") {
+      return NextResponse.json({ error: "Invalid name." }, { status: 400 });
+    }
+    firstName = (body.firstName ?? "").trim().replace(/\s+/g, " ").slice(0, 40) || null;
+  }
 
   if (equippedCostume !== undefined && equippedCostume !== null) {
     const [progressRows, latestTest, streakUser] = await Promise.all([
@@ -83,8 +93,10 @@ export async function PATCH(req: NextRequest) {
       ...(goalScore !== undefined ? { goalScore } : {}),
       ...(parsedDate !== undefined ? { targetTestDate: parsedDate } : {}),
       ...(equippedCostume !== undefined ? { equippedCostume } : {}),
+      ...(firstName !== undefined ? { firstName } : {}),
+      ...(dismissChecklist ? { onboardingChecklistDismissedAt: new Date() } : {}),
     },
-    select: { baselineScore: true, goalScore: true, targetTestDate: true, equippedCostume: true },
+    select: { baselineScore: true, goalScore: true, targetTestDate: true, equippedCostume: true, firstName: true },
   });
 
   return NextResponse.json({ ok: true, ...updated });
