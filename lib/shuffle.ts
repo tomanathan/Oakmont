@@ -5,7 +5,7 @@
  * to learn. Generic over both Question and WorkedExample, which share the
  * same {choices, answer} shape; every other field passes through.
  */
-export function shuffleChoices<T extends { choices: string[]; answer: number; trapFor?: (number | null)[] }>(item: T): T {
+export function shuffleChoices<T extends { choices: string[]; answer: number; trapFor?: (number | null)[]; why?: (string | null)[] }>(item: T): T {
   const order = [0, 1, 2, 3].slice(0, item.choices.length);
   for (let i = order.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -17,6 +17,8 @@ export function shuffleChoices<T extends { choices: string[]; answer: number; tr
     answer: order.indexOf(item.answer),
     // Trap tags travel with their choices.
     ...(item.trapFor ? { trapFor: order.map((idx) => item.trapFor![idx] ?? null) } : {}),
+    // So do the per-choice "why it's wrong" notes.
+    ...(item.why ? { why: order.map((idx) => item.why![idx] ?? null) } : {}),
   };
 }
 

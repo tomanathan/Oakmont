@@ -26,6 +26,10 @@ export interface WorkedExample {
   // literally appears there, to render underlined so the student sees it
   // highlighted directly in the passage rather than having to relocate it.
   underline?: string;
+  // One entry per choice, in authored order: why that choice is wrong
+  // (null at the correct answer). Shown for the choice a student actually
+  // picked, instead of one explanation covering every choice at once.
+  why?: (string | null)[];
 }
 
 export interface Pattern {
@@ -94,6 +98,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The passage's whole arc is a revision: from believing temperature was the main threat, to finding genetic diversity determines survival, ending in a policy recommendation built on that finding. Restating the original, now-revised belief about temperature misses that the passage moves past it. A claim generic enough to describe almost any conservation passage never engages the study's specific finding, and a true but trivial detail (how long they studied) isn't the passage's point. Only 'genetic diversity, not temperature control alone, is the key factor' captures both the finding and the stakes the final sentence signals.",
           difficulty: "easy",
+          why: ["That's the belief the team held at the start. The passage is about how fifteen years of data moved them past it.", null, "This is so general it could describe almost any reef article. It never mentions the study's actual finding about genetic diversity.", "True, but it's just a detail about the study's length. The main idea is what the study found, not how long it took."],
         },
         {
           q: "A city's plan to convert vacant lots into community gardens was framed publicly as a way to beautify neglected blocks. Two years in, program coordinators tracked participating families' grocery receipts and found a measurable drop in produce spending alongside greater variety in what families ate. Several local schools have since asked to build their own teaching gardens, citing these results. Which choice best states the main idea of the text?",
@@ -107,6 +112,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Nothing states a conclusion outright, so build it from what changes across the passage: presented as beautification, but paragraph two reveals a measurable food-access benefit, and paragraph three shows other institutions responding to that practical benefit, not the visual one. Simply restating that a city built the gardens covers only the setup, and noting growing school interest is a downstream detail. Claiming spending fell for most families citywide overstates scope (only participating families, not most families citywide), and is a supporting fact rather than the throughline. Only 'a program framed as a beautification effort ended up producing real, practical benefits for participating families' captures the shift from framing to actual impact.",
           difficulty: "medium",
+          why: ["That's only the setup in the first sentence. The passage goes on to show the program did more than fill empty lots.", "The schools' interest is a later ripple effect, one detail near the end, not the point the whole passage builds.", null, "Too broad: the text is about participating families, not most families in the city. It's also only one supporting fact."],
         },
         {
           q: "A jazz musician's rigorous classical training shaped her earliest performances, but when she began releasing improvisational recordings, critics dismissed them as undisciplined departures from that training. Decades later, music historians revisited her catalog and concluded that her improvisation was in fact deliberately built on the very classical structures those critics assumed she had abandoned. Which choice best states the main idea of the text?",
@@ -120,6 +126,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Track the shift: technical training, then dismissed as a break from it, then later understood as an extension of it. The claim that critics are often unfair is tempting because it's true, but it's generic enough to fit thousands of passages and ignores the specific misunderstanding this one describes. Comparing her training's rigor to her contemporaries' invents a comparison the text never makes, and calling the recordings her 'best work' adds a claim the passage doesn't support — historians recognized structural continuity, not superiority. Only 'her improvisational work was originally dismissed as a break from her training but was later recognized as an extension of it' has both required pieces: what was misunderstood, and that it was later corrected.",
           difficulty: "hard",
+          why: ["It sounds reasonable, but it's a general claim about critics everywhere. The text is about one specific misunderstanding of one musician.", null, "The text never compares her training to anyone else's, so \"more rigorous than her contemporaries\" is invented.", "Historians found her work built on classical structures; they never called it her best work. That's a stronger claim than the text makes."],
         },
         {
           q: "A small town's decision to convert an unused rail line into a walking trail drew mixed reactions at first. The project ultimately came in well under its projected budget, and businesses located along the trail have reported a rise in customers since it opened. Which choice best states the main idea of the text?",
@@ -133,6 +140,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The passage tracks two outcomes for one project, a financial one (under budget) and an economic one (more customers), and the main idea has to capture both, not just one. Reporting only that the project cost less than expected covers just the budget half, and noting businesses were initially skeptical reports a detail from the opening, not the passage's point. A broader claim about rail-to-trail conversions generally generalizes beyond what this passage actually supports. Only 'the rail-to-trail conversion succeeded both financially and economically' combines both outcomes into the passage's real claim.",
           difficulty: "easy",
+          why: [null, "The text says reactions were \"mixed\" at first, not that businesses were skeptical. And an opening detail isn't the main idea anyway.", "The text is about one town's project. A claim about a trend across many towns goes beyond anything it says.", "This covers only the budget half. The passage also stresses the boost to nearby businesses, and the main idea needs both."],
         },
         {
           q: "A historic theater's decline and eventual closure seemed to mark the end of an era for its neighborhood. When a preservation group took on its restoration, they made a deliberate choice: rather than recreating the theater's original 1920s appearance, they preserved only its facade while modernizing its accessibility and acoustics. Since reopening, the theater's attendance has exceeded even its historic peak. Which choice best states the main idea of the text?",
@@ -146,6 +154,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The passage moves from decline, to a deliberate adaptation-over-restoration decision, to a record-attendance outcome, and ties the outcome to the decision. Simply noting the theater is more popular now states the outcome but not the reasoning that makes it the passage's actual point, and framing facade preservation as all that could be saved misreads it as a limitation rather than a deliberate choice. A broader claim that historic theaters generally benefit from prioritizing accessibility stretches one theater's result into a claim the passage never argues. Only 'choosing to modernize the theater rather than restore it exactly to its original form is what enabled its success' links the specific decision to the specific result.",
           difficulty: "medium",
+          why: ["The facade was a deliberate choice, not the only thing they could save. This turns a decision into a limitation.", "That's the outcome, but it leaves out why: the decision to modernize, which is what the passage connects to the success.", null, "One theater's result doesn't support a rule about historic theaters in general. The text never makes that broader claim."],
         },
       ],
       traps: [
@@ -171,6 +180,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Locate the exact sentence answering 'what did she find' — the return count, 34 of 40. Describing the tagging itself reports what she did, not what she found. Reporting that 6 turtles returned gives the number that did NOT return (40 minus 34), a classic swapped-number trap, and claiming all 40 returned overstates the finding to 'all,' which the passage doesn't say. Only '34 of the 40 tagged turtles returned to the same nesting beach the following year' restates the finding exactly, without adding or reversing anything.",
           difficulty: "easy",
+          why: [null, "The text says 34 of 40 returned, not all 40. \"All\" overstates the finding.", "That describes what the biologist did, not what she found, and the question asks for the finding.", "6 is the number that did not return (40 minus 34). This swaps the two groups."],
         },
         {
           q: "A city's recycling program initially accepted only paper and glass. After a 2019 policy change, the program began accepting most plastics as well. According to the text, what changed about the program in 2019?",
@@ -184,6 +194,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Locate the sentence describing the 2019 change specifically: plastics were added. Claiming paper and glass were dropped reverses the facts — they remained accepted, nothing was removed. Saying paper and glass were newly accepted in 2019 misattributes the original materials to that change, and claiming the program was replaced entirely invents an event the passage never mentions. Only 'the program began accepting most plastics in addition to paper and glass' matches exactly what changed and when.",
           difficulty: "easy",
+          why: ["Nothing was removed. Paper and glass were still accepted; plastics were added.", null, "The program wasn't replaced. The text describes one policy change to the same program.", "Paper and glass were accepted from the start, not added in 2019."],
         },
         {
           q: "A single colony of aspen trees, all connected by one shared root system, is believed to be among the largest living organisms by mass in the region where it grows. Researchers monitoring the colony have found that its growth has been slowing in recent years, in part because deer graze on young saplings before the saplings can mature. The researchers believe that fencing off the colony's edges could allow it to resume its earlier growth rate. According to the text, why are the researchers concerned about the aspen colony?",
@@ -197,6 +208,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The text gives one specific, stated reason for concern: slowing growth, tied to deer grazing on saplings. Claiming it has stopped producing saplings entirely overstates 'slowing' into 'stopped entirely' — a common trap where a moderate finding gets pushed into an absolute one. Claims about an invasive species replacing it, or the root system being unable to survive any loss, both invent causes and vulnerabilities the text never mentions. Only 'its growth rate has been slowing, in part because deer graze on its young saplings' restates the actual reason given, at the actual degree the text supports.",
           difficulty: "medium",
+          why: [null, "No invasive species appears in the text. The stated cause is deer eating young saplings.", "The text never says losing part of the root system would kill the colony. This invents a vulnerability.", "The text says growth is slowing, not that new saplings have stopped entirely. \"Entirely\" overstates it."],
         },
         {
           q: "Before a particular drug's approval process was reformed, clinical trials for that category of drug required a median of 8.5 years to complete. Following a set of regulatory changes enacted in 2015, that median fell to 6.2 years. According to the text, what was true of clinical trial length before the 2015 reforms?",
@@ -210,6 +222,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The question asks specifically for the before value. Reporting 6.2 years reports the after value — swapping the two time periods is the main trap built into this question. Claiming trial length increased reverses the direction entirely (the median fell, not rose), and claiming it remained unchanged contradicts the passage. Only 'the median trial length was 8.5 years' reports the correct number for the correct time period.",
           difficulty: "medium",
+          why: ["6.2 years is the median after the 2015 reforms. The question asks about before.", null, "Trial length fell, from 8.5 to 6.2 years. This reverses the direction.", "The median changed from 8.5 to 6.2 years, so it didn't stay the same."],
         },
         {
           q: "In the coastal town of Marrow's Bend, residents greet one another not with 'hello' but with a question about the tide — 'high or low?' — even indoors, far from any dock. Researchers studying the phrase have traced its origin to a period when the town's economy depended entirely on tide-timed harvests, when knowing the tide was, quite literally, the most urgent thing two people could tell each other. Though the town's economy has since diversified well beyond fishing, the greeting has persisted for generations. Which question does the text most directly attempt to answer?",
@@ -223,6 +236,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The text explains where the greeting came from and notes that it has outlasted the economic conditions that originally made it useful — together, that's an explanation for why it persisted. Questions about how many other towns share the greeting, when the economy diversified, or whether visitors understand it are all questions a reader might reasonably have, but none of them is addressed anywhere in the text: no count of other towns, no date for the economic shift, no mention of visitors' comprehension. Only 'why has this unusual greeting persisted in Marrow's Bend?' is a question the passage actually answers.",
           difficulty: "hard",
+          why: ["The text never mentions any other towns, so it can't be answering this.", null, "The text says the economy diversified but never says when, so this question goes unanswered.", "Visitors aren't mentioned anywhere, so the text doesn't address this."],
         },
       ],
       traps: [
@@ -248,6 +262,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The text states she has already run through her opening line so many times the words 'started to lose their shape,' and that her hands keep restlessly refolding themselves — repetition plus a physical sign of nerves. Claiming she revises her argument misreads 'said it so many times' as revising it; she's repeating the same line, not changing it. Withdrawing from the competition or asking her coach for a new strategy both describe actions the text never depicts. Only 'she repeatedly rehearses her opening line and shows visible signs of nervousness' matches both details the text actually gives.",
           difficulty: "easy",
+          why: ["She repeats the same opening line; she doesn't change it. \"Revises\" misreads the rehearsing.", null, "Nothing suggests she's quitting. She's backstage getting ready to go on.", "Her coach mouths \"just breathe,\" and she only nods. She never asks for a new strategy."],
         },
         {
           q: "The following text is from a short story. Wen has just noticed that his grandfather quietly paid for a stranger's groceries. 'My grandfather never mentioned it to anyone, not even to my grandmother that evening at dinner. When I brought it up later, all he said was, \"That's between me and the young man,\" and reached for the newspaper, as though the conversation were already over.' According to the text, what is true about the grandfather?",
@@ -261,6 +276,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "He tells no one, including his own wife, and shuts down the topic with a brief, deflecting answer before changing the subject — all signs of someone who doesn't want the act discussed. Claiming he wants recognition is directly contradicted: avoiding mention of it is the opposite of wanting recognition. Claiming he regularly gives to strangers describes a pattern the text never establishes; this is one instance. Reading his short, matter-of-fact reply as disapproval isn't supported by the text either. Only 'he prefers to keep his acts of kindness private' matches his actual behavior.",
           difficulty: "easy",
+          why: ["He tells no one, not even his wife, and cuts the subject short. That's the opposite of wanting recognition.", "The text shows a single act of generosity, not a habit. \"Regularly\" isn't supported.", null, "His short reply ends the conversation, but nothing shows he disapproves of his grandson. He's deflecting, not scolding."],
         },
         {
           q: "The following text is adapted from a poem. 'The roots have long since found the pot's edge, / and pressed there, coiled, without complaint, / though somewhere past the clay a field lies open, / loam enough for any tree to spread. / We prune what shows above the rim / and call the smallness chosen, call it shape, / and never ask what happens underneath, / where growth continues, quiet, unconsoled.' Based on the text, what does the poem suggest about growth that is constrained?",
@@ -274,6 +290,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The final lines state directly that beneath what's visibly pruned, 'growth continues, quiet, unconsoled' — unseen, but not absent. Claiming it stops entirely once a limit is reached directly contradicts 'continues.' Claiming it always escapes its container overreaches: the poem never claims that, only that it persists internally. Claiming it causes visible damage isn't supported; no damage to the pot is described anywhere. Only 'it continues even when it isn't visible or acknowledged' matches what the poem actually states about the unseen growth.",
           difficulty: "medium",
+          why: ["The last line says growth \"continues.\" Saying it stops contradicts the poem directly.", null, "The poem never says growth escapes or is redirected past every container, only that it keeps going unseen.", "No damage to the pot is described. The roots press against the edge \"without complaint.\""],
         },
         {
           q: "The following text is from a novel set in the early nineteenth century. Miss Enderby has just been introduced to her cousin's new husband. 'Miss Enderby said little at the dinner table, a circumstance her aunt later remarked upon with some disappointment, supposing her niece wanting in either wit or interest. But Miss Enderby's silence proceeded from neither cause; she had, within the first quarter hour, discerned in Mr. Halloway's easy manner a carelessness with truth that his bride had not yet detected, and she judged it wiser, for the present, to observe than to speak.' According to the text, what is true about Miss Enderby?",
@@ -287,6 +304,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The text explicitly rules out both shyness and dullness as explanations — her silence 'proceeded from neither cause.' It states instead that she has quietly detected something dishonest in Halloway and has deliberately chosen to watch rather than speak 'for the present.' Claiming she disapproves for financial reasons invents a reason the text never mentions; her judgment concerns his truthfulness, not his wealth. Only 'she has already formed a shrewd, private judgment that she chooses not to voice yet' matches what the text directly states about her silence.",
           difficulty: "medium",
+          why: ["The text says her silence came from \"neither\" shyness nor lack of wit. It rules this out explicitly.", "Her judgment is about his \"carelessness with truth,\" not money. Financial reasons are never mentioned.", null, "This is the aunt's mistaken guess, and the text immediately says it's wrong."],
         },
         {
           q: "The following text is from a novel. The narrator has just returned home after a long absence to find her childhood bedroom unchanged. 'Someone had kept the room exactly as I'd left it — the concert posters still crooked on the wall, the desk still angled toward the window instead of the door the way I'd always preferred it. I stood in the doorway for a long moment before I made myself walk in and start packing the boxes I'd come for.' What does the text most strongly suggest about the narrator's reaction to her preserved room?",
@@ -300,6 +318,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "She hesitates in the doorway for 'a long moment' and has to make herself walk in; both signal a reaction strong enough to slow her down, without the text stating exactly what that reaction is. Claiming she feels gratitude invents a feeling never mentioned, and claiming she's annoyed isn't supported; nothing in the text reads as complaint. Claiming she has no emotional response is directly undercut by the pause and the effort it takes her to enter: that's the opposite of no response. Only 'she is more affected by the room than she is ready to act on immediately' matches the hesitation the text actually depicts, without overstating what emotion is behind it.",
           difficulty: "hard",
+          why: ["Gratitude is never mentioned. The text shows hesitation, not thankfulness.", null, "Nothing in the text reads as a complaint about the room being unchanged.", "She stands in the doorway \"for a long moment\" and has to make herself walk in. That's clearly a reaction."],
         },
       ],
       traps: [
@@ -325,6 +344,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The 91% figure shows strong approval among people who actually tried the program, while the 12% figure shows that few residents have tried it at all — two separate facts that combine into a specific, supported conclusion. Claiming most residents dislike the program conflates low usage with dislike, but the text gives no information about what non-users think. Predicting cancellation invents a future outcome never suggested by the text, and claiming users found it too expensive invents a reason that's never mentioned. Only 'the program has been well-received by those who have tried it, but most residents haven't tried it yet' follows from both given figures without adding anything.",
           difficulty: "easy",
+          why: ["Low usage isn't the same as dislike. The text says nothing about how non-users feel.", null, "Nothing in the text predicts cancellation, and approval among users is actually 91%.", "Cost is never mentioned. This invents a complaint the text doesn't contain."],
         },
         {
           q: "A local bakery began offering a discount to customers who brought their own container instead of using a disposable bag. Six months later, the bakery reported using 40% fewer disposable bags than before the discount began, though its total number of daily customers stayed about the same. Based on the text, what can most reasonably be concluded?",
@@ -338,6 +358,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Fewer bags used, combined with a steady customer count, points to existing customers switching their own behavior — not to more people showing up. Claiming customers increased is directly contradicted: customer count 'stayed about the same,' not increased. Claims about the bakery losing money or bags costing more than the discount both introduce financial claims the text never addresses at all. Only 'a meaningful portion of the bakery's customers began bringing their own containers because of the discount' follows from the two stated facts.",
           difficulty: "easy",
+          why: ["The text says the number of customers \"stayed about the same,\" so it didn't increase.", null, "The text gives no information about the bakery's profits or losses.", "Neither the price of bags nor the size of the discount is given, so this comparison can't be made."],
         },
         {
           q: "A small furniture maker built each chair entirely by hand for the shop's first decade, a process that limited output to about three chairs a week regardless of how many orders came in. After investing in a table saw and a power sander, the shop's weekly output rose to roughly nine chairs, though each piece still required hours of hand-finishing to match the shop's original standard. Based on the text, what would have most likely been true if the shop had never adopted the new tools?",
@@ -351,6 +372,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The tools are what raised weekly output from about three chairs to about nine; without them, that constraint on output would remain. Claiming quality would have suffered is wrong because hand-finishing (the step that actually preserves quality) continued even after the tools were introduced, so quality isn't what the tools changed. Claiming hand-finishing would have stopped inverts the text: hand-finishing is exactly what stayed the same, tools or not. Claiming prices would have risen invents a pricing response never discussed. Only 'the shop would have continued producing far fewer chairs per week than it does now' follows directly from the stated cause of the output increase.",
           difficulty: "medium",
+          why: ["Quality came from hand-finishing, which continued with or without the tools. The tools changed speed, not quality.", null, "Hand-finishing is what stayed the same. Without the tools it would have continued, not stopped.", "Prices are never discussed. This invents a response the text gives no basis for."],
         },
         {
           q: "For decades, engineers assumed that a bridge's support cables needed replacing every 25 years regardless of visible wear, since testing each individual cable's true condition was prohibitively expensive. A new sensor technology now allows continuous, low-cost monitoring of cable stress in real time. In bridges where the sensors have been installed, several cables originally scheduled for replacement have instead remained safely in service for over 30 years. What does the text most strongly suggest about the original 25-year replacement schedule?",
@@ -364,6 +386,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The schedule applied 'regardless of visible wear' because testing individual condition was too costly (meaning it tracked age, not actual condition), and the sensor data confirms this by showing some cables safely outlasting the schedule by years. Claiming it was created to cut maintenance costs misreads the reasoning: the fixed schedule was a workaround for the cost of testing, not a cost-reduction goal in itself. Claiming it's been proven unsafe overstates the finding into a safety verdict the text never makes; some cables lasting longer doesn't mean the schedule was unsafe. Claiming it's no longer followed anywhere goes beyond what the text describes about un-sensored bridges. Only 'it was based on a fixed timeline rather than each cable's actual condition' follows directly from what the text establishes about the schedule's basis.",
           difficulty: "medium",
+          why: [null, "The fixed schedule existed because testing each cable was too expensive, not as a goal to cut costs.", "Some cables lasting longer means the schedule replaced them early, not that it was unsafe.", "The text only describes bridges with sensors. It says nothing about bridges without them."],
         },
         {
           q: "A team studying a species of freshwater fish transplanted a population from a slow-moving river to a faster-flowing one, to see whether the fish's growth rate was influenced by water speed. The transplanted fish grew significantly faster in their new environment. Crucially, genetic testing showed that the transplanted fish and the original population remained genetically identical throughout the study. It can most reasonably be inferred from the text that the genetic testing was important for which reason?",
@@ -377,6 +400,7 @@ const LC_RW_CENTRAL_IDEAS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Without the genetic test, the faster growth could be explained by a pre-existing genetic difference between the two groups rather than by the environment itself; confirming genetic identity closes off that alternative explanation and strengthens the water-speed conclusion specifically. Claiming it confirmed permanent adaptation overstates the finding, which the identical genetics actually argue against — no genetic change occurred at all. Claims about the species being more genetically diverse, or faster rivers containing more varied populations, both invent claims the text never addresses; the test showed sameness between two groups, not diversity within the species. Only 'it ruled out genetic differences as an explanation for the change in growth rate' describes the test's actual logical role.",
           difficulty: "hard",
+          why: ["Identical genetics means no genetic change happened, so the test argues against permanent adaptation.", null, "The test compared two groups and found them the same. It says nothing about diversity within the species.", "The text never compares genetic variety between rivers. This invents a finding."],
         },
       ],
       traps: [
@@ -412,6 +436,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The winning answer has a specific number directly tied to the claimed relationship — tree canopy percentage linked to an electricity-bill outcome. The neighborhood-planting choice is true but generic, saying nothing about energy costs. The tree-planting figure is specific and real, but it measures planting activity, not costs. The resident-opinion choice is a feeling, not a measurement. Only the canopy-to-bill comparison directly measures the claimed relationship.",
           difficulty: "easy",
+          why: ["True but generic. It says trees are common; it says nothing about energy costs.", null, "A real, specific number, but it measures how many trees were planted, not whether energy costs went down.", "That's how residents feel about trees, not a measurement of energy costs."],
         },
         {
           q: "A city planner claims that a new bike lane network reduced downtown traffic congestion. Which choice best supports this claim?",
@@ -425,6 +450,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "What would actually prove this claim is a number about congestion (like commute times) tied to the bike lanes. The cost figure is a real, specific number, but it measures spending, not congestion, so it never touches the actual claim. The mileage figure measures the network's size, not its effect. The safety-feeling choice reports a feeling, not a traffic measurement. Only the commute-time statistic directly measures the claimed outcome.",
           difficulty: "medium",
+          why: ["The $12 million measures spending, not congestion. It never touches what the claim is about.", null, "The 40 miles measures how big the network is, not whether traffic got better.", "That's about cyclists' sense of safety, not about congestion for everyone downtown."],
         },
         {
           q: "An official claims that a public awareness campaign decreased littering in city parks. Which choice best supports this claim?",
@@ -438,6 +464,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The claim is specifically about litter decreasing, not about parks in general. The attendance figure is tempting (it's specific, about the same parks and campaign, and 'increased' sounds like good news), but it says nothing about litter, and more visitors could just as easily mean more litter. The poster-awareness figure measures whether people saw the campaign, not whether behavior changed. The activities list describes the campaign's methods, not its effect. Only the litter-count figure measures the right variable in the right direction.",
           difficulty: "hard",
+          why: ["Attendance isn't litter. More visitors could just as easily mean more litter, so this doesn't show a decrease.", null, "This lists what the campaign did, not what effect it had on litter.", "Seeing the posters isn't the same as littering less. This measures awareness, not behavior."],
         },
         {
           q: "A facilities manager claims that a new office lighting system reduced employee eye strain complaints. Which choice best supports this claim?",
@@ -451,6 +478,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "What would prove this claim is a number tied specifically to eye strain complaints. The LED-bulb fact is true and topic-related, but generic — it says nothing about complaints going down. The cost figure and the color-temperature survey each measure something other than the claimed outcome. Only the complaint-count comparison directly measures the claimed outcome.",
           difficulty: "easy",
+          why: ["LED bulbs being common says nothing about whether eye strain complaints went down.", null, "Installation cost is a different outcome from eye strain complaints.", "A survey about preferred color temperature doesn't measure eye strain complaints at all."],
         },
         {
           q: "A city official claims that a new streetlight upgrade reduced nighttime traffic accidents. Which choice best supports this claim?",
@@ -464,6 +492,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "What would actually prove this claim is a number about accidents, not about the lights themselves. The installation-scale figure sounds impressive and is specific and real, but it measures the scope of installation, not accidents. The energy-use figure and the resident perception each measure something the claim never mentions. Only the accident-count comparison directly measures the claimed outcome.",
           difficulty: "medium",
+          why: ["The number of lights measures the size of the upgrade, not whether accidents fell.", null, "Energy use isn't part of the claim. The claim is about accidents.", "Feeling safer isn't the same as having fewer accidents. This is perception, not an accident count."],
         },
         {
           q: "A health department claims that a public health campaign increased vaccination rates among teenagers. Which choice best supports this claim?",
@@ -477,6 +506,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The claim is about an increase caused by the campaign specifically after it launched. The pre-campaign decline is tempting (it's specific and about the exact topic), but it describes the opposite direction, before the campaign even started, so it can't support a claim about the campaign's effect. The advertising-channels and general-trust choices don't measure vaccination rates at all. Only the post-campaign rate increase measures the right variable, in the right direction, during the right time period.",
           difficulty: "hard",
+          why: ["This describes the years before the campaign, and in the wrong direction (declining). It can't show the campaign raised rates.", null, "Where the ads ran says nothing about whether vaccination rates actually went up.", "General trust in health departments isn't a vaccination rate, and it's national, not about this campaign."],
         },
       ],
       traps: [
@@ -502,6 +532,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The claim credits the bike-share program itself, so the evidence has to do more than show car trips fell around the same time — it has to rule out other causes. The plain 12%-drop figure alone doesn't rule out things like gas prices or weather that could affect any city that year. The fleet-size and enjoyment figures don't measure car trips at all. Only the first choice reports that same drop while also showing a comparable city without the program saw no such drop, ruling out those other explanations.",
           difficulty: "easy",
+          why: [null, "Adding bikes to the fleet doesn't show that car trips went down.", "Enjoying exercise isn't a measure of car trips at all.", "The drop alone could have other causes, like gas prices or weather. Without a comparison city, it doesn't show the program caused it."],
         },
         {
           q: "A factory manager claims that a new safety training program reduced workplace injuries. Which choice best supports this claim?",
@@ -515,6 +546,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Same setup as before: the training has to be the actual cause, so injuries merely dropping around the same time isn't enough on its own. The plain 18%-drop figure alone doesn't rule out something like a slower production period needing less equipment use. The session-length and helpfulness-rating choices don't measure injuries at all. Only the sister-factory comparison rules out a company-wide explanation like a slowdown, by showing a similar factory without the training saw no meaningful change.",
           difficulty: "medium",
+          why: ["Injuries falling around the same time could have another cause, like slower production. Without a comparison, this doesn't isolate the training.", null, "The session's contents say nothing about whether injuries actually went down.", "Rating the training \"helpful\" is an opinion, not an injury count."],
         },
         {
           q: "A nonprofit claims that a community garden program reduced grocery spending among participating families. Which choice best supports this claim?",
@@ -528,6 +560,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Joining the program has to be what actually drove the change here, not just something that happened alongside it. The plain 15%-decline figure doesn't rule out something like a general drop in food prices that year. The seeds-and-tools and hobby-enjoyment choices don't measure grocery spending. Only the first choice adds a comparison group of similar families who didn't join, ruling out that kind of alternative explanation.",
           difficulty: "easy",
+          why: [null, "A decline alone could come from something else, like falling food prices that year. There's no comparison group to rule that out.", "Free seeds and tools describe the program, not its effect on grocery spending.", "Enjoying gardening doesn't measure grocery spending."],
         },
         {
           q: "A researcher claims that a workplace mentorship program increased promotion rates among mentees. Which choice best supports this claim?",
@@ -541,6 +574,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The claim is that mentorship, not pre-existing ambition, drove the promotions. The first choice's comparison group (employees who never applied) likely differs in ambition from the start, so it doesn't rule out that alternative explanation. The pairing-description and confidence-survey choices don't measure promotions. The second choice's comparison group applied but wasn't matched only due to limited availability, meaning both groups share the same ambition level and only the mentor-matching differed. That's the comparison that actually controls for the variable that matters.",
           difficulty: "medium",
+          why: ["People who never applied may simply be less ambitious to begin with, so ambition, not mentorship, could explain the gap.", null, "How mentees were paired describes the program, not whether promotions went up.", "Feeling more confident isn't the same as actually being promoted."],
         },
         {
           q: "A researcher claims that a four-day work week caused a rise in employee output per hour. Which choice best supports this claim?",
@@ -554,6 +588,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The claim is specifically about output per hour, caused by the schedule change. The stress-survey choice is tempting (less stress could plausibly raise output), but it never actually measures output. The plain 9%-rise figure and the hours-reduction fact don't rule out an industry-wide trend that year. Only the second choice directly measures output while also ruling out that alternative, using a similar company that kept a five-day week as a comparison.",
           difficulty: "hard",
+          why: ["Less stress might help output, but this never measures output per hour, which is what the claim is about.", null, "Fewer hours is the change itself, not evidence of what it did to output per hour.", "A 9% rise alone could be an industry-wide trend that year. Without a comparison company, it doesn't show the schedule caused it."],
         },
       ],
       traps: [
@@ -578,6 +613,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Grantsville has the lowest value (18), matching 'shortest.' The other three choices each correctly report their own city's number, but none of those numbers is the minimum, so none of them actually completes 'shortest' correctly.",
           difficulty: "easy",
+          why: [null, "Denview's 22 minutes is correct for Denview, but it's not the shortest. Grantsville's 18 is lower.", "Millbrook's 27 minutes is correct for Millbrook, but it's one of the longer commutes, not the shortest.", "Fairhaven's 31 minutes is the longest commute in the table, the opposite of \"shortest.\""],
         },
         {
           q: "A bar graph shows a company's quarterly revenue, in millions of dollars, over one year: Q1, 4.2; Q2, 5.1; Q3, 4.8; Q4, 6.3. An analyst writing about the company's performance notes that after an increase in Q2, revenue ______. Which choice most effectively uses data from the graph to complete the statement?",
@@ -591,6 +627,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Q3 (4.8) is lower than Q2 (5.1), a slight fall, and Q4 (6.3) is higher again, a rise. 'Fell in every quarter' overstates that one dip into a full decline through year's end. 'Remained flat' ignores that the values changed at all. 'Rose in every quarter' ignores the Q3 dip entirely.",
           difficulty: "easy",
+          why: [null, "Revenue fell only in Q3. It rose again in Q4 (6.3), so it didn't fall in every quarter.", "The values changed: 4.8 in Q3, then 6.3 in Q4. Nothing stayed flat.", "Q3 (4.8) was lower than Q2 (5.1), so revenue didn't rise in every quarter."],
         },
         {
           q: "Researchers surveyed customer satisfaction, on a 100-point scale, at two competing coffee chains before and after each chain introduced a loyalty rewards app. Chain A's average score rose from 62 to 81 after launching its app. Chain B's average score, measured over the same period without launching any app, rose from 65 to 68. The researchers concluded that Chain A's loyalty app substantially improved customer satisfaction. Which choice best describes data that support the researchers' conclusion?",
@@ -604,6 +641,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The conclusion is causal (the app specifically drove the improvement), so the strongest support is the size of Chain A's rise (19 points) compared to Chain B's much smaller rise (3 points) without an app, ruling out a general trend affecting both chains equally. Comparing the two chains' raw scores at a single point in time doesn't address which company changed more. Noting that 'both increased' actually undercuts the app's unique effect, since Chain B improved too without one.",
           difficulty: "medium",
+          why: [null, "Which chain scored higher at a given moment doesn't show which one improved more, or why.", "If both chains improved, that actually points to a general trend, which weakens the case for the app specifically.", "Comparing final scores alone ignores that Chain A started lower. The key is how much each chain changed."],
         },
         {
           q: "A city's parks department claims that adding new drinking fountains increased park attendance. In the twelve months after fountains were added to five parks, average monthly attendance at those parks rose from 3,200 to 3,850. Over the same period, average monthly attendance at eight comparable parks that did not receive new fountains rose from 3,100 to 3,700. Which choice best describes data that weaken the department's claim?",
@@ -617,6 +655,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "If parks without any new fountains saw almost the same percentage increase, that points to some other citywide factor (like weather or a general rise in park use), driving attendance up everywhere, not the fountains specifically, which weakens the causal claim. The pre-existing attendance gap and the raw increase at the fountain parks are both true but don't address whether the fountains specifically caused the rise. The fountain-count detail is background information, not evidence either way.",
           difficulty: "medium",
+          why: [null, "A small head start in attendance doesn't tell you whether the fountains caused the rise.", "This is the rise the department is pointing to. It doesn't weaken the claim; it's the claim's own evidence.", "How many parks got fountains is background. It doesn't count for or against the claim."],
         },
         {
           q: "A survey asked residents of three neighborhoods how they primarily commute to work: by car, by public transit, or by bicycle. In Neighborhood X, 58% commute by car, 12% by transit, and 30% by bicycle. In Neighborhood Y, 62% commute by car, 33% by transit, and 5% by bicycle. In Neighborhood Z, 55% commute by car, 40% by transit, and 5% by bicycle. A researcher claims that public transit use varies more across these neighborhoods than car use does. Which choice most effectively uses data from the survey to support the researcher's claim?",
@@ -630,6 +669,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The claim is specifically about variation (which commute type's rate swings more across the three neighborhoods), so the relevant comparison is each variable's range: transit spans 28 points (12% to 40%) while car spans only 7 points (55% to 62%), directly supporting the claim that transit use varies more. The second choice reports the identical two numbers but swaps which variable they belong to, which would actually support the opposite conclusion. The Neighborhood Z choice and the car-is-most-common choice are both true statements, but each describes a single data point or a consistent pattern rather than the spread across neighborhoods the claim is actually about.",
           difficulty: "hard",
+          why: [null, "These are the right numbers attached to the wrong variables. With them swapped, they would argue the opposite.", "True for Neighborhood Z, but one neighborhood can't show how much each rate varies across all three.", "True, but it's about which option is most common, not which one varies more across neighborhoods."],
         },
       ],
       traps: [
@@ -655,6 +695,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The claim names a specific emotion: relief, after a long ordeal. The gulls quotation shows disbelief and tension, not relief. The sunrise-count and sail-trimming quotations are neutral descriptions with no emotional content at all. Only the second quotation shows the physical release of built-up tension (buckled knees, a broken laugh), capturing the emotional release itself.",
           difficulty: "easy",
+          why: ["Not trusting his own eyes shows disbelief and tension. The relief hasn't arrived yet.", null, "Counting sunrises is a neutral fact. It shows no emotion at all.", "The captain's order describes the ship, not the sailor's feelings."],
         },
         {
           q: "A novel states that a seamstress feels quiet pride in a dress she has just finished. Which quotation most effectively illustrates this claim?",
@@ -668,6 +709,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The claim names a specific, understated emotion: quiet pride, not loud celebration. The announcement quotation shows pride, but loudly, which doesn't match the claim's specific wording. The doubt quotation shows uncertainty, not pride. The hours-spent quotation is a neutral fact with no emotional content. Only the second quotation shows restrained, private satisfaction (silently smoothing the seam by the window), matching 'quiet' precisely.",
           difficulty: "easy",
+          why: ["That's pride, but loud and public. The claim specifies quiet pride.", null, "Hours spent is a neutral fact. It doesn't show any emotion.", "Wondering whether anyone will notice shows doubt, not pride."],
         },
         {
           q: "A short story states that a man feels a growing sense of unease about a business decision he has already made. Which quotation most effectively illustrates this claim?",
@@ -681,6 +723,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The claim specifies growing unease about something already decided, not doubt before deciding. The hesitation quotation shows doubt, but before the decision — the wrong point in the timeline. The review and handshake quotations are neutral, with no unease shown. Only the third quotation shows unease that persists and builds after the decision, matching both the emotion and its timing exactly.",
           difficulty: "medium",
+          why: ["This hesitation happens before he signs. The claim is about unease after the decision is already made.", "Reviewing the contract is neutral. It shows no unease.", null, "A warm handshake shows no unease at all, let alone growing unease."],
         },
         {
           q: "A researcher studying urban beekeeping claims that some city beekeepers deliberately choose rooftop locations specifically to keep hives farther from pedestrian foot traffic. Which quotation from an interview with a beekeeper would most directly support the researcher's claim?",
@@ -694,6 +737,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The claim is specific: rooftops are chosen deliberately to keep hives away from pedestrians. The first quotation mentions rooftop experience generally but never states a reason for the choice. The second describes a personal feeling unrelated to location. The fourth describes a general trend in rooftop gardening, not a reason for hive placement. Only the third quotation directly states the beekeeper's actual motivation (distance from pedestrians), matching the claim exactly.",
           difficulty: "medium",
+          why: ["It mentions rooftops but never gives the reason for choosing them, which is what the claim is about.", "A personal feeling about watching bees has nothing to do with where the hives are placed.", null, "A citywide gardening trend isn't a beekeeper's reason for placing hives on the roof."],
         },
         {
           q: "A novel states that a character maintains an outward appearance of composure even while privately furious during a tense meeting. Which quotation most effectively illustrates this claim?",
@@ -707,6 +751,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The claim requires both halves at once — outward composure and private anger underneath, simultaneously. The slammed-folder quotation shows anger, but openly, contradicting the 'outward composure' half. The quiet-sitting quotation shows calm but no evidence of concealed fury, and the colleague quotation reveals the anger only afterward, not during. Only the second quotation shows both halves at once: a calm, even voice on the surface, and a clenched, white-knuckled hand hidden beneath the table.",
           difficulty: "hard",
+          why: ["Slamming the folder and storming out is open anger. The claim needs outward composure.", null, "Sitting quietly shows calm, but nothing shows the fury hidden underneath.", "This reveals her frustration afterward, not during the meeting while she kept her composure."],
         },
       ],
       traps: [
@@ -732,6 +777,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Turn the hypothesis into a prediction: if it's true, blocking smell should stop the beetles from finding fruit, while blocking vision shouldn't matter much. The first choice matches that exact prediction. The color-observation choice tests sight, not smell, and wouldn't specifically confirm the 'scent, not sight' claim either way. The activity-timing and general-odor choices don't test the beetles' actual location behavior at all.",
           difficulty: "easy",
+          why: [null, "Being active in daylight doesn't show whether they find fruit by scent or by sight.", "A strong odor existing doesn't show the beetles are the ones using it.", "Visiting fruit of many colors is about sight, and doesn't show scent is what they rely on."],
         },
         {
           q: "A transportation researcher claims that a city's new rapid-transit line reduced the number of people driving downtown for work. Which finding, if true, would most strongly support this claim?",
@@ -745,6 +791,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The predicted effect is fewer downtown drivers after the line opened. The ridership figure doesn't by itself show driving went down — riders could simply be new commuters who never drove, so it doesn't confirm the specific claim. The construction-time and comfort-survey choices don't measure driving at all. Only the parking-permit drop directly reports the predicted decrease, since permits are a direct proxy for people driving downtown.",
           difficulty: "easy",
+          why: ["Riders could be new commuters who never drove before, so ridership alone doesn't show driving went down.", null, "How long construction took has nothing to do with whether driving decreased.", "Liking the line isn't evidence that fewer people drove downtown."],
         },
         {
           q: "A nutritionist hypothesizes that a new meal-delivery service causes subscribers to eat more vegetables per week than they did before subscribing. Which finding, if true, would most directly weaken this hypothesis?",
@@ -758,6 +805,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "A weakening finding for a causal claim shows the same change would likely have happened anyway, without the supposed cause. If vegetable intake was already climbing at about the same rate before subscribing, the service isn't what's driving the increase — the trend was already in motion. The satisfaction and vegetables-per-meal choices describe the service's content, not whether it actually changed behavior. The cancellation-reason choice concerns a different group (people who left) and doesn't address the hypothesis about eating habits at all.",
           difficulty: "medium",
+          why: ["Satisfaction with the vegetables doesn't show whether eating habits actually changed.", null, "Servings per meal describe the product, not whether subscribers ate more vegetables than before.", "This is about people who left and why. It doesn't speak to the hypothesis about vegetable intake."],
         },
         {
           q: "An archaeologist proposes that an ancient trade network extended much farther than previously believed, based on a distinctive pottery style found at a distant site. Which finding, if true, would most strongly support this proposal?",
@@ -771,6 +819,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The proposal's weak point is that the distant pottery could have been made locally by potters who simply copied the style, without any actual trade occurring. The style-resemblance choice just restates the similarity already given in the claim, adding nothing new. The habitation and third-region choices don't resolve that weak point either. Only the clay-source match rules out local imitation directly, since the physical material itself must have traveled from the original region.",
           difficulty: "medium",
+          why: [null, "This just restates the style similarity the proposal already rests on. It adds nothing new.", "How long the site was inhabited doesn't show whether the pottery came through trade.", "A third site with similar pottery could also be local imitation. It doesn't rule that out."],
         },
         {
           q: "A biologist hypothesizes that a particular enzyme causes faster wound healing in a species of fish. Which finding, if true, would most strongly support this hypothesis?",
@@ -784,6 +833,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "A hypothesis using 'causes' needs evidence that isolates the enzyme as the cause, not just evidence that the enzyme and fast healing tend to occur together. The natural-variation finding is only a correlation — some other trait shared by high-enzyme fish could be the real cause. The water-temperature finding introduces yet another variable without isolating anything, and the discovery-history fact is irrelevant. Only the experimental-injection finding directly tests cause and effect by controlling everything except the enzyme itself.",
           difficulty: "hard",
+          why: ["This is only a correlation. Some other trait of high-enzyme fish could be what speeds healing.", null, "Where the enzyme was first discovered has no bearing on what it does in this species.", "Water temperature is yet another variable, and it doesn't isolate the enzyme as the cause."],
         },
       ],
       traps: [
@@ -820,6 +870,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Contradicted decades of prior research' implies the result is unusual and needs verification before being trusted. The standard, logical next step when a surprising result appears is replication, not dramatic action. Abandoning the field is too extreme a reaction to one surprising result. Publishing immediately skips the verification step entirely, and assuming all prior research was wrong is an unsupported leap. Replicating the experiment follows conservatively from what's actually stated.",
           difficulty: "easy",
+          why: ["One surprising result is a reason to check it, not to give up on the whole question. This overreacts.", null, "Publishing right away skips the step a surprising result most needs: confirming it.", "One contradicting result doesn't show decades of research were wrong. That's a big leap the text doesn't support."],
         },
         {
           q: "The bridge inspectors found hairline cracks in three support beams that hadn't been present during the previous year's inspection, so the city announced that the bridge would need to ______. Which choice most logically completes the text?",
@@ -833,6 +884,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "New cracks in support beams imply something changed for the worse since last year, in a structurally important part of the bridge. The standard, cautious next step is closer inspection and repair, not the extremes on either side. Demolition goes further than three hairline cracks support, remaining open ignores the finding entirely, and a full redesign is a drastic leap the text never suggests. Closer inspection and repair is the conservative, logical step.",
           difficulty: "medium",
+          why: ["Three hairline cracks call for a closer look and repairs, not tearing the whole bridge down.", "New cracks in support beams are exactly why action is needed. Doing nothing ignores the finding.", null, "A full redesign goes far beyond what three new cracks suggest. Nothing points to the design itself being flawed."],
         },
         {
           q: "The recipe had never failed before, so when the cake collapsed in the oven, the baker assumed the problem was most likely ______. Which choice most logically completes the text?",
@@ -846,6 +898,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Had never failed before' implies the recipe itself is generally reliable, so a cautious first explanation points to something specific to this attempt, not the recipe's design. Standard troubleshooting logic starts with the most immediate variable, like oven temperature, not a rewrite of the whole recipe. Blaming the recipe directly contradicts the given information, and an oven defect or an intentional change are both specific claims the text never makes. A specific error in this attempt follows most directly from what's stated.",
           difficulty: "easy",
+          why: ["The recipe \"had never failed before,\" so it's the least likely suspect. This contradicts the setup.", null, "Nothing points to a broken oven needing professional repair. That's a much bigger claim than the text supports.", "The text never says the baker changed anything. This invents a cause."],
         },
         {
           q: "The new bridge design used 40% less steel than the previous model while passing every load test, so engineers concluded that ______. Which choice most logically completes the text?",
@@ -859,6 +912,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Using less steel while passing every load test establishes that this design achieves comparable strength with less material, nothing more. 'Steel-free' wildly overreaches, and a sweeping replacement policy isn't supported by the data. Concluding load testing is unnecessary directly contradicts the passage, which describes load testing as the very thing that validated the design. The comparable-strength completion stays closest to exactly what's shown.",
           difficulty: "medium",
+          why: ["The design used 40% less steel, not none. \"Steel-free\" goes far beyond the result.", "Passing tests on one design doesn't justify replacing every older bridge at once. The text never argues that.", null, "The load tests are what proved the design works, so the result supports testing, not dropping it."],
         },
         {
           q: "Despite requiring twice the initial investment, the new water filtration system removed contaminants at a rate the older systems could never approach, so the utility company reasoned that ______. Which choice most logically completes the text?",
@@ -872,6 +926,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "What's actually established is a costlier system that performs much better at contaminant removal. Switching regardless of cost ignores the stated cost tradeoff, and banning older systems entirely is unsupported by anything in the text. A specific recovery timeline is never mentioned. The completion limiting the conclusion to situations where the specific benefit justifies the specific cost is the only conservative reading.",
           difficulty: "hard",
+          why: ["\"Regardless of cost\" ignores the tradeoff the sentence sets up: the system costs twice as much.", null, "Nothing in the text says the older systems are unsafe or should be banned.", "No payback timeline is mentioned. \"Within the first year\" is invented."],
         },
       ],
       traps: [
@@ -897,6 +952,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Two facts combine directly: the text is now searchable, and historians no longer need to search page by page — together, that means locating specific references is now much faster. Stopping the use of other sources, assuming no errors, and expecting other cities' archives to also be digitized are all unsupported leaps the text gives no basis for.",
           difficulty: "easy",
+          why: [null, "Searchable newspapers are one more tool. Nothing suggests historians would drop every other source.", "Being digitized doesn't make the papers error-free, and the text never says anything about errors.", "The text is about one library's archive. It gives no reason to expect other cities' archives to follow."],
         },
         {
           q: "A bakery's new industrial oven can bake three times as many loaves per batch as its old oven, and it reaches baking temperature in half the time. Combined, these two facts suggest that the bakery's overall bread output could ______. Which choice most logically completes the text?",
@@ -910,6 +966,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "More loaves per batch and less time per batch combine directly to support a higher overall output using the same equipment, without necessarily requiring more staff. The other choices introduce costs, customer demand, or an unsupported claim of no change — none of which the text addresses.",
           difficulty: "easy",
+          why: [null, "Energy costs are never mentioned, and more loaves in less time points to more output, not less.", "The text gives two gains and no offsetting costs, so \"exactly the same\" isn't supported.", "Customer demand isn't mentioned. The question is about how much bread the oven setup can produce."],
         },
         {
           q: "A city's downtown area saw a 25% drop in reported bicycle theft last year, the same year it installed security cameras at major intersections. However, the number of registered bicycle owners in the downtown area also fell by roughly 20% over the same period. Given this decline in bicycle ownership, the drop in reported thefts ______. Which choice most logically completes the text?",
@@ -923,6 +980,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "With fewer bicycles present overall, some of the theft decline could reflect that shrinking pool rather than the cameras alone — a competing explanation the text can't rule out. Claiming the cameras had 'no effect at all' overreaches in the other direction, since the text doesn't establish that either. The other two choices go well beyond what a 25% drop with a smaller bike population can support.",
           difficulty: "medium",
+          why: [null, "Fewer bikes explains part of the drop, but that doesn't prove the cameras did nothing. \"No effect at all\" overreaches.", "A 25% drop in reported thefts means fewer thefts, not zero. Theft hasn't disappeared.", "Nothing in the text says where the cameras were placed, let alone that it was the wrong spot."],
         },
         {
           q: "A vineyard's soil contains a rare mineral that gives its wine a distinctive taste, one that has been chemically confirmed in bottles from every one of the vineyard's harvests dating back to 1962, the year the vineyard was first planted. Records show that the vineyard's original owner sourced all of the vines from a single nursery that closed permanently in 1965. A neighboring vineyard, planted in 1970 in soil with a nearly identical mineral composition but using vines from a different nursery, produces wine that lacks this distinctive taste entirely. Given these facts, the distinctive taste most likely ______. Which choice most logically completes the text?",
@@ -936,6 +994,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Chaining the facts: the taste has appeared in every harvest since the vines came from one particular nursery, while a neighboring vineyard with nearly identical soil but different-sourced vines lacks the taste entirely — pointing to the vines themselves, not the shared soil, as the likely origin. The text never discusses vine replacement or an eventual disappearance. 'Similar regional soil' is directly undercut by the neighboring vineyard's lack of the taste despite comparable soil. Nothing in the text mentions any additive during bottling.",
           difficulty: "hard",
+          why: [null, "The text never mentions replacing vines or the taste fading. This predicts something with no basis.", "The neighboring vineyard has nearly identical soil and no distinctive taste, so soil alone can't be the source.", "No additive is mentioned anywhere. The taste has been chemically traced to every harvest, not added at bottling."],
         },
         {
           q: "Economists have long assumed that a country's manufacturing employment declines primarily because factories relocate to countries with cheaper labor. A recent analysis of one country's manufacturing sector found that total manufacturing output actually rose over the past decade even as manufacturing employment fell by 15%, and that domestic factories, rather than closing, increasingly relied on automated equipment to replace manual tasks. Assuming this analysis is accurate, the country's declining manufacturing employment ______. Which choice most logically completes the text?",
@@ -949,6 +1008,7 @@ const LC_RW_INFERENCES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "If output rose while employment fell and factories stayed open but automated, that pattern points to automation, not just relocation, as at least part of the explanation — directly complicating the traditional assumption stated up front. 'Entirely obsolete' and 'no factories have relocated' both overreach into absolute claims the text doesn't support. The passage also gives no basis for predicting output will keep rising 'indefinitely.'",
           difficulty: "hard",
+          why: [null, "Output actually rose, so manufacturing is doing fine. \"Entirely obsolete\" contradicts the data.", "The analysis points to automation as a cause, but it doesn't prove no factory ever moved abroad.", "A decade of rising output doesn't support a prediction that it will rise forever."],
         },
       ],
       traps: [
@@ -980,6 +1040,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Predict your own word first: something like 'strict' or 'tight-fisted,' since departments wanted more money and are unhappy. 'Generous' is the opposite of what's needed — departments wouldn't be upset by generosity. 'Confusing' and 'enthusiastic' don't match the criticism described at all. 'Austere' precisely matches strict, minimal spending, consistent with departments being unhappy about it.",
           difficulty: "easy",
+          why: ["Departments wanted bigger budgets, so they wouldn't criticize generosity. This is the opposite of what fits.", null, "Nothing says the approach was hard to understand. The complaint is about tight spending, not clarity.", "\"Enthusiastic\" says nothing about how much was spent, and it doesn't explain why departments were unhappy."],
         },
         {
           q: "The negotiator's ______ tone put both sides at ease during an otherwise tense meeting. Which choice completes the text with the most logical and precise word or phrase?",
@@ -988,6 +1049,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Predict your own word first: something like 'calming' or 'soothing,' since the tone is what put both sides at ease. 'Diplomatic' is tempting since it sounds similar, but it just means tactful — a diplomatic tone could still leave real tension in the room. 'Formal' and 'assertive' don't match an easing effect at all. 'Conciliatory' specifically means aimed at reducing conflict, the actual effect the sentence describes.",
           difficulty: "medium",
+          why: ["Close, but \"diplomatic\" only means tactful. A tactful tone can still leave tension; the sentence says it put both sides at ease.", null, "A formal tone doesn't ease tension. It says nothing about calming anyone.", "An assertive tone pushes; it wouldn't be what put both sides at ease."],
         },
         {
           q: "The professor's ______ feedback left little room for misinterpretation, since every point was stated in exact, unambiguous terms. Which choice completes the text with the most logical and precise word or phrase?",
@@ -996,6 +1058,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Predict your own word first: something like 'clear' or 'precise,' since the feedback left no room for misinterpretation. 'Brief' only describes length — short feedback could still be vague, so it doesn't guarantee the described precision. 'Harsh' and 'generous' describe tone, not clarity. 'Explicit' precisely matches 'stated in exact, unambiguous terms.'",
           difficulty: "easy",
+          why: ["\"Brief\" is about length. Short feedback can still be vague, and the sentence stresses exactness.", "\"Harsh\" describes tone, not clarity. The sentence is about how unambiguous the feedback was.", null, "\"Generous\" describes tone or kindness, not how exact and unambiguous the feedback was."],
         },
         {
           q: "Rather than adopting the committee's plan outright, the director chose to ______ several of its individual provisions, discarding the rest. Which choice completes the text with the most logical and precise word or phrase?",
@@ -1004,6 +1067,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Predict your own word first: something like 'keep only some parts of,' since the plan wasn't adopted outright and the rest was discarded. 'Endorse' and 'ratify' both imply approving something as a whole, which doesn't match 'several... provisions' being kept while 'the rest' is discarded. 'Overturn' means to reject — the opposite direction. 'Salvage' precisely captures retaining select useful parts from something otherwise not adopted.",
           difficulty: "medium",
+          why: ["\"Endorse\" means approve as a whole. The director kept only several provisions and threw out the rest.", null, "\"Ratify\" means formally approve the whole thing, which contradicts discarding most of it.", "\"Overturn\" means reject, but the director kept several provisions."],
         },
         {
           q: "The panel's final report ran to nearly two hundred pages, cataloguing every one of the agency's oversight failures in methodical, exhaustive detail. Though the report was ______ in its criticism of the agency's failures, it stopped short of recommending anyone's removal. Which choice completes the text with the most logical and precise word or phrase?",
@@ -1012,6 +1076,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Predict your own word first: something like 'thorough' or 'detailed,' since the earlier context specifies the report cataloged failures thoroughly, not necessarily with a harsh tone. 'Scathing' is a very tempting choice, since it also describes strong criticism, but it specifically implies a harsh, biting tone the context never establishes. 'Muted' and 'premature' both contradict the thoroughness described. 'Exhaustive' matches the specific quality described (thorough coverage) without importing an assumption about tone.",
           difficulty: "hard",
+          why: ["Tempting, but \"scathing\" means harsh and biting. The context stresses thoroughness, not a harsh tone.", null, "A 200-page catalogue of every failure is anything but muted.", "\"Premature\" means too early. Nothing in the context is about timing."],
         },
       ],
       traps: [
@@ -1032,6 +1097,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The context establishes the argument was brief and well-reasoned, not weak. 'Flawed,' 'irrelevant,' and 'confusing' would all describe a genuinely poor argument, contradicting the established context. 'Sound' (meaning logically valid and well-reasoned, not its more common everyday sense) fits precisely: the argument was logically solid but still didn't address the panel's specific concern.",
           difficulty: "easy",
+          why: [null, "The context says the case was impressive even to opponents. \"Flawed\" contradicts that.", "The argument was impressive; \"irrelevant\" contradicts that setup. The problem was one missed concern, not relevance overall.", "\"Without a single wasted word\" and \"impressive\" rule out confusing."],
         },
         {
           q: "The critic ultimately recommended the film, but not before spending three paragraphs detailing its uneven pacing and underwritten supporting characters. The critic's review was surprisingly ______ for a film so widely praised elsewhere. Which choice completes the text with the most logical and precise word or phrase?",
@@ -1040,6 +1106,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Glowing' and 'dismissive' describe reactions more extreme than what's described: recommending with real flaws noted. 'Brief' doesn't capture the sentence's contrast with the film's wide praise elsewhere. 'Qualified' most commonly means having the right credentials, a meaning that makes no sense next to 'review', but its secondary meaning, praise held back by reservations, fits precisely: the critic recommended the film while still noting real flaws.",
           difficulty: "medium",
+          why: ["Three paragraphs on flaws isn't glowing praise. The review was mixed.", null, "The critic recommended the film, so the review wasn't dismissive.", "Three paragraphs on flaws alone suggests the review wasn't brief, and length isn't the contrast the sentence draws."],
         },
         {
           q: "Political opponents who disagreed with nearly everything else the senator stood for still privately admitted her closing argument was tightly constructed and genuinely persuasive. Even her harshest critics conceded that the senator's closing argument was ______. Which choice completes the text with the most logical and precise word or phrase?",
@@ -1048,6 +1115,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The most familiar meaning of 'arresting' involves police taking someone into custody, obviously not applicable here, which makes it tempting to cross off entirely. That's exactly the trap: 'arresting' also means strikingly impressive, attention-grabbing, with no connection to law enforcement at all. 'Controversial,' 'predictable,' and 'lengthy' don't match critics conceding the argument's quality. Since even critics who disagreed with her still admitted the argument was persuasive and well-constructed, 'arresting' in this second sense fits precisely.",
           difficulty: "hard",
+          why: [null, "The critics concede it was strong. \"Controversial\" is about disagreement, not quality.", "\"Predictable\" would be a criticism, but the critics are conceding the argument was impressive.", "Length isn't what the critics are conceding. They're admitting it was persuasive."],
         },
         {
           q: "Nothing in the passage suggests a committee's move was morally wrong, only strategic. The committee's decision to postpone the vote was widely seen as a ______ move, buying time until public opinion shifted. Which choice completes the text with the most logical and precise word or phrase?",
@@ -1056,6 +1124,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Reckless' and 'accidental' both contradict a deliberate, strategic decision, and 'unanimous' describes how a vote was decided, not the quality of the move itself. 'Politic' looks like it just means 'related to politics' at first glance, especially in a sentence already about a committee vote, but used this way it actually has a distinct, less common meaning: shrewd, sensible, strategically wise — which fits 'buying time until public opinion shifted' precisely.",
           difficulty: "easy",
+          why: ["The move was deliberate and strategic, which is the opposite of reckless.", null, "Postponing to buy time was on purpose, not an accident.", "\"Unanimous\" describes how a vote went, not what kind of move postponing was."],
         },
         {
           q: "This sentence describes exceptional sensory precision, not a specific food preference. The chef's ______ palate could distinguish a dish seasoned moments ago from one that had rested for ten minutes. Which choice completes the text with the most logical and precise word or phrase?",
@@ -1064,6 +1133,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Biased' imports an unfair, negative meaning that has nothing to do with tasting food, and 'simple' and 'cautious' both contradict the exceptional precision described. 'Discriminating' most commonly triggers today's association with unfair bias, but its classic, still-valid meaning (having refined judgment, able to make fine distinctions) exactly matches a palate that can tell moments-ago seasoning from ten-minutes-rested seasoning.",
           difficulty: "medium",
+          why: [null, "\"Biased\" means unfair, which has nothing to do with tasting fine differences in food.", "A palate that detects ten minutes of resting is exceptional, not simple.", "\"Cautious\" doesn't describe an ability to taste fine differences."],
         },
       ],
       traps: [
@@ -1099,6 +1169,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "If this sentence were deleted, the passage would seem to claim narrow streets are unconditionally safer, with no nuance. Its function is to complicate or qualify the main claim, not contradict it entirely — it adds a condition (sightlines) under which the benefit doesn't hold. Describing it as a complete reversal overstates it as a full reversal, describing it as a supporting statistic misreads it as supporting rather than qualifying, and calling it an unrelated topic ignores that it's directly tied to the main claim.",
           difficulty: "easy",
+          why: [null, "The sentence adds a condition (sightlines), not a full reversal. It never says narrow streets are always more dangerous.", "There's no statistic in the sentence, and it limits the claim rather than supporting it.", "Sightlines are tied directly to the safety claim. It's a qualification, not a new topic."],
         },
         {
           q: "When a mid-sized consulting firm shifted every employee to remote work in 2021, leadership expected a uniform boost in morale and productivity. Surveys the following year largely confirmed this: most employees reported shorter commutes and greater overall satisfaction. Not every employee benefited equally, however — those with young children at home often found the change added new stressors rather than removing old ones. The firm later introduced a stipend for co-working space specifically to address this gap. Which choice best states the function of the underlined sentence in the text as a whole?",
@@ -1113,6 +1184,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "If deleted, the passage would read as if the switch benefited everyone the same way, with no exceptions. Its job is to complicate that uniform picture by pointing out one specific group the change didn't help, not to argue the whole policy was a mistake, which the 'entire policy was a mistake' reading overstates. Claiming it proves remote work reduces productivity introduces an unrelated claim about productivity, and claiming it restates the main point misses that this sentence adds nuance rather than restating it.",
           difficulty: "medium",
+          why: ["The sentence notes one group didn't benefit equally. It never calls the whole policy a mistake.", null, "The sentence is about stress for parents, not productivity, and it contains no statistics.", "It doesn't restate the main point. \"However\" signals it adds an exception."],
         },
         {
           q: "A new bus rapid transit line connecting downtown to the eastern suburbs began carrying passengers last spring, cutting the average commute by nearly twenty minutes. The city funded the project using a combination of state grants and a small increase in the local sales tax. Ridership has already exceeded initial projections, prompting officials to consider extending the line further east. Which choice best states the function of the underlined sentence in the text as a whole?",
@@ -1127,6 +1199,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "If deleted, the passage would describe the transit line without explaining how it was paid for. Its job is simply to supply funding-source information, a supporting detail, not a qualification or counterexample, as reading it as a challenge or a counterexample both wrongly suggest. Comparing the project's cost to another city's invents a comparison the sentence never makes. Only 'it explains how the project was financed, supplying a supporting detail about its funding sources' plainly describes this detail-supplying function.",
           difficulty: "easy",
+          why: ["The funding sentence doesn't question the project's benefits. It just says how it was paid for.", "How a project was funded isn't a counterexample to its success.", null, "No other city or project is mentioned, so there's no comparison."],
         },
         {
           q: "A four-day work week piloted at a mid-sized software company was initially met with skepticism from managers who worried that fewer hours would mean missed deadlines. A year into the pilot, however, project completion rates held steady and employee turnover fell by half. Even the initiative's most vocal early critics now describe the schedule as a net positive for the company. Company leadership has since made the policy permanent. Which choice best states the function of the underlined sentence in the text as a whole?",
@@ -1141,6 +1214,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "If deleted, the passage would argue morale improved but wouldn't address that some people opposed the change initially. Its function is to strengthen the argument by showing that even skeptics changed their minds, stronger support than simply repeating 'morale improved,' which describing it as a repeated claim wrongly reduces it to. Reading it as pointing to ongoing opposition misreads the sentence, when it actually reports conversion, and calling it an unrelated new argument ignores that it's directly on-topic.",
           difficulty: "medium",
+          why: ["It's directly about how people view the schedule, not a new, unrelated argument.", null, "The sentence says critics changed their minds. It doesn't say anyone still opposes the schedule.", "It adds something new: the critics themselves now agree. That's stronger than repeating the earlier point."],
         },
         {
           q: "Certain species of moth are known to locate distant mates not through vision but through scent, detecting pheromones carried on the wind from more than a mile away. In laboratory conditions with the moths' eyes temporarily covered, mate-location success rates remained statistically unchanged. Researchers now suspect that vision plays, at most, a minor supporting role once a moth has already closed most of the distance to a potential mate. Which choice best states the function of the underlined sentence in the text as a whole?",
@@ -1155,6 +1229,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "If deleted, the claim (scent, not sight) would remain an assertion without direct experimental support. This sentence's function is not to complicate or qualify the claim, which reading it as 'a complication that weakens the claim' wrongly suggests — it provides the controlled experimental evidence that directly confirms it, by showing performance is unaffected when vision is removed. Reading it as showing sight is sometimes more important misreads the finding entirely, and describing it as a methodology critique invents one the sentence doesn't make. It's actually the paragraph's strongest piece of direct support, even though the setup (covering eyes) might read as a complication at first.",
           difficulty: "hard",
+          why: [null, "The sentence supports the scent claim; success didn't change without sight. It doesn't weaken anything.", "Covering the eyes had no effect, which shows sight isn't the key. This reverses the finding.", "The sentence reports a result. It doesn't criticize how the lab study was run."],
         },
       ],
       traps: [
@@ -1180,6 +1255,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Why would the author pause the personal narrative to describe social norms? This is a common structural move — providing context that helps explain constraints or pressures shaping the subject's later choices. Describing it as a counterargument, an advance conclusion, or a criticism of the era each invents a function the paragraph doesn't perform. Only 'it provides context that helps the reader understand the constraints shaping the subject's subsequent choices' correctly names this context-providing, explanatory role.",
           difficulty: "easy",
+          why: [null, "The paragraph sets up her background. It doesn't argue against the biography's thesis.", "It describes her hometown's expectations, not the biography's conclusion.", "It describes the norms without calling them unjust. Its job is context, not criticism."],
         },
         {
           q: "A particular titanium alloy achieves its unusual strength-to-weight ratio through a manufacturing process that cools the metal in controlled stages, preventing the brittle crystal structures that form when titanium cools too quickly.\n\nThat same alloy made possible the record-setting span of the Cedar Point Bridge, whose designers could not have achieved its slender central arch with conventional steel.\n\nWhich choice best states the function of the first paragraph relative to the passage as a whole?",
@@ -1193,6 +1269,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Why would the author spend an entire paragraph on manufacturing detail before returning to the bridge itself? This is a common structural move — laying groundwork that makes the later, more impressive claims about the bridge's design easier to understand and trust. Describing it as arguing the process was flawed, comparing it to a competitor, or summarizing criticism of the bridge each invents content the paragraph doesn't contain. Only 'it provides the technical background needed to understand and trust the design claims made about the bridge' correctly names this groundwork-laying role.",
           difficulty: "medium",
+          why: ["The paragraph explains the process that makes the alloy strong. It doesn't say the process was flawed.", null, "No competing material is described in the first paragraph.", "Neither paragraph mentions any criticism of the bridge."],
         },
         {
           q: "Many people assume a lightning rod works by attracting a strike to itself and drawing it away from a building, like a decoy.\n\nIn reality, a lightning rod works by providing a low-resistance path to the ground, so that if a strike does occur nearby, the current passes safely through the rod rather than through the building's structure.\n\nWhich choice best states the function of the first paragraph relative to the passage as a whole?",
@@ -1206,6 +1283,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Why would an author open with a misconception before explaining the truth? This is a common structural move — clearing away a wrong assumption first so the correct explanation that follows is easier to appreciate and contrast against. Describing it as giving the rod's invention history, arguing rods are ineffective, or describing a rare exception each invents content the paragraph doesn't contain. Only 'it presents a common misconception, setting up a contrast with the accurate explanation that follows' correctly describes this 'clear the misconception, then explain' role.",
           difficulty: "easy",
+          why: [null, "The paragraph describes a common belief, not the history of the lightning rod's invention.", "The passage says rods do work, just not as a decoy. It never argues they're ineffective.", "The paragraph describes a common misconception, not an unusual exception."],
         },
         {
           q: "Many painters and composers now considered canonical spent the bulk of their careers in financial precarity, dependent on patrons, side jobs, or family support to keep working at all.\n\nOne such painter, Odille Marchetti, continued producing new canvases for nearly a decade without a single sale, turning down a steady teaching position that would have meant giving up painting almost entirely.\n\nWhich choice best states the function of the second paragraph relative to the passage as a whole?",
@@ -1219,6 +1297,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Why zoom in on one specific case after a general survey? This is a common structural move — narrowing from a general pattern to one detailed, illustrative case, which makes the broader claim more concrete and persuasive. Claiming it contradicts the first paragraph misreads the example as contradicting the premise, and claiming it shifts focus away from financial struggle or provides statistical data each invents a shift or data the paragraph doesn't contain. Only 'it narrows the essay's general claim into one specific, detailed case, making the broader pattern more concrete' correctly names this narrowing-to-a-case function.",
           difficulty: "medium",
+          why: ["Marchetti struggled for a decade without a sale. She illustrates the first paragraph, not a quick success.", null, "Her decade without a sale is financial struggle. The focus doesn't shift away from it.", "The paragraph tells one artist's story. It gives no statistics."],
         },
         {
           q: "A widely used classroom teaching method, adopted by thousands of schools over the past two decades, showed no measurable benefit to student test scores in a large randomized study published last year.\n\nThe study's authors were careful to note three possible limitations of their design — a short study window, an unusually experienced pool of teachers, and a test that may not have captured the skills the method targets — without concluding that any of these actually explains the result.\n\nWhich choice best states the function of the second paragraph relative to the passage as a whole?",
@@ -1232,6 +1311,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "If deleted, the surprising finding would stand unchallenged and unexamined. The second paragraph's function isn't to disprove the finding — it explicitly doesn't endorse any of the three possible flaws as the real explanation. Its function is to introduce reasonable doubt while leaving the question open. Claiming it definitively refutes the finding overstates this as a full refutation, which a non-committal list of possible flaws doesn't accomplish, and claiming it confirms the method is ineffective or introduces a second study each invent conclusions or evidence not present. Only 'it raises possible limitations of the study without concluding any of them actually invalidate the finding' correctly captures this cautious, doubt-raising role.",
           difficulty: "hard",
+          why: ["The authors list possible limitations without saying any of them explains the result. That's not a refutation.", null, "The paragraph raises doubts about the study. It doesn't confirm the method is ineffective.", "No second study appears. The paragraph discusses the same study's limitations."],
         },
       ],
       traps: [
@@ -1256,6 +1336,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Sketch the shape: general pattern first, then one specific case that stands out from it. The case isn't just an example of the general pattern — it's presented as an exception to it, a more specific relationship than plain illustration. Describing it as a hypothesis-then-experiments structure, competing theories, or a single bird's first-person narration each describes a structure the passage doesn't use. Only 'it describes a general migratory pattern, then presents one species as a specific exception to that pattern' captures 'general pattern, then a specific exception to it' precisely.",
           difficulty: "easy",
+          why: [null, "There's no hypothesis tested by experiments. It's a general pattern followed by an exception.", "The debate at the end is about the tern's route, not two theories of why birds migrate.", "It's written about birds in general and the tern, not from one bird's point of view."],
         },
         {
           q: "For nearly a century, the collapse of the Ashgrove Bridge was attributed to a single overloaded delivery truck that crossed it on the day it fell. Engineering records rediscovered in a municipal archive last year, however, suggest a different, previously overlooked cause: corrosion in a support cable that had gone unreported for years. The records don't prove the truck played no role, but they complicate a story that had gone unquestioned for generations. Which choice best describes the passage's overall structure?",
@@ -1269,6 +1350,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Sketch the shape: an established, conventional account comes first, then new evidence complicates it. The passage doesn't say the old account was definitely wrong, only that the new records 'suggest' a different cause, so claiming the records prove the old explanation entirely wrong overstates this as a full refutation. Claiming both explanations are presented as equally accepted misreads them as equally weighted, and claiming the passage opens with the new records reverses the actual order. Only 'it presents the long-accepted explanation for an event, then introduces newly discovered evidence that complicates that explanation' matches both the sequence and the passage's cautious wording.",
           difficulty: "easy",
+          why: [null, "The records \"suggest\" another cause and \"don't prove the truck played no role.\" Nothing is proven entirely wrong.", "One explanation was long accepted and the other is new. They aren't presented as equally accepted.", "The passage opens with the old explanation and then brings in the records. This reverses the order."],
         },
         {
           q: "A particular coral species off the coast of a Pacific island survives water temperatures that should, by every existing model, kill it outright. Curious researchers spent three years running a series of laboratory experiments, gradually eliminating possible explanations (first unusually thick tissue, then unusual feeding behavior), before finally isolating a heat-resistant protein produced by algae living inside the coral's own cells. That protein, researchers now believe, is the coral's actual defense. Which choice best describes the passage's overall structure?",
@@ -1282,6 +1364,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Sketch the shape: the passage opens with a puzzle or unexplained phenomenon, then works through an investigation that resolves it. This is a question-then-answer structure, delivered through a narrated process (a series of experiments) rather than a single stated hypothesis. Describing it as an experiment followed by an unexplained puzzle, or a solution followed by the problem it solves, both reverse the actual order, and comparing the coral to a second species invents a comparison never made. Only 'it presents a puzzling phenomenon, then narrates the experimental process that eventually explains it' mentions both the initial puzzle and the investigative process that resolves it.",
           difficulty: "medium",
+          why: [null, "The puzzle comes first and the experiments explain it. This reverses the order and says they failed.", "No second species is mentioned. The passage stays on one coral.", "The puzzle comes first; the protein, the solution, comes last. This reverses the order."],
         },
         {
           q: "A small coastal town's water supply has been shrinking for over a decade as a nearby aquifer runs dry faster than it can recharge. City planners have proposed a desalination plant as a fix, capable of processing enough seawater to meet the town's needs well into the next century. That capacity comes at a cost, however: the plant's energy demands are high enough that the town would need to nearly double its current power generation, a drawback planners have yet to fully resolve. Which choice best describes the passage's overall structure?",
@@ -1295,6 +1378,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This passage has three moves, not two: a problem, a proposed solution, and then a complication that qualifies the solution. Describing it as ending on an entirely positive note is incomplete — it leaves out the passage's actual ending, which raises a real drawback rather than closing on an unqualified fix. Claiming it presents two competing solutions invents a second solution never described, and claiming it opens with the solution reverses the order. Only 'it describes a problem, proposes a solution to it, and then acknowledges a significant drawback of that proposed solution' captures all three moves in order.",
           difficulty: "medium",
+          why: [null, "The passage ends on a drawback: the plant would nearly double power needs. It doesn't end entirely positive.", "Only one solution is proposed: the desalination plant.", "The problem (the shrinking aquifer) comes first, then the plant. This reverses the order."],
         },
         {
           q: "At a regional tournament three years ago, a relatively unranked chess player won the championship match using an opening move so unconventional that commentators initially assumed it was a mistake. That win turned out to illustrate a broader principle: unconventional strategies often succeed not because they're objectively stronger, but because opponents haven't prepared a response to them. The player's opponent later admitted, in a post-match interview, that he had never once encountered that opening in years of studying the game. Which choice best describes the passage's overall structure?",
@@ -1308,6 +1392,7 @@ const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Sketch the shape carefully — this passage doesn't just move from specific to general; it returns to the opening anecdote at the end, adding a new detail that reinforces the general point. Describing it as opening with the anecdote and generalizing without returning describes only part of the structure, missing that final return to the anecdote, since the passage's structure is closer to a loop than a straight line. Claiming it opens with a general claim reverses the actual order, and claiming it presents two unrelated anecdotes invents a second one. Only 'it opens with a specific anecdote, generalizes from it, and then returns to that same anecdote with an additional detail that reinforces the generalization' captures all three moves: the anecdote, the generalization it leads to, and the passage's return to that anecdote with a reinforcing detail.",
           difficulty: "hard",
+          why: [null, "It opens with the specific match, not a general claim. This reverses the order.", "Both parts are about the same match and the same player. There's only one anecdote.", "The passage does return to the anecdote at the end, with the opponent's admission. This misses that last move."],
         },
       ],
       traps: [
@@ -1343,6 +1428,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both authors are discussing the same underlying phenomenon: social media has changed how people interact and participate in public life. Their conclusions differ (engagement versus isolation), but the shared premise, that social media has significantly changed interaction patterns, is something both would accept, since it's the foundation their opposing arguments are built on. Claiming social media increases engagement more than isolation just restates one author's conclusion, and claims about government regulation or in-person relationships becoming obsolete are claims neither passage actually makes.",
           difficulty: "easy",
+          why: [null, "That's Passage 1's side of the debate. Passage 2 argues the opposite, so both authors wouldn't agree.", "Neither passage mentions government regulation.", "Passage 2 says people substitute online exchanges for in-person ones, not that in-person relationships are gone. Neither says \"entirely obsolete.\""],
         },
         {
           q: "Passage 1: Standardized tests remain the most consistent, objective tool available for comparing applicants from vastly different schools and backgrounds, and scores on these tests should carry significant weight in college admissions decisions. \n\nPassage 2: Standardized test scores consistently differ across students from different socioeconomic backgrounds, not because of differences in underlying achievement, but because wealthier students have far greater access to test preparation resources; these tests should therefore be minimized in admissions decisions.\n\nBased on the two passages, with which of the following statements would both authors most likely agree?",
@@ -1356,6 +1442,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both authors are working from the same observable fact: scores on these tests differ across students from different backgrounds. Their conclusions differ sharply (one trusts the test, one distrusts it), but they disagree about why scores vary, not whether they vary. Claiming tests should be eliminated, or that they're the single best predictor of success, each state only one author's conclusion, and claiming prep access has no effect directly contradicts Passage 2. Only 'test scores vary across students from different backgrounds' is the underlying pattern both authors would accept.",
           difficulty: "medium",
+          why: [null, "That's closer to Passage 2's view, and even Passage 2 says \"minimized,\" not eliminated. Passage 1 disagrees.", "Passage 2's whole argument is that prep access affects scores. This contradicts it.", "Passage 1 calls tests consistent and objective, not the single best predictor of college success. Passage 2 wouldn't agree either."],
         },
         {
           q: "Passage 1: Clinical trials of a popular diet trend consistently show participants losing significant weight within the first eight weeks, making it an effective option for people seeking rapid short-term results. \n\nPassage 2: Follow-up studies of the same diet trend show that the vast majority of participants who lose weight in the first eight weeks regain it within a year, since the diet's restrictive rules are too difficult to maintain as a long-term lifestyle.\n\nBased on the two passages, with which of the following statements would both authors most likely agree?",
@@ -1369,6 +1456,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both authors are discussing the same underlying phenomenon: the diet produces some effect in the short term. Their conclusions differ (effective versus unsustainable), but the shared premise, that the diet does produce noticeable short-term change, is something both would likely accept, since Passage 2's critique is about long-term sustainability, not about whether short-term effects occur at all. B, C, and D each contradict what one or both passages actually say.",
           difficulty: "easy",
+          why: [null, "Passage 1 says the diet works in the short term, and Passage 2 agrees people lose weight at first. This contradicts both.", "Passage 2 says the diet is too hard to keep up long-term, so it wouldn't recommend it as permanent.", "Passage 2 says the rules are too difficult to maintain long-term. This contradicts it."],
         },
         {
           q: "Passage 1: A city's new nighttime noise ordinance has measurably reduced late-night disturbances, and residents report sleeping better and feeling calmer in their own neighborhoods as a direct result. \n\nPassage 2: The same noise ordinance has cut deeply into revenue for small businesses that depend on customers arriving after 9 p.m., since those businesses can no longer legally operate with any amplified sound during peak evening hours.\n\nBased on the two passages, with which of the following statements would both authors most likely agree?",
@@ -1382,6 +1470,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both authors discuss the same underlying fact: the ordinance changed nighttime activity patterns in the city. Their conclusions differ (benefit to residents versus burden on businesses), but the shared premise, that the ordinance measurably reduced nighttime activity and noise, is something both would accept, since it's the shared foundation each side interprets differently. Claiming it's been an unambiguous success, or that it should be repealed immediately, each state only one side's evaluation, and claiming businesses weren't affected contradicts Passage 2 directly.",
           difficulty: "medium",
+          why: [null, "Passage 2 describes real harm to businesses, so it wouldn't call the ordinance an unambiguous success.", "Passage 2 is entirely about businesses being affected. This contradicts it.", "That might fit Passage 2's concerns, but neither author calls for repeal, and Passage 1 clearly supports the ordinance."],
         },
         {
           q: "Passage 1 (a historian): An ancient trade route's gradual decline over roughly a century coincided closely with a major shift in regional political power, as a newly dominant empire redirected trade through routes it could tax and control more directly. \n\nPassage 2 (an archaeologist): Sediment core samples show the same region's climate became significantly drier over the same century-long period, and the trade route's key water sources, on which caravans depended, appear to have dried up gradually before the route was finally abandoned.\n\nBased on the two passages, with which of the following statements would both authors most likely agree?",
@@ -1395,6 +1484,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "A tempting but too-generic shared-ground answer might claim the route was economically important — probably true, but it's assumed background, not the actual point either author argues about. The more precise shared ground is that both authors agree the decline occurred gradually over an extended period, since each proposes a different explanation (political vs. environmental) for that same observed pattern. Claiming political shifts or claiming climate change were the sole cause of the decline each state only one author's specific causal claim.",
           difficulty: "hard",
+          why: [null, "Both authors treat the route as important enough to explain its decline. Neither says it had little value.", "That's only Passage 1's explanation. The archaeologist points to climate instead.", "That's only Passage 2's explanation. The historian points to politics instead."],
         },
       ],
       traps: [
@@ -1419,6 +1509,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Passage 2's core concern is that online interaction lacks the depth of real connection. Applying that same concern to the new claim, an author worried about depth of connection would most likely argue that online communities, however active, don't fully replace the depth of in-person relationships. Fully agreeing that online communities are an adequate substitute would directly contradict their entire stated position, ignoring the claim as irrelevant misreads it as irrelevant when it's central to their argument, and arguing communities should be banned introduces a policy position never suggested.",
           difficulty: "easy",
+          why: [null, "Passage 2 argues online exchanges lack depth, so full agreement would contradict its whole point.", "The claim that online communities replace real ones is exactly what Passage 2 disputes. It's central, not irrelevant.", "Passage 2 never suggests banning anything. It's about the depth of connection, not policy."],
         },
         {
           q: "Passage 1: Standardized tests remain the most consistent, objective tool available for comparing applicants from vastly different schools and backgrounds, and scores on these tests should carry significant weight in college admissions decisions. \n\nPassage 2: Some highly capable students perform poorly on standardized tests specifically because of test anxiety, a response unrelated to their actual academic ability, which means test scores can misrepresent exactly the students they are meant to accurately measure.\n\nHow would the author of Passage 1 most likely respond to Passage 2's claim about test anxiety?",
@@ -1432,6 +1523,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Passage 1's core concern is that test scores are a reliable, trustworthy measure of achievement and deserve real weight in decisions. Applying that concern to the new claim, an author committed to defending the test's reliability would most likely argue that some variation in any single measurement is expected, but that this doesn't undermine the test's overall usefulness. Conceding the test should be dropped entirely, or agreeing scores frequently misrepresent ability, would both concede the test is fundamentally flawed, directly contradicting Passage 1's stated position, and denying test anxiety exists denies a real phenomenon rather than reframing its significance.",
           difficulty: "medium",
+          why: [null, "Passage 1 argues tests deserve significant weight. Dropping them would abandon its own position.", "Denying test anxiety exists would be an extreme response, and Passage 1 has no reason to deny it; it would reframe its importance.", "Agreeing scores often misrepresent ability would undercut Passage 1's claim that tests are reliable."],
         },
         {
           q: "Passage 1: A city's new nighttime noise ordinance has measurably reduced late-night disturbances, and residents report sleeping better and feeling calmer in their own neighborhoods as a direct result. \n\nPassage 2: The same noise ordinance has cut deeply into revenue for small businesses that depend on customers arriving after 9 p.m., since those businesses can no longer legally operate with any amplified sound during peak evening hours.\n\nHow would the author of Passage 1 most likely respond to Passage 2's claim that the ordinance unfairly burdens small businesses?",
@@ -1445,6 +1537,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Passage 1's core concern is improved quality of life for residents. Applying that concern to the new claim, an author focused on resident quality of life would most likely argue that the benefit to residents outweighs the inconvenience to businesses, or that businesses can adjust. Conceding the ordinance was a mistake would contradict their stated position entirely, and denying any businesses were affected or arguing they should relocate both go well beyond what a reasonable, consistent response would claim.",
           difficulty: "easy",
+          why: [null, "Passage 1 praises the ordinance's benefits. Calling it a mistake would reverse its whole position.", "Passage 2 describes real revenue losses. Flatly denying them isn't a reasonable, consistent response.", "Telling businesses to leave the city goes far beyond anything Passage 1 argues."],
         },
         {
           q: "Passage 1: Clinical trials of a popular diet trend consistently show participants losing significant weight within the first eight weeks, making it an effective option for people seeking rapid short-term results. \n\nPassage 2: Follow-up studies of the same diet trend show that the vast majority of participants who lose weight in the first eight weeks regain it within a year, since the diet's restrictive rules are too difficult to maintain as a long-term lifestyle.\n\nHow would the author of Passage 2 most likely respond to Passage 1's claim that the diet produces measurable short-term weight loss?",
@@ -1458,6 +1551,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Passage 2's core concern is not whether short-term effects occur, but whether they can be sustained. Applying that concern to the new claim, this author would most likely concede the short-term effect is real, but argue it doesn't matter if it can't be maintained long-term. Denying any short-term weight loss occurs misreads their critique, which is about durability, not the initial result. Arguing the diet should be recommended more widely would contradict their own conclusion, and ignoring the claim as unrelated wrongly treats it as irrelevant when it's central to their argument.",
           difficulty: "medium",
+          why: [null, "Passage 2 accepts that people lose weight at first; its point is that they regain it. It wouldn't deny the loss.", "Passage 2 argues the diet can't be sustained, so it wouldn't recommend it more widely.", "Short-term results are exactly what Passage 2 is responding to. The claim is central to its argument."],
         },
         {
           q: "Passage 1 (a historian): An ancient trade route's gradual decline over roughly a century coincided closely with a major shift in regional political power, as a newly dominant empire redirected trade through routes it could tax and control more directly. \n\nPassage 2 (an archaeologist): Sediment core samples show the same region's climate became significantly drier over the same century-long period, and the trade route's key water sources, on which caravans depended, appear to have dried up gradually before the route was finally abandoned.\n\nHow would the author of Passage 1 most likely respond to the sediment core evidence presented in Passage 2?",
@@ -1471,6 +1565,7 @@ const LC_RW_CROSS_TEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Passage 1's core concern is that political shifts were the primary cause of the decline. A careful historian wouldn't necessarily dispute solid sediment-core data, since that's not their area of expertise or actual disagreement — their real disagreement is about which cause was primary, not whether the climate changed at all. Flatly denying the climate changed rejects data outside their argument, attacking sediment core analysis as unreliable attacks a scientific method without cause, and agreeing environmental change was the true primary cause would abandon their own thesis entirely. Only 'accepting the environmental evidence as accurate, but arguing it was a secondary factor' accepts the data but reframes its importance as secondary, the most consistent response.",
           difficulty: "hard",
+          why: [null, "The historian has no reason to reject solid climate data. The disagreement is about which cause mattered most.", "That would abandon the historian's own thesis that politics was the main cause.", "Attacking the scientific method without cause isn't a reasonable response. The historian can accept the data and dispute its importance."],
         },
       ],
       traps: [
@@ -1506,6 +1601,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           explain:
             "Re-read the goal: 'economic stakes,' not causes or general facts about bees. Note 1 (pollinating food crops) is the economic angle. Framing colony collapse disorder as poorly understood, or as the cause of the decline, focuses on the cause (note 3), not economic stakes, and reporting the decline alone leaves no economic connection. Only 'because bees pollinate about one-third of food crops grown for human consumption, a 40% population decline since 2006 threatens a significant portion of the food supply' combines the crop-pollination fact with the decline statistic, directly serving the stated goal.",
           difficulty: "easy",
+          why: ["This focuses on the cause of the decline (note 3), not the economic stakes.", null, "The decline alone says nothing economic. It leaves out the crop-pollination fact that shows what's at stake.", "This is about the cause of the decline, not its economic stakes."],
         },
         {
           q: "A student has taken the following notes: (1) A city library added 12 self-checkout kiosks in 2022. (2) Average wait times at the checkout desk dropped by 6 minutes. (3) Staff reported spending more time helping patrons find books. The student wants to emphasize the impact of the kiosks on staff work, not on patron convenience. Which choice most effectively uses relevant information from the notes to accomplish this goal?",
@@ -1519,6 +1615,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           explain:
             "Re-read the goal carefully: 'impact on staff work,' not patron convenience. The wait-time note is tempting because it's about the same event, but it's about patrons, exactly what the goal says to avoid, ruling out choices built around the wait-time drop. Mentioning only the installation as a technology investment leaves no effect on staff at all. Only 'a city library added 12 self-checkout kiosks in 2022, freeing staff to spend more time helping patrons find books' combines the kiosk installation with the staff time-reallocation note, directly serving the goal.",
           difficulty: "medium",
+          why: ["Wait times are about patrons, the exact thing the goal says not to emphasize.", null, "This is only about patron wait times. The goal is the effect on staff.", "Calling the kiosks a technology investment says nothing about how staff work changed."],
         },
         {
           q: "A student has taken the following notes: (1) A nonprofit distributed 500 reusable water bottles at a summer festival. (2) The festival generated an estimated 3 tons of plastic waste the previous year. (3) A follow-up survey a month later found that 68% of attendees still used the bottles regularly. (4) The festival's ticket prices rose 10% this year. The student wants to emphasize the long-term environmental impact of the giveaway. Which choice most effectively uses relevant information from the notes to accomplish this goal?",
@@ -1532,6 +1629,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           explain:
             "Re-read the goal precisely: 'long-term environmental impact,' not just that the giveaway happened or general festival facts. Note 4 (ticket prices) is true but has nothing to do with the environment, ruling out the choice built around ticket prices. Note 2 (3 tons of plastic waste) sets the scale of the problem, but by itself doesn't show any actual impact from the giveaway — it's background, not an outcome, which is why choices pairing the giveaway with just the waste figure fall short. Note 3 (68% still using the bottles a month later) is the only note showing a real, lasting effect tied specifically to the giveaway, which is why 'a nonprofit distributed 500 reusable water bottles at a summer festival, and a follow-up survey a month later found that 68% of attendees still used the bottles regularly' is correct.",
           difficulty: "hard",
+          why: ["The waste figure sets up the problem, but it doesn't show the giveaway had any lasting effect.", null, "Ticket prices have nothing to do with environmental impact.", "This explains why the giveaway happened, not what lasting effect it had."],
         },
         {
           q: "A student has taken the following notes: (1) A local bakery started using compostable packaging in 2021. (2) The switch increased packaging costs by 15%. (3) Customer surveys show that 68% of customers say they'd pay more for eco-friendly packaging. The student wants to emphasize customer support for the change. Which choice most effectively uses relevant information from the notes to accomplish this goal?",
@@ -1545,6 +1643,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           explain:
             "Re-read the goal: 'customer support,' not cost. Note 3 (68% would pay more) ties directly to customer support. Choices centered on the 15% cost increase both answer a different question, and the choice that mentions the survey only as a contrast to the cost increase frames it as a footnote rather than as the sentence's actual emphasis. Only 'a local bakery started using compostable packaging in 2021, and customer surveys show that 68% of customers say they'd pay more for eco-friendly packaging' combines the packaging change with the survey result, directly serving the stated goal.",
           difficulty: "easy",
+          why: ["This emphasizes cost, not customer support.", null, "The survey appears only as a side note to the cost increase. The emphasis is still on cost.", "This is only about the cost increase. It never mentions customers."],
         },
         {
           q: "A student has taken the following notes: (1) A youth orchestra performed its first international tour in 2019. (2) The tour included stops in four countries. (3) Ticket sales from the tour funded new instruments for the following year. (4) The orchestra's conductor has led the group since 2015. The student wants to emphasize how the tour benefited the orchestra's future. Which choice most effectively uses relevant information from the notes to accomplish this goal?",
@@ -1558,6 +1657,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           explain:
             "Re-read the goal: 'benefited the orchestra's future,' not how big the tour was or who leads the orchestra. Choices bringing in the conductor's tenure (note 4) are unrelated to the tour's benefit, and describing the tour's scope (note 2) alone doesn't address benefit. Only 'a youth orchestra's first international tour in 2019 funded new instruments for the following year through ticket sales' combines the tour with the instrument-funding outcome, the specific future benefit the goal asks about.",
           difficulty: "medium",
+          why: ["The number of countries describes the tour's size, not how it helped the orchestra's future.", null, "The conductor's tenure has nothing to do with how the tour benefited the future.", "Countries visited and the conductor's tenure are details. Neither shows a benefit to the future."],
         },
         {
           q: "A student has taken the following notes: (1) A public library extended its hours to include Sunday openings starting in 2022. (2) Sunday visits now account for 18% of total weekly visits. (3) Before the change, the library was closed two days per week, Sunday and Monday. (4) A separate branch across town has had Sunday hours since 2015, with similar visit patterns. (5) The library's overall annual budget increased 5% the same year hours were extended. The student wants to emphasize that demand for Sunday access already existed before this library reacted to it. Which choice most effectively uses relevant information from the notes to accomplish this goal?",
@@ -1571,6 +1671,7 @@ const LC_RW_RHETORICAL_SYNTHESIS: { patterns: Pattern[]; tipsAndTricks: string[]
           explain:
             "Re-read the goal precisely: demand existed before the library reacted, not just that Sunday hours are popular now. The 18%-of-visits figure shows current usage, but that's after the change, so alone it doesn't prove demand existed beforehand — a tempting but incomplete choice. Pairing the change with the budget increase, or describing the old closure schedule, don't address demand at all. Only 'a public library extended its hours to include Sunday openings in 2022, following years of similar Sunday demand at a separate branch across town that has offered Sunday hours since 2015' combines this library's 2022 change with the comparable branch's years-long Sunday demand pattern, showing the demand pre-dated this library's own reaction.",
           difficulty: "hard",
+          why: ["18% of visits shows demand after the change. The goal is to show demand existed before.", "The budget increase says nothing about demand for Sunday hours.", null, "The old schedule describes when the library was closed, not whether people wanted Sunday access."],
         },
       ],
       traps: [
@@ -1602,6 +1703,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "What's the relationship between the two sentences? Promising results, then failure to replicate — this is a contrast, not an addition or cause-effect. 'Similarly' signals comparison, 'for example' signals illustration, and 'as a result' would wrongly imply the failure was caused by the promising results. 'However' is the only choice matching the actual contrast.",
           difficulty: "easy",
+          why: ["\"Similarly\" signals the two ideas match. Promising results followed by failure is a contrast.", null, "The failed trials aren't an example of the promising results. They contradict them.", "The promising results didn't cause the failure to replicate. There's no cause and effect here."],
         },
         {
           q: "The bakery started sourcing flour from a local mill instead of a national distributor. ______, delivery times improved and ingredient costs actually dropped by 8%. Which choice completes the text with the most logical transition?",
@@ -1610,6 +1712,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "What's the relationship here? The switch to a local mill directly produced two outcomes (faster deliveries and lower costs), a cause and its effects, not addition or contrast. 'In addition' would suggest these are just two more, separate facts, not results of the switch, and 'however' would suggest a contradiction that isn't there. 'As a result' is the only choice that correctly signals the second sentence describes consequences of the first.",
           difficulty: "medium",
+          why: ["\"In addition\" treats these as two separate facts. The better deliveries and lower costs came from the switch.", "Nothing contradicts the switch. Faster deliveries and lower costs are good results, not a contrast.", null, "The improvements aren't an example of switching mills. They're what the switch produced."],
         },
         {
           q: "The museum extended its hours for the holiday season. ______, staff scheduled additional guided tours to meet the increased demand. Which choice completes the text with the most logical transition?",
@@ -1618,6 +1721,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "What's the relationship here? Extending hours led directly to a response (more tours), a cause and its effect. 'However' signals contrast, 'for example' signals illustration, and 'similarly' signals comparison, none of which fit. 'As a result' is the only choice matching the actual cause-effect relationship.",
           difficulty: "easy",
+          why: ["More tours don't contrast with longer hours. They're a response to them.", "Scheduling tours isn't an example of extending hours. It's a result of the demand.", "\"Similarly\" signals a parallel idea, but the tours were a response to the extended hours, not a separate similar move.", null],
         },
         {
           q: "The vaccine trial enrolled twice as many participants as originally planned. ______, the results were available nearly a year ahead of schedule. Which choice completes the text with the most logical transition?",
@@ -1626,6 +1730,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "What's the relationship? A larger enrollment led to faster results — a causal link, not just two separate facts about the trial. 'In addition' would present these as two unconnected facts, but the sentence's logic specifically connects the larger sample to the faster timeline, and 'nevertheless' signals contrast, which doesn't fit at all. 'Consequently' correctly matches the cause-effect relationship.",
           difficulty: "medium",
+          why: ["\"In addition\" presents two unrelated facts. The larger enrollment is what made results come sooner.", null, "\"Nevertheless\" signals a contrast, but faster results are what you'd expect from more participants.", "Early results aren't an example of larger enrollment. They're a consequence of it."],
         },
         {
           q: "The company's revenue grew for the fifth consecutive quarter. ______, its stock price fell sharply after the earnings call. Which choice completes the text with the most logical transition?",
@@ -1634,6 +1739,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "What's the relationship? Revenue grew, but stock fell — growth would normally be expected to raise or maintain stock price, so this is a contrast between expectation and outcome, not a cause producing an expected effect. 'As a result' is a tempting trap, since the events are chronologically connected, but it would imply the growth logically produced the drop, reversing the sentence's actual logic. 'Similarly' and 'for example' don't fit a contrast at all. 'However' correctly signals that the fall is surprising given the growth.",
           difficulty: "hard",
+          why: ["Growth wouldn't normally cause a stock drop. \"As a result\" implies the growth produced the fall, which reverses the logic.", null, "A falling stock after growing revenue is a contrast, not a similarity.", "The stock drop isn't an example of revenue growth. It goes the other way."],
         },
       ],
       traps: [
@@ -1655,6 +1761,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Is this a full contradiction, or an acknowledgment of a difference followed by a shared similarity? It's the latter: the cost difference is acknowledged, but doesn't prevent a shared goal from being true. 'Therefore' implies the second sentence follows as a consequence, which isn't the case here, and 'for instance' and 'similarly' don't fit either. 'Nonetheless' correctly signals a concession: the difference is acknowledged, but the shared goal still holds true despite it.",
           difficulty: "easy",
+          why: ["A shared goal doesn't follow from the cost difference. \"Therefore\" implies a cause that isn't there.", null, "The shared goal isn't an example of the cost difference.", "\"Similarly\" can't follow a statement about how the proposals differ. The second sentence is a concession, not a parallel."],
         },
         {
           q: "The bridge repairs ran three months behind schedule. ______, the final structure passed every safety inspection without a single issue. Which choice completes the text with the most logical transition?",
@@ -1663,6 +1770,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Ask whether the two ideas actually contradict each other, or whether the second is simply true despite the first. Running behind schedule doesn't logically prevent a project from passing inspection later; these aren't direct opposites. 'Consequently' would wrongly suggest the delay caused the successful inspection, and 'similarly' and 'for example' don't fit at all. 'Nonetheless' is correct because nothing is actually being reversed or disproven: a positive result held up despite an earlier problem, exactly what concession language signals.",
           difficulty: "hard",
+          why: ["The delay didn't cause the bridge to pass inspection. \"Consequently\" implies it did.", null, "Passing inspection isn't similar to running late. It's a positive result despite the delay.", "Passing inspection isn't an example of the delay."],
         },
         {
           q: "The two candidates disagree on nearly every policy issue. ______, both have pledged to accept the election results peacefully. Which choice completes the text with the most logical transition?",
@@ -1671,6 +1779,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Is this a full contradiction, or an acknowledgment of one point followed by agreement on another? It's the latter: disagreeing on policy doesn't prevent a shared commitment on something else. 'As a result' would wrongly imply the disagreement caused the pledge, and 'for example' and 'similarly' don't fit either. 'Nonetheless' correctly signals a concession: the disagreement is acknowledged, but the shared commitment still holds true despite it.",
           difficulty: "easy",
+          why: [null, "A shared pledge isn't an example of the candidates' disagreements.", "The disagreement didn't cause the pledge. \"As a result\" implies it did.", "\"Similarly\" can't follow \"they disagree.\" The pledge holds despite the disagreement."],
         },
         {
           q: "The renovation ran significantly over budget. ______, the building's new energy efficiency is expected to save the city money within five years. Which choice completes the text with the most logical transition?",
@@ -1679,6 +1788,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Is this a flat contradiction, or does the second idea hold true despite the first? Running over budget doesn't logically prevent future energy savings — these aren't opposites, so this is a 'despite X, Y still holds' relationship. 'As a result' would wrongly suggest the overspending caused the savings, and 'for example' and 'moreover' don't fit either. 'Nonetheless' correctly signals a positive outcome holding true despite an earlier setback.",
           difficulty: "medium",
+          why: ["Going over budget didn't cause the energy savings. \"As a result\" implies it did.", null, "Future savings aren't an example of going over budget.", "\"Moreover\" adds another point in the same direction, but savings push back against the overspending."],
         },
         {
           q: "Reviewers praised the film's visual effects as groundbreaking. ______, they panned its script as incoherent and poorly paced. Which choice completes the text with the most logical transition?",
@@ -1687,6 +1797,7 @@ const LC_RW_TRANSITIONS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Is this 'despite X, Y still holds,' or a direct two-sided contrast? Here, praise for the effects and criticism of the script are two separate, directly opposing assessments, not one idea holding true despite the other. A concession word like 'nonetheless' would subtly misrepresent this as one point overcoming a setback, when it's really just two contrasting judgments placed side by side. 'Similarly' and 'as a result' don't fit a contrast at all. 'However' is the cleaner, more accurate fit for this direct contrast.",
           difficulty: "medium",
+          why: ["\"Nonetheless\" frames the criticism as holding true despite the praise. These are just two opposite judgments side by side.", null, "Praise for one part and criticism of another is a contrast, not a similarity.", "The praise didn't cause the criticism. There's no cause and effect."],
         },
       ],
       traps: [
@@ -1716,6 +1827,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Check both sides: 'The results were surprising' and 'no one had predicted such a sharp decline' are both complete, independent clauses. A lone comma alone would create a comma splice, and 'so' without a comma before it creates a run-on. 'But' signals a contrast, but these two ideas aren't in contrast. The semicolon correctly joins two closely related independent clauses without needing a conjunction.",
           difficulty: "easy",
+          why: [null, "Both sides are complete sentences. A comma alone can't join them; that's a comma splice.", "\"So\" with no comma before it runs two complete sentences together, and the second isn't a result of the first anyway.", "The punctuation works, but \"but\" signals a contrast. The second clause explains why the results were surprising; it doesn't contrast with them."],
         },
         {
           q: "The lab technician double-checked every reading twice ______ a single miscalibration could invalidate months of data. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1724,6 +1836,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both sides are independent clauses ('The lab technician double-checked every reading twice' and 'a single miscalibration could invalidate months of data'), so a lone comma is wrong. The second clause explains why the technician was so careful — exactly the relationship a colon signals, more precisely than 'so' or the contrastive 'but,' which doesn't fit here at all.",
           difficulty: "medium",
+          why: [null, "Both sides are complete sentences, so a comma alone creates a comma splice.", "\"So\" would mean the checking caused the risk. It's the other way around: the risk explains the checking.", "\"But\" signals a contrast, and there's none. The second clause explains the first."],
         },
         {
           q: "The negotiators extended the deadline by another week, ______ neither side had reviewed the full contract yet. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1732,6 +1845,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both halves could stand alone as complete sentences, and a comma already sits right before the blank. 'For' links two complete sentences the same way 'and' or 'but' would, so it correctly takes a comma right before it. 'Because,' 'so that,' and 'although' all attach onto the second clause and turn it into a dependent clause that could no longer stand alone — used that way, none of them would take a comma directly in front of them the way this sentence already has.",
           difficulty: "hard",
+          why: [null, "\"Because\" can't follow a comma here. It makes the second part dependent, and \"because\" clauses at the end don't take a comma.", "\"So that\" signals purpose, but not having reviewed the contract isn't the goal of the extension. It's the reason for it.", "\"Although\" signals contrast, but the second clause gives the reason for the extension, not a contrast with it."],
         },
         {
           q: "The council approved the budget unanimously ______ the mayor still vetoed it the next day. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1740,6 +1854,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both sides are complete sentences on their own, so a lone comma is a splice and 'so' without a comma is a run-on. The relationship here is a surprising contrast, not an explanation, so a colon doesn't fit either. A comma plus 'but' correctly joins the two independent clauses while signaling that direct contrast.",
           difficulty: "easy",
+          why: [null, "Both sides are complete sentences, so a comma alone creates a comma splice.", "\"So\" with no comma runs the sentences together, and the veto isn't a result of the approval.", "A colon signals that the second part explains the first. The veto is a surprising contrast, not an explanation."],
         },
         {
           q: "The two departments rarely agree on budget priorities ______ this year's proposal passed with support from both. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1748,6 +1863,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both sides are complete, independent clauses, so a lone comma would be a splice and 'so' without a comma is a run-on. A colon would incorrectly suggest the second clause explains or defines the first, when it's really a surprising contrast. A semicolon correctly joins the two independent clauses and lets that contrast speak for itself.",
           difficulty: "medium",
+          why: [null, "Both sides are complete sentences, so a comma alone creates a comma splice.", "\"So\" implies the disagreement caused the joint support, which reverses the logic. It also runs the sentences together.", "A colon means the second part explains the first. Here it's a contrast, not an explanation."],
         },
       ],
       traps: [
@@ -1774,6 +1890,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This is a list, not two independent clauses, so it needs a colon to introduce it, not a semicolon or a plain comma beforehand. Each list item already contains its own internal comma (name, then role), so using only commas throughout makes it impossible to tell where one item ends and the next begins. The correct choice uses a colon to introduce the list and semicolons to separate the individual comma-containing items.",
           difficulty: "easy",
+          why: [null, "With only commas, you can't tell where one person ends and the next begins, since each item has its own comma.", "This drops the commas around each role and uses a comma to introduce the list. A list after a full clause needs a colon.", "A semicolon can't introduce a list. It needs a complete sentence on both sides."],
         },
         {
           q: "Three volunteers organized the event______ Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1787,6 +1904,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This is a list, not two independent clauses, so a colon introduces it, not a semicolon or a plain comma beforehand. Each item has its own internal comma (name, then job), so plain commas throughout would make it impossible to tell where one item ends and the next begins.",
           difficulty: "easy",
+          why: [null, "Each item already has a comma inside it, so plain commas between items make the list impossible to read.", "This drops the commas around each job and uses a comma to introduce the list instead of a colon.", "A semicolon can't introduce a list. Only a colon can do that here."],
         },
         {
           q: "The scholarship went to two applicants______ Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1800,6 +1918,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Even with only two applicants instead of three, the same signal applies: each item already contains its own internal comma (name, then status), so the list needs a colon to introduce it and semicolons, not plain commas, to separate the items. Using only commas throughout creates ambiguity about where one applicant's description ends and the next begins; dropping the commas around each description entirely loses necessary detail-marking; and using a semicolon instead of a colon to introduce the list breaks the intro punctuation.",
           difficulty: "medium",
+          why: [null, "Each name already has a comma before its description, so commas between items blur where one applicant ends.", "This drops the commas around each description and uses a comma to introduce the list instead of a colon.", "A semicolon can't introduce a list. It needs a complete sentence on both sides."],
         },
         {
           q: "The panel featured three speakers______ Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1813,6 +1932,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Most items have internal commas (name plus role), but 'Devon Marsh' alone has no descriptor. Since at least one item in the list has an internal comma, plain commas throughout would still create ambiguity about where items begin and end — the rule applies to the whole list, not just the items with descriptions. Dropping necessary commas around the descriptions, or using a semicolon instead of a colon to introduce the list, are both errors of the same kind.",
           difficulty: "medium",
+          why: [null, "Two of the items have internal commas, so plain commas between items make it unclear who is described by what.", "This drops the commas around the descriptions and introduces the list with a comma instead of a colon.", "A semicolon can't introduce a list. A colon is needed after \"three speakers.\""],
         },
         {
           q: "The panel included three judges______, each bringing a different kind of expertise. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1826,6 +1946,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Each judge's name is followed by its own extra descriptive detail requiring commas on both sides, so plain commas separating the three list items too would make it impossible to tell where one judge's entry ends and the next begins. Dropping the commas around each description, or using a semicolon instead of a colon to introduce the list, are both errors of the same kind. The correct choice uses a colon to introduce the list and semicolons between the three items, while keeping the commas around each individual description.",
           difficulty: "hard",
+          why: [null, "This drops the commas that set off each judge's description.", "With commas everywhere, you can't tell where each judge's entry ends. It also introduces the list with a comma.", "A semicolon can't introduce a list. A colon is needed after \"three judges.\""],
         },
         {
           q: "The bakery sells ______ every morning. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1839,6 +1960,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "None of the items (muffins, scones, croissants) contains its own internal comma, so plain commas between them are perfectly clear on their own, with a comma before 'and' following standard serial-comma convention. Semicolons throughout the list are unnecessary here and would actually be a mistake in the other direction, since there's no ambiguity for them to resolve; dropping punctuation entirely is a plain error.",
           difficulty: "hard",
+          why: [null, "Semicolons are only for lists whose items contain commas. These single words don't, so plain commas are right.", "Mixing a comma and a semicolon in the same simple list is inconsistent and incorrect.", "The items need commas between them. Without any, the list runs together."],
         },
       ],
       traps: [
@@ -1859,6 +1981,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'A retired firefighter' is extra descriptive information about 'my uncle Raymond' — not needed to know who's being discussed, since the name already tells us exactly who that is. Extra descriptive information dropped into the middle of a sentence needs to be boxed off on both sides with commas, like parentheses, ruling out the choices missing one or both commas.",
           difficulty: "easy",
+          why: [null, "\"A retired firefighter\" is extra detail about Raymond, so it needs commas on both sides.", "There's an opening comma but no closing one. The extra detail has to be boxed off on both sides.", "There's a closing comma but no opening one. The extra detail has to be boxed off on both sides."],
         },
         {
           q: "Our neighbor Dr. Alvarez ______ now volunteers at the community clinic twice a week. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1867,6 +1990,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'A retired pediatrician' describes 'Dr. Alvarez' with extra, droppable detail — 'our neighbor Dr. Alvarez' already tells us exactly who's meant. Since the phrase falls in the middle of the sentence, it needs to be boxed off on both sides with commas, the same mid-sentence bracketing rule as any nonessential appositive.",
           difficulty: "easy",
+          why: [null, "\"A retired pediatrician\" is extra detail about Dr. Alvarez, so it needs commas on both sides.", "The opening comma is there, but the closing comma after \"pediatrician\" is missing.", "The closing comma is there, but the opening comma before \"a retired\" is missing."],
         },
         {
           q: "The author ______ became a recluse after her novel's unexpected success. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1875,6 +1999,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'The author' already identifies one specific, identifiable person in this context, so 'Min-jin Lee' is extra information, not essential to knowing who's meant — unlike a phrase such as 'the author who wrote the novel,' where the identifying clause is necessary and would take no commas at all. Because the name here is extra, it needs to be boxed off with commas on both sides.",
           difficulty: "medium",
+          why: [null, "\"The author\" already points to one specific person, so her name is extra and needs commas on both sides.", "The opening comma is there, but the closing comma after \"Lee\" is missing.", "The closing comma is there, but the opening comma before \"Min-jin\" is missing."],
         },
         {
           q: "______ Dr. Alvarez has treated three generations of families at the clinic. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1888,6 +2013,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'A retired pediatrician who still volunteers twice a week' describes 'Dr. Alvarez,' but the descriptive phrase comes first, before the name it describes. Since there's nothing before the phrase to bracket (it opens the sentence), only one comma is needed, right after the phrase and before the name, not commas on both sides as in a mid-sentence appositive, and not a comma splitting the phrase itself.",
           difficulty: "medium",
+          why: [null, "An introductory phrase needs a comma after it, before the name it describes.", "The comma after \"pediatrician\" wrongly splits \"who still volunteers\" from the noun it describes.", "Nothing comes before the opening phrase, so there's nothing for a leading comma to separate."],
         },
         {
           q: "The award went to Naledi Khumalo______ a fact organizers highlighted throughout the ceremony. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1901,6 +2027,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'The youngest winner in the competition's history' is a mid-sentence appositive describing Naledi Khumalo and needs commas on both sides. The final phrase, 'a fact organizers highlighted throughout the ceremony,' is a second, end-of-sentence appositive describing the whole preceding claim rather than a single noun, and it still needs a comma introducing it, which the correct choice supplies by closing the first appositive properly. Choices that drop either comma around the first appositive break that mid-sentence bracketing rule.",
           difficulty: "hard",
+          why: [null, "With no commas, the description runs straight into the name and into \"a fact organizers...\"", "The closing comma after \"history\" is missing, so the description runs into \"a fact organizers highlighted.\"", "The opening comma before \"the youngest\" is missing. The description needs commas on both sides."],
         },
       ],
       traps: [
@@ -1921,19 +2048,21 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Despite the storm' is not a complete sentence on its own (it's a dependent prepositional phrase) while 'the flight departed on time' is independent. Since only one side is independent, a semicolon (which requires independent clauses on both sides) is wrong. The correct choice uses a single comma after the introductory phrase, before the independent clause begins.",
           difficulty: "easy",
+          why: [null, "A semicolon needs a complete sentence on both sides. \"Despite the storm\" can't stand alone.", "An introductory phrase like this needs a comma before the main clause begins.", "The comma after \"Despite\" splits the preposition from its object, \"the storm.\""],
         },
         {
           q: "______ the results still revealed a clear pattern. Which choice completes the text so that it conforms to the conventions of Standard English?",
           choices: [
             "Although the survey received far fewer responses than expected, ",
             "Although the survey received far fewer responses than expected; ",
-            "The survey received far fewer responses than expected; ",
+            "The survey received far fewer responses than expected, ",
             "Although the survey received far fewer responses than expected ",
           ],
           answer: 0,
           explain:
             "'The survey received far fewer responses than expected' has its own subject and verb, so it can look complete on its own, but 'although' at the front stops it from actually standing alone. Since only the second part can truly stand on its own, this is a single-boundary case: one comma after the lead-in, not a semicolon, which would require both sides to be independent.",
           difficulty: "medium",
+          why: [null, "A semicolon needs a complete sentence on both sides, and \"Although...\" can't stand alone.", "Without \"although,\" the first part is a complete sentence, so joining it to the next one with only a comma is a comma splice.", "The introductory \"although\" clause needs a comma before the main clause."],
         },
         {
           q: "______ the festival finally opened to the public. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1942,6 +2071,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'After months of planning' is not a complete sentence on its own (it's a dependent introductory phrase) while 'the festival finally opened to the public' is independent. Since only one side is independent, a semicolon would be wrong. A single comma after the introductory phrase is correct.",
           difficulty: "easy",
+          why: [null, "A semicolon needs a complete sentence on both sides. \"After months of planning\" can't stand alone.", "The introductory phrase needs a comma before the main clause begins.", "The comma after \"After\" splits the preposition from its object."],
         },
         {
           q: "______ doctors still lack a reliable early screening test. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1955,6 +2085,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The whole stretch 'Despite years of research into the disease's underlying causes,' including its own internal phrases, is still just one introductory unit modifying the independent clause that follows. Even though it's long, it still takes exactly one comma before the independent clause begins, placed after 'causes' — not earlier within the phrase, and not a semicolon, which would require independence on both sides.",
           difficulty: "medium",
+          why: [null, "The comma after \"research\" breaks one introductory phrase in the middle. The only comma belongs after \"causes.\"", "A semicolon needs complete sentences on both sides, and the \"Despite...\" phrase can't stand alone.", "The long introductory phrase still needs a comma before the main clause."],
         },
         {
           q: "______ the committee still could not reach a unanimous decision. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1968,6 +2099,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Having reviewed every application twice' has no subject of its own, since it's a participial phrase describing an implied actor (the committee), not a complete clause, while 'the committee still could not reach a unanimous decision' is independent. This is the same single-boundary case as an introductory phrase beginning with 'despite' or 'although,' even though this one opens with an '-ing' participle: a single comma after the introductory phrase is correct.",
           difficulty: "hard",
+          why: [null, "A semicolon needs complete sentences on both sides. \"Having reviewed...\" has no subject and can't stand alone.", "The introductory phrase needs a comma before the main clause.", "The comma after \"Having\" splits the verb from its object."],
         },
       ],
       traps: [
@@ -1987,6 +2119,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Identities' follows the noun — something the ghostwriters possess, so this needs a possessive form, not a plain plural. The sentence says 'two,' so this is plural possession, and for a plural owner the apostrophe goes after the existing -s: ghostwriters', not ghostwriter's, which would wrongly imply only one owner, or ghostwriters's, which isn't a standard English form at all.",
           difficulty: "easy",
+          why: [null, "\"Ghostwriter's\" means one ghostwriter, but the sentence says \"two.\"", "Something belongs to them (identities), so this needs a possessive, not a plain plural.", "\"Ghostwriters's\" isn't a standard form. A plural ending in -s just takes an apostrophe after it."],
         },
         {
           q: "Many ______ personal stories go untold in official histories. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -1995,6 +2128,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Stories' follows the noun — these are stories the immigrants possess, so a plain plural won't work. 'Many' signals more than one owner, so this needs the plural possessive form, with the apostrophe after the -s: immigrants'.",
           difficulty: "easy",
+          why: [null, "\"Immigrant's\" is one immigrant, but \"many\" means more than one.", "The stories belong to the immigrants, so this needs a possessive, not a plain plural.", "\"Immigrants's\" isn't a standard form. A plural ending in -s just takes an apostrophe."],
         },
         {
           q: "The research team credited three separate laboratories for the discovery; the ______ combined data made the pattern clear. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2003,6 +2137,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Combined data' follows the noun: data the laboratories possess together, so this needs a possessive, not a plain plural. The sentence explicitly says 'three separate laboratories,' confirming multiple owners, so the plural possessive is correct: laboratories', apostrophe after the existing -s, not laboratory's, which would wrongly suggest a single lab, and 'laboratorys'' isn't even how the plural is spelled.",
           difficulty: "medium",
+          why: [null, "\"Laboratory's\" is one lab, but the sentence says three separate laboratories.", "The data belongs to the labs, so this needs a possessive, not a plain plural.", "The plural is spelled \"laboratories,\" not \"laboratorys.\""],
         },
         {
           q: "The final report was reviewed and approved by three ______ before publication. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2011,6 +2146,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Nothing directly after 'researchers' is being possessed; the sentence just moves on to 'before publication.' Since there's no noun being possessed, this is simply naming multiple people, not showing ownership, so a plain plural with no apostrophe is correct — both possessive forms are traps here.",
           difficulty: "medium",
+          why: [null, "Nothing after the blank belongs to the researcher; \"before publication\" isn't something owned. No apostrophe is needed.", "Nothing follows that the researchers own, so a possessive has nothing to attach to.", "Nothing is being owned, and \"researchers's\" isn't a standard form anyway."],
         },
         {
           q: "The museum's newest exhibit displays several ______ early sketches alongside a single sculptor's finished bronze piece. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2019,6 +2155,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The sentence already correctly uses two other possessives ('museum's' for one museum, 'sculptor's' for one sculptor) as a model. 'Sketches' follows the blank, and 'several' signals more than one artist possessing them jointly, so the plural possessive matches the pattern: artists', not artist's (one owner) or artists (no ownership at all).",
           difficulty: "hard",
+          why: [null, "\"Artist's\" means one artist, but \"several\" means more than one.", "The sketches belong to the artists, so this needs a possessive, not a plain plural.", "\"Artist's's\" isn't a real form. Several artists need \"artists'.\""],
         },
       ],
       traps: [
@@ -2039,6 +2176,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Agreed on' is a single verb phrase, and 'a compromise' is its direct object — there's no boundary here at all, just a verb followed by what it acts on. Inserting a comma between a verb phrase and its object breaks the sentence's core grammar, and 'to on' isn't idiomatic English at all. The correct choice has no punctuation and uses the correct preposition alone.",
           difficulty: "easy",
+          why: [null, "A comma between \"agreed on\" and its object splits a verb from what it acts on.", "A comma between \"agreed\" and \"on\" breaks the verb phrase apart.", "\"Agreed to on\" isn't idiomatic English. It's \"agreed on.\""],
         },
         {
           q: "Visitors are asked to remain seated ______ performance to avoid disrupting other guests. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2047,6 +2185,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'During' is a preposition and 'the performance' is its object — together they form one tightly bound unit with no internal boundary. A comma or semicolon between a preposition and its object is never correct, regardless of how long the surrounding sentence is.",
           difficulty: "easy",
+          why: [null, "A comma between \"during\" and \"the performance\" splits a preposition from its object.", "A comma between \"the\" and \"performance\" splits the noun phrase apart.", "A semicolon needs complete sentences on both sides. Here it breaks a preposition from its object."],
         },
         {
           q: "The committee's chair, Dr. Alvarez______ announced the new research funding priorities at the meeting. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2055,6 +2194,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Since 'the committee's chair' already uniquely identifies one specific person, the name that follows is a nonessential appositive and does need commas on both sides — this is a trap in the other direction, testing whether you over-correct toward 'no punctuation' once you've learned to watch for it. The correct choice keeps the comma after 'Alvarez,' matching the comma already present before the name.",
           difficulty: "medium",
+          why: [null, "The name has a comma before it, so it needs a matching comma after it. Leaving it out breaks the pair.", "A semicolon needs complete sentences on both sides. Here it cuts the subject off from its verb.", "A colon here would cut the subject off from its verb, \"announced.\""],
         },
         {
           q: "The festival's organizers decided______ to postpone the outdoor concert until the storm passed. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2063,6 +2203,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Decided' is the main verb, and 'to postpone the outdoor concert until the storm passed' is its infinitive-phrase object, answering 'decided what?' A verb and the infinitive phrase completing its meaning form one unbroken grammatical unit, just like a verb and a direct-object noun, so no punctuation belongs between them.",
           difficulty: "medium",
+          why: [null, "A comma splits the verb \"decided\" from what was decided.", "A semicolon needs complete sentences on both sides, and \"to postpone...\" isn't one.", "A colon here would split the verb from its object. Nothing needs introducing."],
         },
         {
           q: "Employees who arrive after nine o'clock______ must sign in at the front desk before entering the building. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2071,6 +2212,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Who arrive after nine o'clock' is a restrictive relative clause — it specifies which employees the sentence is about, not extra removable detail about all employees. Removing it would change the sentence's meaning entirely, from a rule about latecomers to a rule about everyone, which is the signature of an essential, restrictive clause. Restrictive clauses never take a comma (or semicolon or colon) before them, so no punctuation is correct.",
           difficulty: "hard",
+          why: [null, "\"Who arrive after nine o'clock\" tells you which employees. Essential information like that takes no comma.", "A semicolon cuts the subject off from its verb, \"must sign in.\"", "A colon here would split the subject from its verb."],
         },
       ],
       traps: [
@@ -2091,6 +2233,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The left side, 'The museum's mission statement emphasizes one goal above all others,' is a complete, independent clause. The right side, 'preserving the collection for future generations,' is a phrase renaming that 'one goal,' not a full independent clause, so a semicolon (which needs independent clauses on both sides) won't work, and a plain comma would create a run-on. A colon is correct: independent clause on the left, an elaborating phrase on the right.",
           difficulty: "easy",
+          why: [null, "A comma here runs the explanation onto the clause without signaling that it names the goal. A colon is what introduces it.", "A semicolon needs a complete sentence on both sides, but \"preserving the collection...\" isn't one.", "\"And\" would make preserving the collection a second thing, not the one goal being named."],
         },
         {
           q: "Before the expedition departed, the team packed everything they would need______ tents, dried food, water filters, and a satellite phone. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2099,6 +2242,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The part before the blank, 'the team packed everything they would need,' is a complete independent clause. What follows is a list of items, not an independent clause, so this isn't a case for a semicolon between two full sentences. A colon correctly introduces the list, since only the clause before it needs to be independent.",
           difficulty: "easy",
+          why: [null, "A comma doesn't introduce a list after a complete sentence. That's a colon's job.", "A semicolon needs a complete sentence on both sides. A list of items isn't one.", "\"Like\" suggests these are just examples, but the sentence says they packed \"everything they would need.\""],
         },
         {
           q: "The engineers faced a single unavoidable constraint______ the bridge's total weight could not exceed the old foundation's original rating. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2107,6 +2251,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both sides here happen to be complete independent clauses, so a semicolon would technically work grammatically too — but the second clause specifically explains and defines the 'single unavoidable constraint' named in the first, which is exactly the elaboration relationship a colon signals. A plain comma would create a run-on.",
           difficulty: "medium",
+          why: [null, "Both sides are complete sentences, so a comma alone is a comma splice.", "A semicolon only says the ideas are related. The second clause defines the constraint the first announces, which is what a colon signals.", "\"And\" treats the second clause as a new point, when it actually spells out the constraint."],
         },
         {
           q: "Coral reefs depend on a delicate balance______ too much warming kills the algae reefs need, while too little sunlight starves that same algae. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2115,6 +2260,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Coral reefs depend on a delicate balance' is a complete independent clause introducing an abstract idea that needs unpacking. What follows explains what that balance actually consists of, in two parts joined by 'while.' A colon correctly signals 'here's what that balance means,' even though what follows is a more complex, two-part explanation rather than a short phrase.",
           difficulty: "medium",
+          why: [null, "The explanation that follows is a full clause, so a comma alone runs it onto the first sentence.", "A semicolon only says the ideas are related. The second part spells out what the balance is, which calls for a colon.", "\"Because\" makes it a cause, but what follows describes the balance itself rather than why reefs depend on it."],
         },
         {
           q: "The archive's newest acquisition is remarkable for a simple reason______ it is the only surviving copy of the pamphlet, the printer's original plates having been destroyed in a fire decades ago. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2123,6 +2269,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'The archive's newest acquisition is remarkable for a simple reason' is independent and sets up an expectation: what is that reason? What follows directly answers that expectation, ruling out a plain comma (which would create a run-on) and favoring the colon's 'here's the reason' function over a semicolon's 'separate but related' function. The trailing modifier about the printer's plates is nonessential background and doesn't change which mark belongs right after 'reason.'",
           difficulty: "hard",
+          why: [null, "What follows is a complete sentence, so a comma alone creates a comma splice.", "A semicolon only links related ideas. The first clause promises a reason and the second delivers it, which is a colon's job.", "\"And\" treats the reason as a separate point instead of the reason the first clause promised."],
         },
       ],
       traps: [
@@ -2155,6 +2302,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Cross out the prepositional phrase 'of items' — it's not the subject, just a modifier. What remains is 'The list ______ long,' making 'list' (singular) the true subject, not 'items' (plural). A singular subject requires a singular verb.",
           difficulty: "easy",
+          why: [null, "\"Items\" is inside the phrase \"of items.\" The subject is \"list,\" which is singular, so the verb must be singular.", "\"Were\" is plural, but the subject is \"list,\" which is singular. \"Items\" is part of a modifying phrase.", "\"Have been\" is plural, but the subject is \"list,\" which is singular."],
         },
         {
           q: "The collection of rare manuscripts ______ housed in a climate-controlled room. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2163,6 +2311,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Cross out 'of rare manuscripts' — it's just extra description, not the subject. What remains is 'The collection ______ housed,' making 'collection' (singular) the true subject, not 'manuscripts' (plural). A singular subject needs a singular verb.",
           difficulty: "medium",
+          why: [null, "\"Manuscripts\" is inside \"of rare manuscripts.\" The subject is \"collection,\" singular, so it needs \"is.\"", "\"Were\" is plural and past tense, but the subject is \"collection,\" which is singular.", "\"Have been\" is plural, but the subject is \"collection,\" which is singular."],
         },
         {
           q: "The box of old photographs ______ in the attic. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2171,6 +2320,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Cross out 'of old photographs' — it's a modifier, not the subject. What remains is 'The box ______ in the attic,' making 'box' (singular) the true subject, not 'photographs' (plural). A singular subject needs a singular verb.",
           difficulty: "easy",
+          why: [null, "\"Sit\" matches \"photographs,\" but that's inside the phrase \"of old photographs.\" The subject is \"box,\" singular.", "\"Were sitting\" is plural, but the subject is \"box,\" which is singular.", "\"Have sat\" is plural, but the subject is \"box,\" which is singular."],
         },
         {
           q: "The results of the survey conducted across all twelve regions ______ still being reviewed by the committee. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2179,6 +2329,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Cross out both modifying phrases ('of the survey' and 'conducted across all twelve regions') neither is the subject. What remains is 'The results ______ still being reviewed,' making 'results' (plural) the true subject, not the nearby singular 'survey.' A plural subject needs a plural verb.",
           difficulty: "medium",
+          why: [null, "\"Is\" matches \"survey,\" but that's inside a modifying phrase. The subject is \"results,\" which is plural.", "\"Was\" is singular, but the subject is \"results,\" which is plural.", "\"Has been\" is singular, but the subject is \"results,\" which is plural."],
         },
         {
           q: "The committee ______ divided on how to proceed, with several members favoring a different plan than the majority. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2187,6 +2338,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Committee' is a collective noun — in standard American usage, it's treated as singular even when the sentence describes disagreement among the individuals within it. The phrase 'with several members favoring a different plan' might tempt a plural verb, but the grammatical subject is still 'the committee' as one unit, not 'the members.'",
           difficulty: "hard",
+          why: [null, "The subject is \"the committee,\" which is treated as one unit and takes a singular verb, even though its members disagree.", "\"Were\" is plural, but \"committee\" is a singular collective noun here.", "\"Have been\" is plural, but \"committee\" takes a singular verb."],
         },
       ],
       traps: [
@@ -2207,6 +2359,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Hiking' and 'swimming' are both -ing (gerund) forms, so the third item in the list must match this same form to maintain parallel structure. 'To bike' (infinitive) and 'bikes' (plain verb) don't match the established -ing pattern.",
           difficulty: "easy",
+          why: [null, "\"Hiking\" and \"swimming\" are -ing forms, so the third item must be too. \"To bike\" breaks the pattern.", "\"Bikes\" doesn't match the -ing pattern of \"hiking\" and \"swimming.\"", "\"Having biked\" isn't the same form as \"hiking\" and \"swimming.\" The list needs a plain -ing word."],
         },
         {
           q: "The workshop taught participants how to negotiate contracts, resolve disputes, and ______ effective teams. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2215,6 +2368,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "After 'how to,' the list uses plain verb forms — 'negotiate' and 'resolve,' not 'negotiating' or 'to resolve.' The third item must match that same plain-verb form to stay parallel; 'building' breaks the pattern set by the first two items.",
           difficulty: "medium",
+          why: [null, "After \"how to,\" the list uses plain verbs: \"negotiate,\" \"resolve.\" \"Building\" breaks that pattern.", "\"Built\" is past tense, but the list uses plain verbs after \"how to.\"", "\"To\" is already covered by \"how to\" at the start. Repeating it breaks the pattern of \"negotiate\" and \"resolve.\""],
         },
         {
           q: "The workshop covers writing clear emails, giving effective feedback, and ______. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2228,6 +2382,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Writing' and 'giving' are both -ing forms, so the third item must match this same -ing form. 'To lead' (infinitive), 'leads' (plain verb), and 'having led' (perfect participle) don't match the established pattern.",
           difficulty: "easy",
+          why: [null, "\"Writing\" and \"giving\" are -ing forms, so the third item must be too. \"To lead\" breaks the pattern.", "\"Leads\" doesn't match the -ing pattern of \"writing\" and \"giving.\"", "\"Having led\" isn't the same form as \"writing\" and \"giving.\""],
         },
         {
           q: "The new policy was designed not only to reduce costs but also ______ employee satisfaction. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2236,6 +2391,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'To reduce' is an infinitive in the first half of the 'not only... but also' comparison, so the second half must match this same infinitive form. 'Improving' (gerund) and 'improves'/'improved' (plain verb forms) don't match — parallel structure applies to comparisons, not just lists.",
           difficulty: "medium",
+          why: [null, "The first half uses \"to reduce,\" so the second half must also use a \"to\" verb. \"Improving\" breaks the parallel.", "\"Improves\" doesn't match \"to reduce.\" Both halves of \"not only... but also\" need the same form.", "\"Improved\" doesn't match \"to reduce\" in the first half."],
         },
         {
           q: "The report concluded that the delays were caused by outdated equipment, that funding had been mismanaged for years, and ______. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2249,6 +2405,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The first two items are both full 'that + clause' structures, so the third item must match this same shape rather than shrink into a shorter noun phrase or drop 'that' entirely. A shorter phrase like 'declining staff morale' would be grammatical on its own but breaks the parallel pattern across the whole list.",
           difficulty: "hard",
+          why: [null, "The first two items are full \"that\" clauses. A short noun phrase breaks the parallel structure.", "This drops \"that,\" so it no longer matches the first two items, which both start with \"that.\"", "This turns the item into a noun with a description instead of a \"that\" clause like the others."],
         },
       ],
       traps: [
@@ -2268,6 +2425,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The antecedent is 'each' (not 'students,' which is inside a prepositional phrase modifying 'each'). 'Each' is grammatically singular, even though it refers to a group of students individually, so the pronoun must agree with 'each' in number.",
           difficulty: "easy",
+          why: [null, "The subject is \"each,\" which is singular, so the pronoun must be singular too. \"Their\" is plural.", "\"Its\" is for things, not people. The students are people.", "\"They're\" means \"they are.\" The sentence needs a possessive."],
         },
         {
           q: "Neither of the twins finished ______ homework before dinner. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2276,6 +2434,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The antecedent is 'neither' (not 'twins,' which sits inside a prepositional phrase describing 'neither'). 'Neither' is grammatically singular, even though it's talking about two people.",
           difficulty: "medium",
+          why: [null, "\"Neither\" is singular, even when talking about two people, so the pronoun must be singular.", "\"Its\" is for things, not people.", "\"They're\" means \"they are.\" The sentence needs a possessive."],
         },
         {
           q: "Every applicant must submit ______ portfolio by Friday. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2284,6 +2443,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Every,' like 'each,' is grammatically singular, even though it refers to a whole group of applicants individually, so the pronoun must agree in number with 'every applicant.'",
           difficulty: "easy",
+          why: [null, "\"Every applicant\" is singular, so the pronoun must be singular too.", "\"Its\" is for things, not people.", "\"They're\" means \"they are.\" The sentence needs a possessive."],
         },
         {
           q: "When Maria told her sister about the award, she was thrilled. Which choice best revises this sentence to fix its ambiguous pronoun?",
@@ -2297,6 +2457,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'She' is ambiguous — it could refer to Maria or her sister, and nothing in the sentence clarifies which. This is a genuine ambiguity, not a number-agreement issue, and the fix is to name the specific person directly rather than leave 'she' to guess from. The other choices either don't resolve the ambiguity or change the sentence's meaning.",
           difficulty: "medium",
+          why: [null, "\"They\" means both people were thrilled, which changes the meaning instead of clarifying who was.", "\"She herself\" is still \"she,\" so it's just as unclear which sister was thrilled.", "\"It was thrilling\" drops the person entirely and changes what the sentence says."],
         },
         {
           q: "Either the manager or the interns will need to submit ______ report by Monday. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2305,6 +2466,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This is an 'either... or' compound subject, not a simple 'and' list — with 'or'/'nor,' the pronoun agrees with whichever subject is closer to it, not automatically the first one listed. Since 'the interns' (plural) is nearer to the blank, the pronoun should be plural, not singular just because 'the manager' appears first.",
           difficulty: "hard",
+          why: [null, "With \"either... or,\" the pronoun agrees with the closer subject. \"The interns\" is closer, and it's plural.", "\"Its\" is for things, and the nearer subject, \"the interns,\" is plural people.", "\"They're\" means \"they are.\" The sentence needs a possessive."],
         },
       ],
       traps: [
@@ -2326,6 +2488,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This describes two past events, and restocking happened before closing. When one past event happens before another past event, the earlier one needs the past perfect tense ('had' + past participle); simple past would blur which action came first.",
           difficulty: "easy",
+          why: [null, "Restocking happened before the store closed. When one past event comes before another, the earlier one needs \"had.\"", "\"Has restocked\" connects to the present, but this whole scene is in the past.", "\"Was restocking\" describes an ongoing action, but \"every shelf twice\" is completed work finished before closing."],
         },
         {
           q: "The museum's newest wing, completed last spring, ______ over 200,000 visitors since opening. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2334,6 +2497,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Since opening' specifically points to present perfect tense, an action that started at a past point and continues to matter up to now. Simple past 'welcomed' doesn't pair correctly with 'since.'",
           difficulty: "easy",
+          why: [null, "\"Since opening\" means from then until now, which calls for \"has welcomed,\" not simple past.", "\"Had welcomed\" places this before some other past event, but the count runs up to the present.", "\"Welcomes\" is present tense, but \"since opening\" describes a total built up over time."],
         },
         {
           q: "After years of research, the team finally managed ______ a working prototype. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2342,6 +2506,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This isn't about timeline — it's about which form 'managed' grammatically requires after it. 'Manage' is one of many verbs that must be followed by an infinitive, not the '-ing' form, unlike 'enjoy,' which instead requires the '-ing' form.",
           difficulty: "medium",
+          why: [null, "\"Managed\" must be followed by \"to\" plus a verb, not an -ing form.", "\"Built\" is a past-tense verb. After \"managed,\" you need \"to build.\"", "\"Builds\" is a present-tense verb. After \"managed,\" you need \"to build.\""],
         },
         {
           q: "A decade after first publishing his theory, the physicist ______ additional evidence that ultimately confirmed it. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2350,6 +2515,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'A decade after first publishing' places us at one specific later point, and the sentence describes a single completed action at that point, not two separate past events and not something continuing to now. Simple past fits — not 'had gathered,' which would wrongly imply this happened before some other past event, and not 'has gathered,' which would wrongly imply relevance continuing to now.",
           difficulty: "medium",
+          why: [null, "\"Had gathered\" would place this before another past event, but it's the single event the sentence describes.", "\"Has gathered\" connects to the present, but this happened at one specific past point.", "\"Was gathering\" describes ongoing action, but the gathering is presented as finished, since it confirmed the theory."],
         },
         {
           q: "Having ______ the same experiment for the third time, the researchers finally decided ______ their original hypothesis entirely. Which choice completes both blanks so that the text conforms to the conventions of Standard English?",
@@ -2358,6 +2524,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The first blank follows 'Having,' which requires a past participle to form a perfect participial phrase showing a completed action before the main clause: 'Having repeated,' not 'having repeating' or 'having repeat.' The second blank follows 'decided,' a verb that requires an infinitive afterward, not a gerund: 'decided to abandon,' not 'decided abandoning.' Each blank follows its own specific rule.",
           difficulty: "hard",
+          why: [null, "\"Having\" needs a past participle (\"repeated\"), not \"repeating.\"", "The first blank is right, but \"decided\" must be followed by \"to abandon,\" not \"abandoning.\"", "\"Having repeat\" isn't grammatical, and \"decided abandon\" is missing \"to.\""],
         },
       ],
       traps: [
@@ -2383,6 +2550,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'The museum's new wing' is the subject right after the comma. It makes sense as something that existed through years of delays (a state), not as something that was itself doing the delaying (an action) — the other choices would illogically suggest the wing delayed itself. 'After years of delays' doesn't require the following subject to be performing an action, so it pairs correctly.",
           difficulty: "easy",
+          why: [null, "This says the museum wing delayed the project, which makes no sense.", "This says the wing itself did the delaying. A building can't delay a project.", "\"To delay\" suggests the wing opened in order to delay the project, which is illogical."],
         },
         {
           q: "______ the ancient manuscript was carefully restored. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2396,6 +2564,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The manuscript is the one that was found, not the one doing the discovering, so the modifier needs the passive form 'discovered,' matching what the following subject experienced. The other choices all wrongly imply the manuscript actively discovered something.",
           difficulty: "easy",
+          why: [null, "This says the manuscript did the discovering. It was discovered, not the discoverer.", "\"Having discovered it\" makes the manuscript the one who found something.", "\"To discover it\" suggests the manuscript was restored in order to discover itself."],
         },
         {
           q: "______ the results took the research team by surprise. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2409,6 +2578,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The research team is the one doing the analyzing, not 'the results' — so a modifier requiring an active 'analyzing' subject would dangle, since results can't analyze data. 'After the data was analyzed for months' removes the mismatch entirely, since it describes a completed process rather than an actor, pairing safely with 'the results' as the subject.",
           difficulty: "medium",
+          why: [null, "This makes \"the results\" the ones analyzing the data. Results can't analyze anything.", "Same problem: \"the results\" becomes the subject that analyzed the data.", "\"To analyze the data\" suggests the results surprised the team in order to analyze data, which is illogical."],
         },
         {
           q: "Which choice corrects the dangling modifier in this sentence: 'Frustrated by years of rejection, the manuscript was finally accepted by a small press.'?",
@@ -2422,6 +2592,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Frustrated by years of rejection' describes a person's feeling, but 'the manuscript' (an object) can't feel frustration — only the author could be frustrated. The sentence needs the author, not the manuscript, as the subject immediately following the modifier, which only the first choice provides.",
           difficulty: "medium",
+          why: [null, "This is the original sentence. A manuscript can't feel frustrated, so the modifier still dangles.", "Moving the phrase doesn't help. It still says the manuscript was frustrated.", "\"Having been frustrated\" still describes the manuscript as feeling frustration."],
         },
         {
           q: "A report states budget concerns were raised in an earlier meeting. Which choice best revises the following sentence to correct its dangling modifier: 'Having ignored those same concerns months earlier, the proposal was resubmitted without any changes.'?",
@@ -2435,6 +2606,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Having ignored those concerns' requires a subject capable of ignoring something (a person or group, like the proposal's authors), not the proposal itself, which can't ignore anything. This dangling-modifier pattern applies to any sentence in a passage, not just the first one. Only the first choice supplies a subject capable of the action the modifier describes.",
           difficulty: "hard",
+          why: [null, "This is the original sentence. A proposal can't ignore concerns, so the modifier still dangles.", "Moving the phrase still says the proposal ignored the concerns.", "This changes the meaning: now the proposal was ignored, instead of people ignoring the concerns."],
         },
       ],
       traps: [
@@ -2455,6 +2627,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The sentence's one finite main verb is 'could not reach.' Since that spot is already filled, the phrase between the commas needs a non-finite form describing the committee's action. 'Reviewing' (a participle) correctly modifies 'the committee' without competing for the role of main verb; 'reviewed' or 'reviews' would each wrongly try to act as a second finite verb, creating a run-on.",
           difficulty: "easy",
+          why: [null, "\"Reviewed\" would compete with \"could not reach\" as a second main verb, or read as \"the committee was reviewed.\"", "\"Reviews\" is a main verb, but the sentence already has one: \"could not reach.\"", "\"Having review\" isn't grammatical. It would need \"having reviewed.\""],
         },
         {
           q: "The scientists hoped ______ a treatment before the funding expired. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2463,6 +2636,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Hoped' is the sentence's finite main verb and specifically requires an infinitive to complete its meaning ('hoped to do something'), not a gerund or a second finite verb.",
           difficulty: "easy",
+          why: [null, "\"Hoped\" must be followed by \"to\" plus a verb, not an -ing form.", "\"Discovered\" is a past-tense verb. After \"hoped,\" you need \"to discover.\"", "\"Discovers\" is a present-tense verb. After \"hoped,\" you need \"to discover.\""],
         },
         {
           q: "Nobody could explain ______ so abruptly. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2476,6 +2650,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Why the machine had stopped' functions as a noun clause (the object of 'explain'), not a standalone question. An embedded clause like this uses ordinary statement word order: subject before its verb, no inversion. The other choices incorrectly apply question-word-order inversion inside an embedded clause.",
           difficulty: "medium",
+          why: [null, "This uses question word order (\"had the machine\") inside a sentence that isn't a question.", "\"Why did the machine stop\" is question order. Inside a statement, it should be \"why the machine had stopped.\"", "\"Did stopped\" isn't grammatical. After \"did,\" the verb would be \"stop.\""],
         },
         {
           q: "The engineer inspected the bridge's support beams, ______ three hairline cracks that had gone unnoticed for years. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2484,6 +2659,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The finite main verb is 'inspected.' Since the clause already has its finite verb, the phrase after the comma needs a non-finite form to attach to it, describing what the engineer discovered while inspecting. 'Finding' (participle) correctly attaches as a modifying phrase; 'found' would be a second finite verb with no conjunction connecting it, creating a comma splice.",
           difficulty: "medium",
+          why: [null, "\"Found\" would be a second main verb with no \"and\" to join it, creating a comma splice.", "\"Finds\" is present tense and a second main verb. It doesn't fit after \"inspected.\"", "\"Having find\" isn't grammatical. It would need \"having found.\""],
         },
         {
           q: "Historians still debate ______ the empire's sudden decline, though few dispute that its trade routes shifted dramatically in the same period. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2492,6 +2668,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'What caused the empire's sudden decline' is an embedded noun clause functioning as the object of 'debate,' not a standalone question. Embedded clauses use statement word order, not the inverted 'did' construction a standalone question would use. The second half of the sentence is a separate, correctly-formed independent clause and doesn't affect which form belongs in the first blank.",
           difficulty: "hard",
+          why: [null, "\"What did cause\" uses question-style \"did.\" Inside a statement, it's just \"what caused.\"", "\"It\" has nothing to refer to and leaves \"the empire's sudden decline\" stranded with no verb.", "\"What causing\" has no real verb, so the clause doesn't work."],
         },
       ],
       traps: [
@@ -2522,6 +2699,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Distribute the 5: 5x + 10 = 3x + 18. Subtract 3x from both sides: 2x + 10 = 18. Subtract 10: 2x = 8. Divide by 2: x = 4. Getting 8 comes from forgetting to distribute the 5 across both terms. Getting 1 comes from adding 3x to both sides instead of subtracting. Getting -4 comes from a sign error in the final division.",
           difficulty: "easy",
+          why: [null, "8 comes from not distributing the 5 to the 2: 5x + 2 = 3x + 18 gives x = 8. Distribute first: 5x + 10.", "1 comes from adding 3x to both sides instead of subtracting it: 8x + 10 = 18.", "Check it: 5(−4 + 2) = −10, but 3(−4) + 18 = 6. The sides don't match; this is a sign slip."],
         },
         {
           q: "Solve for x: -3(x - 4) + 2 = x - 10",
@@ -2530,6 +2708,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Distribute the -3 carefully: -3x + 12 + 2 = x - 10, which simplifies to -3x + 14 = x - 10. Add 3x to both sides: 14 = 4x - 10. Add 10: 24 = 4x. Divide by 4: x = 6. Getting 0 comes from distributing -3 incorrectly as -3x - 12 instead of -3x + 12. Getting -6 comes from a sign error in the final step. Getting 4 comes from an arithmetic slip combining 14 and 10.",
           difficulty: "medium",
+          why: [null, "0 comes from distributing −3 as −3x − 12. A negative times −4 is +12, so it's −3x + 12.", "Check it: −3(−6 − 4) + 2 = 32, but −6 − 10 = −16. This is a sign slip at the end; 4x = 24 gives x = 6.", "Check it: −3(4 − 4) + 2 = 2, but 4 − 10 = −6. From 14 = 4x − 10, add 10 to get 4x = 24."],
         },
         {
           q: "Solve for x: 3x - 4 = 11",
@@ -2538,6 +2717,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Add 4 to both sides: 3x = 15. Divide by 3: x = 5. Getting 15 comes from forgetting to divide by 3 after isolating 3x. Getting -5 comes from a sign error. Getting 7 comes from subtracting 4 instead of adding it to both sides.",
           difficulty: "easy",
+          why: [null, "15 is 3x, not x. After 3x = 15, divide by 3.", "A sign slip: 3(−5) − 4 = −19, not 11.", "7 is 11 − 4. You need to add 4 to both sides (3x = 15), then divide by 3."],
         },
         {
           q: "Solve for x: 2(3x - 1) + 5 = 4(x + 3)",
@@ -2546,6 +2726,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Distribute on both sides: 6x - 2 + 5 = 4x + 12, simplifying to 6x + 3 = 4x + 12. Subtract 4x: 2x + 3 = 12. Subtract 3 and divide by 2: 2x = 9, so x = 4.5. Getting 9 comes from forgetting to divide by 2 in the final step. Getting 1.5 comes from a division error. Getting -4.5 comes from a sign error.",
           difficulty: "medium",
+          why: [null, "9 is 2x, not x. After 2x = 9, divide by 2.", "Check it: 2(3·1.5 − 1) + 5 = 12, but 4(1.5 + 3) = 18. The sides don't match.", "A sign slip: 2x = 9 gives x = +4.5, not −4.5."],
         },
         {
           q: "Solve for x: x/4 + x/6 = 5",
@@ -2554,6 +2735,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Clear the fractions by multiplying every term by the least common denominator, 12: 3x + 2x = 60. Combine like terms: 5x = 60, so x = 12. Getting 20 comes from a common LCD error. Getting 10 comes from using an incorrect denominator guess instead of 12. Getting 60 comes from forgetting to divide by 5 in the last step.",
           difficulty: "hard",
+          why: [null, "Check it: 20/4 + 20/6 = 5 + 3.33, which is about 8.3, not 5.", "Check it: 10/4 + 10/6 = 2.5 + 1.67, which is about 4.2, not 5. Multiply every term by 12 to clear the fractions.", "60 is 5x, not x. After 5x = 60, divide by 5."],
         },
       ],
       traps: [
@@ -2573,6 +2755,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Subtract 4x from both sides: k = 7. Since the x-terms fully cancel, the equation's solutions depend entirely on whether this remaining statement is true. k = 7 makes it 7 = 7, true for every x, giving infinitely many solutions; any other value of k makes it false, giving no solution instead.",
           difficulty: "easy",
+          why: [null, "4 is the coefficient of x, which cancels on both sides. What's left is k = 7.", "With k = 0, you get 0 = 7, which is never true. That gives no solution, not infinitely many.", "With k = −7, you get −7 = 7, which is never true, so there's no solution."],
         },
         {
           q: "For which value of k does the equation 3(x + 2) = 3x + k have infinitely many solutions?",
@@ -2581,6 +2764,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Distribute the 3 on the left: 3x + 6 = 3x + k. Subtract 3x from both sides: 6 = k. The x-terms have fully canceled, so everything now depends on whether the remaining statement is true. If k = 6, the equation becomes 6 = 6, true no matter what x is, meaning every real number is a solution.",
           difficulty: "medium",
+          why: [null, "2 is inside the parentheses. After distributing, the left side is 3x + 6, so k must be 6.", "With k = 3, you get 3x + 6 = 3x + 3, or 6 = 3, which is never true. No solution.", "With k = −6, you get 6 = −6, which is never true. The sign has to match: k = 6."],
         },
         {
           // Deliberately the "no solution" half of the same setup as the
@@ -2590,12 +2774,13 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           // value only, so a student could clear the whole lesson without
           // ever actually working the no-solution case the pattern (and
           // the traps below) are named for.
-          q: "For which value of k does the equation 2x + 5 = 2x + k have no solution?",
+          q: "Which choice describes all values of k for which the equation 2x + 5 = 2x + k has no solution?",
           choices: ["Any k ≠ 5", "5", "-5", "0"],
           answer: 0,
           explain:
             "Subtract 2x from both sides: 5 = k. The x-terms have fully canceled, so the equation's truth now depends only on this remaining statement. It's true only when k = 5, which instead gives infinitely many solutions — every other value of k makes '5 = k' false, so any k ≠ 5 gives no solution.",
           difficulty: "easy",
+          why: [null, "k = 5 makes it 5 = 5, true for every x. That's infinitely many solutions, the opposite of none.", "−5 does give no solution, but it's only one such value. The question asks for all of them: every k except 5.", "0 does give no solution, but it's only one such value. Every k except 5 works."],
         },
         {
           q: "How many solutions does the equation 5x - 3(x + 4) = 2x + 3 have?",
@@ -2604,6 +2789,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Simplify the left side first; distribute and combine like terms: 5x - 3x - 12 = 2x + 3, which becomes 2x - 12 = 2x + 3. The x-terms only visibly match after simplifying, so you have to distribute first to see it. Subtracting 2x from both sides leaves -12 = 3, false for every value of x, so the equation has no solution.",
           difficulty: "medium",
+          why: [null, "The x-terms cancel (2x on both sides), leaving −12 = 3. There's no x left to solve for, so there isn't one solution.", "Infinitely many would need the leftover statement to be true, but −12 = 3 is false.", "A linear equation can't have exactly two solutions. It has none, one, or infinitely many."],
         },
         {
           // The second no-solution example -- unlike the k-based one two
@@ -2616,6 +2802,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Distribute the 0.5 on the left side: 0.5(4x) + 0.5(6) = 2x + 3. The equation is now 2x + 3 = 2x + 5, and the x-terms already match once distributed. Subtract 2x from both sides: 3 = 5 — false for every value of x, so there's no solution. Distributing the decimal coefficient first is the extra step that reveals the x-terms match at all.",
           difficulty: "hard",
+          why: [null, "After distributing, 2x cancels on both sides, leaving 3 = 5. There's no single x that works.", "That would need the leftover statement to be true, but 3 = 5 is false.", "It can be determined: distribute, and the equation becomes 3 = 5, which has no solution."],
         },
       ],
       traps: [
@@ -2635,6 +2822,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The equation already contains '4x,' and the target expression is 'x - 7' — dividing the entire equation by 4 directly produces 'x - 7' on the left side. Divide every term by 4: (4x - 28)/4 = -24/4, giving x - 7 = -6. There's no need to solve for x itself and then subtract 7 separately.",
           difficulty: "easy",
+          why: [null, "Divide every term by 4: 4x/4 − 28/4 = −24/4, which is x − 7 = −6, not −1.", "1 is the value of x itself. The question asks for x − 7, which is −6.", "A sign slip: −24 ÷ 4 is −6, not 6."],
         },
         {
           q: "If 3x + 12 = 27, what is the value of x + 4?",
@@ -2643,6 +2831,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The target expression 'x + 4' is exactly the original equation divided by 3 (3x/3 = x, 12/3 = 4). Divide every term by 3: (3x + 12)/3 = 27/3, giving x + 4 = 9 directly.",
           difficulty: "easy",
+          why: [null, "5 is x itself. The question asks for x + 4, which is 9.", "15 is 3x (27 − 12). The question asks for x + 4.", "A sign slip: 27 ÷ 3 is 9, so x + 4 = 9."],
         },
         {
           q: "If 6x - 9 = 21, what is the value of 2x - 3?",
@@ -2651,6 +2840,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'2x - 3' is exactly one-third of '6x - 9' (since 6x/3 = 2x and 9/3 = 3). Divide the entire equation by 3: (6x - 9)/3 = 21/3, giving 2x - 3 = 7 directly.",
           difficulty: "medium",
+          why: [null, "5 is x itself. The question asks for 2x − 3, which is 7.", "21 is the value of 6x − 9. Divide the whole equation by 3 to get 2x − 3.", "A sign slip: 21 ÷ 3 is +7."],
         },
         {
           q: "If 5x + 2y = 18 and y = 4, what is the value of 5x?",
@@ -2659,6 +2849,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Substitute y = 4 directly into the equation: 5x + 2(4) = 18, which simplifies to 5x + 8 = 18. Subtract 8 from both sides to isolate the exact requested expression '5x': 5x = 10. There's no need to divide by 5 and find x itself, since the question only asks for '5x.'",
           difficulty: "medium",
+          why: [null, "2 is x itself. The question asks for 5x, which is 10.", "18 is the whole left side, 5x + 2y. Subtract 2y = 8 to get 5x.", "26 comes from adding 8 instead of subtracting it. 5x + 8 = 18 gives 5x = 10."],
         },
         {
           q: "If 3x + 2y = 20 and x - 2y = 4, what is the value of 4x?",
@@ -2667,6 +2858,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Adding the two equations directly eliminates y: (3x + 2y) + (x - 2y) = 20 + 4, giving 4x = 24. This happens to be the exact requested expression already — no further work needed. Solving for x individually (x = 6) and then multiplying by 4 would reach the same answer but requires an unnecessary extra step.",
           difficulty: "hard",
+          why: [null, "6 is x itself. The question asks for 4x, which is 24.", "16 comes from subtracting the equations instead of adding them. Adding cancels the 2y terms.", "12 is 2x. Adding the equations gives 4x = 24 directly."],
         },
       ],
       traps: [
@@ -2687,6 +2879,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Eight times a number' translates directly to 8n, and 'is' becomes the equals sign, giving 8n = 56. The other choices each mistranslate 'times' as addition or division instead of multiplication.",
           difficulty: "easy",
+          why: [null, "\"Times\" means multiply, not add. This says eight more than a number.", "This is also addition. \"Eight times a number\" is 8n.", "This divides the number by 8. \"Times\" means multiply."],
         },
         {
           q: "A rabbit eats 25 calories per hour while resting. Which equation gives the total calories, C, the rabbit eats resting for h hours?",
@@ -2695,6 +2888,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'Per hour' signals a rate that gets multiplied by the number of hours: total calories = rate × time, so C = 25h. The other choices each mistranslate the rate relationship as addition, division, or subtraction.",
           difficulty: "easy",
+          why: [null, "25 calories per hour gets multiplied by the hours, not added to them.", "Dividing hours by 25 doesn't give calories. The rate times the time does.", "Subtracting hours from 25 would make calories go down the longer it rests."],
         },
         {
           q: "A number decreased by 12 is the same as 3 times the number. Which equation represents this situation, using n for the number?",
@@ -2703,6 +2897,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'A number decreased by 12' translates to n - 12 — 'decreased by' keeps the same word order as spoken, the number first, then subtract 12. '3 times the number' translates to 3n, and 'is the same as' becomes the equals sign: n - 12 = 3n. Writing '12 - n = 3n' reverses which quantity is subtracted from which.",
           difficulty: "medium",
+          why: [null, "\"A number decreased by 12\" is n − 12. This reverses it into 12 minus the number.", "\"3 times the number\" is 3n, not n/3.", "This subtracts 12 from 3n instead of from the number itself."],
         },
         {
           q: "12 less than a number is 45. Which equation represents this situation, using n for the number?",
@@ -2711,6 +2906,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'12 less than a number' is a reversed-order phrase — despite '12' appearing first in the sentence, it's the number that comes first in the equation, with 12 subtracted from it: n - 12 = 45. Writing '12 - n = 45' is a common error that reverses which quantity is being subtracted from which.",
           difficulty: "medium",
+          why: [null, "\"12 less than a number\" is the number minus 12. This reverses the order.", "\"Less than\" means subtract, not add.", "\"Less than\" means subtract. This multiplies instead."],
         },
         {
           q: "A plant is currently 8 centimeters tall and grows at a constant rate of 2 centimeters per week. Which equation gives the plant's height, H, after w weeks?",
@@ -2719,6 +2915,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Identify the starting value (8, present even at w = 0) and the rate of change (2 centimeters per week, multiplied by w), then combine them: H = 8 + 2w. The other choices each swap which number is the fixed start and which is the rate, or use the wrong operation.",
           difficulty: "hard",
+          why: [null, "This swaps the numbers: it starts at 2 and grows by 8 a week. The plant starts at 8 and grows by 2.", "Same swap: it treats 8 as the weekly growth and 2 as the starting height.", "The plant grows, so its height goes up each week. Subtracting 2w would make it shrink."],
         },
       ],
       traps: [
@@ -2750,6 +2947,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The flat fee (y-intercept) is $3, the amount charged even for zero miles. The rate (slope) is $2 per mile, the amount added for each additional mile. 'C = 3m + 2' swaps which number is the rate and which is the flat fee. 'C = 2m - 3' uses the wrong sign, and 'C = 5m' incorrectly adds the two numbers together into a single rate.",
           diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "y-int = 3", at: "left" }], slopeLabel: "slope = 2" },
           difficulty: "easy",
+          why: [null, "This swaps the numbers: it charges $3 per mile with a $2 fee. The fee is $3 and the rate is $2 per mile.", "The $3 is added as a fee, not subtracted.", "Adding 2 and 3 into one rate charges $5 every mile. The $3 is charged only once."],
         },
         {
           q: "A water tank starts with 200 gallons and drains at a rate of 15 gallons per minute. Which function models the amount of water W remaining after m minutes?",
@@ -2759,6 +2957,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The starting value (y-intercept) is 200 gallons, the amount present at m = 0. The rate (slope) is 15 gallons per minute, but since the tank is draining, the amount is decreasing, so the rate needs a negative sign. 'W = 15m + 200' forgets the negative sign entirely, and 'W = -15m - 200' and 'W = 200m - 15' each misplace the negative sign or swap the roles of the two numbers.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "y-int = 200", at: "left" }], slopeLabel: "slope = -15" },
           difficulty: "medium",
+          why: [null, "The tank drains, so the amount goes down. The rate needs a negative sign.", "The tank starts with 200 gallons, so the 200 is positive. Only the rate is negative.", "This swaps the roles: 200 is the starting amount, not the per-minute rate."],
         },
         {
           q: "A gym charges a $20 sign-up fee plus $15 per month. Which function models the total cost C after m months?",
@@ -2768,6 +2967,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The flat fee (y-intercept) is $20, charged once regardless of months. The rate (slope) is $15 per month. 'C = 20m + 15' swaps which number is the rate and which is the flat fee, 'C = 15m - 20' uses the wrong sign, and 'C = 35m' incorrectly combines the two numbers into a single rate.",
           diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "y-int = 20", at: "left" }], slopeLabel: "slope = 15" },
           difficulty: "easy",
+          why: [null, "This swaps the numbers: it charges $20 a month with a $15 fee. The fee is $20 and the monthly rate is $15.", "The $20 sign-up fee is added to the cost, not subtracted.", "Adding 15 and 20 into one rate charges the $20 fee every month. It's charged once."],
         },
         {
           q: "A candle is 8 inches tall when lit and burns down at a rate that reduces its height by half an inch every 20 minutes. Which function models the candle's height H after t minutes?",
@@ -2777,6 +2977,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The starting value (y-intercept) is 8 inches at t = 0. The tricky part is converting 'half an inch every 20 minutes' into a per-minute rate first: 0.5 / 20 = 0.025 inches per minute, and since the candle is burning down, this rate must be negative. 'H = 0.025t + 8' forgets the negative sign, 'H = -0.5t + 8' forgets to convert the rate to a per-minute basis, and 'H = -0.025t - 8' applies the negative sign to the wrong number.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "y-int = 8", at: "left" }], slopeLabel: "slope = -0.025" },
           difficulty: "medium",
+          why: [null, "The candle burns down, so its height decreases. The rate needs a negative sign.", "The rate has to be per minute: 0.5 inch every 20 minutes is 0.025 inch per minute, not 0.5.", "The candle starts at +8 inches. Only the rate is negative."],
         },
         {
           q: "A moving company charges a flat fee plus a per-mile rate. A 50-mile move costs $350, and a 120-mile move costs $560. Which function models the cost C for a move of m miles?",
@@ -2786,6 +2987,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Unlike a scenario that states the flat fee and rate directly, here both must be derived from two cost/mileage pairs. The rate (slope) is (560 - 350) / (120 - 50) = 210 / 70 = 3 dollars per mile. Using the rate and one data point to find the flat fee: 350 = 3(50) + b, so b = 200, giving C = 3m + 200. 'C = 3m + 350' mistakes one of the cost values for the flat fee, 'C = 7m + 200' uses an incorrect rate, and 'C = 3m - 200' uses the wrong sign on the flat fee.",
           diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "(50, 350)", at: "left" }, { label: "(120, 560)", at: "right" }] },
           difficulty: "hard",
+          why: [null, "$350 is the total for 50 miles, not the flat fee. Solve 350 = 3(50) + b to get b = 200.", "The rate is the change in cost over the change in miles: 210 ÷ 70 = 3, not 7.", "Check it: 3(50) − 200 = −50, not 350. The flat fee is +200."],
         },
       ],
       traps: [
@@ -2806,6 +3008,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The y-intercept is simply the point where the line crosses the y-axis, i.e., where x = 0. The graph shows the line passing through (0, 3) — that point directly is the y-intercept, read straight off the graph with no calculation needed.",
           diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "(0, 3)", at: "left" }, { label: "(2, 7)", at: "right" }] },
           difficulty: "easy",
+          why: [null, "7 is the y-value of the other point, where x = 2. The y-intercept is where x = 0.", "2 is the x-value of the other point. The y-intercept is the y-value where x = 0.", "The line crosses the y-axis at (0, 3). 0 is its x-value there, not its y-value."],
         },
         {
           q: "A line is graphed passing through the marked points (1, 2) and (3, 8). What is the slope of the line?",
@@ -2815,6 +3018,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Compute rise over run between the two marked points: (8 - 2) / (3 - 1) = 6 / 2 = 3. Counting grid squares directly confirms it: from (1,2) to (3,8) is 2 squares right and 6 squares up, matching a slope of 3.",
           diagram: { kind: "lineGraph", direction: "steepPos", points: [{ label: "(1, 2)", at: "left" }, { label: "(3, 8)", at: "right" }] },
           difficulty: "easy",
+          why: [null, "6 is the rise alone. Divide by the run, 3 − 1 = 2, to get a slope of 3.", "2 is the run alone. Slope is rise over run: 6 ÷ 2 = 3.", "This is run over rise, flipped. Slope is rise over run: 6/2 = 3."],
         },
         {
           q: "A line is graphed on axes where each gridline is worth 5 units, not 1. The line crosses the y-axis exactly 2 gridlines above the origin. What is the y-intercept of the line?",
@@ -2824,6 +3028,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The axes are scaled at 5 units per gridline, not the default 1 unit — easy to miss if you count gridlines as if each were worth 1. The line crosses the y-axis 2 gridlines up, and since each gridline equals 5 units, that's 2 × 5 = 10. Answering '2' is the trap that forgets to apply the scale.",
           diagram: { kind: "lineGraph", direction: "gentlePos", points: [{ label: "y-int", at: "left" }] },
           difficulty: "medium",
+          why: [null, "2 counts gridlines as if each were 1 unit. Each is worth 5, so 2 gridlines is 10.", "7 adds 2 and 5. Two gridlines at 5 units each is 2 × 5 = 10.", "5 is the value of one gridline. The line crosses 2 gridlines up: 10."],
         },
         {
           q: "A line is graphed crossing the x-axis at (4, 0) and the y-axis at (0, 8). What is the slope of the line?",
@@ -2833,6 +3038,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Using the two marked points where the line crosses each axis, (4, 0) and (0, 8): slope = (8 - 0) / (0 - 4) = 8 / (-4) = -2. The line falling from upper-left to lower-right on the graph visually confirms a negative slope.",
           diagram: { kind: "lineGraph", direction: "steepNeg", points: [{ label: "(0, 8)", at: "left" }, { label: "(4, 0)", at: "right" }] },
           difficulty: "medium",
+          why: [null, "The line falls from left to right, so the slope is negative: 8 ÷ (0 − 4) = −2.", "This is run over rise, flipped. Slope is rise over run: 8 ÷ (−4) = −2.", "4 is where the line crosses the x-axis, not its slope."],
         },
         {
           q: "A line is graphed on axes where each gridline represents 3 units. The line passes through the marked points (1 gridline right, 4 gridlines up) and (3 gridlines right, 2 gridlines up) from the origin. What is the y-intercept of the line, in actual units?",
@@ -2842,6 +3048,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Convert grid positions to actual coordinates using the scale (3 units per gridline): the two points become (3, 12) and (9, 6). The slope is (6 - 12) / (9 - 3) = -6 / 6 = -1. Using one point and the slope to solve for the y-intercept: 12 = -1(3) + b, so b = 15 — this value isn't a point directly marked on the graph, so it has to be found by extending the line's equation back to x = 0.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "(3, 12)", at: "left" }, { label: "(9, 6)", at: "right" }] },
           difficulty: "hard",
+          why: [null, "12 is the height of the first marked point, not where the line crosses the y-axis.", "−1 is the slope. The y-intercept comes from 12 = −1(3) + b, so b = 15.", "3 is the size of one gridline (or the first point's x-value), not the y-intercept."],
         },
       ],
       traps: [
@@ -2863,6 +3070,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Translate function notation into coordinate pairs: f(0) = 4 means the point (0, 4); f(3) = 13 means the point (3, 13). The slope is (change in output) / (change in input) = (13 - 4) / (3 - 0) = 9 / 3 = 3.",
           diagram: { kind: "lineGraph", direction: "steepPos", points: [{ label: "(0, 4)", at: "left" }, { label: "(3, 13)", at: "right" }] },
           difficulty: "easy",
+          why: [null, "9 is the change in output only. Divide by the change in input, 3, to get 3.", "This is flipped: change in input over change in output. Slope is 9 ÷ 3 = 3.", "4 is f(0), the y-intercept, not the slope."],
         },
         {
           q: "A linear function g has g(-2) = 9 and g(4) = -3. What is the slope of g?",
@@ -2872,6 +3080,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Translate function notation into coordinate pairs: g(-2) = 9 means the point (-2, 9); g(4) = -3 means the point (4, -3). The slope is (-3 - 9) / (4 - (-2)) = -12 / 6 = -2 — the negative numbers make this a good check on sign carefulness.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "(-2, 9)", at: "left" }, { label: "(4, -3)", at: "right" }] },
           difficulty: "medium",
+          why: [null, "The output drops from 9 to −3 as the input rises, so the slope is negative.", "−12 is the change in output only. Divide by the change in input, 6, to get −2.", "The change in input is 4 − (−2) = 6, not 2. Subtracting a negative adds."],
         },
         {
           q: "A linear function h has h(1) = 7 and h(4) = 16. What is the slope of h?",
@@ -2881,6 +3090,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Translate function notation into coordinate pairs: h(1) = 7 means (1, 7); h(4) = 16 means (4, 16). The slope is (16 - 7) / (4 - 1) = 9 / 3 = 3.",
           diagram: { kind: "lineGraph", direction: "steepPos", points: [{ label: "(1, 7)", at: "left" }, { label: "(4, 16)", at: "right" }] },
           difficulty: "easy",
+          why: [null, "9 is the change in output only. Divide by the change in input, 3, to get 3.", "23 adds the two outputs. Slope is the difference in outputs over the difference in inputs.", "This is flipped: change in input over change in output. Slope is 9 ÷ 3 = 3."],
         },
         {
           q: "A linear function k has k(2) = 11 and a slope of 4. What is k(5)?",
@@ -2895,6 +3105,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             slopeLabel: "slope = 4",
           },
           difficulty: "medium",
+          why: [null, "19 adds only two steps of 4. From 2 to 5 is three steps: 11 + 3(4) = 23.", "15 adds only one step of 4. From 2 to 5 is three steps: 11 + 12 = 23.", "44 multiplies 11 by 4. The slope is added once for each 1-unit step, not multiplied."],
         },
         {
           q: "A linear function's values are shown in a table: when x = -3, y = 22; when x = 1, y = 10; when x = 6, y = -5. What is the slope of the function?",
@@ -2904,6 +3115,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Any two points from a linear function's table give the same slope, so pick a convenient pair: (10 - 22) / (1 - (-3)) = -12 / 4 = -3. Checking with the third point, from (1, 10) to (6, -5): (-5 - 10) / (6 - 1) = -15 / 5 = -3, the same value, confirming consistency.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", points: [{ label: "(-3, 22)", at: "left" }, { label: "(6, -5)", at: "right" }] },
           difficulty: "hard",
+          why: [null, "y goes down as x goes up (22, then 10, then −5), so the slope is negative.", "−12 is the change in y only. Divide by the change in x, 4, to get −3.", "22 is a y-value from the table, not the slope."],
         },
       ],
       traps: [
@@ -2922,6 +3134,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Substitute x = 4 into the rule: f(4) = 7(4) + 1 = 28 + 1 = 29.",
           difficulty: "easy",
+          why: [null, "28 is 7(4) without the + 1.", "32 comes from adding 1 before multiplying: 7(4) + 1 is 28 + 1.", "11 adds 7 and 4. The rule multiplies: 7 times 4, then add 1."],
         },
         {
           q: "The function is defined by g(x) = -3x + 10. What is g(-2)?",
@@ -2930,6 +3143,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Substitute x = -2 into the rule, being careful with the sign: g(-2) = -3(-2) + 10 = 6 + 10 = 16 — a negative input multiplied by a negative coefficient produces a positive term.",
           difficulty: "easy",
+          why: [null, "4 treats −3 times −2 as −6. A negative times a negative is positive: +6, so 6 + 10 = 16.", "A sign slip: −3(−2) is +6, and 6 + 10 = +16.", "Check it: −3(−2) + 10 = 16, not 13."],
         },
         {
           q: "The function is defined by h(x) = 5x - 8. For what value of x does h(x) = 27?",
@@ -2937,6 +3151,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Set the rule equal to the given output: 5x - 8 = 27. Add 8 to both sides: 5x = 35. Divide by 5: x = 7.",
           difficulty: "medium",
+          why: [null, "35 is 5x. Divide by 5 to get x = 7.", "3.8 comes from subtracting 8 instead of adding it: 5x = 19. Add 8 to both sides: 5x = 35.", "19 is 27 − 8. You need to add 8 to both sides, then divide by 5."],
         },
         {
           q: "The function is defined by f(x) = (2/3)x + 4. What is f(9)?",
@@ -2944,6 +3159,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Substitute x = 9: f(9) = (2/3)(9) + 4. Simplify the fraction times 9 first: (2/3)(9) = 6, then add: 6 + 4 = 10.",
           difficulty: "medium",
+          why: [null, "6 is (2/3)(9) without the + 4.", "13 adds 9 and 4, skipping the multiplication by 2/3.", "(2/3)(9) is exactly 6, so f(9) = 6 + 4 = 10. There's no decimal."],
         },
         {
           q: "The function is defined by k(x) = 4x - 9. If k(2n) = 15, what is the value of n?",
@@ -2952,6 +3168,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The input here isn't a plain number but an expression, 2n — substitute it exactly as given: k(2n) = 4(2n) - 9 = 8n - 9. Set this equal to the given output: 8n - 9 = 15, so 8n = 24 and n = 3. The input being an expression rather than a plain number doesn't change the method, just the algebra required after substituting.",
           difficulty: "hard",
+          why: [null, "6 is the value of 2n. The question asks for n, which is 3.", "Check it: if n = 1.5, then 2n = 3 and k(3) = 4(3) − 9 = 3, not 15.", "24 is 8n. Divide by 8 to get n = 3."],
         },
       ],
       traps: [
@@ -2983,6 +3200,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Isolate y by moving 4x to the other side: 2y = -4x + 8. Divide every term by 2: y = -2x + 4. The slope is directly readable as the coefficient of x: -2, not the coefficient from the original standard form.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", slopeLabel: "slope = -2" },
           difficulty: "easy",
+          why: [null, "A sign slip: moving 4x across makes it −4x, so y = −2x + 4.", "4 is the x-coefficient in standard form. Solve for y first: y = −2x + 4.", "This forgets to divide by 2. From 2y = −4x + 8, dividing gives −2."],
         },
         {
           q: "What is the slope of the line 6x - 3y = 12?",
@@ -2992,6 +3210,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Isolate y by moving 6x to the other side: -3y = -6x + 12. Divide every term by -3, being careful with the negative signs: y = 2x - 4. Dividing by a negative coefficient here still produces a positive slope, since both terms being divided were negative.",
           diagram: { kind: "lineGraph", direction: "gentlePos", slopeLabel: "slope = 2" },
           difficulty: "medium",
+          why: [null, "Dividing −6x by −3 gives +2x. Two negatives make a positive.", "6 is the x-coefficient in standard form. Solve for y first: y = 2x − 4.", "This forgets to divide by −3 after moving 6x across."],
         },
         {
           q: "What is the slope of the line 2x + y = 5?",
@@ -3000,6 +3219,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain: "Isolate y by subtracting 2x from both sides: y = -2x + 5. The slope is directly readable as the coefficient of x: -2.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", slopeLabel: "slope = -2" },
           difficulty: "easy",
+          why: [null, "A sign slip: moving 2x across makes it −2x, so y = −2x + 5.", "5 is the y-intercept, not the slope.", "−5 is the negative of the intercept. The slope is the coefficient of x: −2."],
         },
         {
           q: "What is the slope of the line 5x + 4y = 20?",
@@ -3009,6 +3229,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Isolate y by moving 5x to the other side: 4y = -5x + 20. Divide every term by 4: y = -(5/4)x + 5. The slope is the coefficient of x: -5/4 — the fraction just needs to be carried through the division carefully.",
           diagram: { kind: "lineGraph", direction: "steepNeg", slopeLabel: "slope = -5/4" },
           difficulty: "medium",
+          why: [null, "A sign slip: moving 5x across makes it −5x, so the slope is −5/4.", "5 is the x-coefficient in standard form. Divide by 4 after isolating y.", "This is the flipped fraction. Slope is −5/4: the x-coefficient over the y-coefficient, with the sign changed."],
         },
         {
           q: "What is the slope of the line -3x - 6y = 18?",
@@ -3018,6 +3239,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Isolate y by adding 3x to both sides: -6y = 3x + 18. Divide every term by -6, tracking both sign flips carefully: y = -0.5x - 3. The slope is the coefficient of x: -1/2.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", slopeLabel: "slope = -1/2" },
           difficulty: "hard",
+          why: [null, "A sign slip: 3x ÷ (−6) = −0.5x, so the slope is negative.", "This is the flipped fraction. 3 divided by −6 is −1/2, not −2.", "This is flipped and has the wrong sign. The slope is 3/(−6) = −1/2."],
         },
       ],
       traps: [
@@ -3038,6 +3260,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The given line has slope 1/2. For a perpendicular line, take the negative reciprocal: flip the fraction (getting 2/1, or 2) and change the sign (making it -2). Since -2 is the negative reciprocal of 1/2, the lines are perpendicular.",
           diagram: { kind: "lineGraph", direction: "gentlePos", slopeLabel: "slope = 1/2", extra: { direction: "steepNeg", label: "perpendicular: slope = -2" } },
           difficulty: "easy",
+          why: [null, "Parallel lines have the same slope. −2 and 1/2 are different.", "The same line would need the same slope, and −2 isn't 1/2.", "−2 is the negative reciprocal of 1/2 (flip it, change the sign), so the lines are perpendicular."],
         },
         {
           q: "A line has slope 3/2. Which relationship does it have to the line 3x - 2y = 8?",
@@ -3047,6 +3270,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Convert to slope-intercept form first: -2y = -3x + 8, so y = (3/2)x - 4. The slope of the given line is 3/2. Parallel lines share the exact same slope (unlike perpendicular lines, which need the negative reciprocal), so a line with slope 3/2 is parallel — this required converting from standard form first before the comparison was possible.",
           diagram: { kind: "lineGraph", direction: "gentlePos", slopeLabel: "slope = 3/2", extra: { direction: "gentlePos", label: "parallel: slope = 3/2" } },
           difficulty: "medium",
+          why: [null, "Perpendicular would need the negative reciprocal, −2/3. The slopes here are equal.", "Only a slope is given. Being the same line would also require the same intercept, which isn't given.", "The given line's slope is 3/2 once you solve for y, so the slopes match. That's parallel."],
         },
         {
           q: "A line has slope 4. Which relationship does it have to the line y = 4x - 1?",
@@ -3055,6 +3279,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain: "The given line's slope is 4. Parallel lines share the exact same slope, so a line with slope 4 is parallel.",
           diagram: { kind: "lineGraph", direction: "steepPos", slopeLabel: "slope = 4", extra: { direction: "steepPos", label: "parallel: slope = 4" } },
           difficulty: "easy",
+          why: [null, "Perpendicular would need the negative reciprocal, −1/4. The slopes here are equal.", "Both slopes are 4, and equal slopes mean parallel.", "Only a slope is given. Being the same line would also require the same intercept, which isn't given."],
         },
         {
           q: "A line has slope 2. Which relationship does it have to the line 2x + 4y = 16?",
@@ -3064,6 +3289,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Convert to slope-intercept form first: 4y = -2x + 16, so y = -0.5x + 4. The given slope is -1/2. For a perpendicular line, take the negative reciprocal: flip the fraction (2/1) and change the sign, giving 2, which matches the described line.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", slopeLabel: "slope = -1/2", extra: { direction: "steepPos", label: "perpendicular: slope = 2" } },
           difficulty: "medium",
+          why: [null, "Parallel would need the same slope. The given line's slope is −1/2, not 2.", "The same line would need the same slope. −1/2 and 2 are different.", "2 is the negative reciprocal of −1/2 (their product is −1), so they're perpendicular."],
         },
         {
           q: "Two lines are given: 4x + 6y = 12 and 6x - 4y = 8. Are these two lines parallel, perpendicular, or neither?",
@@ -3073,6 +3299,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Convert both to slope-intercept form. Line 1: 6y = -4x + 12, so y = -(2/3)x + 2, slope = -2/3. Line 2: -4y = -6x + 8, so y = (3/2)x - 2, slope = 3/2. Multiplying the two slopes gives (-2/3)(3/2) = -1, confirming they are negative reciprocals of each other, so the lines are perpendicular.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", slopeLabel: "slope = -2/3", extra: { direction: "steepPos", label: "slope = 3/2" } },
           difficulty: "hard",
+          why: [null, "Parallel lines have equal slopes. These are −2/3 and 3/2.", "(−2/3)(3/2) = −1, so the slopes are negative reciprocals. That's perpendicular.", "The slopes are different, so they can't be the same line."],
         },
       ],
       traps: [
@@ -3097,6 +3324,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "3 multiplies x, making it the coefficient — a per-notebook rate. 50 stands alone, representing a fixed amount present even when x = 0, revenue from some source separate from notebook sales.",
           difficulty: "easy",
+          why: [null, "The price per notebook is 3, the number multiplied by x. 50 stands alone.", "x is the number of notebooks. 50 isn't attached to x at all.", "Revenue keeps growing as x grows, so 50 isn't a maximum. It's the starting amount when x = 0."],
         },
         {
           q: "The equation y = 5x + 200 models the total cost, in dollars, of renting a hall for an event with x guests. What does the 5 represent?",
@@ -3110,6 +3338,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "5 multiplies x, making it the coefficient. A coefficient tied to the number of guests represents a per-guest rate; the 200, by contrast, is the flat rental fee charged regardless of guest count.",
           difficulty: "easy",
+          why: [null, "The flat fee is 200, the number that stands alone. 5 is multiplied by the guest count.", "x is the number of guests. 5 is multiplied by x, so it's a per-guest amount.", "Nothing in the equation sets a maximum. 5 is the cost added per guest."],
         },
         {
           q: "A store sells two sizes of candles. The equation 4.51x + 6.07y = 896.86 represents last month's total sales, where x is the number of smaller candles sold and y is the number of larger candles sold. What does 6.07 represent?",
@@ -3123,6 +3352,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "6.07 multiplies y, the number of larger candles. Since the equation totals dollar sales, this term must represent dollars earned specifically from larger candles, making 6.07 the price of one larger candle — not the smaller candle's price (4.51, tied to x) or the total (896.86).",
           difficulty: "medium",
+          why: [null, "The smaller candles are x, and x is multiplied by 4.51. 6.07 goes with y.", "y is the number of larger candles. 6.07 is multiplied by y, so it's a price.", "The total sales is 896.86, on the right side of the equation."],
         },
         {
           q: "The equation x + y = 1,440 represents the number of minutes of daylight, x, and minutes of non-daylight, y, in a day. What does the 1,440 represent?",
@@ -3136,6 +3366,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Neither x nor y is multiplied by 1,440 — it stands alone as the equation's total. Since x and y together make up all the minutes in a day, 1,440 must represent the total number of minutes in a full day, not a rate or either variable's individual value.",
           difficulty: "medium",
+          why: [null, "x is the minutes of daylight. 1,440 is what x and y add up to.", "y is the minutes of non-daylight. 1,440 is the total of both.", "1,440 isn't multiplied by anything; it's the fixed total of x + y, not a rate."],
         },
         {
           q: "A company's weekly profit is given by P = 45n - 12n - 900, where n is the number of units produced. After simplifying the equation, what does the simplified coefficient of n represent?",
@@ -3149,6 +3380,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Before interpreting anything, simplify by combining like terms: 45n - 12n - 900 = 33n - 900. In the original equation, 45 was per-unit revenue and 12 was per-unit cost, but the simplified coefficient, 33, already combines both, representing net profit per unit rather than either piece alone.",
           difficulty: "hard",
+          why: [null, "45 was the per-unit revenue, but after subtracting 12, the combined 33 is net profit per unit.", "12 was the per-unit cost. The simplified 33 combines revenue and cost.", "The fixed cost is 900, the term with no n attached."],
         },
       ],
       traps: [
@@ -3169,6 +3401,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Each adult ticket contributes $12, so adult revenue is 12a; each child ticket contributes $8, so child revenue is 8c. The two revenues together equal the given total: 12a + 8c = 840.",
           difficulty: "easy",
+          why: [null, "This swaps the prices. Adults pay $12 and children $8, so it's 12a + 8c.", "Subtracting a and c from 840 has no meaning here. The revenue simply equals 840.", "This charges $20 for every ticket, adults and children alike. Each type has its own price."],
         },
         {
           q: "A farm has both chickens and cows. Chickens have 2 legs and cows have 4 legs. Which equation shows that the animals on the farm have a total of 172 legs, where h is the number of chickens and w is the number of cows?",
@@ -3177,6 +3410,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Each chicken contributes 2 legs, so chicken legs total 2h; each cow contributes 4 legs, so cow legs total 4w. Together they equal the given total: 2h + 4w = 172.",
           difficulty: "easy",
+          why: [null, "This gives chickens 4 legs and cows 2. It's 2 per chicken and 4 per cow.", "Subtracting h and w from 172 has no meaning here. The legs simply total 172.", "This counts animals, not legs. Each animal has 2 or 4 legs."],
         },
         {
           q: "A gym charges a one-time $50 enrollment fee plus $30 per month of membership. Which equation gives the total amount paid, T, after m months of membership?",
@@ -3185,6 +3419,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The enrollment fee is paid once, regardless of how many months pass — it's a fixed constant, not multiplied by anything. The monthly charge, $30, is multiplied by the number of months, m: T = 50 + 30m.",
           difficulty: "medium",
+          why: [null, "This swaps the numbers: $30 once and $50 a month. The fee is $50 once, $30 a month.", "This charges the $50 fee every month. It's paid only once.", "Adding 50 and 30 into one monthly charge charges the fee every month. It's a one-time cost."],
         },
         {
           q: "A rectangular garden's perimeter is 60 feet. Which equation relates its length, l, and width, w?",
@@ -3193,6 +3428,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Recall the perimeter formula for a rectangle: P = 2l + 2w, since there are two lengths and two widths. Substituting the given perimeter gives 2l + 2w = 60.",
           difficulty: "medium",
+          why: [null, "l + w is only half the perimeter. A rectangle has two lengths and two widths.", "l × w is the area, not the perimeter.", "Perimeter adds all four sides. Nothing gets subtracted."],
         },
         {
           q: "A chemist mixes a solution that is 20% acid with a solution that is 50% acid to create 12 liters of a mixture. Which equation shows that the resulting mixture is 30% acid, where x is the number of liters of the 20% solution and y is the number of liters of the 50% solution?",
@@ -3201,6 +3437,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The total acid contributed by each solution is its concentration times its volume: 0.20x from the first, 0.50y from the second. The final mixture's total acid content is its concentration times its total volume: 0.30(12) = 3.6. Setting the sum of the contributed acid equal to that total gives 0.20x + 0.50y = 3.6.",
           difficulty: "hard",
+          why: [null, "0.30 is the concentration, not the amount of acid. The mixture has 0.30 × 12 = 3.6 liters of acid.", "The percents must be decimals times volume, and 30 isn't the total acid. The total acid is 3.6 liters.", "12 is the total volume of the mixture, not the amount of acid in it."],
         },
       ],
       traps: [
@@ -3220,6 +3457,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Substitute y = 5: 3x + 2(5) = 22, which simplifies to 3x + 10 = 22. Subtract 10: 3x = 12. Divide by 3: x = 4.",
           difficulty: "easy",
+          why: [null, "Check it: 3(6) + 2(5) = 28, not 22.", "12 is 3x. Divide by 3 to get x = 4.", "17 comes from subtracting 5 instead of 2(5). y is multiplied by 2, so subtract 10."],
         },
         {
           q: "The equation 4a - b = 15 relates a and b. If a = 6, what is the value of b?",
@@ -3228,6 +3466,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Substitute a = 6: 4(6) - b = 15, which simplifies to 24 - b = 15. Subtract 24 from both sides: -b = -9. Multiply both sides by -1: b = 9 — solving for a variable with a negative coefficient requires this extra sign flip at the end.",
           difficulty: "easy",
+          why: [null, "−9 is −b, not b. Multiply both sides by −1: b = 9.", "39 comes from adding 15 to 24. Check: 4(6) − 39 = −15, not 15.", "Check it: 4(6) − 3 = 21, not 15."],
         },
         {
           q: "A city recorded x + y = 1,440 minutes of daylight (x) and non-daylight (y) in a day. If the city had 620 minutes of daylight, how many minutes of non-daylight did it have?",
@@ -3235,6 +3474,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Substitute x = 620 into the equation: 620 + y = 1,440. Subtract 620 from both sides: y = 820.",
           difficulty: "medium",
+          why: [null, "620 is the daylight minutes, x. The question asks for y.", "1,440 is the total. Subtract the daylight: 1,440 − 620 = 820.", "2,060 adds 620 to the total instead of subtracting it."],
         },
         {
           q: "The equation 2x + 5y = 34 relates x and y. If y = 2x, what is the value of x?",
@@ -3243,6 +3483,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Here the 'known value' isn't a plain number but an expression in terms of the other variable — substitute y = 2x directly into the equation: 2x + 5(2x) = 34, which simplifies to 12x = 34, so x = 34/12 = 17/6. Getting 17/3 comes from dividing by 6 instead of 12, and getting 34/7 comes from adding the coefficients incorrectly.",
           difficulty: "medium",
+          why: [null, "This divides 34 by 6 instead of 12. After substituting, 2x + 10x = 12x.", "34/7 treats y as x instead of 2x. Substitute y = 2x: 2x + 5(2x) = 12x.", "Check it: 2(2) + 5(4) = 24, not 34."],
         },
         {
           q: "A phone plan's monthly cost is modeled by C = 25 + 0.10m, where m is minutes used beyond the plan's included minutes. If a customer's bill was $52.50, how many minutes beyond the included minutes did they use?",
@@ -3251,6 +3492,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Substitute the known cost, C = 52.50: 52.50 = 25 + 0.10m. Subtract 25 from both sides: 27.50 = 0.10m. Divide both sides by 0.10: m = 275.",
           difficulty: "hard",
+          why: [null, "27.5 is 0.10m. Divide by 0.10 to get m.", "2.75 multiplies 27.5 by 0.10 instead of dividing by it.", "525 divides the whole bill by 0.10, forgetting to subtract the $25 base first."],
         },
       ],
       traps: [
@@ -3281,6 +3523,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Adding the two equations directly cancels the y-terms (since one is +y and the other is -y): (x + y) + (x - y) = 10 + 2, giving 2x = 12, so x = 6.",
           difficulty: "easy",
+          why: [null, "4 is y, not x. Adding the equations gives 2x = 12, so x = 6.", "8 is 10 − 2. Add the equations instead: 2x = 12, so x = 6.", "12 is 2x. Divide by 2 to get x = 6."],
         },
         {
           q: "Solve the system: 3x + 2y = 16, 3x - 5y = -12. What is y?",
@@ -3289,6 +3532,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both equations already have a matching 3x term, so subtracting one equation from the other eliminates x. Subtracting carefully, distributing the negative sign across the whole second equation: (3x + 2y) - (3x - 5y) = 16 - (-12), giving 7y = 28, so y = 4.",
           difficulty: "medium",
+          why: [null, "A sign slip: 16 − (−12) = 28, and 2y − (−5y) = 7y, so y = +4.", "28 is 7y. Divide by 7 to get y = 4.", "7 is the coefficient of y after subtracting. y = 28 ÷ 7 = 4."],
         },
         {
           q: "Solve the system: x + 2y = 12, x - 2y = 4. What is x?",
@@ -3296,6 +3540,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Adding the two equations directly cancels the y-terms: (x + 2y) + (x - 2y) = 12 + 4, giving 2x = 16, so x = 8.",
           difficulty: "easy",
+          why: [null, "Check it: if x = 4, the first equation gives y = 4, but then 4 − 2(4) = −4, not 4.", "16 is 2x. Divide by 2 to get x = 8.", "2 is y, not x."],
         },
         {
           q: "Solve the system: y = 2x + 1, 3x + y = 16. What is x?",
@@ -3304,6 +3549,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The first equation already has y isolated, so substitution is faster here than forcing elimination. Substituting y = 2x + 1 into the second equation: 3x + (2x + 1) = 16, giving 5x + 1 = 16, so x = 3.",
           difficulty: "medium",
+          why: [null, "Check it: if x = 5, then y = 11, and 3(5) + 11 = 26, not 16.", "15 is 5x. Divide by 5 to get x = 3.", "17/5 comes from adding 1 instead of subtracting it: 5x + 1 = 16 gives 5x = 15."],
         },
         {
           q: "Solve the system: x + 2y = 11, 3x - y = 5. What is y?",
@@ -3312,6 +3558,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The x-coefficients don't already match (1 and 3), so direct elimination won't cancel anything yet. Multiplying the first equation by 3 so its x-coefficient matches the second gives 3x + 6y = 33. Subtracting the second equation from this new version: (3x + 6y) - (3x - y) = 33 - 5, giving 7y = 28, so y = 4.",
           difficulty: "hard",
+          why: [null, "33 is the right side after multiplying the first equation by 3, not y.", "28 is 7y. Divide by 7 to get y = 4.", "3 is x, not y."],
         },
       ],
       traps: [
@@ -3332,6 +3579,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Compare the slopes: both are 2, identical. Compare the y-intercepts: 1 versus -3, different. Same slope with different intercepts means the lines are parallel and never intersect, so there's no solution, without needing to solve anything further.",
           diagram: { kind: "systemGraph", line1Direction: "gentlePos", line2Direction: "gentlePos", parallel: true },
           difficulty: "easy",
+          why: [null, "One solution needs different slopes. Both slopes here are 2.", "Infinitely many would need the same intercept too, but 1 and −3 differ. These lines are parallel.", "It can be determined by comparing slopes and intercepts: same slope, different intercepts means no solution."],
         },
         {
           q: "How many solutions does this system have? 2x + y = 5 and 4x + 2y = 10",
@@ -3341,6 +3589,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Convert both to slope-intercept form before comparing anything. First equation: y = -2x + 5. Second equation: 2y = -4x + 10, which simplifies to y = -2x + 5 as well. Both the slope (-2) and the y-intercept (5) match exactly — this isn't just two parallel lines, it's the exact same line written two different ways, so every point on the line is a solution.",
           diagram: { kind: "systemGraph", line1Direction: "gentleNeg", line2Direction: "gentleNeg", sameLine: true },
           difficulty: "medium",
+          why: [null, "No solution needs different intercepts, but both equations become y = −2x + 5. They're the same line.", "One solution needs different slopes. Both slopes are −2.", "It can be determined: the second equation is the first one doubled, so they're the same line."],
         },
         {
           q: "How many solutions does this system have? y = 3x - 2 and y = -x + 6",
@@ -3349,6 +3598,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain: "Compare the slopes: 3 versus -1, different. Different slopes always mean exactly one solution, without needing to solve anything further.",
           diagram: { kind: "systemGraph", line1Direction: "steepPos", line2Direction: "gentleNeg", solutionLabel: "?" },
           difficulty: "easy",
+          why: [null, "No solution needs the same slope. The slopes here are 3 and −1.", "Infinitely many needs the same line. These have different slopes.", "It can be determined: different slopes always cross exactly once."],
         },
         {
           q: "How many solutions does this system have? 2x + y = 7 and 4x + 2y = 9",
@@ -3358,6 +3608,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Convert both to slope-intercept form first. Equation 1: y = -2x + 7. Equation 2: 2y = -4x + 9, so y = -2x + 4.5. Both have slope -2, identical, but the intercepts (7 versus 4.5) are different. Same slope with different intercepts means the lines are parallel, so there's no solution.",
           diagram: { kind: "systemGraph", line1Direction: "gentleNeg", line2Direction: "gentleNeg", parallel: true },
           difficulty: "medium",
+          why: [null, "Infinitely many needs the same intercept too. Here it's 7 versus 4.5, so the lines are parallel.", "One solution needs different slopes. Both slopes are −2.", "It can be determined: same slope, different intercepts means no solution."],
         },
         {
           q: "How many solutions does this system have? -3x + 6y = 12 and x - 2y = -4",
@@ -3367,6 +3618,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Convert both to slope-intercept form. Equation 1: 6y = 3x + 12, so y = 0.5x + 2. Equation 2: -2y = -x - 4, so y = 0.5x + 2. Both the slope and the intercept match exactly — despite looking like different equations at first glance, they're actually the same line (equation 1 is -3 times equation 2), so every point on the line is a solution.",
           diagram: { kind: "systemGraph", line1Direction: "gentlePos", line2Direction: "gentlePos", sameLine: true },
           difficulty: "hard",
+          why: [null, "No solution needs different intercepts, but both equations become y = 0.5x + 2.", "One solution needs different slopes. Both slopes are 0.5.", "It can be determined: the first equation is −3 times the second, so they're the same line."],
         },
       ],
       traps: [
@@ -3389,6 +3641,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain: "The solution to a system, read from a graph, is simply the point where the two lines cross. That marked point is (3, 5).",
           diagram: { kind: "systemGraph", line1Direction: "steepPos", line2Direction: "gentleNeg", solutionLabel: "(3, 5)" },
           difficulty: "easy",
+          why: [null, "This swaps the coordinates. The point is x = 3, y = 5, written (3, 5).", "(3, 0) is on the x-axis. The lines cross at y = 5.", "(0, 5) is on the y-axis. The lines cross at x = 3."],
         },
         {
           q: "Two lines are graphed. They cross at a marked grid point 4 units right and 2 units up from the origin. What is the solution (x, y) to the system?",
@@ -3398,6 +3651,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Convert the grid description directly into coordinates: 4 units right means x = 4, 2 units up means y = 2. The solution is the point where the lines actually cross, which is exactly this marked point.",
           diagram: { kind: "systemGraph", line1Direction: "gentlePos", line2Direction: "steepNeg", solutionLabel: "(4, 2)" },
           difficulty: "easy",
+          why: [null, "This swaps the coordinates. 4 right is x = 4 and 2 up is y = 2.", "(4, 0) is on the x-axis. The crossing point is 2 units up.", "(0, 2) is on the y-axis. The crossing point is 4 units right."],
         },
         {
           q: "Two lines are graphed: one crosses the y-axis at (0, 6), the other crosses the y-axis at (0, 1), and the two lines cross each other at the point (2, 4). What is the solution to the system?",
@@ -3407,6 +3661,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "A system's 'solution' specifically means the point where the two lines cross each other, not either line's own y-intercept. The y-intercepts, (0, 6) and (0, 1), describe where each line individually crosses the y-axis, not the answer to this question. The solution is the shared intersection point, (2, 4).",
           diagram: { kind: "systemGraph", line1Direction: "gentleNeg", line2Direction: "steepPos", solutionLabel: "(2, 4)" },
           difficulty: "medium",
+          why: [null, "(0, 6) is where one line crosses the y-axis, not where the two lines cross each other.", "(0, 1) is the other line's y-intercept, not the intersection.", "This combines the two y-intercept values. The solution is where the lines meet: (2, 4)."],
         },
         {
           q: "The graphs of a linear equation and a nonlinear equation are shown, intersecting at exactly one marked point where x = -1 and y = 6. What is the solution (x, y) to this system?",
@@ -3415,6 +3670,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Even though one graph is a curve rather than a straight line, the method is identical: the solution is simply the point where the two graphs cross. The marked intersection point is at x = -1, y = 6.",
           difficulty: "medium",
+          why: [null, "This swaps the coordinates. The point is x = −1, y = 6.", "The x-value is −1, not 1.", "The y-value is 6, not −6."],
         },
         {
           q: "The graphs of a line and a parabola are shown, crossing at two marked points: (-2, 3) and (5, 10). If the solution to the system must have a positive x-value, what is the solution (x, y)?",
@@ -3423,6 +3679,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The graphs cross at two points, since a line can intersect a curve more than once, unlike the earlier examples, which had exactly one intersection. Applying the given constraint (positive x-value): (-2, 3) has a negative x-value, so it's excluded, while (5, 10) has a positive x-value and satisfies the constraint.",
           difficulty: "hard",
+          why: [null, "(−2, 3) is an intersection, but its x-value is negative. The question requires a positive x.", "This swaps the coordinates of (5, 10).", "This swaps the coordinates of (−2, 3), which is excluded anyway."],
         },
       ],
       traps: [
@@ -3453,6 +3710,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Subtract 6 from both sides: -3x > -6. Divide both sides by -3, and because we're dividing by a negative number, flip the inequality sign from > to <, giving x < 2.",
           difficulty: "easy",
+          why: [null, "Dividing by −3 flips the inequality sign. It becomes x < 2.", "The boundary is +2: −6 ÷ −3 = 2.", "The boundary is +2, and the sign flips to <."],
         },
         {
           q: "Solve: 8 - 4x ≤ 20",
@@ -3461,6 +3719,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Subtract 8 from both sides: -4x ≤ 12. Divide both sides by -4, and since that's a negative number, flip the inequality sign from ≤ to ≥, giving x ≥ -3.",
           difficulty: "medium",
+          why: [null, "Dividing by −4 flips the sign: ≤ becomes ≥.", "12 ÷ (−4) is −3, not 3.", "This has the wrong boundary and doesn't flip the sign."],
         },
         {
           q: "Solve: 5x + 2 < 17",
@@ -3468,6 +3727,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Subtract 2 from both sides: 5x < 15. Divide both sides by 5, a positive number, so the sign doesn't flip: x < 3.",
           difficulty: "easy",
+          why: [null, "Dividing by 5, a positive number, doesn't flip the sign. It stays <.", "Check x = 4: 5(4) + 2 = 22, which isn't less than 17. The boundary is 15 ÷ 5 = 3.", "15 is 5x. Divide by 5, and keep the < sign."],
         },
         {
           q: "Solve: -2(x - 3) ≥ 10",
@@ -3476,6 +3736,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Distribute the -2: -2x + 6 ≥ 10. Subtract 6 from both sides: -2x ≥ 4. Divide both sides by -2, since that's negative, flip the inequality sign: x ≤ -2.",
           difficulty: "medium",
+          why: [null, "Dividing by −2 flips the sign: ≥ becomes ≤.", "Check x = 0, which fits x ≤ 2: −2(0 − 3) = 6, which isn't ≥ 10.", "Check x = 8: −2(8 − 3) = −10, which isn't ≥ 10."],
         },
         {
           q: "Solve: 3 - 4x > 7x - 25",
@@ -3484,6 +3745,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Move the x-terms to one side by adding 4x to both sides: 3 > 11x - 25. Add 25 to both sides: 28 > 11x. Divide both sides by 11, and since 11 is positive, the inequality sign does not flip, even though a negative coefficient (-4x) appeared earlier: x < 28/11.",
           difficulty: "hard",
+          why: [null, "Dividing by 11, a positive number, doesn't flip the sign. It stays <.", "Check x = 3, which fits x < 4: 3 − 12 = −9 isn't greater than 21 − 25 = −4.", "A sign slip on the boundary: 28 > 11x gives x < 28/11."],
         },
       ],
       traps: [
@@ -3503,6 +3765,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Translate 'at least 90 average' into an inequality: (85 + 92 + 88 + x)/4 ≥ 90. Multiply both sides by 4: 265 + x ≥ 360. Subtract 265: x ≥ 95 — 'at least' translates to ≥, not a strict >.",
           difficulty: "easy",
+          why: [null, "90 is the needed average. With 85, 92, and 88 so far, a 90 only brings the average to 88.75.", "Check it: (85 + 92 + 88 + 93) ÷ 4 = 89.5, still below 90.", "88 brings the average to 88.25, below 90."],
         },
         {
           q: "A rider has $12. Each snack from a vending machine costs $1.75, and the rider needs to keep at least $2.50 left over for the return bus fare. What is the maximum number of snacks n the rider can buy?",
@@ -3511,6 +3774,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Translate 'needs to keep at least $2.50' into an inequality about what's left after buying n snacks: 12 - 1.75n ≥ 2.50. Subtracting 12 and dividing by -1.75 (flipping the sign, since that's negative) gives n ≤ 5.43. Since n must be a whole number of snacks, the largest whole number satisfying the inequality is 5.",
           difficulty: "medium",
+          why: [null, "Six snacks cost $10.50, leaving $1.50, less than the $2.50 needed for the bus.", "Four snacks works, but so does five ($8.75, leaving $3.25). The question asks for the maximum.", "You can't buy part of a snack. Round down to the largest whole number: 5."],
         },
         {
           q: "A parking garage charges $4 for the first hour and $2 for each additional hour. If a customer wants to pay no more than $16 total, what is the maximum number of additional hours a, beyond the first, they can park?",
@@ -3518,6 +3782,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Translate 'no more than $16' into an inequality: 4 + 2a ≤ 16. Subtract 4: 2a ≤ 12. Divide by 2: a ≤ 6.",
           difficulty: "easy",
+          why: [null, "8 forgets the $4 first hour. Subtract it first: 4 + 2a ≤ 16 gives a ≤ 6.", "Five works, but six costs exactly $16, which is still \"no more than $16.\"", "12 is 2a, the money left for extra hours. At $2 each, that's 6 hours."],
         },
         {
           q: "A shipment is rejected if it weighs more than 500 pounds. Which inequality represents the weight w, in pounds, of a shipment that will be rejected?",
@@ -3526,6 +3791,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'More than 500 pounds' is strictly greater than, not '500 or more,' so the correct inequality is w > 500, not w ≥ 500. Contrast with 'at least 500,' which would include 500 itself (≥) — 'more than' specifically excludes the boundary value.",
           difficulty: "medium",
+          why: [null, "\"More than 500\" doesn't include 500 itself. ≥ would reject a 500-pound shipment too.", "This describes shipments lighter than 500 pounds, the ones that are accepted.", "This describes shipments that are 500 pounds or less, which aren't rejected."],
         },
         {
           q: "A shipping company requires packages to weigh at least 2 pounds but no more than 70 pounds to qualify for standard shipping. Which choice correctly gives the compound inequality for the qualifying weights w, and states whether a 70-pound package qualifies?",
@@ -3539,6 +3805,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'At least 2 pounds' translates to w ≥ 2, and 'no more than 70 pounds' translates to w ≤ 70 — both boundary values are included, giving 2 ≤ w ≤ 70. Since 70 is included by 'no more than' (≤, not a strict <), a package weighing exactly 70 pounds does qualify.",
           difficulty: "hard",
+          why: [null, "\"At least\" and \"no more than\" both include their boundary values, so the signs are ≤, and 70 qualifies.", "The inequality is right, but ≤ 70 includes 70, so a 70-pound package does qualify.", "\"At least 2\" includes 2, so the left side should be ≤, not <."],
         },
       ],
       traps: [
@@ -3562,6 +3829,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Substitute the point's coordinates: 1 > 2(3) - 4. The right side simplifies to 2, so this checks whether 1 > 2 is true — it isn't.",
           difficulty: "easy",
+          why: [null, "1 > 2 is false, not true. The point doesn't satisfy it.", "The test compares 1 > 2, which is false. Rewriting it as 1 < 2 changes the inequality being checked.", "Comparing the point's own coordinates isn't the test. Substitute into y > 2x − 4."],
         },
         {
           q: "Which of the following points satisfies the inequality y ≤ -x + 5: (1, 5) or (4, 3)?",
@@ -3575,6 +3843,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Test (1, 5): 5 ≤ -1 + 5 = 4 is false, since 5 is not ≤ 4. Test (4, 3): 3 ≤ -4 + 5 = 1 is also false, since 3 is not ≤ 1. Since both given points fail the test, neither satisfies the inequality.",
           difficulty: "easy",
+          why: [null, "(1, 5) gives 5 ≤ 4, which is false.", "(4, 3) gives 3 ≤ 1, which is false.", "Both points fail: 5 ≤ 4 and 3 ≤ 1 are both false."],
         },
         {
           q: "A table lists three (x, y) pairs: (0, 4), (2, 9), and (5, 15). Does every point in this table satisfy the inequality y ≥ 2x + 3?",
@@ -3588,6 +3857,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Test (0, 4): 4 ≥ 2(0) + 3 = 3, true. Test (2, 9): 9 ≥ 2(2) + 3 = 7, true. Test (5, 15): 15 ≥ 2(5) + 3 = 13, true. Since all three points satisfy the inequality, the whole table is consistent with it.",
           difficulty: "medium",
+          why: [null, "(0, 4) gives 4 ≥ 3, which is true, so it satisfies the inequality.", "(2, 9) gives 9 ≥ 7, which is true.", "(5, 15) gives 15 ≥ 13, which is true."],
         },
         {
           q: "A graph shows a solid boundary line passing through (0, 2) and (4, 0), with shading below the line. Which inequality does the graph represent?",
@@ -3596,9 +3866,10 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Find the boundary line's equation using its two given points: slope = (0-2)/(4-0) = -1/2, and the y-intercept is 2, giving y = -1/2 x + 2. The line is solid, meaning the inequality includes equality. Testing a point clearly below the line, like (0, 0): 0 ≤ -1/2(0) + 2 = 2 is true, so shading below corresponds to ≤.",
           difficulty: "hard",
+          why: [null, "Shading below the line means y is less than the line, so the sign is ≤, not ≥.", "The boundary line is solid, so points on it count. That's ≤, not <.", "This is shading above a dashed line. The graph shades below a solid line."],
         },
         {
-          q: "A system consists of two inequalities. Point (2, 6) satisfies y ≥ x + 3 but not y ≤ -x + 10. Does (2, 6) satisfy the full system?",
+          q: "A system consists of two inequalities. Point (2, 6) satisfies y ≥ x + 3 but not y ≤ -x + 7. Does (2, 6) satisfy the full system?",
           choices: [
             "No, because it must satisfy both inequalities to solve the system",
             "Yes, because it satisfies at least one of the inequalities",
@@ -3607,8 +3878,9 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "A point satisfies a system only if it satisfies every inequality in that system simultaneously. The point fails the second inequality, y ≤ -x + 10, so it cannot be a solution to the system as a whole, regardless of satisfying the first one.",
+            "A point satisfies a system only if it satisfies every inequality in that system simultaneously. The point fails the second inequality, y ≤ -x + 7, so it cannot be a solution to the system as a whole, regardless of satisfying the first one.",
           difficulty: "hard",
+          why: [null, "A system needs every inequality satisfied at once. Satisfying one isn't enough.", "Satisfying the first inequality isn't enough. The point must satisfy both.", "It can be determined: the point fails the second inequality, so it isn't a solution."],
         },
       ],
       traps: [
@@ -3639,6 +3911,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Recognize the shape: a single squared term minus another squared term (x² and 9 = 3²) — the difference-of-squares pattern. Apply it directly: a² - b² = (a-b)(a+b), with a = x and b = 3, giving (x-3)(x+3).",
           difficulty: "easy",
+          why: [null, "Multiply it out: (x − 9)(x + 1) = x² − 8x − 9, not x² − 9.", "(x − 3)² = x² − 6x + 9. A difference of squares has no middle term and ends in −9.", "(x + 3)² = x² + 6x + 9, which has a middle term and a +9."],
         },
         {
           q: "Factor completely: 4x² - 25",
@@ -3647,6 +3920,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Recognize the shape, even with a coefficient present: 4x² is (2x)², and 25 is 5² — still a difference of squares, just with a squared term instead of a bare variable. Applying a² - b² = (a-b)(a+b) with a = 2x and b = 5 gives (2x-5)(2x+5).",
           difficulty: "medium",
+          why: [null, "Multiply it out: (4x − 25)(x + 1) = 4x² − 21x − 25, which has an extra middle term.", "(2x − 5)² = 4x² − 20x + 25. A difference of squares has no middle term.", "Multiply it out: (4x − 5)(x + 5) = 4x² + 15x − 25, which has an extra middle term."],
         },
         {
           q: "Factor completely: x² - 16",
@@ -3654,6 +3928,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Recognize the shape: x² and 16 = 4² — a difference of squares. Applying the pattern gives (x-4)(x+4).",
           difficulty: "easy",
+          why: [null, "Multiply it out: (x − 16)(x + 1) = x² − 15x − 16.", "(x − 4)² = x² − 8x + 16, which has a middle term and a +16.", "Multiply it out: (x − 8)(x + 2) = x² − 6x − 16."],
         },
         {
           q: "Factor completely: x² + 10x + 25",
@@ -3662,6 +3937,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Check whether the middle term is twice the product of the square roots of the first and last terms: √(x²) = x, √25 = 5, and 2 × x × 5 = 10x — it matches exactly, confirming a perfect square trinomial: a² + 2ab + b² = (a+b)², giving (x+5)².",
           difficulty: "medium",
+          why: [null, "x + 25 isn't a factorization of a squared expression. The x² term would be lost.", "(x + 5)(x − 5) = x² − 25. It has no 10x term.", "Multiply it out: (x + 10)(x + 5) = x² + 15x + 50."],
         },
         {
           q: "Factor completely: x² - 3x - 40",
@@ -3670,6 +3946,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This doesn't match difference-of-squares or perfect-square-trinomial shapes — it needs simple trinomial factoring. Find two numbers that multiply to -40 and add to -3: since the product is negative, the numbers have opposite signs; testing pairs, -8 and 5 work (-8 × 5 = -40, -8 + 5 = -3), giving (x-8)(x+5).",
           difficulty: "hard",
+          why: [null, "The signs are swapped: (x + 8)(x − 5) = x² + 3x − 40. The middle term needs to be −3x.", "Multiply it out: (x − 40)(x + 1) = x² − 39x − 40.", "Multiply it out: (x − 4)(x + 10) = x² + 6x − 40."],
         },
       ],
       traps: [
@@ -3689,6 +3966,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Factor the numerator: x² - 4 is a difference of squares, factoring to (x-2)(x+2). Rewriting the fraction as (x-2)(x+2) / (x-2) and canceling the shared factor of (x-2) leaves x+2.",
           difficulty: "easy",
+          why: [null, "x − 2 is the factor that cancels. What's left is x + 2.", "The numerator factors to (x − 2)(x + 2). Nothing produces x + 4.", "You can't cancel terms that are added or subtracted. Factor first, then cancel the (x − 2)."],
         },
         {
           q: "Simplify the rational expression: (x² - 5x + 6)/(x - 3)",
@@ -3697,6 +3975,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The numerator isn't a difference of squares — it's a trinomial, so factor it by finding two numbers that multiply to 6 and add to -5: those numbers are -2 and -3, so x² - 5x + 6 factors to (x-2)(x-3). Canceling the shared (x-3) factor leaves x-2.",
           difficulty: "medium",
+          why: [null, "The numerator factors to (x − 2)(x − 3). The remaining factor is x − 2, with a minus.", "x − 3 is the factor that cancels with the denominator. What's left is x − 2.", "−5 is the middle coefficient, not a factor. Factor the numerator: (x − 2)(x − 3)."],
         },
         {
           q: "Simplify the rational expression: (x² - 25)/(x + 5)",
@@ -3704,6 +3983,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Factor the numerator: x² - 25 is a difference of squares, factoring to (x-5)(x+5). Canceling the shared (x+5) factor leaves x-5.",
           difficulty: "easy",
+          why: [null, "x + 5 is the factor that cancels. What's left is x − 5.", "The numerator factors to (x − 5)(x + 5), not (x − 25).", "You can't cancel terms that are added or subtracted. Factor first: (x − 5)(x + 5)."],
         },
         {
           q: "Simplify the rational expression: (x² - 9)/(x² + x - 6)",
@@ -3712,6 +3992,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Factor the numerator: x² - 9 is a difference of squares, (x-3)(x+3). Factor the denominator too: x² + x - 6 needs two numbers multiplying to -6 and adding to 1, which are 3 and -2, giving (x+3)(x-2). Canceling the shared (x+3) factor leaves (x-3)/(x-2).",
           difficulty: "medium",
+          why: [null, "x + 3 appears in both numerator and denominator, so it cancels. The x − 3 stays on top.", "The denominator factors to (x + 3)(x − 2), so the leftover factor is x − 2, not x + 2.", "After canceling (x + 3), the denominator still has (x − 2) left."],
         },
         {
           q: "Simplify the rational expression: (x² - 9)/(3 - x)",
@@ -3720,6 +4001,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Factor the numerator as before: (x-3)(x+3). The denominator, (3-x), isn't identical to (x-3), but it is its negative: 3 - x = -(x-3). Rewriting the denominator that way and canceling the shared (x-3) factor leaves a negative sign behind: -(x+3).",
           difficulty: "hard",
+          why: [null, "3 − x is the negative of x − 3, so canceling leaves a negative sign: −(x + 3).", "The factor that cancels is (x − 3). What's left is −(x + 3), not −(x − 3).", "x − 3 is the factor that cancels with the denominator. The leftover is −(x + 3)."],
         },
       ],
       traps: [
@@ -3739,6 +4021,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Both terms share the same base, x. When multiplying same-base powers, add the exponents: 5 + 3 = 8, giving x^8.",
           difficulty: "easy",
+          why: [null, "Multiplying same-base powers adds the exponents (5 + 3), not multiplies them.", "Subtracting exponents is for dividing. For multiplying, add: 5 + 3 = 8.", "Nothing doubles the coefficient. x⁵ · x³ has a coefficient of 1."],
         },
         {
           q: "Rewrite x^(1/2) using radical notation.",
@@ -3746,6 +4029,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "A rational exponent of 1/n corresponds to the nth root. Here n = 2, so x^(1/2) means the square root of x.",
           difficulty: "easy",
+          why: [null, "x² means x squared. An exponent of 1/2 means the square root.", "The 2 in 1/2 tells you which root; it's not a coefficient in front.", "1/√x would be x to the −1/2. The exponent here is positive."],
         },
         {
           q: "Simplify: (x³y²)⁴ / x²",
@@ -3754,6 +4038,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Apply the power-of-a-power rule to each factor inside the parentheses: (x³)⁴ = x^12, and (y²)⁴ = y^8, giving x^12 y^8. Dividing by x², since the bases match, subtract the exponents: x^(12-2) = x^10. The y term has no matching factor to combine with in the denominator, so it stays as is: x^10 y^8.",
           difficulty: "medium",
+          why: [null, "This forgets to divide by x². Subtract the exponents: x¹² ÷ x² = x¹⁰.", "Dividing powers subtracts exponents (12 − 2 = 10); it doesn't divide them (12 ÷ 2).", "(y²)⁴ multiplies the exponents: y⁸, not y⁶."],
         },
         {
           q: "Rewrite x^(2/3) using radical notation.",
@@ -3767,6 +4052,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "For a rational exponent m/n, the denominator n gives the root and the numerator m gives the power. Here n = 3 (cube root) and m = 2 (squared), so x^(2/3) equals the cube root of x², or equivalently, the cube root of x, squared.",
           difficulty: "medium",
+          why: [null, "This swaps the root and the power. The denominator, 3, is the root; the numerator, 2, is the power.", "x to the 3/2 is a different number. The exponent here is 2/3.", "This drops the power of 2. x to the 2/3 is the cube root, squared."],
         },
         {
           q: "If x > 0 and x^(3/4) = 8, what is the value of x?",
@@ -3775,6 +4061,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Rewrite the rational exponent as a radical: x^(3/4) means the 4th root of x, cubed, which equals 8. To undo the cube, take the cube root of both sides: the 4th root of x = 8^(1/3) = 2. To undo the 4th root, raise both sides to the 4th power: x = 2^4 = 16.",
           difficulty: "hard",
+          why: [null, "Check it: 6 to the 3/4 is about 3.8, not 8.", "8 is the value of x to the 3/4. Solve for x: the 4th root of x is 2, so x = 16.", "Check it: 64 to the 3/4 is about 22.6, not 8."],
         },
       ],
       traps: [
@@ -3794,6 +4081,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Line up like terms by matching powers of x: (2x³ + x³) + (-5x + 4x) + (1 - 6), giving 3x³ - x - 5.",
           difficulty: "easy",
+          why: [null, "The x terms are −5x + 4x, which is −x, not +x.", "The constants are 1 − 6 = −5, not +5.", "The x terms add: −5x + 4x = −x. This subtracts 4x instead."],
         },
         {
           q: "Expand: (x + 4)(x + 7)",
@@ -3801,6 +4089,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Distribute each term in the first factor across the second: x(x+7) + 4(x+7) = x² + 7x + 4x + 28, which combines to x² + 11x + 28.",
           difficulty: "easy",
+          why: [null, "This swaps the numbers: the middle term is 4 + 7 = 11, and the constant is 4 × 7 = 28.", "The middle term needs both 7x and 4x, which make 11x.", "The constant is 4 × 7 = 28, not 4 + 7."],
         },
         {
           q: "Simplify: (5x² - 3x + 8) - (2x² - 6x + 1)",
@@ -3809,6 +4098,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Subtracting a polynomial means distributing a negative sign across every one of its terms: 5x² - 3x + 8 - 2x² + 6x - 1 — the middle term's sign flips from -6x to +6x. Combining like terms: (5x² - 2x²) + (-3x + 6x) + (8 - 1) = 3x² + 3x + 7.",
           difficulty: "medium",
+          why: [null, "Subtracting −6x adds 6x: −3x + 6x = +3x.", "The constant is 8 − 1 = 7. Subtracting the 1 isn't the same as adding it.", "The x² terms subtract: 5x² − 2x² = 3x², not 7x²."],
         },
         {
           q: "Expand: (2x - 3)(x² + 4x - 1)",
@@ -3817,6 +4107,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Distribute each term of the binomial across all three terms of the trinomial: 2x(x²+4x-1) - 3(x²+4x-1) = (2x³ + 8x² - 2x) + (-3x² - 12x + 3). Combining like terms gives 2x³ + 5x² - 14x + 3.",
           difficulty: "medium",
+          why: [null, "−3 must multiply every term too: that adds −3x² and −12x.", "The x terms are −2x and −12x, which make −14x.", "The x² terms are 8x² and −3x², which make +5x²."],
         },
         {
           q: "If P(x) = 3x² - 2x + 5 and Q(x) = x² + 4x - 7, what is 2P(x) - Q(x)?",
@@ -3825,6 +4116,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Apply the coefficient 2 to every term of P(x) first: 2P(x) = 6x² - 4x + 10. Distribute the negative sign across every term of Q(x): -Q(x) = -x² - 4x + 7. Adding the results together, combining like terms: (6x² - x²) + (-4x - 4x) + (10 + 7) = 5x² - 8x + 17.",
           difficulty: "hard",
+          why: [null, "Check the constant: 2(5) − (−7) = 17, not −2.", "The x terms: 2(−2x) − 4x = −8x, not +8x.", "Subtracting −7 adds 7: 10 + 7 = 17, not 3."],
         },
       ],
       traps: [
@@ -3857,6 +4149,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The equation is already in 'expression = 0' form. Look for two numbers that multiply to -10 and add to -3: -5 and 2 work. Factoring gives (x - 5)(x + 2) = 0, and the zero product property gives x = 5 or x = -2.",
           diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-2", "5"] },
           difficulty: "easy",
+          why: [null, "The signs are flipped. (x − 5)(x + 2) = 0 gives x = 5 or x = −2.", "Check x = 2: 4 − 6 − 10 = −12, not 0.", "Check x = −5: 25 + 15 − 10 = 30, not 0."],
         },
         {
           q: "Solve for d: (d - 30)(d + 30) - 7 = -7",
@@ -3866,6 +4159,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This isn't in 'expression = 0' form yet — add 7 to both sides first: (d-30)(d+30) = 0. The expression is now already factored, so applying the zero product property directly gives d = 30 or d = -30.",
           diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-30", "30"] },
           difficulty: "easy",
+          why: [null, "The −7s cancel when you add 7 to both sides. They aren't solutions; the factors (d − 30)(d + 30) give them.", "d + 30 = 0 also works, so d = −30 is a second solution.", "Check d = 0: (−30)(30) − 7 = −907, not −7."],
         },
         {
           q: "Solve for x: 2x² + 5x - 3 = 0",
@@ -3875,6 +4169,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The leading coefficient isn't 1, which makes integer factoring trickier, so use the quadratic formula: a=2, b=5, c=-3, giving x = (-5 ± √(25-4(2)(-3))) / 4 = (-5 ± √49) / 4 = (-5 ± 7) / 4, so x = 1/2 or x = -3.",
           diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-3", "1/2"] },
           difficulty: "medium",
+          why: [null, "The signs are flipped. (−5 + 7)/4 = 1/2 and (−5 − 7)/4 = −3.", "Check x = 1: 2 + 5 − 3 = 4, not 0.", "The signs are flipped. The solutions are 1/2 and −3."],
         },
         {
           q: "Solve for x: 3x² = 12x",
@@ -3884,6 +4179,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Move everything to one side: 3x² - 12x = 0. Factor out the greatest common factor first: 3x(x - 4) = 0. The zero product property gives 3x = 0 or x - 4 = 0, so x = 0 or x = 4 — dividing both sides by x instead would illegally lose the x = 0 solution.",
           diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["0", "4"] },
           difficulty: "medium",
+          why: [null, "Dividing both sides by x throws away the solution x = 0. Factor instead: 3x(x − 4) = 0.", "x − 4 = 0 gives x = +4, not −4.", "3 is the coefficient, not a solution. Check: 3(9) = 27, but 12(3) = 36."],
         },
         {
           q: "Solve for x: x² + 6x + 4 = 0",
@@ -3898,6 +4194,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Integer factors of 4 that add to 6 don't exist, so this won't factor cleanly. Use the quadratic formula with a=1, b=6, c=4: x = (-6 ± √(36-16)) / 2 = (-6 ± √20) / 2. Simplifying the radical, √20 = 2√5, so x = -3 ± √5.",
           diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-3-√5", "-3+√5"] },
           difficulty: "hard",
+          why: [null, "A sign slip: the formula starts with −b = −6, so the center is −3.", "The whole numerator is divided by 2, so −6 becomes −3, not just the radical.", "√20 also gets divided by 2: √20 = 2√5, so (−6 ± 2√5)/2 = −3 ± √5."],
         },
       ],
       traps: [
@@ -3917,6 +4214,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Split into two cases: x - 5 = 10, or x - 5 = -10. Solving each gives x = 15 or x = -5.",
           difficulty: "easy",
+          why: [null, "Check x = 5: |5 − 5| = 0, not 10. The second case is x − 5 = −10, so x = −5.", "The signs are flipped. x − 5 = 10 gives 15, and x − 5 = −10 gives −5.", "Check x = 5: |0| = 0, not 10. There are two solutions: 15 and −5."],
         },
         {
           q: "Solve for x: |2x + 3| = 9",
@@ -3925,6 +4223,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Split into two cases: 2x + 3 = 9, or 2x + 3 = -9. Solving the first gives 2x = 6, so x = 3; solving the second gives 2x = -12, so x = -6.",
           difficulty: "easy",
+          why: [null, "Check x = 6: |12 + 3| = 15, not 9.", "Check x = −3: |−6 + 3| = 3, not 9.", "Check x = 6: |15| = 15, not 9. The solutions are 3 and −6."],
         },
         {
           q: "Solve for x: |4x - 1| = -6",
@@ -3933,6 +4232,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Before splitting into cases, check the right side: it's -6, a negative number. An absolute value expression can never equal a negative number, no matter what x is, so this equation has no solution.",
           difficulty: "medium",
+          why: [null, "Those values make 4x − 1 equal 6 or −6, but an absolute value can never equal −6.", "An absolute value is never negative, so it can't equal −6 for any x.", "No x works: an absolute value can't equal a negative number."],
         },
         {
           q: "Solve for x: 3|x + 2| - 4 = 11",
@@ -3941,6 +4241,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Isolate the absolute value expression before splitting into cases: add 4 to both sides (3|x+2| = 15), then divide by 3 (|x+2| = 5). Splitting into two cases, x + 2 = 5 or x + 2 = -5, gives x = 3 or x = -7.",
           difficulty: "medium",
+          why: [null, "Check x = 5: 3|7| − 4 = 17, not 11.", "Check x = −2: 3|0| − 4 = −4, not 11.", "Check x = 7: 3|9| − 4 = 23, not 11."],
         },
         {
           q: "Find the sum of all solutions to the equation |2x - 7| = 3x - 1.",
@@ -3949,6 +4250,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Split into two cases: 2x - 7 = 3x - 1, giving x = -6; or 2x - 7 = -(3x - 1), giving 5x = 8, so x = 8/5. Since the right side contains a variable, each candidate must be checked in the original equation — substituting x = -6 gives 3(-6) - 1 = -19, and an absolute value can't equal a negative number, so x = -6 is extraneous and must be discarded (a student who forgets this check would wrongly report the sum as -22/5). Only x = 8/5 is valid, so the sum of all solutions is 8/5.",
           difficulty: "hard",
+          why: [null, "This includes x = −6, but then the right side is 3(−6) − 1 = −19, and an absolute value can't be negative.", "x = −6 is extraneous: it makes the right side −19. The only real solution is 8/5.", "A sign slip: 5x = 8 gives x = +8/5."],
         },
       ],
       traps: [
@@ -3972,6 +4274,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain: "Identify a=1, b=4, c=5. The discriminant is b² - 4ac = 16 - 20 = -4. Since it's negative, there are no real solutions.",
           diagram: { kind: "parabolaGraph", opensUp: true, vertexLabel: "No real solutions" },
           difficulty: "easy",
+          why: [null, "One solution needs a discriminant of exactly 0. Here it's 16 − 20 = −4.", "Two solutions need a positive discriminant. Here it's −4.", "It can be determined: the discriminant is 16 − 20 = −4, which is negative."],
         },
         {
           q: "How many real solutions does 2x² - 4x + 2 = 0 have?",
@@ -3981,6 +4284,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Identify a=2, b=-4, c=2. The discriminant is b² - 4ac = 16 - 16 = 0. A discriminant of exactly zero is a distinct case from both positive and negative — it means exactly one repeated real solution.",
           diagram: { kind: "parabolaGraph", opensUp: true, touchesAxis: true, vertexLabel: "1 solution" },
           difficulty: "medium",
+          why: [null, "No real solutions needs a negative discriminant. Here it's 16 − 16 = 0.", "Two solutions needs a positive discriminant. Here it's exactly 0.", "It can be determined: the discriminant is 0, which means one repeated solution."],
         },
         {
           q: "How many real solutions does x² - 6x + 8 = 0 have?",
@@ -3989,6 +4293,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain: "Identify a=1, b=-6, c=8. The discriminant is b² - 4ac = 36 - 32 = 4. Since it's positive, there are two real solutions.",
           diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["", ""], vertexLabel: "2 solutions" },
           difficulty: "easy",
+          why: [null, "No real solutions needs a negative discriminant. Here it's 36 − 32 = 4.", "One solution needs a discriminant of 0. Here it's 4, positive.", "It can be determined: the discriminant is 4, which is positive."],
         },
         {
           q: "How many real solutions does -2x² + 3x - 5 = 0 have?",
@@ -3998,6 +4303,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Identify a=-2, b=3, c=-5. Computing the discriminant carefully with the negative values: b² - 4ac = 9 - 4(-2)(-5) = 9 - 40 = -31. Since it's negative, there are no real solutions.",
           diagram: { kind: "parabolaGraph", opensUp: false, vertexLabel: "No real solutions" },
           difficulty: "medium",
+          why: [null, "One solution needs a discriminant of 0. Here it's 9 − 40 = −31.", "Two solutions need a positive discriminant. Here it's −31.", "It can be determined: 9 − 4(−2)(−5) = −31, which is negative."],
         },
         {
           q: "For what values of k does the equation x² + 6x + k = 0 have two real solutions?",
@@ -4007,6 +4313,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Set up the discriminant using the given coefficients, with k as the unknown: b² - 4ac = 36 - 4k. 'Two real solutions' requires the discriminant to be strictly positive (not just non-negative, since exactly one solution needs it to equal zero), so 36 - 4k > 0, giving k < 9.",
           diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["", ""], vertexLabel: "2 solutions when k < 9" },
           difficulty: "hard",
+          why: [null, "k > 9 makes 36 − 4k negative, which gives no real solutions.", "At k = 9, the discriminant is 0, which gives only one solution. It must be strictly less than 9.", "k = 9 gives a discriminant of 0, which is exactly one solution, not two."],
         },
       ],
       traps: [
@@ -4026,6 +4333,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Square both sides to eliminate the square root: x + 3 = 25, so x = 22. Check by substituting back into the original equation: √(22 + 3) = √25 = 5, which matches the right side — the solution is valid, not extraneous.",
           difficulty: "easy",
+          why: [null, "2 is 5 − 3. Square both sides first: x + 3 = 25.", "25 is x + 3. Subtract 3 to get x = 22.", "28 adds 3 instead of subtracting it: x + 3 = 25 gives x = 22."],
         },
         {
           q: "Solve for x: √(2x - 1) = x - 2",
@@ -4034,6 +4342,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Square both sides: 2x - 1 = (x-2)² = x² - 4x + 4. Rearranging: x² - 6x + 5 = 0, which factors to (x-1)(x-5) = 0, giving candidates x = 1 and x = 5. Checking both in the original equation: for x = 1, the left side is 1 but the right side is -1, so x = 1 is extraneous; for x = 5, both sides equal 3, so x = 5 is the only valid solution.",
           difficulty: "medium",
+          why: [null, "x = 1 is extraneous: √1 = 1, but 1 − 2 = −1. Only 5 works.", "Check x = 1: the left side is 1 and the right side is −1. It doesn't work.", "Check x = −5: √(−11) isn't a real number."],
         },
         {
           q: "Solve for x: √(x - 2) = 4",
@@ -4041,6 +4350,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           answer: 0,
           explain: "Square both sides: x - 2 = 16, so x = 18. Check: √(18-2) = √16 = 4, which matches — valid, not extraneous.",
           difficulty: "easy",
+          why: [null, "14 subtracts 2 instead of adding it: x − 2 = 16 gives x = 18.", "16 is x − 2. Add 2 to get x = 18.", "2 is 4 − 2. Square both sides first: x − 2 = 16."],
         },
         {
           q: "Solve for x: 3√(x + 1) = 12",
@@ -4049,6 +4359,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Before squaring, isolate the radical completely — divide both sides by 3 first: √(x+1) = 4. Squaring both sides: x + 1 = 16, so x = 15. Checking in the original equation: 3√(15+1) = 3(4) = 12, which matches.",
           difficulty: "medium",
+          why: [null, "3 is 4 − 1, skipping the squaring step. √(x + 1) = 4 means x + 1 = 16.", "Check x = 35: 3√36 = 18, not 12.", "11 is 12 − 1. Divide by 3 and square first: x + 1 = 16."],
         },
         {
           q: "Solve for x: √(3x + 7) = x - 1",
@@ -4057,6 +4368,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Square both sides: 3x + 7 = (x-1)² = x² - 2x + 1. Rearranging into standard form: 0 = x² - 5x - 6, which factors to (x-6)(x+1) = 0, giving x = 6 or x = -1. Checking both: x = 6 gives √25 = 5 and 6-1 = 5, valid; x = -1 gives √4 = 2 but -1-1 = -2, and a square root can never equal a negative number, so it fails.",
           difficulty: "hard",
+          why: [null, "x = −1 is extraneous: √4 = 2, but −1 − 1 = −2.", "Check x = −1: the left side is 2 and the right side is −2. It doesn't work.", "Check x = 7: √28 isn't 6."],
         },
       ],
       traps: [
@@ -4080,6 +4392,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Substitute the linear expression for y into the quadratic equation: x + 1 = x² - 5. Rearranging: 0 = x² - x - 6, which factors to (x-3)(x+2) = 0, giving x = 3 or x = -2. Applying the constraint x > 0 keeps x = 3 and rejects x = -2.",
           diagram: { kind: "lineParabolaSystem", opensUp: true, points: [{ label: "x = -2", accepted: false }, { label: "x = 3", accepted: true }] },
           difficulty: "easy",
+          why: [null, "x = −2 is a solution to the system, but the question requires x > 0.", "The condition x > 0 rules out −2, leaving only 3.", "Check x = 1: y = 1 + 1 = 2, but 1² − 5 = −4. The equations don't match."],
         },
         {
           q: "Solve the system: y = 2x, y = x² - 3x. What are the possible values of x?",
@@ -4088,6 +4401,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain: "Substitute y = 2x into the second equation: 2x = x² - 3x. Rearranging: 0 = x² - 5x, which factors to x(x-5) = 0, giving x = 0 or x = 5.",
           diagram: { kind: "lineParabolaSystem", opensUp: true, points: [{ label: "x = 0", accepted: true }, { label: "x = 5", accepted: true }] },
           difficulty: "easy",
+          why: [null, "Dividing by x throws away x = 0. Factor instead: x(x − 5) = 0.", "x − 5 = 0 also works, so x = 5 is a second solution.", "x − 5 = 0 gives x = +5, not −5."],
         },
         {
           q: "Solve the system: y = 4x, y = x² - 12. What is the value of x, given x > 0?",
@@ -4097,6 +4411,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Substitute 4x for y: 4x = x² - 12. Rearranging: 0 = x² - 4x - 12, which factors to (x-6)(x+2) = 0, giving x = 6 or x = -2. Applying the constraint x > 0 keeps x = 6.",
           diagram: { kind: "lineParabolaSystem", opensUp: true, points: [{ label: "x = -2", accepted: false }, { label: "x = 6", accepted: true }] },
           difficulty: "medium",
+          why: [null, "x = −2 is a solution, but the question requires x > 0.", "The condition x > 0 rules out −2, leaving only 6.", "Check x = 4: 4(4) = 16, but 16 − 12 = 4. The equations don't match."],
         },
         {
           q: "Solve the system: x + y = 10, y = x² - 4x + 6. What is the value of x, given x < 3?",
@@ -4106,6 +4421,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Solve the linear equation for y: y = 10 - x. Substituting into the quadratic equation: 10 - x = x² - 4x + 6. Rearranging: 0 = x² - 3x - 4, which factors to (x-4)(x+1) = 0, giving x = 4 or x = -1. Applying the constraint x < 3 rejects x = 4 and keeps x = -1.",
           diagram: { kind: "lineParabolaSystem", opensUp: true, points: [{ label: "x = 4", accepted: false }, { label: "x = -1", accepted: true }] },
           difficulty: "medium",
+          why: [null, "4 is a solution, but the question requires x < 3.", "The condition x < 3 rules out 4, leaving only −1.", "Check x = 3: y = 10 − 3 = 7, but 9 − 12 + 6 = 3. The equations don't match."],
         },
         {
           q: "Does the system y = x + 8, y = x² + 2x + 10 have any real solutions?",
@@ -4115,6 +4431,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Substitute the linear expression into the quadratic equation: x + 8 = x² + 2x + 10. Rearranging into standard form: 0 = x² + x + 2. Rather than forcing a factoring attempt, check the discriminant: 1² - 4(1)(2) = -7, which is negative, meaning the line and the parabola never intersect.",
           diagram: { kind: "lineParabolaSystem", opensUp: true, points: [], noSolutions: true },
           difficulty: "hard",
+          why: [null, "One solution needs a discriminant of 0. x² + x + 2 has 1 − 8 = −7.", "Two solutions need a positive discriminant. Here it's −7.", "No graph needed: the discriminant of x² + x + 2 is −7, so they never meet."],
         },
       ],
       traps: [
@@ -4136,6 +4453,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "'Passes through (5, 0)' means f(5) = 0. Substitute x = 5: (5-3)(5-k) = 2(5-k) = 0, so k = 5. Evaluate f(0) using k = 5: f(0) = (0-3)(0-5) = (-3)(-5) = 15.",
           diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["3", "5"] },
           difficulty: "easy",
+          why: [null, "A sign slip: (−3)(−5) is +15.", "8 adds 3 and 5. f(0) multiplies: (0 − 3)(0 − 5) = 15.", "2 is 5 − 3, the first factor at x = 5. f(0) = (−3)(−5) = 15."],
         },
         {
           q: "The function g is defined by g(x) = (x + 2)(x - k). The graph of y = g(x) passes through (6, 0). What is g(0)?",
@@ -4145,6 +4463,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "'Passes through (6, 0)' means g(6) = 0. Substitute x = 6: (6+2)(6-k) = 8(6-k) = 0, so k = 6. Evaluate g(0) using k = 6: g(0) = (0+2)(0-6) = 2(-6) = -12.",
           diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-2", "6"] },
           difficulty: "easy",
+          why: [null, "A sign slip: (2)(−6) is −12.", "8 is the first factor at x = 6. g(0) = (2)(−6) = −12.", "g(0) = (0 + 2)(0 − 6) = −12, not −8."],
         },
         {
           q: "The function g is defined by g(x) = (x + 14)(t - x), where t is a constant. The graph of y = g(x) passes through the point (24, 0). What is g(0)?",
@@ -4154,6 +4473,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "'(24, 0)' means g(24) = 0. Substitute x = 24: (24+14)(t-24) = 38(t-24) = 0; since 38 ≠ 0, t = 24. Substitute x = 0 and t = 24 into g(x) = (x+14)(t-x): g(0) = (0+14)(24-0) = 14 × 24 = 336.",
           diagram: { kind: "parabolaGraph", opensUp: false, rootLabels: ["-14", "24"] },
           difficulty: "medium",
+          why: [null, "A sign slip: (14)(24) is +336.", "38 is 24 + 14. g(0) multiplies: 14 × 24 = 336.", "g(0) = (0 + 14)(24 − 0) = 14 × 24 = 336, not 560."],
         },
         {
           q: "The function h is defined by h(x) = (x - 4)(x + k). If h(2) = -6, what is the value of k?",
@@ -4163,6 +4483,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Unlike a root (where the output is 0), here the given point tells us h(2) = -6, a nonzero value — the same substitution method still applies, just without one factor automatically equaling zero. Substitute x = 2: (2-4)(2+k) = -2(2+k) = -6. Dividing both sides by -2: 2 + k = 3, so k = 1.",
           diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-1", "4"] },
           difficulty: "medium",
+          why: [null, "3 is the value of 2 + k. Subtract 2 to get k = 1.", "Check k = −1: (2 − 4)(2 − 1) = −2, not −6.", "Check k = −3: (−2)(−1) = 2, not −6."],
         },
         {
           q: "The function p is defined by p(x) = (x + 6)(x - m), where m is a constant. The graph of y = p(x) passes through (10, 0). What is p(-2)?",
@@ -4172,6 +4493,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "'(10, 0)' means p(10) = 0. Substitute x = 10: (10+6)(10-m) = 16(10-m) = 0; since 16 ≠ 0, m = 10. Substitute x = -2 and m = 10 into p(x) = (x+6)(x-m): p(-2) = (-2+6)(-2-10) = (4)(-12) = -48.",
           diagram: { kind: "parabolaGraph", opensUp: true, rootLabels: ["-6", "10"] },
           difficulty: "hard",
+          why: [null, "A sign slip: (4)(−12) is −48.", "With m = 10, p(−2) = (−2 + 6)(−2 − 10) = (4)(−12) = −48, not −32.", "64 multiplies 16 by 4. Plug in x = −2: (4)(−12) = −48."],
         },
       ],
       traps: [
@@ -4203,6 +4525,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "A quadratic in vertex form a(x-h)² + k has vertex (h, k) with no calculation needed. Here the function subtracts 2 inside the parentheses, so h = 2, and it adds 5, so k = 5, giving vertex (2, 5). (-2, 5) comes from flipping the sign on h and mistakenly treating (x-2) as meaning h = -2; (2, -5) flips the sign on k instead; (-2, -5) flips both.",
           diagram: { kind: "parabolaGraph", opensUp: true, vertexLabel: "(2, 5)" },
           difficulty: "easy",
+          why: [null, "(x − 2) means h = +2. The sign inside the parentheses is the opposite of h's sign.", "+ 5 outside means k = +5. The y-value keeps its sign.", "Both signs are flipped. (x − 2)² + 5 has its vertex at (2, 5)."],
         },
         {
           q: "The vertex of f(x) = -2(x + 3)² - 1 is which of the following points?",
@@ -4212,6 +4535,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Matching to a(x-h)² + k, the function has (x+3), which means x - (-3), so h = -3, not h = 3 — since the template subtracts h, a plus sign inside means h is negative. It also subtracts 1, so k = -1, giving vertex (-3, -1). (3, -1) comes from the common sign error of reading (x+3) as h = 3. (-3, 1) and (3, 1) additionally flip the sign of k. The negative leading coefficient (-2) doesn't affect how h and k are read; it just makes this vertex a maximum instead of a minimum.",
           diagram: { kind: "parabolaGraph", opensUp: false, vertexLabel: "(-3, -1)" },
           difficulty: "medium",
+          why: [null, "(x + 3) means x − (−3), so h = −3, not 3.", "− 1 outside means k = −1. The y-value keeps its sign.", "Both signs are flipped. The vertex is (−3, −1)."],
         },
         {
           q: "The vertex of f(x) = (x - 7)² + 2 is which of the following points?",
@@ -4221,6 +4545,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since the function has (x - 7), h = 7, and since it adds 2, k = 2, giving vertex (7, 2) read directly from vertex form. The other choices all come from flipping the sign of h, k, or both.",
           diagram: { kind: "parabolaGraph", opensUp: true, vertexLabel: "(7, 2)" },
           difficulty: "easy",
+          why: [null, "(x − 7) means h = +7.", "+ 2 outside means k = +2.", "Both signs are flipped. The vertex is (7, 2)."],
         },
         {
           q: "The vertex of f(x) = 3(x + 4)² is which of the following points?",
@@ -4230,6 +4555,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The function has (x+4), meaning x - (-4), so h = -4. There's no constant added or subtracted after the squared term, which means k = 0, not that k is missing entirely — the vertex's y-coordinate is exactly 0, giving vertex (-4, 0). (4, 0) comes from misreading the sign on h. (-4, 3) comes from mistakenly using the leading coefficient 3 as k. (0, -4) swaps the coordinates.",
           diagram: { kind: "parabolaGraph", opensUp: true, vertexLabel: "(-4, 0)" },
           difficulty: "medium",
+          why: [null, "(x + 4) means x − (−4), so h = −4.", "3 is the leading coefficient, not k. With nothing added outside, k = 0.", "This swaps the coordinates. The vertex is (h, k) = (−4, 0)."],
         },
         {
           q: "A quadratic is given as y - 4 = -(x - 6)². What is the vertex of this parabola?",
@@ -4239,6 +4565,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This isn't yet written in the standard y = a(x-h)² + k template — isolating y first by adding 4 to both sides gives y = -(x-6)² + 4, so h = 6 and k = 4, giving vertex (6, 4). (6, -4) comes from skipping the rearranging step and keeping the original equation's subtracted 4. (-6, 4) and (-6, -4) come from misreading the sign on h.",
           diagram: { kind: "parabolaGraph", opensUp: false, vertexLabel: "(6, 4)" },
           difficulty: "hard",
+          why: [null, "Rearrange first: y = −(x − 6)² + 4. Moving the 4 across makes it +4.", "(x − 6) means h = +6.", "Both are off: h is +6, and after rearranging, k is +4."],
         },
       ],
       traps: [
@@ -4259,6 +4586,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This is repeated percentage decay, which needs an exponential model, not a linear one that just subtracts a flat amount each year. Since the value decreases by 12% each year, 88% remains each year, giving a base of 0.88 (not the raw rate 0.12), so 30000(0.88)^2 = 23,232 is correct. 30000(0.12)^2 mistakes the decay rate for the base. 30000 - 2(0.12)(30000) applies the loss linearly, subtracting a flat 12% of the original value each year instead of compounding. 30000(1.12)^2 uses a growth base for a decay scenario.",
           diagram: { kind: "exponentialGraph", growth: false, yInterceptLabel: "$30,000" },
           difficulty: "easy",
+          why: [null, "0.12 is the amount lost each year. What remains each year is 88%, so the base is 0.88.", "This subtracts the same $3,600 each year. A 12% loss applies to the current value, so it compounds.", "1.12 is growth. The value is decreasing, so the base is 1 − 0.12 = 0.88."],
         },
         {
           q: "A population of bacteria grows by 8% every hour, starting from 500 bacteria. Which function models the population P after t hours?",
@@ -4268,6 +4596,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This is repeated percentage growth, which needs an exponential model. Growth of 8% per hour means the base is 1 + 0.08 = 1.08, not the raw rate 0.08 itself, so P = 500(1.08)^t is correct. P = 500(0.08)^t mistakes the growth rate for the base. P = 500 + 8t models the growth linearly, adding a flat amount each hour instead of compounding. P = 500(1.8)^t confuses 8% with 80%.",
           diagram: { kind: "exponentialGraph", growth: true, yInterceptLabel: "500" },
           difficulty: "medium",
+          why: [null, "0.08 is the growth rate. Each hour the population is 108% of before, so the base is 1.08.", "Adding 8 each hour is linear. Growing by 8% compounds, so it's exponential.", "1.8 means 80% growth. 8% growth is 1.08."],
         },
         {
           q: "A population of 800 fish decreases by 5% each year. Which function models the population P after t years?",
@@ -4277,6 +4606,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "A 5% decrease means 95% remains each year, giving a base of 0.95, so P = 800(0.95)^t is correct. P = 800(0.05)^t mistakes the decay rate for the base. P = 800 - 40t models the loss linearly (a flat 5% of the original 800 subtracted each year) rather than compounding. P = 800(1.05)^t uses a growth base for a decay scenario.",
           diagram: { kind: "exponentialGraph", growth: false, yInterceptLabel: "800" },
           difficulty: "easy",
+          why: [null, "0.05 is the amount lost. What remains each year is 95%, so the base is 0.95.", "Subtracting 40 each year is linear. A 5% loss applies to the current population, so it compounds.", "1.05 is growth. The population is decreasing, so the base is 0.95."],
         },
         {
           q: "An investment of $2,000 earns 8% annual interest, compounded quarterly. Which function models the value V after t years?",
@@ -4286,6 +4616,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Because 8% is an annual rate but interest compounds quarterly, the rate per period is 0.08/4 = 0.02, not 0.08, and since there are 4 compounding periods per year, the exponent must count total quarters over t years, giving 4t — so V = 2000(1.02)^(4t) is correct. V = 2000(1.08)^(4t) uses the annual rate instead of dividing it by 4. V = 2000(1.02)^t correctly adjusts the rate but forgets to adjust the exponent for the number of periods. V = 2000(1.08)^t makes both mistakes at once.",
           diagram: { kind: "exponentialGraph", growth: true, yInterceptLabel: "$2,000" },
           difficulty: "medium",
+          why: [null, "The rate per quarter is 8% ÷ 4 = 2%, so the base is 1.02, not 1.08.", "The rate is right, but there are 4 quarters per year, so the exponent is 4t.", "This uses the annual rate and yearly periods. Quarterly compounding means 1.02 and 4t."],
         },
         {
           q: "A city's population grew from 40,000 to 44,000 over one year, and continues to grow at the same constant percentage rate each year. Which function models the population P after t years?",
@@ -4295,6 +4626,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since no percentage is stated directly, the growth multiplier is found by dividing the new value by the original: 44000/40000 = 1.1, and that multiplier IS the base of the exponential function directly, giving P = 40000(1.1)^t. P = 40000(0.1)^t mistakes the multiplier for a rate that still needs 1 added to it. P = 40000(1.4)^t misreads the 4,000-person increase as 40% rather than computing the actual ratio. P = 44000(1.1)^t incorrectly uses the later population as the starting value instead of the original 40,000.",
           diagram: { kind: "exponentialGraph", growth: true, yInterceptLabel: "40,000" },
           difficulty: "hard",
+          why: [null, "The multiplier is 44,000 ÷ 40,000 = 1.1. Using 0.1 would shrink the population.", "4,000 out of 40,000 is 10%, not 40%. The base is 1.1.", "The starting value is 40,000, the population before the year of growth."],
         },
       ],
       traps: [
@@ -4314,6 +4646,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Checking the differences between consecutive outputs gives 17-16=1, 18-17=1, 19-18=1, a constant added amount, which is the signature of a linear function — and since the outputs are getting larger, it's increasing linear. The exponential options are ruled out because the outputs don't share a constant ratio (17/16 ≠ 18/17), and the decreasing options are ruled out because the values are rising, not falling.",
           difficulty: "easy",
+          why: [null, "The outputs go up by the same amount (1) each time, which is linear, not exponential.", "The outputs go up (16, 17, 18, 19), so it's increasing.", "The values are rising, and they change by a constant amount, not a constant ratio."],
         },
         {
           q: "A table shows x: 0, 1, 2, 3 with g(x): 5, 10, 20, 40. Which best describes g?",
@@ -4322,6 +4655,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The differences between consecutive outputs (10-5=5, 20-10=10) are not constant, which rules out linear. The ratios, though, are constant: 10/5=2, 20/10=2, 40/20=2 — a constant ratio is the signature of exponential growth, and since the values are rising, it's increasing exponential.",
           difficulty: "easy",
+          why: [null, "The differences (5, 10, 20) aren't constant, so it's not linear. The ratio is constant: ×2.", "The values are rising (5, 10, 20, 40), so it's increasing.", "The values are rising and double each time. That's increasing exponential."],
         },
         {
           q: "A table shows x: 0, 1, 2, 3 with h(x): 50, 44, 38, 32. Which best describes h?",
@@ -4330,6 +4664,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The differences between consecutive outputs are constant (44-50=-6, 38-44=-6, 32-38=-6), which is the signature of linear behavior, not exponential — even though the values are shrinking, that alone doesn't mean decay. Confirming with ratios shows they are NOT constant (44/50 ≈ 0.88, 38/44 ≈ 0.864), ruling out exponential decay. Since the values fall by a constant amount, this is decreasing linear.",
           difficulty: "medium",
+          why: [null, "The values drop by the same amount (6) each time. A constant difference is linear.", "The values are falling (50, 44, 38, 32), so it's decreasing.", "The values fall by a constant amount. That's decreasing linear."],
         },
         {
           q: "A table shows x: 0, 1, 2, 3 with k(x): 200, 150, 112.5, 84.375. Which best describes k?",
@@ -4338,6 +4673,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The differences between consecutive outputs (150-200=-50, 112.5-150=-37.5) are not constant, ruling out linear. The ratios are constant instead: 150/200=0.75, 112.5/150=0.75 — a constant ratio, even one less than 1, is the signature of exponential decay, so this is decreasing exponential.",
           difficulty: "medium",
+          why: [null, "The drops (50, then 37.5) aren't constant, so it's not linear. The ratio is constant: ×0.75.", "The values are falling, so it's decreasing.", "The values fall, and by a constant ratio, not a constant amount."],
         },
         {
           q: "A table shows x: 0, 1, 2, 3 with m(x): 3, 6, 12, 20. Based on the first three values (3, 6, 12), a student concludes the function is exponential with a growth factor of 2. Is this conclusion fully supported by the table?",
@@ -4351,6 +4687,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The ratio between the first two pairs (6/3=2, 12/6=2) does look exponential, which is what tempts the quick conclusion, but checking one more pair is essential: 20/12 ≈ 1.67, not 2, so the pattern breaks. Since the ratio isn't consistent across the whole table, two matching ratios weren't enough evidence to confirm the model. The differences (3, 6, 8) aren't constant either, so the table isn't linear. And rising values alone never guarantee exponential growth — both linear and exponential functions can increase.",
           difficulty: "hard",
+          why: [null, "Every ratio has to match. 20 ÷ 12 is about 1.67, not 2, so the pattern breaks.", "The differences are 3, 6, and 8, which aren't constant, so the table isn't linear either.", "Linear functions can increase too. Rising values alone don't prove exponential growth."],
         },
       ],
       traps: [
@@ -4371,6 +4708,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "g(x) = f(x) + 3 is a vertical shift — every output increases by 3 while inputs stay the same, so (2, 5) becomes (2, 5+3) = (2, 8). (5, 5) mistakenly adds 3 to the x-coordinate instead of the y-coordinate. (2, 2) subtracts instead of adds. (-1, 5) shifts the x-coordinate as if this were a horizontal shift, which it isn't.",
           difficulty: "easy",
+          why: [null, "+ 3 outside the function shifts the graph up, which changes y, not x.", "+ 3 moves the point up by 3: 5 + 3 = 8, not 5 − 3.", "+ 3 outside is a vertical shift. The x-value stays 2."],
         },
         {
           q: "The graph of f passes through the point (4, 1). If g(x) = f(x - 2), what corresponding point lies on the graph of g?",
@@ -4379,6 +4717,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "g(x) = f(x-2) is a horizontal shift, and since the template subtracts h, the graph moves right, meaning 2 is added to the x-coordinate: (4, 1) becomes (4+2, 1) = (6, 1). (2, 1) subtracts instead of adds, moving the point the wrong direction. (4, 3) and (4, -1) mistakenly shift the y-coordinate instead of the x-coordinate for what is purely a horizontal shift.",
           difficulty: "easy",
+          why: [null, "f(x − 2) shifts the graph right by 2: 4 + 2 = 6.", "A change inside the parentheses shifts left or right, not up or down.", "This changes y. f(x − 2) only moves the point horizontally."],
         },
         {
           q: "The graph of f has a minimum point at (-3, -6). If g(x) = f(x + 5), what is the minimum point of g?",
@@ -4387,6 +4726,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "g(x) = f(x+5) is a horizontal shift, but the plus sign inside shifts the graph LEFT, not right — the opposite of what the sign might suggest. Subtracting 5 from the original x-coordinate gives -3-5 = -8, and the y-coordinate stays -6 since this is purely horizontal, giving (-8, -6). (2, -6) shifts right instead of left. (-8, -1) and (2, -11) incorrectly also change the y-coordinate.",
           difficulty: "medium",
+          why: [null, "f(x + 5) shifts left, not right: −3 − 5 = −8.", "The shift is purely horizontal. The y-value stays −6.", "This shifts right instead of left and also changes y. The minimum moves to (−8, −6)."],
         },
         {
           q: "The graph of f has a maximum point at (1, 9). If g(x) = f(x - 4) - 2, what is the maximum point of g?",
@@ -4395,6 +4735,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This transformation combines two shifts: f(x-4) shifts right by 4 (horizontal), and the -2 outside shifts down by 2 (vertical). Applying both to the original point gives x-coordinate 1+4=5 and y-coordinate 9-2=7, so the maximum point of g is (5, 7). (-3, 7) shifts left instead of right. (5, 11) and (-3, 11) add instead of subtract for the vertical shift.",
           difficulty: "medium",
+          why: [null, "f(x − 4) shifts right by 4, so x becomes 1 + 4 = 5.", "− 2 outside shifts down, so y becomes 9 − 2 = 7.", "Both shifts go the wrong way. Right 4 and down 2 gives (5, 7)."],
         },
         {
           q: "The graph of a rational function f is shown, with a horizontal asymptote at y = 0 for x ≥ 0, starting high near x = 0 and decreasing toward that asymptote as x increases. Which best describes the graph of y = f(x) + 5, where x ≥ 0?",
@@ -4408,6 +4749,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "f(x) + 5 is a vertical shift: every point on the original graph moves up by 5, including the asymptote itself, so the asymptote moves from y = 0 to y = 5, and the curve still decreases toward that new level. It's incorrect to think the asymptote stays put; a vertical shift moves every part of the graph, including the level it flattens toward. The overall shape (still decreasing, not increasing) doesn't change, and the asymptote remains horizontal, not vertical; only its vertical position moves.",
           difficulty: "hard",
+          why: [null, "Adding 5 moves every point up, including the level the curve flattens toward. The asymptote moves to y = 5.", "A vertical shift doesn't change the shape. The curve still decreases.", "Shifting up doesn't turn a horizontal asymptote vertical. It just moves it to y = 5."],
         },
       ],
       traps: [
@@ -4428,6 +4770,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The constant added at the end (4) is what the function approaches, not the coefficient (3) or the base (2). As x gets very negative, 2^x shrinks toward 0, so 3(2)^x also shrinks toward 0, leaving the function approaching just the constant term, 4. 3 mistakes the coefficient for the asymptote. 2 mistakes the base for the asymptote. 7 comes from adding the coefficient and constant together.",
           difficulty: "easy",
+          why: [null, "3 is the coefficient. As x decreases, 3(2)^x shrinks to 0, leaving just the + 4.", "2 is the base. The function levels off at the added constant, 4.", "7 adds the coefficient and constant, but the 3(2)^x term goes to 0, not 3."],
         },
         {
           q: "What is the horizontal asymptote of g(x) = -5(0.5)^x - 2?",
@@ -4436,14 +4779,16 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "As x increases, (0.5)^x shrinks toward 0, so -5(0.5)^x also shrinks toward 0, leaving the function approaching just the constant term, -2, so the asymptote is y = -2. y = -5 mistakes the coefficient for the asymptote. y = 0.5 mistakes the base for the asymptote. y = -7 comes from combining the coefficient and constant.",
           difficulty: "easy",
+          why: [null, "−5 is the coefficient. As x increases, −5(0.5)^x shrinks to 0, leaving −2.", "0.5 is the base. The asymptote is the added constant, −2.", "−7 adds the coefficient and constant, but the −5(0.5)^x term goes to 0."],
         },
         {
-          q: "Which of the following functions has a maximum value at y = -3?\nI. h(x) = -4(2)^x - 3\nII. k(x) = 4(2)^x - 3",
+          q: "For which of the following functions is every output value less than -3?\nI. h(x) = -4(2)^x - 3\nII. k(x) = 4(2)^x - 3",
           choices: ["Only function I", "Only function II", "Both function I and II", "Neither function I nor II"],
           answer: 0,
           explain:
-            "Both functions share the same constant (-3), but that alone doesn't determine max vs. min; the sign of the coefficient does. In function I, the coefficient is -4 (negative); since the base (2) is greater than 1, a negative coefficient means the function approaches -3 from below as x decreases, making -3 a ceiling and thus a maximum. In function II, the coefficient is 4 (positive), so the function approaches -3 from above as x decreases, making -3 a floor, not a maximum, so only function I qualifies.",
+            "Both functions share the same constant (-3), so both approach -3 as x decreases; the sign of the coefficient decides which side they stay on. Since (2)^x is always positive, in function I the term -4(2)^x is always negative, so every output is below -3: -3 is a ceiling the function approaches but never reaches. In function II, 4(2)^x is always positive, so every output is above -3. Only function I qualifies.",
           difficulty: "medium",
+          why: [null, "4(2)^x is always positive, so function II's outputs are always above −3, not below.", "Function II's outputs are all above −3, so only function I qualifies.", "Function I's term −4(2)^x is always negative, so all its outputs are below −3."],
         },
         {
           q: "A cup of coffee's temperature, in degrees Fahrenheit, is modeled by T(t) = 70(0.9)^t + 68, where t is the number of minutes since it was poured. What temperature does the coffee approach as time goes on?",
@@ -4452,6 +4797,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "As t increases, (0.9)^t shrinks toward 0 (since 0.9 < 1), so 70(0.9)^t also shrinks toward 0, leaving the function approaching just the constant, 68. This matches real cooling behavior — the coffee cools toward room temperature but never quite reaches it. 70°F mistakes the coefficient for the asymptote. 0.9°F mistakes the base for the asymptote. 138°F comes from adding the coefficient and constant together.",
           difficulty: "medium",
+          why: [null, "70 is the coefficient. The 70(0.9)^t term shrinks to 0, leaving 68.", "0.9 is the base. The coffee levels off at the added constant, 68.", "138 is the starting temperature (70 + 68), not where it ends up."],
         },
         {
           q: "Two bacterial cultures are modeled by P(t) = 200(1.05)^t and Q(t) = 500(0.92)^t, where t is measured in hours. Which statement is true about their long-term behavior?",
@@ -4465,6 +4811,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "P's base (1.05) is greater than 1, meaning P grows without bound as t increases, with no upper asymptote. Q's base (0.92) is less than 1, meaning Q shrinks toward (but never reaches) 0 as t increases. Comparing the two bases (greater than 1 versus less than 1) determines the long-term outcome regardless of which starting value was larger, so P eventually overtakes Q permanently. Q's larger starting value (500) doesn't matter for the long-term comparison, since Q is shrinking while P keeps growing. And Q isn't growing at all — its base below 1 means it shrinks, not grows.",
           difficulty: "hard",
+          why: [null, "Q's base, 0.92, is less than 1, so Q shrinks. A bigger start doesn't matter long-term.", "Q's base is below 1, so Q shrinks toward 0 instead of growing.", "P's base, 1.05, is greater than 1, so P grows without bound."],
         },
       ],
       traps: [
@@ -4485,6 +4832,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "With a = 1 and b = -6, the vertex's x-coordinate is -b/2a = -(-6)/(2·1) = 3. Substituting x = 3 back into the original function gives f(3) = 9 - 18 + 5 = -4, so the vertex is (3, -4). (-3, -4) flips the sign of the x-coordinate from a sign error in -b/2a. (3, 4) flips the sign of the y-coordinate. (6, 5) comes from misreading b and c directly as coordinates instead of computing the vertex.",
           difficulty: "easy",
+          why: [null, "A sign slip: −b/2a = −(−6)/2 = +3.", "f(3) = 9 − 18 + 5 = −4, not +4.", "6 and 5 are b and c read straight off the equation. Compute the vertex instead: x = 3."],
         },
         {
           q: "What is the minimum value of f(x) = x² + 8x + 10?",
@@ -4493,6 +4841,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Since a = 1 is positive, the parabola opens upward, so its vertex is a minimum. The x-coordinate of the vertex is -b/2a = -8/2 = -4, and substituting back in gives f(-4) = 16 - 32 + 10 = -6, which is the minimum value — the vertex's y-coordinate, not its x-coordinate. -4 mistakenly reports the x-coordinate of the vertex instead of the minimum value itself. 10 mistakes the constant term c for the minimum. -16 comes from an arithmetic slip when substituting back in.",
           difficulty: "easy",
+          why: [null, "−4 is the x-value where the minimum happens. The minimum value is f(−4) = −6.", "10 is the value at x = 0, not the minimum.", "−16 forgets the + 10: 16 − 32 + 10 = −6."],
         },
         {
           q: "What is the vertex of g(x) = 2x² - 12x + 7?",
@@ -4501,6 +4850,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "With a = 2 and b = -12 (the leading coefficient must be included in the formula, not dropped), the x-coordinate is -b/2a = -(-12)/(2·2) = 3. Substituting back in gives g(3) = 2(9) - 36 + 7 = -11, so the vertex is (3, -11). (6, -11) comes from dropping the leading coefficient and computing -b/2 instead of -b/2a. (3, 7) mistakenly uses the constant term c as the y-coordinate. (-3, -11) flips the sign of the x-coordinate.",
           difficulty: "medium",
+          why: [null, "6 comes from −b/2 instead of −b/2a. Include a = 2: 12 ÷ 4 = 3.", "7 is g(0), the constant term. Plug in x = 3: g(3) = −11.", "A sign slip: −(−12)/4 = +3."],
         },
         {
           q: "Which of the following is the vertex form of f(x) = x² + 10x + 21, found by completing the square?",
@@ -4509,6 +4859,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Taking half of the x-coefficient and squaring it gives (10/2)² = 25; adding and subtracting this value rewrites the expression without changing it: x² + 10x + 25 - 25 + 21. The first three terms form a perfect square, giving (x+5)² - 25 + 21 = (x+5)² - 4. (x+5)² + 21 correctly completes the square but forgets to subtract the 25 that was added. (x-5)² - 4 gets the sign inside the parentheses wrong. (x+10)² - 79 incorrectly uses the full x-coefficient (10) instead of half of it.",
           difficulty: "medium",
+          why: [null, "This adds 25 to complete the square but doesn't subtract it back out: 21 − 25 = −4.", "x² + 10x comes from (x + 5)², not (x − 5)².", "Take half the x-coefficient: 10 ÷ 2 = 5, so it's (x + 5)², not (x + 10)²."],
         },
         {
           q: "A ball's height in feet is modeled by h(t) = -16t² + 64t + 5, where t is time in seconds after launch. What is the maximum height the ball reaches?",
@@ -4517,6 +4868,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Since a = -16 is negative, the parabola opens downward, so its vertex is a maximum — exactly what's being asked. The x-coordinate (representing time) is -b/2a = -64/(2·-16) = 2, and substituting t = 2 back into the function gives h(2) = -16(4) + 64(2) + 5 = -64 + 128 + 5 = 69. 2 feet mistakenly reports the vertex's x-coordinate (when the maximum occurs) instead of the maximum height itself. 5 feet mistakes the initial height (the constant term) for the maximum. 64 feet misreads the coefficient of t as the answer.",
           difficulty: "hard",
+          why: [null, "2 seconds is when the maximum happens. The height then is h(2) = 69.", "5 feet is the launch height, h(0), not the maximum.", "64 is the coefficient of t, not a height. Plug in t = 2 to get 69."],
         },
       ],
       traps: [
@@ -4535,8 +4887,9 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["4", "10", "-14", "22"],
           answer: 0,
           explain:
-            "Substituting x = 3 into every instance of x gives f(3) = 2(3)² - 5(3) + 1. Applying order of operations, exponents first: 2(9) - 5(3) + 1 = 18 - 15 + 1 = 4. 10 comes from computing 2(3)² correctly but mishandling the subtraction of 5(3). -14 comes from squaring 3 as if it applied to the whole term 2(3) instead of just 3. 22 comes from adding instead of subtracting the middle term.",
+            "Substituting x = 3 into every instance of x gives f(3) = 2(3)² - 5(3) + 1. Applying order of operations, exponents first: 2(9) - 5(3) + 1 = 18 - 15 + 1 = 4. -14 leaves out the 2x² term entirely (just -15 + 1). 22 comes from squaring 2 × 3 together, (6)² = 36, when the exponent applies only to the 3.",
           difficulty: "easy",
+          why: [null, "Check it: 2(9) − 15 + 1 = 4, not 10.", "−14 leaves out the 2x² term. It's just −15 + 1.", "22 squares 2 × 3 together: 36 − 15 + 1. The exponent applies only to the 3: 2(9) = 18."],
         },
         {
           q: "A diver's height above the water, in feet, is modeled by H(t) = -16t² + 8t + 10, where t is time in seconds after leaving the platform. What does H(0) represent in this context?",
@@ -4550,6 +4903,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Substituting t = 0 gives H(0) = -16(0) + 8(0) + 10 = 10. Since t represents time since leaving the platform, t = 0 is the instant the diver leaves it, so H(0) = 10 represents the platform's starting height above the water at that moment. The second choice confuses t = 0 with t = 1. The third choice confuses an output (height) with a completely different quantity (total airtime). The fourth choice misreads the function's output as describing the water rather than the diver.",
           difficulty: "easy",
+          why: [null, "t = 0 is the moment the diver leaves, not one second later.", "H(0) is a height, not an amount of time.", "H gives the diver's height. At t = 0 that's 10 feet, the platform."],
         },
         {
           q: "A population is modeled by P(t) = 500(1.08)^t, where t is measured in years. What is P(0)?",
@@ -4558,6 +4912,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Substituting t = 0 gives P(0) = 500(1.08)^0. Any nonzero number raised to the power 0 equals 1, so (1.08)^0 = 1, and P(0) = 500(1) = 500 — the initial population, before any growth has occurred. 0 mistakenly treats t = 0 as making the whole expression 0. 540 comes from computing one year of growth (500 × 1.08) instead of recognizing that t = 0 means no time has passed. 1.08 mistakes the growth base itself for the population value.",
           difficulty: "medium",
+          why: [null, "Anything to the 0 power is 1, not 0: 500 × 1 = 500.", "540 is one year of growth, P(1). At t = 0, no time has passed.", "1.08 is the growth base, not the population."],
         },
         {
           q: "A rock's height above a canyon floor, in meters, is modeled by h(t) = -5t² + 30, where t is seconds after it's dropped. Which statement correctly interprets h(2) = 10?",
@@ -4571,6 +4926,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Confirming the substitution: h(2) = -5(4) + 30 = -20 + 30 = 10, so the given value checks out. In context, the input (2) is a time in seconds and the output (10) is a height in meters, so the correct interpretation keeps them in their proper roles: 2 seconds after being dropped, the rock is 10 meters above the canyon floor. The second choice swaps which number is the time and which is the height. The third choice misreads the input/output as describing the drop height and duration instead of time-at-a-given-height. The fourth choice invents a constant rate that isn't supported by a quadratic (non-constant-rate) model.",
           difficulty: "medium",
+          why: [null, "This swaps them. The input (2) is the time and the output (10) is the height.", "The rock was dropped from h(0) = 30 meters. h(2) = 10 describes where it is at 2 seconds.", "A quadratic model doesn't fall at a constant rate. h(2) = 10 is a single moment."],
         },
         {
           q: "An object's velocity in meters per second is modeled by v(x) = 3x² - 12x + 9, where x is the number of seconds since a sensor started recording, valid only for 0 ≤ x ≤ 5. For how many values of x in this interval is the object's velocity equal to 0?",
@@ -4579,6 +4935,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Setting the function equal to 0 gives 3x² - 12x + 9 = 0. Dividing every term by 3 simplifies to x² - 4x + 3 = 0, which factors as (x-1)(x-3) = 0, giving x = 1 or x = 3. Both values fall within the given domain (0 ≤ x ≤ 5), so both are valid, giving 2 total solutions. Answering 1 would mean incorrectly discarding one of the two valid roots. Answering 3 overcounts, likely from an arithmetic slip while factoring. Answering 0 would incorrectly assume neither root falls in the domain, when both do.",
           difficulty: "hard",
+          why: [null, "Both roots, x = 1 and x = 3, fall in 0 ≤ x ≤ 5, so there are 2.", "A quadratic has at most two roots. Factoring gives (x − 1)(x − 3).", "Both roots, 1 and 3, are inside the interval 0 to 5."],
         },
       ],
       traps: [
@@ -4609,6 +4966,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Setting up a proportion with matching units, (cups)/(cookies) = (cups)/(cookies), gives 2/12 = x/30; cross-multiplying gives 12x = 60, so x = 5. 180 comes from flipping which side of the proportion is numerator vs. denominator (setting up 2/12 = 30/x instead), producing the reciprocal relationship. 0.8 comes from dividing in the wrong direction entirely (2×12/30). 20 comes from treating the given numbers as if they could simply be added and subtracted instead of set into a proportion.",
           difficulty: "easy",
+          why: [null, "180 comes from setting up 2/12 = 30/x, which flips one side. Keep cups over cookies on both sides: 2/12 = x/30.", "0.8 divides in the wrong direction. More cookies need more flour, so the answer must be more than 2.", "Check it: 2 cups for 12 cookies is 1 cup per 6 cookies, so 30 cookies need 5 cups, not 20."],
         },
         {
           q: "A factory produces 45 units in 3 hours. At this rate, how many hours will it take to produce 225 units?",
@@ -4617,6 +4975,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Setting up a proportion with matching units, (units)/(hours) = (units)/(hours), gives 45/3 = 225/x; cross-multiplying gives 45x = 675, so x = 15. 3 mistakes the original given hours for the answer, without doing any calculation. 5 comes from computing the scale factor 225/45 = 5 correctly but forgetting to multiply it by the original 3 hours. 675 comes from cross-multiplying correctly but forgetting the final division step, leaving 45x itself as the answer.",
           difficulty: "medium",
+          why: [null, "3 hours is how long 45 units take. 225 units is five times as many.", "5 is the scale factor (225 ÷ 45). Multiply it by 3 hours to get 15.", "675 is 45x. Divide by 45 to get x = 15."],
         },
         {
           q: "A car uses 3 gallons of gas to travel 75 miles. How many gallons are needed to travel 200 miles?",
@@ -4625,6 +4984,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Setting up a proportion with matching units, 3/75 = x/200, and cross-multiplying gives 75x = 600, so x = 8. 8.33 comes from an arithmetic slip in the final division step. 5 confuses this problem with a similar-looking one, using the wrong given numbers. 600 comes from cross-multiplying correctly but forgetting to complete the final division step.",
           difficulty: "easy",
+          why: [null, "The division comes out exactly: 600 ÷ 75 = 8. There's no decimal.", "Check it: 5 gallons at 25 miles per gallon goes only 125 miles.", "600 is 75x. Divide by 75 to get 8."],
         },
         {
           q: "A recipe uses 3/4 cup of sugar for 18 cookies. How many cups of sugar are needed for 30 cookies?",
@@ -4633,6 +4993,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Setting up a proportion with matching units, (3/4)/18 = x/30, and cross-multiplying gives 18x = 30 × (3/4) = 22.5, so x = 22.5/18 = 1.25. 0.75 just restates the original 3/4 cup without scaling it to the new number of cookies. 1.8 comes from a division error when finishing the last step. 22.5 comes from cross-multiplying correctly but forgetting to divide by 18 to isolate x.",
           difficulty: "medium",
+          why: [null, "0.75 is the sugar for 18 cookies. 30 cookies need more.", "Check it: 1.8 cups for 30 cookies is 0.06 cups each, but the recipe uses 0.75 ÷ 18, about 0.042 cups each.", "22.5 is 18x. Divide by 18 to get 1.25."],
         },
         {
           q: "A factory's 5 machines produce 600 units in 4 hours. If 2 of the machines break down, how many units will the remaining machines produce in 6 hours, assuming each machine works at the same constant rate?",
@@ -4641,6 +5002,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Finding the rate per single machine first, 600 units ÷ 5 machines ÷ 4 hours = 30 units per machine per hour; applying this to 3 remaining machines over 6 hours gives 3 × 30 × 6 = 540 units. 900 comes from forgetting to reduce the number of machines from 5 to 3 in the final multiplication. 360 comes from using the original 4 hours instead of the new 6 hours. 450 comes from using 2 (the number that broke down) instead of the 3 machines that remain.",
           difficulty: "hard",
+          why: [null, "900 uses all 5 machines. Only 3 are still working.", "360 uses the original 4 hours. The question asks about 6 hours.", "450 isn't 3 machines × 30 units × 6 hours. Use the 3 machines that still work: 540."],
         },
       ],
       traps: [
@@ -4660,6 +5022,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Chaining conversions so units cancel, 60 miles/hour × 5,280 feet/mile × 1 hour/60 minutes leaves (60 × 5,280)/60 = 5,280 feet per minute. 316,800 comes from forgetting to divide by 60 to convert hours to minutes — that's feet per hour, not per minute. 88 confuses this with the well-known fact that 60 mph equals 88 feet per second, applying that conversion to the wrong unit of time. 63,360 comes from a units mix-up that leaves an extra, unneeded factor in the computation.",
           difficulty: "easy",
+          why: [null, "316,800 is feet per hour. Divide by 60 to get feet per minute.", "88 is feet per second. The question asks for feet per minute.", "63,360 is the number of inches in a mile, not a speed in feet per minute."],
         },
         {
           q: "A runner's pace is 9 minutes per mile. What is this pace in seconds per 100 meters? (1 mile ≈ 1,609 meters)",
@@ -4668,6 +5031,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Converting minutes to seconds first gives 9 min/mile × 60 sec/min = 540 sec/mile; dividing by the meters in a mile (540/1,609 ≈ 0.336 sec/meter) and scaling to 100 meters (0.336 × 100) gives about 33.6 seconds. ≈5.4 seconds comes from scaling to 100 meters before finishing the meters conversion, an out-of-order calculation. ≈540 seconds mistakenly reports the seconds-per-mile figure without scaling it down to the smaller 100-meter distance. ≈3.36 seconds comes from a misplaced decimal point when scaling to 100 meters.",
           difficulty: "medium",
+          why: [null, "5.4 divides 540 by 100 instead of by the meters in a mile first.", "540 seconds is the time for a whole mile, not 100 meters.", "The decimal is off by a factor of 10: 0.336 seconds per meter × 100 = 33.6."],
         },
         {
           q: "A container holds 3 liters of liquid. How many milliliters is this? (1 liter = 1,000 milliliters)",
@@ -4676,6 +5040,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Multiplying 3 liters by the conversion factor 1,000 milliliters/liter gives 3 × 1,000 = 3,000 milliliters. 300 and 30 come from misplaced decimal points using the wrong power of ten. 0.003 comes from dividing instead of multiplying by the conversion factor, inverting the relationship entirely.",
           difficulty: "easy",
+          why: [null, "A liter is 1,000 milliliters, so multiply by 1,000, not 100.", "Milliliters are smaller than liters, so the number should get bigger. This divides instead.", "A liter is 1,000 milliliters, so it's 3 × 1,000 = 3,000."],
         },
         {
           q: "A rectangular room measures 4 yards by 3 yards. What is its area in square feet? (1 yard = 3 feet)",
@@ -4684,6 +5049,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Since 1 yard = 3 feet, converting an area (not a length) requires squaring the linear conversion factor, giving 1 square yard = 9 square feet; the room's area is 4 × 3 = 12 square yards, so in square feet it's 12 × 9 = 108. 36 mistakenly converts only one of the two dimensions instead of accounting for both. 12 reports the area in square yards without ever converting to square feet. 324 comes from squaring the total square-yard area itself (12²) instead of just the conversion factor.",
           difficulty: "medium",
+          why: [null, "36 converts only one side to feet. Both sides need converting: 12 × 9 = 108.", "12 is the area in square yards. Each square yard is 9 square feet.", "324 multiplies by 27, the conversion for cubic yards. Area uses 3² = 9."],
         },
         {
           q: "A cyclist travels at 8 meters per second. What is this speed in miles per hour, rounded to the nearest whole number? (1 mile ≈ 1,609 meters)",
@@ -4692,6 +5058,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Converting seconds to hours first gives 8 meters/second × 3,600 seconds/hour = 28,800 meters/hour; dividing by the meters in a mile (28,800/1,609 ≈ 17.9) rounds to about 18 miles per hour. ≈8 mistakenly reports the original speed in meters per second as if it were already in miles per hour. ≈29 comes from converting meters to miles before converting seconds to hours, an out-of-order calculation that produces the wrong scale. ≈4,969 comes from forgetting to divide by 1,609 at all, leaving the answer in meters per hour.",
           difficulty: "hard",
+          why: [null, "8 is meters per second, not miles per hour.", "29 is about kilometers per hour (28,800 ÷ 1,000). A mile is 1,609 meters.", "The speed is 28,800 meters per hour. Divide by 1,609 to get about 18 miles per hour."],
         },
       ],
       traps: [
@@ -4711,6 +5078,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "For every 1 bag of flour there are 4 loaves, so loaves = 4 × flour, giving 4f for f bags. f/4 reverses the ratio, expressing flour in terms of loaves instead. f + 4 and 4 + f incorrectly treat the ratio as an additive relationship rather than a multiplicative one.",
           difficulty: "easy",
+          why: [null, "This reverses the ratio. There are more loaves than bags, so multiply: 4f.", "A ratio of 4 to 1 means multiply, not add.", "Same problem: a ratio is multiplication, not addition."],
         },
         {
           q: "A school's ratio of teachers to students is 1 to 22. If there are s students, which expression represents the number of teachers?",
@@ -4719,6 +5087,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "There's 1 teacher for every 22 students, so teachers = students ÷ 22, giving s/22. 22s reverses the ratio, as if there were 22 teachers per student. s - 22 incorrectly treats the ratio as additive. s/1 drops the ratio's denominator entirely.",
           difficulty: "easy",
+          why: [null, "22s would mean 22 teachers per student. There's 1 teacher per 22 students.", "A ratio means divide, not subtract 22.", "s/1 is just the number of students. Divide by 22 for teachers."],
         },
         {
           q: "At a robotics competition, the ratio of judges to teams is 1 to 8. If there are j judges at the competition, which expression represents the number of teams?",
@@ -4727,6 +5096,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "For every 1 judge there are 8 teams, so teams = 8 × judges, giving 8j for j judges. j/8 reverses the ratio, representing judges in terms of a given number of teams instead. j + 8 and 8 - j incorrectly treat the ratio as additive rather than multiplicative.",
           difficulty: "medium",
+          why: [null, "This reverses the ratio. There are more teams than judges, so multiply: 8j.", "A ratio of 1 to 8 means multiply, not add.", "A ratio means multiply. Subtracting j from 8 makes no sense here."],
         },
         {
           q: "In a bag of marbles, 3 out of every 10 marbles are blue. If the bag contains m marbles total, which expression represents the number of blue marbles?",
@@ -4735,6 +5105,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Since the ratio compares blue marbles to the TOTAL (3 out of every 10 total, a part-to-whole ratio), blue marbles = 3/10 of the total, giving (3/10)m. (10/3)m inverts the fraction, as if 3 were the total and 10 were the part. 3m - 10 incorrectly treats the ratio as an additive adjustment. m/3 drops the numerator of the ratio entirely.",
           difficulty: "medium",
+          why: [null, "This flips the fraction. Blue marbles are 3 out of every 10, so 3/10 of the total.", "A ratio means multiply by a fraction, not subtract.", "m/3 would make a third of the marbles blue. It's 3 out of 10."],
         },
         {
           q: "At a company, the ratio of managers to engineers is 1 to 6, and the ratio of engineers to interns is 3 to 10. If there are m managers, which expression represents the number of interns, in terms of m?",
@@ -4743,6 +5114,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Translating managers to engineers first gives engineers = 6 × managers = 6m; translating engineers to interns using the second ratio (engineers:interns = 3:10) gives interns = (10/3) × engineers, and substituting 6m gives (10/3)(6m) = 20m. 18m comes from multiplying the two ratio numbers (6 × 3) directly instead of correctly chaining the ratios. m/20 inverts the final relationship. 60m comes from multiplying together all the given ratio numbers without correctly inverting the second ratio (3/10 vs. 10/3).",
           difficulty: "hard",
+          why: [null, "18m multiplies 6 by 3. Engineers to interns is 3 to 10, so interns = (10/3) × 6m = 20m.", "This flips the result. There are more interns than managers.", "60m multiplies 6 by 10 without dividing by 3. Interns = (10/3)(6m) = 20m."],
         },
       ],
       traps: [
@@ -4773,6 +5145,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "A 25% discount means the customer pays 100%-25%=75% of the original price; multiplying directly by that multiplier, 40 × 0.75 = $30. $10 mistakenly reports the discount amount itself instead of the sale price. $35 comes from subtracting the wrong amount, like a flat $5, instead of 25% of the price. $50 comes from adding the discount instead of subtracting it.",
           difficulty: "easy",
+          why: [null, "$10 is the discount amount. The sale price is $40 − $10 = $30.", "$35 takes off only $5. 25% of $40 is $10.", "$50 adds the discount instead of subtracting it."],
         },
         {
           q: "A wholesaler buys an item for $50 and marks it up 40% to set the retail price. What is the retail price?",
@@ -4781,6 +5154,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "A 40% markup means the retail price is 100%+40%=140% of the wholesale price; multiplying directly, 50 × 1.40 = $70. $20 mistakenly reports just the markup amount instead of the full retail price. $90 comes from misapplying the multiplier, like adding the markup twice. $50.40 comes from confusing 40% with 0.4%, a decimal-placement slip.",
           difficulty: "medium",
+          why: [null, "$20 is the markup amount. The retail price is $50 + $20 = $70.", "$90 adds $40 instead of 40% of $50, which is $20.", "40% is 0.40, not 0.004. The markup is $20."],
         },
         {
           q: "A meal costs $60 before an 8% sales tax. What is the total cost including tax?",
@@ -4789,14 +5163,16 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "An 8% tax means the customer pays 100%+8%=108% of the meal price; multiplying directly, 60 × 1.08 = $64.80. $4.80 mistakenly reports just the tax amount instead of the total cost. $68 comes from a rounding or arithmetic slip while adding the tax. $55.20 comes from subtracting the tax instead of adding it.",
           difficulty: "easy",
+          why: [null, "$4.80 is the tax alone. Add it to the meal: $64.80.", "$68 adds $8 instead of 8% of $60, which is $4.80.", "$55.20 subtracts the tax. Tax gets added."],
         },
         {
           q: "After a 20% discount, a jacket costs $64. What was the original price?",
           choices: ["$80", "$76.80", "$51.20", "$84"],
           answer: 0,
           explain:
-            "Since the discounted price is 80% of the original, 64 = original × 0.80, so dividing (not multiplying) gives original = 64/0.80 = $80. $76.80 comes from mistakenly multiplying 64 by 0.80 again instead of dividing, as if the given price needed another discount applied. $51.20 comes from a similar multiply-instead-of-divide error. $84 comes from simply adding back 20% of $64 rather than correctly reversing the multiplier.",
+            "Since the discounted price is 80% of the original, 64 = original × 0.80, so dividing (not multiplying) gives original = 64/0.80 = $80. $76.80 adds 20% of $64 back on, but the 20% was taken from the original price, not from $64. $51.20 applies the discount a second time (64 × 0.80). $84 adds a flat $20 instead of reversing the percentage.",
           difficulty: "medium",
+          why: [null, "$76.80 adds 20% of $64. The 20% was taken from the original price, so divide: 64 ÷ 0.80.", "$51.20 applies the discount again. Undo it by dividing: 64 ÷ 0.80 = 80.", "$84 adds $20. Undo the 20% discount by dividing by 0.80."],
         },
         {
           q: "A $50 meal has an 18% tip added first, and then a $10 discount coupon is applied to the total. What is the final price?",
@@ -4805,6 +5181,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Applying the operations in the stated order, the tip is calculated first: 50 × 1.18 = 59, and then the flat $10 discount is applied to that new total: 59 - 10 = 49. $47.20 comes from applying the $10 discount before the tip (50-10=40, ×1.18=47.20), reversing the correct order. $41.80 makes a similar order-and-arithmetic error. $59 mistakenly reports the pre-discount total, forgetting to subtract the coupon at all.",
           difficulty: "hard",
+          why: [null, "$47.20 applies the coupon before the tip. The tip comes first: 50 × 1.18 = 59, then subtract 10.", "Check it: 50 × 1.18 = 59, and 59 − 10 = 49, not 41.80.", "$59 is the total with tip, before the $10 coupon."],
         },
       ],
       traps: [
@@ -4824,6 +5201,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Representing the original price as 100, a 20% increase gives 100×1.20=120, and a 20% decrease applied to that new price of 120 (not the original 100) gives 120×0.80=96 — a net 4% decrease, not zero. Assuming the changes cancel to 0% net change is the classic trap: percentage changes compound multiplicatively, not additively. 4% higher flips the direction of the net change. 40% lower comes from simply adding the two percentages together instead of applying them as sequential multipliers.",
           difficulty: "easy",
+          why: [null, "The second 20% is taken from 120, not 100. 120 × 0.80 = 96, which is 4% lower.", "The price ends at 96, which is lower than 100, not higher.", "Adding the percents doesn't work. Apply them in turn: 100 → 120 → 96."],
         },
         {
           q: "A stock's price increases by 50% one month, then decreases by 50% the next month. Compared to the original price, the final price is:",
@@ -4832,6 +5210,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Representing the original as 100, a 50% increase gives 150, and a 50% decrease applied to the new 150 gives 75 — a net 25% decrease. Assuming the two 50% swings cancel out is the same additive-thinking trap that fails for any pair of equal-and-opposite percentages. 25% higher flips the direction. 100% lower would mean the price hit zero, which isn't what a 50% decrease does.",
           difficulty: "medium",
+          why: [null, "The 50% drop is taken from 150, not 100. 150 × 0.5 = 75, which is 25% lower.", "The price ends at 75, lower than 100, not higher.", "100% lower would mean the price hit zero. A 50% drop from 150 leaves 75."],
         },
         {
           q: "A price increases by 10% and then increases by another 10%. Compared to the original price, the final price is:",
@@ -4840,6 +5219,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Representing the original as 100, the first 10% increase gives 110, and the second 10% increase applied to the new 110 (not the original 100) gives 121 — a 21% increase. 20% higher comes from simply adding the two percentages together instead of compounding them. 22% higher overcorrects, perhaps from a slip in the compounding calculation. 10% higher mistakenly ignores the second increase entirely.",
           difficulty: "easy",
+          why: [null, "The second 10% is taken from 110, not 100. 110 × 1.1 = 121, a 21% increase.", "Check it: 100 × 1.1 × 1.1 = 121, not 122.", "This ignores the second increase. Both apply: 100 → 110 → 121."],
         },
         {
           q: "A stock's price decreases by 30% one month, then increases by 40% the next month. Compared to the original price, the final price is:",
@@ -4848,6 +5228,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Representing the original as 100, a 30% decrease gives 70, and a 40% increase applied to the new 70 (not the original 100) gives 98 — a net 2% decrease. 10% higher comes from simply subtracting the percentages (40%-30%=10%) instead of compounding them. 2% higher flips the direction of the correct net change. 10% lower makes the same additive mistake in the opposite direction.",
           difficulty: "medium",
+          why: [null, "Subtracting the percents doesn't work. Apply them in turn: 100 → 70 → 98.", "The price ends at 98, below 100, so it's lower, not higher.", "Check it: 70 × 1.4 = 98, which is 2% lower, not 10%."],
         },
         {
           q: "A company's revenue increases by 10% in year one, decreases by 10% in year two, and increases by 10% again in year three. Compared to the original revenue, what is the revenue after year three?",
@@ -4856,6 +5237,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Applying each year's multiplier in sequence to the original 100 gives 110 after year one, 99 after year two's 10% decrease (applied to 110, not 100), and 108.9 after year three's 10% increase (applied to 99) — an 8.9% net increase. 10% higher mistakenly assumes the middle decrease exactly cancels one of the increases. 9% higher is a close but incorrect rounding of the compounding effect. Assuming 0% net change misapplies the same additive-cancellation error as the two-step cases, compounded across three steps instead of two.",
           difficulty: "hard",
+          why: [null, "The decrease is taken from 110, so it removes more than 10 points. 100 → 110 → 99 → 108.9.", "The exact result is 108.9, an 8.9% increase. Nothing rounds here.", "The changes don't cancel. Applying them in turn gives 108.9."],
         },
       ],
       traps: [
@@ -4875,6 +5257,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Identifying the part (75) and the whole (300, since it follows 'of'), the ratio is 75/300=0.25, or 25%. 4% comes from dividing the whole by the part instead (300/75), inverting the ratio. 225% comes from an unrelated arithmetic slip, like subtracting instead of dividing. 75% mistakenly restates the part itself as if it were already the percent.",
           difficulty: "easy",
+          why: [null, "4% divides 300 by 75. The part goes on top: 75 ÷ 300 = 25%.", "225 is 300 − 75, not a percent.", "75 is the part, not the percent. 75 is a quarter of 300: 25%."],
         },
         {
           q: "What is 40% of 150?",
@@ -4883,6 +5266,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Converting 40% to a decimal (0.40) and multiplying by the whole, 0.40 × 150 = 60. 40 mistakenly restates the percent itself as if it were the answer. 110 comes from subtracting the percent as if it were a flat quantity (150-40) instead of multiplying. 375 comes from dividing instead of multiplying (150/0.40).",
           difficulty: "easy",
+          why: [null, "40 is the percent itself. 40% of 150 is 0.40 × 150 = 60.", "110 subtracts 40 from 150. A percent means multiply: 0.40 × 150.", "375 divides by 0.40. \"Of\" means multiply: 0.40 × 150 = 60."],
         },
         {
           q: "A class has 20 students, and 8 of them ride the bus to school. What percent of the class rides the bus?",
@@ -4891,6 +5275,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Identifying the part (8, the bus riders) and the whole (20, the total class), the ratio is 8/20=0.4, or 40%. 8% mistakes the raw count of bus riders for a percent. 20% mistakes the total class size for the percent. 60% reports the percent of students who do NOT ride the bus instead of who does.",
           difficulty: "medium",
+          why: [null, "8 is the number of bus riders, not a percent. 8 out of 20 is 40%.", "20 is the class size, not a percent.", "60% is the share who don't ride the bus."],
         },
         {
           q: "45 is what percent of 36?",
@@ -4899,6 +5284,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Identifying the part (45) and the whole (36, following 'of'), noting that the part is larger than the whole here, the ratio is 45/36=1.25, or 125%; a result over 100% is valid and expected whenever the part exceeds the whole. 80% comes from inverting the ratio (36/45) instead of dividing the part by the whole. 9% comes from an unrelated arithmetic slip. 100% incorrectly assumes the two quantities must be treated as equal since they're being compared.",
           difficulty: "medium",
+          why: [null, "80% divides 36 by 45. The part goes on top: 45 ÷ 36 = 125%.", "9 is 45 − 36, not a percent.", "45 is larger than 36, so it's more than 100% of it."],
         },
         {
           q: "In a survey, 63 out of 180 respondents preferred option A, and the rest preferred option B. What percent of respondents preferred option B?",
@@ -4907,6 +5293,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Since the question doesn't give the part for option B directly, it must be found first: 180-63=117 respondents preferred option B, and the ratio 117/180=0.65, or 65%. 35% mistakenly reports the percent who preferred option A instead of B. 63% mistakes the raw count of option A responses for a percent. 31.5% comes from an unrelated miscalculation, like halving the wrong quantity.",
           difficulty: "hard",
+          why: [null, "35% is the share who preferred option A (63 of 180).", "63 is the number who chose option A, not a percent.", "Option B has 180 − 63 = 117 people, and 117 ÷ 180 = 65%."],
         },
       ],
       traps: [
@@ -4942,6 +5329,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The value 50 is far from the rest of the data (4-10), a clear outlier that pulls the mean substantially higher than most of the actual values, while the median (based on the middle values 6 and 8, averaging to 7) stays representative of the typical cluster, unaffected by the extreme value. Choosing the mean because it 'uses every value' ignores that using every value is exactly why it's distorted by the outlier here. Choosing the mean as 'always' the best measure is a general misconception — outliers are exactly when the median becomes more reliable. The median isn't always larger than the mean; here it happens to be smaller, since a high outlier pulls the mean up, not down.",
           difficulty: "easy",
+          why: [null, "Using every value is the problem here: the outlier 50 drags the mean far above most of the data.", "The mean isn't always best. With an outlier, the median better shows a typical value.", "The median isn't always larger. Here it's smaller, because the high outlier pulls the mean up."],
         },
         {
           q: "Home sale prices (in thousands of dollars): 240, 210, 890, 230, 225. What is the median sale price?",
@@ -4950,6 +5338,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Sorting the data first (210, 225, 230, 240, 890) reveals 890 as a clear outlier far above the rest; the mean would be pulled substantially higher by that one sale, while the median (the middle value once sorted, 230) stays representative of the typical price. 359 is the actual mean of this data set, exactly the distorted value the outlier produces. 890 mistakes the outlier itself for a typical value. 225 comes from picking a value near the middle without correctly sorting the list first.",
           difficulty: "medium",
+          why: [null, "359 is the mean, pulled up by the $890,000 sale. The median is the middle value once sorted: 230.", "890 is the outlier, the least typical price.", "225 is second in the sorted list (210, 225, 230, 240, 890). The middle value is 230."],
         },
         {
           q: "A data set: 12, 15, 15, 18, 20, 95. What is the median of this data set?",
@@ -4958,6 +5347,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "95 is far from the rest of the data (12-20), a clear outlier that pulls the mean substantially higher; the median, based on the middle values (15 and 18, averaging to 16.5), remains representative of the typical cluster. 40.83 is the actual mean of this data set, distorted upward by the outlier. 95 mistakes the outlier itself for a representative value. 18 picks one of the two middle values without correctly averaging them.",
           difficulty: "easy",
+          why: [null, "40.83 is the mean, pulled up by 95. The median averages the two middle values: (15 + 18) ÷ 2.", "95 is the outlier, not the middle of the data.", "With six values, the median is the average of the 3rd and 4th: (15 + 18) ÷ 2 = 16.5."],
         },
         {
           q: "A data set of quiz scores: 2, 78, 81, 85, 88, 90. What is the median score?",
@@ -4966,6 +5356,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "2 is far below the rest of the data (78-90), a low outlier that pulls the MEAN down substantially (left skew); the median, based on the middle values (81 and 85, averaging to 83), stays representative of the typical cluster, unaffected by the one very low score. 70.67 is the actual mean of this data set, distorted downward by the outlier — the opposite direction from the earlier high-outlier examples, but the same underlying principle. 2 mistakes the outlier itself for a typical score. 84.4 comes from averaging the wrong pair of middle values.",
           difficulty: "medium",
+          why: [null, "70.67 is the mean, dragged down by the score of 2. The median is (81 + 85) ÷ 2 = 83.", "2 is the outlier, not a typical score.", "84.4 is the mean of the other five scores. The median averages the middle pair, 81 and 85."],
         },
         {
           q: "A real estate report states that the mean home price in a neighborhood is $420,000, while the median home price is $350,000. What does this comparison most likely indicate about the distribution of home prices?",
@@ -4979,6 +5370,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Comparing the two values directly, the mean ($420,000) is noticeably higher than the median ($350,000); when the mean exceeds the median, a small number of unusually HIGH values are pulling the average up (right skew), meaning a few unusually expensive homes are inflating the mean while most homes are priced closer to the median. The left-skew option describes the opposite pattern (mean below median), which doesn't match what's given here. Reporting both a mean and median says nothing about symmetry; this large a gap between them is actually a sign of skew, not symmetry. And the median isn't 'incorrect': in a skewed distribution, the median is the more representative statistic, not a flawed one.",
           difficulty: "hard",
+          why: [null, "The mean here is higher than the median. Cheap outliers would pull the mean below the median.", "Reporting both numbers says nothing about symmetry. A $70,000 gap between them points to skew.", "The median isn't wrong. In skewed data like this, it's the more representative measure."],
         },
       ],
       traps: [
@@ -5003,6 +5395,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Standard deviation measures the typical distance of data points from the mean, not the mean's value itself; since the means are equal, a larger standard deviation for Set A means its values are more spread out around that shared mean than Set B's, which are more tightly clustered. Saying Set A's mean is larger contradicts the given fact that the means are equal. Standard deviation says nothing about how many data points a set has. And a larger spread doesn't mean the values are all higher — it means they're farther from the mean in either direction.",
           difficulty: "easy",
+          why: [null, "The means are stated to be equal. Standard deviation is about spread, not the mean.", "Standard deviation measures spread, not how many data points there are.", "More spread means values sit farther from the mean in both directions, not that they're all higher."],
         },
         {
           q: "Two classes take the same exam. Class A's scores are tightly clustered close to a mean of 78. Class B has the same mean of 78, but individual scores range widely, from 40 to 100. Which class most likely has the larger standard deviation?",
@@ -5016,6 +5409,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both classes share the same mean, so the mean itself gives no useful information here — the question is entirely about spread. Class B's scores range all the way from 40 to 100 around that same 78, while Class A's stay tightly clustered close to it; a wider range of individual scores around the same mean is a sign of a larger standard deviation. The second choice reverses which class has the wider range. Assuming a shared mean means the standard deviations must also match ignores that the two statistics measure completely different things. And enough is given here (the described spread of each class) to determine which has the wider variability, even without every individual score.",
           difficulty: "medium",
+          why: [null, "This reverses them. Class A is tightly clustered; Class B ranges from 40 to 100.", "The same mean doesn't mean the same spread. They measure different things.", "The described spread is enough: a range of 40 to 100 around 78 is far wider than a tight cluster."],
         },
         {
           q: "Two vending machines dispense the same average amount of soda per cup, but Machine A has a much smaller standard deviation in fill amount than Machine B. What does this indicate?",
@@ -5029,6 +5423,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Since the average fill amount is the same for both machines, the difference must be about consistency, not typical amount; a smaller standard deviation means Machine A's fill amounts vary less from cup to cup, making it more consistent. The second and third choices both incorrectly assume the standard deviation comparison says something about the average amount, when the averages are explicitly stated to be equal. And a smaller standard deviation for A specifically means the two machines are NOT equally consistent.",
           difficulty: "easy",
+          why: [null, "The averages are stated to be equal. Standard deviation is about consistency, not amount.", "The averages are the same. A smaller standard deviation means more consistent fills, not less soda.", "Different standard deviations mean different consistency. A's smaller one means it's more consistent."],
         },
         {
           q: "A data set has a standard deviation of exactly 0. What must be true about the data set?",
@@ -5042,6 +5437,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Standard deviation measures how spread out values are from the mean, and a standard deviation of exactly 0 means there's no spread at all — the only way for that to happen is if every single value in the data set is identical. A data set can have any number of values (not just one) and still have zero spread, as long as they're all the same number. The mean can be any value, not necessarily 0, since standard deviation measures spread around whatever the mean happens to be, not the mean's actual value. And 'no outliers, but values can still vary' misses that zero standard deviation rules out any variation at all, not just outliers.",
           difficulty: "medium",
+          why: [null, "A set can have many values and still have zero spread, as long as they're all the same.", "The mean can be any number. Zero standard deviation means no spread around that mean.", "Zero standard deviation rules out any variation at all, not just outliers."],
         },
         {
           q: "Two dot plots show quiz scores for two classes, both centered around the same mean of 75. Class X's dots are tightly clustered within a few points of 75. Class Y's dots are spread out widely, with several students scoring near 50 and several near 100. Which class has the larger standard deviation, and what does this suggest about performance consistency?",
@@ -5055,6 +5451,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Both classes share the same mean, so the visual spread of the dots is what determines the standard deviation comparison; Class Y's dots span a much wider range around the same center (50 to 100) compared to Class X's tight clustering, meaning Class Y has the larger standard deviation and, in context, less consistent performance across students. The second choice reverses which class has the wider spread. Sharing a mean doesn't imply sharing a standard deviation, since the two statistics measure different things. And a larger standard deviation indicates LESS consistency, not more, since it means scores sit farther from the mean on average.",
           difficulty: "hard",
+          why: [null, "This reverses them. Class Y's scores spread from 50 to 100; Class X is tightly clustered.", "Sharing a mean doesn't mean sharing a spread.", "A larger standard deviation means less consistency, not more."],
         },
       ],
       traps: [
@@ -5074,6 +5471,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The range is the largest value minus the smallest: 6 - 2 = 4. 6 mistakenly reports just the largest value instead of the range. 2 mistakenly reports just the smallest value. 5 comes from an off-by-one counting error.",
           difficulty: "easy",
+          why: [null, "6 is the largest value. The range is largest minus smallest: 6 − 2 = 4.", "2 is the smallest value. The range is 6 − 2 = 4.", "5 is the number of students, not the range."],
         },
         {
           q: "A dot plot shows the number of pets owned by each student in a class: 2 students with 0 pets, 5 students with 1 pet, 4 students with 2 pets, and 1 student with 3 pets. How many students are in the class?",
@@ -5082,6 +5480,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This asks for a total count, found by adding up the number of students represented at each value: 2 + 5 + 4 + 1 = 12. 4 mistakes the number of distinct pet-count categories (0, 1, 2, 3) for the total number of students. 11 comes from an arithmetic slip while adding. 3 mistakes the highest pet count (3 pets) for the total number of students.",
           difficulty: "easy",
+          why: [null, "4 is the number of categories (0 to 3 pets). Add the students in each: 2 + 5 + 4 + 1.", "Check the sum: 2 + 5 + 4 + 1 = 12, not 11.", "3 is the most pets anyone owns, not the number of students."],
         },
         {
           q: "A store recorded daily sales (in dollars) for 6 days: 210, 340, 275, 300, 265, 290. What is the mean daily sales?",
@@ -5090,6 +5489,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Adding all six values gives 210+340+275+300+265+290=1,680, and dividing by the count of values, 6, gives 1,680/6=280. $300 comes from an arithmetic slip in the division. $1,680 mistakenly reports the sum itself without dividing by the count. $210 mistakes the smallest individual value for the mean.",
           difficulty: "medium",
+          why: [null, "Check it: 1,680 ÷ 6 = 280, not 300.", "$1,680 is the total. Divide by the 6 days to get the mean.", "$210 is the smallest single day, not the average."],
         },
         {
           q: "A frequency table shows quiz scores for a class: 2 students scored 70, 6 students scored 80, 9 students scored 90, and 3 students scored 100. What was the highest individual score earned by any student?",
@@ -5098,6 +5498,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This asks for the maximum individual score value, not a frequency or count — scanning the table for the largest score with a nonzero frequency gives 100, since 3 students scored it. 3 mistakenly reports the frequency at that score instead of the score value itself. 90 and 9 both confuse the score with a value or frequency from a different row of the table.",
           difficulty: "medium",
+          why: [null, "3 is how many students scored 100, not the score itself.", "90 is a score, but 100 is higher and at least one student earned it.", "9 is how many students scored 90. The question asks for the highest score."],
         },
         {
           q: "A histogram groups delivery times (in minutes) into bins: 10 deliveries took 0-10 minutes, 25 took 10-20 minutes, 40 took 20-30 minutes, 15 took 30-40 minutes, and 10 took 40-50 minutes. What percent of deliveries took 20 minutes or more?",
@@ -5106,6 +5507,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Identifying the bins that satisfy '20 minutes or more' (the 20-30, 30-40, and 40-50 bins) and summing their frequencies gives 40+15+10=65, and dividing by the total across all bins (10+25+40+15+10=100) gives 65/100=65%. 40% mistakenly reports only the largest single bin (20-30) instead of summing every qualifying bin. 75% comes from including one extra bin that doesn't satisfy the condition, like the 10-20 bin. 35% reports the percent of deliveries that took LESS than 20 minutes instead of 20 minutes or more.",
           difficulty: "hard",
+          why: [null, "40% counts only the 20–30 bin. The 30–40 and 40–50 bins also qualify: 40 + 15 + 10 = 65.", "75 includes a bin that doesn't qualify. Only 20–30, 30–40, and 40–50 count: 65 of 100.", "35% is the share that took less than 20 minutes (10 + 25), the opposite of what's asked."],
         },
       ],
       traps: [
@@ -5126,6 +5528,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Adding the same constant to every value shifts the mean by that exact constant, so the new mean is 20+5=25. 20 mistakenly assumes the mean is unaffected by a uniform shift. 5 mistakenly reports just the constant added, not the new mean itself. 100 comes from multiplying the original mean by the constant instead of adding it.",
           difficulty: "easy",
+          why: [null, "Adding 5 to every value raises the mean by 5 too.", "5 is the amount added, not the new mean.", "100 multiplies the mean by 5. Adding 5 to every value adds 5 to the mean."],
         },
         {
           q: "A data set has a range of 12. If every value in the data set is increased by 3, what is the new range?",
@@ -5134,6 +5537,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Adding the same constant to every value shifts the whole data set uniformly — the maximum and minimum both increase by 3, so their difference (the range) stays exactly the same at 12. 15 mistakenly adds the constant to the range itself, as if the spread grew along with the values. 9 mistakenly subtracts the constant from the range instead. 36 comes from multiplying the range by the constant, an unrelated operation.",
           difficulty: "easy",
+          why: [null, "The max and min both rise by 3, so their difference, the range, doesn't change.", "Nothing is subtracted. Shifting every value by the same amount leaves the range at 12.", "36 multiplies the range by 3. Adding 3 to every value doesn't change the spread."],
         },
         {
           q: "Five test scores have a mean of 80. A sixth score of 92 is added. What is the new mean?",
@@ -5142,9 +5546,10 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Reconstructing the original total from the mean and count, 5 scores × 80 = 400; adding the new score gives 400+92=492, and dividing by the new count of 6 gives 492/6=82. 86 comes from averaging the old mean and the new score directly ((80+92)/2) instead of correctly reconstructing the total. 80 mistakenly assumes adding one new score doesn't change the mean at all. 92 mistakes the new score itself for the new mean.",
           difficulty: "medium",
+          why: [null, "86 averages 80 and 92 as if they had equal weight. The old mean stands for five scores: (400 + 92) ÷ 6 = 82.", "92 is above the old mean, so adding it pulls the mean up.", "92 is just the new score. The mean includes all six: 82."],
         },
         {
-          q: "A data set of 7 values has a median of 50. If a new value of 200 is added to the data set, what happens to the median?",
+          q: "The data set 42, 45, 48, 50, 52, 55, 58 has a median of 50. If a new value of 200 is added to the data set, what happens to the median?",
           choices: [
             "The median shifts only slightly, since one extreme value mainly affects which value sits in the middle, not the overall balance",
             "The median jumps dramatically higher, since 200 is far above the rest of the data",
@@ -5153,8 +5558,9 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           ],
           answer: 0,
           explain:
-            "With 7 values, the median is the 4th (middle) value; adding one very high value (200) makes 8 values, so the new median is the average of the 4th and 5th values in the new ordering; since 200 just becomes the new maximum, it doesn't affect which values sit in the middle, so the median shifts only slightly, unlike the mean, which the extreme value would pull noticeably higher. Assuming a dramatic jump confuses how the median behaves with how the mean would behave here. Assuming the median never changes when a value is added overstates the median's resistance to change: it's resistant to outliers, not literally frozen. And the median is a measure of the middle of the data, so it can never simply equal the new maximum value.",
+            "With 7 values, the median is the 4th (middle) value; adding one very high value (200) makes 8 values, so the new median is the average of the 4th and 5th values in the new ordering; since 200 just becomes the new maximum, the middle pair is 50 and 52, so the median shifts only slightly, to 51, unlike the mean, which the extreme value would pull noticeably higher. Assuming a dramatic jump confuses how the median behaves with how the mean would behave here. Assuming the median never changes when a value is added overstates the median's resistance to change: it's resistant to outliers, not literally frozen. And the median is a measure of the middle of the data, so it can never simply equal the new maximum value.",
           difficulty: "hard",
+          why: [null, "200 becomes the new maximum. The middle pair is now 50 and 52, so the median moves only to 51.", "The median does change: with eight values, it's the average of 50 and 52, which is 51.", "The median is the middle of the data, not the largest value."],
         },
         {
           q: "A biologist recorded the wingspan of 9 birds, with a mean of 24 cm and a range of 10 cm. A 10th bird is measured with a wingspan of 24 cm, exactly equal to the current mean. What happens to the mean and the range?",
@@ -5168,6 +5574,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Adding a value exactly equal to the current mean doesn't pull the average up or down at all, so the mean stays 24 cm; and since the range only changes if the new value is more extreme than the current minimum or maximum, and 24 falls between them (as the mean typically does), the range stays 10 cm too. Assuming the range increases ignores that a new value must be more extreme than the existing min or max to affect the range, and 24 isn't. Assuming the mean increases ignores that a value exactly at the current mean, by definition, doesn't shift the average in either direction. So neither statistic changes.",
           difficulty: "hard",
+          why: [null, "The new value, 24, lies between the old minimum and maximum, so the range doesn't change.", "A value exactly equal to the mean leaves the mean unchanged.", "24 equals the mean and lies inside the range, so neither one changes."],
         },
       ],
       traps: [
@@ -5202,6 +5609,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "A constant rate of increase forming a straight-line pattern is the defining characteristic of a linear relationship: linear models have a constant rate of change, unlike exponential (accelerating rate) or quadratic (a rate that changes direction at a vertex) models. Exponential is ruled out because its rate of change isn't constant, it grows. Quadratic is ruled out because it changes direction at a peak or trough, which isn't described here. And the description gives enough information (a clear constant-rate straight-line pattern) to determine the model.",
           diagram: { kind: "scatterGraph", trend: "linearPos" },
           difficulty: "easy",
+          why: [null, "Exponential growth speeds up. A constant rate is linear.", "A quadratic changes direction at a peak or low point. A steady straight line doesn't.", "A constant rate in a straight line is enough to identify a linear model."],
         },
         {
           q: "A scatterplot shows points rising slowly at first, then increasingly steeply as x increases, with each step producing a noticeably bigger jump than the last. Which model best fits?",
@@ -5211,6 +5619,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The rate of increase itself keeps growing (each step's jump is bigger than the last), which rules out linear (constant rate) immediately. It's tempting to think 'curving upward' means quadratic, but a quadratic model eventually turns and changes direction at its vertex, while this pattern just keeps accelerating in the same direction without turning around, matching exponential growth specifically. Linear is ruled out by the changing rate. Quadratic is ruled out because nothing here describes a reversal in direction. And this is a textbook match for exponential growth, so it's certainly produced by one of the standard models.",
           diagram: { kind: "scatterGraph", trend: "exponential" },
           difficulty: "medium",
+          why: [null, "The jumps keep getting bigger, so the rate isn't constant. That rules out linear.", "A quadratic eventually turns around. This keeps speeding up in one direction, which is exponential.", "Ever-growing jumps are exactly what exponential growth looks like."],
         },
         {
           q: "A scatterplot shows points that rise, reach a peak around the middle of the data, then fall back down, forming a symmetric arc shape. Which model best fits?",
@@ -5220,6 +5629,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The data doesn't just keep increasing or decreasing — it changes direction once, at a single peak, which is the defining feature of a quadratic model. Linear is ruled out because a constant rate never changes direction. Exponential is ruled out because it keeps accelerating in one direction and never turns around. And the description (a full rise, peak, and fall) is a clear, specific signature that's enough to identify the model shape.",
           diagram: { kind: "scatterGraph", trend: "quadratic" },
           difficulty: "easy",
+          why: [null, "A line never rises and then falls. It can't change direction.", "Exponential curves keep going one way. They never peak and turn back down.", "A rise, a peak, and a fall is enough to identify a quadratic."],
         },
         {
           q: "A scatterplot shows points that appear to rise at a roughly constant rate, but closer inspection shows the amount of increase between consecutive points is slightly smaller near the right side of the graph than near the left. Which model best fits?",
@@ -5229,6 +5639,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The rate of increase itself is changing (specifically getting smaller), which rules out a purely linear model (constant rate) and also rules out exponential growth, which would have an ACCELERATING rate, the opposite direction. A rate of increase that's shrinking while still positive matches the rising portion of a quadratic model, before it reaches its peak and turns downward. Linear is ruled out by the changing rate. Exponential moves the wrong direction entirely. Cubic isn't one of the model shapes this method distinguishes between, and the described behavior specifically matches quadratic's pre-vertex behavior.",
           diagram: { kind: "scatterGraph", trend: "quadratic" },
           difficulty: "medium",
+          why: [null, "The increase shrinks toward the right, so the rate isn't constant. That rules out linear.", "Exponential growth speeds up. Here the increases get smaller.", "The pattern matches the rising side of a quadratic, where increases shrink before the peak."],
         },
         {
           q: "A linear model is fit to a data set, and the residuals show a clear pattern: strongly negative for small x-values, positive in the middle, and strongly negative again for large x-values. What does this residual pattern suggest about the true relationship between the variables?",
@@ -5242,6 +5653,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "A good linear fit's residuals should scatter randomly above and below zero, with no systematic pattern; here the residuals follow a clear pattern (negative, then positive, then negative again), meaning the linear model consistently over- or under-predicts in a structured way, which is a strong signal that the true relationship is curved (like quadratic), not actually linear. Claiming the fit is perfect ignores that a truly perfect fit would have residuals of zero, not a systematic pattern. Concluding exponential overreaches: this negative-positive-negative shape specifically matches a relationship that turns around, which is quadratic behavior, not accelerating exponential behavior. And a systematic pattern like this is a sign of the wrong model, not necessarily flawed data.",
           difficulty: "hard",
+          why: [null, "Calculating residuals doesn't make a fit perfect. A clear pattern in them shows the model is wrong.", "Negative, then positive, then negative again is a curve that turns around, which is quadratic, not exponential.", "A systematic pattern points to the wrong model, not to measurement errors."],
         },
       ],
       traps: [
@@ -5261,6 +5673,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The residual formula is actual minus predicted, not the reverse: 50 - 45 = 5. -5 comes from reversing the formula (predicted minus actual), flipping the sign. 45 mistakenly reports the predicted value itself instead of the residual. 95 comes from adding the two values instead of subtracting.",
           difficulty: "easy",
+          why: [null, "Residual is actual minus predicted: 50 − 45 = 5, not 45 − 50.", "45 is the predicted value, not the residual.", "95 adds the two values. Residual subtracts: actual minus predicted."],
         },
         {
           q: "A line of best fit predicts a plant will be 24 cm tall after 6 weeks, but its actual measured height is 19 cm. What is the residual, and what does its sign tell you?",
@@ -5274,6 +5687,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Applying the residual formula, actual minus predicted, gives 19 - 24 = -5; the negative sign specifically means the actual height fell short of the model's prediction, not just that there was some difference. Reporting a residual of 5 instead of -5 comes from reversing the subtraction order. Saying the negative residual means the plant grew MORE than predicted has the sign's meaning backwards — a negative residual always means the actual value came in below the prediction.",
           difficulty: "medium",
+          why: [null, "Actual minus predicted is 19 − 24 = −5, a negative number.", "A negative residual means the actual value was below the prediction: the plant grew less.", "The residual is −5, and the plant came in 5 cm short, so it grew less."],
         },
         {
           q: "A line of best fit predicts a car will sell for $18,000, but it actually sells for $16,500. What is the residual?",
@@ -5282,6 +5696,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Applying the residual formula, actual minus predicted, gives 16,500 - 18,000 = -1,500. 1,500 comes from reversing the formula, flipping the sign. 18,000 mistakenly reports the predicted value itself. 34,500 comes from adding the two values instead of subtracting.",
           difficulty: "easy",
+          why: [null, "Residual is actual minus predicted: 16,500 − 18,000 = −1,500.", "18,000 is the predicted price, not the residual.", "34,500 adds the two prices. Residual subtracts them."],
         },
         {
           q: "A model predicts a runner will finish a race in 52 minutes, but the runner actually finishes in 49 minutes. What is the residual, and what does its sign indicate about the runner's performance relative to the prediction?",
@@ -5295,6 +5710,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Applying the residual formula, actual minus predicted, gives 49 - 52 = -3. In most contexts a negative residual means underperforming, but here LOWER race times are BETTER, so this negative residual actually means the runner finished faster than predicted — better performance, not worse. Reporting 3 instead of -3 reverses the subtraction order. Interpreting the negative sign as 'worse' applies the typical higher-is-better assumption to a context where it doesn't hold, since faster (lower) times are the good outcome in a race.",
           difficulty: "medium",
+          why: [null, "Actual minus predicted is 49 − 52 = −3, a negative number.", "In a race, a lower time is better. Finishing below the prediction means a better run.", "The residual is −3, and finishing faster than predicted is better, not worse."],
         },
         {
           q: "A line of best fit predicts a plant's height based on weeks since planting. For a particular plant, the residual was calculated as 4.5. If the model predicted a height of 22 cm for that plant, what was its actual height?",
@@ -5303,6 +5719,7 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Using the residual formula in reverse, residual = actual - predicted, gives 4.5 = actual - 22, so actual = 4.5 + 22 = 26.5. 17.5 comes from subtracting the residual from the predicted value instead of adding it, effectively flipping the formula's sign. 22 mistakenly reports just the predicted value, ignoring the residual entirely. 4.5 mistakenly reports the residual itself as if it were the actual height.",
           difficulty: "hard",
+          why: [null, "17.5 subtracts the residual. Actual = predicted + residual = 22 + 4.5.", "22 is the predicted height. The positive residual means the actual height was 4.5 cm more.", "4.5 is the residual, not the height."],
         },
       ],
       traps: [
@@ -5332,6 +5749,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Since A and B are independent and the question asks for 'and,' the probabilities multiply: P(A and B) = 0.5 × 0.4 = 0.2. 0.9 comes from adding the two probabilities instead of multiplying, the rule for 'or,' not 'and.' 0.1 comes from an arithmetic slip in the multiplication. 0.45 comes from averaging the two probabilities instead of multiplying them.",
           difficulty: "easy",
+          why: [null, "Adding is for \"or.\" For \"and\" with independent events, multiply: 0.5 × 0.4.", "0.1 is the difference between the probabilities. For \"and,\" multiply: 0.2.", "Averaging doesn't apply. For independent events, \"and\" means multiply."],
         },
         {
           q: "A jar contains 5 red marbles and 3 blue marbles. One marble is drawn and replaced, then a second marble is drawn. What is the probability that the first marble is red OR the second marble is blue?",
@@ -5340,6 +5758,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Since these two events can both happen at once, the addition rule applies: P(A or B) = P(A) + P(B) - P(A and B). With P(first red)=5/8 and P(second blue)=3/8, and since the marble is replaced (making the draws independent), the overlap is 5/8 × 3/8 = 15/64, giving 5/8+3/8-15/64 = 49/64. 1 comes from simply adding 5/8 and 3/8 without subtracting any overlap, over-counting the outcome where both happen. 5/8 mistakenly reports just one of the two individual probabilities. 15/64 mistakenly reports just the overlap term itself instead of the final combined probability.",
           difficulty: "medium",
+          why: [null, "Adding 5/8 and 3/8 counts the outcome where both happen twice. Subtract the overlap, 15/64.", "5/8 is only the chance the first is red. \"Or\" also includes the second being blue.", "15/64 is the chance both happen, not either one."],
         },
         {
           q: "A spinner has 4 equal sections numbered 1-4. What is the probability of spinning an even number?",
@@ -5348,6 +5767,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The favorable outcomes are 2 and 4, out of 4 total sections, giving 2/4 = 1/2. 1/4 comes from counting only one of the two even numbers. 3/4 reports the probability of an odd number instead. 2 mistakenly reports the count of favorable outcomes without dividing by the total.",
           difficulty: "easy",
+          why: [null, "There are two even numbers, 2 and 4, not one.", "3/4 counts three sections, but only 2 and 4 are even.", "A probability can't be more than 1. 2 is the count of even sections; divide by 4."],
         },
         {
           q: "A fair coin is flipped 3 times. What is the probability of getting at least one heads?",
@@ -5356,6 +5776,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "'At least one' is found using the complement rule: P(at least one) = 1 - P(none); P(all three tails) = (1/2)^3 = 1/8, so P(at least one heads) = 1 - 1/8 = 7/8. 1/8 mistakenly reports the complement itself instead of subtracting it from 1. 3/8 comes from an unrelated miscalculation across the three flips. 1/2 mistakenly applies the single-flip probability to the three-flip scenario.",
           difficulty: "medium",
+          why: [null, "1/8 is the chance of no heads at all. Subtract it from 1.", "3/8 is the chance of exactly one heads. \"At least one\" also includes two or three heads.", "1/2 is for a single flip. With three flips, the only way to miss is all tails: 1 − 1/8."],
         },
         {
           q: "A jar contains 5 red and 3 blue marbles. Two marbles are drawn WITHOUT replacement. What is the probability that both are red?",
@@ -5364,6 +5785,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Since the draws are without replacement, the two events are dependent: P(first red) = 5/8, and given the first was red, only 4 red marbles remain out of 7 total, so P(second red | first red) = 4/7; multiplying gives 5/8 × 4/7 = 20/56 = 5/14. 25/64 comes from incorrectly treating the draws as independent and using 5/8 twice, as if the marble were replaced. 5/8 mistakenly reports just the first draw's probability. 4/7 mistakenly reports just the second draw's conditional probability.",
           difficulty: "hard",
+          why: [null, "25/64 treats the draws as if the first marble were put back. Without replacement, the second draw is 4/7.", "5/8 is only the first draw. Both need to be red: 5/8 × 4/7.", "4/7 is only the second draw. Multiply by the first: 5/8 × 4/7."],
         },
       ],
       traps: [
@@ -5383,6 +5805,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Restricting to the 26 red cards (hearts and diamonds), as specified by 'given that the card is red,' 13 of those are hearts, giving 13/26 = 1/2. 1/4 comes from using the full deck of 52 as the denominator instead of the restricted 26. 13/52 makes the same mistake in unreduced form. 1 would only be correct if every red card were a heart, which isn't the case.",
           difficulty: "easy",
+          why: [null, "\"Given red\" limits you to the 26 red cards, and 13 are hearts: 13/26.", "13/52 uses the whole deck. The condition limits it to the 26 red cards.", "Not every red card is a heart. Half are diamonds."],
         },
         {
           q: "A survey of 200 students found that 120 play a sport, and of those 120, 45 also play a musical instrument. What is the probability that a student plays an instrument, given that they play a sport?",
@@ -5391,6 +5814,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Restricting to the 120 sport-playing students, as specified by 'given that they play a sport,' 45 of those also play an instrument, giving 45/120 = 3/8. 45/200 mistakenly uses the full 200 surveyed students as the denominator instead of the restricted 120. 9/40 comes from an unreduced or miscalculated fraction using the wrong denominator. 45/80 uses an unrelated, incorrect subgroup size.",
           difficulty: "medium",
+          why: [null, "45/200 uses everyone surveyed. \"Given they play a sport\" limits it to the 120 who do.", "9/40 is 45/200 reduced, which still uses all 200 students instead of the 120 who play a sport.", "80 is the number who don't play a sport. The condition limits you to the 120 who do."],
         },
         {
           q: "A box contains 10 pens: 6 blue and 4 black. What is the probability that a randomly selected pen is black, given that it is not blue?",
@@ -5399,6 +5823,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Since every pen is either blue or black, 'not blue' restricts the group to just the 4 black pens; within that group, all 4 are black, giving 4/4 = 1. 4/10 mistakenly uses the full 10 pens as the denominator instead of the restricted group. 6/10 reports the probability of blue from the full set, unrelated to what's asked. 0 would only be correct if none of the 'not blue' pens were black, which contradicts the setup.",
           difficulty: "easy",
+          why: [null, "4/10 uses all 10 pens. \"Not blue\" limits you to the 4 black pens, and all are black.", "6/10 is the chance of blue, which is ruled out by the condition.", "Every pen that isn't blue is black, so the probability is 1, not 0."],
         },
         {
           q: "A survey of 150 students found: 90 play a sport, 60 do not. Of the 90 who play a sport, 36 also work a part-time job. Of the 60 who don't play a sport, 24 work a part-time job. What is the probability that a student works a part-time job, given that they play a sport?",
@@ -5407,6 +5832,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Restricting to the 90 sport-playing students, as specified by 'given that they play a sport,' 36 of those also work a part-time job, giving 36/90 = 2/5. 36/150 mistakenly uses the full 150 students surveyed instead of the restricted 90. 24/60 pulls from the wrong subgroup (non-sport-players) entirely. 36/60 uses an unrelated, incorrect denominator.",
           difficulty: "medium",
+          why: [null, "36/150 uses all students. \"Given they play a sport\" limits it to the 90 who do.", "24/60 is about the students who don't play a sport.", "The denominator should be the 90 sport players, not 60."],
         },
         {
           q: "Using the same survey (150 students: 90 play a sport, of whom 36 work a part-time job; 60 don't play a sport, of whom 24 work a part-time job), what is the probability a student plays a sport, given that they work a part-time job, and is this the same as the probability a student works a part-time job given that they play a sport?",
@@ -5420,6 +5846,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This restriction is different: 'given that they work a part-time job' restricts the total to all part-time workers, 36+24=60; within that group of 60, 36 also play a sport, giving P(sport | part-time) = 36/60 = 3/5 — which is NOT the same as P(part-time | sport) = 36/90 = 2/5, since the two conditional probabilities use different restricted totals (60 vs. 90) even though they share the same 36 students. Reporting 2/5 here confuses this calculation with the previous example's, using the wrong denominator (90 instead of 60). Claiming the two conditional probabilities are equal ignores that reversing which condition restricts the group changes the denominator, even when the numerator (36) stays the same.",
           difficulty: "hard",
+          why: [null, "Given part-time work, the group is the 60 workers, and 36 play a sport: 3/5, not 2/5.", "3/5 is right, but it's not the same as P(part-time | sport) = 36/90 = 2/5.", "Given part-time work, the group is 60, not 90, so the probability is 3/5."],
         },
       ],
       traps: [
@@ -5454,6 +5881,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "A confidence interval describes a plausible range for the population MEAN, not for individual data points, and it's tied to the reliability of the sampling method, not a guarantee. Claiming 95% of individual data points fall in the range describes a completely different concept, like a percentile range. Claiming a 95% probability for any individual observation makes the same mistake, applying the interval to individual data instead of the population parameter. And 'guaranteed' overstates what a confidence interval claims — it's a plausible range, not a certainty.",
           difficulty: "easy",
+          why: [null, "A confidence interval is about the population mean, not where individual data points fall.", "The interval is about the mean, not about any single observation.", "A confidence interval gives a plausible range, not a guarantee."],
         },
         {
           q: "A 90% confidence interval for the average commute time of employees at a company is (22, 28) minutes. Which statement correctly interprets this interval?",
@@ -5467,6 +5895,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The interval describes a plausible range for the AVERAGE commute time across all employees, not for any individual employee's commute, and it's tied to the sampling method used to estimate that average. Claiming '90% of employees commute' within the range describes individual variation, a completely different idea from an interval around an average. Claiming 'every employee's' commute falls in the range overstates the claim even further. And describing a 90% chance for any individual employee makes the same individual-vs-average confusion.",
           difficulty: "medium",
+          why: [null, "The interval estimates the average commute, not how many individual employees fall in the range.", "Individual commutes vary far more than the average does. The interval is only about the average.", "The interval is about the average commute, not the chance for any one employee."],
         },
         {
           q: "A 95% confidence interval for the average weight of apples in an orchard is (150, 170) grams. Which statement correctly interprets this interval?",
@@ -5480,6 +5909,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "The interval describes a plausible range for the population's mean weight, not for any individual apple's weight. Claiming '95% of apples weigh' within the range describes a different concept, individual variation rather than an interval around an average. Claiming 'every apple' weighs within the range overstates the claim entirely. And describing a 95% chance for any individual apple repeats the same individual-vs-average confusion.",
           difficulty: "easy",
+          why: [null, "The interval estimates the average weight, not the share of apples in that range.", "Individual apples vary more than the average. The interval is only about the average.", "The interval is about the mean weight, not any single apple."],
         },
         {
           q: "A company claims its light bulbs last an average of 1,000 hours. A 90% confidence interval for the true mean lifespan, based on a sample, is (920, 980) hours. What does this suggest about the company's claim?",
@@ -5493,6 +5923,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Checking whether the claimed value (1,000 hours) falls inside the interval (920, 980), it falls OUTSIDE, above the upper bound, suggesting the company's claim isn't well supported by the sample data. Saying the claim is 'confirmed' because the interval is 'close' misunderstands that being outside the interval means the claim isn't well supported, regardless of how close the numbers look. The interval doesn't prove any exact value — it establishes a plausible range, not a single confirmed number like 950. And nothing in the problem indicates the sample size was inadequate; the interval is simply informative on its own.",
           difficulty: "medium",
+          why: [null, "1,000 is outside (920, 980), so the data doesn't support the claim, however close it looks.", "An interval gives a plausible range, not one exact value like 950.", "Nothing suggests the sample was too small. The interval itself is informative."],
         },
         {
           q: "A researcher claims that the average commute time in a city is 27 minutes. A 95% confidence interval for the true mean, based on a sample, is (24, 30) minutes. Does this data contradict the researcher's claim?",
@@ -5506,6 +5937,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Checking whether the claimed value (27) falls inside the interval (24, 30), it does, so the sample data is consistent with the claim, not contradicting it, though this doesn't PROVE the true mean is exactly 27, since other values in the range are equally plausible. Claiming contradiction because 27 isn't exactly centered misunderstands that any value within the interval, not just the midpoint, is considered plausible. Claiming the data proves the mean cannot be 27 gets the conclusion backwards, since 27 falls inside, not outside, the range. And claiming the data proves the mean IS exactly 27 overstates what a confidence interval can establish: it supports plausibility, not certainty of one exact value.",
           difficulty: "hard",
+          why: [null, "Any value inside the interval is plausible, not just the center. 27 is inside (24, 30).", "27 is inside the interval, so the data doesn't rule it out.", "Being inside the interval makes 27 plausible, not proven. Other values in the range are just as plausible."],
         },
       ],
       traps: [
@@ -5530,6 +5962,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Larger sample size leads to a smaller margin of error and thus a narrower confidence interval, all else equal, so increasing from 100 to 400 should narrow the interval. Claiming it will widen reverses the correct relationship. Claiming no change ignores that sample size directly affects precision. And the confidence level isn't affected by sample size at all — it's a separate, chosen value, unrelated to what happens here.",
           difficulty: "easy",
+          why: [null, "A larger sample gives a smaller margin of error, which narrows the interval.", "Sample size affects precision. Quadrupling it narrows the interval.", "The confidence level is chosen separately. The sample size doesn't change it."],
         },
         {
           q: "A pollster wants a narrower margin of error for an upcoming election poll while keeping the same 95% confidence level. What should they do to their sample size?",
@@ -5543,6 +5976,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Larger sample size produces a smaller margin of error, holding confidence level constant, so increasing the sample size is exactly what a narrower margin requires. Decreasing the sample size would widen the interval, the opposite of the desired outcome. Changing the confidence level doesn't address the goal here, since the pollster explicitly wants to KEEP the same 95% confidence level — and increasing confidence level would widen the interval anyway, working against the goal. Decreasing the confidence level would narrow the interval but abandon the stated 95% requirement, which isn't what was asked.",
           difficulty: "medium",
+          why: [null, "A smaller sample makes the margin of error larger, the opposite of the goal.", "The pollster wants to keep 95%, and a higher level would widen the interval anyway.", "That would narrow the margin, but it abandons the required 95% level."],
         },
         {
           q: "A researcher decreases the sample size from 500 to 200 while keeping the same confidence level. What is the most likely effect on the width of the confidence interval?",
@@ -5556,6 +5990,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Smaller sample size leads to a larger margin of error and thus a wider confidence interval, all else equal, so decreasing from 500 to 200 should widen the interval. Claiming it will narrow reverses the correct relationship. Claiming no change ignores that sample size directly affects precision. And the confidence level isn't affected by sample size — it's a separately chosen value.",
           difficulty: "easy",
+          why: [null, "A smaller sample gives a larger margin of error, which widens the interval.", "Sample size affects precision. Cutting it from 500 to 200 widens the interval.", "The confidence level is chosen separately. The sample size doesn't change it."],
         },
         {
           q: "A pollster increases the confidence level from 90% to 99% while keeping the same sample size. What is the most likely effect on the width of the confidence interval?",
@@ -5569,6 +6004,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Increasing the confidence level runs the OPPOSITE direction from the sample-size relationship: to be more confident (99% vs. 90%) that the interval actually contains the true value, the range needs to be broader, so increasing from 90% to 99% should widen the interval. Claiming it will narrow confuses this with the sample-size relationship, which runs the opposite direction. Claiming no change ignores that confidence level directly affects interval width. And the sample size doesn't change here at all; only the confidence level does.",
           difficulty: "medium",
+          why: [null, "Being more confident requires a wider range, not a narrower one.", "The confidence level directly affects the width. Going to 99% widens it.", "The sample size stays the same. Only the confidence level changes."],
         },
         {
           q: "A study increases both its sample size and its confidence level at the same time. A colleague claims the resulting confidence interval must be narrower, since larger samples always produce narrower intervals. Is the colleague's reasoning fully correct?",
@@ -5582,6 +6018,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Larger sample size narrows the interval, but higher confidence level widens it (two changes pushing the interval's width in OPPOSITE directions), so since both changed at once, the net result depends on the size of each change and can't be determined from the sample-size effect alone; the colleague's reasoning is incomplete because it ignores the confidence level's opposing effect. Saying the colleague is 'fully correct' ignores that a second, competing change (confidence level) was also made. Claiming confidence level 'also narrows' the interval gets that specific relationship backwards: confidence level increases widen intervals, they don't narrow them. And it's not true that the changes must happen 'at the exact same rate' to have any effect; it's just that the net direction isn't determinable without knowing those sizes.",
           difficulty: "hard",
+          why: [null, "The confidence level also changed, and a higher level widens the interval. The net effect isn't certain.", "A higher confidence level widens an interval; it doesn't narrow it.", "Each change affects the width on its own. The net direction just can't be determined without their sizes."],
         },
       ],
       traps: [
@@ -5601,6 +6038,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Finding the sample proportion, 16/20=0.8, and applying it to the full population, 0.8 × 400 = 320. 16 mistakenly reports the raw sample count instead of scaling it up. 80 comes from applying the wrong proportion, like 20% instead of 80%, to the population. 384 comes from an unrelated miscalculation, like using the wrong population size in the multiplication.",
           difficulty: "easy",
+          why: [null, "16 is the count in the sample. Scale it up: 16/20 = 80% of 400.", "80 is the estimate of employees not enrolled (4 of every 20).", "384 subtracts 16 from 400. Use the sample proportion: 80% of 400 = 320."],
         },
         {
           q: "A quality inspector randomly samples 50 bolts from a shipment of 3,000 and finds 3 are defective. Based on this sample, what is the best estimate of the total number of defective bolts in the shipment?",
@@ -5609,6 +6047,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Finding the sample proportion, 3/50=0.06, and applying it to the full shipment, 0.06 × 3,000 = 180. 3 mistakenly reports the raw sample count instead of scaling it up. 60 comes from applying a rate ten times too small. 150 comes from an unrelated arithmetic slip in the multiplication.",
           difficulty: "easy",
+          why: [null, "3 is the count in the sample. Scale up: 3/50 = 6% of 3,000.", "60 is how many groups of 50 fit in 3,000. Multiply by the 3 defects per group: 180.", "150 uses 5%. The sample rate is 3/50 = 6%."],
         },
         {
           q: "A random sample of 250 voters from a district of 60,000 found that 175 support a proposed measure. Based on this sample, what is the best estimate of the number of voters in the district who do NOT support the measure?",
@@ -5617,6 +6056,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Finding the sample proportion who support, 175/250=0.7, and since the question asks about those who do NOT support, the complement proportion is 1-0.7=0.3, applied to the full population: 0.3 × 60,000 = 18,000. 42,000 mistakenly scales up the 'support' proportion (0.7) instead of finding the complement first, answering the wrong question. 175 mistakenly reports the raw sample count instead of scaling it up at all. 12,000 comes from an unrelated arithmetic slip in the final multiplication.",
           difficulty: "medium",
+          why: [null, "42,000 estimates the supporters. The question asks for those who don't support: 30%.", "175 is the number of supporters in the sample, not an estimate for the district.", "12,000 uses 20%. Non-supporters are 75 of 250, which is 30%."],
         },
         {
           q: "An online news site posts a poll on its website, and 2,400 of its 3,000 respondents say they prefer streaming over cable TV. The site's editor claims this shows 80% of ALL adults in the country prefer streaming. Is this estimate valid?",
@@ -5630,6 +6070,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "This is a self-selected online poll (only people who chose to visit the site and respond are included, not a random sample of all adults), so even though 80% is accurate for the poll's respondents, it can't be reliably scaled up to represent all adults nationally, regardless of the sample's size. Claiming validity based on the large sample size (3,000) ignores that sample size doesn't fix a lack of random selection; a big biased sample is still biased. Claiming any online poll can be scaled up as long as the percentage is reported correctly ignores the random-sampling requirement entirely. And there's nothing inherently unrealistic about an 80% figure: the problem is the sampling method, not the size of the percentage itself.",
           difficulty: "medium",
+          why: [null, "A big sample doesn't fix how it was chosen. People who opted in to a website poll aren't a random sample.", "Scaling up requires a random sample. An opt-in online poll isn't one.", "The problem isn't that 80% is too high. It's that the sample wasn't random."],
         },
         {
           q: "A city's parks department randomly surveys 80 out of 5,000 registered users of a park app and finds that 12 reported visiting a park at least 3 times per week. If each 'frequent visitor' uses park facilities worth about $45 per month in maintenance costs, what is the best estimate of total monthly maintenance costs attributable to frequent visitors, based on this sample?",
@@ -5638,6 +6079,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           explain:
             "Finding the sample proportion of frequent visitors, 12/80=0.15, scaling up to the full population, 0.15 × 5,000 = 750 estimated frequent visitors, and applying the given per-visitor cost, 750 × $45 = $33,750. $540 mistakenly applies the per-visitor cost to the sample's raw count (12) instead of the scaled-up population estimate. $3,600 comes from an incomplete calculation that stops partway through the two-step process. $225,000 comes from applying the per-visitor cost to the full population size (5,000) instead of just the estimated frequent-visitor subset.",
           difficulty: "hard",
+          why: [null, "$540 uses the 12 people in the sample. Scale up first: 15% of 5,000 = 750 people.", "$3,600 multiplies the 80 people sampled by $45. Use the estimated 750 frequent visitors.", "$225,000 charges every user $45. Only the estimated 750 frequent visitors count."],
         },
       ],
       traps: [
@@ -5673,6 +6115,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           explain:
             "This is an observational study (no random assignment of who eats ice cream), so causation cannot be concluded; hot summer weather likely increases both ice cream sales and swimming (and therefore drowning risk), making it a confounding variable and the most reasonable explanation. Claiming ice cream causes drowning ignores that no plausible mechanism connects the two directly. Claiming drowning causes ice cream sales reverses an already-implausible causal claim. And claiming the correlation 'proves' causation in either direction ignores the defining limitation of an observational study.",
           difficulty: "easy",
+          why: [null, "There's no plausible way ice cream causes drowning. Hot weather drives both.", "Drowning doesn't cause ice cream sales. A third factor, heat, explains both.", "An observational study shows correlation, not proof of cause in either direction."],
         },
         {
           q: "A city notices that neighborhoods with more coffee shops also tend to have higher average rents. A local blogger claims that opening coffee shops causes rent increases. What's the best interpretation?",
@@ -5686,6 +6129,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           explain:
             "This is observational (no one randomly assigned coffee shops to neighborhoods), so causation can't be concluded from the correlation alone; a neighborhood becoming more desirable or seeing more investment could independently attract both new coffee shops and rising rents, making that shared trend a far more plausible confounding variable than coffee shops directly driving up rent. Claiming coffee shops directly cause rent increases is exactly the unsupported leap the blogger made. Claiming rents cause coffee shops reverses that same unsupported leap. And dismissing the correlation as purely coincidental ignores that a real, identifiable confounding variable is a much more likely explanation than pure chance.",
           difficulty: "medium",
+          why: [null, "That's the blogger's leap. Without random assignment, a correlation doesn't show cause.", "This reverses the same unsupported leap. Both likely come from a third factor.", "A real confounding variable, like the area becoming more desirable, is more likely than pure chance."],
         },
         {
           q: "An observational study finds that students who eat breakfast tend to have higher test scores than students who skip breakfast. What's the best interpretation?",
@@ -5699,6 +6143,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           explain:
             "This is observational (no random assignment of who eats breakfast), so causation cannot be concluded; family routines, income, or overall health habits could independently affect both breakfast habits and test performance, making a confounding variable the most reasonable explanation. Claiming breakfast directly causes higher scores is exactly the unsupported leap an observational study can't justify. Claiming test scores cause breakfast-eating reverses that same unsupported leap and doesn't even make logical sense as a causal direction. And denying any relationship contradicts the correlation the study actually found.",
           difficulty: "easy",
+          why: [null, "An observational study can't show that breakfast itself raises scores. Other factors may drive both.", "Test scores can't cause breakfast habits, and the study can't show cause anyway.", "The study found a relationship. It just can't say what causes it."],
         },
         {
           q: "A study finds that neighborhoods with more public libraries have lower rates of teen crime. A city council member proposes building more libraries specifically to reduce crime. What is the main weakness in this reasoning?",
@@ -5712,6 +6157,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           explain:
             "This is observational (no random assignment of libraries to neighborhoods), so causation can't be concluded from the correlation alone; neighborhoods with more overall public investment or resources might have both more libraries AND lower crime, independent of any direct effect of libraries themselves, so building more libraries in a different neighborhood without those other resources might not produce the same crime reduction. Claiming the study proves a direct causal effect ignores the defining limitation of an observational design. Blaming sample size misidentifies the actual flaw, which is the confounding variable, not the amount of data collected. And claiming crime causes fewer libraries reverses the correlation in a way not supported by the study at all.",
           difficulty: "medium",
+          why: [null, "An observational study can't prove libraries reduce crime.", "The flaw is the likely confounding variable, not the sample size.", "This reverses the relationship and isn't supported by the study."],
         },
         {
           q: "Researchers randomly assign 200 volunteers to either take a new supplement or a placebo, without either group knowing which they received, then measure changes in blood pressure after 8 weeks. The supplement group shows a significantly larger decrease. Can this study support a causal claim?",
@@ -5725,6 +6171,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           explain:
             "Checking the study design, there was random assignment (yes) and a control (placebo) group (yes), so with both randomization and a control group in place, this design CAN support a causal claim, unlike a purely observational study. Claiming correlation never implies causation 'under any circumstances' overgeneralizes: a properly designed randomized controlled experiment is specifically the tool that CAN support causal claims. Objecting to the sample size misidentifies what actually determines whether a study can support causation, which is the design, not simply how many participants were involved. And crediting the significant result alone, regardless of design, ignores that the same significant result from a poorly designed observational study would NOT support causation: the design is what earns the causal conclusion, not the result's size.",
           difficulty: "hard",
+          why: [null, "A randomized controlled experiment is exactly the kind of study that can support causation.", "What allows a causal claim is the design (random assignment and a control), not a certain sample size.", "The significant result supports causation because of the randomized design, not regardless of it."],
         },
       ],
       traps: [
@@ -5749,6 +6196,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           explain:
             "Checking the study design against the causal-claim checklist, there is no control group to compare against, so other explanations for the weight change (like diet changes, exercise changes, or simply time passing) cannot be ruled out; this missing comparison is the primary weakness, not the sample size or any other factor. Random sampling is a different concept from random assignment and isn't the specific issue described here. Blaming sample size misidentifies the actual flaw, which is the missing comparison group. And claiming weight loss can never be measured accurately is an unsupported, overly broad claim unrelated to this study's actual design flaw.",
           difficulty: "easy",
+          why: [null, "Random sampling is a different issue. The key flaw is having no control group to compare against.", "The main problem is the missing control group, not the sample size.", "Weight can be measured accurately. The flaw is having no comparison group."],
         },
         {
           q: "A researcher wants to test whether a new tutoring method improves test scores. Students are randomly assigned to either the new method or the standard method, and both groups take the same final test, with the new-method group scoring higher. Does this design support a causal claim?",
@@ -5762,6 +6210,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           explain:
             "Running the causal-claim checklist, there was random assignment (yes) and a comparison group (yes, the standard-method group serves as the control), so since both boxes are checked, this design does isolate the tutoring method's effect from other explanations, unlike the earlier supplement study. Claiming this is observational and therefore can't support causation misreads the design — random assignment is specifically what makes this NOT a purely observational study. Denying that the standard-method group is a real control misunderstands what a control group is: a comparison group that didn't receive the treatment being tested, which is exactly what it is here. And crediting the result alone, regardless of assignment, ignores that random assignment is precisely what allows the result to be attributed to the tutoring method rather than some other factor.",
           difficulty: "medium",
+          why: [null, "Random assignment is what makes this an experiment, not an observational study.", "The standard-method group didn't get the new method, which is exactly what a control group is.", "The result can be credited to the method because of random assignment, not regardless of it."],
         },
         {
           q: "A researcher wants to test whether a new fertilizer increases crop yield. They apply the fertilizer to one field and compare its yield to that same field's yield from the previous year, when no fertilizer was used. What is the primary weakness of this design?",
@@ -5775,6 +6224,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           explain:
             "Checking the study design against the causal-claim checklist, there is no genuine control group tested under the same conditions (this compares the same field across two different years, not two groups under the same conditions), so other factors that changed between years, like weather, rainfall, or soil conditions, can't be ruled out as explanations for any yield difference; this missing same-time comparison is the primary weakness. Blaming the use of only one field misidentifies the flaw, which is the lack of a same-time comparison, not simply the amount of data. Claiming yield comparisons can never measure fertilizer effects is an overly broad claim unrelated to this study's specific flaw. And while random assignment would help, the immediately identifiable weakness here is the missing same-time control, the more specific and direct issue described.",
           difficulty: "easy",
+          why: [null, "The key flaw is comparing different years, when weather and other factors change, not the number of fields.", "Yield comparisons can work with a proper same-time control. This design lacks one.", "The more direct flaw is the lack of a comparison group grown at the same time."],
         },
         {
           q: "Researchers randomly assign participants to either receive a new pain medication or a sugar pill (placebo), but everyone (participants and researchers alike) knows who received which. Pain levels are then assessed through interviews. What is a specific weakness of this design?",
@@ -5788,6 +6238,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           explain:
             "Checking the checklist, random assignment (yes) and a control/placebo group (yes) are both present, so the study isn't missing those basics; but because everyone knows who received the real medication, participants' self-reported pain levels (and researchers' assessments of them) could be influenced by expectation rather than the medication itself, a lack of 'blinding.' Claiming there was no random assignment contradicts what's explicitly stated in the setup. Claiming there was no placebo group also contradicts the setup, which explicitly includes one. And claiming pain can never be measured through interviews is an overly broad claim unrelated to this study's specific, identifiable flaw.",
           difficulty: "medium",
+          why: [null, "The setup says participants were randomly assigned.", "The setup includes a placebo group.", "Interviews can measure pain. The problem is that everyone knew who got what."],
         },
         {
           q: "A gym's marketing claims 'attending our gym causes higher life satisfaction, and gym attendance improves cardiovascular health.' Life satisfaction was measured through an observational self-report survey with no random assignment; cardiovascular health was measured separately through a randomized 12-week trial comparing gym attendance to a non-exercise control group. Which part of the marketing claim is better supported by evidence?",
@@ -5801,6 +6252,7 @@ const LC_M_STATISTICAL_CLAIMS: { patterns: Pattern[]; tipsAndTricks: string[] } 
           explain:
             "This compound claim rests on two different pieces of evidence with different designs, evaluated separately: the life satisfaction claim comes from an observational survey with no random assignment, so it can only support correlation, not the causal wording used, while the cardiovascular health claim comes from a randomized controlled trial with a control group, which CAN support a causal claim — making the cardiovascular claim the better-supported one. Claiming the life satisfaction claim is better supported because it was 'measured through a direct survey' confuses direct measurement with a design that can establish causation, which the survey's lack of random assignment prevents. Claiming both are equally supported ignores that they come from two genuinely different study designs. And dismissing both as unreliable ignores that one of the two claims does come from a well-designed randomized controlled trial, a specific and legitimate reason to distinguish between them rather than lumping them together.",
           difficulty: "hard",
+          why: [null, "A survey measures directly but can't show cause without random assignment.", "The two claims come from different designs, and only one was a randomized trial.", "The cardiovascular claim comes from a randomized controlled trial, which is solid evidence."],
         },
       ],
       traps: [
@@ -5831,6 +6283,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The linear scale factor is k=2 (side length doubles); area scales by k², not k, so the area increases by 2²=4. 2 mistakenly applies the linear scale factor directly to area instead of squaring it. 8 comes from confusing the volume rule (k³) with the area rule. 16 comes from squaring the wrong quantity, like squaring the area's own factor instead of the linear factor.",
           diagram: { kind: "scaleCompare", shape: "square", factorLabel: "2" },
           difficulty: "easy",
+          why: [null, "Area uses two dimensions, so the factor is squared: 2² = 4.", "8 is 2³, the factor for volume. Area uses 2² = 4.", "16 is 4², which squares twice. Area scales by 2² = 4."],
         },
         {
           q: "A cube's side length is tripled. By what factor does its volume increase?",
@@ -5840,6 +6293,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The linear scale factor is k=3 (side length triples); volume scales by k³, not k or k², so the volume increases by 3³=27. 3 mistakenly applies the linear scale factor directly to volume. 9 comes from confusing the area rule (k²) with the volume rule. 6 comes from multiplying the scale factor by the number of dimensions instead of raising it to a power.",
           diagram: { kind: "scaleCompare", shape: "cube", factorLabel: "3" },
           difficulty: "medium",
+          why: [null, "Volume uses three dimensions, so the factor is cubed: 3³ = 27.", "9 is 3², the factor for area. Volume uses 3³.", "6 is 3 × 2. The factor is raised to a power, not multiplied: 3³ = 27."],
         },
         {
           q: "If a circle's radius triples, by what factor does its area increase?",
@@ -5849,6 +6303,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The linear scale factor is k=3 (radius triples); area scales by k², not k, so the area increases by 3²=9. 3 mistakenly applies the linear scale factor directly to area. 27 comes from confusing the volume rule (k³) with the area rule. 6 comes from multiplying instead of squaring the scale factor.",
           diagram: { kind: "scaleCompare", shape: "circle", factorLabel: "3" },
           difficulty: "easy",
+          why: [null, "Area scales by the square of the factor: 3² = 9.", "27 is 3³, the factor for volume.", "6 is 3 × 2. Square the factor instead: 3² = 9."],
         },
         {
           q: "A square's area increases by a factor of 16 after being enlarged. By what factor did its side length increase?",
@@ -5858,6 +6313,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since area scales by k², an area scale factor of 16 means k²=16, so k=4 (the positive root, since a scale factor can't be negative) — the side length increased by a factor of 4, not 16. 16 mistakenly reports the area scale factor itself as if it were the linear scale factor. 8 comes from halving 16 instead of taking its square root. 256 comes from squaring 16 instead of taking its square root, moving in the wrong direction entirely.",
           diagram: { kind: "scaleCompare", shape: "square", factorLabel: "?" },
           difficulty: "medium",
+          why: [null, "16 is the area factor. The side factor is its square root: 4.", "8 is half of 16. Take the square root instead: 4.", "256 squares 16. Go the other way: the square root of 16 is 4."],
         },
         {
           q: "A cube's side length doubles. By what factor does the ratio of its surface area to its volume change?",
@@ -5867,6 +6323,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Surface area scales by k² and volume scales by k³, with k=2 here: surface area scales by 2²=4, volume scales by 2³=8, so the RATIO of surface area to volume scales by 4/8=1/2 — the ratio is cut in half, since volume grows faster than surface area as an object scales up. 2 mistakenly applies the linear scale factor directly to the ratio. 4 mistakenly reports just the surface area's scale factor as if it were the ratio's. 8 mistakenly reports just the volume's scale factor as if it were the ratio's.",
           diagram: { kind: "scaleCompare", shape: "cube", factorLabel: "2" },
           difficulty: "hard",
+          why: [null, "The ratio changes by 4/8, since area grows by 4 and volume by 8.", "4 is only the surface area's factor. The volume grows by 8, so the ratio changes by 4/8.", "8 is only the volume's factor. The ratio changes by 4/8 = 1/2."],
         },
       ],
       traps: [
@@ -5887,6 +6344,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "A cylinder's volume is πr²h; substituting r=3, h=10 gives π(3²)(10)=π(9)(10)=90π. 30π comes from forgetting to square the radius, using πrh instead. 60π comes from an arithmetic slip in the multiplication. 270π comes from mistakenly cubing the radius instead of squaring it.",
           diagram: { kind: "solid", shape: "cylinder", labels: { r: "3", h: "10" } },
           difficulty: "easy",
+          why: [null, "30π forgets to square the radius: π(3)(10). It's π(3²)(10).", "60π uses 2r instead of r². The formula is πr²h = π(9)(10).", "270π cubes the radius. The formula uses r²."],
         },
         {
           q: "A cone-shaped paper cup has a radius of 3 cm and a height of 8 cm. What is its volume in terms of π?",
@@ -5896,6 +6354,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "A cone's volume is (1/3)πr²h, which needs the extra factor of 1/3 that a cylinder's formula doesn't have; substituting r=3, h=8 gives (1/3)π(9)(8)=(1/3)(72π)=24π. 72π mistakenly uses the cylinder formula (without the 1/3 factor) for what is actually a cone. 8π comes from an arithmetic slip in the multiplication. 216π comes from mistakenly cubing the radius instead of squaring it.",
           diagram: { kind: "solid", shape: "cone", labels: { r: "3", h: "8" } },
           difficulty: "medium",
+          why: [null, "72π is the cylinder formula. A cone is one-third of that: 24π.", "8π forgets to square the radius: (1/3)π(3)(8).", "216π cubes the radius and skips the 1/3."],
         },
         {
           q: "A sphere-shaped water tank has a radius of 6 feet. What is its volume in terms of π?",
@@ -5905,6 +6364,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "A sphere's volume is (4/3)πr³; substituting r=6 gives (4/3)π(216)=288π. 144π comes from forgetting the 4/3 factor and only using half of it correctly. 216π mistakenly reports r³ itself without multiplying by 4/3. 48π comes from an arithmetic slip in the multiplication.",
           diagram: { kind: "solid", shape: "sphere", labels: { r: "6" } },
           difficulty: "easy",
+          why: [null, "144π is the surface area, 4πr². Volume is (4/3)πr³.", "216π is πr³ without the 4/3.", "48π squares the radius instead of cubing it: (4/3)π(36)."],
         },
         {
           q: "A silo is shaped like a cylinder with a hemisphere on top. The cylinder has a radius of 4 feet and a height of 10 feet, and the hemisphere has the same radius. What is the silo's total volume in terms of π?",
@@ -5914,6 +6374,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This composite figure requires two separate formulas added together: cylinder volume π(4²)(10)=160π, plus hemisphere volume (half a sphere) (1/2)(4/3)π(64)=(128/3)π, giving a total of 160π+(128/3)π=(480/3)π+(128/3)π=(608/3)π. 160π mistakenly reports just the cylinder's volume, forgetting to add the hemisphere. (128/3)π mistakenly reports just the hemisphere's volume, forgetting to add the cylinder. 288π comes from an unrelated miscalculation, like using the full sphere volume instead of the hemisphere.",
           diagram: { kind: "solid", shape: "cylinderHemisphere", labels: { r: "4", h: "10" } },
           difficulty: "medium",
+          why: [null, "160π is only the cylinder. Add the hemisphere, (128/3)π.", "(128/3)π is only the hemisphere. Add the cylinder, 160π.", "288π adds 128π for the hemisphere, forgetting to divide by 3."],
         },
         {
           q: "A cylindrical pipe has an outer radius of 5 cm and an inner radius of 3 cm (it's hollow), and a length of 20 cm. What is the volume of the material making up the pipe, in terms of π?",
@@ -5923,6 +6384,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This composite figure requires subtracting one shape from another: the outer cylinder's volume, π(5²)(20)=500π, minus the inner hollow cylinder's volume, π(3²)(20)=180π, gives 500π-180π=320π. 500π mistakenly reports just the outer cylinder's volume, forgetting to subtract the hollow interior. 180π mistakenly reports just the inner cylinder's volume instead of the material's volume. 680π comes from adding the two volumes instead of subtracting them.",
           diagram: { kind: "solid", shape: "hollowCylinder", labels: { outerR: "5", innerR: "3", len: "20" } },
           difficulty: "hard",
+          why: [null, "500π is the whole outer cylinder. Subtract the hollow inside, 180π.", "180π is the hollow part, not the material around it.", "680π adds the hollow inside. Subtract it: 500π − 180π."],
         },
       ],
       traps: [
@@ -5943,6 +6405,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Rectangular box volume is length × width × height; substituting the given dimensions gives V = x × 3 × 5 = 15x. V = 8x comes from adding the width and height (3+5=8) instead of multiplying them into the coefficient. V = 15 + x incorrectly treats the volume formula as additive instead of multiplicative. V = x/15 comes from dividing instead of multiplying.",
           diagram: { kind: "solid", shape: "box", labels: { l: "x", w: "3", h: "5" } },
           difficulty: "easy",
+          why: [null, "8x adds the width and height. Volume multiplies them: x × 3 × 5.", "Volume multiplies the dimensions, not adds them.", "Volume multiplies. Dividing by 15 has no basis."],
         },
         {
           q: "A cylinder has a radius of r and a height of 4. Which expression gives the volume V of the cylinder, in terms of r?",
@@ -5952,6 +6415,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Cylinder volume is πr²h; substituting r and h=4 gives V = πr²(4) = 4πr². V = πr²/4 divides by the height instead of multiplying by it. V = 4πr forgets to square the radius. V = πr⁴ mistakenly multiplies the exponents on r instead of multiplying the height in as a separate coefficient.",
           diagram: { kind: "solid", shape: "cylinder", labels: { r: "r", h: "4" } },
           difficulty: "easy",
+          why: [null, "This divides by the height. Volume multiplies: πr² × 4.", "4πr forgets to square the radius.", "The height is a separate factor of 4, not an exponent: 4πr²."],
         },
         {
           q: "A rectangular prism has a height of 8 inches. The length of its base is x inches, which is 3 inches more than the width of the base. Which function V gives the volume, in cubic inches, in terms of x?",
@@ -5961,6 +6425,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Rectangular prism volume is length × width × height; translating 'length is 3 more than width' into width = x-3 and substituting all three dimensions gives V = x(x-3)(8) = 8x(x-3). V(x) = 8x(x+3) mistranslates the comparative phrase, adding 3 instead of subtracting it. V(x) = 8(x-3) forgets to include the length (x) as a separate factor. V(x) = x(x-3) forgets to include the given height of 8 entirely.",
           diagram: { kind: "solid", shape: "box", labels: { l: "x", w: "x-3", h: "8" } },
           difficulty: "medium",
+          why: [null, "The length is 3 more than the width, so the width is x − 3, not x + 3.", "This leaves out the length, x. Volume multiplies all three dimensions.", "This leaves out the height of 8."],
         },
         {
           q: "A cylindrical can has a height that is twice its radius r. Which expression gives the volume V of the can, in terms of r?",
@@ -5970,6 +6435,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Cylinder volume is πr²h; translating 'height that is twice its radius' into height = 2r (a multiplicative relationship, not additive) and substituting gives V = πr²(2r) = 2πr³. V = πr³ forgets to include the factor of 2 from the height. V = 2πr² forgets to multiply in the extra factor of r from the height being expressed in terms of r. V = πr²+2r incorrectly treats the height as something added to the formula instead of multiplied into it.",
           diagram: { kind: "solid", shape: "cylinder", labels: { r: "r", h: "2r" } },
           difficulty: "medium",
+          why: [null, "The height is 2r, so there's a factor of 2: πr²(2r) = 2πr³.", "This forgets that the height 2r includes another r: πr² × 2r = 2πr³.", "The height gets multiplied in, not added: πr² × 2r."],
         },
         {
           q: "A rectangular box has a length of x. Its width is half its length, and its height is 4 inches less than its width. Which expression gives the volume V of the box, in terms of x?",
@@ -5979,6 +6445,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Rectangular box volume is length × width × height; translating 'width = half the length' as x/2 and 'height = 4 less than the width' as (x/2)-4, then substituting and expanding: x × (x/2) × ((x/2)-4) = (x²/2) × ((x/2)-4) = x³/4 - 2x². V = x³/2 - 4x comes from an incomplete expansion that mishandles the distribution. V = x²/2 - 4x forgets to include one of the three dimensions in the multiplication. V = x³/4 + 2x² gets the sign wrong on the second term, from a distribution error.",
           diagram: { kind: "solid", shape: "box", labels: { l: "x", w: "x/2", h: "x/2 - 4" } },
           difficulty: "hard",
+          why: [null, "Multiply it out: x · (x/2) · (x/2 − 4) = x³/4 − 2x², not x³/2 − 4x.", "This has only two dimensions multiplied. Volume needs all three.", "The height is x/2 − 4, so the second term is negative: −2x²."],
         },
       ],
       traps: [
@@ -6010,6 +6477,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             "The exterior angle rule states an exterior angle equals the sum of the two non-adjacent interior angles: 110 = 40 + x, so x = 70°. 110° mistakenly restates the exterior angle itself. 40° mistakenly restates the given interior angle instead of solving for the unknown one. 150° comes from adding the two given angles (110+40) instead of subtracting.",
           diagram: { kind: "triangleAngles", angleA: "?", angleB: "40°", exterior: { at: "C", label: "110°" } },
           difficulty: "easy",
+          why: [null, "110° is the exterior angle itself. It equals the sum of the two far interior angles: 110 = 40 + x.", "40° is the angle you're given. The unknown one is 110 − 40 = 70°.", "150° adds 110 and 40. The exterior angle is the sum, so subtract: 110 − 40."],
         },
         {
           q: "A triangle has interior angles measuring 55° and 65°. What is the measure of the exterior angle at the triangle's third vertex?",
@@ -6019,6 +6487,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             "The exterior angle rule states an exterior angle equals the sum of the two interior angles NOT adjacent to it, and the two given angles (55° and 65°) are exactly that pair, so 55+65=120°. 60° mistakenly reports the triangle's third interior angle (180-55-65=60°) instead of the exterior angle. 115° comes from an arithmetic slip in the addition. 180° comes from confusing this with the straight-line supplementary relationship instead of the sum-of-non-adjacent-angles rule.",
           diagram: { kind: "triangleAngles", angleA: "55°", angleB: "65°", exterior: { at: "C", label: "?" } },
           difficulty: "medium",
+          why: [null, "60° is the third interior angle. The exterior angle next to it is 55 + 65 = 120°.", "Check the sum: 55 + 65 = 120, not 115.", "180° is a straight line. The exterior angle equals the two far interior angles added: 120°."],
         },
         {
           q: "A triangle has interior angles measuring 50° and 70°. What is the measure of the third interior angle?",
@@ -6028,6 +6497,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             "A triangle's interior angles sum to 180°, so subtracting the two known angles gives 180-50-70=60°. 120° comes from adding the two given angles instead of subtracting them from 180. 20° comes from an arithmetic slip in the subtraction. 180° mistakenly restates the total angle sum itself instead of the missing angle.",
           diagram: { kind: "triangleAngles", angleA: "50°", angleB: "70°", angleC: "?" },
           difficulty: "easy",
+          why: [null, "120° adds the two angles. Subtract them from 180: 180 − 120 = 60.", "20° is 70 − 50. The three angles must total 180: 180 − 50 − 70 = 60.", "180° is the total of all three angles, not the missing one."],
         },
         {
           q: "A triangle's exterior angle measures 115°. What is the measure of the interior angle adjacent to this exterior angle?",
@@ -6037,6 +6507,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             "Since this asks for the ADJACENT interior angle, not a non-adjacent one, the relevant rule is that an exterior angle and its adjacent interior angle form a straight line and are supplementary: 180-115=65°. 115° mistakenly restates the exterior angle itself. 55° comes from an arithmetic slip in the subtraction. 180° mistakenly restates the straight-line total instead of the missing angle.",
           diagram: { kind: "triangleAngles", angleC: "?", exterior: { at: "C", label: "115°" } },
           difficulty: "medium",
+          why: [null, "115° is the exterior angle itself. The interior angle beside it adds with it to 180.", "Check it: 180 − 115 = 65, not 55.", "180° is the straight-line total, not the missing angle."],
         },
         {
           q: "In triangle ABC, angle A = 55° and angle B = 60°. Side BC is extended beyond C to point D, forming triangle ACD, where angle ADC = 35°. What is the measure of angle DAC?",
@@ -6046,6 +6517,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             "Finding the third angle of triangle ABC first, angle ACB=180-55-60=65°; since angle ACD and angle ACB form a straight line, angle ACD=180-65=115°; treating angle ACD as an interior angle of triangle ACD and applying the 180° rule again, 115+35+angle DAC=180, so angle DAC=30°. 65° mistakenly reports angle ACB instead of continuing the chain to find angle DAC. 115° mistakenly reports angle ACD, an intermediate value, instead of the final answer. 45° comes from an arithmetic slip in the final subtraction.",
           diagram: { kind: "triangleAngles", chained: { angleB: "60°", angleBAC: "55°", angleD: "35°", angleDAC: "?" } },
           difficulty: "hard",
+          why: [null, "65° is angle ACB. Keep going: ACD = 115°, then DAC = 180 − 115 − 35.", "115° is angle ACD, a step along the way. DAC = 180 − 115 − 35 = 30°.", "Check it: 115 + 35 + 45 = 195, more than 180."],
         },
       ],
       traps: [
@@ -6066,6 +6538,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             "Co-interior (same-side interior) angles are supplementary, summing to 180°, unlike corresponding or alternate interior angles, which are equal: 180-65=115°. 65° mistakenly applies the equal-angle rule that belongs to corresponding or alternate interior angles instead of the supplementary co-interior rule. 25° comes from an arithmetic slip in the subtraction. 180° mistakenly restates the total instead of the missing angle.",
           diagram: { kind: "parallelTransversal", givenLabel: "65°", givenPosition: 3, askedLabel: "?", askedPosition: 5 },
           difficulty: "easy",
+          why: [null, "Equal angles are for corresponding or alternate pairs. Same-side interior angles add to 180.", "25° is 90 − 65. Same-side interior angles add to 180, not 90.", "180° is their total, not the missing angle."],
         },
         {
           q: "Two parallel lines are cut by a transversal. If one angle measures 72°, what is the measure of its alternate exterior angle?",
@@ -6075,6 +6548,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             "Alternate exterior angles are equal, not supplementary (the opposite relationship from the co-interior pair), so the alternate exterior angle also measures 72°. 108° mistakenly applies the supplementary rule that belongs to co-interior angles instead of the equal rule for alternate exterior angles. 18° comes from an unrelated miscalculation. 144° comes from doubling the given angle instead of simply restating it.",
           diagram: { kind: "parallelTransversal", givenLabel: "72°", givenPosition: 1, askedLabel: "?", askedPosition: 8 },
           difficulty: "medium",
+          why: [null, "Alternate exterior angles are equal. 108° treats them as adding to 180.", "18° is 90 − 72. Alternate exterior angles are simply equal.", "144° doubles the angle. Alternate exterior angles are equal: 72°."],
         },
         {
           q: "Two parallel lines are cut by a transversal. If one angle measures 110°, what is the measure of its corresponding angle?",
@@ -6084,6 +6558,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             "Corresponding angles, which sit in the same relative position at each intersection, are always equal, so the corresponding angle also measures 110°. 70° mistakenly applies the supplementary rule that belongs to co-interior angles instead of the equal rule for corresponding angles. 55° comes from halving the given angle instead of restating it. 220° comes from doubling the given angle instead of restating it.",
           diagram: { kind: "parallelTransversal", givenLabel: "110°", givenPosition: 2, askedLabel: "?", askedPosition: 6 },
           difficulty: "easy",
+          why: [null, "Corresponding angles are equal. 70° treats them as adding to 180.", "55° halves the angle. Corresponding angles are equal.", "220° doubles the angle. Corresponding angles are equal."],
         },
         {
           q: "Two parallel lines are cut by a transversal. One angle measures 75°. What is the measure of the angle that is vertical to its co-interior (same-side interior) angle?",
@@ -6101,6 +6576,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             extraPosition: 5,
           },
           difficulty: "medium",
+          why: [null, "75° skips a step. The same-side interior angle is 180 − 75 = 105°, and its vertical angle equals that.", "15° is 90 − 75. Same-side interior angles add to 180, not 90.", "Check it: the same-side interior angle is 180 − 75 = 105°, and vertical angles are equal."],
         },
         {
           q: "Lines p and q are parallel. A zigzag path starts on line p, bends at a point B between the lines, and ends on line q. The angle between line p and the first segment (on the interior side) is 35°, and the angle between line q and the second segment (on the interior side) is 50°. What is the measure of the angle at the bend point B, on the interior side of the zigzag?",
@@ -6110,6 +6586,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             "This classic 'bent path between two parallel lines' setup is solved by drawing an auxiliary line through the bend point B, parallel to both given lines; this splits the angle at B into two pieces, each an alternate interior angle with one of the given angles (one piece equals 35°, the other equals 50°), so the full angle at B is 35+50=85°. 15° comes from subtracting the two given angles instead of adding them. 180° mistakenly treats the two given angles and the unknown as summing to a straight line instead of correctly splitting the unknown into two alternate-interior pieces. 70° comes from doubling one of the given angles instead of adding both distinct pieces.",
           diagram: { kind: "bentPath", angle1: "35°", angle2: "50°", unknown: "?" },
           difficulty: "hard",
+          why: [null, "15° subtracts. A line through B parallel to both splits the bend into 35° and 50°, which add.", "The three angles don't form a straight line. The bend is 35° + 50°.", "70° doubles one angle. The two pieces are different: 35° + 50° = 85°."],
         },
       ],
       traps: [
@@ -6136,6 +6613,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             rightSides: ["9", "?", ""],
           },
           difficulty: "easy",
+          why: [null, "The scale factor from ABC to DEF is 9/6 = 1.5, so EF = 8 × 1.5 = 12.", "6 is AB. EF corresponds to BC, so scale BC: 8 × 1.5.", "9 is DE. EF corresponds to BC: 8 × 1.5 = 12."],
         },
         {
           q: "Triangle PQR is similar to triangle XYZ with a scale factor of 2/3 from PQR to XYZ. If PQ = 12, what is XY?",
@@ -6151,6 +6629,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             rightSides: ["?", "", ""],
           },
           difficulty: "easy",
+          why: [null, "18 multiplies by 3/2. The scale factor from PQR to XYZ is 2/3: 12 × 2/3 = 8.", "6 is half of 12. The scale factor is 2/3: 12 × 2/3 = 8.", "4 is one-third of 12. Two-thirds of 12 is 8."],
         },
         {
           q: "Triangle ABC is similar to triangle EFD (note the vertex order). If AB = 10, EF = 15, and CA = 8, what is DE?",
@@ -6166,6 +6645,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             rightSides: ["15", "", "?"],
           },
           difficulty: "medium",
+          why: [null, "8 is CA. DE corresponds to CA, so scale it: 8 × 1.5.", "10 is AB, not DE.", "The scale factor is 15/10 = 1.5, so DE = 8 × 1.5 = 12."],
         },
         {
           q: "Triangle GHI is similar to triangle JKL. GH = 14, HI = 21, JK = 6. What is KL?",
@@ -6181,6 +6661,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             rightSides: ["6", "?", ""],
           },
           difficulty: "medium",
+          why: [null, "49 multiplies by 7/3. The scale factor from GHI to JKL is 6/14 = 3/7: 21 × 3/7.", "Check it: 21 × 3/7 = 9, not 3.", "14 is GH. KL corresponds to HI: 21 × 3/7 = 9."],
         },
         {
           q: "Triangle ABC has angle A = 50° and angle B = 70°. Triangle DEF has angle D = 50° and angle F = 60°. Are triangles ABC and DEF similar? If so, and if AB = 9 while DE = 6, what is the scale factor from ABC to DEF?",
@@ -6201,6 +6682,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             rightSides: ["6", "", ""],
           },
           difficulty: "hard",
+          why: [null, "Find the missing angles: ABC has 60° and DEF has 70°, so all three angles match.", "3/2 is flipped. From ABC to DEF, sides shrink: 6/9 = 2/3.", "The missing angles can be found (180 minus the other two), which is enough to show similarity."],
         },
       ],
       traps: [
@@ -6229,6 +6711,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             ],
           },
           difficulty: "easy",
+          why: [null, "Vertical angles are equal. 115° is the angle beside it on the line.", "25° is 90 − 65. Vertical angles are simply equal.", "180° is a straight line, not the vertical angle."],
         },
         {
           q: "Two lines intersect, forming an angle of 110° next to (adjacent to) an unknown angle along the same straight line. What is the measure of the unknown angle?",
@@ -6245,6 +6728,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             ],
           },
           difficulty: "easy",
+          why: [null, "Angles side by side on a line add to 180. Equal angles are the vertical ones.", "180° is the total, not the missing angle.", "55° halves 110. The two angles add to 180: 180 − 110 = 70."],
         },
         {
           q: "Two lines intersect at a point. One of the four angles formed measures (3x + 15)°, and its vertical angle measures (5x - 25)°. What is x?",
@@ -6261,6 +6745,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             ],
           },
           difficulty: "medium",
+          why: [null, "Check x = 5: 3(5) + 15 = 30, but 5(5) − 25 = 0.", "40 is 2x. Divide by 2: x = 20.", "A sign slip: 15 + 25 = 2x gives x = +20."],
         },
         {
           q: "Two lines intersect at a point, forming four angles. One angle measures (2x + 10)°, and the angle adjacent to it along the same line measures (3x - 30)°. What is the measure of the larger of the two angles?",
@@ -6277,6 +6762,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             ],
           },
           difficulty: "medium",
+          why: [null, "40 is x. Plug it back in: 2(40) + 10 = 90°.", "Check it: with x = 40, both angles are 90°. Neither is 110°.", "With x = 40, both angles are 90°, not 70°."],
         },
         {
           q: "Three lines all pass through the same single point. One of the six angles formed measures 40°, and it is adjacent (with no other angle between them) to a second angle, which is itself adjacent to a third angle that is vertical to the original 40° angle. What is the measure of the second angle?",
@@ -6294,6 +6780,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             ],
           },
           difficulty: "hard",
+          why: [null, "140° subtracts only one 40° angle. The straight line holds both: 40 + x + 40 = 180.", "40° is one of the given angles. The second angle is 180 − 80 = 100°.", "80° is the two 40° angles together. The second angle is what's left: 180 − 80."],
         },
       ],
       traps: [
@@ -6325,6 +6812,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The pole's height is opposite the 40° angle and the 15-foot distance is adjacent to it, so relating opposite and adjacent calls for tangent (TOA): tan(40°)=height/15, giving height=15·tan(40°). 15·sin(40°) mistakenly uses sine, which relates opposite and hypotenuse, but the hypotenuse (the cable) isn't the given side here. 15·cos(40°) mistakenly uses cosine, which relates adjacent and hypotenuse, the same mismatch. 15/tan(40°) inverts the correct relationship, effectively swapping which side is opposite and which is adjacent.",
           diagram: { kind: "rightTriangle", base: "15", angle: "40°", height: "?", solveFor: "height" },
           difficulty: "easy",
+          why: [null, "Sine uses the hypotenuse (the cable), which isn't given. Height and ground distance call for tangent.", "Cosine uses the hypotenuse too. The height is opposite and the 15 feet is adjacent: tangent.", "This divides instead of multiplying: tan(40°) = height/15, so height = 15 · tan(40°)."],
         },
         {
           q: "A ladder leans against a wall, reaching a point 12 feet up the wall. The base of the ladder sits 5 feet from the wall. What angle does the ladder make with the ground?",
@@ -6334,6 +6822,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The wall height (12) is opposite the ground angle and the base distance (5) is adjacent to it, so relating opposite and adjacent calls for tangent; solving for the angle itself uses the inverse: angle=tan⁻¹(12/5). tan⁻¹(5/12) inverts the ratio, swapping opposite and adjacent. sin⁻¹(12/5) misapplies sine to a ratio greater than 1, which isn't valid for sine, and confuses the hypotenuse relationship with the opposite/adjacent one. cos⁻¹(5/12) makes the same mismatch.",
           diagram: { kind: "rightTriangle", base: "5", height: "12", angle: "?", solveFor: "angle" },
           difficulty: "medium",
+          why: [null, "This flips the ratio. The wall height, 12, is opposite the ground angle and goes on top.", "Sine can't be greater than 1, and 12/5 is. Sine also needs the ladder's length.", "Cosine needs the ladder (the hypotenuse), not the wall height."],
         },
         {
           q: "In a right triangle, the side opposite a 30° angle is 5, and the hypotenuse is 10. What is sin(30°) based on this triangle?",
@@ -6343,6 +6832,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "5 is opposite the 30° angle and 10 is the hypotenuse; sine relates opposite and hypotenuse (SOH), so sin(30°)=5/10=1/2. 2 inverts the correct ratio. 5/√75 comes from an unrelated miscalculation, like invoking the Pythagorean theorem when it isn't needed here. 10/5 also inverts the ratio, restating hypotenuse over opposite instead of opposite over hypotenuse.",
           diagram: { kind: "rightTriangle", height: "5", hypotenuse: "10", angle: "30°" },
           difficulty: "easy",
+          why: [null, "2 flips the ratio. Sine is opposite over hypotenuse: 5/10.", "5/√75 is opposite over the other leg, which is tangent. Sine uses the hypotenuse, 10.", "10/5 is flipped. Sine is 5/10."],
         },
         {
           q: "A 20-foot ramp rises at an angle of 15° from the ground to a loading dock. Which expression gives the horizontal distance the ramp covers?",
@@ -6352,6 +6842,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The ramp (20 feet) is the hypotenuse and the horizontal distance is adjacent to the 15° angle, so relating adjacent and hypotenuse calls for cosine (CAH): cos(15°)=horizontal/20, giving horizontal=20cos(15°). 20sin(15°) mistakenly uses sine, which would give the vertical rise (opposite), not the horizontal distance. 20tan(15°) mistakenly uses tangent, which relates opposite and adjacent, neither of which is the hypotenuse given here. 20/cos(15°) inverts the correct relationship.",
           diagram: { kind: "rightTriangle", hypotenuse: "20", angle: "15°", base: "?", solveFor: "base" },
           difficulty: "medium",
+          why: [null, "Sine gives the vertical rise (opposite the angle), not the horizontal distance.", "Tangent relates the two legs. The ramp is the hypotenuse, so use cosine.", "This divides by cosine. cos(15°) = horizontal/20, so multiply: 20cos(15°)."],
         },
         {
           q: "An isosceles triangle has two equal sides of length 13 and a base of 10. An altitude is drawn from the apex to the midpoint of the base, forming two right triangles. What is the sine of the angle between one of the equal sides and the base?",
@@ -6361,6 +6852,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The altitude from the apex to the base's midpoint creates two congruent right triangles, with the hypotenuse as the original equal side (13) and half the base (5) adjacent to the angle in question; finding the altitude (opposite) via the Pythagorean theorem gives √(13²-5²)=√144=12, so sine=opposite/hypotenuse=12/13. 5/13 mistakenly reports the adjacent side over the hypotenuse (cosine) instead. 5/12 mistakenly reports adjacent over opposite, a tangent-style ratio using the wrong sides. 12/5 mistakenly reports opposite over adjacent instead of opposite over hypotenuse.",
           diagram: { kind: "isoscelesAltitude", equalSide: "13", halfBase: "5", altitude: "?", solveFor: "altitude" },
           difficulty: "hard",
+          why: [null, "5/13 is adjacent over hypotenuse, which is cosine.", "5/12 is adjacent over opposite. Sine uses the hypotenuse: 12/13.", "12/5 is opposite over adjacent, which is tangent."],
         },
       ],
       traps: [
@@ -6381,13 +6873,14 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This is a 30-60-90 triangle; if the side opposite 30° is x, the hypotenuse is always 2x, so with x=5, hypotenuse=2(5)=10. 5√3 mistakenly computes the side opposite 60° instead of the hypotenuse. 5√2 mistakenly applies the 45-45-90 ratio instead of the 30-60-90 ratio. 2.5 comes from halving x instead of doubling it.",
           diagram: { kind: "rightTriangle", height: "5", angle: "30°", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "easy",
+          why: [null, "5√3 is the side opposite 60°. The hypotenuse is twice the shortest side: 10.", "5√2 comes from a 45-45-90 triangle. This one is 30-60-90.", "2.5 halves the side. The hypotenuse is double the side opposite 30°."],
         },
         {
           q: "In a right triangle, both legs measure 7√2. What is the length of the hypotenuse?",
-          choices: ["14", "7√2", "49", "7√4"],
+          choices: ["14", "7√2", "49", "14√2"],
           answer: 0,
           explain:
-            "This is a 45-45-90 triangle, since both legs are equal; if a leg is x, the hypotenuse is x√2, so hypotenuse=7√2×√2=7×2=14. 7√2 mistakenly restates the leg length itself instead of computing the hypotenuse. 49 comes from squaring the leg instead of multiplying it by √2. 7√4 comes from a computational slip that doesn't correctly simplify √2×√2 to 2.",
+            "This is a 45-45-90 triangle, since both legs are equal; if a leg is x, the hypotenuse is x√2, so hypotenuse=7√2×√2=7×2=14. 7√2 mistakenly restates the leg length itself instead of computing the hypotenuse. 49 comes from squaring the leg instead of multiplying it by √2. 14√2 multiplies the leg by 2 instead of by √2.",
           diagram: {
             kind: "rightTriangle",
             base: "7√2",
@@ -6397,6 +6890,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             solveFor: "hypotenuse",
           },
           difficulty: "medium",
+          why: [null, "7√2 is a leg. The hypotenuse is a leg times √2: 7√2 × √2 = 14.", "49 squares the leg. Multiply by √2 instead: 14.", "14√2 multiplies by 2. In a 45-45-90 triangle, the hypotenuse is a leg times √2."],
         },
         {
           q: "In a right triangle, both legs measure 9. What is the length of the hypotenuse?",
@@ -6406,6 +6900,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This is a 45-45-90 triangle, since both legs are equal; if a leg is x, the hypotenuse is x√2, so with x=9, hypotenuse=9√2. 18 mistakenly doubles the leg instead of multiplying by √2. 9 mistakenly restates the leg length itself instead of computing the hypotenuse. 81 comes from squaring the leg, an unrelated operation.",
           diagram: { kind: "rightTriangle", base: "9", height: "9", angle: "45°", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "easy",
+          why: [null, "18 doubles the leg. The hypotenuse is a leg times √2.", "9 is a leg. The hypotenuse is always longer than either leg.", "81 squares the leg. The hypotenuse is 9√2."],
         },
         {
           q: "In a right triangle, the hypotenuse measures 14, and one angle measures 30°. What is the length of the side opposite the 30° angle?",
@@ -6415,6 +6910,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This is a 30-60-90 triangle; if the side opposite 30° is x, the hypotenuse is 2x, so working backward from the given hypotenuse, 2x=14, giving x=7. 14 mistakenly restates the hypotenuse itself instead of solving for x. 7√3 mistakenly computes the side opposite 60° instead of the side opposite 30°. 28 comes from doubling the hypotenuse instead of halving it.",
           diagram: { kind: "rightTriangle", hypotenuse: "14", angle: "30°", height: "?", solveFor: "height" },
           difficulty: "medium",
+          why: [null, "14 is the hypotenuse. The side opposite 30° is half of it.", "7√3 is the side opposite 60°.", "28 doubles the hypotenuse. The side opposite 30° is half: 7."],
         },
         {
           q: "In a right triangle, the hypotenuse measures 16, and one angle measures 60°. What is the length of the side opposite the 60° angle?",
@@ -6424,6 +6920,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since one angle is 60°, this is a 30-60-90 triangle; using the hypotenuse to find x first, 16=2x gives x=8 (the side opposite 30°), and the side opposite 60° is x√3, not x itself, giving 8√3. 8 mistakenly reports x, the side opposite 30°, instead of the side opposite 60°. 16√3 mistakenly uses the full hypotenuse instead of x in the x√3 formula. 4√3 comes from an arithmetic slip while solving for x from the hypotenuse.",
           diagram: { kind: "rightTriangle", hypotenuse: "16", angle: "60°", height: "?", solveFor: "height" },
           difficulty: "hard",
+          why: [null, "8 is the side opposite 30°. The side opposite 60° is 8√3.", "16√3 uses the hypotenuse. Start from the short side, 8: 8√3.", "4√3 halves twice. The short side is 16 ÷ 2 = 8, so the answer is 8√3."],
         },
       ],
       traps: [
@@ -6444,6 +6941,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Sine needs the hypotenuse, found first via the Pythagorean theorem: √(6²+8²)=√100=10; sine=opposite/hypotenuse=6/10=3/5. 4/5 mistakenly reports the sine of the OTHER acute angle (opposite the side of length 8) instead. 6/8 mistakenly uses a tangent-style ratio (leg over leg) instead of opposite over hypotenuse. 8/6 makes the same mistake, using the wrong pair of sides entirely.",
           diagram: { kind: "rightTriangle", base: "8", height: "6", angle: "θ", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "easy",
+          why: [null, "4/5 is the sine of the other angle, the one opposite 8.", "6/8 divides the two legs, which is tangent. Sine uses the hypotenuse, 10.", "8/6 divides the legs, which isn't sine. Sine is 6/10."],
         },
         {
           q: "In a right triangle, one leg measures 5 and the hypotenuse measures 13. What is the tangent of the angle for which the leg of length 5 is adjacent?",
@@ -6453,24 +6951,27 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Tangent needs opposite/adjacent, so the missing leg is found first via the Pythagorean theorem: √(13²-5²)=√144=12; tangent=opposite/adjacent=12/5. 5/12 inverts the correct ratio, swapping opposite and adjacent. 5/13 and 12/13 both mistakenly involve the hypotenuse, which tangent doesn't use at all.",
           diagram: { kind: "rightTriangle", base: "5", angle: "θ", height: "?", hypotenuse: "13", solveFor: "height" },
           difficulty: "easy",
+          why: [null, "This is flipped. Tangent is opposite over adjacent: 12/5.", "5/13 uses the hypotenuse. Tangent uses only the two legs.", "12/13 uses the hypotenuse. Tangent is 12/5."],
         },
         {
           q: "In a right triangle, the two legs measure 4 and 4. What is the sine of one of the acute angles?",
-          choices: ["√2/2", "1/2", "√2", "4/√32"],
+          choices: ["√2/2", "1/2", "√2", "√2/4"],
           answer: 0,
           explain:
-            "The hypotenuse is found via the Pythagorean theorem: √(4²+4²)=√32=4√2 after simplifying; sine=opposite/hypotenuse=4/(4√2)=1/√2, which rationalizes to √2/2. 1/2 comes from an unrelated miscalculation that drops the radical entirely. √2 comes from inverting the correctly rationalized ratio. 4/√32 is the correct ratio before rationalizing, left in a non-simplified form rather than the fully simplified answer.",
+            "The hypotenuse is found via the Pythagorean theorem: √(4²+4²)=√32=4√2 after simplifying; sine=opposite/hypotenuse=4/(4√2)=1/√2, which rationalizes to √2/2. 1/2 comes from an unrelated miscalculation that drops the radical entirely. √2 comes from inverting the correctly rationalized ratio. √2/4 comes from a slip when rationalizing: 1/√2 = √2/2, not √2/4.",
           diagram: { kind: "rightTriangle", base: "4", height: "4", angle: "θ", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "medium",
+          why: [null, "1/2 drops the radical. The hypotenuse is 4√2, so sine is 4/(4√2) = √2/2.", "√2 is flipped. Sine is opposite over hypotenuse, which is less than 1.", "1/√2 rationalizes to √2/2, not √2/4."],
         },
         {
           q: "In a right triangle, one leg measures 9 and the hypotenuse measures 15. What is the cosine of the acute angle that is NOT adjacent to the leg of length 9?",
-          choices: ["4/5", "3/5", "9/15", "12/15"],
+          choices: ["4/5", "3/5", "9/15", "12/9"],
           answer: 0,
           explain:
-            "The missing leg is found first: √(15²-9²)=√144=12; since the question asks for the angle NOT adjacent to the 9-leg, that means 9 is actually opposite this angle and 12 is adjacent to it, so cosine=adjacent/hypotenuse=12/15=4/5. 3/5 mistakenly computes sine (using 9 as opposite over the hypotenuse) instead of cosine. 9/15 mistakenly treats the 9-leg as adjacent, misreading which angle is being asked about. 12/15 correctly identifies 12 as adjacent but isn't reduced to its simplest form, unlike the fully simplified 4/5.",
+            "The missing leg is found first: √(15²-9²)=√144=12; since the question asks for the angle NOT adjacent to the 9-leg, that means 9 is actually opposite this angle and 12 is adjacent to it, so cosine=adjacent/hypotenuse=12/15=4/5. 3/5 mistakenly computes sine (using 9 as opposite over the hypotenuse) instead of cosine. 9/15 mistakenly treats the 9-leg as adjacent, misreading which angle is being asked about. 12/9 divides the two legs (adjacent over opposite) instead of using the hypotenuse.",
           diagram: { kind: "rightTriangle", height: "9", hypotenuse: "15", angle: "θ", base: "?", solveFor: "base" },
           difficulty: "medium",
+          why: [null, "3/5 is sine (9 over 15). The question asks for cosine.", "9/15 treats 9 as the adjacent side. For this angle, 9 is opposite and 12 is adjacent.", "12/9 divides the two legs. Cosine uses the hypotenuse: 12/15 = 4/5."],
         },
         {
           q: "A support wire runs from the top of a 24-foot pole to a point on the ground 18 feet from the pole's base. What is the sine of the angle the wire makes with the ground?",
@@ -6480,6 +6981,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The wire (hypotenuse) isn't given directly and must be found via the Pythagorean theorem: √(24²+18²)=√900=30; sine=opposite/hypotenuse=24/30=4/5. 3/5 mistakenly computes cosine (adjacent over hypotenuse, 18/30) instead of sine. 24/18 mistakenly uses a tangent-style ratio (leg over leg) instead of opposite over hypotenuse. 18/24 makes the same mistake with the legs reversed.",
           diagram: { kind: "rightTriangle", base: "18", height: "24", angle: "θ", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "hard",
+          why: [null, "3/5 is cosine: the ground distance over the wire.", "24/18 divides the two legs, which is tangent.", "18/24 divides the legs the other way. Sine is 24/30."],
         },
       ],
       traps: [
@@ -6501,6 +7003,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Adding a full 2π rotation doesn't change where the angle points, so cos(2π+π/3) equals the simpler cos(π/3)=1/2. √3/2 mistakenly reports sin(π/3) instead of cos(π/3), confusing the two trig functions. -1/2 comes from an incorrect sign, as if the angle landed in a different quadrant. 1 mistakenly evaluates the reduced angle as if it were 0 instead of π/3.",
           diagram: { kind: "unitCircleAngle", rawLabel: "2π + π/3", angleDegrees: 60 },
           difficulty: "easy",
+          why: [null, "√3/2 is sin(π/3). The question asks for cosine: 1/2.", "2π + π/3 points the same way as π/3, where cosine is positive.", "1 is cos(0). The angle reduces to π/3, not 0."],
         },
         {
           q: "What is the value of sin(-π/6)?",
@@ -6510,6 +7013,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Converting the negative angle to its positive coterminal angle by adding 2π gives -π/6+2π=11π/6, which lies in the fourth quadrant, where sine is negative; the reference angle is π/6, and sin(π/6)=1/2, so with the fourth-quadrant sign, sin(11π/6)=-1/2. 1/2 forgets to apply the negative sign for the fourth quadrant. -√3/2 and √3/2 both mistakenly report cosine's reference value instead of sine's.",
           diagram: { kind: "unitCircleAngle", rawLabel: "-π/6", angleDegrees: -30 },
           difficulty: "easy",
+          why: [null, "The angle is below the x-axis, where sine is negative.", "√3/2 is the cosine value for π/6. Sine of π/6 is 1/2.", "√3/2 is cosine's value, and the sign should be negative."],
         },
         {
           q: "What is the value of tan(13π/4)?",
@@ -6519,6 +7023,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since 13π/4 is larger than 2π (which is 8π/4), subtracting one full rotation gives 13π/4-8π/4=5π/4, which lies in the third quadrant, where tangent is positive; the reference angle is π/4, and tan(π/4)=1, so tan(5π/4)=1. -1 mistakenly applies a negative sign, as if the angle landed in a quadrant where tangent is negative. √2 and -√2 both mistakenly report a sine or cosine reference value instead of tangent's.",
           diagram: { kind: "unitCircleAngle", rawLabel: "13π/4", angleDegrees: 585 },
           difficulty: "medium",
+          why: [null, "13π/4 reduces to 5π/4, in the third quadrant, where tangent is positive.", "√2 isn't a tangent value for π/4. tan(π/4) = 1.", "Tangent of π/4 is 1, and it's positive in the third quadrant."],
         },
         {
           q: "What is the value of sin(17π/2)?",
@@ -6528,6 +7033,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since 17π/2 is much larger than 2π, multiple full rotations must be subtracted: 17π/2 ÷ (4π/2) = 4.25, meaning 4 full rotations (16π/2) fit inside, leaving 17π/2-16π/2=π/2, and sin(π/2)=1. -1 comes from subtracting one too many or too few rotations, landing on the wrong angle. 0 mistakenly evaluates the angle as if it reduced to 0 or π instead of π/2. 1/2 mistakenly reports a different reference value entirely.",
           diagram: { kind: "unitCircleAngle", rawLabel: "17π/2", angleDegrees: 1530 },
           difficulty: "medium",
+          why: [null, "17π/2 reduces to π/2, not 3π/2. sin(π/2) = 1.", "The angle reduces to π/2, not 0 or π.", "sin(π/2) is 1. 1/2 is sin(π/6)."],
         },
         {
           q: "What is the value of cos(-11π/3)?",
@@ -6537,6 +7043,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This angle is both negative and large in magnitude, needing 2π added twice to reach the standard range: -11π/3+6π/3=-5π/3 (still negative), then -5π/3+6π/3=π/3; cos(π/3)=1/2. -1/2 comes from stopping after adding 2π only once, landing on the wrong (still-negative) angle and misapplying a sign. √3/2 and -√3/2 both mistakenly report sine's reference value instead of cosine's.",
           diagram: { kind: "unitCircleAngle", rawLabel: "-11π/3", angleDegrees: -660 },
           difficulty: "hard",
+          why: [null, "Add 2π twice: −11π/3 + 4π = π/3, where cosine is +1/2.", "√3/2 is sin(π/3). cos(π/3) = 1/2.", "√3/2 is a sine value, and the sign here is positive."],
         },
       ],
       traps: [
@@ -6558,6 +7065,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Applying the Pythagorean theorem, 6²+8²=c², gives 36+64=100=c², so c=10, a recognizable 6-8-10 triangle (a scaled-up 3-4-5). 14 comes from simply adding the two legs instead of applying the theorem. √28 comes from an unrelated miscalculation, like subtracting instead of adding the squares. 48 mistakenly reports the product of the two legs instead of the hypotenuse.",
           diagram: { kind: "rightTriangle", base: "6", height: "8", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "easy",
+          why: [null, "14 adds the legs. The theorem adds their squares: 36 + 64 = 100.", "√28 subtracts the squares. For the hypotenuse, add them.", "48 multiplies the legs. The hypotenuse is √(36 + 64) = 10."],
         },
         {
           q: "A right triangle has a hypotenuse of length 13 and one leg of length 5. What is the length of the other leg?",
@@ -6567,6 +7075,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since the hypotenuse is known, the missing leg is found by subtracting: b²=13²-5²=169-25=144, so b=12. 18 comes from adding the squares instead of subtracting them, treating the hypotenuse as if it were a missing leg. 8 comes from an arithmetic slip in the subtraction. √194 comes from adding the squares (169+25) instead of subtracting them.",
           diagram: { kind: "rightTriangle", hypotenuse: "13", base: "5", height: "?", solveFor: "height" },
           difficulty: "easy",
+          why: [null, "18 adds 13 and 5. Subtract the squares: 169 − 25 = 144.", "8 is 13 − 5. Subtract the squares, then take the root: √144 = 12.", "√194 adds the squares. A missing leg subtracts: 169 − 25."],
         },
         {
           q: "A right triangle has legs of length 5 and 9. What is the length of the hypotenuse, in simplest radical form?",
@@ -6576,6 +7085,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Applying the theorem, 5²+9²=c², gives 25+81=106=c², so c=√106; since 106 has no perfect-square factors other than 1 (its factors are 2×53, neither a perfect square), this radical is already fully simplified. 14 comes from simply adding the two legs instead of applying the theorem. √56 comes from an arithmetic slip in the addition. 106 mistakenly reports c² itself instead of taking the square root.",
           diagram: { kind: "rightTriangle", base: "5", height: "9", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "medium",
+          why: [null, "14 adds the legs. Add their squares instead: 25 + 81 = 106.", "√56 subtracts the squares. For the hypotenuse, add them.", "106 is c². Take the square root: √106."],
         },
         {
           q: "A ladder 15 feet long leans against a wall, with its base 9 feet from the wall. How high up the wall does the ladder reach?",
@@ -6585,6 +7095,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Translating the scenario into a right triangle, the ladder is the hypotenuse (15) and the ground distance is one leg (9); applying the theorem, 9²+b²=15², gives 81+b²=225, so b²=144 and b=12 feet. 18 feet comes from adding the squares instead of subtracting them, treating the hypotenuse as if it were a missing leg. 6 feet comes from an arithmetic slip in the subtraction. √306 feet comes from adding the squares (81+225) instead of subtracting them.",
           diagram: { kind: "rightTriangle", hypotenuse: "15", base: "9", height: "?", solveFor: "height" },
           difficulty: "medium",
+          why: [null, "18 is longer than the 15-foot ladder, which is impossible. Subtract squares: 225 − 81 = 144.", "6 is 15 − 9. Subtract the squares instead: √144 = 12.", "√306 adds the squares. The ladder is the hypotenuse, so subtract."],
         },
         {
           q: "A right triangle has legs of length 4√3 and 4. Find the length of the hypotenuse, and simplify your answer completely.",
@@ -6594,6 +7105,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Applying the theorem and squaring each leg carefully, (4√3)²+4²=c²; squaring the radical term correctly gives (4√3)²=16×3=48, and combining, 48+16=64=c², so c=8. 4√7 comes from incorrectly adding the two legs' values under one radical instead of squaring each separately. 64 mistakenly reports c² itself instead of taking the square root. 4√3+4 mistakenly adds the two original leg lengths together instead of applying the Pythagorean theorem at all.",
           diagram: { kind: "rightTriangle", base: "4√3", height: "4", hypotenuse: "?", solveFor: "hypotenuse" },
           difficulty: "hard",
+          why: [null, "(4√7)² = 112. The actual sum of squares is 48 + 16 = 64.", "64 is c². Take the square root: 8.", "Adding the legs isn't the Pythagorean theorem. Square each, add, then take the root."],
         },
       ],
       traps: [
@@ -6615,6 +7127,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Applying the identity sin(x°)=cos(90°-x°) with x=40 gives y=90-40=50. 40 mistakenly restates the given angle itself instead of solving for its complement. 130 comes from adding the two angles instead of subtracting. 90 mistakenly reports the full complementary sum itself instead of the missing angle y.",
           diagram: { kind: "rightTriangle", angle: "40°", topAngle: "y°" },
           difficulty: "easy",
+          why: [null, "40 is the given angle. Sine of an angle equals cosine of its complement: 90 − 40.", "130 adds 90 and 40. The complement subtracts: 90 − 40 = 50.", "90 is the total of the two angles, not y."],
         },
         {
           q: "In a right triangle, angle A and angle B are the two non-right angles. If sin(A) = 0.6, what is cos(B)?",
@@ -6624,6 +7137,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "In any right triangle, the two non-right angles are always complementary, and by the complementary angle identity, sin(A)=cos(B) whenever A and B are complementary, so cos(B)=0.6 with no calculation needed. 0.4 comes from an unrelated miscalculation, like subtracting from 1. 0.8 mistakenly computes a different ratio, as if using the Pythagorean theorem on an assumed 3-4-5 triangle instead of applying the direct identity. 1.6 comes from adding 1 to the given value, an arithmetic error.",
           diagram: { kind: "rightTriangle", angle: "A", topAngle: "B" },
           difficulty: "easy",
+          why: [null, "0.4 is 1 − 0.6. A and B are complementary, so cos(B) = sin(A) = 0.6.", "0.8 is cos(A). The question asks for cos(B), which equals sin(A).", "1.6 adds 1. cos(B) equals sin(A) exactly: 0.6."],
         },
         {
           q: "If sin(3x°) = cos(2x° + 15°), what is the value of x?",
@@ -6633,6 +7147,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since sin of one angle equals cos of its complement, 3x and (2x+15) must sum to 90: 3x+(2x+15)=90; combining like terms gives 5x+15=90, so 5x=75, giving x=15. 25 comes from an arithmetic slip while isolating x. 5 comes from a similar arithmetic slip in a different direction. 37.5 comes from forgetting to subtract the 15 before dividing by 5.",
           diagram: { kind: "rightTriangle", angle: "3x°", topAngle: "(2x+15)°" },
           difficulty: "medium",
+          why: [null, "Check x = 25: 3(25) + 2(25) + 15 = 140, not 90.", "Check x = 5: 15 + 25 = 40, not 90.", "Check x = 37.5: 3x alone is 112.5, already over 90."],
         },
         {
           q: "In right triangle KLM, with the right angle at L, sin(K) = cos(K + 20°). What is the measure of angle K?",
@@ -6642,6 +7157,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since K and M (where M=K+20) are complementary, K+(K+20)=90; combining gives 2K+20=90, so 2K=70, giving K=35°. 70° mistakenly reports 2K, an intermediate value, instead of solving for K itself. 20° mistakenly restates the given offset instead of solving for K. 55° comes from an arithmetic slip while isolating K.",
           diagram: { kind: "rightTriangle", angle: "K", topAngle: "K+20°" },
           difficulty: "hard",
+          why: [null, "70° is 2K. Divide by 2: K = 35°.", "20° is the offset between the angles, not K.", "55° is angle M, which is K + 20. K itself is 35°."],
         },
         {
           q: "Right triangle PQR has its right angle at Q. If sin(P) = 5/13, what is cos(P) + sin(R)?",
@@ -6651,6 +7167,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since P and R are complementary, sin(R)=cos(P) by the identity, meaning the two quantities being added are equal to each other; since sin(P)=5/13 describes a 5-12-13 right triangle (opposite=5, hypotenuse=13, so adjacent=12), cos(P)=12/13, and cos(P)+sin(R)=12/13+12/13=24/13. 12/13 mistakenly reports only one of the two equal terms instead of their sum. 10/13 comes from doubling the wrong ratio (5/13 instead of 12/13). 17/13 comes from an arithmetic slip in the final addition.",
           diagram: { kind: "rightTriangle", angle: "P", topAngle: "R", base: "12", height: "5", hypotenuse: "13" },
           difficulty: "hard",
+          why: [null, "12/13 is only cos(P). sin(R) equals it too, so double it: 24/13.", "10/13 doubles sin(P). The terms are cos(P) and sin(R), each 12/13.", "17/13 adds sin(P) and cos(P). sin(R) equals cos(P), so it's 12/13 + 12/13."],
         },
       ],
       traps: [
@@ -6685,6 +7202,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Substituting h=2, k=-3, r=5 into the template (x-h)²+(y-k)²=r² gives (x-2)²+(y-(-3))²=5², which simplifies to (x-2)²+(y+3)²=25 — the '+3' is correct because subtracting a negative k flips the sign. (x+2)²+(y-3)²=25 flips both signs incorrectly, treating the center as if it were (-2,3). (x-2)²+(y-3)²=25 forgets to flip the sign on the negative k-coordinate at all. (x-2)²+(y+3)²=5 correctly handles the center but forgets to square the radius on the right side.",
           diagram: { kind: "circleCoordinate", h: 2, k: -3, r: 5 },
           difficulty: "easy",
+          why: [null, "Both signs are flipped. The center (2, −3) gives (x − 2) and (y + 3).", "The y-coordinate is −3, so it's y − (−3) = y + 3.", "The right side is r², not r: 5² = 25."],
         },
         {
           q: "What is the equation of a circle with center (-4, 1) and radius 6?",
@@ -6694,6 +7212,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Substituting h=-4, k=1, r=6 gives (x-(-4))²+(y-1)²=6², which simplifies to (x+4)²+(y-1)²=36 — the '+4' is correct because subtracting a negative h flips the sign. (x-4)²+(y+1)²=36 flips both signs incorrectly, treating the center as if it were (4,-1). (x+4)²+(y-1)²=6 correctly handles the center but forgets to square the radius. (x+4)²+(y+1)²=36 correctly flips the sign for h but incorrectly flips the sign for the positive k as well.",
           diagram: { kind: "circleCoordinate", h: -4, k: 1, r: 6 },
           difficulty: "medium",
+          why: [null, "Both signs are flipped. The center (−4, 1) gives (x + 4) and (y − 1).", "The right side is r², not r: 6² = 36.", "The y-coordinate is +1, so it's (y − 1), not (y + 1)."],
         },
         {
           q: "What is the equation of a circle with center (5, 2) and radius 3?",
@@ -6703,6 +7222,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Substituting h=5, k=2, r=3 directly into the template gives (x-5)²+(y-2)²=3², which simplifies to (x-5)²+(y-2)²=9. (x+5)²+(y+2)²=9 incorrectly flips both signs, even though both coordinates of the center are positive and need no flip. (x-5)²+(y-2)²=3 forgets to square the radius. (x-5)²+(y-2)²=6 comes from an arithmetic slip, like doubling the radius instead of squaring it.",
           diagram: { kind: "circleCoordinate", h: 5, k: 2, r: 3 },
           difficulty: "easy",
+          why: [null, "Both center coordinates are positive, so both terms subtract: (x − 5) and (y − 2).", "The right side is r²: 3² = 9.", "6 doubles the radius. The right side is r²: 9."],
         },
         {
           q: "A circle has the equation (x+1)² + (y-8)² = 49. What are the circle's center and radius?",
@@ -6712,6 +7232,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since the equation has (x+1), that's (x-(-1)), so h=-1; since it has (y-8), k=8; and the radius is the square root of the right side, √49=7, not 49 itself. Reporting center (1,8) misreads (x+1) as meaning h=1 instead of correctly flipping the sign to h=-1. Reporting radius 49 forgets to take the square root of the right side. Reporting center (-1,-8) incorrectly flips the sign on k, which doesn't need flipping since (y-8) already matches the template directly.",
           diagram: { kind: "circleCoordinate", h: -1, k: 8, r: 7 },
           difficulty: "medium",
+          why: [null, "(x + 1) means x − (−1), so the x-coordinate is −1.", "The radius is the square root of 49: 7.", "(y − 8) means the y-coordinate is +8."],
         },
         {
           q: "A circle has the equation x² + y² + 6x - 4y - 12 = 0. What is the circle's radius?",
@@ -6721,6 +7242,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Completing the square for both x and y, grouping terms as (x²+6x)+(y²-4y)=12, then adding (6/2)²=9 and (-4/2)²=4 to both sides gives (x²+6x+9)+(y²-4y+4)=12+9+4=25, which simplifies to (x+3)²+(y-2)²=25, so the radius is √25=5. 25 mistakenly reports the right side of the equation itself instead of taking its square root. 12 mistakenly restates the original constant from the equation instead of completing the square first. 3 comes from an arithmetic slip while completing the square.",
           diagram: { kind: "circleCoordinate", h: -3, k: 2, r: 5 },
           difficulty: "hard",
+          why: [null, "25 is r². The radius is √25 = 5.", "12 is the constant before completing the square. Add 9 and 4 to get 25, then take the root.", "3 is how far the center is from the y-axis, not the radius."],
         },
       ],
       traps: [
@@ -6741,6 +7263,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This sector represents 90°/360°=1/4 of the full circle; the full circle's area is πr²=π(16)=16π, so applying the fraction gives (1/4)(16π)=4π. 16π mistakenly reports the full circle's area instead of the sector's fraction of it. π comes from an arithmetic slip in the fraction multiplication. 2π comes from using the wrong fraction, like confusing the angle with a different value.",
           diagram: { kind: "sector", radiusLabel: "4", angleLabel: "90°", angleDegrees: 90, askFor: "area" },
           difficulty: "easy",
+          why: [null, "16π is the whole circle. 90° is a quarter: 4π.", "Check it: a quarter of 16π is 4π, not π.", "2π is a quarter of the circumference, the arc length. Area uses πr² = 16π."],
         },
         {
           q: "An arc has a central angle of 120° in a circle of radius 9. What is the arc length, in terms of π?",
@@ -6750,6 +7273,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This arc represents 120°/360°=1/3 of the full circle; the full circumference is 2πr=2π(9)=18π, so applying the fraction gives (1/3)(18π)=6π. 18π mistakenly reports the full circumference instead of the arc's fraction of it. 9π comes from an arithmetic slip in the fraction multiplication. 2π comes from using the wrong fraction entirely.",
           diagram: { kind: "sector", radiusLabel: "9", angleLabel: "120°", angleDegrees: 120, askFor: "arcLength" },
           difficulty: "medium",
+          why: [null, "18π is the whole circumference. 120° is a third: 6π.", "9π is half the circumference. 120° is a third.", "Check it: a third of 18π is 6π, not 2π."],
         },
         {
           q: "A sector has a central angle of 60° in a circle of radius 6. What is its area?",
@@ -6759,6 +7283,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "This sector represents 60°/360°=1/6 of the full circle; the full circle's area is πr²=π(36)=36π, so applying the fraction gives (1/6)(36π)=6π. 36π mistakenly reports the full circle's area instead of the sector's fraction of it. 3π comes from an arithmetic slip in the fraction multiplication. 12π comes from using an incorrect fraction, like 1/3 instead of 1/6.",
           diagram: { kind: "sector", radiusLabel: "6", angleLabel: "60°", angleDegrees: 60, askFor: "area" },
           difficulty: "easy",
+          why: [null, "36π is the whole circle. 60° is a sixth: 6π.", "3π is a twelfth. 60° out of 360° is a sixth.", "12π is a third. 60° out of 360° is a sixth."],
         },
         {
           q: "An arc has a length of 5π in a circle of radius 10. What is the measure of the central angle, in degrees?",
@@ -6768,6 +7293,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The full circumference is 2πr=2π(10)=20π; the given arc length represents a fraction of 5π/20π=1/4 of that circumference, so applying that same fraction to the full 360° gives (1/4)(360°)=90°. 45° comes from an arithmetic slip in computing the fraction. 18° comes from using the arc length itself (5) as a fraction of 360 without properly relating it to the circumference. 180° mistakenly reports half the circle instead of the correct 1/4.",
           diagram: { kind: "sector", radiusLabel: "10", angleLabel: "?", angleDegrees: 90, askFor: "angle" },
           difficulty: "medium",
+          why: [null, "The fraction is 5π/20π = 1/4, and 1/4 of 360° is 90°.", "18° treats the 5 as a share of 360. Compare to the circumference: 5π out of 20π.", "180° is half the circle. The arc is a quarter: 5π of 20π."],
         },
         {
           q: "A sector has a central angle of 2π/3 radians in a circle of radius 9. What is the arc length of the sector?",
@@ -6777,6 +7303,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since the angle is given in radians, arc length equals radius times angle directly (rθ), without needing a fraction of 360°: 9×(2π/3)=18π/3=6π. 18π mistakenly reports radius times the numerator of the angle without dividing by the denominator. 3π comes from an arithmetic slip in the multiplication. 2π/3 mistakenly restates the angle itself instead of computing the arc length.",
           diagram: { kind: "sector", radiusLabel: "9", angleLabel: "2π/3", angleDegrees: 120, askFor: "arcLength" },
           difficulty: "hard",
+          why: [null, "18π multiplies 9 by 2π, forgetting to divide by 3.", "Check it: 9 × 2π/3 = 6π, not 3π.", "2π/3 is the angle, not the arc length. Multiply by the radius: 9 × 2π/3."],
         },
       ],
       traps: [
@@ -6797,6 +7324,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Substituting x=2 gives (2-2)²+(y-3)²=25, which simplifies to (y-3)²=25; taking the square root of both sides (remembering both the positive and negative root) gives y-3=±5, so y=8 or y=-2. y=5 or y=1 comes from adding/subtracting the wrong value, like the center's y-coordinate itself, instead of the radius. y=8 only forgets the negative root, missing one of the two valid solutions. y=-8 or y=2 comes from a sign error while solving y-3=±5.",
           diagram: { kind: "circleCoordinate", h: 2, k: 3, r: 5, verticalLineAtX: 2, markPoints: true },
           difficulty: "easy",
+          why: [null, "y − 3 = ±5, so y = 3 + 5 or 3 − 5. These values come from ±2 instead of ±5.", "Taking a square root gives two answers: y − 3 = 5 or y − 3 = −5.", "A sign slip: y = 3 ± 5 gives 8 or −2."],
         },
         {
           q: "The circle x² + y² = 100 passes through a point where x=6. What are the possible value(s) of y?",
@@ -6806,6 +7334,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Substituting x=6 gives 36+y²=100, so y²=64, and taking the square root of both sides gives y=±8. y=64 or y=-64 mistakenly reports y² itself instead of taking the square root. y=8 only forgets the negative root. y=4 or y=-4 comes from an arithmetic slip, like taking the square root of 64 incorrectly.",
           diagram: { kind: "circleCoordinate", h: 0, k: 0, r: 10, verticalLineAtX: 6, markPoints: true },
           difficulty: "easy",
+          why: [null, "64 is y². Take the square root: ±8.", "y² = 64 has two answers: 8 and −8.", "The square root of 64 is 8, not 4."],
         },
         {
           q: "The circle (x+1)² + (y-4)² = 40 passes through a point where x=5. What are the possible value(s) of y?",
@@ -6815,6 +7344,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Substituting x=5 gives (5+1)²+(y-4)²=40, which simplifies to 36+(y-4)²=40, so (y-4)²=4; taking the square root of both sides gives y-4=±2, so y=6 or y=2. y=8 or y=0 comes from an arithmetic slip while isolating the squared term. y=6 only forgets the negative root, missing one of the two valid solutions. y=-6 or y=-2 comes from a sign error while solving y-4=±2.",
           diagram: { kind: "circleCoordinate", h: -1, k: 4, r: 6, verticalLineAtX: 5, markPoints: true },
           difficulty: "medium",
+          why: [null, "Check y = 8: 6² + (8 − 4)² = 36 + 16 = 52, not 40.", "(y − 4)² = 4 has two answers: y − 4 = 2 or −2.", "A sign slip: y = 4 ± 2 gives 6 or 2."],
         },
         {
           q: "The circle (x-3)² + (y+2)² = 16 passes through a point where x=7. What is the value of y at this point?",
@@ -6829,6 +7359,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Substituting x=7 gives (7-3)²+(y+2)²=16, which simplifies to 16+(y+2)²=16, so (y+2)²=0, giving y+2=0 and y=-2 — only ONE solution, because x=7 is the circle's most extreme point in that direction (center x=3 plus radius 4), where the vertical line only touches the circle once. Assuming two solutions here misapplies the usual ± rule to a case where the squared term equals exactly 0, which has only one square root. y=2 only gets the sign wrong while solving y+2=0. And claiming no real value works misreads (y+2)²=0 as if it were negative, when 0 is a perfectly valid, non-negative result with exactly one solution.",
           diagram: { kind: "circleCoordinate", h: 3, k: -2, r: 4, verticalLineAtX: 7, singlePoint: true },
           difficulty: "medium",
+          why: [null, "(y + 2)² = 0 has only one root, 0. x = 7 is the circle's far right edge, where it touches once.", "A sign slip: y + 2 = 0 gives y = −2.", "The squared term equals 0, not a negative number, so there's exactly one solution."],
         },
         {
           q: "The circle (x-2)² + (y-5)² = 9 is claimed to pass through a point where x=8. Is this possible, and why or why not?",
@@ -6843,6 +7374,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Substituting x=8 gives (8-2)²+(y-5)²=9, which simplifies to 36+(y-5)²=9, so (y-5)²=9-36=-27; since a squared real number can never be negative, no real value of y satisfies this, meaning the circle does NOT actually pass through any point where x=8. Claiming y=5±√27 works ignores that the squared expression equals a negative number, which has no real square root at all. Claiming y=5 only misreads the negative result as if it simplified to a single solution instead of having none. And 'not an integer multiple of the radius' is not a real mathematical requirement — the actual reason is the negative squared value, unrelated to whether x is a multiple of the radius.",
           diagram: { kind: "circleCoordinate", h: 2, k: 5, r: 3, verticalLineAtX: 8, noIntersect: true },
           difficulty: "hard",
+          why: [null, "(y − 5)² would have to equal −27, and no real number squared is negative.", "The squared term would have to be −27, which has no real solution, not a single one.", "Being a multiple of the radius has nothing to do with it. The real reason is (y − 5)² = −27."],
         },
       ],
       traps: [
@@ -6864,6 +7396,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "A central angle's measure always equals its intercepted arc's measure in degrees, so the arc also measures 70°. 35° mistakenly halves the angle, confusing this with the different rule for inscribed angles, which equal half their intercepted arc. 140° mistakenly doubles the angle instead of restating it directly. 110° comes from an unrelated miscalculation, like subtracting from 180°.",
           diagram: { kind: "circleBasic", centralAngleLabel: "70°", arcLabel: "?" },
           difficulty: "easy",
+          why: [null, "Half the arc is the rule for inscribed angles. A central angle equals its arc.", "140° doubles the angle. A central angle equals its arc.", "110° is 180 − 70. A central angle equals its arc: 70°."],
         },
         {
           q: "A circle has a radius of 6. What is its area, in terms of π?",
@@ -6873,6 +7406,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Applying the area formula A=πr² with r=6 gives A=π(6)²=36π. 12π mistakenly uses the circumference formula (2πr) instead of the area formula. 6π mistakenly restates the radius times π without squaring it. 18π comes from an unrelated miscalculation, like using half of the correct area.",
           diagram: { kind: "circleBasic", radiusLabel: "6" },
           difficulty: "easy",
+          why: [null, "12π is the circumference, 2πr. Area is πr² = 36π.", "6π forgets to square the radius.", "18π is half the area. Area is π(6²) = 36π."],
         },
         {
           q: "Line segment PQ is tangent to a circle at point Q, where O is the circle's center. If OQ = 5 and OP = 13, what is the length of PQ?",
@@ -6882,6 +7416,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since PQ is tangent to the circle at Q, radius OQ is perpendicular to PQ, making triangle OQP a right triangle with OP as the hypotenuse; applying the Pythagorean theorem, 5²+PQ²=13², gives 25+PQ²=169, so PQ²=144 and PQ=12. 18 comes from adding the squares instead of subtracting, treating OP as if it were a leg instead of the hypotenuse. 8 comes from an arithmetic slip in the subtraction. √194 comes from adding the squares (25+169) instead of subtracting them.",
           diagram: { kind: "circleBasic", tangent: { radius: "5", tangentSeg: "?", hyp: "13" } },
           difficulty: "medium",
+          why: [null, "18 is 13 + 5. OP is the hypotenuse, so subtract squares: 169 − 25 = 144.", "8 is 13 − 5. Subtract the squares, then take the root: 12.", "√194 adds the squares. OP is the hypotenuse, so subtract."],
         },
         {
           q: "Points A and B lie on a circle centered at O, with OA = OB = 9. If the angle AOB measures 60°, what is the length of chord AB?",
@@ -6891,6 +7426,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "Since OA and OB are both radii of the same circle, they're equal, making triangle AOB isosceles with a 60° angle between the two equal sides; an isosceles triangle with a 60° angle between its equal sides is actually equilateral, since its base angles must also each be 60° to sum to 180°, so all three sides are equal and AB=OA=OB=9. 9√3 comes from an unrelated miscalculation, like applying a 30-60-90 ratio that doesn't actually apply to this equilateral setup. 18 mistakenly doubles the radius instead of recognizing the chord equals it directly. 4.5 comes from halving the radius instead of restating it.",
           diagram: { kind: "circleBasic", chordTriangle: { radius: "9", angle: "60°", chord: "?" } },
           difficulty: "hard",
+          why: [null, "The triangle has two sides of 9 with 60° between them, so it's equilateral. All sides are 9.", "18 doubles the radius. In an equilateral triangle, the chord equals the radius.", "4.5 halves the radius. The chord equals the radius here."],
         },
         {
           q: "A circle has a circumference of 24π. A central angle intercepts an arc with a length of 4π. What is the measure of the central angle, in degrees?",
@@ -6900,6 +7436,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "An arc's length is the same fraction of the full circumference as its central angle is of 360°; the fraction here is arc length/circumference=4π/24π=1/6, so applying that fraction to 360° gives (1/6)×360°=60°. 90° comes from using the wrong fraction, like 1/4 instead of 1/6. 30° comes from an arithmetic slip in the fraction multiplication. 45° comes from an unrelated miscalculation.",
           diagram: { kind: "circleBasic", centralAngleLabel: "?", arcLabel: "4π" },
           difficulty: "hard",
+          why: [null, "90° is a quarter of the circle. The arc is 4π of 24π, a sixth.", "30° is a twelfth. The arc is a sixth: 360 ÷ 6 = 60°.", "45° is an eighth. The arc is a sixth of the circle."],
         },
       ],
       traps: [

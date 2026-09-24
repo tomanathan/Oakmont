@@ -23,6 +23,7 @@ export function ExamChoices({
   revealed,
   onSelect,
   disabled = false,
+  struck = [],
 }: {
   choices: string[];
   correctIndex: number;
@@ -33,6 +34,9 @@ export function ExamChoices({
   // explicit action); a worked example never needs this -- picking a
   // different choice after seeing the answer is fine, even encouraged.
   disabled?: boolean;
+  // Choices already tried and found wrong (worked examples), marked wrong
+  // even before the correct answer is revealed.
+  struck?: number[];
 }) {
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>, ci: number) {
     if (disabled) return;
@@ -55,7 +59,7 @@ export function ExamChoices({
       {choices.map((choice, ci) => {
         const isSelected = selected === ci;
         const isCorrect = revealed && ci === correctIndex;
-        const isWrongSelected = revealed && isSelected && ci !== correctIndex;
+        const isWrongSelected = (revealed && isSelected && ci !== correctIndex) || (struck.includes(ci) && ci !== correctIndex);
         // Roving tabIndex: only the selected choice sits in the Tab order
         // (the first choice, before anything's picked), so Tab moves past
         // the whole group in one stop and arrow keys move within it --

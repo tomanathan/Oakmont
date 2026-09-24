@@ -15,6 +15,7 @@ import { ConfidencePicker, CONFIDENCE_OPTIONS } from "@/components/ConfidencePic
 import { PaceClock, formatSeconds, useElapsed } from "@/components/PaceClock";
 import { GeometryDiagram } from "@/components/GeometryDiagram";
 import { ExamChoices } from "@/components/ExamChoices";
+import { WhyWrong, FullExplanation } from "@/components/WhyWrong";
 import { PixelDog } from "@/components/PixelDog";
 import { sectionTheme } from "@/lib/sectionTheme";
 
@@ -198,7 +199,11 @@ export function SubskillClient({
   // incorrect coloring and the explanation, same interaction as the
   // practice quiz below. Persists as they browse back and forth, same as
   // viewedExamples.
-  const [exampleSelections, setExampleSelections] = useState<Record<string, number>>({});
+  // Every choice tried on each example, in order: a wrong pick shows why
+  // that one choice is wrong and leaves the answer hidden so they can try
+  // again; picking the answer (or "Show the answer") reveals it.
+  const [examplePicks, setExamplePicks] = useState<Record<string, number[]>>({});
+  const [exampleShown, setExampleShown] = useState<Record<string, boolean>>({});
   // Bumped on every retake to force a fresh shuffle -- see quizQuestions
   // below -- so the correct answer's position doesn't stay memorizable
   // across attempts either.
@@ -301,7 +306,7 @@ export function SubskillClient({
   }, [mode]);
 
   // Same idea for the lesson's worked examples, shuffled once per page
-  // visit (not on every navigation between examples) -- exampleSelections
+  // visit (not on every navigation between examples) -- examplePicks
   // above stores a plain choice *index* per example, so reshuffling a
   // pattern's examples every time a student steps back to one already
   // viewed would leave that stored index pointing at a different choice
@@ -310,7 +315,7 @@ export function SubskillClient({
   // effect is keyed on subskill.id and not `questions` -- see that
   // effect's comment. `subskill` is just as much a fresh-object-every-
   // refresh Server Component prop as `questions` is, so depending on it
-  // directly reshuffled these choices out from under exampleSelections
+  // directly reshuffled these choices out from under examplePicks
   // any time router.refresh() fired (every quiz submission does exactly
   // that) while this same subskill was still on screen.
   const [shuffledPatterns, setShuffledPatterns] = useState<Pattern[]>(subskill.patterns);
@@ -800,23 +805,18 @@ export function SubskillClient({
                         <PassageText text={example.q} highlight={example.underline} />
                       </div>
                       {example.diagram && <GeometryDiagram spec={example.diagram} />}
-                      <ExamChoices
-                        choices={example.choices}
-                        correctIndex={example.answer}
-                        selected={exampleSelections[`${activePattern}-${activeExample}`] ?? null}
-                        revealed={exampleSelections[`${activePattern}-${activeExample}`] !== undefined}
-                        onSelect={(ci) =>
-                          setExampleSelections((prev) => ({ ...prev, [`${activePattern}-${activeExample}`]: ci }))
+                      <ExampleChoices
+                        example={example}
+                        picks={examplePicks[`${activePattern}-${activeExample}`] ?? []}
+                        shown={!!exampleShown[`${activePattern}-${activeExample}`]}
+                        onPick={(ci) =>
+                          setExamplePicks((prev) => {
+                            const key = `${activePattern}-${activeExample}`;
+                            return { ...prev, [key]: [...(prev[key] ?? []), ci] };
+                          })
                         }
+                        onShow={() => setExampleShown((prev) => ({ ...prev, [`${activePattern}-${activeExample}`]: true }))}
                       />
-                      {exampleSelections[`${activePattern}-${activeExample}`] !== undefined && (
-                        <div className="mt-3 pt-3 border-t border-gray-200">
-                          <div className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                            Explanation
-                          </div>
-                          <StepList text={example.explain} className="text-[13px] text-gray-600" />
-                        </div>
-                      )}
                     </>
                   )}
                 </div>
@@ -1020,13 +1020,23 @@ export function SubskillClient({
                     {isCorrect && confidence[i] !== "sure" ? " · this one will come back in mixed review" : ""}
                   </div>
                 )}
-                {submitted && (
-                  <div className="text-[13px] text-gray-500 mt-2.5 leading-relaxed">
-                    <strong className="text-ink">Explanation: </strong>
-                    <MathText text={q.explain} />
-                  </div>
+                {submitted && !isCorrect && answers[i] !== undefined && q.why?.[answers[i]] ? (
+                  // A miss with a written reason: just why their choice is
+                  // wrong, with the full explanation one click away.
+                  <WhyWrong letter={String.fromCharCode(65 + answers[i])} note={q.why[answers[i]]} trap={trapOf(q, i)}>
+                    <FullExplanation letter={String.fromCharCode(65 + q.answer)} text={q.explain} />
+                  </WhyWrong>
+                ) : (
+                  <>
+                    {submitted && (
+                      <div className="text-[13px] text-gray-500 mt-2.5 leading-relaxed">
+                        <strong className="text-ink">Explanation: </strong>
+                        <MathText text={q.explain} />
+                      </div>
+                    )}
+                    {submitted && !isCorrect && trapOf(q, i) && <TrapNote trap={trapOf(q, i)!} />}
+                  </>
                 )}
-                {submitted && !isCorrect && trapOf(q, i) && <TrapNote trap={trapOf(q, i)!} />}
                 {submitted && !isCorrect && q.pattern && (
                   <MethodCallout
                     patternName={q.pattern}
@@ -1570,3 +1580,56 @@ function LessonOutline({
   );
 }
 
+// A worked example's choices with per-choice feedback: a wrong pick shows
+// why that choice is wrong and keeps the answer hidden for another try;
+// the right pick (or "Show the answer") reveals the full explanation.
+function ExampleChoices({
+  example,
+  picks,
+  shown,
+  onPick,
+  onShow,
+}: {
+  example: Pattern["examples"][number];
+  picks: number[];
+  shown: boolean;
+  onPick: (ci: number) => void;
+  onShow: () => void;
+}) {
+  const last = picks.length ? picks[picks.length - 1] : null;
+  const solved = shown || picks.includes(example.answer);
+  const letter = (i: number) => String.fromCharCode(65 + i);
+  return (
+    <>
+      <ExamChoices
+        choices={example.choices}
+        correctIndex={example.answer}
+        selected={last}
+        revealed={solved}
+        struck={picks.filter((p) => p !== example.answer)}
+        onSelect={onPick}
+      />
+      {last !== null && last !== example.answer && (
+        <WhyWrong letter={letter(last)} note={example.why?.[last]}>
+          {!solved && (
+            <div className="mt-2 text-[12.5px] text-gray-500">
+              Try another choice, or{" "}
+              <button onClick={onShow} className="font-semibold text-[#4a5bb0] hover:underline">
+                show the answer
+              </button>
+              .
+            </div>
+          )}
+        </WhyWrong>
+      )}
+      {solved && (last === example.answer || shown) && (
+        <div className="mt-3 pt-3 border-t border-gray-200">
+          <div className="text-[11px] font-semibold text-accent uppercase tracking-wide mb-1.5">
+            {letter(example.answer)} is right
+          </div>
+          <StepList text={example.explain} className="text-[13px] text-gray-600" />
+        </div>
+      )}
+    </>
+  );
+}

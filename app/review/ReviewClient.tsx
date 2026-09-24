@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ExamChoices } from "@/components/ExamChoices";
+import { WhyWrong, FullExplanation } from "@/components/WhyWrong";
 import { MathText } from "@/components/MathText";
 import { PassageText } from "@/components/PassageText";
 import { ScoreRing } from "@/components/ScoreRing";
@@ -34,6 +35,7 @@ interface ItemResult {
   explain: string;
   pattern: string | null;
   trap: string | null;
+  whyWrong?: string | null; // why the choice they picked is wrong
   subskillId: string;
   subskillName: string;
   domain: string;
@@ -708,11 +710,19 @@ function ReviewResults({
                 disabled
                 onSelect={() => {}}
               />
-              <div className="mt-2.5 text-[13px] leading-relaxed text-gray-500">
-                <strong className="text-ink">Explanation: </strong>
-                <MathText text={r.explain} />
-              </div>
-              {!r.correct && r.trap && <TrapNote trap={r.trap} />}
+              {!r.correct && r.whyWrong && answers[i] !== undefined ? (
+                <WhyWrong letter={String.fromCharCode(65 + (answers[i] as number))} note={r.whyWrong} trap={r.trap}>
+                  <FullExplanation letter={String.fromCharCode(65 + correctShown)} text={r.explain} />
+                </WhyWrong>
+              ) : (
+                <>
+                  <div className="mt-2.5 text-[13px] leading-relaxed text-gray-500">
+                    <strong className="text-ink">Explanation: </strong>
+                    <MathText text={r.explain} />
+                  </div>
+                  {!r.correct && r.trap && <TrapNote trap={r.trap} />}
+                </>
+              )}
               {!r.correct && (
                 <Link
                   href={`/subskill/${r.subskillId}${r.pattern ? `?pattern=${encodeURIComponent(r.pattern)}` : ""}`}

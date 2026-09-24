@@ -27,6 +27,10 @@ export interface Question {
   // data/curriculum.ts), or null. Always null for the correct answer.
   // Lets a miss say which mistake it was, not just that it was one.
   trapFor?: (number | null)[];
+  // One entry per choice, in authored order: why that choice is wrong
+  // (null at the correct answer). After grading, a miss shows the reason
+  // for the choice the student picked.
+  why?: (string | null)[];
   // A table, graph, or plot drawn to scale from its own data (see
   // lib/figureTypes.ts), shown between the setup and the question.
   figure?: FigureSpec;

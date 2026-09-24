@@ -119,13 +119,36 @@ export function SampleQuestion({
                   {correct ? "Correct." : "Not quite."} This is question type {typeIndex + 1} of {question.types.length} in {question.skill}:{" "}
                   {question.type}.
                 </div>
-                {trap && (
-                  <div className="mb-2 rounded-lg bg-white px-3 py-2 text-sm leading-relaxed text-gray-700 ring-1 ring-[#f0d0d0]">
-                    <span className="font-semibold text-[#b23b3b]">The trap you fell for: </span>
-                    {trap}
-                  </div>
+                {!correct && selected !== null && question.why[selected] ? (
+                  <>
+                    <div className="mb-2 rounded-lg bg-white px-3 py-2 text-sm leading-relaxed text-gray-700 ring-1 ring-[#f0d0d0]">
+                      <span className="font-semibold text-[#b23b3b]">Why {LETTERS[selected]} is wrong: </span>
+                      {question.why[selected]}
+                      {trap && (
+                        <span className="mt-1.5 block text-[13px] text-[#6b3a14]">
+                          <span className="font-semibold text-[#b4541a]">The trap: </span>
+                          {trap}
+                        </span>
+                      )}
+                    </div>
+                    <details className="group">
+                      <summary className="cursor-pointer list-none text-sm font-semibold text-[#4a5bb0] hover:underline">
+                        Why {LETTERS[question.answer]} is right<span className="group-open:hidden"> &rarr;</span>
+                      </summary>
+                      <p className="mt-1.5 text-sm leading-relaxed text-gray-600">{question.explain}</p>
+                    </details>
+                  </>
+                ) : (
+                  <>
+                    {trap && (
+                      <div className="mb-2 rounded-lg bg-white px-3 py-2 text-sm leading-relaxed text-gray-700 ring-1 ring-[#f0d0d0]">
+                        <span className="font-semibold text-[#b23b3b]">The trap you fell for: </span>
+                        {trap}
+                      </div>
+                    )}
+                    <p className="text-sm leading-relaxed text-gray-600">{question.explain}</p>
+                  </>
                 )}
-                <p className="text-sm leading-relaxed text-gray-600">{question.explain}</p>
               </div>
             )}
           </div>

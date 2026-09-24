@@ -134,6 +134,7 @@ export async function POST(req: NextRequest) {
         explain: it.item.explain,
         pattern: it.item.pattern ?? null,
         trap: it.correct ? null : trapFor(it.item, it.choice),
+        whyWrong: it.correct ? null : it.item.why?.[it.choice] ?? null,
         subskillId: it.item.subskillId,
         subskillName: sub?.name ?? it.item.subskillId,
         domain: it.item.domain,

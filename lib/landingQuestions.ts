@@ -15,6 +15,7 @@ export interface LandingQuestion {
   explain: string;
   underline: string | null;
   traps: (string | null)[]; // per choice: the trap behind that wrong answer
+  why: (string | null)[]; // per choice: why that choice is wrong
   section: string;
   domains: string[]; // every domain in the section, in order
   domain: string;
@@ -53,6 +54,7 @@ export function landingQuestions(): LandingQuestion[] {
             const t = item.trapFor?.[i];
             return t === null || t === undefined ? null : pattern?.traps[t] ?? null;
           }),
+          why: item.choices.map((_, i) => item.why?.[i] ?? null),
           section: sec.section,
           domains: sec.domains.map((x) => x.domain),
           domain: d.domain,
