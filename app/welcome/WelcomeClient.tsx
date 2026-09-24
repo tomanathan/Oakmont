@@ -200,7 +200,7 @@ export function WelcomeClient(props: Props) {
       ? `Hi ${displayName}! I'm ${PET_NAME}, and I'll be studying right alongside you. First up: when's the big day?`
       : `Hi! I'm ${PET_NAME}, and I'll be studying right alongside you. First up: when's the big day?`,
     score: "Where are we starting, and where are we headed?",
-    parent: "Should someone at home be able to follow along? Your call.",
+    parent: "Let's get your parent in the loop. They'll love seeing this.",
     tour: "Here's how we'll get there, in two minutes.",
     ready: displayName ? `That's everything, ${displayName}. Your plan is ready!` : "That's everything. Your plan is ready!",
   };
@@ -413,10 +413,13 @@ export function WelcomeClient(props: Props) {
 
         {step === "parent" && (
           <div className={CARD}>
-            <h1 className={H1}>Parent supervision</h1>
-            <p className={SUB}>Choose whether a parent or guardian follows your progress. You can change this any time in Settings.</p>
+            <h1 className={H1}>Add your parent</h1>
+            <p className={SUB}>
+              Your parent gets their own dashboard that follows your prep as you go, plus a summary every Sunday, so everyone at home is on
+              the same page.
+            </p>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Parent supervision">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Add your parent">
               <button role="radio" aria-checked={parentChoice === "yes"} onClick={() => setParentChoice("yes")} className={choiceCard(parentChoice === "yes")}>
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[15px] font-semibold">Add my parent</span>
@@ -425,13 +428,13 @@ export function WelcomeClient(props: Props) {
                   </span>
                 </div>
                 <div className={`mt-1 text-[13px] leading-snug ${parentChoice === "yes" ? "text-white/75" : "text-gray-500"}`}>
-                  They get a free, read-only report and a summary email on Sundays.
+                  Their free dashboard connects to your account right away.
                 </div>
               </button>
               <button role="radio" aria-checked={parentChoice === "solo"} onClick={() => setParentChoice("solo")} className={choiceCard(parentChoice === "solo")}>
-                <span className="text-[15px] font-semibold">I&apos;ll study on my own</span>
+                <span className="text-[15px] font-semibold">Skip for now</span>
                 <div className={`mt-1 text-[13px] leading-snug ${parentChoice === "solo" ? "text-white/75" : "text-gray-500"}`}>
-                  Nothing is shared with anyone. You can add a parent later.
+                  You can add a parent from Settings later.
                 </div>
               </button>
             </div>
@@ -454,16 +457,14 @@ export function WelcomeClient(props: Props) {
                   )}
                 </div>
                 <div className="rounded-xl bg-[#f5f4fb] p-4 text-[13px] leading-relaxed text-gray-600">
-                  <div className="mb-1.5 font-semibold text-ink">What they&apos;ll see</div>
+                  <div className="mb-1.5 font-semibold text-ink">What your parent gets</div>
                   <ul className="space-y-1">
                     <li>When you study and for how long</li>
                     <li>Lessons, quizzes and reviews, with scores</li>
                     <li>Your progress on each skill</li>
                     <li>Practice test scores against your goal</li>
                   </ul>
-                  <div className="mt-2.5 text-[12px] text-gray-500">
-                    They can&apos;t change anything or answer for you. You can see and remove the connection in Settings.
-                  </div>
+                  <div className="mt-2.5 text-[12px] text-gray-500">A summary email every Sunday, with what to celebrate and what to ask about.</div>
                 </div>
               </div>
             )}
@@ -522,7 +523,7 @@ export function WelcomeClient(props: Props) {
                 value={
                   parents.length === 0
                     ? parentChoice === "solo"
-                      ? "On your own"
+                      ? "Skipped"
                       : "Not set"
                     : parents.some((p) => !p.pending)
                     ? "Connected"

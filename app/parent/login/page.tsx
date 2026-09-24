@@ -87,7 +87,7 @@ function ParentLoginContent() {
             Know exactly how SAT prep is going, without asking.
           </h1>
           <p className="mt-3 max-w-[46ch] text-[15px] leading-relaxed text-gray-600">
-            A detailed, read-only report of your student&apos;s studying, updated every time they practice.
+            A detailed report of your student&apos;s studying, updated every time they practice.
           </p>
           <ul className="mt-6 flex flex-col gap-2.5">
             {WHAT_YOU_SEE.map((t) => (
@@ -98,7 +98,7 @@ function ParentLoginContent() {
             ))}
           </ul>
           <p className="mt-6 max-w-[48ch] text-[12.5px] leading-relaxed text-gray-500">
-            Your student approves the connection and can see that it&apos;s on. Parents can&apos;t change anything in their account.
+            Parent accounts are free with your student&apos;s plan, and one account can follow more than one student.
           </p>
         </div>
 

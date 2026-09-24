@@ -23,11 +23,11 @@ export const FAQ_ITEMS = [
   },
   {
     q: "What can parents see?",
-    a: "A detailed, read-only report: every study session (when, how long, what was covered), questions answered and accuracy week by week, progress on all 29 skills, whether mastered skills are sticking, confidence and pace habits, mistakes that keep repeating, and practice test scores against the goal. A summary email arrives every Sunday.",
+    a: "A detailed report: every study session (when, how long, what was covered), questions answered and accuracy week by week, progress on all 29 skills, whether mastered skills are sticking, confidence and pace habits, mistakes that keep repeating, and practice test scores against the goal. A summary email arrives every Sunday.",
   },
   {
-    q: "Does my student know I can see their progress?",
-    a: "Yes. They choose parent supervision themselves (when they sign up, or later in Settings), their Settings show exactly what a connected parent sees, and they can remove access. Parents can't change anything or answer questions for them.",
+    q: "How up to date is the parent dashboard?",
+    a: "It updates every time your student practices: each lesson, quiz, review and logged practice test shows up right away, and the Sunday email sums up the week.",
   },
   {
     q: "Do parents need to pay or have their own plan?",

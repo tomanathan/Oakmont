@@ -5,7 +5,7 @@ import { displayName, loadParentReport } from "@/lib/parentReportData";
 
 export const dynamic = "force-dynamic";
 
-// Public, no-login read-only view -- anyone with the link sees the same
+// Public, no-login view -- anyone with the link sees the same
 // report a linked parent account would (see app/parent/dashboard). A
 // student generates or revokes this link from Settings; a wrong or revoked
 // token gets the same generic "not valid" message either way -- never a
@@ -38,8 +38,7 @@ export default async function SharePage({ params }: { params: { token: string } 
         report={report}
         footer={
           <p className="text-center text-[12px] leading-relaxed text-gray-400">
-            Shared by the student from their Settings; they can turn this link off at any time. For the weekly email and your own time
-            zone, <a href="/parent/login?mode=signup" className="text-[#4a5bb0] underline">create a free parent account</a>.
+            For the Sunday email and times in your own time zone, <a href="/parent/login?mode=signup" className="text-[#4a5bb0] underline">create a free parent account</a>.
           </p>
         }
       />

@@ -102,7 +102,7 @@ export function SetupForm({
       {!claimed && (
         <p className="mt-2 text-[15px] leading-relaxed text-gray-600">
           {who} added you as their parent. Set a password and you&apos;ll go straight to their report: every study session, every skill and
-          every practice test score. It&apos;s free and read-only.
+          every practice test score. It&apos;s free.
         </p>
       )}
       <form onSubmit={submit} className="mt-6 rounded-xl border border-[#ece9f7] bg-white p-6 shadow-[0_1px_2px_rgba(26,26,46,0.04),0_8px_24px_rgba(26,26,46,0.06)]">

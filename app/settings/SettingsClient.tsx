@@ -380,24 +380,18 @@ export function SettingsClient({
         </button>
       </form>
 
-      {/* Parent access -- lets a parent see this student's own dashboard
-          (read-only, a separate parent account of their own) two ways: an
-          invite code they type in once while signing up, or a link they
-          can just open. Either can be turned off independently, and
-          linked parents can be individually unlinked -- this is the one
-          place a student controls who besides them can see their data. */}
+      {/* Parent access: parents on this account (with setup status), adding
+          another by email, the invite code, and the no-login share link. */}
       <div id="parents" className="scroll-mt-[72px] text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Parent access</div>
       <div className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-6">
         <div className="mb-5 rounded-lg bg-[#f5f4fb] p-3.5 text-xs leading-relaxed text-gray-600">
-          <span className="font-semibold text-ink">What a connected parent sees:</span> when you study and for how long, which lessons,
-          quizzes and reviews you did, how many questions you answered and got right, your progress on each skill, the confidence you mark
-          on answers, mistakes that repeat, and the practice test scores, goal and test date you enter. They get a summary email on
-          Sundays. They can&apos;t change anything or answer for you.
+          <span className="font-semibold text-ink">Your parent&apos;s dashboard</span> follows your prep as you go: study sessions, lessons,
+          quizzes and reviews, accuracy on every skill, the mistakes that repeat, and your practice test scores against your goal. They
+          also get a summary email every Sunday.
         </div>
         <div className="text-[15px] font-semibold text-ink mb-1">{parents.length ? "Your parents" : "Add a parent"}</div>
         <div className="text-xs text-gray-500 mb-3">
-          Enter their email and we&apos;ll set up a free parent account for them and email them a link to choose a password.
-          Unlinking stops their access right away.
+          Enter their email and we&apos;ll set up their free parent account and email them a link to choose a password.
         </div>
         {parents.length > 0 && (
           <div className="mb-3 flex flex-col gap-2">
@@ -425,7 +419,7 @@ export function SettingsClient({
         <div className="text-[15px] font-semibold text-ink mb-1">Or share an invite code</div>
         <div className="text-xs text-gray-500 mb-3">
           Give this to a parent — they'll enter it when they sign up at{" "}
-          <span className="font-mono">oakmontsat.com/parent/login</span>. A parent who signs up first can also send you a link to approve.
+          <span className="font-mono">oakmontsat.com/parent/login</span>. A parent who signs up first can also send you a link to connect.
         </div>
         {inviteCode ? (
           <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -465,7 +459,7 @@ export function SettingsClient({
 
         <div className="text-[15px] font-semibold text-ink mb-1">Shareable link</div>
         <div className="text-xs text-gray-500 mb-3">
-          Anyone with this link can see your dashboard, read-only, with no account or sign-in needed.
+          Anyone with this link can see your progress report, no account or sign-in needed.
         </div>
         {shareToken ? (
           <div className="flex items-center gap-2 mb-2 flex-wrap">

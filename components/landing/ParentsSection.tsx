@@ -178,7 +178,7 @@ function trimTalk(text: string): string {
 }
 
 const STEPS = [
-  { title: "Your student adds you", body: "When they sign up, they choose parent supervision and enter your email." },
+  { title: "Your student adds you", body: "They enter your email while setting up their account." },
   { title: "You set a password", body: "From the email we send you. Parent accounts are free." },
   { title: "Follow along", body: "Your report updates as they study, with a summary every Sunday." },
 ];
@@ -321,8 +321,8 @@ export function ParentsSection() {
             <div>
               <h3 className="font-display text-[26px] font-semibold leading-snug">Set up in two minutes</h3>
               <p className="mt-2 text-[13.5px] leading-relaxed text-white/65">
-                Read-only: you can&apos;t change anything or answer for them. They can see the connection is on, and remove it any time.
-                Signing up first? Create your account and send them a link.
+                Your dashboard is tied to your student&apos;s account from day one, so it fills in the moment they start. Signing up first?
+                Create your account and send them a link.
               </p>
             </div>
             <ol className="grid gap-3 sm:grid-cols-3">

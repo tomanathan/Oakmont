@@ -50,8 +50,7 @@ export default async function ParentDashboardPage({
         }
         footer={
           <p className="text-center text-[12px] leading-relaxed text-gray-400">
-            {name} approved sharing this report and can see that it&apos;s on in their Settings. It&apos;s read-only: nothing you do here
-            changes their account. Times are shown in {report.timeZone.replace(/_/g, " ")}.
+            Times are shown in {report.timeZone.replace(/_/g, " ")}.
           </p>
         }
       />

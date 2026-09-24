@@ -84,10 +84,10 @@ export function parentAddedEmail({
     subject: `${studentName} added you as their parent on Oakmont`,
     html: shell(`
   <h1 style="font-size:24px;line-height:1.25;margin:10px 0 12px;">${who} is studying for the SAT and added you as their parent</h1>
-  <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 16px;">Your free parent account is ready. Set a password to see a live, read-only report of ${who}'s studying:</p>
+  <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 16px;">Your free parent account is ready. Set a password to see a live report of ${who}'s studying:</p>
   ${list}
   ${button(url, "Set your password")}
-  <p style="font-size:13px;line-height:1.6;color:#4b4b63;margin:18px 0 0;">The link works for 30 days. Parent accounts cost nothing and can't change anything in ${who}'s account.</p>
+  <p style="font-size:13px;line-height:1.6;color:#4b4b63;margin:18px 0 0;">The link works for 30 days. Parent accounts are free.</p>
   <p style="font-size:12px;line-height:1.6;color:#8a8aa0;margin:28px 0 0;">Not ${who}'s parent? <a href="${esc(url)}&amp;decline=1" style="color:#4a5bb0;">Remove this account</a> and you won't hear from us again.</p>`),
   };
 }

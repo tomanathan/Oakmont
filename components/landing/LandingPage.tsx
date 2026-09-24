@@ -1,6 +1,7 @@
 import { BrandMark } from "@/components/BrandMark";
 import { LegalFooter } from "@/components/LegalFooter";
-import { ALL_SUBSKILLS } from "@/data/curriculum";
+import { ALL_SUBSKILLS, ALL_DOMAINS } from "@/data/curriculum";
+import { landingQuestions } from "@/lib/landingQuestions";
 import { QUESTIONS } from "@/data/questions";
 import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { Hero } from "./Hero";
@@ -27,6 +28,7 @@ import { TrackedLink } from "./TrackedLink";
 export function LandingPage() {
   const questionCount = Object.values(QUESTIONS).reduce((n, qs) => n + qs.length, 0);
   const subskillCount = ALL_SUBSKILLS.length;
+  const sampleQuestions = landingQuestions();
 
   const faqJsonLd = {
     "@context": "https://schema.org",
@@ -87,7 +89,7 @@ export function LandingPage() {
       <main id="top">
         <Hero questionCount={questionCount} subskillCount={subskillCount} />
         <ProofStrip questionCount={questionCount} subskillCount={subskillCount} />
-        <SampleQuestion questionCount={questionCount} />
+        <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} />
         <ParentsSection />
         <Reveal>
           <HowItWorks subskillCount={subskillCount} />

@@ -6,8 +6,8 @@ import { ApproveInvite } from "./ApproveInvite";
 
 export const dynamic = "force-dynamic";
 
-// A parent's invite link, opened by the student. Nothing is shared until
-// the signed-in student approves here -- and they see exactly what will be.
+// A parent's invite link, opened by the student while signed in, which
+// connects the two accounts.
 const SHARED = [
   "When you study, for how long, and which lessons and quizzes",
   "How many questions you answer and how many you get right",
@@ -37,11 +37,11 @@ export default async function LinkInvitePage({ params }: { params: { token: stri
         </div>
       ) : (
         <div className="rounded-2xl border border-[#ece9f7] bg-white p-7 shadow-[0_1px_2px_rgba(26,26,46,0.04),0_8px_24px_rgba(26,26,46,0.06)]">
-          <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#4a5bb0]">Parent access request</div>
+          <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#4a5bb0]">Connect your parent</div>
           <h1 className="mt-1 font-display text-[24px] font-semibold leading-snug text-ink">
             {invite.parent.email} wants to follow your SAT prep
           </h1>
-          <p className="mt-2 text-[14px] leading-relaxed text-gray-600">If you approve, they&apos;ll see a read-only report of your studying:</p>
+          <p className="mt-2 text-[14px] leading-relaxed text-gray-600">Once you connect, their dashboard follows your progress:</p>
           <ul className="mt-3 flex flex-col gap-2">
             {SHARED.map((s) => (
               <li key={s} className="flex gap-2.5 text-[13.5px] leading-snug text-gray-700">
@@ -50,17 +50,13 @@ export default async function LinkInvitePage({ params }: { params: { token: stri
               </li>
             ))}
           </ul>
-          <p className="mt-4 text-[13px] leading-relaxed text-gray-500">
-            They can&apos;t change anything, answer questions, or see your password. You can remove them any time in Settings &rarr; Parent
-            access.
-          </p>
           <div className="mt-6">
             {user ? (
               <ApproveInvite token={params.token} studentEmail={user.email} />
             ) : (
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Link href={`/login?next=${back}`} className="flex-1 rounded-lg bg-ink py-2.5 text-center text-sm font-semibold text-white">
-                  Log in to approve
+                  Log in to connect
                 </Link>
                 <Link
                   href={`/login?mode=signup&next=${back}`}

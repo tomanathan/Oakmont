@@ -167,19 +167,15 @@ export default async function DashboardPage() {
         href: "/plan#practice-tests",
         done: !!latestTest,
       },
-      ...(stats.parentOptOutAt
-        ? []
-        : [
-            {
-              id: "parent",
-              title: parentLinks.length ? "Get your parent set up" : "Add a parent",
-              body: parentLinks.length
-                ? `Waiting for ${parentLinks[0].parent.email} to set a password. You can resend it in Settings.`
-                : "Optional. They get a read-only report and a Sunday email.",
-              href: parentLinks.length ? "/settings#parents" : "/welcome?step=parent",
-              done: parentLinks.some((l) => !!l.parent.passwordHash),
-            },
-          ]),
+      {
+          id: "parent",
+          title: parentLinks.length ? "Get your parent set up" : "Add a parent",
+          body: parentLinks.length
+            ? `Waiting for ${parentLinks[0].parent.email} to set a password. You can resend it in Settings.`
+            : "They get their own dashboard of your progress and a Sunday email.",
+          href: parentLinks.length ? "/settings#parents" : "/welcome?step=parent",
+          done: parentLinks.some((l) => !!l.parent.passwordHash),
+        },
     ];
   }
 
