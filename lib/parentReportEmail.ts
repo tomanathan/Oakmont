@@ -29,7 +29,7 @@ function stat(label: string, value: string, sub: string): string {
   </td>`;
 }
 
-function studentCard(r: ParentReport, studentId: string): string {
+function studentCard(r: ParentReport, studentId: string, setupUrl?: string): string {
   const t = TONE[r.verdict.tone];
   const mins = r.week.minutes >= 60 ? `${Math.floor(r.week.minutes / 60)}h ${r.week.minutes % 60}m` : `${r.week.minutes} min`;
   const days = r.week.dayFlags
@@ -64,11 +64,16 @@ function studentCard(r: ParentReport, studentId: string): string {
         : ""
     }
     ${points ? `<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8a8499;margin:6px 0 8px;">How you can help</div><ul style="padding-left:18px;margin:0;">${points}</ul>` : ""}
-    <div style="margin-top:14px;"><a href="${APP_URL}/parent/dashboard?student=${encodeURIComponent(studentId)}" style="display:inline-block;background:#1a1a2e;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">See the full report</a></div>
+    <div style="margin-top:14px;"><a href="${setupUrl ? esc(setupUrl) : `${APP_URL}/parent/dashboard?student=${encodeURIComponent(studentId)}`}" style="display:inline-block;background:#1a1a2e;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">${setupUrl ? "Set a password to see the full report" : "See the full report"}</a></div>
   </div>`;
 }
 
-export function parentWeeklyEmail(students: { id: string; report: ParentReport }[]): { subject: string; html: string } {
+// `setupUrl`: for a parent whose account a student created and who hasn't
+// set a password yet -- links point there, with a way to opt out.
+export function parentWeeklyEmail(
+  students: { id: string; report: ParentReport }[],
+  opts: { setupUrl?: string } = {}
+): { subject: string; html: string } {
   const names = students.map((s) => s.report.name);
   const subject =
     students.length === 1
@@ -78,10 +83,14 @@ export function parentWeeklyEmail(students: { id: string; report: ParentReport }
   <div style="background:#faf8f4;padding:24px 12px;font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;">
     <div style="max-width:560px;margin:0 auto;">
       <div style="font-size:13px;color:#4a5bb0;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 14px;">Oakmont &middot; Weekly report</div>
-      ${students.map((s) => studentCard(s.report, s.id)).join("")}
+      ${students.map((s) => studentCard(s.report, s.id, opts.setupUrl)).join("")}
       <div style="font-size:12px;color:#8a8499;line-height:1.5;margin-top:8px;">
-        You're getting this because you have a parent account on Oakmont Study Center. Turn the Sunday email off with the switch at the top of
-        <a href="${APP_URL}/parent/dashboard" style="color:#4a5bb0;">your dashboard</a>.
+        ${
+          opts.setupUrl
+            ? `You're getting this because ${esc(names.join(" and "))} added you as their parent on Oakmont Study Center. Not their parent? <a href="${esc(opts.setupUrl)}&amp;decline=1" style="color:#4a5bb0;">Remove this account</a> and the emails stop.`
+            : `You're getting this because you have a parent account on Oakmont Study Center. Turn the Sunday email off with the switch at the top of
+        <a href="${APP_URL}/parent/dashboard" style="color:#4a5bb0;">your dashboard</a>.`
+        }
       </div>
     </div>
   </div>`;

@@ -22,6 +22,7 @@ export async function PATCH(req: NextRequest) {
     equippedCostume?: string | null;
     firstName?: string | null;
     dismissChecklist?: boolean;
+    parentOptOut?: boolean;
   };
   try {
     body = await req.json();
@@ -95,6 +96,7 @@ export async function PATCH(req: NextRequest) {
       ...(equippedCostume !== undefined ? { equippedCostume } : {}),
       ...(firstName !== undefined ? { firstName } : {}),
       ...(dismissChecklist ? { onboardingChecklistDismissedAt: new Date() } : {}),
+      ...(body.parentOptOut ? { parentOptOutAt: new Date() } : {}),
     },
     select: { baselineScore: true, goalScore: true, targetTestDate: true, equippedCostume: true, firstName: true },
   });

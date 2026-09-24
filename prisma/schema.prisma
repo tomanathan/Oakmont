@@ -60,6 +60,9 @@ model User {
   // stays until every item is done or the student dismisses it.
   firstName                      String?
   onboardingChecklistDismissedAt DateTime?
+  // Set when the student chooses to study without parent supervision in
+  // onboarding (the alternative is adding a parent there).
+  parentOptOutAt                 DateTime?
 
   // Study-streak pet: dies if the student goes 7 days without completing a
   // quiz (see lib/pet.ts). petBornAt resets when a new pet is started after
@@ -121,7 +124,13 @@ model User {
 model Parent {
   id           String       @id @default(cuid())
   email        String       @unique
-  passwordHash String
+  // Null until the parent sets a password: a student's signup creates
+  // their parent's account and emails them a setup link (setupToken), which
+  // doubles as the parent's password-reset link later.
+  passwordHash      String?
+  setupToken        String?   @unique
+  setupTokenExpires DateTime?
+  setupEmailSentAt  DateTime?
   createdAt    DateTime     @default(now())
   links        ParentLink[]
   invites      ParentInvite[]

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { displayName, loadParentReport } from "@/lib/parentReportData";
 import { parentWeeklyEmail } from "@/lib/parentReportEmail";
+import { ensureSetupLink } from "@/lib/parentSetup";
 
 // Sunday (see vercel.json): each parent with the weekly report on gets one
 // email covering all their linked students. Protected by CRON_SECRET like
@@ -19,7 +20,7 @@ export async function GET(req: NextRequest) {
   const cutoff = new Date(now.getTime() - 6 * 86400000);
   const parents = await prisma.parent.findMany({
     where: { weeklyReport: true, links: { some: {} }, OR: [{ lastReportSentAt: null }, { lastReportSentAt: { lt: cutoff } }] },
-    select: { id: true, email: true, timeZone: true, links: { select: { studentId: true, nickname: true, student: { select: { email: true, firstName: true } } } } },
+    select: { id: true, email: true, timeZone: true, passwordHash: true, setupToken: true, setupTokenExpires: true, links: { select: { studentId: true, nickname: true, student: { select: { email: true, firstName: true } } } } },
   });
 
   let sent = 0;
@@ -31,7 +32,9 @@ export async function GET(req: NextRequest) {
         const report = await loadParentReport(l.studentId, { name: displayName(l.nickname || l.student.firstName, l.student.email), timeZone: p.timeZone, now });
         students.push({ id: l.studentId, report });
       }
-      const { subject, html } = parentWeeklyEmail(students);
+      // Not set up yet: the email carries a fresh set-password link.
+      const setupUrl = p.passwordHash ? undefined : await ensureSetupLink(p);
+      const { subject, html } = parentWeeklyEmail(students, { setupUrl });
       const res = await sendEmail({ to: p.email, subject, html });
       if (res.sent) {
         await prisma.parent.update({ where: { id: p.id }, data: { lastReportSentAt: now } });

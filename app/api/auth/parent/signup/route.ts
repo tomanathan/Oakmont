@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth";
 import { safeTimeZone } from "@/lib/parentReportData";
+import { sendParentSetupLink } from "@/lib/parentSetup";
 import {
   createParentSessionToken,
   PARENT_SESSION_COOKIE_NAME,
@@ -40,6 +41,15 @@ export async function POST(req: NextRequest) {
   }
 
   const existing = await prisma.parent.findUnique({ where: { email } });
+  if (existing && !existing.passwordHash) {
+    // A student already created this account for them: the password has
+    // to be set through the emailed link, which proves the address is theirs.
+    await sendParentSetupLink(existing.id);
+    return NextResponse.json(
+      { error: "Your student already created this account for you. We've emailed you a link to set your password." },
+      { status: 409 }
+    );
+  }
   if (existing) {
     return NextResponse.json(
       { error: "An account with this email already exists. Try logging in instead." },

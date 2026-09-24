@@ -22,7 +22,7 @@ export default async function SettingsPage() {
       select: {
         parentInviteCode: true,
         parentShareToken: true,
-        parentLinks: { select: { id: true, parent: { select: { email: true } } }, orderBy: { createdAt: "asc" } },
+        parentLinks: { select: { id: true, parent: { select: { id: true, email: true, passwordHash: true } } }, orderBy: { createdAt: "asc" } },
       },
     }),
   ]);
@@ -65,7 +65,7 @@ export default async function SettingsPage() {
         secondPetUnlockDays={SECOND_PET_UNLOCK_STREAK_DAYS}
         parentInviteCode={parentAccess?.parentInviteCode ?? null}
         parentShareToken={parentAccess?.parentShareToken ?? null}
-        linkedParents={(parentAccess?.parentLinks ?? []).map((l) => ({ id: l.id, email: l.parent.email }))}
+        linkedParents={(parentAccess?.parentLinks ?? []).map((l) => ({ id: l.id, parentId: l.parent.id, email: l.parent.email, pending: !l.parent.passwordHash }))}
       />
     </AppShell>
   );

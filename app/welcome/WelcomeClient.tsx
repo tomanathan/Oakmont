@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { PET_NAME, SECOND_PET_NAME } from "@/lib/pet";
 import { PetAvatar } from "@/components/PetAvatar";
 import { BrandMark } from "@/components/BrandMark";
-import { EmailParentInvite } from "@/components/EmailParentInvite";
+import { AddParentForm, ParentRow, type AddedParent } from "@/components/AddParentForm";
 
 export type WelcomeStep = "name" | "date" | "score" | "parent" | "tour" | "ready";
-const STEPS: WelcomeStep[] = ["name", "date", "score", "parent", "tour", "ready"];
+const ALL_STEPS: WelcomeStep[] = ["name", "date", "score", "parent", "tour", "ready"];
 const STEP_LABELS: Record<WelcomeStep, string> = {
   name: "You",
   date: "Test date",
@@ -29,8 +29,8 @@ interface Props {
   single: WelcomeStep | null;
   hasAccess: boolean;
   initial: { firstName: string; baselineScore: number | null; goalScore: number | null; targetTestDate: string | null };
-  parentCode: string | null;
-  parentCount: number;
+  parents: AddedParent[];
+  optedOut: boolean;
   satDates: { date: string; label: string; weeks: number }[];
   today: string;
   skills: { id: string; name: string; section: string }[];
@@ -48,7 +48,7 @@ function formatDate(date: string): string {
 export function WelcomeClient(props: Props) {
   const { single, hasAccess, initial, satDates, today, skills, practiceTests } = props;
   const router = useRouter();
-  const [step, setStep] = useState<WelcomeStep>(single ?? "name");
+  const [step, setStep] = useState<WelcomeStep>(single ?? (initial.firstName ? "date" : "name"));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -62,8 +62,13 @@ export function WelcomeClient(props: Props) {
   const [noScore, setNoScore] = useState(false);
   const [goal, setGoal] = useState(initial.goalScore ?? 1300);
   const [goalTouched, setGoalTouched] = useState(initial.goalScore !== null);
-  const [parentCode, setParentCode] = useState(props.parentCode);
-  const [parentInvited, setParentInvited] = useState<string | null>(null);
+  const [parents, setParents] = useState<AddedParent[]>(props.parents);
+  const [parentChoice, setParentChoice] = useState<"yes" | "solo" | null>(
+    props.parents.length > 0 ? "yes" : props.optedOut ? "solo" : null
+  );
+  // The name is asked at signup, so this step only shows for older
+  // accounts that don't have one.
+  const STEPS = initial.firstName ? ALL_STEPS.filter((s) => s !== "name") : ALL_STEPS;
 
   // A date picked on the homepage's "When's your test?" carries over.
   useEffect(() => {
@@ -169,15 +174,12 @@ export function WelcomeClient(props: Props) {
     if (ok) next();
   }
 
-  async function showCode() {
-    if (parentCode) return;
-    setSaving(true);
-    try {
-      const res = await fetch("/api/account/parent-invite", { method: "POST" });
-      if (res.ok) setParentCode((await res.json()).code);
-    } finally {
-      setSaving(false);
+  async function saveParentChoice() {
+    if (parentChoice === "solo") {
+      if (await patch({ parentOptOut: true })) next();
+      return;
     }
+    next();
   }
 
   async function finish(to: string) {
@@ -194,9 +196,11 @@ export function WelcomeClient(props: Props) {
   const stepIndex = STEPS.indexOf(step);
   const ozhoLine: Record<WelcomeStep, string> = {
     name: `Hi! I'm ${PET_NAME}, and I'll be studying right alongside you. What should I call you?`,
-    date: displayName ? `Nice to meet you, ${displayName}! When's the big day?` : "When's the big day?",
+    date: displayName
+      ? `Hi ${displayName}! I'm ${PET_NAME}, and I'll be studying right alongside you. First up: when's the big day?`
+      : `Hi! I'm ${PET_NAME}, and I'll be studying right alongside you. First up: when's the big day?`,
     score: "Where are we starting, and where are we headed?",
-    parent: "Want someone at home in the loop too? Totally optional.",
+    parent: "Should someone at home be able to follow along? Your call.",
     tour: "Here's how we'll get there, in two minutes.",
     ready: displayName ? `That's everything, ${displayName}. Your plan is ready!` : "That's everything. Your plan is ready!",
   };
@@ -208,7 +212,7 @@ export function WelcomeClient(props: Props) {
         <BrandMark size={36} />
         {!single && step !== "ready" && (
           <button
-            onClick={() => setStep("ready")}
+            onClick={() => setStep(parentChoice ? "ready" : "parent")}
             className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600"
           >
             Skip setup
@@ -409,60 +413,73 @@ export function WelcomeClient(props: Props) {
 
         {step === "parent" && (
           <div className={CARD}>
-            <h1 className={H1}>Connect a parent</h1>
-            <p className={SUB}>
-              A parent gets a free account with a read-only report of your studying and a short summary email on Sundays. It can save you from
-              being asked how it&apos;s going.
-            </p>
+            <h1 className={H1}>Parent supervision</h1>
+            <p className={SUB}>Choose whether a parent or guardian follows your progress. You can change this any time in Settings.</p>
 
-            {props.parentCount > 0 && (
-              <div className="mt-4 rounded-xl bg-[#eef6f1] p-3.5 text-[13px] text-[#2f6b4a]">
-                {props.parentCount === 1 ? "A parent is" : `${props.parentCount} parents are`} already connected. You can add another below.
-              </div>
-            )}
+            <div className="mt-5 grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Parent supervision">
+              <button role="radio" aria-checked={parentChoice === "yes"} onClick={() => setParentChoice("yes")} className={choiceCard(parentChoice === "yes")}>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[15px] font-semibold">Add my parent</span>
+                  <span className={`rounded-full px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wide ${parentChoice === "yes" ? "bg-white/15 text-white" : "bg-[#eef6f1] text-[#2f6b4a]"}`}>
+                    Recommended
+                  </span>
+                </div>
+                <div className={`mt-1 text-[13px] leading-snug ${parentChoice === "yes" ? "text-white/75" : "text-gray-500"}`}>
+                  They get a free, read-only report and a summary email on Sundays.
+                </div>
+              </button>
+              <button role="radio" aria-checked={parentChoice === "solo"} onClick={() => setParentChoice("solo")} className={choiceCard(parentChoice === "solo")}>
+                <span className="text-[15px] font-semibold">I&apos;ll study on my own</span>
+                <div className={`mt-1 text-[13px] leading-snug ${parentChoice === "solo" ? "text-white/75" : "text-gray-500"}`}>
+                  Nothing is shared with anyone. You can add a parent later.
+                </div>
+              </button>
+            </div>
 
-            <div className="mt-5 grid gap-4 sm:grid-cols-[1.15fr_1fr]">
-              <div>
-                <div className="text-sm font-semibold text-ink">Email them an invite</div>
-                <p className="mb-3 mt-1 text-[13px] text-gray-500">They get a link that connects their account to yours.</p>
-                <EmailParentInvite
-                  compact
-                  onSent={({ email, code }) => {
-                    setParentInvited(email);
-                    setParentCode(code);
-                  }}
-                />
-                <div className="mt-4 text-[13px] text-gray-500">
-                  Rather tell them yourself?{" "}
-                  {parentCode ? (
-                    <>
-                      Your code is <span className="font-mono font-semibold tracking-wide text-ink">{parentCode}</span>. They enter it at{" "}
-                      <span className="font-mono">oakmontsat.com/parent/login</span>.
-                    </>
-                  ) : (
-                    <button onClick={showCode} disabled={saving} className="font-semibold text-accent hover:underline">
-                      Show my parent code
-                    </button>
+            {parentChoice === "yes" && (
+              <div className="mt-5 grid gap-4 sm:grid-cols-[1.15fr_1fr]">
+                <div>
+                  <div className="text-sm font-semibold text-ink">Your parent or guardian&apos;s email</div>
+                  <p className="mb-3 mt-1 text-[13px] text-gray-500">We&apos;ll set up their account and email them a link to choose a password.</p>
+                  <AddParentForm
+                    cta={parents.length ? "Add another" : "Add parent"}
+                    onAdded={(p) => setParents((ps) => [...ps.filter((x) => x.id !== p.id), p])}
+                  />
+                  {parents.length > 0 && (
+                    <div className="mt-3 flex flex-col gap-2">
+                      {parents.map((p) => (
+                        <ParentRow key={p.id} parent={p} />
+                      ))}
+                    </div>
                   )}
                 </div>
-              </div>
-              <div className="rounded-xl bg-[#f5f4fb] p-4 text-[13px] leading-relaxed text-gray-600">
-                <div className="mb-1.5 font-semibold text-ink">What they&apos;ll see</div>
-                <ul className="space-y-1">
-                  <li>When you study and for how long</li>
-                  <li>Lessons, quizzes and reviews, with scores</li>
-                  <li>Your progress on each skill</li>
-                  <li>Practice test scores against your goal</li>
-                </ul>
-                <div className="mt-2.5 text-[12px] text-gray-500">
-                  They can&apos;t change anything or answer for you. You can see and remove the connection in Settings.
+                <div className="rounded-xl bg-[#f5f4fb] p-4 text-[13px] leading-relaxed text-gray-600">
+                  <div className="mb-1.5 font-semibold text-ink">What they&apos;ll see</div>
+                  <ul className="space-y-1">
+                    <li>When you study and for how long</li>
+                    <li>Lessons, quizzes and reviews, with scores</li>
+                    <li>Your progress on each skill</li>
+                    <li>Practice test scores against your goal</li>
+                  </ul>
+                  <div className="mt-2.5 text-[12px] text-gray-500">
+                    They can&apos;t change anything or answer for you. You can see and remove the connection in Settings.
+                  </div>
                 </div>
               </div>
-            </div>
-            <Footer error={error} onBack={single ? undefined : back}>
-              <button onClick={next} className={parentInvited || props.parentCount > 0 ? PRIMARY : SECONDARY}>
-                {parentInvited || props.parentCount > 0 ? "Continue" : "Not now"}
-              </button>
+            )}
+            <Footer error={error} onBack={single || STEPS.indexOf("parent") === 0 ? undefined : back}>
+              <div className="flex items-center gap-3">
+                {parentChoice === "yes" && parents.length === 0 && (
+                  <span className="hidden text-[12px] text-gray-400 sm:inline">Add their email to continue</span>
+                )}
+                <button
+                  onClick={saveParentChoice}
+                  disabled={saving || !parentChoice || (parentChoice === "yes" && parents.length === 0)}
+                  className={PRIMARY}
+                >
+                  {saving ? "Saving..." : "Continue"}
+                </button>
+              </div>
             </Footer>
           </div>
         )}
@@ -502,8 +519,16 @@ export function WelcomeClient(props: Props) {
               />
               <Summary
                 label="Parent"
-                value={props.parentCount > 0 ? "Connected" : parentInvited ? "Invited" : "Not yet"}
-                note={parentInvited ? parentInvited : props.parentCount > 0 ? "Sunday emails on" : "Add one in Settings"}
+                value={
+                  parents.length === 0
+                    ? parentChoice === "solo"
+                      ? "On your own"
+                      : "Not set"
+                    : parents.some((p) => !p.pending)
+                    ? "Connected"
+                    : "Invited"
+                }
+                note={parents.length ? parents.map((p) => p.email).join(", ") : "Add one any time in Settings"}
               />
             </dl>
 
@@ -552,8 +577,11 @@ const CARD =
 const H1 = "font-display text-[24px] font-semibold leading-tight text-ink sm:text-[28px]";
 const SUB = "mt-1.5 text-[14px] leading-relaxed text-gray-500";
 const INPUT = "w-full rounded-lg border border-[#e0defa] px-3 py-2.5 text-sm focus:border-[#6d7fd6] focus:outline-none";
-const SECONDARY = "rounded-xl px-6 py-3 text-sm font-semibold text-ink ring-1 ring-[#e0defa] transition-colors hover:bg-[#f5f4fb]";
 const PRIMARY = "rounded-xl bg-ink px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60";
+
+function choiceCard(on: boolean) {
+  return `rounded-xl p-4 text-left ring-1 transition-colors ${on ? "bg-ink text-white ring-ink" : "bg-white text-ink ring-[#e0defa] hover:ring-[#b9b5e6]"}`;
+}
 
 function chip(on: boolean) {
   return `rounded-xl px-3.5 py-3 text-left ring-1 transition-colors ${

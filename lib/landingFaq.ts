@@ -27,7 +27,7 @@ export const FAQ_ITEMS = [
   },
   {
     q: "Does my student know I can see their progress?",
-    a: "Yes. They approve the connection, their Settings show exactly what a connected parent sees, and they can remove access. Parents can't change anything or answer questions for them.",
+    a: "Yes. They choose parent supervision themselves (when they sign up, or later in Settings), their Settings show exactly what a connected parent sees, and they can remove access. Parents can't change anything or answer questions for them.",
   },
   {
     q: "Do parents need to pay or have their own plan?",
@@ -35,7 +35,7 @@ export const FAQ_ITEMS = [
   },
   {
     q: "How do I connect to my student's account?",
-    a: "Create a parent account, then either send your student an invite link to approve or enter the code from their Settings. It takes about two minutes.",
+    a: "The easiest way: when your student signs up, they choose parent supervision and enter your email. You'll get an email to set a password, and their report is waiting. If you'd rather start yourself, create a parent account and send them an invite link to approve, or enter the code from their Settings.",
   },
   {
     q: "Can I cancel?",

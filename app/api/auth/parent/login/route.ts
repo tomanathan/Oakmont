@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/auth";
+import { sendParentSetupLink } from "@/lib/parentSetup";
 import {
   createParentSessionToken,
   PARENT_SESSION_COOKIE_NAME,
@@ -30,6 +31,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  if (!parent.passwordHash) {
+    await sendParentSetupLink(parent.id);
+    return NextResponse.json(
+      { error: "Your account isn't set up yet. We've emailed you a link to set your password." },
+      { status: 403 }
+    );
+  }
   const valid = await verifyPassword(password, parent.passwordHash);
   if (!valid) {
     return NextResponse.json({ error: "Incorrect password." }, { status: 401 });

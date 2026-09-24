@@ -20,7 +20,10 @@ export default async function WelcomePage({ searchParams }: { searchParams: { st
     getUserStats(user.userId),
     prisma.user.findUnique({
       where: { id: user.userId },
-      select: { parentInviteCode: true, _count: { select: { parentLinks: true } } },
+      select: {
+        parentOptOutAt: true,
+        parentLinks: { select: { parent: { select: { id: true, email: true, passwordHash: true } } }, orderBy: { createdAt: "asc" } },
+      },
     }),
   ]);
   const hasAccess = hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt);
@@ -39,8 +42,8 @@ export default async function WelcomePage({ searchParams }: { searchParams: { st
         goalScore: stats.goalScore ?? null,
         targetTestDate: stats.targetTestDate ? stats.targetTestDate.toISOString().slice(0, 10) : null,
       }}
-      parentCode={parent?.parentInviteCode ?? null}
-      parentCount={parent?._count.parentLinks ?? 0}
+      parents={(parent?.parentLinks ?? []).map((l) => ({ id: l.parent.id, email: l.parent.email, pending: !l.parent.passwordHash }))}
+      optedOut={!!parent?.parentOptOutAt}
       satDates={upcomingSatDates(now).map((d) => ({ ...d, weeks: weeksUntil(d.date, now) }))}
       today={now.toISOString().slice(0, 10)}
       skills={ALL_SUBSKILLS.map((s) => ({ id: s.id, name: s.name, section: s.section }))}

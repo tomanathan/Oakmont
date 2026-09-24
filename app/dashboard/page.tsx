@@ -128,7 +128,7 @@ export default async function DashboardPage() {
     const [lessonViews, reviewAttempts, parentLinks] = await Promise.all([
       prisma.lessonView.count({ where: { userId: user.userId } }),
       prisma.itemAttempt.count({ where: { userId: user.userId, source: "review" } }),
-      prisma.parentLink.count({ where: { studentId: user.userId } }),
+      prisma.parentLink.findMany({ where: { studentId: user.userId }, select: { parent: { select: { email: true, passwordHash: true } } } }),
     ]);
     const firstId = todayItem?.day.subskillIds[0] ?? weaknessOrderedIds[0];
     checklist = [
@@ -167,13 +167,19 @@ export default async function DashboardPage() {
         href: "/plan#practice-tests",
         done: !!latestTest,
       },
-      {
-        id: "parent",
-        title: "Connect a parent",
-        body: "Optional. They get a read-only report and a Sunday email.",
-        href: "/welcome?step=parent",
-        done: parentLinks > 0,
-      },
+      ...(stats.parentOptOutAt
+        ? []
+        : [
+            {
+              id: "parent",
+              title: parentLinks.length ? "Get your parent set up" : "Add a parent",
+              body: parentLinks.length
+                ? `Waiting for ${parentLinks[0].parent.email} to set a password. You can resend it in Settings.`
+                : "Optional. They get a read-only report and a Sunday email.",
+              href: parentLinks.length ? "/settings#parents" : "/welcome?step=parent",
+              done: parentLinks.some((l) => !!l.parent.passwordHash),
+            },
+          ]),
     ];
   }
 

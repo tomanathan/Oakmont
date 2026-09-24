@@ -17,6 +17,7 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
   const safeNext = next && /^\/link\/[A-Za-z0-9_-]+$/.test(next) ? next : null;
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup" | "forgot">(initialMode);
+  const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -31,7 +32,7 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
       const res = await fetch(`/api/auth/${mode === "login" ? "login" : "signup"}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(mode === "signup" ? { email, password, firstName } : { email, password }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -145,6 +146,20 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
             </button>
           </div>
           <form onSubmit={submit}>
+            {mode === "signup" && (
+              <>
+                <label className="block text-sm text-gray-700 mb-1">First name</label>
+                <input
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="What should we call you?"
+                  autoComplete="given-name"
+                  maxLength={40}
+                  className="w-full px-3 py-2.5 rounded-lg border border-[#e0defa] mb-3.5 text-sm focus:outline-none focus:border-[#6d7fd6]"
+                  required
+                />
+              </>
+            )}
             <label className="block text-sm text-gray-700 mb-1">Email</label>
             <input
               type="email"

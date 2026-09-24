@@ -23,6 +23,22 @@ function ParentLoginContent() {
   const [inviteCode, setInviteCode] = useState(params.get("code") ?? "");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [forgot, setForgot] = useState(false);
+  const [forgotSent, setForgotSent] = useState(false);
+
+  async function sendReset(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setSubmitting(true);
+    const res = await fetch("/api/auth/parent/forgot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    }).catch(() => null);
+    setSubmitting(false);
+    if (res?.ok) setForgotSent(true);
+    else setError("Couldn't send it. Check the email and try again.");
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -98,13 +114,59 @@ function ParentLoginContent() {
               </button>
             ))}
           </div>
+          {forgot ? (
+            <form onSubmit={sendReset} className="flex flex-col gap-3.5">
+              <div className="text-[15px] font-semibold text-ink">Set or reset your password</div>
+              {forgotSent ? (
+                <p className="text-sm leading-relaxed text-gray-600">
+                  If there&apos;s a parent account for {email}, we&apos;ve emailed it a link to set a password.
+                </p>
+              ) : (
+                <>
+                  <p className="text-sm leading-relaxed text-gray-500">
+                    We&apos;ll email you a link. This also works if your student created your account for you.
+                  </p>
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" className={input} required />
+                  {error && <div className="text-sm text-red-700">{error}</div>}
+                  <button type="submit" disabled={submitting} className="w-full rounded-lg bg-ink py-2.5 text-sm font-semibold text-white disabled:opacity-60">
+                    {submitting ? "Sending..." : "Email me a link"}
+                  </button>
+                </>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setForgot(false);
+                  setForgotSent(false);
+                  setError("");
+                }}
+                className="text-xs text-gray-400 hover:text-ink"
+              >
+                &larr; Back to log in
+              </button>
+            </form>
+          ) : (
           <form onSubmit={submit} className="flex flex-col gap-3.5">
             <div>
               <label className="mb-1 block text-sm text-gray-700">Your email</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" className={input} required />
             </div>
             <div>
-              <label className="mb-1 block text-sm text-gray-700">Password</label>
+              <div className="mb-1 flex items-center justify-between">
+                <label className="block text-sm text-gray-700">Password</label>
+                {mode === "login" && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForgot(true);
+                      setError("");
+                    }}
+                    className="text-xs text-gray-400 hover:text-ink"
+                  >
+                    Forgot password?
+                  </button>
+                )}
+              </div>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" className={input} required minLength={6} />
             </div>
             {mode === "signup" && (
@@ -136,6 +198,7 @@ function ParentLoginContent() {
               {submitting ? "Please wait..." : mode === "login" ? "Log in" : "Create parent account"}
             </button>
           </form>
+          )}
         </div>
       </div>
     </div>
