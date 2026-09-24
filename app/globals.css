@@ -97,9 +97,6 @@ body {
 .animate-fade-up {
   animation: fade-up 0.3s cubic-bezier(0.2, 0.8, 0.3, 1);
 }
-@media (prefers-reduced-motion: reduce) {
-  .animate-fade-up { animation: none; }
-}
 
 @keyframes streak-flame-pulse {
   0%, 100% { transform: scale(1); }
@@ -125,10 +122,6 @@ body {
   transform-origin: bottom center;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .animate-ozho-hop { animation: none; }
-}
-
 /* Ozho's panel (components/OzhoPanel.tsx): a quick lift-in beside him on
    desktop, a slide-up sheet on phones. */
 @keyframes ozho-panel {
@@ -144,10 +137,6 @@ body {
 }
 .animate-ozho-sheet {
   animation: ozho-sheet 0.24s cubic-bezier(0.2, 0.8, 0.3, 1);
-}
-@media (prefers-reduced-motion: reduce) {
-  .animate-ozho-panel,
-  .animate-ozho-sheet { animation: none; }
 }
 
 /* Ozho between walks: nose down to the ground and a couple of quick
@@ -169,10 +158,6 @@ body {
 .animate-ozho-stretch {
   animation: ozho-stretch 0.7s ease-in-out;
   transform-origin: 50% 100%;
-}
-@media (prefers-reduced-motion: reduce) {
-  .animate-ozho-sniff,
-  .animate-ozho-stretch { animation: none; }
 }
 
 /* More of Ozho's idle repertoire (see ScoutCompanion's IDLE_ACT_MS for
@@ -243,13 +228,6 @@ body {
 .animate-ozho-land {
   animation: ozho-land 0.26s ease-out;
   transform-origin: 50% 100%;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-ozho-bow,
-  .animate-ozho-hops,
-  .animate-ozho-spin,
-  .animate-ozho-land { animation: none; }
 }
 
 @keyframes zzz-float {
@@ -373,12 +351,6 @@ body {
   animation: pet-worried 2.2s ease-in-out infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .animate-worried {
-    animation: none;
-  }
-}
-
 /* The little heart burst when you pet him -- drifts up and out, fading.
    --hx (set inline per heart) splays them left/right so it reads as a
    puff rather than a single column. */
@@ -429,15 +401,6 @@ body {
   animation: ozho-pet 0.7s ease-in-out;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  /* Purely decorative entrances -- a heart appearing
-     instantly instead of popping/drifting in loses nothing functional, so
-     these are fully skipped, same as elsewhere in this file. */
-  .animate-ozho-heart {
-    animation: none;
-  }
-}
-
 /* Ozho's tail wag used to live here as a CSS rotation, pivoting the tail
    around roughly where it meets the body. Removed: at his actual render
    size the tail is only ~7x10px, and `shape-rendering: crispEdges` (used
@@ -447,6 +410,4 @@ body {
    wagging at all. The wag is now a hand-drawn two-position swap (see
    PixelDog's tailFrame prop and ScoutCompanion's own tailFrame timer),
    the same technique already proven for the leg-swap walk cycle at this
-   same scale -- no CSS animation involved, so prefers-reduced-motion is
-   handled by ScoutCompanion simply not alternating tailFrame at all when
-   reducedMotionRef is set, same as it already slows walking. */
+   same scale -- no CSS animation involved. */

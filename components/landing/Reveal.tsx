@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 
 // The one motion wrapper used across the landing page's below-the-fold
 // sections: a fade + slight slide-up the first time each section scrolls
@@ -14,19 +14,12 @@ import { motion, useReducedMotion } from "motion/react";
 // caught live in the console during verification. The plain import has
 // everything available synchronously on both sides, so there's no gap.
 export function Reveal({ children }: { children: React.ReactNode }) {
-  // useReducedMotion() can only know the real answer once mounted in the
-  // browser (SSR has no matchMedia); keeping `initial` identical between
-  // server and client and varying only the transition *duration* avoids a
-  // second, separate hydration mismatch that conditioning `initial` itself
-  // would cause.
-  const reduceMotion = useReducedMotion();
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: reduceMotion ? 0 : 0.5, ease: [0.34, 0.56, 0.64, 1] }}
+      transition={{ duration: 0.5, ease: [0.34, 0.56, 0.64, 1] }}
     >
       {children}
     </motion.div>

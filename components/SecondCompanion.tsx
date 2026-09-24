@@ -29,7 +29,6 @@ const BOTTOM_MARGIN = 30;
 // fallen well behind him she breaks into a trot to catch up.
 const WALK_SPEED = 90;
 const TROT_SPEED = 135;
-const SLOW_SPEED = 35;
 const LEG_SWAP_MS = 130;
 const TROT_LEG_SWAP_MS = 95;
 // Slightly slower than Ozho's 45ms tail cadence -- same reasoning as the
@@ -87,7 +86,6 @@ export function SecondCompanion() {
   // free wander -- lets the loop re-aim if he runs off mid-walk.
   const followingRef = useRef<{ x: number; y: number } | null>(null);
   const pauseUntilRef = useRef(0);
-  const reducedMotionRef = useRef(false);
   const legTimerRef = useRef(0);
   const tailTimerRef = useRef(0);
   const tailDirRef = useRef<1 | -1>(1);
@@ -155,13 +153,6 @@ export function SecondCompanion() {
     posRef.current = { x: startX, y: startY };
     targetRef.current = { x: startX, y: startY };
     pauseUntilRef.current = Date.now() + 500 + Math.random() * 800;
-
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    reducedMotionRef.current = mq.matches;
-    const onMotionChange = () => {
-      reducedMotionRef.current = mq.matches;
-    };
-    mq.addEventListener?.("change", onMotionChange);
 
     function bounds() {
       const vw = window.innerWidth || 800;
@@ -248,7 +239,7 @@ export function SecondCompanion() {
       const nowMs = Date.now();
 
       tailTimerRef.current += dt;
-      const swapMs = reducedMotionRef.current ? TAIL_SWAP_MS * 4 : TAIL_SWAP_MS;
+      const swapMs = TAIL_SWAP_MS;
       if (tailTimerRef.current > swapMs) {
         tailTimerRef.current = 0;
         setTailFrame((f) => {
@@ -291,7 +282,7 @@ export function SecondCompanion() {
           setLegFrame((f) => (f === 0 ? 1 : 0));
         }
 
-        const speed = reducedMotionRef.current ? SLOW_SPEED : speedRef.current;
+        const speed = speedRef.current;
         const pos = posRef.current;
         const target = targetRef.current;
         const dx = target.x - pos.x;
@@ -335,7 +326,6 @@ export function SecondCompanion() {
 
     return () => {
       clearInterval(intervalId);
-      mq.removeEventListener?.("change", onMotionChange);
     };
   }, [unlocked]);
 

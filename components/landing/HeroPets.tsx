@@ -24,9 +24,6 @@ import {
 // stage, steps the simulation each animation frame, and writes positions
 // straight to the DOM. Pose changes (legs, tail, sitting) go through React,
 // but only for the dog whose pose actually changed.
-//
-// Deliberately ignores prefers-reduced-motion -- an explicit product call for
-// this decorative cast.
 
 const CAST: DogConfig[] = [
   { variant: "ozho", costume: "bowtie", player: true, energy: 0.8, calm: 0.3 },

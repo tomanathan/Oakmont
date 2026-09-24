@@ -309,7 +309,6 @@ const TOP_MARGIN = BUBBLE_ABOVE + 10;
 const SIDE_MARGIN = BUBBLE_HALF_W;
 const BOTTOM_MARGIN = 24;
 const RUN_SPEED = 150; // px/sec, before per-walk random variation
-const SLOW_SPEED = 60; // px/sec, used when the OS prefers reduced motion
 // Locomotion is steered, not scripted: he has a velocity, accelerates
 // toward where he wants to be at a limited rate, eases off as he arrives,
 // and his legs swap per distance covered rather than on a clock -- so a
@@ -692,7 +691,6 @@ export function ScoutCompanion() {
   const returningRef = useRef(false);
   const walkingRef = useRef(false);
   const facingRef = useRef<1 | -1>(1);
-  const reducedMotionRef = useRef(false);
   const behaviorUntilRef = useRef(0);
   const speakAtRef = useRef(0);
   const tailTimerRef = useRef(0);
@@ -806,13 +804,6 @@ export function ScoutCompanion() {
       })
       .catch(() => {});
 
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    reducedMotionRef.current = mq.matches;
-    const onMotionChange = () => {
-      reducedMotionRef.current = mq.matches;
-    };
-    mq.addEventListener?.("change", onMotionChange);
-
     function checkMobile() {
       const mobile = window.innerWidth < MOBILE_BREAKPOINT;
       isMobileRef.current = mobile;
@@ -913,7 +904,6 @@ export function ScoutCompanion() {
     window.addEventListener("ozho:costume", onCostumeChange);
 
     return () => {
-      mq.removeEventListener?.("change", onMotionChange);
       window.removeEventListener("resize", checkMobile);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("scroll", onInteract);
@@ -1236,7 +1226,7 @@ export function ScoutCompanion() {
   function pickGait(): Gait {
     const r = Math.random();
     const energetic = stageRef.current === "thriving" || stageRef.current === "content" || stageRef.current === null;
-    if (!energetic || reducedMotionRef.current) return r < 0.45 ? "stroll" : "trot";
+    if (!energetic) return r < 0.45 ? "stroll" : "trot";
     if (r < 0.25) return "stroll";
     if (r < 0.72) return "trot";
     return "gallop";
@@ -1393,7 +1383,7 @@ export function ScoutCompanion() {
   // Well fed and not asked to keep motion down: the full repertoire.
   function isLively(): boolean {
     const st = stageRef.current;
-    return !reducedMotionRef.current && (st === "thriving" || st === "content" || st === null);
+    return st === "thriving" || st === "content" || st === null;
   }
 
   // Picks what he does with a spare moment between walks. `left` is how
@@ -1405,7 +1395,7 @@ export function ScoutCompanion() {
     }
     const lively = isLively();
     const options: [IdleAct | "glance", number][] = [
-      ["sniff", reducedMotionRef.current ? 0 : 3],
+      ["sniff", 3],
       ["tilt", 2.2],
       ["glance", 2],
       ["bow", lively ? 1.4 : 0],
@@ -1496,7 +1486,7 @@ export function ScoutCompanion() {
       phase: Math.random() * Math.PI * 2,
     };
     // Bursting into a sprint from a standstill gets a little launch hop.
-    if (!wasWalking && (urgent || gaitRef.current === "gallop") && !reducedMotionRef.current) {
+    if (!wasWalking && (urgent || gaitRef.current === "gallop")) {
       if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
       setPerk(true);
       perkTimeoutRef.current = setTimeout(() => setPerk(false), 260);
@@ -1585,15 +1575,10 @@ export function ScoutCompanion() {
       // just not wasting the tick. Same for sitting: that pose draws its
       // own fixed curled tail and ignores tailFrame too. A merely-hungry
       // Ozho still wags, only noticeably slower, so the drop in energy
-      // reads as a gradient rather than a switch. Reduced motion slows
-      // this further rather than turning it off outright -- same "slow
-      // down, don't eliminate" choice walking itself already makes for
-      // that preference (see SLOW_SPEED vs RUN_SPEED below) -- so it's
-      // never fully invisible.
+      // reads as a gradient rather than a switch.
       if (stageRef.current !== "dead" && stageRef.current !== "critical" && !sittingRef.current) {
         tailTimerRef.current += dt;
-        const baseSwap = stageRef.current === "hungry" ? TAIL_SWAP_MS * 2.4 : TAIL_SWAP_MS;
-        const swapMs = reducedMotionRef.current ? baseSwap * 4 : baseSwap;
+        const swapMs = stageRef.current === "hungry" ? TAIL_SWAP_MS * 2.4 : TAIL_SWAP_MS;
         if (tailTimerRef.current > swapMs) {
           tailTimerRef.current = 0;
           // Ping-pong through the six frames (0..5..0) rather than
@@ -1777,7 +1762,7 @@ export function ScoutCompanion() {
 
       if (walkingRef.current) {
         const speed =
-          (reducedMotionRef.current ? SLOW_SPEED : RUN_SPEED) *
+          RUN_SPEED *
           pathSpeedRef.current *
           (onText ? BEHIND_TEXT_SPEED_MULT : 1) *
           // A near-death Ozho trudges rather than trots -- part of the
@@ -1802,7 +1787,7 @@ export function ScoutCompanion() {
           setIsWalking(false);
           returningRef.current = false;
           resetBody();
-          if (peakSpeedRef.current > LAND_SPEED && !reducedMotionRef.current && zoomLegsRef.current === 0) {
+          if (peakSpeedRef.current > LAND_SPEED && zoomLegsRef.current === 0) {
             if (landTimeoutRef.current) clearTimeout(landTimeoutRef.current);
             setLand(true);
             landTimeoutRef.current = setTimeout(() => setLand(false), 260);
@@ -1857,7 +1842,7 @@ export function ScoutCompanion() {
           const amag = Math.hypot(ax, ay);
           // Speeding up and turning are limited; slowing down is allowed
           // to be quicker, so he never overshoots his spot.
-          const limit = (want < curSpeed ? ACCEL * 1.8 : ACCEL) * (reducedMotionRef.current ? 0.6 : 1) * sec;
+          const limit = (want < curSpeed ? ACCEL * 1.8 : ACCEL) * sec;
           const k = amag > limit ? limit / amag : 1;
           v.x += ax * k;
           v.y += ay * k;
@@ -1890,7 +1875,7 @@ export function ScoutCompanion() {
         if (walkingRef.current && bodyRef.current) {
           const g = gaitRef.current;
           bobPhaseRef.current += ((moved * sec) / strideFor(Math.max(moved, 1))) * Math.PI;
-          const amt = Math.min(1, moved / 60) * (reducedMotionRef.current ? 0.4 : 1);
+          const amt = Math.min(1, moved / 60);
           const bob = GAIT_BOB[g] * Math.abs(Math.sin(bobPhaseRef.current)) * amt;
           const rock = GAIT_ROCK[g] * Math.cos(bobPhaseRef.current) * amt;
           peakSpeedRef.current = Math.max(peakSpeedRef.current, moved);
@@ -2167,7 +2152,7 @@ export function ScoutCompanion() {
       const b = ballSimRef.current;
       if (!b) return;
       const now = performance.now();
-      stepBall(b, ((now - last) / 1000) * (reducedMotionRef.current ? 0.6 : 1));
+      stepBall(b, (now - last) / 1000);
       last = now;
       drawBall();
       if (fetchingRef.current === "flying") {
@@ -2201,12 +2186,10 @@ export function ScoutCompanion() {
     } catch {
       // ignore
     }
-    if (!reducedMotionRef.current) {
-      setHeartKey((k) => k + 1);
-      setShowHearts(true);
-      if (heartsTimeoutRef.current) clearTimeout(heartsTimeoutRef.current);
-      heartsTimeoutRef.current = setTimeout(() => setShowHearts(false), 1300);
-    }
+    setHeartKey((k) => k + 1);
+    setShowHearts(true);
+    if (heartsTimeoutRef.current) clearTimeout(heartsTimeoutRef.current);
+    heartsTimeoutRef.current = setTimeout(() => setShowHearts(false), 1300);
     // The contented wiggle -- his own distinct reaction to being petted,
     // not just the generic little speaking-hop every line already gets.
     if (pettingTimeoutRef.current) clearTimeout(pettingTimeoutRef.current);
