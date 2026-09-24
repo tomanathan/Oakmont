@@ -2,7 +2,7 @@ import { ALL_SUBSKILLS } from "@/data/curriculum";
 import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
 import { TrackedLink } from "./TrackedLink";
 import { ViewTracker } from "./ViewTracker";
-import { Highlight } from "./Highlight";
+import { Eyebrow } from "./Flourish";
 
 function Check() {
   return (
@@ -29,35 +29,35 @@ export async function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="scroll-mt-20 bg-gradient-to-b from-tint-50 to-tint-100 px-6 py-16 sm:py-20">
+    <section id="pricing" className="scroll-mt-20 bg-gradient-to-b from-forest-600 to-forest-900 px-6 py-16 text-ivory sm:py-20">
       <ViewTracker event="pricing_viewed" />
       <div className="mx-auto max-w-[1120px]">
         <div className="mx-auto mb-10 max-w-[620px] text-center">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-tint-700">Pricing</div>
-          <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[40px]">
-            <Highlight>Everything included</Highlight>, either way.
+          <Eyebrow center light>Pricing</Eyebrow>
+          <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[42px]">
+            <em className="font-medium italic text-brass-light">Everything included</em>, either way.
           </h2>
         </div>
 
         <div className="mx-auto grid max-w-[860px] gap-4 md:grid-cols-2">
-          <div className="relative flex flex-col rounded-2xl bg-gradient-to-br from-tint-800 to-ink p-7 text-white shadow-[0_24px_60px_-30px_rgba(26,26,46,0.7)] sm:p-8">
+          <div className="relative flex flex-col rounded-lg bg-ivory p-7 text-forest-900 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.6)] ring-1 ring-brass/60 ring-offset-4 ring-offset-ivory sm:p-8">
             <div className="mb-6 flex items-center justify-between">
-              <div className="text-sm font-semibold">6-month pass</div>
-              <div className="rounded-full bg-hi px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-ink">
+              <div className="font-display text-[19px] font-semibold">6-month pass</div>
+              <div className="rounded-full bg-brass px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-white">
                 Best value
               </div>
             </div>
             <div className="flex items-baseline gap-2">
               <span className="font-display text-[46px] font-semibold leading-none">${sixTotal.toFixed(0)}</span>
-              <span className="text-sm text-white/60">one time</span>
+              <span className="text-sm text-stone-500">one time</span>
             </div>
-            <div className="mt-2 text-sm text-white/60">
+            <div className="mt-2 text-sm text-stone-500">
               About ${(sixTotal / 6).toFixed(0)}/month · one payment, nothing to cancel
             </div>
-            <ul className="mt-7 flex flex-1 flex-col gap-2.5 text-sm text-white/85">
+            <ul className="mt-7 flex flex-1 flex-col gap-2.5 text-sm text-stone-700">
               {included.map((item) => (
                 <li key={item} className="flex gap-2.5">
-                  <Check />
+                  <span className="text-brass"><Check /></span>
                   {item}
                 </li>
               ))}
@@ -65,36 +65,36 @@ export async function Pricing() {
             <TrackedLink
               href="/login?mode=signup"
               event="signup_started"
-              className="mt-8 rounded-xl bg-white px-6 py-3.5 text-center text-sm font-semibold text-ink transition-opacity hover:opacity-90"
+              className="mt-8 rounded-md bg-forest px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600"
             >
               Get the 6-month pass
             </TrackedLink>
           </div>
 
-          <div className="flex flex-col rounded-2xl bg-white p-7 shadow-[0_10px_30px_-18px_rgba(74,91,176,0.55)] ring-1 ring-tint-200 sm:p-8">
+          <div className="flex flex-col rounded-lg bg-white/[0.06] p-7 ring-1 ring-brass-light/30 sm:p-8">
             <div className="mb-6 flex items-center justify-between">
-              <div className="text-sm font-semibold">Monthly</div>
-              <div className="rounded-full bg-[#eef7f1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#2f6f4f]">
+              <div className="font-display text-[19px] font-semibold">Monthly</div>
+              <div className="rounded-full px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-brass-light ring-1 ring-brass-light/50">
                 7-day free trial
               </div>
             </div>
             <div className="flex items-baseline gap-2">
               <span className="font-display text-[46px] font-semibold leading-none">${monthlyPrice.toFixed(0)}</span>
-              <span className="text-sm text-gray-500">/month</span>
+              <span className="text-sm text-ivory/60">/month</span>
             </div>
-            <div className="mt-2 text-sm text-gray-500">Cancel anytime from Settings</div>
-            <ul className="mt-7 flex flex-1 flex-col gap-2.5 text-sm text-gray-700">
+            <div className="mt-2 text-sm text-ivory/60">Cancel anytime from Settings</div>
+            <ul className="mt-7 flex flex-1 flex-col gap-2.5 text-sm text-ivory/85">
               {included.map((item) => (
-                <li key={item} className="flex gap-2.5 text-[#2f6f4f]">
-                  <Check />
-                  <span className="text-gray-700">{item}</span>
+                <li key={item} className="flex gap-2.5">
+                  <span className="text-brass-light"><Check /></span>
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
             <TrackedLink
               href="/login?mode=signup"
               event="signup_started"
-              className="mt-8 rounded-xl border border-[#e0defa] px-6 py-3.5 text-center text-sm font-semibold text-ink transition-colors hover:border-[#c9c6ee]"
+              className="mt-8 rounded-md px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory ring-1 ring-brass-light/50 transition-colors hover:bg-white/10"
             >
               Start free trial
             </TrackedLink>

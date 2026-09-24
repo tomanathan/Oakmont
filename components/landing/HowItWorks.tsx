@@ -1,6 +1,6 @@
 import { PixelDog } from "@/components/PixelDog";
 import { TestDatePicker } from "./TestDatePicker";
-import { Highlight } from "./Highlight";
+import { Eyebrow, Highlight } from "./Flourish";
 
 // How the plan works, what else comes with it, and who built it -- one
 // section, so the page explains itself once instead of three times.
@@ -38,46 +38,46 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
     },
   ];
 
+  const numerals = ["I", "II", "III"];
+
   return (
-    <section id="how-it-works" className="scroll-mt-20 bg-cream px-6 py-16 sm:py-20">
+    <section id="how-it-works" className="scroll-mt-20 border-t border-brass/30 bg-ivory px-6 py-16 sm:py-20">
       <div className="mx-auto max-w-[1120px]">
         <div className="mb-10 max-w-[680px]">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-tint-700">How it works</div>
-          <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[40px]">
+          <Eyebrow>How it works</Eyebrow>
+          <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] text-forest-900 sm:text-[42px]">
             A tutor&apos;s plan, <Highlight>without the hourly rate.</Highlight>
           </h2>
-          <p className="mt-4 text-[15px] leading-relaxed text-gray-600">
+          <p className="mt-4 text-[15px] leading-relaxed text-stone-600">
             Built by Aman, who has tutored the SAT for six years, around the same week-by-week plan used with private students.
           </p>
         </div>
 
         <ol className="grid gap-4 md:grid-cols-3">
           {steps.map((step, i) => (
-            <li key={step.title} className="rounded-2xl bg-gradient-to-b from-white to-tint-50 p-6 shadow-[0_10px_30px_-18px_rgba(74,91,176,0.55)] ring-1 ring-tint-200">
-              <div className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-b from-tint-400 to-tint-700 font-display text-[15px] font-semibold text-white shadow-[0_4px_10px_-4px_rgba(74,91,176,0.8)]">
-                {i + 1}
-              </div>
-              <h3 className="mb-2 font-display text-[18px] font-semibold">{step.title}</h3>
-              <p className="text-[14px] leading-relaxed text-gray-700">{step.body}</p>
+            <li key={step.title} className="rounded-lg bg-white/80 p-6 shadow-[0_12px_30px_-22px_rgba(60,42,15,0.5)] ring-1 ring-brass/25">
+              <div className="mb-3 font-display text-[26px] font-medium italic leading-none text-brass">{numerals[i]}.</div>
+              <h3 className="mb-2 font-display text-[19px] font-semibold text-forest-900">{step.title}</h3>
+              <p className="text-[14px] leading-relaxed text-stone-600">{step.body}</p>
             </li>
           ))}
         </ol>
 
         <TestDatePicker subskillCount={subskillCount} />
 
-        <div className="mt-10 grid gap-6 border-t border-tint-200 pt-8 md:grid-cols-3">
+        <div className="mt-10 grid gap-6 border-t border-brass/30 pt-8 md:grid-cols-3">
           {extras.map((x) => (
             <div key={x.title} className="flex gap-3">
-              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-b from-tint-100 to-tint-200 text-tint-800" aria-hidden="true">
+              <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-parchment text-forest ring-1 ring-brass/40" aria-hidden="true">
                 {x.dog ? (
-                  <PixelDog size={36} mood="happy" costume="bowtie" shadow={false} />
+                  <PixelDog size={34} mood="happy" costume="bowtie" shadow={false} />
                 ) : (
-                  <span className="font-display text-[20px] font-semibold">{x.icon}</span>
+                  <span className="font-display text-[19px] font-semibold italic">{x.icon}</span>
                 )}
               </div>
               <div>
-                <h3 className="text-[15px] font-semibold text-ink">{x.title}</h3>
-                <p className="mt-1 text-[14px] leading-relaxed text-gray-600">{x.body}</p>
+                <h3 className="font-display text-[16px] font-semibold text-forest-900">{x.title}</h3>
+                <p className="mt-1 text-[14px] leading-relaxed text-stone-600">{x.body}</p>
               </div>
             </div>
           ))}

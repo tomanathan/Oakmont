@@ -2,7 +2,7 @@ import Link from "next/link";
 import { sampleParentReport } from "@/lib/parentDemo";
 import type { ParentReport } from "@/lib/parentInsights";
 import { TrackedLink } from "./TrackedLink";
-import { Highlight } from "./Highlight";
+import { Eyebrow, Highlight } from "./Flourish";
 
 // The parent pitch: what a parent sees, next to a composed snapshot of the
 // real report (sample student "Maya", invented and labeled as such). The
@@ -93,7 +93,7 @@ function Snapshot({ r }: { r: ParentReport }) {
                   className="w-full rounded-[4px]"
                   style={{
                     height: d.minutes ? `${Math.max(12, (d.minutes / maxDay) * 40)}px` : "4px",
-                    background: d.minutes ? GREEN : "#ece9f7",
+                    background: d.minutes ? GREEN : "#ece4d3",
                     opacity: d.minutes ? 0.55 + 0.45 * (d.minutes / maxDay) : 1,
                   }}
                   title={`${d.label}: ${d.minutes} min`}
@@ -107,7 +107,7 @@ function Snapshot({ r }: { r: ParentReport }) {
 
       {/* A mastery moment, pinned to the corner. */}
       {mastered && (
-        <div className="relative z-20 mx-auto -mt-2 w-fit rounded-xl bg-ink px-3.5 py-2.5 text-white shadow-lg sm:absolute sm:-bottom-12 sm:-right-6 sm:mt-0">
+        <div className="relative z-20 mx-auto -mt-2 w-fit rounded-md bg-forest-900 px-3.5 py-2.5 text-ivory shadow-lg ring-1 ring-brass/50 sm:absolute sm:-bottom-12 sm:-right-6 sm:mt-0">
           <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#e6c46a]">★ Mastered</div>
           <div className="text-[13px] font-semibold">{mastered.name}</div>
         </div>
@@ -116,7 +116,7 @@ function Snapshot({ r }: { r: ParentReport }) {
       {/* The Sunday email, tucked underneath. */}
       <div className="relative z-20 mt-4 rounded-2xl border border-[#e6e3f3] bg-[#fffdf9] p-4 shadow-[0_18px_40px_-18px_rgba(26,26,46,0.3)] sm:absolute sm:-bottom-32 sm:-left-10 sm:mt-0 sm:w-[300px]">
         <div className="flex items-center gap-2 text-[11px] text-gray-400">
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-ink text-[9px] font-bold text-white">O</span>
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-forest text-[9px] font-bold text-ivory">O</span>
           <span className="font-semibold text-ink">Oakmont</span>
           <span>&middot; Sunday, 8:00 AM</span>
         </div>
@@ -157,11 +157,11 @@ export function ParentsSection() {
   const r = sampleParentReport(new Date());
 
   return (
-    <section id="parents" className="scroll-mt-20 overflow-hidden bg-cream px-4 py-16 sm:px-6 sm:py-24">
+    <section id="parents" className="scroll-mt-20 overflow-hidden bg-ivory px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto grid max-w-[1120px] items-center gap-12 lg:grid-cols-[1fr_520px] lg:gap-16">
         <div>
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-tint-700">For parents</div>
-          <h2 className="text-balance font-display text-[32px] font-semibold leading-[1.06] tracking-[-0.01em] text-ink sm:text-[44px]">
+          <Eyebrow>For parents</Eyebrow>
+          <h2 className="text-balance font-display text-[32px] font-semibold leading-[1.06] tracking-[-0.01em] text-forest-900 sm:text-[46px]">
             Know how SAT prep is going <Highlight>without having to ask.</Highlight>
           </h2>
           <p className="mt-4 max-w-[46ch] text-[16px] leading-relaxed text-gray-600">
@@ -170,7 +170,7 @@ export function ParentsSection() {
           <ul className="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
             {YOU_SEE.map((f) => (
               <li key={f.title} className="flex gap-3">
-                <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md bg-gradient-to-b from-tint-100 to-tint-200 text-tint-700" aria-hidden>
+                <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-parchment text-forest ring-1 ring-brass/40" aria-hidden>
                   <svg width="12" height="12" viewBox="0 0 12 12">
                     <path d="M2.5 6.2 5 8.5l4.5-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -186,13 +186,13 @@ export function ParentsSection() {
             <TrackedLink
               href="/parent/login?mode=signup"
               event="parent_signup_started"
-              className="rounded-xl bg-ink px-6 py-3.5 text-center text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              className="rounded-md bg-forest px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600"
             >
               Create a free parent account
             </TrackedLink>
             <Link
               href="/parents/sample"
-              className="rounded-xl px-5 py-3.5 text-center text-sm font-semibold text-ink ring-1 ring-[#d9d6ee] transition-colors hover:bg-white"
+              className="rounded-md bg-white/60 px-5 py-3.5 text-center text-sm font-semibold tracking-wide text-forest ring-1 ring-brass/45 transition-colors hover:bg-white"
             >
               See a full sample report &rarr;
             </Link>
