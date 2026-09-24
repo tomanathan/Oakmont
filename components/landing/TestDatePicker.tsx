@@ -13,7 +13,7 @@ export function TestDatePicker({ subskillCount }: { subskillCount: number }) {
   if (dates.length === 0) return null;
 
   return (
-    <div className="mt-4 grid items-center gap-6 rounded-2xl bg-ink p-6 text-white sm:p-8 md:grid-cols-[1fr_1.1fr]">
+    <div className="mt-4 grid items-center gap-6 rounded-2xl bg-gradient-to-br from-tint-800 to-ink p-6 text-white shadow-[0_20px_50px_-28px_rgba(52,63,133,0.9)] sm:p-8 md:grid-cols-[1fr_1.1fr]">
       <div>
         <div className="font-display text-[22px] font-semibold leading-tight">When&apos;s your test?</div>
         <p className="mt-1.5 text-sm text-white/65">Pick a date to see how your plan fits the time you have.</p>

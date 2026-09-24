@@ -5,6 +5,7 @@ import { track } from "@vercel/analytics";
 import type { LandingQuestion } from "@/lib/landingQuestions";
 import { PassageText } from "@/components/PassageText";
 import { TrackedLink } from "./TrackedLink";
+import { Highlight } from "./Highlight";
 
 const LETTERS = ["A", "B", "C", "D"];
 
@@ -55,12 +56,12 @@ export function SampleQuestion({
   }
 
   return (
-    <section id="try-a-question" className="scroll-mt-20 bg-pastel-sky/60 px-6 py-16 sm:py-20">
+    <section id="try-a-question" className="scroll-mt-20 bg-gradient-to-b from-tint-50 to-tint-100 px-6 py-16 sm:py-20">
       <div className="mx-auto grid max-w-[1120px] items-start gap-10 lg:grid-cols-[1fr_1.25fr] lg:gap-16">
         <div className="lg:sticky lg:top-24">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">Try a question</div>
+          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-tint-700">Try a question</div>
           <h2 className="mb-4 text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[40px]">
-            The SAT, broken down to every kind of question it asks.
+            The SAT, broken down to <Highlight>every kind of question</Highlight> it asks.
           </h2>
           <p className="mb-6 max-w-[460px] text-[15px] leading-relaxed text-gray-600">
             &ldquo;Reading and math&rdquo; is really {subskillCount} skills, and each skill shows up as a few specific kinds of
@@ -68,10 +69,10 @@ export function SampleQuestion({
           </p>
           <Ladder
             steps={[
-              { n: 2, label: "test sections", tone: "bg-pastel-lilac text-pastelInk-lilac" },
-              { n: domainCount, label: "subject areas", tone: "bg-pastel-mint text-pastelInk-mint" },
-              { n: subskillCount, label: "skills", tone: "bg-pastel-butter text-pastelInk-butter" },
-              { n: typeCount, label: "question types", tone: "bg-ink text-white" },
+              { n: 2, label: "test sections", tone: "bg-white text-tint-800" },
+              { n: domainCount, label: "subject areas", tone: "bg-tint-100 text-tint-800" },
+              { n: subskillCount, label: "skills", tone: "bg-tint-200 text-tint-800" },
+              { n: typeCount, label: "question types", tone: "bg-hi text-ink" },
             ]}
           />
           {/* Beside the question on wide screens; below it on phones (see
@@ -189,17 +190,17 @@ export function SampleQuestion({
   );
 }
 
-// The whole breakdown in four numbers, the last one (the level Oakmont
-// teaches at) picked out.
+// The whole breakdown in four numbers, shading deeper at each level, the
+// last one (the level Oakmont teaches at) in the accent.
 function Ladder({ steps }: { steps: { n: number; label: string; tone: string }[] }) {
   return (
     <ol className="grid max-w-[460px] grid-cols-4 gap-2 lg:mb-8" aria-label="How the SAT breaks down">
       {steps.map((s, i) => {
         const last = i === steps.length - 1;
         return (
-          <li key={s.label} className={`rounded-xl px-3 py-3 ${s.tone}`}>
+          <li key={s.label} className={`rounded-xl px-3 py-3 ring-1 ring-tint-200/70 shadow-[0_10px_30px_-18px_rgba(74,91,176,0.55)] ${s.tone}`}>
             <div className="font-display text-[24px] font-semibold leading-none tabular-nums">{s.n}</div>
-            <div className={`mt-1 text-[11.5px] leading-tight ${last ? "text-white/75" : "text-gray-600"}`}>{s.label}</div>
+            <div className={`mt-1 text-[11.5px] leading-tight ${last ? "text-ink/75" : "text-gray-600"}`}>{s.label}</div>
           </li>
         );
       })}

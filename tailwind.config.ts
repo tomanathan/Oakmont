@@ -11,24 +11,20 @@ const config: Config = {
       colors: {
         ink: "#1a1a2e",
         accent: "#2f6f4f",
-        // Homepage pastels: a soft ground plus a deeper ink of the same hue
-        // for numbers, icons and labels that sit on it.
-        pastel: {
-          lilac: "#ece8fb",
-          sky: "#e2effb",
-          mint: "#dff3e7",
-          butter: "#fcf1c9",
-          peach: "#fde5d6",
-          blush: "#fbe2ec",
+        // Homepage theme: one periwinkle family (700 is the brand's link
+        // color) used in gradients and tinted shadows, a cream ground that
+        // separates sections, and one highlighter accent for what matters.
+        tint: {
+          50: "#f6f5fe",
+          100: "#eceafb",
+          200: "#dcd8f6",
+          300: "#c2bcee",
+          400: "#9f98e0",
+          700: "#4a5bb0",
+          800: "#343f85",
         },
-        pastelInk: {
-          lilac: "#4a5bb0",
-          sky: "#2b6497",
-          mint: "#2f6f4f",
-          butter: "#8a6510",
-          peach: "#a44d23",
-          blush: "#a23d69",
-        },
+        cream: "#fbf8f1",
+        hi: "#ffd15c",
       },
       fontFamily: {
         // Reserved for the brand wordmark and page titles -- see

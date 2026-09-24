@@ -49,7 +49,7 @@ export function LandingPage() {
         <div className="mx-auto grid max-w-[1120px] grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 py-3 sm:gap-3 sm:px-6">
           <div className="flex min-w-0 items-center">
             <div className="hidden items-center gap-6 whitespace-nowrap text-[15px] text-gray-500 lg:flex xl:gap-8 xl:text-[16px]">
-              <a href="#parents" className="font-medium text-pastelInk-lilac transition-colors hover:text-ink">
+              <a href="#parents" className="font-medium text-tint-700 transition-colors hover:text-ink">
                 For parents
               </a>
               <a href="#how-it-works" className="transition-colors hover:text-ink">
@@ -62,7 +62,7 @@ export function LandingPage() {
                 FAQ
               </a>
             </div>
-            <a href="#parents" className="-ml-1 rounded-lg px-1 py-1.5 text-[14px] font-medium text-pastelInk-lilac sm:text-[15px] lg:hidden">
+            <a href="#parents" className="-ml-1 rounded-lg px-1 py-1.5 text-[14px] font-medium text-tint-700 sm:text-[15px] lg:hidden">
               Parents
             </a>
           </div>

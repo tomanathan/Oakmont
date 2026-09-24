@@ -2,6 +2,7 @@ import { ALL_SUBSKILLS } from "@/data/curriculum";
 import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
 import { TrackedLink } from "./TrackedLink";
 import { ViewTracker } from "./ViewTracker";
+import { Highlight } from "./Highlight";
 
 function Check() {
   return (
@@ -28,21 +29,21 @@ export async function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="scroll-mt-20 bg-pastel-mint/60 px-6 py-16 sm:py-20">
+    <section id="pricing" className="scroll-mt-20 bg-gradient-to-b from-tint-50 to-tint-100 px-6 py-16 sm:py-20">
       <ViewTracker event="pricing_viewed" />
       <div className="mx-auto max-w-[1120px]">
         <div className="mx-auto mb-10 max-w-[620px] text-center">
-          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-[#4a5bb0]">Pricing</div>
+          <div className="mb-3 text-xs font-semibold uppercase tracking-[0.12em] text-tint-700">Pricing</div>
           <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[40px]">
-            Everything included, either way.
+            <Highlight>Everything included</Highlight>, either way.
           </h2>
         </div>
 
         <div className="mx-auto grid max-w-[860px] gap-4 md:grid-cols-2">
-          <div className="relative flex flex-col rounded-2xl bg-ink p-7 text-white shadow-[0_24px_60px_-30px_rgba(26,26,46,0.7)] sm:p-8">
+          <div className="relative flex flex-col rounded-2xl bg-gradient-to-br from-tint-800 to-ink p-7 text-white shadow-[0_24px_60px_-30px_rgba(26,26,46,0.7)] sm:p-8">
             <div className="mb-6 flex items-center justify-between">
               <div className="text-sm font-semibold">6-month pass</div>
-              <div className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide">
+              <div className="rounded-full bg-hi px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-ink">
                 Best value
               </div>
             </div>
@@ -70,7 +71,7 @@ export async function Pricing() {
             </TrackedLink>
           </div>
 
-          <div className="flex flex-col rounded-2xl border border-[#e6e4f5] bg-white p-7 sm:p-8">
+          <div className="flex flex-col rounded-2xl bg-white p-7 shadow-[0_10px_30px_-18px_rgba(74,91,176,0.55)] ring-1 ring-tint-200 sm:p-8">
             <div className="mb-6 flex items-center justify-between">
               <div className="text-sm font-semibold">Monthly</div>
               <div className="rounded-full bg-[#eef7f1] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#2f6f4f]">
