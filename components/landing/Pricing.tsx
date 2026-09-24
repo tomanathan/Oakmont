@@ -25,7 +25,7 @@ export async function Pricing() {
     "Mixed review at SAT pace that brings back what you'd otherwise forget",
     "8 full-length practice tests with review",
     "Ozho, streaks and the costume wardrobe",
-    "Read-only parent view",
+    "Parent dashboard and Sunday email report (parent accounts are free)",
   ];
 
   return (

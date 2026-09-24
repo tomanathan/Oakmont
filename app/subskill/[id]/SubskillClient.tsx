@@ -142,6 +142,37 @@ export function SubskillClient({
   // lesson tab wondering why their answers "disappeared" when they
   // haven't actually been touched at all.
   const [mode, setMode] = useState<"lesson" | "practice">("lesson");
+
+  // Lesson reading time for the parent report: counts only while the Lesson
+  // tab is showing and the page is visible, and is sent when either stops
+  // (or the page is left). Short pass-throughs are dropped server-side.
+  useEffect(() => {
+    if (mode !== "lesson") return;
+    let visibleSince: number | null = document.visibilityState === "visible" ? Date.now() : null;
+    let total = 0;
+    const flush = () => {
+      if (visibleSince !== null) total += Date.now() - visibleSince;
+      visibleSince = null;
+      if (total >= 10000) {
+        const body = JSON.stringify({ subskillId: subskill.id, ms: total });
+        if (!navigator.sendBeacon?.("/api/activity/lesson", new Blob([body], { type: "application/json" }))) {
+          fetch("/api/activity/lesson", { method: "POST", body, headers: { "Content-Type": "application/json" }, keepalive: true }).catch(() => {});
+        }
+      }
+      total = 0;
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") visibleSince = Date.now();
+      else flush();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("pagehide", flush);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", flush);
+      flush();
+    };
+  }, [mode, subskill.id]);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");

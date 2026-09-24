@@ -16,7 +16,7 @@ import { SecondCompanion } from "./SecondCompanion";
 // root layout a client component, just to read the current route.
 export function CompanionGate() {
   const pathname = usePathname();
-  if (pathname === "/" || pathname?.startsWith("/parent") || pathname?.startsWith("/share")) return null;
+  if (pathname === "/" || pathname?.startsWith("/parent") || pathname?.startsWith("/share") || pathname?.startsWith("/link")) return null;
   return (
     <>
       <ScoutCompanion />

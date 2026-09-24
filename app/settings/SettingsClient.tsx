@@ -373,10 +373,16 @@ export function SettingsClient({
           place a student controls who besides them can see their data. */}
       <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Parent access</div>
       <div className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-6">
+        <div className="mb-5 rounded-lg bg-[#f5f4fb] p-3.5 text-xs leading-relaxed text-gray-600">
+          <span className="font-semibold text-ink">What a connected parent sees:</span> when you study and for how long, which lessons,
+          quizzes and reviews you did, how many questions you answered and got right, your progress on each skill, the confidence you mark
+          on answers, mistakes that repeat, and the practice test scores, goal and test date you enter. They get a summary email on
+          Sundays. They can&apos;t change anything or answer for you.
+        </div>
         <div className="text-[15px] font-semibold text-ink mb-1">Invite code</div>
         <div className="text-xs text-gray-500 mb-3">
           Give this to a parent — they'll enter it when they sign up at{" "}
-          <span className="font-mono">/parent/login</span> to see your dashboard (read-only).
+          <span className="font-mono">oakmontsat.com/parent/login</span>. A parent who signs up first can also send you a link to approve.
         </div>
         {inviteCode ? (
           <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -460,7 +466,8 @@ export function SettingsClient({
         {parents.length > 0 && (
           <>
             <div className="border-t border-[#f0eff9] my-5" />
-            <div className="text-[15px] font-semibold text-ink mb-2">Linked parents</div>
+            <div className="text-[15px] font-semibold text-ink mb-2">Connected parents</div>
+            <div className="text-xs text-gray-500 mb-2">These accounts can see your study report. Unlinking stops that right away.</div>
             <div className="flex flex-col gap-1.5">
               {parents.map((p) => (
                 <div

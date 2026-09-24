@@ -6,6 +6,7 @@ import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { Hero } from "./Hero";
 import { ProofStrip } from "./ProofStrip";
 import { SampleQuestion } from "./SampleQuestion";
+import { ParentsSection } from "./ParentsSection";
 import { HowItWorks } from "./HowItWorks";
 import { Features } from "./Features";
 import { TutorSection } from "./TutorSection";
@@ -20,8 +21,9 @@ import { TrackedLink } from "./TrackedLink";
 // pitch, not a login form, is what search engines and shared links see.
 //
 // Story order: promise (hero) -> proof it's real (numbers, a live question)
-// -> how the plan works -> everything that's inside, including why there
-// are dogs -> who built it -> price -> objections -> ask again.
+// -> what parents get (often the ones deciding) -> how the plan works ->
+// everything that's inside, including why there are dogs -> who built it
+// -> price -> objections -> ask again.
 export function LandingPage() {
   const questionCount = Object.values(QUESTIONS).reduce((n, qs) => n + qs.length, 0);
   const subskillCount = ALL_SUBSKILLS.length;
@@ -48,6 +50,9 @@ export function LandingPage() {
             <span className="hidden truncate font-display text-[15px] font-semibold sm:inline">Oakmont Study Center</span>
           </a>
           <div className="hidden items-center gap-7 text-sm text-gray-500 md:flex">
+            <a href="#parents" className="font-medium text-[#4a5bb0] transition-colors hover:text-ink">
+              For parents
+            </a>
             <a href="#how-it-works" className="transition-colors hover:text-ink">
               How it works
             </a>
@@ -62,6 +67,9 @@ export function LandingPage() {
             </a>
           </div>
           <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
+            <a href="#parents" className="rounded-lg px-2 py-1.5 text-sm font-medium text-[#4a5bb0] md:hidden">
+              Parents
+            </a>
             <a href="/login" className="rounded-lg px-3 py-1.5 text-sm text-gray-600 transition-colors hover:text-ink">
               Log in
             </a>
@@ -80,6 +88,7 @@ export function LandingPage() {
         <Hero questionCount={questionCount} subskillCount={subskillCount} />
         <ProofStrip questionCount={questionCount} subskillCount={subskillCount} />
         <SampleQuestion questionCount={questionCount} />
+        <ParentsSection />
         <Reveal>
           <HowItWorks subskillCount={subskillCount} />
         </Reveal>

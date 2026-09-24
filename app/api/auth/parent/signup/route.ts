@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth";
+import { safeTimeZone } from "@/lib/parentReportData";
 import {
   createParentSessionToken,
   PARENT_SESSION_COOKIE_NAME,
@@ -8,7 +9,7 @@ import {
 } from "@/lib/parentAuth";
 
 export async function POST(req: NextRequest) {
-  let body: { email?: string; password?: string; inviteCode?: string };
+  let body: { email?: string; password?: string; inviteCode?: string; nickname?: string; timeZone?: string };
   try {
     body = await req.json();
   } catch {
@@ -28,15 +29,10 @@ export async function POST(req: NextRequest) {
   if (password.length < 6) {
     return NextResponse.json({ error: "Password must be at least 6 characters." }, { status: 400 });
   }
-  if (!inviteCode) {
-    return NextResponse.json(
-      { error: "Enter the invite code from your student's Settings page." },
-      { status: 400 }
-    );
-  }
-
-  const student = await prisma.user.findUnique({ where: { parentInviteCode: inviteCode } });
-  if (!student) {
+  // The student's code is optional: a parent can sign up first and send
+  // their student an invite link from the dashboard instead.
+  const student = inviteCode ? await prisma.user.findUnique({ where: { parentInviteCode: inviteCode } }) : null;
+  if (inviteCode && !student) {
     return NextResponse.json(
       { error: "That code doesn't match any student account. Double-check it and try again." },
       { status: 400 }
@@ -55,11 +51,13 @@ export async function POST(req: NextRequest) {
   // The nested `links.create` runs in the same transaction Prisma already
   // wraps a create-with-nested-write in -- the parent account and its first
   // link are never left half-created.
+  const nickname = (body.nickname || "").trim().slice(0, 40) || null;
   const parent = await prisma.parent.create({
     data: {
       email,
       passwordHash,
-      links: { create: { studentId: student.id } },
+      timeZone: body.timeZone ? safeTimeZone(body.timeZone) : null,
+      ...(student ? { links: { create: { studentId: student.id, nickname } } } : {}),
     },
   });
 

@@ -10,7 +10,11 @@ import { track } from "@vercel/analytics";
 // duplicating ~150 lines of state and handlers. `initialMode` lets a caller
 // land a visitor directly on signup (e.g. /login?mode=signup) instead of
 // always starting on the login tab.
-export function LoginCard({ initialMode = "login" }: { initialMode?: "login" | "signup" | "forgot" }) {
+// `next`: where to go after logging in or signing up, instead of the usual
+// dashboard/welcome -- only ever a parent invite approval page, so it can't
+// be used to bounce someone to an arbitrary address.
+export function LoginCard({ initialMode = "login", next }: { initialMode?: "login" | "signup" | "forgot"; next?: string | null }) {
+  const safeNext = next && /^\/link\/[A-Za-z0-9_-]+$/.test(next) ? next : null;
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "signup" | "forgot">(initialMode);
   const [email, setEmail] = useState("");
@@ -36,7 +40,7 @@ export function LoginCard({ initialMode = "login" }: { initialMode?: "login" | "
         return;
       }
       if (mode === "signup") track("signup_completed");
-      router.push(mode === "signup" ? "/welcome" : "/dashboard");
+      router.push(safeNext ?? (mode === "signup" ? "/welcome" : "/dashboard"));
       router.refresh();
     } catch {
       setError("Couldn't reach the server. Please try again.");

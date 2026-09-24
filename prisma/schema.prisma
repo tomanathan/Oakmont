@@ -27,6 +27,7 @@ model User {
   progress  Progress[]
   practiceTests PracticeTest[]
   itemAttempts ItemAttempt[]
+  lessonViews  LessonView[]
 
   // Daily practice streak (consecutive calendar days with at least one quiz
   // submission). Computed in app/api/progress/route.ts on each submission.
@@ -113,6 +114,16 @@ model Parent {
   passwordHash String
   createdAt    DateTime     @default(now())
   links        ParentLink[]
+  invites      ParentInvite[]
+
+  // IANA zone from the parent's own browser (saved on their first dashboard
+  // visit), so "today", the activity calendar and the weekly report's days
+  // all line up with the parent's clock rather than UTC.
+  timeZone         String?
+  // The Sunday summary email (see app/api/cron/parent-report). On by
+  // default: a parent signed up to keep track, and can switch it off.
+  weeklyReport     Boolean   @default(true)
+  lastReportSentAt DateTime?
 }
 
 // One parent linked to one student. A parent can link multiple students
@@ -126,8 +137,40 @@ model ParentLink {
   studentId String
   student   User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  // What the parent calls this student ("Maya") -- students are only an
+  // email address otherwise.
+  nickname  String?
 
   @@unique([parentId, studentId])
+}
+
+// Parent-first linking: a parent who signs up before their student has a
+// code creates one of these and sends the link to their student, who opens
+// it while signed in and approves sharing (app/link/[token]). Single use;
+// expires after 14 days.
+model ParentInvite {
+  id        String    @id @default(cuid())
+  parentId  String
+  parent    Parent    @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  token     String    @unique
+  nickname  String?
+  createdAt DateTime  @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+}
+
+// Time spent reading a lesson (the Lesson tab of a subskill page), sent
+// when the student leaves it. ItemAttempt already times every answered
+// question; this covers the studying that happens before the quiz.
+model LessonView {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subskillId String
+  ms         Int
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
 
 model Progress {

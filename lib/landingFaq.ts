@@ -22,6 +22,22 @@ export const FAQ_ITEMS = [
     a: "The plan condenses to your actual timeline instead of assuming a full 6 months, covering every subskill at a faster pace rather than skipping any.",
   },
   {
+    q: "What can parents see?",
+    a: "A detailed, read-only report: every study session (when, how long, what was covered), questions answered and accuracy week by week, progress on all 29 skills, whether mastered skills are sticking, confidence and pace habits, mistakes that keep repeating, and practice test scores against the goal. A summary email arrives every Sunday.",
+  },
+  {
+    q: "Does my student know I can see their progress?",
+    a: "Yes. They approve the connection, their Settings show exactly what a connected parent sees, and they can remove access. Parents can't change anything or answer questions for them.",
+  },
+  {
+    q: "Do parents need to pay or have their own plan?",
+    a: "No. Parent accounts are free. The parent dashboard and weekly email are included with your student's plan, and one parent account can follow more than one student.",
+  },
+  {
+    q: "How do I connect to my student's account?",
+    a: "Create a parent account, then either send your student an invite link to approve or enter the code from their Settings. It takes about two minutes.",
+  },
+  {
     q: "Can I cancel?",
     a: "Yes, anytime, from Settings. The monthly plan stops billing immediately going forward; the one-time 6-month pass simply runs until it expires.",
   },

@@ -51,6 +51,14 @@ export function Hero({ questionCount, subskillCount }: { questionCount: number; 
             </li>
           ))}
         </ul>
+        <a
+          href="#parents"
+          className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-[13px] text-gray-600 ring-1 ring-[#e0defa] transition-colors hover:text-ink hover:ring-[#c9c6ee]"
+        >
+          <span className="rounded-full bg-ink px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wide text-white">Parents</span>
+          See every session, skill and score, in your own dashboard
+          <span aria-hidden>&rarr;</span>
+        </a>
       </div>
     </section>
   );

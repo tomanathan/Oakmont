@@ -95,10 +95,13 @@ export function Features({ subskillCount }: { subskillCount: number }) {
                 </svg>
               </div>
               <div>
-                <h3 className="font-display text-[18px] font-semibold">For parents: a clear view, no nagging.</h3>
+                <h3 className="font-display text-[18px] font-semibold">For parents: the full picture, no nagging.</h3>
                 <p className={body}>
-                  Once your student invites you from their Settings, you get a read-only view of their pace, subject
-                  mastery and practice-test history — without logging into their account.
+                  Your own dashboard shows every session, all 29 skills, study habits and scores against the goal, with a summary email
+                  every Sunday.{" "}
+                  <a href="#parents" className="font-semibold text-[#4a5bb0] hover:underline">
+                    See a sample report
+                  </a>
                 </p>
               </div>
             </div>

@@ -1,101 +1,48 @@
 import { prisma } from "@/lib/prisma";
-import { getUserStats } from "@/lib/user";
-import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
-import { computePetState } from "@/lib/pet";
-import { computeDomainMastery, orderSubskillsByWeakness } from "@/lib/mastery";
-import { progressMapFromRows, isPassed } from "@/lib/progressState";
-import { getTodayPlanItem } from "@/lib/studyPlan";
-import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan } from "@/data/curriculum";
 import { BrandMark } from "@/components/BrandMark";
-import { StudentProgressView } from "@/components/StudentProgressView";
+import { ParentReportView } from "@/components/parent/ParentReportView";
+import { displayName, loadParentReport } from "@/lib/parentReportData";
 
-// Public, no-login read-only view -- anyone with the link sees this
-// student's dashboard, the same as a linked parent account would (see
-// app/parent/dashboard/page.tsx, which this mirrors almost exactly, minus
-// the parent-account gate and the student switcher). A student generates
-// or revokes this link from Settings; a wrong or revoked token gets the
-// same generic "not valid" message either way -- never a hint that a
-// token was once real, or that any particular token might be close.
+export const dynamic = "force-dynamic";
+
+// Public, no-login read-only view -- anyone with the link sees the same
+// report a linked parent account would (see app/parent/dashboard). A
+// student generates or revokes this link from Settings; a wrong or revoked
+// token gets the same generic "not valid" message either way -- never a
+// hint that a token was once real, or that any particular token might be
+// close. Days are shown in US Eastern time, since there's no viewer
+// account to take a time zone from.
 export default async function SharePage({ params }: { params: { token: string } }) {
-  const student = await prisma.user.findUnique({ where: { parentShareToken: params.token } });
+  const student = await prisma.user.findUnique({ where: { parentShareToken: params.token }, select: { id: true, email: true } });
 
   if (!student) {
     return (
-      <div className="max-w-[480px] mx-auto px-6 py-16 font-sans text-center">
+      <div className="mx-auto max-w-[480px] px-6 py-16 text-center font-sans">
         <BrandMark size={48} className="mx-auto mb-4" />
-        <div className="text-lg font-semibold text-ink mb-2">This link isn&apos;t valid</div>
-        <div className="text-sm text-gray-500">
-          It may have been turned off, or the link might be mistyped. Ask your student for a fresh one.
-        </div>
+        <div className="mb-2 text-lg font-semibold text-ink">This link isn&apos;t valid</div>
+        <div className="text-sm text-gray-500">It may have been turned off, or the link might be mistyped. Ask your student for a fresh one.</div>
       </div>
     );
   }
 
-  const [rows, stats, tests] = await Promise.all([
-    prisma.progress.findMany({ where: { userId: student.id } }),
-    getUserStats(student.id),
-    prisma.practiceTest.findMany({ where: { userId: student.id }, orderBy: { takenAt: "desc" } }),
-  ]);
-
-  const progress = progressMapFromRows(rows);
-
-  const subskillsByDomain: Record<string, string[]> = {};
-  for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
-  const domainMastery = computeDomainMastery(
-    ALL_DOMAINS,
-    subskillsByDomain,
-    progress,
-    (tests[0]?.domainScores as Record<string, number> | null) ?? null
-  );
-
-  // Mirrors app/dashboard/page.tsx's own computation exactly -- see
-  // app/parent/dashboard/page.tsx's identical block for why.
-  const createdAt = stats.createdAt ?? new Date();
-  const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null);
-  const weaknessOrderedIds = orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery);
-  const studyPlan = buildStudyPlan(Math.ceil(courseLengthDays / 7), weaknessOrderedIds);
-  const planSubskillIds = new Set(studyPlan.flatMap((w) => w.subskillIds));
-  const completedInPlan = Object.entries(progress).filter(
-    ([id, p]) => planSubskillIds.has(id) && isPassed(p)
-  ).length;
-  const pacing = computePacing(createdAt, new Date(), planSubskillIds.size, completedInPlan, courseLengthDays);
-
-  const todayItem = getTodayPlanItem(studyPlan, createdAt, new Date(), courseLengthDays);
-  const thisWeek = todayItem ? studyPlan.find((w) => w.week === todayItem.week) : null;
-  const weekDone = thisWeek ? thisWeek.subskillIds.filter((id) => progress[id]).length : 0;
-  const weekTotal = thisWeek ? thisWeek.subskillIds.length : 0;
-
-  const petState = computePetState(stats.lastActiveDate ?? null, stats.petDiedAt ?? null, stats.petBornAt);
+  const report = await loadParentReport(student.id, { name: displayName(null, student.email) });
 
   return (
-    <div className="max-w-[1180px] mx-auto px-4 pb-12 pt-2 font-sans">
-      <header className="flex items-center gap-2.5 py-3 px-4 mb-4">
+    <div className="mx-auto max-w-[1180px] px-4 pb-16 pt-2 font-sans">
+      <header className="mb-4 flex items-center gap-2.5 px-4 py-3">
         <BrandMark size={26} />
-        <div className="font-display font-semibold text-[14px] text-ink">Oakmont Study Center</div>
-        <span className="text-xs text-gray-400">&middot; shared progress view</span>
+        <div className="font-display text-[14px] font-semibold text-ink">Oakmont Study Center</div>
+        <span className="text-xs text-gray-400">&middot; shared study report</span>
       </header>
-      <StudentProgressView
-        studentEmail={student.email}
-        curriculum={CURRICULUM}
-        progress={progress}
-        domainMastery={domainMastery}
-        domains={ALL_DOMAINS}
-        pacing={pacing}
-        thisWeek={{ done: weekDone, total: weekTotal }}
-        daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
-        petStage={petState.stage}
-        currentStreak={stats.currentStreak}
-        tests={tests.map((t) => ({
-          id: t.id,
-          takenAt: t.takenAt.toISOString(),
-          compositeScore: t.compositeScore,
-          rwScore: t.rwScore,
-          mathScore: t.mathScore,
-          domainScores: t.domainScores as Record<string, number>,
-          domainCounts: t.domainCounts as Record<string, { correct: number; total: number }>,
-        }))}
+      <ParentReportView
+        report={report}
+        footer={
+          <p className="text-center text-[12px] leading-relaxed text-gray-400">
+            Shared by the student from their Settings; they can turn this link off at any time. For the weekly email and your own time
+            zone, <a href="/parent/login?mode=signup" className="text-[#4a5bb0] underline">create a free parent account</a>.
+          </p>
+        }
       />
-      <div className="text-center text-xs text-gray-400 mt-8">Powered by Oakmont Study Center</div>
     </div>
   );
 }

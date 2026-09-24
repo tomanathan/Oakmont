@@ -35,7 +35,7 @@ function LoginPageContent() {
         <div className="pointer-events-none absolute -top-[37px] right-6 z-10" aria-hidden>
           <PixelDog size={52} sitting mood="happy" facing={-1} shadow={false} />
         </div>
-        <LoginCard initialMode={initialMode} />
+        <LoginCard initialMode={initialMode} next={searchParams.get("next")} />
       </div>
       <div className="text-center text-xs text-gray-400 mt-4">
         Your progress is saved automatically and syncs whenever you log back in.
