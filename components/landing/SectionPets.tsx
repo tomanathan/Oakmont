@@ -10,8 +10,8 @@ import { PixelDog, type DogMood } from "@/components/PixelDog";
 //   QuizBuddy  -- sits on the showcase question card and reacts to it:
 //                 watches the choice you hover, worries at a wrong answer,
 //                 celebrates a right one.
-//   Runners    -- the two dogs chase a ball across the bottom of the
-//                 pricing section now and then, in varying ways.
+//   Runners    -- the two dogs gambol across the bottom of the pricing
+//                 section now and then: hops, play bows, chasing, a ball.
 //   NapPet     -- naps beside the FAQ heading; opening a question wakes him.
 // All decorative (aria-hidden, no pointer events except the hover target
 // they sit on), and all driven by timers rather than per-frame React
@@ -219,116 +219,266 @@ export function QuizBuddy({ className = "" }: { className?: string }) {
 }
 
 // ---- Runners -------------------------------------------------------------------
-// A chase across the bottom of a section: the one with the ball in front,
-// the other a few steps behind. Each run varies -- direction, who has the
-// ball, speed, and sometimes a mid-run stop for a play bow -- and runs only
-// while the section is on screen.
+// Two dogs gamboling across the bottom of a section, like dogs in a meadow:
+// the pair drifts across the screen, but each dog has a mind of its own on
+// the way -- bounding hops of different heights, surges and slow-downs that
+// swap who's in front, a play bow and pounce, a quick wheel-around to chase
+// back at the other, and now and then the ball gets tossed ahead and both
+// race for it. Every run is different. Runs only while the section is on
+// screen, every several seconds. Positions are written straight to the DOM;
+// React only hears about pose changes (legs, facing, bow, ball).
+
+type RunAct = "run" | "bow" | "wheel";
+interface Runner {
+  x: number;
+  h: number; // height above the ground
+  vh: number;
+  speed: number; // current multiplier on the pair's pace
+  target: number; // speed it's easing toward
+  act: RunAct;
+  actUntil: number;
+  nextThink: number;
+  facing: 1 | -1;
+  stride: number;
+  leg: 0 | 1;
+  hasBall: boolean;
+}
+interface Pose {
+  leg: 0 | 1;
+  facing: 1 | -1;
+  bow: boolean;
+  air: boolean;
+  ball: boolean;
+}
+
+const GRAVITY = 1500; // px/s^2
+const PACE = 150; // the pair's average speed, px/s
 
 export function Runners({ className = "" }: { className?: string }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const leadRef = useRef<HTMLDivElement>(null);
-  const chaseRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(wrapRef, "-80px");
-  const [leg, setLeg] = useState<0 | 1>(0);
-  const [dir, setDir] = useState<1 | -1>(1);
-  const [running, setRunning] = useState(false);
-  const [ballOnOzho, setBallOnOzho] = useState(true);
-  const [bow, setBow] = useState(false);
-  const tail = useWag(60);
+  const dogRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
+  const ballRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(wrapRef, "-60px");
+  const [poses, setPoses] = useState<Pose[]>([
+    { leg: 0, facing: 1, bow: false, air: false, ball: true },
+    { leg: 0, facing: 1, bow: false, air: false, ball: false },
+  ]);
+  const posesRef = useRef(poses);
+  const tail = useWag(55);
 
   useEffect(() => {
     if (!inView) return;
     let cancelled = false;
-    let raf: ReturnType<typeof setInterval> | null = null;
-    let legT: ReturnType<typeof setInterval> | null = null;
+    let tick: ReturnType<typeof setInterval> | null = null;
     let waitT: ReturnType<typeof setTimeout>;
+
+    const push = (dogs: Runner[]) => {
+      const next = dogs.map((d) => ({ leg: d.leg, facing: d.facing, bow: d.act === "bow", air: d.h > 1, ball: d.hasBall }));
+      const prev = posesRef.current;
+      if (next.some((n, i) => n.leg !== prev[i].leg || n.facing !== prev[i].facing || n.bow !== prev[i].bow || n.air !== prev[i].air || n.ball !== prev[i].ball)) {
+        posesRef.current = next;
+        setPoses(next);
+      }
+    };
 
     const run = () => {
       const wrap = wrapRef.current;
       if (!wrap || cancelled) return;
-      const w = wrap.clientWidth;
-      const d: 1 | -1 = Math.random() < 0.5 ? 1 : -1;
-      setDir(d);
-      setBallOnOzho(Math.random() < 0.6);
-      setRunning(true);
-      const speed = rand(170, 250); // px/s
-      const gap = rand(46, 70);
-      const stopAt = Math.random() < 0.35 ? rand(0.35, 0.6) * w : null;
-      let x = d === 1 ? -120 : w + 120;
-      // The optional mid-run play bow: when x passes stopAt, hold still
-      // (legs down, bowing) until pauseUntil, once per run.
-      let bowDone = stopAt === null;
-      let pauseUntil = 0;
-      let last = performance.now();
-      const startLegs = () => {
-        if (legT) clearInterval(legT);
-        legT = setInterval(() => setLeg((l) => (l === 0 ? 1 : 0)), 110);
-      };
-      startLegs();
-      raf = setInterval(() => {
+      const W = wrap.clientWidth;
+      const dir: 1 | -1 = Math.random() < 0.5 ? 1 : -1;
+      const startX = dir === 1 ? -90 : W + 90;
+      const first = Math.random() < 0.5 ? 0 : 1;
+      const now0 = performance.now();
+      const dogs: Runner[] = [0, 1].map((i) => ({
+        x: startX - dir * (i === first ? 0 : 60 + Math.random() * 40),
+        h: 0,
+        vh: 0,
+        speed: 1,
+        target: 1,
+        act: "run" as RunAct,
+        actUntil: 0,
+        nextThink: now0 + rand(300, 900),
+        facing: dir,
+        stride: 0,
+        leg: 0 as 0 | 1,
+        hasBall: i === first,
+      }));
+      // The ball when it's loose: x, height, velocities.
+      let ball: { x: number; h: number; vx: number; vh: number; bounces: number; at: number; by: number } | null = null;
+      let tossed = false;
+      let last = now0;
+
+      tick = setInterval(() => {
         const now = performance.now();
         const dt = Math.min(0.05, (now - last) / 1000);
         last = now;
-        if (!bowDone && (d === 1 ? x >= stopAt! : x <= stopAt!)) {
-          bowDone = true;
-          pauseUntil = now + 1300;
-          setRunning(false);
-          setBow(true);
-          if (legT) clearInterval(legT);
+
+        dogs.forEach((d, i) => {
+          const other = dogs[1 - i];
+          const ahead = (other.x - d.x) * dir; // >0: the other dog is ahead
+
+          // Decide what to do next, every so often.
+          if (now > d.nextThink && d.act === "run" && d.h === 0) {
+            d.nextThink = now + rand(450, 1200);
+            const r = Math.random();
+            if (d.hasBall && !tossed && Math.random() < 0.28) {
+              // Toss the ball ahead; whoever gets there first has it.
+              tossed = true;
+              d.hasBall = false;
+              ball = { x: d.x + dir * 14, h: 18, vx: dir * rand(260, 340), vh: rand(380, 470), bounces: 0, at: now, by: i };
+              d.target = 1.7;
+              other.target = 1.8;
+            } else if (r < 0.34) {
+              // A bounding hop -- sometimes a big leap.
+              d.vh = Math.random() < 0.3 ? rand(520, 640) : rand(300, 440);
+              d.target = rand(1.1, 1.45);
+            } else if (r < 0.5 && ahead > 30) {
+              d.target = rand(1.5, 1.9); // surge to catch up
+            } else if (r < 0.62 && ahead < -40) {
+              // Out in front: stop and play-bow at the other one.
+              d.act = "bow";
+              d.actUntil = now + 900;
+              d.facing = (-dir) as 1 | -1;
+            } else if (r < 0.72 && ahead < -60) {
+              // Wheel around and dash back at the other for a moment.
+              d.act = "wheel";
+              d.actUntil = now + rand(350, 600);
+              d.facing = (-dir) as 1 | -1;
+              d.target = 1.2;
+            } else {
+              d.target = rand(0.75, 1.25);
+            }
+          }
+
+          // Keep the pair together: nobody gets more than ~170px apart.
+          if (ahead > 170) d.target = Math.max(d.target, 1.8);
+          if (ahead < -190 && d.act === "run") d.target = Math.min(d.target, 0.55);
+
+          // Acts ending.
+          if (d.act === "bow" && now > d.actUntil) {
+            // Pounce out of the bow, toward the other dog.
+            d.act = "run";
+            d.facing = dir;
+            d.vh = rand(420, 520);
+            d.target = 1.6;
+          } else if (d.act === "wheel" && now > d.actUntil) {
+            d.act = "run";
+            d.facing = dir;
+            d.vh = rand(260, 340);
+          }
+
+          // Move.
+          d.speed += (d.target - d.speed) * Math.min(1, dt * 3);
+          const moving = d.act !== "bow";
+          let vx = !moving ? 0 : d.act === "wheel" ? -dir * PACE * d.speed * 0.9 : dir * PACE * d.speed;
+          // A loose ball behind them: turn back and go get it.
+          if (ball && moving && ball.h < 40 && (ball.x - d.x) * dir < -8) {
+            vx = Math.sign(ball.x - d.x) * PACE * 1.5;
+            d.facing = (Math.sign(ball.x - d.x) || dir) as 1 | -1;
+          } else if (d.act === "run" && d.facing !== dir) {
+            d.facing = dir;
+          }
+          d.x += vx * dt;
+          if (d.h > 0 || d.vh > 0) {
+            d.h = Math.max(0, d.h + d.vh * dt);
+            d.vh -= GRAVITY * dt;
+            if (d.h === 0) d.vh = 0;
+          }
+          // Legs cycle with distance covered; tucked mid-air.
+          if (moving && d.h === 0) {
+            d.stride += Math.abs(vx) * dt;
+            if (d.stride > 13) {
+              d.stride = 0;
+              d.leg = d.leg === 0 ? 1 : 0;
+            }
+          }
+
+          // Catch the loose ball.
+          // Only once it's on its way down (or rolling), and not straight
+          // back into the thrower's mouth.
+          if (
+            ball &&
+            !d.hasBall &&
+            ball.vh <= 0 &&
+            ball.h < 22 &&
+            Math.abs(ball.x - d.x) < 18 &&
+            (ball.by !== i || now - ball.at > 700)
+          ) {
+            d.hasBall = true;
+            ball = null;
+            tossed = false;
+            d.vh = Math.max(d.vh, 240); // a happy little bounce
+          }
+        });
+
+        // The loose ball: arc, bounce, roll.
+        if (ball) {
+          ball.x += ball.vx * dt;
+          ball.h += ball.vh * dt;
+          ball.vh -= GRAVITY * 0.9 * dt;
+          if (ball.h <= 0) {
+            ball.h = 0;
+            if (ball.bounces < 2) {
+              ball.vh = -ball.vh * 0.45;
+              ball.bounces += 1;
+            } else {
+              ball.vh = 0;
+            }
+            ball.vx *= 0.8;
+          }
         }
-        if (pauseUntil) {
-          if (now < pauseUntil) return;
-          pauseUntil = 0;
-          setBow(false);
-          setRunning(true);
-          startLegs();
+
+        dogs.forEach((d, i) => {
+          const el = dogRefs[i].current;
+          if (el) el.style.transform = `translate3d(${d.x.toFixed(1)}px, ${(-d.h).toFixed(1)}px, 0)`;
+        });
+        if (ballRef.current) {
+          ballRef.current.style.opacity = ball ? "1" : "0";
+          if (ball) ballRef.current.style.transform = `translate3d(${ball.x.toFixed(1)}px, ${(-ball.h).toFixed(1)}px, 0)`;
         }
-        x += d * speed * dt;
-        if (leadRef.current) leadRef.current.style.transform = `translateX(${x}px)`;
-        if (chaseRef.current) chaseRef.current.style.transform = `translateX(${x - d * gap}px)`;
-        if (d === 1 ? x > w + 140 : x < -140) {
-          if (raf) clearInterval(raf);
-          if (legT) clearInterval(legT);
-          setRunning(false);
-          waitT = setTimeout(run, rand(5000, 11000));
+        push(dogs);
+
+        const gone = dogs.every((d) => (dir === 1 ? d.x > W + 110 : d.x < -110));
+        if (gone) {
+          if (tick) clearInterval(tick);
+          tick = null;
+          waitT = setTimeout(run, rand(4500, 9000));
         }
       }, 16);
     };
-    waitT = setTimeout(run, rand(800, 2000));
+
+    waitT = setTimeout(run, rand(600, 1600));
     return () => {
       cancelled = true;
       clearTimeout(waitT);
-      if (raf) clearInterval(raf);
-      if (legT) clearInterval(legT);
+      if (tick) clearInterval(tick);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
-  const lead = ballOnOzho ? "ozho" : "mochi";
   return (
-    <div ref={wrapRef} className={`pointer-events-none absolute inset-x-0 overflow-hidden ${className}`} style={{ height: 52 }} aria-hidden>
-      <div ref={leadRef} className="absolute bottom-0 left-0" style={{ transform: "translateX(-200px)" }}>
-        <div className={bow ? "animate-ozho-bow" : ""}>
-          <PixelDog
-            size={44}
-            variant={lead}
-            mood="happy"
-            legFrame={running ? leg : 0}
-            tailFrame={tail}
-            facing={dir}
-            carryingBall
-          />
+    <div ref={wrapRef} className={`pointer-events-none absolute inset-x-0 overflow-hidden ${className}`} style={{ height: 96 }} aria-hidden>
+      <div ref={ballRef} className="absolute bottom-[3px] left-0" style={{ opacity: 0, width: 10, height: 10, marginLeft: -5 }}>
+        <svg viewBox="0 0 16 16" width={10} height={10}>
+          <circle cx={8} cy={8} r={7.2} fill="#cddc39" stroke="#aebb28" strokeWidth={1} />
+          <path d="M 2.5 5 Q 8 9 13.5 5" stroke="#f3f8cf" strokeWidth={1.4} fill="none" strokeLinecap="round" />
+        </svg>
+      </div>
+      {poses.map((p, i) => (
+        <div key={i} ref={dogRefs[i]} className="absolute bottom-0 left-0" style={{ transform: "translate3d(-200px, 0, 0)", marginLeft: -22 }}>
+          <div className={p.bow ? "animate-ozho-bow" : ""} style={{ ["--face" as string]: p.facing }}>
+            <PixelDog
+              size={i === 0 ? 44 : 40}
+              variant={i === 0 ? "ozho" : "mochi"}
+              mood="happy"
+              legFrame={p.air ? 1 : p.leg}
+              tailFrame={tail}
+              facing={p.facing}
+              carryingBall={p.ball}
+            />
+          </div>
         </div>
-      </div>
-      <div ref={chaseRef} className="absolute bottom-0 left-0" style={{ transform: "translateX(-260px)" }}>
-        <PixelDog
-          size={40}
-          variant={lead === "ozho" ? "mochi" : "ozho"}
-          mood="happy"
-          legFrame={running ? ((1 - leg) as 0 | 1) : 0}
-          tailFrame={tail}
-          facing={dir}
-        />
-      </div>
+      ))}
     </div>
   );
 }
