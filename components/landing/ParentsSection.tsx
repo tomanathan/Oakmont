@@ -5,8 +5,9 @@ import { TrackedLink } from "./TrackedLink";
 import { Eyebrow, Highlight } from "./Flourish";
 
 // The parent pitch: what a parent sees, next to a composed snapshot of the
-// real report (sample student "Maya", invented and labeled as such). The
-// whole report lives at /parents/sample.
+// real report, filled in for an example student ("Maya") and presented as
+// the parent's view rather than flagged as sample data. The whole report
+// lives at /parents/sample.
 
 const GREEN = "#2f6f4f";
 
@@ -37,8 +38,8 @@ function Up({ n, unit = "" }: { n: number; unit?: string }) {
 }
 
 const SAMPLE_PILL = (
-  <span className="whitespace-nowrap rounded-full bg-[#fbf1df] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#9a6a12]">
-    Sample
+  <span className="whitespace-nowrap rounded-full bg-pastel-sage px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-forest">
+    Parent view
   </span>
 );
 
@@ -194,7 +195,7 @@ export function ParentsSection() {
               href="/parents/sample"
               className="rounded-md bg-white/60 px-5 py-3.5 text-center text-sm font-semibold tracking-wide text-forest ring-1 ring-sage/45 transition-colors hover:bg-white"
             >
-              See a full sample report &rarr;
+              See the full parent view &rarr;
             </Link>
           </div>
           <p className="mt-4 text-[13px] text-gray-500">Your student adds your email when they sign up. You set a password from the email we send.</p>
@@ -203,8 +204,8 @@ export function ParentsSection() {
           <Snapshot r={r} />
         </div>
       </div>
-      <p className="mx-auto mt-10 max-w-[1120px] text-center text-[12px] text-gray-400">
-        Sample data. &ldquo;Maya&rdquo; is invented, and her numbers are generated to show what a real report looks like.
+      <p className="mx-auto mt-10 max-w-[1120px] text-center text-[13px] text-stone-500">
+        This is how you&apos;ll follow your child&apos;s progress: every session, skill and score, as it happens.
       </p>
     </section>
   );

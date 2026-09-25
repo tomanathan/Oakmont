@@ -5,8 +5,8 @@ import { ParentReportView } from "@/components/parent/ParentReportView";
 import { BrandMark } from "@/components/BrandMark";
 
 export const metadata: Metadata = {
-  title: "Sample parent report | Oakmont",
-  description: "The full parent report, filled in with an invented sample student.",
+  title: "What parents see | Oakmont",
+  description: "The full parent view: every study session, every skill and every score, as it happens.",
 };
 
 // The whole parent report with sample data, linked from the homepage's
@@ -22,7 +22,7 @@ export default function SampleParentReportPage() {
             &larr; Back
           </Link>
           <div className="flex items-center gap-3">
-            <span className="rounded-full bg-[#fbf1df] px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-wide text-[#9a6a12]">Sample data</span>
+            <span className="rounded-full bg-pastel-sage px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-wide text-forest">Parent view</span>
             <Link href="/parent/login?mode=signup" className="rounded-lg bg-forest px-3.5 py-1.5 text-[13px] font-semibold text-white">
               Create a parent account
             </Link>
@@ -34,8 +34,8 @@ export default function SampleParentReportPage() {
           report={report}
           frozen
           footer={
-            <p className="text-center text-[12px] text-stone-500">
-              Sample report. &ldquo;Maya&rdquo; is invented, and her numbers are generated to show what a real report looks like.
+            <p className="text-center text-[13px] text-stone-500">
+              This is the view you&apos;ll have of your child&apos;s prep, updated every time they practice.
             </p>
           }
         />
