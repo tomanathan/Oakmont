@@ -37,7 +37,7 @@ export async function Pricing() {
         <div className="mx-auto mb-10 max-w-[620px] text-center">
           <Eyebrow center light>Pricing</Eyebrow>
           <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[42px]">
-            Same course, <em className="font-medium italic text-pastel-blush">two ways to pay.</em>
+            Same course, two ways to pay.
           </h2>
         </div>
 

@@ -5,7 +5,7 @@ import { track } from "@vercel/analytics";
 import type { LandingQuestion } from "@/lib/landingQuestions";
 import { PassageText } from "@/components/PassageText";
 import { TrackedLink } from "./TrackedLink";
-import { Eyebrow, Highlight } from "./Flourish";
+import { Eyebrow } from "./Flourish";
 
 const LETTERS = ["A", "B", "C", "D"];
 
@@ -61,7 +61,7 @@ export function SampleQuestion({
         <div className="lg:sticky lg:top-24">
           <Eyebrow>Try a question</Eyebrow>
           <h2 className="mb-4 text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] text-forest-900 sm:text-[42px]">
-            The SAT, broken down to <Highlight>every kind of question</Highlight> it asks.
+            The SAT, broken down to every kind of question it asks.
           </h2>
           <p className="mb-6 max-w-[460px] text-[15px] leading-relaxed text-gray-600">
             Each of the {subskillCount} skills shows up as a few specific kinds of question. Oakmont teaches every kind on its own.
