@@ -18,12 +18,14 @@ const ORANGE = "#d3805f";
 // is an example of.
 export function SampleQuestion({
   item,
+  questionCount,
   sectionCount,
   domainCount,
   skillCount,
   typeCount,
 }: {
   item: LandingShowcase;
+  questionCount: number;
   sectionCount: number;
   domainCount: number;
   skillCount: number;
@@ -45,80 +47,88 @@ export function SampleQuestion({
   }
 
   return (
-    <section id="try-a-question" className="scroll-mt-20 border-t border-sage/30 bg-parchment px-6 py-16 sm:py-20">
-      <div className="mx-auto grid max-w-[1120px] items-start gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
-        <div className="lg:sticky lg:top-24">
-          <Eyebrow>Try a question</Eyebrow>
-          <h2 className="mb-4 text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] text-forest-900 sm:text-[42px]">
-            The SAT, broken down to every kind of question it asks.
-          </h2>
-          <p className="mb-6 max-w-[440px] text-[15px] leading-relaxed text-stone-600">
-            Each kind gets its own lesson. Here&apos;s one of them: answer it, then see how it&apos;s taught.
-          </p>
-          <Ladder
-            steps={[
-              { n: sectionCount, label: "test sections", tone: "bg-pastel-sky" },
-              { n: domainCount, label: "subject areas", tone: "bg-pastel-sage" },
-              { n: skillCount, label: "skills", tone: "bg-pastel-butter" },
-              { n: typeCount, label: "question types", tone: "bg-forest text-ivory", last: true },
-            ]}
-          />
-          <div className="mt-6 max-w-[440px] text-[13px] leading-relaxed text-stone-600">
-            <span className="font-semibold text-ink">This one:</span> {item.section} &rsaquo; {item.domain} &rsaquo; {item.skill} &rsaquo;{" "}
-            <span className="font-semibold text-forest">{item.type}</span>
+    <section id="try-a-question" className="scroll-mt-[68px] border-t border-sage/30 bg-parchment px-6 pb-14 pt-8 sm:pb-16">
+      <div className="mx-auto max-w-[1120px]">
+        {/* Header row: the claim on the left, the numbers on the right, with
+            the question count as the headline figure. Kept short so the
+            whole problem below fits on one screen. */}
+        <div className="mb-5 grid items-end gap-5 lg:grid-cols-[1fr_auto] lg:gap-10">
+          <div>
+            <Eyebrow>Try a question</Eyebrow>
+            <h2 className="text-balance font-display text-[28px] font-semibold leading-[1.1] tracking-[-0.01em] text-forest-900 sm:text-[34px]">
+              The SAT, broken down to every kind of question it asks.
+            </h2>
+            <p className="mt-2 max-w-[520px] text-[14.5px] leading-relaxed text-stone-600">
+              Each kind gets its own lesson. Answer this one, then see how it&apos;s taught.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-end gap-5">
+            <div>
+              <div className="font-display text-[48px] font-semibold leading-none tracking-tight text-forest-900 tabular-nums sm:text-[54px]">
+                {questionCount}
+              </div>
+              <div className="mt-1.5 text-[13px] font-semibold text-forest">practice questions, every one explained</div>
+            </div>
+            <Ladder
+              steps={[
+                { n: sectionCount, label: "sections", tone: "bg-pastel-sky" },
+                { n: domainCount, label: "subject areas", tone: "bg-pastel-sage" },
+                { n: skillCount, label: "skills", tone: "bg-pastel-butter" },
+                { n: typeCount, label: "question types", tone: "bg-forest text-ivory", last: true },
+              ]}
+            />
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(60,42,15,0.05),0_18px_44px_-24px_rgba(60,42,15,0.45)] ring-1 ring-[#e2d7c1] sm:p-7">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <span className="rounded-full bg-parchment px-2.5 py-1 font-semibold text-forest ring-1 ring-[#e2d7c1]">
-              {item.skill} &middot; type {item.typeIndex + 1} of {item.typeCount}
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="rounded-full bg-[#fbeaea] px-2 py-0.5 font-semibold text-[#b23b3b]">Hard</span>
-              <span className="text-stone-500">No account needed</span>
-            </span>
-          </div>
-
-          <ZigzagDiagram revealed={answered} />
-
-          <p className="mb-5 mt-4 text-[15.5px] leading-relaxed text-ink">{item.q}</p>
-
-          <div className="grid grid-cols-2 gap-2.5" role="radiogroup" aria-label="Answer choices">
-            {item.choices.map((choice, i) => {
-              const isAnswer = i === item.answer;
-              const isPicked = i === selected;
-              let row = "border-[#d9ceb7] bg-white hover:border-[#587356] hover:bg-[#fbf8f1]";
-              let badge = "bg-[#eef3e9] text-[#2c4c3b]";
-              if (answered && isAnswer) {
-                row = "border-accent bg-[#edf6f0] ring-1 ring-accent";
-                badge = "bg-accent text-white";
-              } else if (answered && isPicked) {
-                row = "border-[#c0524f] bg-[#fcefee] ring-1 ring-[#c0524f]";
-                badge = "bg-[#b23b3b] text-white";
-              } else if (answered) {
-                row = "border-[#e8dfcc] bg-white opacity-60";
-              }
-              return (
-                <button
-                  key={i}
-                  role="radio"
-                  aria-checked={isPicked}
-                  onClick={() => pick(i)}
-                  disabled={answered}
-                  className={`flex items-center gap-3 rounded-xl border px-3.5 py-3 text-left text-[15px] font-medium text-ink transition-colors ${row}`}
-                >
-                  <span className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-[12.5px] font-bold ${badge}`}>
-                    {answered && isAnswer ? "✓" : answered && isPicked ? "✕" : LETTERS[i]}
-                  </span>
-                  {choice}
-                </button>
-              );
-            })}
+        <div className="rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(60,42,15,0.05),0_18px_44px_-24px_rgba(60,42,15,0.45)] ring-1 ring-[#e2d7c1] sm:p-6">
+          <div className="grid items-center gap-5 lg:grid-cols-[1fr_1.05fr] lg:gap-7">
+            <ZigzagDiagram revealed={answered} />
+            <div>
+              <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
+                <span className="rounded-full bg-parchment px-2.5 py-1 font-semibold text-forest ring-1 ring-[#e2d7c1]">
+                  {item.skill} &middot; type {item.typeIndex + 1} of {item.typeCount}
+                </span>
+                <span className="rounded-full bg-[#fbeaea] px-2 py-0.5 font-semibold text-[#b23b3b]">Hard</span>
+                <span className="text-stone-500">No account needed</span>
+              </div>
+              <p className="mb-4 text-[15px] leading-relaxed text-ink">{item.q}</p>
+              <div className="grid grid-cols-2 gap-2.5" role="radiogroup" aria-label="Answer choices">
+                {item.choices.map((choice, i) => {
+                  const isAnswer = i === item.answer;
+                  const isPicked = i === selected;
+                  let row = "border-[#d9ceb7] bg-white hover:border-[#587356] hover:bg-[#fbf8f1]";
+                  let badge = "bg-[#eef3e9] text-[#2c4c3b]";
+                  if (answered && isAnswer) {
+                    row = "border-accent bg-[#edf6f0] ring-1 ring-accent";
+                    badge = "bg-accent text-white";
+                  } else if (answered && isPicked) {
+                    row = "border-[#c0524f] bg-[#fcefee] ring-1 ring-[#c0524f]";
+                    badge = "bg-[#b23b3b] text-white";
+                  } else if (answered) {
+                    row = "border-[#e8dfcc] bg-white opacity-60";
+                  }
+                  return (
+                    <button
+                      key={i}
+                      role="radio"
+                      aria-checked={isPicked}
+                      onClick={() => pick(i)}
+                      disabled={answered}
+                      className={`flex items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors ${row}`}
+                    >
+                      <span className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-[12.5px] font-bold ${badge}`}>
+                        {answered && isAnswer ? "✓" : answered && isPicked ? "✕" : LETTERS[i]}
+                      </span>
+                      {choice}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           {answered && (
-            <div className="mt-6 animate-fade-up">
+            <div className="mt-6 animate-fade-up border-t border-[#ece4d4] pt-6">
               {correct ? (
                 <div className="mb-4 text-[15px] font-semibold text-accent">Right: {item.choices[item.answer]}. Here&apos;s why it works.</div>
               ) : (
@@ -178,11 +188,11 @@ export function SampleQuestion({
 // The four levels of the breakdown, the last (what Oakmont teaches) in green.
 function Ladder({ steps }: { steps: { n: number; label: string; tone: string; last?: boolean }[] }) {
   return (
-    <ol className="grid max-w-[440px] grid-cols-4 gap-2" aria-label="How the SAT breaks down">
+    <ol className="grid grid-cols-4 gap-2" aria-label="How the SAT breaks down">
       {steps.map((s) => (
-        <li key={s.label} className={`rounded-md px-3 py-3 ring-1 ring-sage/25 ${s.tone} ${s.last ? "" : "text-forest"}`}>
-          <div className="font-display text-[24px] font-semibold leading-none tabular-nums">{s.n}</div>
-          <div className={`mt-1 text-[11.5px] leading-tight ${s.last ? "text-ivory/75" : "text-stone-600"}`}>{s.label}</div>
+        <li key={s.label} className={`min-w-[76px] rounded-md px-2.5 py-2 ring-1 ring-sage/25 ${s.tone} ${s.last ? "" : "text-forest"}`}>
+          <div className="font-display text-[20px] font-semibold leading-none tabular-nums">{s.n}</div>
+          <div className={`mt-1 text-[11px] leading-tight ${s.last ? "text-ivory/75" : "text-stone-600"}`}>{s.label}</div>
         </li>
       ))}
     </ol>
@@ -223,7 +233,7 @@ function ZigzagDiagram({ revealed }: { revealed: boolean }) {
   );
   return (
     <figure className="overflow-hidden rounded-xl bg-[#fbf9f4] ring-1 ring-[#ece4d4]">
-      <svg viewBox="0 0 340 248" className="block h-auto w-full" role="img" aria-label="Parallel lines p and q with a zigzag path from A on p, bending at B, to C on q">
+      <svg viewBox="0 0 340 248" className="mx-auto block h-auto max-h-[272px] w-full" role="img" aria-label="Parallel lines p and q with a zigzag path from A on p, bending at B, to C on q">
         {/* the parallel lines, with their arrow marks */}
         {[A[1], C[1]].map((y) => (
           <g key={y}>

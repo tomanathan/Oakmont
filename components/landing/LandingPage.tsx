@@ -2,6 +2,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { LegalFooter } from "@/components/LegalFooter";
 import { ALL_SUBSKILLS, ALL_DOMAINS, CURRICULUM } from "@/data/curriculum";
 import { landingShowcase } from "@/lib/landingShowcase";
+import { QUESTIONS } from "@/data/questions";
 import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { Hero } from "./Hero";
 import { Pitch } from "./Pitch";
@@ -23,6 +24,7 @@ export function LandingPage() {
   const subskillCount = ALL_SUBSKILLS.length;
   const typeCount = ALL_SUBSKILLS.reduce((n, s) => n + s.patterns.length, 0);
   const showcase = landingShowcase();
+  const questionCount = Object.values(QUESTIONS).reduce((n, qs) => n + qs.length, 0);
 
   const faqJsonLd = {
     "@context": "https://schema.org",
@@ -84,6 +86,7 @@ export function LandingPage() {
         {showcase && (
           <SampleQuestion
             item={showcase}
+            questionCount={questionCount}
             sectionCount={CURRICULUM.length}
             domainCount={ALL_DOMAINS.length}
             skillCount={subskillCount}
