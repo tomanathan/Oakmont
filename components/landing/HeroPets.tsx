@@ -151,7 +151,13 @@ const DogSprite = memo(function DogSprite({ cfg, size, slot }: { cfg: DogConfig;
 
 const BALL_D = BALL_R * 2;
 
-export function HeroPets() {
+// `children` is scenery (the title page's trees and ground) rendered inside
+// the same stacking context as the dogs, so a tree planted at a given depth
+// can sit in front of the dogs behind it and behind the dogs in front of it.
+// Dogs stack at zIndex 10 + z*40 (z = depth, 0 back to 1 front; see
+// yardSim's viewDog), on a floor 14px above the bottom (22px higher for the
+// back row) -- see yardFloor.ts for planting things on it.
+export function HeroPets({ children }: { children?: React.ReactNode } = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const ballRef = useRef<HTMLDivElement>(null);
   const ballSquashRef = useRef<HTMLDivElement>(null);
@@ -308,6 +314,7 @@ export function HeroPets() {
 
   return (
     <div ref={containerRef} className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+      {children}
       {CAST.slice(0, layout.castSize).map((cfg, i) => (
         <DogSprite key={i} cfg={cfg} size={layout.dogSize} slot={slotsRef.current[i]} />
       ))}

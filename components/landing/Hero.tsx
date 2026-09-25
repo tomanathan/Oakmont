@@ -1,5 +1,6 @@
 import { BrandMark } from "@/components/BrandMark";
 import { HeroPets } from "./HeroPets";
+import { yardFloor } from "./yardFloor";
 import { TrackedLink } from "./TrackedLink";
 import { Ornament } from "./Flourish";
 import { OakTree } from "./OakTree";
@@ -23,14 +24,23 @@ export function Hero() {
         ].join(", "),
       }}
     >
-      {/* Two drawn oaks framing the title, kept to the edges so nothing
-          sits behind it; the pets play at their roots. Wide screens only --
-          on a phone there's no room beside the copy. */}
-      <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden="true">
-        <OakTree seed={7} className="absolute -right-28 bottom-0 w-[440px] opacity-60 xl:-right-6" />
-        <OakTree seed={21} className="absolute -left-24 bottom-0 w-[360px] -scale-x-100 opacity-45 xl:-left-4" />
-      </div>
-      <HeroPets />
+      {/* The yard: a soft strip of ground at the dogs' floor, and two oaks in
+          the mark's style planted on it at mid depth, inside the dogs' own
+          layer -- so a dog running along the back passes behind a trunk and
+          one in front passes in front of it. Trees on wide screens only; on
+          a phone there's no room beside the copy. */}
+      <HeroPets>
+        <div
+          className="absolute inset-x-0 bottom-0 h-[52px]"
+          style={{ zIndex: 2, background: "linear-gradient(180deg, rgba(232,223,204,0) 0%, rgba(232,223,204,0.55) 45%, rgba(226,215,193,0.7) 100%)" }}
+        />
+        <OakTree
+          seed={21}
+          className="absolute hidden w-[360px] -scale-x-100 lg:block -left-24 xl:-left-4"
+          style={yardFloor(0.4)}
+        />
+        <OakTree seed={7} className="absolute hidden w-[440px] lg:block -right-28 xl:-right-6" style={yardFloor(0.55)} />
+      </HeroPets>
       <div className="relative z-10 mx-auto max-w-[820px] text-center">
         <BrandMark size={88} className="mx-auto mb-6 sm:mb-8" />
         <h1 className="text-balance font-display text-[52px] font-semibold leading-[0.98] tracking-[-0.025em] text-forest-900 sm:text-[92px]">
