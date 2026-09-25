@@ -1,10 +1,11 @@
 import Link from "next/link";
+import { SUPPORT_EMAIL } from "@/lib/support";
 
-// The one place a visible support contact lives across the app -- see
-// app/terms and app/privacy for the pages this links to. SUPPORT_EMAIL is
-// exported so those two pages (and anywhere else that needs it) show the
-// exact same address without risking it drifting out of sync.
-export const SUPPORT_EMAIL = "aman.vishwanathan@gmail.com";
+// The visible support contact across the app -- see app/terms and
+// app/privacy for the pages this links to. SUPPORT_EMAIL lives in
+// lib/support.ts (so server code like lib/email.ts can use it too) and is
+// re-exported here for the pages that already import it from this file.
+export { SUPPORT_EMAIL };
 
 export function LegalFooter({ className = "" }: { className?: string }) {
   return (

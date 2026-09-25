@@ -3,6 +3,8 @@
 // setup. Without a key, this logs instead of sending -- so local dev and a
 // not-yet-configured deployment never crash, they just don't deliver mail.
 
+import { SUPPORT_EMAIL } from "./support";
+
 const RESEND_API_URL = "https://api.resend.com/emails";
 
 export async function sendEmail({
@@ -30,7 +32,7 @@ export async function sendEmail({
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ from, to, subject, html }),
+    body: JSON.stringify({ from, to, subject, html, reply_to: SUPPORT_EMAIL }),
   });
 
   if (!res.ok) {
