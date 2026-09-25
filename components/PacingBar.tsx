@@ -3,7 +3,7 @@ import type { Pacing } from "@/lib/pacing";
 export const PACE_STATUS_STYLES: Record<Pacing["status"], string> = {
   ahead: "text-accent",
   behind: "text-[#9a6a12]",
-  onTrack: "text-gray-500",
+  onTrack: "text-stone-500",
 };
 
 export function paceStatusCopy(pacing: Pacing): string {
@@ -28,7 +28,7 @@ export function PacingBar({ pacing }: { pacing: Pacing }) {
   return (
     <div className="relative mt-5 mb-1">
       <div
-        className="absolute -top-4 -translate-x-1/2 text-[9px] font-semibold text-[#6b6f8e] uppercase tracking-wide whitespace-nowrap"
+        className="absolute -top-4 -translate-x-1/2 text-[9px] font-semibold text-[#7a7565] uppercase tracking-wide whitespace-nowrap"
         style={{ left: `${todayMarker}%` }}
       >
         Today
@@ -36,14 +36,14 @@ export function PacingBar({ pacing }: { pacing: Pacing }) {
       {/* Neutral ink fill, not a subject color -- this bar is the whole
           course's trajectory, not Math's or Reading's, and it sits right
           under the two subject cards, which are each strongly hued. */}
-      <div className="relative h-2.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="relative h-2.5 bg-stone-100 rounded-full overflow-hidden">
         <div
-          className="h-full bg-[#43435c] rounded-full transition-all duration-700 ease-out"
+          className="h-full bg-[#2c4c3b] rounded-full transition-all duration-700 ease-out"
           style={{ width: `${pacing.pctComplete}%` }}
         />
       </div>
       <div
-        className="absolute top-0 w-0.5 h-2.5 bg-ink/60 -translate-x-1/2"
+        className="absolute top-0 w-0.5 h-2.5 bg-forest/60 -translate-x-1/2"
         style={{ left: `${todayMarker}%` }}
         aria-hidden
       />

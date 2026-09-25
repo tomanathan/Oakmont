@@ -16,7 +16,7 @@ function LoginPageContent() {
 
   return (
     <div className="max-w-[420px] mx-auto px-6 py-8 font-sans">
-      <Link href="/" className="inline-block text-sm text-gray-500 transition-colors hover:text-ink">
+      <Link href="/" className="inline-block text-sm text-stone-500 transition-colors hover:text-ink">
         &larr; Back to home
       </Link>
       <div className="text-center mb-8 mt-6">
@@ -24,7 +24,7 @@ function LoginPageContent() {
           <BrandMark size={56} className="mx-auto mb-3" />
         </Link>
         <div className="font-display font-semibold text-[28px] text-ink mb-1">Oakmont Study Center</div>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-stone-500">
           A complete SAT plan, paced to your test date.
         </div>
       </div>
@@ -37,7 +37,7 @@ function LoginPageContent() {
         </div>
         <LoginCard initialMode={initialMode} next={searchParams.get("next")} />
       </div>
-      <div className="text-center text-xs text-gray-400 mt-4">
+      <div className="text-center text-xs text-stone-400 mt-4">
         Your progress is saved automatically and syncs whenever you log back in.
       </div>
       <LegalFooter className="mt-6" />

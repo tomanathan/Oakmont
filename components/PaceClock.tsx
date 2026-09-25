@@ -41,7 +41,7 @@ export function PaceClock({ elapsed, target, label }: { elapsed: number; target:
 
   if (hidden) {
     return (
-      <button onClick={toggle} className="text-[11.5px] font-medium text-gray-400 transition-colors hover:text-ink">
+      <button onClick={toggle} className="text-[11.5px] font-medium text-stone-400 transition-colors hover:text-ink">
         Show clock
       </button>
     );
@@ -53,20 +53,20 @@ export function PaceClock({ elapsed, target, label }: { elapsed: number; target:
       <div className="flex flex-col items-end leading-none">
         <span className={`text-[13px] font-semibold tabular-nums ${over ? "text-[#b4541a]" : "text-ink"}`}>
           {formatSeconds(elapsed)}
-          <span className="font-normal text-gray-400"> / {formatSeconds(target)}</span>
+          <span className="font-normal text-stone-400"> / {formatSeconds(target)}</span>
         </span>
-        <span className="mt-1 text-[10px] uppercase tracking-[0.08em] text-gray-400">{label}</span>
+        <span className="mt-1 text-[10px] uppercase tracking-[0.08em] text-stone-400">{label}</span>
       </div>
-      <div className="flex h-7 w-1.5 flex-col justify-end overflow-hidden rounded-full bg-[#f0eff9]" aria-hidden>
+      <div className="flex h-7 w-1.5 flex-col justify-end overflow-hidden rounded-full bg-[#eef3e9]" aria-hidden>
         <div
-          className={`w-full rounded-full transition-[height] duration-700 ${over ? "bg-[#e07a3a]" : "bg-[#6d7fd6]"}`}
+          className={`w-full rounded-full transition-[height] duration-700 ${over ? "bg-[#e07a3a]" : "bg-[#587356]"}`}
           style={{ height: `${pct}%` }}
         />
       </div>
       <button
         onClick={toggle}
         aria-label="Hide clock"
-        className="flex h-6 w-6 items-center justify-center rounded-md text-gray-300 transition-colors hover:bg-[#f4f3fb] hover:text-gray-500"
+        className="flex h-6 w-6 items-center justify-center rounded-md text-stone-300 transition-colors hover:bg-[#f5f0e5] hover:text-stone-500"
       >
         <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
           <path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />

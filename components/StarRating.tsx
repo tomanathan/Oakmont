@@ -22,7 +22,7 @@ export function StarRating({
       aria-label={`${stars} of ${max} stars`}
     >
       {Array.from({ length: max }, (_, i) => (
-        <span key={i} className={i < stars ? "text-[#c9971b]" : "text-gray-200"}>
+        <span key={i} className={i < stars ? "text-[#c9971b]" : "text-stone-200"}>
           &#9733;
         </span>
       ))}

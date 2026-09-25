@@ -29,7 +29,7 @@ export function ParentShell({
 
   return (
     <div className="mx-auto max-w-[1180px] px-4 pb-16 pt-2 font-sans">
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-stone-200 bg-white px-4 py-2 shadow-[0_1px_2px_rgba(26,26,46,0.04),0_6px_20px_rgba(26,26,46,0.05)]">
+      <header className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-stone-200 bg-white px-4 py-2 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_6px_20px_rgba(38,34,24,0.05)]">
         <div className="flex min-w-0 items-center gap-2.5">
           <BrandMark size={28} />
           <div className="min-w-0">
@@ -44,7 +44,7 @@ export function ParentShell({
               key={s.id}
               href={`/parent/dashboard?student=${s.id}`}
               className={`rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors ${
-                s.id === activeStudentId ? "bg-ink text-white" : "text-gray-600 hover:bg-[#f3f2fc] hover:text-ink"
+                s.id === activeStudentId ? "bg-forest text-white" : "text-stone-600 hover:bg-[#eef3e9] hover:text-ink"
               }`}
             >
               {s.name}
@@ -53,7 +53,7 @@ export function ParentShell({
           <Link
             href="/parent/dashboard?add=1"
             className={`rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors ${
-              activeStudentId === "" && students.length > 0 ? "bg-ink text-white" : "text-[#4a5bb0] hover:bg-[#f3f2fc]"
+              activeStudentId === "" && students.length > 0 ? "bg-forest text-white" : "text-[#2c4c3b] hover:bg-[#eef3e9]"
             }`}
           >
             + Add a student

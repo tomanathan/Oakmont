@@ -25,8 +25,8 @@ export function ConfidencePicker({
 }) {
   return (
     <div className={`flex flex-wrap items-center gap-2 ${compact ? "" : "mt-3"}`}>
-      <span className="text-[12px] text-gray-400">How sure?</span>
-      <div role="radiogroup" aria-label="How sure are you?" className="inline-flex rounded-lg bg-[#f4f3fb] p-0.5">
+      <span className="text-[12px] text-stone-400">How sure?</span>
+      <div role="radiogroup" aria-label="How sure are you?" className="inline-flex rounded-lg bg-[#f5f0e5] p-0.5">
         {CONFIDENCE_OPTIONS.map((o) => (
           <button
             key={o.value}
@@ -34,7 +34,7 @@ export function ConfidencePicker({
             aria-checked={value === o.value}
             onClick={() => onChange(o.value)}
             className={`rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors ${
-              value === o.value ? "bg-white text-ink shadow-[0_1px_2px_rgba(26,26,46,0.12)]" : "text-gray-500 hover:text-ink"
+              value === o.value ? "bg-white text-ink shadow-[0_1px_2px_rgba(38,34,24,0.12)]" : "text-stone-500 hover:text-ink"
             }`}
           >
             {o.label}

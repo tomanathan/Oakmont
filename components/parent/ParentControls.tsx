@@ -74,17 +74,17 @@ export function ParentControls({
             onChange={(e) => setName(e.target.value)}
             maxLength={40}
             placeholder="First name"
-            className="w-36 rounded-lg border border-[#e0defa] px-2.5 py-1.5 text-sm focus:border-[#6d7fd6] focus:outline-none"
+            className="w-36 rounded-lg border border-[#ddd3bf] px-2.5 py-1.5 text-sm focus:border-[#587356] focus:outline-none"
           />
-          <button type="submit" disabled={saving} className="rounded-lg bg-ink px-3 py-1.5 text-sm font-semibold text-white">
+          <button type="submit" disabled={saving} className="rounded-lg bg-forest px-3 py-1.5 text-sm font-semibold text-white">
             Save
           </button>
-          <button type="button" onClick={() => setEditing(false)} className="px-1.5 text-sm text-gray-500 hover:text-ink">
+          <button type="button" onClick={() => setEditing(false)} className="px-1.5 text-sm text-stone-500 hover:text-ink">
             Cancel
           </button>
         </form>
       ) : (
-        <button onClick={() => setEditing(true)} className="rounded-lg border border-[#e0defa] bg-white px-3 py-1.5 text-[13px] font-medium text-ink hover:bg-[#f3f2fc]">
+        <button onClick={() => setEditing(true)} className="rounded-lg border border-[#ddd3bf] bg-white px-3 py-1.5 text-[13px] font-medium text-ink hover:bg-[#eef3e9]">
           Rename
         </button>
       )}
@@ -92,9 +92,9 @@ export function ParentControls({
         onClick={toggleWeekly}
         role="switch"
         aria-checked={weekly}
-        className="flex items-center gap-2 rounded-lg border border-[#e0defa] bg-white px-3 py-1.5 text-[13px] font-medium text-ink hover:bg-[#f3f2fc]"
+        className="flex items-center gap-2 rounded-lg border border-[#ddd3bf] bg-white px-3 py-1.5 text-[13px] font-medium text-ink hover:bg-[#eef3e9]"
       >
-        <span className={`relative inline-block h-4 w-7 rounded-full transition-colors ${weekly ? "bg-accent" : "bg-gray-300"}`}>
+        <span className={`relative inline-block h-4 w-7 rounded-full transition-colors ${weekly ? "bg-accent" : "bg-stone-300"}`}>
           <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${weekly ? "left-3.5" : "left-0.5"}`} />
         </span>
         Sunday email

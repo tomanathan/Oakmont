@@ -9,10 +9,10 @@ export type OzhoAction = "pet" | "trick" | "next" | "fetch" | "sit" | "follow" |
 
 const STAGE_PILL: Record<PetStage, { label: string; cls: string }> = {
   thriving: { label: "Thriving", cls: "bg-[#eaf6ef] text-accent" },
-  content: { label: "Doing fine", cls: "bg-[#eef0fc] text-[#4a5bb0]" },
+  content: { label: "Doing fine", cls: "bg-[#eaf1e5] text-[#2c4c3b]" },
   hungry: { label: "Hungry", cls: "bg-[#fbf1df] text-[#9a6a12]" },
   critical: { label: "In trouble", cls: "bg-[#fbeaea] text-[#b23b3b]" },
-  dead: { label: "Gone", cls: "bg-[#f0eff2] text-gray-500" },
+  dead: { label: "Gone", cls: "bg-[#f1ece2] text-stone-500" },
 };
 
 const PANEL_W = 292;
@@ -128,7 +128,7 @@ export function OzhoPanel({
       ref={ref}
       role="dialog"
       aria-label={`${PET_NAME}`}
-      className={`pointer-events-auto fixed z-[60] rounded-2xl border border-[#ece9f7] bg-white p-3.5 font-sans shadow-[0_18px_48px_-12px_rgba(26,26,46,0.28)] ${
+      className={`pointer-events-auto fixed z-[60] rounded-2xl border border-[#ebe3d3] bg-white p-3.5 font-sans shadow-[0_18px_48px_-12px_rgba(38,34,24,0.28)] ${
         sheet ? "inset-x-3 bottom-3 animate-ozho-sheet" : "animate-ozho-panel"
       }`}
       style={
@@ -143,12 +143,12 @@ export function OzhoPanel({
             <span className="font-display text-[16px] font-semibold text-ink">{PET_NAME}</span>
             {pill && <span className={`rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${pill.cls}`}>{pill.label}</span>}
           </div>
-          <div className="mt-0.5 text-[12px] text-gray-500">{statusLine(stage, fedToday, streak)}</div>
+          <div className="mt-0.5 text-[12px] text-stone-500">{statusLine(stage, fedToday, streak)}</div>
         </div>
         <button
           onClick={onClose}
           aria-label="Close"
-          className="-mr-1 -mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-[#f4f3fb] hover:text-ink"
+          className="-mr-1 -mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-stone-400 transition-colors hover:bg-[#f5f0e5] hover:text-ink"
         >
           <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
             <path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -158,12 +158,12 @@ export function OzhoPanel({
 
       <div className="mt-3">
         {next === undefined ? (
-          <div className="h-[52px] animate-pulse rounded-xl bg-[#f4f3fb]" />
+          <div className="h-[52px] animate-pulse rounded-xl bg-[#f5f0e5]" />
         ) : next && !onNextPage ? (
           <button
             data-autofocus
             onClick={() => onGo(next.href)}
-            className="group flex w-full items-center gap-3 rounded-xl bg-ink px-3.5 py-2.5 text-left text-white transition-colors hover:bg-[#26263c]"
+            className="group flex w-full items-center gap-3 rounded-xl bg-forest px-3.5 py-2.5 text-left text-white transition-colors hover:bg-[#1f2a23]"
           >
             <div className="min-w-0 flex-1">
               <div className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-white/50">Up next</div>
@@ -174,7 +174,7 @@ export function OzhoPanel({
             </span>
           </button>
         ) : (
-          <div className="rounded-xl bg-[#f6f5fd] px-3.5 py-2.5 text-[12.5px] text-gray-600">
+          <div className="rounded-xl bg-[#f6f1e6] px-3.5 py-2.5 text-[12.5px] text-stone-600">
             {onNextPage ? "You're on the next thing already. Go get it." : "All caught up on your plan. Nice."}
           </div>
         )}
@@ -189,8 +189,8 @@ export function OzhoPanel({
               role="menuitem"
               data-autofocus={(next === null || onNextPage) && i === 0 ? true : undefined}
               onClick={() => onAction(a.action)}
-              className={`flex flex-col items-center gap-1 rounded-xl px-1 py-2.5 text-[11.5px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6d7fd6] ${
-                on ? "bg-[#eef0fc] text-[#4a5bb0]" : "text-gray-600 hover:bg-[#f6f5fd] hover:text-ink"
+              className={`flex flex-col items-center gap-1 rounded-xl px-1 py-2.5 text-[11.5px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#587356] ${
+                on ? "bg-[#eaf1e5] text-[#2c4c3b]" : "text-stone-600 hover:bg-[#f6f1e6] hover:text-ink"
               }`}
             >
               <span className="flex h-5 items-center">{a.icon}</span>

@@ -39,7 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           own file. CompanionGate hides both companions entirely on
           parent-facing routes (/parent, /share), where there's no student
           session for their ambient chatter to be about. */}
-      <body className="bg-white text-ink font-sans antialiased">
+      <body className="bg-[#faf6ec] text-ink font-sans antialiased">
         {/* The id here is a deliberate hook, not decoration: ScoutCompanion
             measures this element's own height (not document.documentElement's)
             to know how far down the *actual page content* goes. Ozho is a

@@ -16,7 +16,7 @@ function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-stone-600">
         This reset link is missing its token. Request a new one from the{" "}
         <a href="/login" className="underline">
           login page
@@ -58,23 +58,23 @@ function ResetPasswordForm() {
 
   return (
     <form onSubmit={submit}>
-      <label className="block text-sm text-gray-700 mb-1">New password</label>
+      <label className="block text-sm text-stone-700 mb-1">New password</label>
       <input
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="At least 6 characters"
-        className="w-full px-3 py-2.5 rounded-lg border border-[#e0defa] mb-3.5 text-sm focus:outline-none focus:border-[#6d7fd6]"
+        className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
         required
         minLength={6}
       />
-      <label className="block text-sm text-gray-700 mb-1">Confirm new password</label>
+      <label className="block text-sm text-stone-700 mb-1">Confirm new password</label>
       <input
         type="password"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         placeholder="Type it again"
-        className="w-full px-3 py-2.5 rounded-lg border border-[#e0defa] mb-3.5 text-sm focus:outline-none focus:border-[#6d7fd6]"
+        className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
         required
         minLength={6}
       />
@@ -82,7 +82,7 @@ function ResetPasswordForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full py-2.5 rounded-lg bg-ink text-white font-semibold text-sm disabled:opacity-60"
+        className="w-full py-2.5 rounded-lg bg-forest text-white font-semibold text-sm disabled:opacity-60"
       >
         {submitting ? "Saving..." : "Set new password"}
       </button>
@@ -97,8 +97,8 @@ export default function ResetPasswordPage() {
         <BrandMark size={56} className="mx-auto mb-3" />
         <div className="font-display font-semibold text-[28px] text-ink mb-1">Set a new password</div>
       </div>
-      <div className="bg-white border border-[#ece9f7] rounded-xl p-7 shadow-[0_1px_2px_rgba(26,26,46,0.04),0_8px_24px_rgba(26,26,46,0.06)]">
-        <Suspense fallback={<div className="text-sm text-gray-400">Loading...</div>}>
+      <div className="bg-white border border-[#ebe3d3] rounded-xl p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
+        <Suspense fallback={<div className="text-sm text-stone-400">Loading...</div>}>
           <ResetPasswordForm />
         </Suspense>
       </div>

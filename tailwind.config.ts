@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#1a1a2e",
+        ink: "#1d2621",
         accent: "#2f6f4f",
         // Homepage theme, following 60-30-10: ivory and parchment grounds
         // (~60%), hunter green for type, buttons and a few panels (~30%),

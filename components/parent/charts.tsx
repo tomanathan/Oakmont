@@ -6,9 +6,9 @@ import type { DayCell, WeekPoint } from "@/lib/parentInsights";
 // Small SVG charts for the parent report. Drawn from the report's own
 // numbers, no chart library.
 
-const INK = "#1a1a2e";
-const GRID = "#ece9f7";
-const MUTED = "#8a8499";
+const INK = "#1d2621";
+const GRID = "#ebe3d3";
+const MUTED = "#8f887a";
 const GREEN = "#2f6f4f";
 
 function fmtDay(key: string, opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }) {
@@ -18,7 +18,7 @@ function fmtDay(key: string, opts: Intl.DateTimeFormatOptions = { month: "short"
 
 // ---- 12-week activity calendar ------------------------------------------------
 
-const CAL_LEVELS = ["#f1eff8", "#cfe3d7", "#9cc8ae", "#5f9f7b", GREEN];
+const CAL_LEVELS = ["#eef3e9", "#cfe3d7", "#9cc8ae", "#5f9f7b", GREEN];
 
 function level(minutes: number): number {
   if (minutes <= 0) return 0;
@@ -92,7 +92,7 @@ export function ActivityCalendar({ days }: { days: DayCell[] }) {
           )}
         </svg>
       </div>
-      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[11.5px] text-gray-500">
+      <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-[11.5px] text-stone-500">
         <span className="min-h-[18px]">
           {hover
             ? `${fmtDay(hover.day, { weekday: "short", month: "short", day: "numeric" })}: ${hover.minutes ? `${hover.minutes} min` : "no study"}${hover.questions ? `, ${hover.questions} questions` : ""}`
@@ -148,7 +148,7 @@ export function WeeklyTrend({ weeks }: { weeks: WeekPoint[] }) {
         const x = L + slot * (i + 0.5);
         return (
           <g key={w.weekStart}>
-            <rect x={x - bw / 2} y={yMin(w.minutes)} width={bw} height={T + ph - yMin(w.minutes)} rx={4} fill={i === weeks.length - 1 ? "#6d7fd6" : "#c5cbef"}>
+            <rect x={x - bw / 2} y={yMin(w.minutes)} width={bw} height={T + ph - yMin(w.minutes)} rx={4} fill={i === weeks.length - 1 ? "#587356" : "#c9d8c2"}>
               <title>{`Week of ${fmtDay(w.weekStart)}: ${w.minutes} min, ${w.questions} questions${w.accuracy !== null ? `, ${w.accuracy}% correct` : ""}, ${w.activeDays} active days`}</title>
             </rect>
             <text x={x} y={H - 10} fontSize={10} fill={MUTED} textAnchor="middle">
@@ -248,7 +248,7 @@ export function ScoreTrend({
 
 // ---- a 0-100 bar ------------------------------------------------------------------
 
-export function PctBar({ value, color = GREEN, track = "#f1eff8" }: { value: number | null; color?: string; track?: string }) {
+export function PctBar({ value, color = GREEN, track = "#eef3e9" }: { value: number | null; color?: string; track?: string }) {
   return (
     <div className="h-1.5 w-full overflow-hidden rounded-full" style={{ background: track }}>
       <div className="h-full rounded-full transition-all duration-500" style={{ width: `${value ?? 0}%`, background: color }} />

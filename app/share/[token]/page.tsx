@@ -20,7 +20,7 @@ export default async function SharePage({ params }: { params: { token: string } 
       <div className="mx-auto max-w-[480px] px-6 py-16 text-center font-sans">
         <BrandMark size={48} className="mx-auto mb-4" />
         <div className="mb-2 text-lg font-semibold text-ink">This link isn&apos;t valid</div>
-        <div className="text-sm text-gray-500">It may have been turned off, or the link might be mistyped. Ask your student for a fresh one.</div>
+        <div className="text-sm text-stone-500">It may have been turned off, or the link might be mistyped. Ask your student for a fresh one.</div>
       </div>
     );
   }
@@ -32,13 +32,13 @@ export default async function SharePage({ params }: { params: { token: string } 
       <header className="mb-4 flex items-center gap-2.5 px-4 py-3">
         <BrandMark size={26} />
         <div className="font-display text-[14px] font-semibold text-ink">Oakmont Study Center</div>
-        <span className="text-xs text-gray-400">&middot; shared study report</span>
+        <span className="text-xs text-stone-400">&middot; shared study report</span>
       </header>
       <ParentReportView
         report={report}
         footer={
-          <p className="text-center text-[12px] leading-relaxed text-gray-400">
-            For the Sunday email and times in your own time zone, <a href="/parent/login?mode=signup" className="text-[#4a5bb0] underline">create a free parent account</a>.
+          <p className="text-center text-[12px] leading-relaxed text-stone-400">
+            For the Sunday email and times in your own time zone, <a href="/parent/login?mode=signup" className="text-[#2c4c3b] underline">create a free parent account</a>.
           </p>
         }
       />

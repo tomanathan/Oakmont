@@ -7,10 +7,9 @@ html, body {
 }
 
 body {
-  /* Warm off-white matched to the Oakmont mark's cream background, rather
-     than the cooler lavender-tinted gray this used to be -- ties the page
-     backdrop to the brand instead of clashing with it. */
-  background: #faf8f4;
+  /* Ivory, the same ground as the homepage, so the app and the front page
+     read as one place. */
+  background: #faf6ec;
 }
 
 .katex-inline .katex {

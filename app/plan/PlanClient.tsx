@@ -79,7 +79,7 @@ export function PlanClient({
   return (
     <div>
       <h1 className="font-display text-[28px] font-semibold leading-tight text-ink mb-1.5">Study plan</h1>
-      <p className="max-w-[62ch] text-sm leading-relaxed text-gray-500 mb-5">
+      <p className="max-w-[62ch] text-sm leading-relaxed text-stone-500 mb-5">
         {weeks.length} weeks, day by day. All {totalTests} practice tests are spread across it, and the
         schedule leans toward whichever domains your scores say need the most work.{" "}
         {targetTestDate ? "Change your test date" : "Set a test date"} in{" "}
@@ -99,7 +99,7 @@ export function PlanClient({
                 ? "Your SAT is today — good luck!"
                 : "Your SAT date has passed"}
             </span>{" "}
-            <span className="text-gray-500">
+            <span className="text-stone-500">
               &middot;{" "}
               {formatUTCDate(targetTestDate, { weekday: "long", month: "long", day: "numeric" })}
             </span>
@@ -118,17 +118,17 @@ export function PlanClient({
         </div>
       )}
 
-      <div className="bg-[#eef0fc] border border-[#d7dbf3] rounded-xl p-5 mb-6">
+      <div className="bg-[#eaf1e5] border border-[#c9d8c2] rounded-xl p-5 mb-6">
         <div className="flex justify-between items-baseline mb-2">
           <span className="text-sm font-semibold text-ink">Overall progress</span>
-          <span className="text-sm text-[#6b6f8e]">
+          <span className="text-sm text-[#7a7565]">
             {doneSubskills} / {allSubskills.length} passed &middot; {masteredSubskills} mastered &middot;{" "}
             <span className="text-accent font-semibold">{weekPct}%</span>
           </span>
         </div>
         <div className="h-2.5 bg-white/70 rounded-md overflow-hidden">
           <div
-            className="h-full bg-[#6d7fd6] transition-all duration-700 ease-out"
+            className="h-full bg-[#587356] transition-all duration-700 ease-out"
             style={{ width: `${weekPct}%` }}
           />
         </div>
@@ -148,27 +148,27 @@ export function PlanClient({
             <div
               key={w.week}
               className={`border rounded-[10px] overflow-hidden ${
-                isCurrentWeek ? "border-[#c9c6ee]" : "border-[#ece9f7]"
+                isCurrentWeek ? "border-[#c9d8c2]" : "border-[#ebe3d3]"
               } bg-white`}
             >
               <button
                 onClick={() => toggleWeek(w.week)}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 text-left hover:bg-[#faf9ff]"
+                className="w-full flex items-center gap-3 px-3.5 py-2.5 text-left hover:bg-[#f8f4eb]"
               >
-                <div className="text-xs font-bold text-gray-400 w-14 flex-shrink-0">
+                <div className="text-xs font-bold text-stone-400 w-14 flex-shrink-0">
                   Week {w.week}
                 </div>
-                <div className="text-[11px] text-gray-400 w-28 flex-shrink-0">
+                <div className="text-[11px] text-stone-400 w-28 flex-shrink-0">
                   {formatDate(weekStart)} &ndash; {formatDate(weekEnd)}
                 </div>
                 <div className="flex-1 flex items-center gap-2 flex-wrap min-w-0">
                   {isCurrentWeek && (
-                    <span className="text-[10px] font-bold uppercase tracking-wide text-[#6d7fd6] bg-[#eef0fc] px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-[#587356] bg-[#eaf1e5] px-1.5 py-0.5 rounded">
                       This week
                     </span>
                   )}
                   {w.subskills.length > 0 && (
-                    <span className="text-[13px] text-gray-600">
+                    <span className="text-[13px] text-stone-600">
                       {w.subskills.length} subskill{w.subskills.length === 1 ? "" : "s"}
                       {doneInWeek > 0 && ` · ${doneInWeek} passed`}
                     </span>
@@ -187,14 +187,14 @@ export function PlanClient({
                   height="16"
                   viewBox="0 0 16 16"
                   aria-hidden="true"
-                  className={`flex-shrink-0 text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
+                  className={`flex-shrink-0 text-stone-400 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
                 >
                   <path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
 
               {isOpen && (
-                <div className="border-t border-[#f0eff9] divide-y divide-[#f5f4fb]">
+                <div className="border-t border-[#eef3e9] divide-y divide-[#f6f1e6]">
                   {w.days.map((d) => {
                     const dayDate = addUTCDays(weekStart, d.day - 1);
                     const isToday = isCurrentWeek && d.day - 1 === currentDayOfWeek;
@@ -204,21 +204,21 @@ export function PlanClient({
                       <div
                         key={d.day}
                         className={`flex items-start gap-3 px-3.5 py-2.5 ${
-                          isExamDay ? "bg-[#fffaf0]" : isToday ? "bg-[#faf9ff]" : ""
+                          isExamDay ? "bg-[#fffaf0]" : isToday ? "bg-[#f8f4eb]" : ""
                         }`}
                       >
                         <div className="w-14 flex-shrink-0 pt-0.5">
                           {/* The real weekday of this date -- the plan's own dayName is just
                               the slot's position in the course week (slot 1 is
                               "Mon" whatever day the course started on). */}
-                          <div className="text-[11px] font-bold text-gray-500">
+                          <div className="text-[11px] font-bold text-stone-500">
                             {formatUTCDate(dayDate, { weekday: "short" })}
                           </div>
-                          <div className="text-[10px] text-gray-400">{formatDate(dayDate)}</div>
+                          <div className="text-[10px] text-stone-400">{formatDate(dayDate)}</div>
                           {isExamDay ? (
                             <div className="text-[9px] font-bold uppercase text-[#9a6a12]">SAT day</div>
                           ) : isToday ? (
-                            <div className="text-[9px] font-bold uppercase text-[#6d7fd6]">Today</div>
+                            <div className="text-[9px] font-bold uppercase text-[#587356]">Today</div>
                           ) : null}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -247,7 +247,7 @@ function DayContent({
   onNavigate: (path: string) => void;
 }) {
   if (day.type === "rest") {
-    return <div className="text-[13px] text-gray-300">Rest &amp; catch up</div>;
+    return <div className="text-[13px] text-stone-300">Rest &amp; catch up</div>;
   }
   if (day.type === "test") {
     return (
@@ -277,13 +277,13 @@ function DayContent({
     return (
       <button
         onClick={() => onNavigate("/review")}
-        className="flex w-full items-center gap-3 rounded-lg bg-[#f6f5fd] px-2.5 py-1.5 text-left transition-colors hover:bg-[#efedfb]"
+        className="flex w-full items-center gap-3 rounded-lg bg-[#f6f1e6] px-2.5 py-1.5 text-left transition-colors hover:bg-[#eef3e9]"
       >
         <div className="min-w-0 flex-1">
           <div className="text-sm font-medium text-ink">Mixed review</div>
-          <div className="text-xs text-gray-400">A short set across everything you&apos;ve studied, no labels</div>
+          <div className="text-xs text-stone-400">A short set across everything you&apos;ve studied, no labels</div>
         </div>
-        <span className="text-gray-400">&rarr;</span>
+        <span className="text-stone-400">&rarr;</span>
       </button>
     );
   }
@@ -303,7 +303,7 @@ function DayContent({
           >
             <div className="flex-1 min-w-0">
               <div className="text-sm font-medium text-ink">{s.name}</div>
-              <div className="text-xs text-gray-400">
+              <div className="text-xs text-stone-400">
                 {s.section} &middot; {s.domain}
               </div>
             </div>

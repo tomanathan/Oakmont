@@ -26,11 +26,11 @@ export function topRepeatedTrap(traps: (string | null | undefined)[]): { trap: s
 
 export function TrapToWatch({ trap, count }: { trap: string; count: number }) {
   return (
-    <div className="border-t border-[#f2f0fa] px-5 py-3 sm:px-6">
+    <div className="border-t border-[#eef3e9] px-5 py-3 sm:px-6">
       <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#b4541a]">
         Trap to watch · caught you {count} times
       </div>
-      <div className="mt-1 text-[13.5px] leading-relaxed text-gray-700">{trap}</div>
+      <div className="mt-1 text-[13.5px] leading-relaxed text-stone-700">{trap}</div>
     </div>
   );
 }

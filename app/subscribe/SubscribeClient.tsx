@@ -55,23 +55,23 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
             than a discount alternative to the subscription. */}
         {sixmonth && (
           <div className="relative bg-white border-2 border-ink rounded-2xl p-6 flex flex-col">
-            <div className="absolute -top-3 left-6 bg-ink text-white text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
+            <div className="absolute -top-3 left-6 bg-forest text-white text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
               Full course access
             </div>
             <div className="mt-2 mb-1 flex items-baseline gap-1.5">
               <span className="text-[36px] leading-none font-display font-semibold text-ink">
                 {formatAmount(sixmonth.amountCents, sixmonth.currency)}
               </span>
-              <span className="text-sm text-gray-500">one time</span>
+              <span className="text-sm text-stone-500">one time</span>
             </div>
-            <div className="text-sm text-gray-500 mb-5">
+            <div className="text-sm text-stone-500 mb-5">
               6 months of access — plenty for most students' whole prep window. One payment, nothing to
               remember to cancel.
             </div>
             <button
               onClick={() => startCheckout("sixmonth")}
               disabled={loadingPlan !== null}
-              className="mt-auto w-full py-3 rounded-lg bg-ink text-white font-semibold text-sm disabled:opacity-60"
+              className="mt-auto w-full py-3 rounded-lg bg-forest text-white font-semibold text-sm disabled:opacity-60"
             >
               {loadingPlan === "sixmonth" ? "Redirecting..." : "Get full access"}
             </button>
@@ -79,21 +79,21 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
         )}
 
         {monthly && (
-          <div className="bg-white border border-[#ece9f7] rounded-2xl p-6 flex flex-col">
+          <div className="bg-white border border-[#ebe3d3] rounded-2xl p-6 flex flex-col">
             <div className="mb-1 flex items-baseline gap-1.5">
               <span className="text-[36px] leading-none font-display font-semibold text-ink">
                 {formatAmount(monthly.amountCents, monthly.currency)}
               </span>
-              <span className="text-sm text-gray-500">/month</span>
+              <span className="text-sm text-stone-500">/month</span>
             </div>
-            <div className="text-sm text-gray-500 mb-5">
+            <div className="text-sm text-stone-500 mb-5">
               Pay month to month, cancel anytime. Starts with a 7-day free trial — your card isn&apos;t
               charged until it ends.
             </div>
             <button
               onClick={() => startCheckout("monthly")}
               disabled={loadingPlan !== null}
-              className="mt-auto w-full py-3 rounded-lg border border-[#e0defa] text-ink font-semibold text-sm disabled:opacity-60"
+              className="mt-auto w-full py-3 rounded-lg border border-[#ddd3bf] text-ink font-semibold text-sm disabled:opacity-60"
             >
               {loadingPlan === "monthly" ? "Redirecting..." : "Start free trial"}
             </button>

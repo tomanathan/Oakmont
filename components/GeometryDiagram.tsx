@@ -3,7 +3,7 @@ import type {
   TransversalPosition,
 } from "@/lib/diagramTypes";
 
-const STROKE = "#3a3550";
+const STROKE = "#383a30";
 const MUTED = "#ab9c88";
 const HILITE = "#b5602f";
 const FILL = "#fef8f2";
@@ -1467,7 +1467,7 @@ export function GeometryDiagram({ spec }: { spec: DiagramSpec }) {
         {spec.kind === "exponentialGraph" && <ExponentialGraph {...spec} />}
         {spec.kind === "scatterGraph" && <ScatterGraph {...spec} />}
       </svg>
-      <div className="text-[10px] text-gray-400 mt-1">Figure not drawn to scale.</div>
+      <div className="text-[10px] text-stone-400 mt-1">Figure not drawn to scale.</div>
     </div>
   );
 }

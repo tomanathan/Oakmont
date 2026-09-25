@@ -103,10 +103,10 @@ export function AnalysisClient({
 
   if (!expanded) {
     return (
-      <div className="flex items-center justify-between gap-3 bg-white border border-[#ece9f7] rounded-xl px-5 py-4 flex-wrap">
+      <div className="flex items-center justify-between gap-3 bg-white border border-[#ebe3d3] rounded-xl px-5 py-4 flex-wrap">
         <div className="min-w-0">
           <div className="text-sm font-semibold text-ink mb-0.5">Practice exam analysis</div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-stone-500">
             {latest
               ? `${tests.length} test${tests.length === 1 ? "" : "s"} logged · latest: ${latest.compositeScore} (${formatUTCDate(latest.takenAt, { month: "short", day: "numeric" })})`
               : "No practice tests logged yet."}
@@ -115,14 +115,14 @@ export function AnalysisClient({
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={openToLog}
-            className="px-3.5 py-2 rounded-lg border border-[#e0defa] bg-[#f0eff9] text-gray-700 text-sm font-medium hover:border-[#c9c6ee]"
+            className="px-3.5 py-2 rounded-lg border border-[#ddd3bf] bg-[#eef3e9] text-stone-700 text-sm font-medium hover:border-[#c9d8c2]"
           >
             + Log a practice test
           </button>
           {tests.length > 0 && (
             <button
               onClick={() => setExpanded(true)}
-              className="px-3.5 py-2 rounded-lg text-gray-500 text-sm font-medium hover:text-ink"
+              className="px-3.5 py-2 rounded-lg text-stone-500 text-sm font-medium hover:text-ink"
             >
               View details &#9656;
             </button>
@@ -140,7 +140,7 @@ export function AnalysisClient({
           {tests.length > 0 && (
             <button
               onClick={() => (formOpen ? closeForm() : setFormOpen(true))}
-              className="px-3.5 py-2 rounded-lg border border-[#e0defa] bg-[#f0eff9] text-gray-700 text-sm font-medium hover:border-[#c9c6ee]"
+              className="px-3.5 py-2 rounded-lg border border-[#ddd3bf] bg-[#eef3e9] text-stone-700 text-sm font-medium hover:border-[#c9d8c2]"
             >
               {formOpen ? "Cancel" : "+ Log a practice test"}
             </button>
@@ -150,13 +150,13 @@ export function AnalysisClient({
               setExpanded(false);
               closeForm();
             }}
-            className="px-3.5 py-2 rounded-lg text-gray-400 text-sm font-medium hover:text-ink"
+            className="px-3.5 py-2 rounded-lg text-stone-400 text-sm font-medium hover:text-ink"
           >
             Hide &#9662;
           </button>
         </div>
       </div>
-      <div className="text-sm text-gray-500 mb-6">
+      <div className="text-sm text-stone-500 mb-6">
         {dueTestNumber !== null
           ? `Practice test ${dueTestNumber} of 8 was scheduled for this week — log your results below.`
           : "Log your full-length practice test results here and see how each subject is trending."}
@@ -188,7 +188,7 @@ export function AnalysisClient({
               label="Reading & Writing"
               value={latest.rwScore}
               delta={previous ? latest.rwScore - previous.rwScore : null}
-              accent="text-[#6d7fd6]"
+              accent="text-[#587356]"
             />
             <ScoreCard
               label="Math"
@@ -200,7 +200,7 @@ export function AnalysisClient({
 
           <div className="flex items-baseline justify-between mb-3 gap-2 flex-wrap">
             <div className="text-sm font-semibold text-ink">Subject breakdown</div>
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-stone-400">
               Stars track quiz mastery &mdash; the same rating shown on the{" "}
               <button onClick={() => router.push("/dashboard")} className="underline hover:text-ink">
                 dashboard
@@ -235,7 +235,7 @@ export function AnalysisClient({
                     }
                     barClass={theme.bar}
                   />
-                  <DomainBar label="Quiz mastery" pct={mastery?.quizPct ?? null} barClass="bg-gray-400" />
+                  <DomainBar label="Quiz mastery" pct={mastery?.quizPct ?? null} barClass="bg-stone-400" />
                 </div>
               );
             })}
@@ -249,20 +249,20 @@ export function AnalysisClient({
                 {tests.map((t) => (
                   <div
                     key={t.id}
-                    className="flex items-center justify-between gap-3 px-3.5 py-2.5 border border-[#ece9f7] bg-white rounded-[10px] text-sm"
+                    className="flex items-center justify-between gap-3 px-3.5 py-2.5 border border-[#ebe3d3] bg-white rounded-[10px] text-sm"
                   >
-                    <span className="text-gray-500 whitespace-nowrap">
+                    <span className="text-stone-500 whitespace-nowrap">
                       {formatUTCDate(t.takenAt, { year: "numeric", month: "short", day: "numeric" })}
                     </span>
                     <span className="text-ink font-semibold flex-1 text-right">
                       {t.compositeScore}{" "}
-                      <span className="text-gray-400 font-normal">
+                      <span className="text-stone-400 font-normal">
                         ({t.rwScore} R&amp;W · {t.mathScore} Math)
                       </span>
                     </span>
                     {deletingId === t.id ? (
                       <span className="flex items-center gap-1.5 whitespace-nowrap">
-                        <span className="text-xs text-gray-500">Delete this?</span>
+                        <span className="text-xs text-stone-500">Delete this?</span>
                         <button
                           onClick={() => confirmDelete(t.id)}
                           className="text-xs font-semibold text-red-700 hover:underline"
@@ -271,7 +271,7 @@ export function AnalysisClient({
                         </button>
                         <button
                           onClick={() => setDeletingId(null)}
-                          className="text-xs text-gray-500 hover:underline"
+                          className="text-xs text-stone-500 hover:underline"
                         >
                           No
                         </button>
@@ -280,7 +280,7 @@ export function AnalysisClient({
                       <span className="flex items-center gap-2.5 whitespace-nowrap">
                         <button
                           onClick={() => startEdit(t)}
-                          className="text-xs text-gray-400 hover:text-ink hover:underline"
+                          className="text-xs text-stone-400 hover:text-ink hover:underline"
                         >
                           Edit
                         </button>
@@ -289,7 +289,7 @@ export function AnalysisClient({
                             setDeleteError("");
                             setDeletingId(t.id);
                           }}
-                          className="text-xs text-gray-400 hover:text-red-700 hover:underline"
+                          className="text-xs text-stone-400 hover:text-red-700 hover:underline"
                         >
                           Delete
                         </button>
@@ -302,7 +302,7 @@ export function AnalysisClient({
           )}
         </>
       ) : !formOpen ? (
-        <div className="text-sm text-gray-500">No practice tests logged yet.</div>
+        <div className="text-sm text-stone-500">No practice tests logged yet.</div>
       ) : null}
     </div>
   );
@@ -320,8 +320,8 @@ function ScoreCard({
   accent: string;
 }) {
   return (
-    <div className="border border-[#ece9f7] bg-white rounded-xl p-4">
-      <div className="text-xs text-gray-500 mb-1">{label}</div>
+    <div className="border border-[#ebe3d3] bg-white rounded-xl p-4">
+      <div className="text-xs text-stone-500 mb-1">{label}</div>
       <div className={`text-2xl font-bold ${accent}`}>
         {value}
         {delta !== null && delta !== 0 && (
@@ -354,8 +354,8 @@ function DomainBar({
   return (
     <div className="mb-2 last:mb-0">
       <div className="flex justify-between items-baseline mb-1">
-        <span className="text-[11px] text-gray-500">{label}</span>
-        <span className="text-[11px] text-gray-500">
+        <span className="text-[11px] text-stone-500">{label}</span>
+        <span className="text-[11px] text-stone-500">
           {pct === null || pct === undefined ? (
             "not reported"
           ) : (
@@ -496,24 +496,24 @@ function SubmitTestForm({
   }
 
   return (
-    <form onSubmit={submit} className="bg-white border border-[#ece9f7] rounded-xl p-6 mb-8">
+    <form onSubmit={submit} className="bg-white border border-[#ebe3d3] rounded-xl p-6 mb-8">
       <div className="text-[15px] font-semibold text-ink mb-4">
         {editing ? "Edit practice test" : "Log a practice test"}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-3.5">
         <div>
-          <label className="block text-sm text-gray-700 mb-1">Test date</label>
+          <label className="block text-sm text-stone-700 mb-1">Test date</label>
           <input
             type="date"
             value={takenAt}
             onChange={(e) => setTakenAt(e.target.value)}
             required
-            className="w-full px-3 py-2.5 rounded-lg border border-[#e0defa] text-sm focus:outline-none focus:border-[#6d7fd6]"
+            className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] text-sm focus:outline-none focus:border-[#587356]"
           />
         </div>
         <div>
-          <label className="block text-sm text-gray-700 mb-1">Composite (400-1600)</label>
+          <label className="block text-sm text-stone-700 mb-1">Composite (400-1600)</label>
           <input
             type="number"
             min={400}
@@ -522,11 +522,11 @@ function SubmitTestForm({
             value={composite}
             onChange={(e) => setComposite(e.target.value)}
             required
-            className="w-full px-3 py-2.5 rounded-lg border border-[#e0defa] text-sm focus:outline-none focus:border-[#6d7fd6]"
+            className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] text-sm focus:outline-none focus:border-[#587356]"
           />
         </div>
         <div>
-          <label className="block text-sm text-gray-700 mb-1">Reading & Writing (200-800)</label>
+          <label className="block text-sm text-stone-700 mb-1">Reading & Writing (200-800)</label>
           <input
             type="number"
             min={200}
@@ -535,11 +535,11 @@ function SubmitTestForm({
             value={rw}
             onChange={(e) => setRw(e.target.value)}
             required
-            className="w-full px-3 py-2.5 rounded-lg border border-[#e0defa] text-sm focus:outline-none focus:border-[#6d7fd6]"
+            className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] text-sm focus:outline-none focus:border-[#587356]"
           />
         </div>
         <div>
-          <label className="block text-sm text-gray-700 mb-1">Math (200-800)</label>
+          <label className="block text-sm text-stone-700 mb-1">Math (200-800)</label>
           <input
             type="number"
             min={200}
@@ -548,26 +548,26 @@ function SubmitTestForm({
             value={math}
             onChange={(e) => setMath(e.target.value)}
             required
-            className="w-full px-3 py-2.5 rounded-lg border border-[#e0defa] text-sm focus:outline-none focus:border-[#6d7fd6]"
+            className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] text-sm focus:outline-none focus:border-[#587356]"
           />
         </div>
       </div>
-      <div className="text-xs text-gray-400 mb-3.5 -mt-2">
+      <div className="text-xs text-stone-400 mb-3.5 -mt-2">
         Reading &amp; Writing and Math must add up to the composite &mdash; that's how the real score
         report works too.
       </div>
 
-      <div className="text-sm text-gray-700 mb-1">
-        Domain performance <span className="text-gray-400">(optional)</span>
+      <div className="text-sm text-stone-700 mb-1">
+        Domain performance <span className="text-stone-400">(optional)</span>
       </div>
-      <div className="text-xs text-gray-400 mb-2">
+      <div className="text-xs text-stone-400 mb-2">
         Bluebook's own score report shows each domain as a bar with a "correct out of total"
         count &mdash; copy those two numbers in directly, no need to work out a percentage.
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
         {domains.map((d) => (
           <div key={d.domain} className="flex items-center gap-2">
-            <label className="text-xs text-gray-500 flex-1">{d.domain}</label>
+            <label className="text-xs text-stone-500 flex-1">{d.domain}</label>
             <input
               type="number"
               min={0}
@@ -576,9 +576,9 @@ function SubmitTestForm({
               aria-label={`${d.domain} correct`}
               value={correct[d.domain] ?? ""}
               onChange={(e) => setCorrect((prev) => ({ ...prev, [d.domain]: e.target.value }))}
-              className="w-16 px-2 py-1.5 rounded-lg border border-[#e0defa] text-sm text-center focus:outline-none focus:border-[#6d7fd6]"
+              className="w-16 px-2 py-1.5 rounded-lg border border-[#ddd3bf] text-sm text-center focus:outline-none focus:border-[#587356]"
             />
-            <span className="text-gray-400 text-sm">/</span>
+            <span className="text-stone-400 text-sm">/</span>
             <input
               type="number"
               min={0}
@@ -587,7 +587,7 @@ function SubmitTestForm({
               aria-label={`${d.domain} total`}
               value={total[d.domain] ?? ""}
               onChange={(e) => setTotal((prev) => ({ ...prev, [d.domain]: e.target.value }))}
-              className="w-16 px-2 py-1.5 rounded-lg border border-[#e0defa] text-sm text-center focus:outline-none focus:border-[#6d7fd6]"
+              className="w-16 px-2 py-1.5 rounded-lg border border-[#ddd3bf] text-sm text-center focus:outline-none focus:border-[#587356]"
             />
           </div>
         ))}
@@ -599,7 +599,7 @@ function SubmitTestForm({
         <button
           type="submit"
           disabled={saving}
-          className="px-4 py-2.5 rounded-lg bg-ink text-white font-semibold text-sm disabled:opacity-60"
+          className="px-4 py-2.5 rounded-lg bg-forest text-white font-semibold text-sm disabled:opacity-60"
         >
           {saving ? "Saving..." : editing ? "Save changes" : "Save results"}
         </button>
@@ -607,7 +607,7 @@ function SubmitTestForm({
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2.5 rounded-lg border border-[#e0defa] text-gray-600 font-medium text-sm hover:border-[#c9c6ee]"
+            className="px-4 py-2.5 rounded-lg border border-[#ddd3bf] text-stone-600 font-medium text-sm hover:border-[#c9d8c2]"
           >
             Cancel
           </button>

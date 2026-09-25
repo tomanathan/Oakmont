@@ -3,11 +3,11 @@ import type { GeometryFigure, SolidFigure } from "@/lib/figureTypes";
 // To-scale geometry for practice questions (see lib/figureTypes.ts). Points
 // are real coordinates; this only fits them into the frame (one uniform
 // scale, y flipped), so lengths and angles on screen are the true ones.
-const INK = "#3a3550";
-const MUTED = "#8a8499";
+const INK = "#383a30";
+const MUTED = "#8f887a";
 const GRID = "#e9e6f3";
 const SHADE = "#dfe3f8";
-const GROUND = "#fbfaff"; // matches the figure panel, for "blank" regions and label halos
+const GROUND = "#f8f4eb"; // matches the figure panel, for "blank" regions and label halos
 const ACCENT = "#b5602f";
 
 const W = 360;

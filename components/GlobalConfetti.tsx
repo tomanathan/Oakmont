@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 // now also bursts confetti across the whole viewport, sized by how big a
 // deal the moment is.
 
-const CONFETTI_COLORS = ["#2f6f4f", "#c9971b", "#1a1a2e", "#5a9c7a", "#e0b84a", "#6d7fd6", "#c0524f"];
+const CONFETTI_COLORS = ["#2f6f4f", "#c9971b", "#1d2621", "#5a9c7a", "#e0b84a", "#587356", "#c0524f"];
 
 interface ConfettiPiece {
   left: number;

@@ -146,12 +146,12 @@ export function DashboardClient({
               aria-pressed={active}
               className={`relative overflow-hidden rounded-2xl border-2 p-5 text-left transition-all duration-200 ${
                 active
-                  ? `${theme.cardBg} ${theme.cardBorder.split(" ")[0]} shadow-[0_4px_18px_rgba(26,26,46,0.1)] scale-[1.02]`
-                  : "bg-white border-[#ece9f7] hover:border-[#d9d6ef] hover:shadow-[0_2px_10px_rgba(26,26,46,0.06)]"
+                  ? `${theme.cardBg} ${theme.cardBorder.split(" ")[0]} shadow-[0_4px_18px_rgba(38,34,24,0.1)] scale-[1.02]`
+                  : "bg-white border-[#ebe3d3] hover:border-[#ddd3bf] hover:shadow-[0_2px_10px_rgba(38,34,24,0.06)]"
               }`}
             >
               <div className="flex items-start justify-between gap-2 mb-2">
-                <div className={`text-[11px] font-bold uppercase tracking-wide ${active ? theme.text : "text-gray-400"}`}>
+                <div className={`text-[11px] font-bold uppercase tracking-wide ${active ? theme.text : "text-stone-400"}`}>
                   {label}
                 </div>
                 <SubjectRing
@@ -163,18 +163,18 @@ export function DashboardClient({
                 />
               </div>
               {avgPct === null ? (
-                <div className="text-sm text-gray-500">Not started yet &mdash; tap in to begin</div>
+                <div className="text-sm text-stone-500">Not started yet &mdash; tap in to begin</div>
               ) : (
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <span className="text-[32px] leading-none font-display font-semibold text-ink">{avgPct}%</span>
                   {attemptedCount === 1 ? (
-                    <span className="text-xs text-gray-400">first attempt</span>
+                    <span className="text-xs text-stone-400">first attempt</span>
                   ) : (
-                    <span className="text-xs text-gray-500">average score</span>
+                    <span className="text-xs text-stone-500">average score</span>
                   )}
                 </div>
               )}
-              <div className="mt-1 text-xs text-gray-500">
+              <div className="mt-1 text-xs text-stone-500">
                 {attemptedCount} started &middot; {passedCount} passed &middot; {sectionMastered} mastered &middot;{" "}
                 {sectionTotal} total
               </div>
@@ -192,17 +192,17 @@ export function DashboardClient({
             return (
               <div
                 key={d.domain}
-                className={`overflow-hidden rounded-2xl border border-[#ece9f7] border-l-[3px] ${theme.accentBorder} bg-white transition-colors`}
+                className={`overflow-hidden rounded-2xl border border-[#ebe3d3] border-l-[3px] ${theme.accentBorder} bg-white transition-colors`}
               >
                 <button
                   onClick={() => toggleDomain(d.domain)}
                   className={`w-full flex items-center gap-3 pl-5 pr-4 py-4 text-left transition-colors ${
-                    isOpen ? theme.cardBg : "hover:bg-[#faf9ff]"
+                    isOpen ? theme.cardBg : "hover:bg-[#f8f4eb]"
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-shrink-0">
                     <span className="text-[15px] font-semibold text-ink truncate">{d.domain}</span>
-                    <span className="text-[11px] font-semibold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                    <span className="text-[11px] font-semibold text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded-full whitespace-nowrap">
                       {domainDone}/{d.subskills.length}
                     </span>
                   </div>
@@ -211,7 +211,7 @@ export function DashboardClient({
                       mastered (that's what the stars are for). Only drawn
                       where there's room for it. */}
                   <div className="flex-1 mx-3">
-                    <div className="hidden md:block h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                    <div className="hidden md:block h-1.5 rounded-full bg-stone-100 overflow-hidden">
                       <div
                         className={`h-full rounded-full ${theme.bar}`}
                         style={{ width: `${(domainDone / d.subskills.length) * 100}%` }}
@@ -225,7 +225,7 @@ export function DashboardClient({
                       height="16"
                       viewBox="0 0 16 16"
                       aria-hidden="true"
-                      className={`text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
+                      className={`text-stone-400 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
                     >
                       <path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -233,7 +233,7 @@ export function DashboardClient({
                 </button>
 
                 {isOpen && (
-                  <div className="px-4 pb-4 pt-3 border-t border-[#f0eff9] bg-white">
+                  <div className="px-4 pb-4 pt-3 border-t border-[#eef3e9] bg-white">
                     {/* lg:grid-cols-4 -- the dashboard now renders at the
                         same 1180px width as the lesson page (see AppShell's
                         wide prop), so a fourth column here puts that extra
@@ -255,7 +255,7 @@ export function DashboardClient({
                               <span className="text-sm font-medium text-ink">{s.name}</span>
                               <SubskillStatusBadge progress={p} />
                             </div>
-                            <div className="text-xs text-gray-400 mt-1">{s.blurb}</div>
+                            <div className="text-xs text-stone-400 mt-1">{s.blurb}</div>
                           </div>
                         );
                       })}
@@ -287,7 +287,7 @@ function Greeting({ name }: { name: string | null }) {
   return (
     <div className="mb-4 flex min-h-[40px] items-baseline justify-between gap-3 flex-wrap">
       <h1 className="font-display text-[26px] font-semibold leading-tight text-ink">{text?.hello ?? (name ? `Welcome back, ${name}.` : "Welcome back.")}</h1>
-      {text && <span className="text-[13px] text-gray-400">{text.date}</span>}
+      {text && <span className="text-[13px] text-stone-400">{text.date}</span>}
     </div>
   );
 }
@@ -321,7 +321,7 @@ function PlanCard({
   const router = useRouter();
   const weekPct = thisWeek.total > 0 ? Math.round((thisWeek.done / thisWeek.total) * 100) : 0;
   const weekOfCourse = Math.min(pacing.totalWeeks, Math.ceil(pacing.dayOfCourse / 7));
-  const eyebrow = "text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400";
+  const eyebrow = "text-[10px] font-bold uppercase tracking-[0.12em] text-stone-400";
 
   // Which of today's subskills is the one the primary action already
   // points at -- so it isn't listed a second time in the "also today" rows
@@ -335,13 +335,13 @@ function PlanCard({
       : [];
 
   return (
-    <div className="flex flex-col bg-white border border-[#ece9f7] rounded-2xl p-4 shadow-[0_1px_3px_rgba(26,26,46,0.03)]">
+    <div className="flex flex-col bg-white border border-[#ebe3d3] rounded-2xl p-4 shadow-[0_1px_3px_rgba(38,34,24,0.03)]">
       {(today || recommended || daysUntilTest !== null) && (
         <div className="flex items-center justify-between gap-3 mb-2.5 flex-wrap">
           <div className="flex items-baseline gap-2">
             <span className={eyebrow}>{today ? DAY_TYPE_COPY[today.type] : recommended ? "Up next" : "Countdown"}</span>
             {today && (
-              <span className="text-[11px] text-gray-300">
+              <span className="text-[11px] text-stone-300">
                 Week {today.week} of {pacing.totalWeeks}
               </span>
             )}
@@ -359,7 +359,7 @@ function PlanCard({
       )}
 
       {today?.type === "rest" && (
-        <div className="text-[13px] text-gray-500 mb-2">
+        <div className="text-[13px] text-stone-500 mb-2">
           Rest day &mdash; nothing new scheduled, but a quick review never hurts.
         </div>
       )}
@@ -370,7 +370,7 @@ function PlanCard({
       {recommended && (
         <button
           onClick={() => router.push(recommended.href)}
-          className="group w-full flex items-center gap-3 bg-ink text-white rounded-xl px-4 py-3 text-left hover:bg-[#26263c] transition-colors"
+          className="group w-full flex items-center gap-3 bg-forest text-white rounded-xl px-4 py-3 text-left hover:bg-[#1f2a23] transition-colors"
         >
           <div className="flex-1 min-w-0">
             <div className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-white/45">
@@ -398,7 +398,7 @@ function PlanCard({
               <div
                 key={s.id}
                 onClick={() => router.push(`/subskill/${s.id}`)}
-                className="flex items-center justify-between gap-3 px-3 py-1.5 -mx-1 rounded-lg cursor-pointer text-sm hover:bg-[#faf9ff] transition-colors"
+                className="flex items-center justify-between gap-3 px-3 py-1.5 -mx-1 rounded-lg cursor-pointer text-sm hover:bg-[#f8f4eb] transition-colors"
               >
                 <span className="text-ink truncate">{s.name}</span>
                 {p ? (
@@ -406,7 +406,7 @@ function PlanCard({
                     <SubskillStatusBadge progress={p} />
                   </span>
                 ) : (
-                  <span className="text-[11px] text-gray-300 flex-shrink-0">Also today</span>
+                  <span className="text-[11px] text-stone-300 flex-shrink-0">Also today</span>
                 )}
               </div>
             );
@@ -419,11 +419,11 @@ function PlanCard({
       {review.ready && recommended?.kind !== "review" && review.toConfirm + review.refreshers > 0 && (
         <button
           onClick={() => router.push("/review")}
-          className="mt-2 flex w-full items-center justify-between gap-3 rounded-xl border border-[#e0defa] px-4 py-2.5 text-left transition-colors hover:border-[#c9c6ee] hover:bg-[#faf9ff]"
+          className="mt-2 flex w-full items-center justify-between gap-3 rounded-xl border border-[#ddd3bf] px-4 py-2.5 text-left transition-colors hover:border-[#c9d8c2] hover:bg-[#f8f4eb]"
         >
           <div className="min-w-0">
             <div className="text-[13.5px] font-semibold text-ink">Mixed review</div>
-            <div className="text-[12px] text-gray-500">
+            <div className="text-[12px] text-stone-500">
               {[
                 review.toConfirm > 0 && `${review.toConfirm} ready to master`,
                 review.refreshers > 0 && `${review.refreshers} due for a refresher`,
@@ -432,7 +432,7 @@ function PlanCard({
                 .join(" · ")}
             </div>
           </div>
-          <span className="flex-shrink-0 text-gray-400">&rarr;</span>
+          <span className="flex-shrink-0 text-stone-400">&rarr;</span>
         </button>
       )}
 
@@ -442,7 +442,7 @@ function PlanCard({
       {/* Pinned to the bottom when the card is stretched to match Ozho's
           card beside it, so the space falls above the pace, not below. */}
       <div className="h-3 flex-shrink-0" />
-      <div className="mt-auto pt-3 border-t border-gray-100">
+      <div className="mt-auto pt-3 border-t border-stone-100">
         <div className="flex items-baseline justify-between gap-3 mb-1">
           <span className={eyebrow}>Your pace</span>
           <span className={`text-xs font-semibold ${PACE_STATUS_STYLES[pacing.status]}`}>
@@ -450,7 +450,7 @@ function PlanCard({
           </span>
         </div>
         <PacingBar pacing={pacing} />
-        <div className="flex justify-between items-baseline mt-1 text-[11px] text-gray-400">
+        <div className="flex justify-between items-baseline mt-1 text-[11px] text-stone-400">
           <span>
             Week {weekOfCourse} of {pacing.totalWeeks}
             {thisWeek.total > 0 && (

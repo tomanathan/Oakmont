@@ -365,7 +365,7 @@ export function SecondCompanion() {
       {isMobile && (
         // Same white badge Ozho sits in when docked, so the pair reads as
         // two matching buttons in the corner rather than a sprite on text.
-        <div className="absolute inset-0 rounded-full bg-white shadow-[0_2px_8px_rgba(26,26,46,0.18)]" aria-hidden />
+        <div className="absolute inset-0 rounded-full bg-white shadow-[0_2px_8px_rgba(38,34,24,0.18)]" aria-hidden />
       )}
       <button
         onClick={hop}

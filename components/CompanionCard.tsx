@@ -9,10 +9,10 @@ import type { CompanionSummary } from "@/lib/companionSummary";
 
 const STAGE_PILL: Record<CompanionSummary["stage"], { label: string; cls: string }> = {
   thriving: { label: "Thriving", cls: "bg-[#eaf6ef] text-accent" },
-  content: { label: "Doing fine", cls: "bg-[#eef0fc] text-[#4a5bb0]" },
+  content: { label: "Doing fine", cls: "bg-[#eaf1e5] text-[#2c4c3b]" },
   hungry: { label: "Hungry", cls: "bg-[#fbf1df] text-[#9a6a12]" },
   critical: { label: "In trouble", cls: "bg-[#fbeaea] text-[#b23b3b]" },
-  dead: { label: "Gone", cls: "bg-[#f0eff2] text-gray-500" },
+  dead: { label: "Gone", cls: "bg-[#f1ece2] text-stone-500" },
 };
 
 // Where Ozho stands today, in a sentence -- written from what actually
@@ -66,7 +66,7 @@ function callLine(c: CompanionSummary): string {
 function Meter({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = Math.min(100, Math.round((value / Math.max(1, max)) * 100));
   return (
-    <div className="h-1.5 overflow-hidden rounded-full bg-[#f0eff9]">
+    <div className="h-1.5 overflow-hidden rounded-full bg-[#eef3e9]">
       <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${pct}%`, background: color }} />
     </div>
   );
@@ -112,7 +112,7 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
   return (
     <div
       ref={cardRef}
-      className="flex flex-col rounded-2xl border border-[#ece9f7] bg-white p-4 shadow-[0_1px_3px_rgba(26,26,46,0.03)]"
+      className="flex flex-col rounded-2xl border border-[#ebe3d3] bg-white p-4 shadow-[0_1px_3px_rgba(38,34,24,0.03)]"
     >
       <div className="flex items-start gap-3.5">
         <button
@@ -120,7 +120,7 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
           aria-label={dead ? PET_NAME : `Call ${PET_NAME} over`}
           title={dead ? undefined : `Call ${PET_NAME} over`}
           className={`relative flex h-[76px] w-[76px] flex-shrink-0 items-end justify-center rounded-2xl pb-2 transition-colors ${
-            dead ? "cursor-default bg-[#f4f3f6]" : "bg-[#f6f5fd] hover:bg-[#efedfb]"
+            dead ? "cursor-default bg-[#f4f3f6]" : "bg-[#f6f1e6] hover:bg-[#eef3e9]"
           }`}
         >
           <span className={hop ? "animate-ozho-hop" : ""}>
@@ -140,7 +140,7 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
             <span className={`rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${pill.cls}`}>{pill.label}</span>
           </div>
           <div className="mt-1 text-[13.5px] font-semibold leading-snug text-ink">{copy.headline}</div>
-          <div className="mt-0.5 text-[12.5px] leading-relaxed text-gray-500">{copy.body}</div>
+          <div className="mt-0.5 text-[12.5px] leading-relaxed text-stone-500">{copy.body}</div>
         </div>
       </div>
 
@@ -148,13 +148,13 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
         <button
           onClick={startNewPet}
           disabled={reviving}
-          className="mt-4 rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="mt-4 rounded-lg bg-forest px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {reviving ? "Starting…" : "Start a new pet"}
         </button>
       ) : (
         <>
-          <div className="mt-4 flex flex-col gap-3 border-t border-gray-100 pt-3.5">
+          <div className="mt-4 flex flex-col gap-3 border-t border-stone-100 pt-3.5">
             {c.nextStreakCostume && (
               <Reward
                 costume={c.nextStreakCostume.id}
@@ -188,7 +188,7 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
                 color="#8a8fd0"
               />
             ) : (
-              <div className="flex items-center gap-3 text-[12.5px] text-gray-500">
+              <div className="flex items-center gap-3 text-[12.5px] text-stone-500">
                 <span className="flex h-8 w-8 flex-shrink-0 items-end justify-center">
                   <PixelDog size={30} variant="mochi" mood="happy" shadow={false} />
                 </span>
@@ -197,10 +197,10 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
             )}
           </div>
           <div className="mt-3.5 flex items-center justify-between gap-2 text-[12.5px]">
-            <button onClick={callOzho} className="font-semibold text-gray-500 transition-colors hover:text-ink">
+            <button onClick={callOzho} className="font-semibold text-stone-500 transition-colors hover:text-ink">
               Call {PET_NAME} over
             </button>
-            <a href="/settings#wardrobe" className="font-semibold text-[#4a5bb0] hover:underline">
+            <a href="/settings#wardrobe" className="font-semibold text-[#2c4c3b] hover:underline">
               Wardrobe →
             </a>
           </div>
@@ -240,10 +240,10 @@ function Reward({
       </span>
       <div className="min-w-0 flex-1">
         <div className="mb-1 flex items-baseline justify-between gap-2">
-          <span className="truncate text-[12.5px] text-gray-600">
+          <span className="truncate text-[12.5px] text-stone-600">
             <span className="font-semibold text-ink">{title}</span> · {detail}
           </span>
-          <span className="flex-shrink-0 text-[11px] tabular-nums text-gray-400">
+          <span className="flex-shrink-0 text-[11px] tabular-nums text-stone-400">
             {Math.min(value, max)}/{max} {unit}
           </span>
         </div>

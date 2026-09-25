@@ -27,7 +27,7 @@ export function useCountUp(value: number, durationMs = 700, startOnMount = true)
   return display;
 }
 
-const CONFETTI_COLORS = ["#2f6f4f", "#c9971b", "#1a1a2e", "#5a9c7a", "#e0b84a"];
+const CONFETTI_COLORS = ["#2f6f4f", "#c9971b", "#1d2621", "#5a9c7a", "#e0b84a"];
 
 /** A brief, tasteful CSS-only confetti burst — no libraries, auto-removes itself. */
 export function ConfettiBurst() {

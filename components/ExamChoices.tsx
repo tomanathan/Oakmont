@@ -74,7 +74,7 @@ export function ExamChoices({
             tabIndex={tabIndex}
             onClick={() => !disabled && onSelect(ci)}
             onKeyDown={(e) => handleKeyDown(e, ci)}
-            className={`px-3 py-2.5 rounded-lg text-[13.5px] border focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6d7fd6] focus-visible:ring-offset-1 ${
+            className={`px-3 py-2.5 rounded-lg text-[13.5px] border focus:outline-none focus-visible:ring-2 focus-visible:ring-[#587356] focus-visible:ring-offset-1 ${
               disabled ? "cursor-default" : "cursor-pointer"
             } ${
               isCorrect
@@ -83,7 +83,7 @@ export function ExamChoices({
                 ? "border-red-700 bg-[#fdf0f0]"
                 : isSelected
                 ? "border-ink bg-[#f5f5f8]"
-                : "border-[#ece9f7] bg-white hover:border-[#d8d4f0]"
+                : "border-[#ebe3d3] bg-white hover:border-[#ddd3bf]"
             } text-ink`}
           >
             {String.fromCharCode(65 + ci)}. <MathText text={choice} />

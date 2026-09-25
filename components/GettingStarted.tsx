@@ -33,19 +33,19 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
   }
 
   return (
-    <section className="mb-4 rounded-2xl border border-[#ece9f7] bg-white p-5 shadow-[0_1px_2px_rgba(26,26,46,0.04),0_6px_20px_rgba(26,26,46,0.05)]">
+    <section className="mb-4 rounded-2xl border border-[#ebe3d3] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_6px_20px_rgba(38,34,24,0.05)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-display text-[18px] font-semibold text-ink">Getting started</h2>
-          <p className="text-[13px] text-gray-500">
+          <p className="text-[13px] text-stone-500">
             {done} of {items.length} done. A quick way to try everything Oakmont does.
           </p>
         </div>
-        <button onClick={dismiss} className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600">
+        <button onClick={dismiss} className="text-xs text-stone-400 underline underline-offset-2 hover:text-stone-600">
           Hide this
         </button>
       </div>
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#eeedf7]">
+      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#efe9dc]">
         <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${(done / items.length) * 100}%` }} />
       </div>
       <ul className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -57,23 +57,23 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
                 item.done
                   ? "bg-[#f7faf8] ring-[#e3efe8]"
                   : item === nextUp
-                  ? "bg-[#f5f4fb] ring-[#cfcbf0] hover:ring-[#b9b5e6]"
-                  : "bg-white ring-[#ece9f7] hover:ring-[#cfcbf0]"
+                  ? "bg-[#f6f1e6] ring-[#c9d8c2] hover:ring-[#b7cbb0]"
+                  : "bg-white ring-[#ebe3d3] hover:ring-[#c9d8c2]"
               }`}
             >
               <span
                 className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
-                  item.done ? "bg-accent text-white" : "ring-1 ring-[#cfcbf0]"
+                  item.done ? "bg-accent text-white" : "ring-1 ring-[#c9d8c2]"
                 }`}
                 aria-hidden
               >
                 {item.done ? "✓" : ""}
               </span>
               <span className="min-w-0">
-                <span className={`block text-[14px] font-semibold ${item.done ? "text-gray-400 line-through decoration-gray-300" : "text-ink"}`}>
+                <span className={`block text-[14px] font-semibold ${item.done ? "text-stone-400 line-through decoration-gray-300" : "text-ink"}`}>
                   {item.title}
                 </span>
-                {!item.done && <span className="mt-0.5 block text-[12.5px] leading-snug text-gray-500">{item.body}</span>}
+                {!item.done && <span className="mt-0.5 block text-[12.5px] leading-snug text-stone-500">{item.body}</span>}
               </span>
               <span className="sr-only">{item.done ? "(done)" : "(not done yet)"}</span>
             </Link>

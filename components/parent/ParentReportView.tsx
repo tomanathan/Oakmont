@@ -10,7 +10,7 @@ import { ActivityCalendar, WeeklyTrend, ScoreTrend, PctBar } from "./charts";
 // numbers, then Overview / Activity / Skills / Habits / Scores. Shared by
 // the parent dashboard and the student's own share link.
 
-const RW = "#6d7fd6";
+const RW = "#587356";
 const MATH = "#d97a4d";
 const GREEN = "#2f6f4f";
 
@@ -23,13 +23,13 @@ const TONE: Record<Tone, { bg: string; border: string; dot: string; label: strin
 const STATUS: Record<SubskillStatus, { label: string; cls: string }> = {
   mastered: { label: "Mastered", cls: "bg-[#eaf6ef] text-accent" },
   due: { label: "Refresher due", cls: "bg-[#fbf1df] text-[#9a6a12]" },
-  passed: { label: "Passed quiz", cls: "bg-[#eef0fc] text-[#4a5bb0]" },
-  attempted: { label: "In progress", cls: "bg-[#f3f2f7] text-gray-600" },
-  new: { label: "Not started", cls: "bg-white text-gray-400 ring-1 ring-[#ece9f7]" },
+  passed: { label: "Passed quiz", cls: "bg-[#eaf1e5] text-[#2c4c3b]" },
+  attempted: { label: "In progress", cls: "bg-[#f3eee4] text-stone-600" },
+  new: { label: "Not started", cls: "bg-white text-stone-400 ring-1 ring-[#ebe3d3]" },
 };
 
-const card = "rounded-2xl border border-[#ece9f7] bg-white p-5 shadow-[0_1px_2px_rgba(26,26,46,0.03)] sm:p-6";
-const eyebrow = "text-[10.5px] font-bold uppercase tracking-[0.12em] text-gray-400";
+const card = "rounded-2xl border border-[#ebe3d3] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.03)] sm:p-6";
+const eyebrow = "text-[10.5px] font-bold uppercase tracking-[0.12em] text-stone-400";
 const h2 = "font-display text-[22px] font-semibold text-ink";
 
 function ago(iso: string | null, now: number): string {
@@ -56,7 +56,7 @@ function fmtMinutes(m: number): string {
 function Delta({ now, prev, unit = "", invert = false }: { now: number | null; prev: number | null; unit?: string; invert?: boolean }) {
   if (now === null || prev === null) return null;
   const d = now - prev;
-  if (d === 0) return <span className="text-[11px] text-gray-400">same as last week</span>;
+  if (d === 0) return <span className="text-[11px] text-stone-400">same as last week</span>;
   const up = d > 0;
   const good = invert ? !up : up;
   return (
@@ -115,7 +115,7 @@ export function ParentReportView({
         <div className="min-w-0">
           <div className={eyebrow}>Study report</div>
           <h1 className="font-display text-[30px] font-semibold leading-tight text-ink sm:text-[34px]">{name}</h1>
-          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[13px] text-gray-500">
+          <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[13px] text-stone-500">
             <span>
               Last studied <span className="font-medium text-ink">{ago(r.lastActive, now)}</span>
             </span>
@@ -137,7 +137,7 @@ export function ParentReportView({
           <div>
             <div className={`text-[11px] font-bold uppercase tracking-[0.12em] ${tone.text}`}>{tone.label}</div>
             <div className="font-display text-[22px] font-semibold leading-snug text-ink">{r.verdict.headline}</div>
-            <p className="mt-1 max-w-[70ch] text-[14px] leading-relaxed text-gray-600">{r.verdict.detail}</p>
+            <p className="mt-1 max-w-[70ch] text-[14px] leading-relaxed text-stone-600">{r.verdict.detail}</p>
           </div>
         </div>
       </div>
@@ -145,8 +145,8 @@ export function ParentReportView({
       {/* ---- the week in numbers ---- */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
         <Kpi label="Study time, last 7 days" value={r.week.minutes >= 60 ? `${Math.floor(r.week.minutes / 60)}h ${r.week.minutes % 60}m` : `${r.week.minutes} min`} sub={<Delta now={r.week.minutes} prev={r.week.minutesPrev} unit=" min" />} />
-        <div className="col-span-2 rounded-2xl border border-[#ece9f7] bg-white p-4 lg:col-span-2">
-          <div className="text-[11.5px] text-gray-500">Study days, last 7 days</div>
+        <div className="col-span-2 rounded-2xl border border-[#ebe3d3] bg-white p-4 lg:col-span-2">
+          <div className="text-[11.5px] text-stone-500">Study days, last 7 days</div>
           <div className="mt-1 flex items-baseline gap-2">
             <span className="font-display text-[26px] font-semibold text-ink">{r.week.activeDays}/7</span>
             <Delta now={r.week.activeDays} prev={r.week.activeDaysPrev} />
@@ -154,8 +154,8 @@ export function ParentReportView({
           <div className="mt-2 flex gap-1.5">
             {r.week.dayFlags.map((d) => (
               <div key={d.day} className="flex flex-1 flex-col items-center gap-1" title={`${d.label}: ${d.minutes ? `${d.minutes} min` : "no study"}`}>
-                <div className={`h-6 w-full rounded-md ${d.active ? "bg-accent" : "bg-[#f1eff8]"}`} style={d.active ? { opacity: 0.45 + Math.min(1, d.minutes / 45) * 0.55 } : undefined} />
-                <span className="text-[10px] text-gray-400">{d.label.slice(0, 2)}</span>
+                <div className={`h-6 w-full rounded-md ${d.active ? "bg-accent" : "bg-[#eef3e9]"}`} style={d.active ? { opacity: 0.45 + Math.min(1, d.minutes / 45) * 0.55 } : undefined} />
+                <span className="text-[10px] text-stone-400">{d.label.slice(0, 2)}</span>
               </div>
             ))}
           </div>
@@ -166,14 +166,14 @@ export function ParentReportView({
           className="col-span-2 lg:col-span-1"
           label="Skills mastered"
           value={`${r.mastery.mastered}/${r.mastery.total}`}
-          sub={<span className="text-[11px] text-gray-400">{r.mastery.passed} more passed, {r.streak.current}-day streak</span>}
+          sub={<span className="text-[11px] text-stone-400">{r.mastery.passed} more passed, {r.streak.current}-day streak</span>}
         />
       </div>
 
       {/* ---- section nav ---- */}
-      <nav className="sticky top-2 z-20 mt-6 flex gap-1 overflow-x-auto rounded-xl border border-[#ece9f7] bg-white/90 p-1 backdrop-blur" aria-label="Report sections">
+      <nav className="sticky top-2 z-20 mt-6 flex gap-1 overflow-x-auto rounded-xl border border-[#ebe3d3] bg-white/90 p-1 backdrop-blur" aria-label="Report sections">
         {NAV.map(([id, label]) => (
-          <a key={id} href={`#${id}`} className="whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[13px] font-medium text-gray-600 transition-colors hover:bg-[#f3f2fc] hover:text-ink">
+          <a key={id} href={`#${id}`} className="whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[13px] font-medium text-stone-600 transition-colors hover:bg-[#eef3e9] hover:text-ink">
             {label}
           </a>
         ))}
@@ -182,7 +182,7 @@ export function ParentReportView({
       {!r.hasActivity && (
         <div className={`${card} mt-6 text-center`}>
           <div className="font-display text-[20px] font-semibold text-ink">Nothing to report yet</div>
-          <p className="mx-auto mt-1 max-w-[52ch] text-sm text-gray-500">
+          <p className="mx-auto mt-1 max-w-[52ch] text-sm text-stone-500">
             As soon as {name} starts a lesson or answers a question, it shows up here: time studied, accuracy, what&apos;s clicking and
             what isn&apos;t.
           </p>
@@ -195,20 +195,20 @@ export function ParentReportView({
           <div className={card}>
             <div className={eyebrow}>How you can help this week</div>
             {r.talkingPoints.length === 0 ? (
-              <p className="mt-2 text-sm text-gray-500">Nothing needs your attention right now. A quick &ldquo;nice work&rdquo; never hurts.</p>
+              <p className="mt-2 text-sm text-stone-500">Nothing needs your attention right now. A quick &ldquo;nice work&rdquo; never hurts.</p>
             ) : (
               <ul className="mt-3 flex flex-col gap-3">
                 {r.talkingPoints.map((t, i) => (
                   <li key={i} className="flex gap-3">
                     <span
                       className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[12px] ${
-                        t.kind === "celebrate" ? "bg-[#eaf6ef] text-accent" : t.kind === "nudge" ? "bg-[#fdf1f1] text-[#b23b3b]" : t.kind === "plan" ? "bg-[#fbf1df] text-[#9a6a12]" : "bg-[#eef0fc] text-[#4a5bb0]"
+                        t.kind === "celebrate" ? "bg-[#eaf6ef] text-accent" : t.kind === "nudge" ? "bg-[#fdf1f1] text-[#b23b3b]" : t.kind === "plan" ? "bg-[#fbf1df] text-[#9a6a12]" : "bg-[#eaf1e5] text-[#2c4c3b]"
                       }`}
                       aria-hidden
                     >
                       {t.kind === "celebrate" ? "★" : t.kind === "nudge" ? "!" : t.kind === "plan" ? "◷" : "?"}
                     </span>
-                    <span className="text-[14px] leading-relaxed text-gray-700">{t.text}</span>
+                    <span className="text-[14px] leading-relaxed text-stone-700">{t.text}</span>
                   </li>
                 ))}
               </ul>
@@ -219,17 +219,17 @@ export function ParentReportView({
               <div className={eyebrow}>The study plan</div>
               <span className={`text-xs font-semibold ${PACE_STATUS_STYLES[r.plan.pacing.status]}`}>{paceStatusCopy(r.plan.pacing)}</span>
             </div>
-            <div className="mb-2 mt-2 text-[13px] text-gray-500">
+            <div className="mb-2 mt-2 text-[13px] text-stone-500">
               Week {Math.min(r.plan.pacing.totalWeeks, Math.ceil(r.plan.pacing.dayOfCourse / 7))} of {r.plan.pacing.totalWeeks}
             </div>
             <PacingBar pacing={r.plan.pacing} />
-            <div className="mt-2 flex justify-between text-[11.5px] text-gray-500">
+            <div className="mt-2 flex justify-between text-[11.5px] text-stone-500">
               <span>{r.plan.thisWeek.total > 0 ? `This week's skills: ${r.plan.thisWeek.done}/${r.plan.thisWeek.total}` : "Review week"}</span>
               <span>
                 {r.plan.pacing.completedUnits}/{r.plan.pacing.totalUnits} skills done
               </span>
             </div>
-            <div className="mt-4 border-t border-[#f1eff8] pt-4">
+            <div className="mt-4 border-t border-[#eef3e9] pt-4">
               <div className={eyebrow}>Score goal</div>
               <ScoreGoal scores={r.scores} />
             </div>
@@ -276,7 +276,7 @@ export function ParentReportView({
           <SkillTable skills={r.skills} now={now} />
           <div className={card}>
             <div className={eyebrow}>What&apos;s sticking</div>
-            <p className="mt-2 text-[13px] leading-relaxed text-gray-600">
+            <p className="mt-2 text-[13px] leading-relaxed text-stone-600">
               Quizzes say which skill they test. Mixed reviews don&apos;t: questions from many skills come in random order, which is how the SAT
               works. Accuracy there is the honest measure of what {name} remembers.
             </p>
@@ -299,13 +299,13 @@ export function ParentReportView({
         <div className="grid gap-4 lg:grid-cols-3">
           <div className={card}>
             <div className={eyebrow}>Confidence vs. results</div>
-            <p className="mt-2 text-[13px] leading-relaxed text-gray-600">After each answer, {name} marks it Sure, Not sure, or Guessed. Last 30 days:</p>
+            <p className="mt-2 text-[13px] leading-relaxed text-stone-600">After each answer, {name} marks it Sure, Not sure, or Guessed. Last 30 days:</p>
             <div className="mt-4 flex flex-col gap-3">
               {r.confidence.map((c) => (
                 <div key={c.level}>
                   <div className="mb-1 flex justify-between text-[12.5px]">
                     <span className="font-medium text-ink">{c.level === "sure" ? "Sure" : c.level === "unsure" ? "Not sure" : "Guessed"}</span>
-                    <span className="text-gray-500">
+                    <span className="text-stone-500">
                       {c.count} answers{c.accuracy !== null ? `, ${c.accuracy}% right` : ""}
                     </span>
                   </div>
@@ -316,17 +316,17 @@ export function ParentReportView({
             <div className="mt-4 grid grid-cols-2 gap-2 text-center">
               <div className="rounded-xl bg-[#fdf1f1] p-2.5">
                 <div className="font-display text-[20px] font-semibold text-[#b23b3b]">{r.confidentlyWrong}</div>
-                <div className="text-[11px] leading-tight text-gray-600">sure, but wrong: a misunderstanding to fix</div>
+                <div className="text-[11px] leading-tight text-stone-600">sure, but wrong: a misunderstanding to fix</div>
               </div>
               <div className="rounded-xl bg-[#fbf1df] p-2.5">
                 <div className="font-display text-[20px] font-semibold text-[#9a6a12]">{r.luckyGuesses}</div>
-                <div className="text-[11px] leading-tight text-gray-600">lucky guesses, rechecked in review</div>
+                <div className="text-[11px] leading-tight text-stone-600">lucky guesses, rechecked in review</div>
               </div>
             </div>
           </div>
           <div className={card}>
             <div className={eyebrow}>Pace vs. the real SAT</div>
-            <p className="mt-2 text-[13px] leading-relaxed text-gray-600">Average time per question over the last 30 days, against the real test&apos;s pace.</p>
+            <p className="mt-2 text-[13px] leading-relaxed text-stone-600">Average time per question over the last 30 days, against the real test&apos;s pace.</p>
             <div className="mt-4 flex flex-col gap-5">
               {r.pace.map((p) => (
                 <PaceBlock key={p.section} p={p} />
@@ -335,18 +335,18 @@ export function ParentReportView({
           </div>
           <div className={card}>
             <div className={eyebrow}>Mistakes that keep coming back</div>
-            <p className="mt-2 text-[13px] leading-relaxed text-gray-600">Every wrong answer on Oakmont is linked to the trap it falls for. These repeated this month:</p>
+            <p className="mt-2 text-[13px] leading-relaxed text-stone-600">Every wrong answer on Oakmont is linked to the trap it falls for. These repeated this month:</p>
             {r.traps.length === 0 ? (
-              <p className="mt-4 text-[13px] text-gray-400">No mistake has repeated yet.</p>
+              <p className="mt-4 text-[13px] text-stone-400">No mistake has repeated yet.</p>
             ) : (
               <ul className="mt-3 flex flex-col gap-3">
                 {r.traps.map((t, i) => (
-                  <li key={i} className="rounded-xl bg-[#faf8f4] p-3">
+                  <li key={i} className="rounded-xl bg-[#faf6ec] p-3">
                     <div className="flex items-baseline justify-between gap-2">
-                      <span className="text-[11px] font-semibold uppercase tracking-wide text-[#4a5bb0]">{t.skill}</span>
+                      <span className="text-[11px] font-semibold uppercase tracking-wide text-[#2c4c3b]">{t.skill}</span>
                       <span className="whitespace-nowrap text-[11.5px] font-semibold text-[#b23b3b]">{t.count}×</span>
                     </div>
-                    <p className="mt-1 text-[13px] leading-snug text-gray-700">{t.trap}</p>
+                    <p className="mt-1 text-[13px] leading-snug text-stone-700">{t.trap}</p>
                   </li>
                 ))}
               </ul>
@@ -359,7 +359,7 @@ export function ParentReportView({
       <Section id="scores" kicker="Scores" title="Practice tests and the goal">
         <div className={card}>
           {r.scores.tests.length === 0 ? (
-            <div className="text-[14px] leading-relaxed text-gray-600">
+            <div className="text-[14px] leading-relaxed text-stone-600">
               No full-length practice tests logged yet. The plan schedules eight official Bluebook practice tests on the way to test day; each
               score {name} logs appears here, with the section and domain breakdown.
               {r.scores.goal && (
@@ -377,8 +377,8 @@ export function ParentReportView({
                 {[...r.scores.tests].reverse().map((t, i, arr) => {
                   const prev = arr[i + 1];
                   return (
-                    <div key={t.id} className="flex items-center justify-between gap-3 rounded-xl border border-[#ece9f7] px-3.5 py-2.5 text-sm">
-                      <span className="text-gray-500">{new Date(t.takenAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                    <div key={t.id} className="flex items-center justify-between gap-3 rounded-xl border border-[#ebe3d3] px-3.5 py-2.5 text-sm">
+                      <span className="text-stone-500">{new Date(t.takenAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
                       <span className="text-right">
                         <span className="font-semibold text-ink">{t.composite}</span>
                         {prev && (
@@ -387,7 +387,7 @@ export function ParentReportView({
                             {t.composite - prev.composite}
                           </span>
                         )}
-                        <span className="block text-[11px] text-gray-400">
+                        <span className="block text-[11px] text-stone-400">
                           R&amp;W {t.rw} · Math {t.math}
                         </span>
                       </span>
@@ -409,8 +409,8 @@ export function ParentReportView({
 
 function Kpi({ label, value, sub, className = "" }: { label: string; value: string; sub?: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-[#ece9f7] bg-white p-4 ${className}`}>
-      <div className="text-[11.5px] text-gray-500">{label}</div>
+    <div className={`rounded-2xl border border-[#ebe3d3] bg-white p-4 ${className}`}>
+      <div className="text-[11.5px] text-stone-500">{label}</div>
       <div className="mt-1 font-display text-[26px] font-semibold leading-tight text-ink">{value}</div>
       <div className="mt-0.5 min-h-[16px]">{sub}</div>
     </div>
@@ -421,7 +421,7 @@ function Metric({ label, value, color }: { label: string; value: number | null; 
   return (
     <div>
       <div className="mb-1 flex justify-between text-[12.5px]">
-        <span className="text-gray-600">{label}</span>
+        <span className="text-stone-600">{label}</span>
         <span className="font-semibold text-ink">{value === null ? "—" : `${value}%`}</span>
       </div>
       <PctBar value={value} color={color} />
@@ -431,18 +431,18 @@ function Metric({ label, value, color }: { label: string; value: number | null; 
 
 function ScoreGoal({ scores }: { scores: ParentReport["scores"] }) {
   const latest = scores.tests.length ? scores.tests[scores.tests.length - 1].composite : null;
-  if (!scores.goal && !latest) return <p className="mt-2 text-[13px] text-gray-500">No goal or practice test yet.</p>;
+  if (!scores.goal && !latest) return <p className="mt-2 text-[13px] text-stone-500">No goal or practice test yet.</p>;
   const lo = 400;
   const hi = 1600;
   const pos = (v: number) => `${((v - lo) / (hi - lo)) * 100}%`;
   return (
     <div className="mt-3">
-      <div className="relative h-2 rounded-full bg-[#f1eff8]">
-        {scores.baseline && <div className="absolute top-1/2 h-3 w-0.5 -translate-y-1/2 bg-gray-400" style={{ left: pos(scores.baseline) }} title={`Starting point ${scores.baseline}`} />}
-        {latest && <div className="absolute inset-y-0 left-0 rounded-full bg-ink" style={{ width: pos(latest) }} />}
+      <div className="relative h-2 rounded-full bg-[#eef3e9]">
+        {scores.baseline && <div className="absolute top-1/2 h-3 w-0.5 -translate-y-1/2 bg-stone-400" style={{ left: pos(scores.baseline) }} title={`Starting point ${scores.baseline}`} />}
+        {latest && <div className="absolute inset-y-0 left-0 rounded-full bg-forest" style={{ width: pos(latest) }} />}
         {scores.goal && <div className="absolute top-1/2 h-4 w-1 -translate-y-1/2 rounded bg-accent" style={{ left: pos(scores.goal) }} title={`Goal ${scores.goal}`} />}
       </div>
-      <div className="mt-2 flex flex-wrap justify-between gap-2 text-[12px] text-gray-500">
+      <div className="mt-2 flex flex-wrap justify-between gap-2 text-[12px] text-stone-500">
         <span>
           Latest: <span className="font-semibold text-ink">{latest ?? "no test yet"}</span>
         </span>
@@ -462,7 +462,7 @@ function SkillList({ title, rows, empty, focus = false }: { title: string; rows:
     <div className={card}>
       <div className={eyebrow}>{title}</div>
       {rows.length === 0 ? (
-        <p className="mt-2 text-[13px] text-gray-500">{empty}</p>
+        <p className="mt-2 text-[13px] text-stone-500">{empty}</p>
       ) : (
         <ul className="mt-3 flex flex-col gap-3">
           {rows.map((s) => (
@@ -470,9 +470,9 @@ function SkillList({ title, rows, empty, focus = false }: { title: string; rows:
               <div className="mb-1 flex items-baseline justify-between gap-2">
                 <span className="text-[13.5px] font-medium text-ink">
                   {s.name}
-                  <span className="ml-1.5 text-[11px] font-normal text-gray-400">{s.section === "Math" ? "Math" : "R&W"}</span>
+                  <span className="ml-1.5 text-[11px] font-normal text-stone-400">{s.section === "Math" ? "Math" : "R&W"}</span>
                 </span>
-                <span className="whitespace-nowrap text-[12px] text-gray-500">
+                <span className="whitespace-nowrap text-[12px] text-stone-500">
                   {s.accuracy === null ? "" : `${s.accuracy}%`}
                   {focus && ` · ${Math.round(s.weight * 1000) / 10}% of test`}
                 </span>
@@ -491,15 +491,15 @@ function MasteryBar({ mastery }: { mastery: ParentReport["mastery"] }) {
     { n: mastery.mastered - mastery.due, color: GREEN, label: "Mastered" },
     { n: mastery.due, color: "#c9971b", label: "Refresher due" },
     { n: mastery.passed, color: RW, label: "Passed quiz" },
-    { n: mastery.started - mastery.mastered - mastery.passed, color: "#c5cbef", label: "In progress" },
-    { n: mastery.total - mastery.started, color: "#f1eff8", label: "Not started" },
+    { n: mastery.started - mastery.mastered - mastery.passed, color: "#c9d8c2", label: "In progress" },
+    { n: mastery.total - mastery.started, color: "#eef3e9", label: "Not started" },
   ];
   return (
     <div className={card}>
       <div className="flex h-3 overflow-hidden rounded-full">
         {parts.map((p) => (p.n > 0 ? <div key={p.label} style={{ width: `${(p.n / mastery.total) * 100}%`, background: p.color }} title={`${p.label}: ${p.n}`} /> : null))}
       </div>
-      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-[12.5px] text-gray-600">
+      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-[12.5px] text-stone-600">
         {parts.map((p) => (
           <span key={p.label} className="flex items-center gap-1.5">
             <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: p.color }} />
@@ -507,7 +507,7 @@ function MasteryBar({ mastery }: { mastery: ParentReport["mastery"] }) {
           </span>
         ))}
       </div>
-      <p className="mt-3 text-[12.5px] leading-relaxed text-gray-500">
+      <p className="mt-3 text-[12.5px] leading-relaxed text-stone-500">
         A perfect quiz passes a skill. It counts as mastered only after it&apos;s answered correctly again later, mixed in with other skills, so a
         good day of cramming can&apos;t fake it.
       </p>
@@ -528,13 +528,13 @@ function SkillTable({ skills, now }: { skills: SkillRow[]; now: number }) {
   const color = section === "Math" ? MATH : RW;
   return (
     <div className={card}>
-      <div className="mb-3 flex gap-1 rounded-xl bg-[#f3f2fc] p-1">
+      <div className="mb-3 flex gap-1 rounded-xl bg-[#eef3e9] p-1">
         {(["Reading and Writing", "Math"] as const).map((s) => (
           <button
             key={s}
             onClick={() => setSection(s)}
             aria-pressed={section === s}
-            className={`flex-1 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors ${section === s ? "bg-white text-ink shadow-sm" : "text-gray-500 hover:text-ink"}`}
+            className={`flex-1 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors ${section === s ? "bg-white text-ink shadow-sm" : "text-stone-500 hover:text-ink"}`}
           >
             {s}
           </button>
@@ -543,8 +543,8 @@ function SkillTable({ skills, now }: { skills: SkillRow[]; now: number }) {
       <div className="flex flex-col gap-5">
         {byDomain.map(([domain, rows]) => (
           <div key={domain}>
-            <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-gray-400">{domain}</div>
-            <div className="flex flex-col divide-y divide-[#f1eff8]">
+            <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-stone-400">{domain}</div>
+            <div className="flex flex-col divide-y divide-[#eef3e9]">
               {rows.map((s) => (
                 <div key={s.id} className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 py-2.5 sm:grid-cols-[minmax(0,1fr)_104px_150px_118px]">
                   <span className="min-w-0 truncate text-[13.5px] font-medium text-ink" title={s.name}>
@@ -553,9 +553,9 @@ function SkillTable({ skills, now }: { skills: SkillRow[]; now: number }) {
                   <span className={`justify-self-end whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-semibold ${STATUS[s.status].cls}`}>{STATUS[s.status].label}</span>
                   <div className="col-span-2 flex items-center gap-2 sm:col-span-1">
                     <PctBar value={s.accuracy} color={color} />
-                    <span className="w-9 text-right text-[12px] text-gray-500">{s.accuracy === null ? "—" : `${s.accuracy}%`}</span>
+                    <span className="w-9 text-right text-[12px] text-stone-500">{s.accuracy === null ? "—" : `${s.accuracy}%`}</span>
                   </div>
-                  <span className="col-span-2 text-[11.5px] text-gray-400 sm:col-span-1 sm:text-right">
+                  <span className="col-span-2 text-[11.5px] text-stone-400 sm:col-span-1 sm:text-right">
                     {s.questions ? `${s.questions} q · ` : ""}
                     {s.lastPracticed ? ago(s.lastPracticed, now) : "not yet"}
                   </span>
@@ -576,16 +576,16 @@ function PaceBlock({ p }: { p: ParentReport["pace"][number] }) {
     <div>
       <div className="flex items-baseline justify-between gap-2">
         <span className="text-[13px] font-medium text-ink">{p.section}</span>
-        <span className="text-[12px] text-gray-500">
+        <span className="text-[12px] text-stone-500">
           {p.avgSeconds === null ? "no timed answers yet" : `${p.avgSeconds}s avg vs ${p.targetSeconds}s on the SAT`}
         </span>
       </div>
-      <div className="relative mt-2 h-2 rounded-full bg-[#f1eff8]">
+      <div className="relative mt-2 h-2 rounded-full bg-[#eef3e9]">
         {ratio !== null && <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${Math.min(100, (ratio / 2) * 100)}%`, background: color }} />}
-        <div className="absolute top-1/2 h-4 w-0.5 -translate-y-1/2 bg-ink" style={{ left: "50%" }} title="SAT pace" />
+        <div className="absolute top-1/2 h-4 w-0.5 -translate-y-1/2 bg-forest" style={{ left: "50%" }} title="SAT pace" />
       </div>
       {p.rushedShare !== null && p.rushedShare > 0 && (
-        <p className="mt-2 text-[12px] leading-snug text-gray-500">
+        <p className="mt-2 text-[12px] leading-snug text-stone-500">
           {p.rushedShare}% of answers came in under {Math.round(p.targetSeconds * 0.4)}s
           {p.rushedAccuracy !== null && p.steadyAccuracy !== null ? `: ${p.rushedAccuracy}% right when quick, ${p.steadyAccuracy}% otherwise.` : "."}
         </p>
@@ -596,32 +596,32 @@ function PaceBlock({ p }: { p: ParentReport["pace"][number] }) {
 
 function SessionTable({ sessions }: { sessions: Session[] }) {
   const [all, setAll] = useState(false);
-  if (sessions.length === 0) return <p className="mt-3 text-[13px] text-gray-500">No sessions yet.</p>;
+  if (sessions.length === 0) return <p className="mt-3 text-[13px] text-stone-500">No sessions yet.</p>;
   const shown = all ? sessions : sessions.slice(0, 6);
   return (
     <div className="mt-3">
-      <div className="flex flex-col divide-y divide-[#f1eff8]">
+      <div className="flex flex-col divide-y divide-[#eef3e9]">
         {shown.map((s, i) => {
           const d = new Date(s.start);
           return (
             <div key={i} className="grid grid-cols-[auto_1fr_auto] items-start gap-3 py-2.5">
               <div className="w-[96px]">
                 <div className="text-[13px] font-medium text-ink">{d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}</div>
-                <div className="text-[11px] text-gray-400">{d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</div>
+                <div className="text-[11px] text-stone-400">{d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</div>
               </div>
               <div className="min-w-0">
-                <div className="truncate text-[13px] text-gray-700" title={s.subskills.join(", ")}>
+                <div className="truncate text-[13px] text-stone-700" title={s.subskills.join(", ")}>
                   {s.subskills.slice(0, 3).join(", ")}
                   {s.subskills.length > 3 ? ` +${s.subskills.length - 3}` : ""}
                 </div>
-                <div className="text-[11px] text-gray-400">
+                <div className="text-[11px] text-stone-400">
                   {[s.kinds.includes("lesson") ? `lesson ${s.lessonMinutes} min` : null, s.kinds.includes("quiz") ? "quiz" : null, s.kinds.includes("review") ? "mixed review" : null].filter(Boolean).join(" · ")}
                 </div>
               </div>
               <div className="text-right">
                 <div className="text-[13px] font-semibold text-ink">{fmtMinutes(s.minutes)}</div>
                 {s.questions > 0 && (
-                  <div className="text-[11px] text-gray-500">
+                  <div className="text-[11px] text-stone-500">
                     {s.correct}/{s.questions} right
                   </div>
                 )}
@@ -631,7 +631,7 @@ function SessionTable({ sessions }: { sessions: Session[] }) {
         })}
       </div>
       {sessions.length > 6 && (
-        <button onClick={() => setAll((v) => !v)} className="mt-2 text-[12.5px] font-semibold text-[#4a5bb0] hover:underline">
+        <button onClick={() => setAll((v) => !v)} className="mt-2 text-[12.5px] font-semibold text-[#2c4c3b] hover:underline">
           {all ? "Show fewer" : `Show all ${sessions.length}`}
         </button>
       )}
@@ -641,16 +641,16 @@ function SessionTable({ sessions }: { sessions: Session[] }) {
 
 const FEED_ICON: Record<FeedEvent["kind"], { icon: string; cls: string }> = {
   mastered: { icon: "★", cls: "bg-[#eaf6ef] text-accent" },
-  passed: { icon: "✓", cls: "bg-[#eef0fc] text-[#4a5bb0]" },
-  quiz: { icon: "Q", cls: "bg-[#f3f2f7] text-gray-600" },
-  review: { icon: "↻", cls: "bg-[#f3f2f7] text-gray-600" },
+  passed: { icon: "✓", cls: "bg-[#eaf1e5] text-[#2c4c3b]" },
+  quiz: { icon: "Q", cls: "bg-[#f3eee4] text-stone-600" },
+  review: { icon: "↻", cls: "bg-[#f3eee4] text-stone-600" },
   test: { icon: "◎", cls: "bg-[#fbe9dd] text-[#b5602f]" },
-  lesson: { icon: "¶", cls: "bg-[#f3f2f7] text-gray-600" },
+  lesson: { icon: "¶", cls: "bg-[#f3eee4] text-stone-600" },
 };
 
 function Feed({ events, now }: { events: FeedEvent[]; now: number }) {
   const [all, setAll] = useState(false);
-  if (events.length === 0) return <p className="mt-3 text-[13px] text-gray-500">Nothing yet.</p>;
+  if (events.length === 0) return <p className="mt-3 text-[13px] text-stone-500">Nothing yet.</p>;
   const shown = all ? events : events.slice(0, 8);
   return (
     <div className="mt-3">
@@ -662,7 +662,7 @@ function Feed({ events, now }: { events: FeedEvent[]; now: number }) {
             </span>
             <div className="min-w-0">
               <div className="text-[13px] font-medium leading-snug text-ink">{e.title}</div>
-              <div className="text-[11.5px] leading-snug text-gray-500">
+              <div className="text-[11.5px] leading-snug text-stone-500">
                 {e.detail} · {ago(e.at, now)}
               </div>
             </div>
@@ -670,7 +670,7 @@ function Feed({ events, now }: { events: FeedEvent[]; now: number }) {
         ))}
       </ol>
       {events.length > 8 && (
-        <button onClick={() => setAll((v) => !v)} className="mt-3 text-[12.5px] font-semibold text-[#4a5bb0] hover:underline">
+        <button onClick={() => setAll((v) => !v)} className="mt-3 text-[12.5px] font-semibold text-[#2c4c3b] hover:underline">
           {all ? "Show less" : `Show all ${events.length}`}
         </button>
       )}

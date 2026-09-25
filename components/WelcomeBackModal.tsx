@@ -20,9 +20,9 @@ const PET_ALERT: Partial<Record<PetStage, { box: string; label: string; labelCla
     labelClass: "text-[#b23b3b]",
   },
   dead: {
-    box: "bg-[#f0eff2] border-[#e0dee6]",
+    box: "bg-[#f1ece2] border-[#e2dccf]",
     label: `${PET_NAME} didn't make it`,
-    labelClass: "text-gray-500",
+    labelClass: "text-stone-500",
   },
 };
 
@@ -99,17 +99,17 @@ export function WelcomeBackModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 backdrop-blur-[2px] p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-forest/40 backdrop-blur-[2px] p-4"
       onClick={dismiss}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl shadow-[0_20px_60px_rgba(26,26,46,0.25)] max-w-[440px] w-full p-7 text-center"
+        className="bg-white rounded-2xl shadow-[0_20px_60px_rgba(38,34,24,0.25)] max-w-[440px] w-full p-7 text-center"
       >
         <BrandMark size={48} className="mx-auto mb-4" />
         <div className="font-display font-semibold text-xl text-ink mb-1.5">Welcome back!</div>
-        <div className="text-sm text-gray-500 mb-5">Last time you were here was {lastDate}.</div>
-        <div className="bg-[#eef0fc] border border-[#d7dbf3] rounded-xl p-4 mb-4 text-sm text-[#41436b] leading-relaxed">
+        <div className="text-sm text-stone-500 mb-5">Last time you were here was {lastDate}.</div>
+        <div className="bg-[#eaf1e5] border border-[#c9d8c2] rounded-xl p-4 mb-4 text-sm text-[#2c4c3b] leading-relaxed">
           {summary}
           {currentStreak > 0 && ` You're on a ${currentStreak}-day streak — keep it going.`}
         </div>
@@ -128,14 +128,14 @@ export function WelcomeBackModal({
               <div className={`text-xs font-bold mb-0.5 ${PET_ALERT[petStage]!.labelClass}`}>
                 {PET_ALERT[petStage]!.label}
               </div>
-              <div className="text-[13px] text-gray-700 leading-snug">{petMessage}</div>
+              <div className="text-[13px] text-stone-700 leading-snug">{petMessage}</div>
             </div>
           </div>
         )}
 
         <button
           onClick={dismiss}
-          className="w-full py-3 rounded-lg bg-ink text-white font-semibold text-sm hover:opacity-90"
+          className="w-full py-3 rounded-lg bg-forest text-white font-semibold text-sm hover:opacity-90"
         >
           Let's go →
         </button>

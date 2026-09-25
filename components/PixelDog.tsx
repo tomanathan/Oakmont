@@ -29,7 +29,7 @@ const PALETTE_DEAD = {
 // palette, so Mochi reads as belonging to this app rather than a generic
 // reskin.
 const PALETTE_MOCHI = {
-  body: "#8b8fc2",
+  body: "#8fa889",
   bodyDark: "#6d70a0",
   belly: "#eceafc",
   dark: "#2b2038",
@@ -413,8 +413,8 @@ function CostumeShapes({ costume }: { costume: string }) {
       // anything subtler than this reads as nothing at all.
       return (
         <>
-          <rect x={39} y={9} width={9.5} height={5.5} rx={0.8} fill="#1a1a2e" />
-          <rect x={36.3} y={10.6} width={3} height={1.8} fill="#1a1a2e" />
+          <rect x={39} y={9} width={9.5} height={5.5} rx={0.8} fill="#1d2621" />
+          <rect x={36.3} y={10.6} width={3} height={1.8} fill="#1d2621" />
           <rect x={41.5} y={10.2} width={2} height={1.2} fill="#4a4a6a" />
         </>
       );

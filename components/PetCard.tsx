@@ -7,10 +7,10 @@ import type { PetState } from "@/lib/pet";
 
 const STAGE_BG: Record<string, string> = {
   thriving: "bg-[#eaf6ef] border-[#cde8d9]",
-  content: "bg-[#eef0fc] border-[#d7dbf3]",
+  content: "bg-[#eaf1e5] border-[#c9d8c2]",
   hungry: "bg-[#fbf1df] border-[#f0ddb8]",
   critical: "bg-[#fbeaea] border-[#f0d0d0]",
-  dead: "bg-[#f0eff2] border-[#e0dee6]",
+  dead: "bg-[#f1ece2] border-[#e2dccf]",
 };
 
 export function PetCard({
@@ -40,13 +40,13 @@ export function PetCard({
       <PetAvatar stage={state.stage} size={64} costume={costume} />
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold text-ink mb-0.5">{petName}</div>
-        <div className="text-xs text-gray-600 leading-relaxed">{state.message}</div>
+        <div className="text-xs text-stone-600 leading-relaxed">{state.message}</div>
       </div>
       {state.stage === "dead" && (
         <button
           onClick={startNewPet}
           disabled={reviving}
-          className="flex-shrink-0 px-3.5 py-2 rounded-lg bg-ink text-white text-xs font-semibold disabled:opacity-60"
+          className="flex-shrink-0 px-3.5 py-2 rounded-lg bg-forest text-white text-xs font-semibold disabled:opacity-60"
         >
           {reviving ? "..." : "Start a new pet"}
         </button>

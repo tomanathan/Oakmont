@@ -40,11 +40,11 @@ export function WhyWrong({
 export function FullExplanation({ letter, text }: { letter: string; text: string }) {
   return (
     <details className="group mt-2.5">
-      <summary className="cursor-pointer list-none text-[12.5px] font-semibold text-[#4a5bb0] hover:underline">
+      <summary className="cursor-pointer list-none text-[12.5px] font-semibold text-[#2c4c3b] hover:underline">
         <span className="group-open:hidden">Why {letter} is right &rarr;</span>
         <span className="hidden group-open:inline">Why {letter} is right</span>
       </summary>
-      <div className="mt-1.5 text-[13px] leading-relaxed text-gray-600">
+      <div className="mt-1.5 text-[13px] leading-relaxed text-stone-600">
         <MathText text={text} />
       </div>
     </details>

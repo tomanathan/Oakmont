@@ -11,7 +11,7 @@ const STATUS_TITLE: Record<SubskillStatus, string> = {
 /** Card styling per status, shared by every subskill list. */
 export const STATUS_CARD: Record<SubskillStatus, string> = {
   new: "",
-  attempted: "bg-white border-gray-200 hover:border-gray-300",
+  attempted: "bg-white border-stone-200 hover:border-stone-300",
   passed: "bg-[#f0f7f2] border-[#cde8d9] hover:border-[#b5dcc6]",
   mastered: "bg-[#fffaf0] border-[#f0e0b0] hover:border-[#e8d29a]",
   due: "bg-[#fff8f1] border-[#f3dcc4] hover:border-[#ebc7a3]",
@@ -53,13 +53,13 @@ export function SubskillStatusBadge({
       );
     case "attempted":
       return (
-        <span className={`${base} text-gray-500`} title={title}>
+        <span className={`${base} text-stone-500`} title={title}>
           {progress!.bestScore}/{progress!.total}
         </span>
       );
     default:
       return showNew ? (
-        <span className={`${base} font-normal text-gray-300`} title={title}>
+        <span className={`${base} font-normal text-stone-300`} title={title}>
           Not started
         </span>
       ) : null;

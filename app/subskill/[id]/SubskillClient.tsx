@@ -601,20 +601,20 @@ export function SubskillClient({
     <div>
       <button
         onClick={() => router.push("/dashboard")}
-        className="bg-transparent border-none text-gray-500 text-sm mb-4 p-0 cursor-pointer hover:text-ink"
+        className="bg-transparent border-none text-stone-500 text-sm mb-4 p-0 cursor-pointer hover:text-ink"
       >
         &larr; Back to dashboard
       </button>
-      <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-1.5">
+      <div className="flex items-center gap-1.5 text-xs text-stone-400 mb-1.5">
         <span className={`w-1.5 h-1.5 rounded-full ${sectionTheme(subskill.section).dot}`} />
         {subskill.section} · {subskill.domain}
       </div>
       <h1 className="font-display text-[28px] font-semibold leading-tight text-ink mb-1.5">{subskill.name}</h1>
-      <div className="text-sm text-gray-500 mb-5">{subskill.blurb}</div>
+      <div className="text-sm text-stone-500 mb-5">{subskill.blurb}</div>
 
       {/* Two views of one subskill, not two destinations -- a segmented
           control says that better than a pair of separate buttons. */}
-      <div role="tablist" aria-label="Lesson or quiz" className="mb-5 inline-flex rounded-xl bg-[#f1f0f8] p-1">
+      <div role="tablist" aria-label="Lesson or quiz" className="mb-5 inline-flex rounded-xl bg-[#f3eee4] p-1">
         {(
           [
             ["lesson", "Lesson"],
@@ -628,8 +628,8 @@ export function SubskillClient({
             onClick={() => setMode(m)}
             className={`rounded-lg px-4 py-2 text-sm transition-all ${
               mode === m
-                ? "bg-white font-semibold text-ink shadow-[0_1px_3px_rgba(26,26,46,0.12)]"
-                : "font-medium text-gray-500 hover:text-ink"
+                ? "bg-white font-semibold text-ink shadow-[0_1px_3px_rgba(38,34,24,0.12)]"
+                : "font-medium text-stone-500 hover:text-ink"
             }`}
           >
             {label}
@@ -663,14 +663,14 @@ export function SubskillClient({
           )}
 
           {/* Main lesson column */}
-          <div className="bg-white border border-[#ece9f7] shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-6 min-w-0">
+          <div className="bg-white border border-[#ebe3d3] shadow-[0_1px_2px_rgba(38,34,24,0.03),0_4px_14px_rgba(38,34,24,0.04)] rounded-xl p-6 min-w-0">
             <div className="flex items-center justify-between mb-3 gap-3">
-              <div className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
+              <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
                 Question patterns within this subskill
               </div>
               {subskill.patterns.length > 1 && (
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-gray-400 whitespace-nowrap">
+                  <span className="text-[11px] text-stone-400 whitespace-nowrap">
                     {subskill.patterns.filter((_, i) => isPatternViewed(i)).length}/
                     {subskill.patterns.length} viewed
                   </span>
@@ -698,17 +698,17 @@ export function SubskillClient({
                         <span
                           className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold border-2 transition-colors ${
                             active
-                              ? "bg-ink border-ink text-white"
+                              ? "bg-forest border-ink text-white"
                               : complete
                               ? "bg-accent border-accent text-white"
-                              : "bg-white border-gray-300 text-gray-400 group-hover:border-gray-400"
+                              : "bg-white border-stone-300 text-stone-400 group-hover:border-stone-400"
                           }`}
                         >
                           {complete && !active ? "✓" : i + 1}
                         </span>
                         <span
                           className={`text-[10px] font-medium text-center leading-tight ${
-                            active ? "text-ink" : "text-gray-400"
+                            active ? "text-ink" : "text-stone-400"
                           }`}
                         >
                           {p.name}
@@ -717,7 +717,7 @@ export function SubskillClient({
                       {i < subskill.patterns.length - 1 && (
                         <div
                           className={`h-0.5 w-5 flex-shrink-0 mt-3.5 rounded ${
-                            complete ? "bg-accent" : "bg-gray-200"
+                            complete ? "bg-accent" : "bg-stone-200"
                           }`}
                         />
                       )}
@@ -736,24 +736,24 @@ export function SubskillClient({
                     producing it are different skills, and the test only
                     asks for the second. One click brings it back. */}
                 {activeExample >= FADE_FROM_EXAMPLE && !methodShown ? (
-                  <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-[#dcd9ef] px-3.5 py-2.5">
-                    <span className="text-[13px] text-gray-600">
+                  <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-[#ddd3bf] px-3.5 py-2.5">
+                    <span className="text-[13px] text-stone-600">
                       Try this one from memory. The method is folded away.
                     </span>
                     <button
                       onClick={() => setMethodShown(true)}
-                      className="text-[12.5px] font-semibold text-[#4a5bb0] hover:underline"
+                      className="text-[12.5px] font-semibold text-[#2c4c3b] hover:underline"
                     >
                       Show the method
                     </button>
                   </div>
                 ) : (
-                  <ProseText text={pattern.explanation} className="text-sm text-gray-700 mb-5" />
+                  <ProseText text={pattern.explanation} className="text-sm text-stone-700 mb-5" />
                 )}
 
-                <div className="bg-[#f8f8fb] rounded-lg p-4 mb-4">
+                <div className="bg-[#f8f5ee] rounded-lg p-4 mb-4">
                   <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-                    <div className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                    <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide">
                       Worked example
                       {pattern.examples.length > 1 && ` ${activeExample + 1} of ${pattern.examples.length}`}
                     </div>
@@ -787,10 +787,10 @@ export function SubskillClient({
                             <span
                               className={`block h-1.5 rounded-full transition-colors ${
                                 isCurrent
-                                  ? "bg-ink"
+                                  ? "bg-forest"
                                   : isViewed
                                   ? "bg-accent/50 group-hover:bg-accent/70"
-                                  : "bg-gray-200 group-hover:bg-gray-300"
+                                  : "bg-stone-200 group-hover:bg-stone-300"
                               }`}
                             />
                           </button>
@@ -828,7 +828,7 @@ export function SubskillClient({
                         Desmos shortcut for this pattern
                       </span>
                     </div>
-                    <StepList text={pattern.desmosTrick} className="text-[13px] text-gray-700 mb-2.5" />
+                    <StepList text={pattern.desmosTrick} className="text-[13px] text-stone-700 mb-2.5" />
                     <a
                       href={DESMOS_URLS[pattern.desmosCalculator ?? "graphing"]}
                       target="_blank"
@@ -843,7 +843,7 @@ export function SubskillClient({
               </div>
             )}
 
-            <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between gap-3">
+            <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between gap-3">
               <button
                 onClick={() => {
                   if (activeExample > 0) {
@@ -855,7 +855,7 @@ export function SubskillClient({
                   }
                 }}
                 disabled={activeExample === 0 && activePattern === 0}
-                className="px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-medium disabled:opacity-30 disabled:cursor-default hover:border-gray-300"
+                className="px-4 py-2.5 rounded-lg border border-stone-200 text-stone-600 text-sm font-medium disabled:opacity-30 disabled:cursor-default hover:border-stone-300"
               >
                 &larr; Previous
               </button>
@@ -869,9 +869,9 @@ export function SubskillClient({
                 // a little more breathing room than the outlined
                 // "Previous" button's px-4 -- a common convention for the
                 // more emphasized side of a button pair -- and the hover
-                // state matches the other bg-ink buttons elsewhere in the
+                // state matches the other bg-forest buttons elsewhere in the
                 // app instead of sitting flat with no feedback at all.
-                className="px-5 py-2.5 rounded-lg bg-ink text-white font-semibold text-sm hover:bg-[#2a2a42] transition-colors"
+                className="px-5 py-2.5 rounded-lg bg-forest text-white font-semibold text-sm hover:bg-[#22302a] transition-colors"
               >
                 {isLastExampleInPattern
                   ? isLastPattern
@@ -884,14 +884,14 @@ export function SubskillClient({
             <div className="mt-3 flex items-center justify-between gap-3 flex-wrap">
               <button
                 onClick={() => setMode("practice")}
-                className="bg-transparent border-none p-0 cursor-pointer text-[13px] font-medium text-gray-500 hover:text-gray-700"
+                className="bg-transparent border-none p-0 cursor-pointer text-[13px] font-medium text-stone-500 hover:text-stone-700"
               >
                 Skip ahead to the practice quiz &rarr;
               </button>
               {/* Mobile-only tips toggle */}
               <button
                 onClick={() => setTipsOpenMobile((v) => !v)}
-                className="lg:hidden px-4 py-2 rounded-lg border border-gray-200 text-gray-700 text-sm font-medium"
+                className="lg:hidden px-4 py-2 rounded-lg border border-stone-200 text-stone-700 text-sm font-medium"
               >
                 {tipsOpenMobile ? "Hide" : "Show"} tips &amp; tricks
               </button>
@@ -915,7 +915,7 @@ export function SubskillClient({
       {mode === "practice" && (
         <div>
           {quizQuestions.length === 0 && (
-            <div className="text-sm text-gray-500 mb-4">
+            <div className="text-sm text-stone-500 mb-4">
               No practice questions are available for this subskill yet.
             </div>
           )}
@@ -953,7 +953,7 @@ export function SubskillClient({
             // this page) since this reads the same way: a helpful
             // pointer, not an interactive tool embedded in the page.
             <div className="bg-[#fffaf0] border border-[#f0e4c8] rounded-lg p-3.5 mb-3.5 flex items-start gap-2.5">
-              <div className="text-[13px] text-gray-700 leading-relaxed">
+              <div className="text-[13px] text-stone-700 leading-relaxed">
                 Once you&apos;ve worked through these, the College Board&apos;s own{" "}
                 <a
                   href="https://satsuite.collegeboard.org/practice/student-question-bank"
@@ -984,12 +984,12 @@ export function SubskillClient({
                 ref={(el) => {
                   questionRefs.current[i] = el;
                 }}
-                className={`scroll-mt-[72px] border shadow-[0_1px_2px_rgba(26,26,46,0.03),0_4px_14px_rgba(26,26,46,0.04)] rounded-xl p-5 mb-3.5 ${
+                className={`scroll-mt-[72px] border shadow-[0_1px_2px_rgba(38,34,24,0.03),0_4px_14px_rgba(38,34,24,0.04)] rounded-xl p-5 mb-3.5 ${
                   submitted
                     ? isCorrect
                       ? "bg-[#fbfefc] border-[#cde8d9]"
                       : "bg-[#fefbfb] border-[#f0d0d0]"
-                    : "bg-white border-[#ece9f7]"
+                    : "bg-white border-[#ebe3d3]"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3 mb-3">
@@ -1015,7 +1015,7 @@ export function SubskillClient({
                   <ConfidencePicker value={confidence[i] ?? null} onChange={(c) => selectConfidence(i, c)} />
                 )}
                 {submitted && confidence[i] && (
-                  <div className="mt-2 text-[11.5px] text-gray-400">
+                  <div className="mt-2 text-[11.5px] text-stone-400">
                     You said: {CONFIDENCE_OPTIONS.find((o) => o.value === confidence[i])?.label}
                     {isCorrect && confidence[i] !== "sure" ? " · this one will come back in mixed review" : ""}
                   </div>
@@ -1029,7 +1029,7 @@ export function SubskillClient({
                 ) : (
                   <>
                     {submitted && (
-                      <div className="text-[13px] text-gray-500 mt-2.5 leading-relaxed">
+                      <div className="text-[13px] text-stone-500 mt-2.5 leading-relaxed">
                         <strong className="text-ink">Explanation: </strong>
                         <MathText text={q.explain} />
                       </div>
@@ -1053,27 +1053,27 @@ export function SubskillClient({
               <button
                 ref={submitRef}
                 onClick={submitQuiz}
-                className="px-5 py-2.5 rounded-lg bg-ink text-white font-semibold text-sm"
+                className="px-5 py-2.5 rounded-lg bg-forest text-white font-semibold text-sm"
               >
                 Submit answers
               </button>
             )
           ) : (
-            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#ece9f7] bg-white px-4 py-3">
+            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#ebe3d3] bg-white px-4 py-3">
               <span className="text-sm font-semibold text-ink tabular-nums">
                 {score ?? 0} / {quizQuestions.length} correct
               </span>
-              <span className="text-gray-300">·</span>
+              <span className="text-stone-300">·</span>
               <button
                 onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                className="text-sm text-gray-500 hover:text-ink"
+                className="text-sm text-stone-500 hover:text-ink"
               >
                 Back to results ↑
               </button>
               {!saving && (
                 <button
                   onClick={retakeQuiz}
-                  className="ml-auto rounded-lg border border-[#e0defa] px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:border-[#c9c6ee] hover:text-ink"
+                  className="ml-auto rounded-lg border border-[#ddd3bf] px-4 py-2 text-sm font-medium text-stone-600 transition-colors hover:border-[#c9d8c2] hover:text-ink"
                 >
                   Retake quiz
                 </button>
@@ -1104,16 +1104,16 @@ function QuizProgress({
   const pct = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
   const elapsed = useElapsed(startedAt, startedAt !== null);
   return (
-    <div className="sticky top-[62px] z-10 mb-3.5 flex items-center gap-4 rounded-lg border border-[#ece9f7] bg-white/95 px-3.5 py-2 shadow-[0_1px_2px_rgba(26,26,46,0.03)] backdrop-blur-sm">
+    <div className="sticky top-[62px] z-10 mb-3.5 flex items-center gap-4 rounded-lg border border-[#ebe3d3] bg-white/95 px-3.5 py-2 shadow-[0_1px_2px_rgba(38,34,24,0.03)] backdrop-blur-sm">
       <div className="min-w-0 flex-1">
         <div className="mb-1 flex items-baseline justify-between">
           <span className="text-xs font-semibold text-ink">
             {answeredCount} of {total} answered
           </span>
-          <span className="text-xs text-gray-400">{pct}%</span>
+          <span className="text-xs text-stone-400">{pct}%</span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-md bg-[#f0eff9]">
-          <div className="h-full bg-[#6d7fd6] transition-all duration-300 ease-out" style={{ width: `${pct}%` }} />
+        <div className="h-1.5 overflow-hidden rounded-md bg-[#eef3e9]">
+          <div className="h-full bg-[#587356] transition-all duration-300 ease-out" style={{ width: `${pct}%` }} />
         </div>
       </div>
       {startedAt !== null && <PaceClock elapsed={elapsed} target={paceTotal} label="whole quiz" />}
@@ -1233,26 +1233,26 @@ function ResultsCard({
   return (
     <div
       ref={cardRef}
-      className={`scroll-mt-[72px] mb-5 overflow-hidden rounded-2xl border bg-white shadow-[0_1px_2px_rgba(26,26,46,0.04),0_12px_32px_-12px_rgba(26,26,46,0.14)] ${
-        perfect ? "border-[#f0e0b0]" : "border-[#ece9f7]"
+      className={`scroll-mt-[72px] mb-5 overflow-hidden rounded-2xl border bg-white shadow-[0_1px_2px_rgba(38,34,24,0.04),0_12px_32px_-12px_rgba(38,34,24,0.14)] ${
+        perfect ? "border-[#f0e0b0]" : "border-[#ebe3d3]"
       }`}
       aria-live="polite"
     >
       <div className={`flex flex-wrap items-center gap-5 p-5 sm:p-6 ${perfect ? "bg-[#fffcf3]" : ""}`}>
         <ScoreRing score={score} total={total} />
         <div className="min-w-[200px] flex-1">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400">Quiz results</div>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-400">Quiz results</div>
           <div className="mt-1 font-display text-[26px] font-semibold leading-tight text-ink">{copy.headline}</div>
-          <p className="mt-1 max-w-[46ch] text-sm leading-relaxed text-gray-600">{copy.body}</p>
+          <p className="mt-1 max-w-[46ch] text-sm leading-relaxed text-stone-600">{copy.body}</p>
         </div>
       </div>
 
       {!saving && (avgSeconds !== null || unsureRight > 0) && (
-        <div className="flex flex-wrap gap-x-6 gap-y-1.5 border-t border-[#f2f0fa] px-5 py-3 text-[13px] text-gray-600 sm:px-6">
+        <div className="flex flex-wrap gap-x-6 gap-y-1.5 border-t border-[#eef3e9] px-5 py-3 text-[13px] text-stone-600 sm:px-6">
           {avgSeconds !== null && (
             <span>
               <span className="font-semibold tabular-nums text-ink">{formatSeconds(avgSeconds)}</span> per question
-              <span className="text-gray-400"> · SAT pace {formatSeconds(paceSeconds)}</span>
+              <span className="text-stone-400"> · SAT pace {formatSeconds(paceSeconds)}</span>
             </span>
           )}
           {unsureRight > 0 && (
@@ -1267,7 +1267,7 @@ function ResultsCard({
       {!saving && repeatedTrap && <TrapToWatch trap={repeatedTrap.trap} count={repeatedTrap.count} />}
 
       {result && !saving && (result.currentStreak > 0 || result.newCostume || result.justCompletedDomain) && (
-        <div className="flex flex-wrap gap-2 border-t border-[#f2f0fa] px-5 py-3 sm:px-6">
+        <div className="flex flex-wrap gap-2 border-t border-[#eef3e9] px-5 py-3 sm:px-6">
           {result.currentStreak > 0 && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#fff4e6] px-3 py-1 text-[12.5px] font-semibold text-[#b4541a]">
               <FlameIcon />
@@ -1294,11 +1294,11 @@ function ResultsCard({
       )}
 
       {!saving && (
-        <div className="flex flex-wrap gap-2 border-t border-[#f2f0fa] bg-[#fafafd] px-5 py-3.5 sm:px-6">
+        <div className="flex flex-wrap gap-2 border-t border-[#eef3e9] bg-[#faf7f0] px-5 py-3.5 sm:px-6">
           {missed > 0 && (
             <button
               onClick={onReview}
-              className="rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              className="rounded-lg bg-forest px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
               Review {missed} {missed === 1 ? "miss" : "misses"} ↓
             </button>
@@ -1306,7 +1306,7 @@ function ResultsCard({
           {perfect && result && !result.alreadyMastered && (
             <a
               href="/review"
-              className="rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              className="rounded-lg bg-forest px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
               Master it in mixed review →
             </a>
@@ -1316,8 +1316,8 @@ function ResultsCard({
               href={nextUp.href}
               className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
                 missed === 0 && result?.alreadyMastered
-                  ? "bg-ink text-white hover:opacity-90"
-                  : "border border-[#e0defa] bg-white text-ink hover:border-[#c9c6ee]"
+                  ? "bg-forest text-white hover:opacity-90"
+                  : "border border-[#ddd3bf] bg-white text-ink hover:border-[#c9d8c2]"
               }`}
             >
               Up next: {nextUp.label} →
@@ -1325,14 +1325,14 @@ function ResultsCard({
           )}
           <button
             onClick={onRetake}
-            className="rounded-lg border border-[#e0defa] bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:border-[#c9c6ee] hover:text-ink"
+            className="rounded-lg border border-[#ddd3bf] bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:border-[#c9d8c2] hover:text-ink"
           >
             Retake quiz
           </button>
           {!nextUp && missed === 0 && result?.alreadyMastered && (
             <a
               href="/dashboard"
-              className="rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+              className="rounded-lg bg-forest px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
               Back to dashboard →
             </a>
@@ -1385,7 +1385,7 @@ function StepArrows({
         onClick={onPrev}
         disabled={prevDisabled}
         aria-label={`Previous ${label}`}
-        className="w-6 h-6 flex items-center justify-center rounded-md border border-gray-200 text-gray-500 leading-none disabled:opacity-25 disabled:cursor-default hover:border-gray-300 hover:text-gray-700"
+        className="w-6 h-6 flex items-center justify-center rounded-md border border-stone-200 text-stone-500 leading-none disabled:opacity-25 disabled:cursor-default hover:border-stone-300 hover:text-stone-700"
       >
         &lsaquo;
       </button>
@@ -1393,7 +1393,7 @@ function StepArrows({
         onClick={onNext}
         disabled={nextDisabled}
         aria-label={`Next ${label}`}
-        className="w-6 h-6 flex items-center justify-center rounded-md border border-gray-200 text-gray-500 leading-none disabled:opacity-25 disabled:cursor-default hover:border-gray-300 hover:text-gray-700"
+        className="w-6 h-6 flex items-center justify-center rounded-md border border-stone-200 text-stone-500 leading-none disabled:opacity-25 disabled:cursor-default hover:border-stone-300 hover:text-stone-700"
       >
         &rsaquo;
       </button>
@@ -1447,7 +1447,7 @@ function MethodCallout({
         This question tests: {patternName}
       </div>
       {pattern && (
-        <ProseText text={pattern.explanation} className="text-[13px] text-gray-700 mb-2.5" />
+        <ProseText text={pattern.explanation} className="text-[13px] text-stone-700 mb-2.5" />
       )}
       <button
         onClick={onReview}
@@ -1468,7 +1468,7 @@ function TipsPanel({ tips, traps }: { tips: string[]; traps?: string[] }) {
         </div>
         <ul className="space-y-3">
           {tips.map((t, i) => (
-            <li key={i} className="text-[13px] text-gray-700 leading-relaxed pb-3 border-b border-[#f0e4c8] last:border-b-0 last:pb-0">
+            <li key={i} className="text-[13px] text-stone-700 leading-relaxed pb-3 border-b border-[#f0e4c8] last:border-b-0 last:pb-0">
               <MathText text={t} />
             </li>
           ))}
@@ -1484,7 +1484,7 @@ function TipsPanel({ tips, traps }: { tips: string[]; traps?: string[] }) {
           </div>
           <ul className="space-y-1.5">
             {traps.map((t, i) => (
-              <li key={i} className="text-[13px] text-gray-600 leading-relaxed flex gap-2">
+              <li key={i} className="text-[13px] text-stone-600 leading-relaxed flex gap-2">
                 <span className="text-[#d97f7e] flex-shrink-0">&#9679;</span>
                 <span>
                   <MathText text={t} />
@@ -1521,8 +1521,8 @@ function LessonOutline({
   onSelectExample: (patternIdx: number, exampleIdx: number) => void;
 }) {
   return (
-    <nav className="hidden lg:block lg:sticky lg:top-[72px] pr-3 border-r border-[#ece9f7] self-start">
-      <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2 px-2">
+    <nav className="hidden lg:block lg:sticky lg:top-[72px] pr-3 border-r border-[#ebe3d3] self-start">
+      <div className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide mb-2 px-2">
         On this lesson
       </div>
       <ol className="flex flex-col gap-0.5">
@@ -1538,10 +1538,10 @@ function LessonOutline({
                 onClick={() => onSelectPattern(i)}
                 className={`w-full text-left px-2 py-1.5 rounded-md text-[12.5px] leading-snug flex items-start gap-1.5 border-l-2 transition-colors ${
                   active
-                    ? "border-ink text-ink font-semibold bg-[#f5f4fb]"
+                    ? "border-ink text-ink font-semibold bg-[#f6f1e6]"
                     : complete
-                    ? "border-accent/50 text-gray-600 hover:bg-[#faf9ff]"
-                    : "border-transparent text-gray-400 hover:text-gray-600 hover:bg-[#faf9ff]"
+                    ? "border-accent/50 text-stone-600 hover:bg-[#f8f4eb]"
+                    : "border-transparent text-stone-400 hover:text-stone-600 hover:bg-[#f8f4eb]"
                 }`}
               >
                 <span className="flex-shrink-0 w-3.5">{complete && !active ? "✓" : `${i + 1}.`}</span>
@@ -1557,12 +1557,12 @@ function LessonOutline({
                         <button
                           onClick={() => onSelectExample(i, j)}
                           className={`w-full text-left px-2 py-1 rounded text-[11px] flex items-center gap-1.5 ${
-                            isCurrent ? "text-ink font-semibold" : isViewed ? "text-gray-500" : "text-gray-400"
+                            isCurrent ? "text-ink font-semibold" : isViewed ? "text-stone-500" : "text-stone-400"
                           }`}
                         >
                           <span
                             className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${
-                              isCurrent ? "bg-ink" : isViewed ? "bg-accent/60" : "bg-gray-300"
+                              isCurrent ? "bg-forest" : isViewed ? "bg-accent/60" : "bg-stone-300"
                             }`}
                           />
                           Example {j + 1}
@@ -1612,9 +1612,9 @@ function ExampleChoices({
       {last !== null && last !== example.answer && (
         <WhyWrong letter={letter(last)} note={example.why?.[last]}>
           {!solved && (
-            <div className="mt-2 text-[12.5px] text-gray-500">
+            <div className="mt-2 text-[12.5px] text-stone-500">
               Try another choice, or{" "}
-              <button onClick={onShow} className="font-semibold text-[#4a5bb0] hover:underline">
+              <button onClick={onShow} className="font-semibold text-[#2c4c3b] hover:underline">
                 show the answer
               </button>
               .
@@ -1623,11 +1623,11 @@ function ExampleChoices({
         </WhyWrong>
       )}
       {solved && (last === example.answer || shown) && (
-        <div className="mt-3 pt-3 border-t border-gray-200">
+        <div className="mt-3 pt-3 border-t border-stone-200">
           <div className="text-[11px] font-semibold text-accent uppercase tracking-wide mb-1.5">
             {letter(example.answer)} is right
           </div>
-          <StepList text={example.explain} className="text-[13px] text-gray-600" />
+          <StepList text={example.explain} className="text-[13px] text-stone-600" />
         </div>
       )}
     </>

@@ -213,13 +213,13 @@ export function WelcomeClient(props: Props) {
         {!single && step !== "ready" && (
           <button
             onClick={() => setStep(parentChoice ? "ready" : "parent")}
-            className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600"
+            className="text-xs text-stone-400 underline underline-offset-2 hover:text-stone-600"
           >
             Skip setup
           </button>
         )}
         {single && (
-          <button onClick={() => router.push("/dashboard")} className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600">
+          <button onClick={() => router.push("/dashboard")} className="text-xs text-stone-400 underline underline-offset-2 hover:text-stone-600">
             Back to dashboard
           </button>
         )}
@@ -230,8 +230,8 @@ export function WelcomeClient(props: Props) {
           <div className="flex gap-1.5">
             {STEPS.map((s, i) => (
               <div key={s} className="flex-1">
-                <div className={`h-1.5 rounded-full transition-colors ${i <= stepIndex ? "bg-ink" : "bg-[#e7e5f3]"}`} />
-                <div className={`mt-1.5 hidden text-[11px] sm:block ${i === stepIndex ? "font-semibold text-ink" : "text-gray-400"}`}>
+                <div className={`h-1.5 rounded-full transition-colors ${i <= stepIndex ? "bg-forest" : "bg-[#e5dccb]"}`} />
+                <div className={`mt-1.5 hidden text-[11px] sm:block ${i === stepIndex ? "font-semibold text-ink" : "text-stone-400"}`}>
                   {STEP_LABELS[s]}
                 </div>
               </div>
@@ -245,7 +245,7 @@ export function WelcomeClient(props: Props) {
         <div className="flex h-[72px] w-[72px] flex-shrink-0 items-end justify-center rounded-2xl bg-[#fef8f2] pb-1.5 ring-1 ring-[#f0d0b3]">
           <PetAvatar stage="thriving" size={58} />
         </div>
-        <div key={step} className="animate-fade-up relative mb-2 rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[15px] leading-snug text-ink shadow-[0_1px_2px_rgba(26,26,46,0.05),0_6px_18px_rgba(26,26,46,0.06)] ring-1 ring-[#ece9f7]">
+        <div key={step} className="animate-fade-up relative mb-2 rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[15px] leading-snug text-ink shadow-[0_1px_2px_rgba(38,34,24,0.05),0_6px_18px_rgba(38,34,24,0.06)] ring-1 ring-[#ebe3d3]">
           {ozhoLine[step]}
         </div>
       </div>
@@ -282,7 +282,7 @@ export function WelcomeClient(props: Props) {
                 return (
                   <button key={d.date} onClick={() => setDateChoice({ kind: "sat", date: d.date })} className={chip(on)} aria-pressed={on}>
                     <div className="text-[14px] font-semibold">{d.label}</div>
-                    <div className={`text-[12px] ${on ? "text-white/70" : "text-gray-500"}`}>
+                    <div className={`text-[12px] ${on ? "text-white/70" : "text-stone-500"}`}>
                       in {d.weeks} {d.weeks === 1 ? "week" : "weeks"}
                     </div>
                   </button>
@@ -294,11 +294,11 @@ export function WelcomeClient(props: Props) {
                 aria-pressed={dateChoice.kind === "other"}
               >
                 <div className="text-[14px] font-semibold">Another date</div>
-                <div className={`text-[12px] ${dateChoice.kind === "other" ? "text-white/70" : "text-gray-500"}`}>School day, retake...</div>
+                <div className={`text-[12px] ${dateChoice.kind === "other" ? "text-white/70" : "text-stone-500"}`}>School day, retake...</div>
               </button>
               <button onClick={() => setDateChoice({ kind: "unsure" })} className={chip(dateChoice.kind === "unsure")} aria-pressed={dateChoice.kind === "unsure"}>
                 <div className="text-[14px] font-semibold">Not sure yet</div>
-                <div className={`text-[12px] ${dateChoice.kind === "unsure" ? "text-white/70" : "text-gray-500"}`}>Use the recommended 6 months</div>
+                <div className={`text-[12px] ${dateChoice.kind === "unsure" ? "text-white/70" : "text-stone-500"}`}>Use the recommended 6 months</div>
               </button>
             </div>
             {dateChoice.kind === "other" && (
@@ -312,11 +312,11 @@ export function WelcomeClient(props: Props) {
               />
             )}
 
-            <div className="mt-5 rounded-xl bg-[#f5f4fb] p-4" aria-live="polite">
+            <div className="mt-5 rounded-xl bg-[#f6f1e6] p-4" aria-live="polite">
               <div className="font-display text-[26px] font-semibold leading-none text-ink">
-                {planWeeks} <span className="text-[15px] font-normal text-gray-500">{planWeeks === 1 ? "week" : "weeks"} of study</span>
+                {planWeeks} <span className="text-[15px] font-normal text-stone-500">{planWeeks === 1 ? "week" : "weeks"} of study</span>
               </div>
-              <p className="mt-2 text-[13px] leading-relaxed text-gray-600">
+              <p className="mt-2 text-[13px] leading-relaxed text-stone-600">
                 {chosenDate ? `Through ${formatDate(chosenDate)}. ` : "The recommended length. It resizes once you pick a date. "}
                 All {skills.length} skills and {practiceTests} full practice tests, about {skillsPerWeek} new{" "}
                 {skillsPerWeek === 1 ? "skill" : "skills"} a week.
@@ -348,10 +348,10 @@ export function WelcomeClient(props: Props) {
                 disabled={noScore}
                 onChange={(e) => setBaseline(e.target.value)}
                 placeholder="e.g. 1120"
-                className={`${INPUT} w-40 disabled:bg-gray-50`}
+                className={`${INPUT} w-40 disabled:bg-stone-50`}
               />
-              <label className="flex items-center gap-2 text-sm text-gray-600">
-                <input type="checkbox" checked={noScore} onChange={(e) => setNoScore(e.target.checked)} className="h-4 w-4 accent-[#1a1a2e]" />
+              <label className="flex items-center gap-2 text-sm text-stone-600">
+                <input type="checkbox" checked={noScore} onChange={(e) => setNoScore(e.target.checked)} className="h-4 w-4 accent-[#1d2621]" />
                 I don&apos;t have one yet
               </label>
             </div>
@@ -373,7 +373,7 @@ export function WelcomeClient(props: Props) {
                 setGoal(Number(e.target.value));
                 setGoalTouched(true);
               }}
-              className="mt-3 w-full accent-[#1a1a2e]"
+              className="mt-3 w-full accent-[#1d2621]"
             />
             <div className="mt-2 flex flex-wrap gap-2">
               {GOAL_PRESETS.map((g) => (
@@ -384,7 +384,7 @@ export function WelcomeClient(props: Props) {
                     setGoalTouched(true);
                   }}
                   className={`rounded-full px-3 py-1 text-[13px] font-medium ring-1 transition-colors ${
-                    goal === g ? "bg-ink text-white ring-ink" : "bg-white text-gray-600 ring-[#e0defa] hover:text-ink"
+                    goal === g ? "bg-forest text-white ring-ink" : "bg-white text-stone-600 ring-[#ddd3bf] hover:text-ink"
                   }`}
                 >
                   {g}
@@ -392,7 +392,7 @@ export function WelcomeClient(props: Props) {
               ))}
             </div>
             {!noScore && validBaseline !== null && (
-              <p className="mt-4 rounded-xl bg-[#f5f4fb] p-3.5 text-[13px] leading-relaxed text-gray-600">
+              <p className="mt-4 rounded-xl bg-[#f6f1e6] p-3.5 text-[13px] leading-relaxed text-stone-600">
                 {goal > validBaseline ? (
                   <>
                     <span className="font-semibold text-ink">+{goal - validBaseline} points</span> from {validBaseline}. Your practice test scores
@@ -427,13 +427,13 @@ export function WelcomeClient(props: Props) {
                     Recommended
                   </span>
                 </div>
-                <div className={`mt-1 text-[13px] leading-snug ${parentChoice === "yes" ? "text-white/75" : "text-gray-500"}`}>
+                <div className={`mt-1 text-[13px] leading-snug ${parentChoice === "yes" ? "text-white/75" : "text-stone-500"}`}>
                   Their free dashboard connects to your account right away.
                 </div>
               </button>
               <button role="radio" aria-checked={parentChoice === "solo"} onClick={() => setParentChoice("solo")} className={choiceCard(parentChoice === "solo")}>
                 <span className="text-[15px] font-semibold">Skip for now</span>
-                <div className={`mt-1 text-[13px] leading-snug ${parentChoice === "solo" ? "text-white/75" : "text-gray-500"}`}>
+                <div className={`mt-1 text-[13px] leading-snug ${parentChoice === "solo" ? "text-white/75" : "text-stone-500"}`}>
                   You can add a parent from Settings later.
                 </div>
               </button>
@@ -443,7 +443,7 @@ export function WelcomeClient(props: Props) {
               <div className="mt-5 grid gap-4 sm:grid-cols-[1.15fr_1fr]">
                 <div>
                   <div className="text-sm font-semibold text-ink">Your parent or guardian&apos;s email</div>
-                  <p className="mb-3 mt-1 text-[13px] text-gray-500">We&apos;ll set up their account and email them a link to choose a password.</p>
+                  <p className="mb-3 mt-1 text-[13px] text-stone-500">We&apos;ll set up their account and email them a link to choose a password.</p>
                   <AddParentForm
                     cta={parents.length ? "Add another" : "Add parent"}
                     onAdded={(p) => setParents((ps) => [...ps.filter((x) => x.id !== p.id), p])}
@@ -456,7 +456,7 @@ export function WelcomeClient(props: Props) {
                     </div>
                   )}
                 </div>
-                <div className="rounded-xl bg-[#f5f4fb] p-4 text-[13px] leading-relaxed text-gray-600">
+                <div className="rounded-xl bg-[#f6f1e6] p-4 text-[13px] leading-relaxed text-stone-600">
                   <div className="mb-1.5 font-semibold text-ink">What your parent gets</div>
                   <ul className="space-y-1">
                     <li>When you study and for how long</li>
@@ -464,14 +464,14 @@ export function WelcomeClient(props: Props) {
                     <li>Your progress on each skill</li>
                     <li>Practice test scores against your goal</li>
                   </ul>
-                  <div className="mt-2.5 text-[12px] text-gray-500">A summary email every Sunday, with what to celebrate and what to ask about.</div>
+                  <div className="mt-2.5 text-[12px] text-stone-500">A summary email every Sunday, with what to celebrate and what to ask about.</div>
                 </div>
               </div>
             )}
             <Footer error={error} onBack={single || STEPS.indexOf("parent") === 0 ? undefined : back}>
               <div className="flex items-center gap-3">
                 {parentChoice === "yes" && parents.length === 0 && (
-                  <span className="hidden text-[12px] text-gray-400 sm:inline">Add their email to continue</span>
+                  <span className="hidden text-[12px] text-stone-400 sm:inline">Add their email to continue</span>
                 )}
                 <button
                   onClick={saveParentChoice}
@@ -490,12 +490,12 @@ export function WelcomeClient(props: Props) {
             <h1 className={H1}>How Oakmont works</h1>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {TOUR.map((t) => (
-                <div key={t.title} className="rounded-xl border border-[#ece9f7] bg-[#fbfaff] p-4">
+                <div key={t.title} className="rounded-xl border border-[#ebe3d3] bg-[#f8f4eb] p-4">
                   <div className="flex items-center gap-2 text-[14px] font-semibold text-ink">
                     <span className="h-2 w-2 rounded-full" style={{ background: t.color }} aria-hidden />
                     {t.title}
                   </div>
-                  <p className="mt-1.5 text-[13px] leading-relaxed text-gray-600">{t.body}</p>
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-stone-600">{t.body}</p>
                 </div>
               ))}
             </div>
@@ -533,8 +533,8 @@ export function WelcomeClient(props: Props) {
               />
             </dl>
 
-            <div className="mt-5 rounded-xl border border-[#ece9f7] p-4">
-              <div className="text-[12px] font-semibold uppercase tracking-[0.08em] text-gray-400">Week 1</div>
+            <div className="mt-5 rounded-xl border border-[#ebe3d3] p-4">
+              <div className="text-[12px] font-semibold uppercase tracking-[0.08em] text-stone-400">Week 1</div>
               <ul className="mt-2 space-y-1.5">
                 {firstWeek.map((s, i) => (
                   <li key={s.id} className="flex items-center justify-between gap-3 text-[14px]">
@@ -542,7 +542,7 @@ export function WelcomeClient(props: Props) {
                       {s.name}
                       {i === 0 && <span className="ml-2 rounded-full bg-[#eef6f1] px-2 py-0.5 text-[11px] font-semibold text-[#2f6b4a]">First up</span>}
                     </span>
-                    <span className="whitespace-nowrap text-[12px] text-gray-400">{s.section}</span>
+                    <span className="whitespace-nowrap text-[12px] text-stone-400">{s.section}</span>
                   </li>
                 ))}
               </ul>
@@ -559,11 +559,11 @@ export function WelcomeClient(props: Props) {
                   <button onClick={() => finish("/subscribe")} disabled={saving} className={PRIMARY}>
                     {saving ? "Opening..." : "Choose a plan to start"}
                   </button>
-                  <span className="text-[13px] text-gray-500">The monthly plan starts with a 7-day free trial.</span>
+                  <span className="text-[13px] text-stone-500">The monthly plan starts with a 7-day free trial.</span>
                 </>
               )}
             </div>
-            <button onClick={back} className="mt-4 text-[13px] text-gray-400 hover:text-ink">
+            <button onClick={back} className="mt-4 text-[13px] text-stone-400 hover:text-ink">
               &larr; Back
             </button>
           </div>
@@ -574,19 +574,19 @@ export function WelcomeClient(props: Props) {
 }
 
 const CARD =
-  "rounded-2xl border border-[#ece9f7] bg-white p-5 shadow-[0_1px_2px_rgba(26,26,46,0.04),0_8px_24px_rgba(26,26,46,0.06)] sm:p-7";
+  "rounded-2xl border border-[#ebe3d3] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)] sm:p-7";
 const H1 = "font-display text-[24px] font-semibold leading-tight text-ink sm:text-[28px]";
-const SUB = "mt-1.5 text-[14px] leading-relaxed text-gray-500";
-const INPUT = "w-full rounded-lg border border-[#e0defa] px-3 py-2.5 text-sm focus:border-[#6d7fd6] focus:outline-none";
-const PRIMARY = "rounded-xl bg-ink px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60";
+const SUB = "mt-1.5 text-[14px] leading-relaxed text-stone-500";
+const INPUT = "w-full rounded-lg border border-[#ddd3bf] px-3 py-2.5 text-sm focus:border-[#587356] focus:outline-none";
+const PRIMARY = "rounded-xl bg-forest px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60";
 
 function choiceCard(on: boolean) {
-  return `rounded-xl p-4 text-left ring-1 transition-colors ${on ? "bg-ink text-white ring-ink" : "bg-white text-ink ring-[#e0defa] hover:ring-[#b9b5e6]"}`;
+  return `rounded-xl p-4 text-left ring-1 transition-colors ${on ? "bg-forest text-white ring-ink" : "bg-white text-ink ring-[#ddd3bf] hover:ring-[#b7cbb0]"}`;
 }
 
 function chip(on: boolean) {
   return `rounded-xl px-3.5 py-3 text-left ring-1 transition-colors ${
-    on ? "bg-ink text-white ring-ink" : "bg-white text-ink ring-[#e0defa] hover:ring-[#b9b5e6]"
+    on ? "bg-forest text-white ring-ink" : "bg-white text-ink ring-[#ddd3bf] hover:ring-[#b7cbb0]"
   }`;
 }
 
@@ -596,7 +596,7 @@ function Footer({ error, onBack, children }: { error: string; onBack?: () => voi
       {error && <div className="mb-3 text-sm text-red-700">{error}</div>}
       <div className="flex items-center justify-between gap-3">
         {onBack ? (
-          <button type="button" onClick={onBack} className="text-[13px] text-gray-400 hover:text-ink">
+          <button type="button" onClick={onBack} className="text-[13px] text-stone-400 hover:text-ink">
             &larr; Back
           </button>
         ) : (
@@ -610,10 +610,10 @@ function Footer({ error, onBack, children }: { error: string; onBack?: () => voi
 
 function Summary({ label, value, note }: { label: string; value: string; note: string }) {
   return (
-    <div className="rounded-xl bg-[#f5f4fb] p-3.5">
-      <dt className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">{label}</dt>
+    <div className="rounded-xl bg-[#f6f1e6] p-3.5">
+      <dt className="text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-400">{label}</dt>
       <dd className="mt-1 font-display text-[18px] font-semibold leading-tight text-ink">{value}</dd>
-      <dd className="mt-0.5 truncate text-[12px] text-gray-500">{note}</dd>
+      <dd className="mt-0.5 truncate text-[12px] text-stone-500">{note}</dd>
     </div>
   );
 }
@@ -621,7 +621,7 @@ function Summary({ label, value, note }: { label: string; value: string; note: s
 const TOUR = [
   {
     title: "A plan for every day",
-    color: "#6d7fd6",
+    color: "#587356",
     body: "Your dashboard shows today's lesson or review. The Plan page lays out every week until test day.",
   },
   {
@@ -641,7 +641,7 @@ const TOUR = [
   },
   {
     title: "Official practice tests",
-    color: "#4a5bb0",
+    color: "#2c4c3b",
     body: "Take the practice tests in Bluebook when your plan schedules them, then log the scores. Your plan shifts toward your weakest areas.",
   },
   {
@@ -684,7 +684,7 @@ function MeetOzho() {
         </div>
         <div className="min-w-0">
           <div className="font-display text-[18px] font-semibold text-ink">About {PET_NAME}</div>
-          <p className="mt-0.5 text-[13px] leading-relaxed text-gray-600">
+          <p className="mt-0.5 text-[13px] leading-relaxed text-stone-600">
             He wanders around while you work, cheers when you get things right, and nudges you when it&apos;s been a while.
           </p>
           <button
@@ -699,11 +699,11 @@ function MeetOzho() {
         {facts.map((f) => (
           <div key={f.title} className="rounded-lg bg-white/70 px-3.5 py-2.5">
             <div className="text-[13px] font-semibold text-ink">{f.title}</div>
-            <div className="mt-0.5 text-xs leading-relaxed text-gray-500">{f.body}</div>
+            <div className="mt-0.5 text-xs leading-relaxed text-stone-500">{f.body}</div>
           </div>
         ))}
       </div>
-      <p className="mt-3 text-xs leading-relaxed text-gray-500">
+      <p className="mt-3 text-xs leading-relaxed text-stone-500">
         One honest warning: he depends on you. After a few days without practice he gets hungry, and a full week without any means
         starting over with a new pet.
       </p>

@@ -37,14 +37,14 @@ export function ApproveInvite({ token, studentEmail }: { token: string; studentE
   }
   return (
     <div>
-      <div className="mb-3 text-[12.5px] text-gray-500">
+      <div className="mb-3 text-[12.5px] text-stone-500">
         Signed in as <span className="font-medium text-ink">{studentEmail}</span>
       </div>
       <div className="flex flex-col gap-2 sm:flex-row">
-        <button onClick={approve} disabled={state === "saving"} className="flex-1 rounded-lg bg-ink py-2.5 text-sm font-semibold text-white disabled:opacity-60">
+        <button onClick={approve} disabled={state === "saving"} className="flex-1 rounded-lg bg-forest py-2.5 text-sm font-semibold text-white disabled:opacity-60">
           {state === "saving" ? "Connecting..." : "Connect"}
         </button>
-        <button onClick={() => router.push("/dashboard")} className="flex-1 rounded-lg border border-[#e0defa] py-2.5 text-sm font-semibold text-ink hover:bg-[#f3f2fc]">
+        <button onClick={() => router.push("/dashboard")} className="flex-1 rounded-lg border border-[#ddd3bf] py-2.5 text-sm font-semibold text-ink hover:bg-[#eef3e9]">
           Not now
         </button>
       </div>

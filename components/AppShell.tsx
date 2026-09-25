@@ -12,10 +12,10 @@ import { LegalFooter } from "./LegalFooter";
 
 const STAGE_PILL: Record<PetStage, string> = {
   thriving: "bg-[#eaf6ef] border-[#cde8d9] text-[#2f6f4f]",
-  content: "bg-[#eef0fc] border-[#d7dbf3] text-[#4a5bb0]",
+  content: "bg-[#eaf1e5] border-[#c9d8c2] text-[#2c4c3b]",
   hungry: "bg-[#fbf1df] border-[#f0ddb8] text-[#9a6a12]",
   critical: "bg-[#fbeaea] border-[#f0d0d0] text-[#b23b3b]",
-  dead: "bg-[#f0eff2] border-[#e0dee6] text-gray-500",
+  dead: "bg-[#f1ece2] border-[#e2dccf] text-stone-500",
 };
 const STAGE_LABEL: Record<PetStage, string> = {
   thriving: "Thriving",
@@ -107,7 +107,7 @@ export function AppShell({
           same product. On phones the right edge is left clear: that's
           where Ozho (and Mochi, once earned) dock as fixed badges -- see
           ScoutCompanion's MOBILE_DOCK_* and SecondCompanion's DOCK_*. */}
-      <header className="sticky top-0 z-30 border-b border-[#ece9f7]/80 bg-white/85 backdrop-blur-md font-sans">
+      <header className="sticky top-0 z-30 border-b border-[#ebe3d3] bg-[#faf6ec]/90 backdrop-blur-md font-sans">
         <div className={`${width} mx-auto flex items-center gap-2 pl-4 pr-[100px] py-2.5 sm:gap-3 sm:pr-4`}>
           <Link href="/dashboard" className="flex flex-shrink-0 items-center gap-2" aria-label="Oakmont Study Center, dashboard">
             <BrandMark size={26} />
@@ -184,7 +184,7 @@ function Tab({ href, active, children }: { href: string; active: boolean; childr
       href={href}
       aria-current={active ? "page" : undefined}
       className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
-        active ? "bg-[#f1f0fb] font-semibold text-ink" : "text-gray-500 hover:text-ink"
+        active ? "bg-[#eef3e9] font-semibold text-ink" : "text-stone-500 hover:text-ink"
       }`}
     >
       {children}
@@ -221,29 +221,29 @@ function AccountMenu({ email, onLogout }: { email: string; onLogout: () => void 
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Account"
-        className="flex h-8 w-8 items-center justify-center rounded-full bg-ink text-[13px] font-semibold uppercase text-white transition-opacity hover:opacity-85"
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-forest text-[13px] font-semibold uppercase text-white transition-opacity hover:opacity-85"
       >
         {email.trim()[0] ?? "?"}
       </button>
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-xl border border-[#ece9f7] bg-white py-1 shadow-[0_12px_32px_-8px_rgba(26,26,46,0.2)]"
+          className="absolute right-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-xl border border-[#ebe3d3] bg-white py-1 shadow-[0_12px_32px_-8px_rgba(38,34,24,0.2)]"
         >
-          <div className="border-b border-[#f2f0fa] px-3.5 py-2.5">
-            <div className="text-[11px] text-gray-400">Signed in as</div>
+          <div className="border-b border-[#eef3e9] px-3.5 py-2.5">
+            <div className="text-[11px] text-stone-400">Signed in as</div>
             <div className="truncate text-[13px] font-medium text-ink">{email}</div>
           </div>
-          <Link role="menuitem" href="/settings" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-gray-700 hover:bg-[#f7f6fd]">
+          <Link role="menuitem" href="/settings" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-stone-700 hover:bg-[#f8f4eb]">
             Settings
           </Link>
-          <Link role="menuitem" href="/settings#wardrobe" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-gray-700 hover:bg-[#f7f6fd]">
+          <Link role="menuitem" href="/settings#wardrobe" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-stone-700 hover:bg-[#f8f4eb]">
             {PET_NAME}&apos;s wardrobe
           </Link>
           <button
             role="menuitem"
             onClick={onLogout}
-            className="block w-full px-3.5 py-2 text-left text-sm text-gray-700 hover:bg-[#f7f6fd]"
+            className="block w-full px-3.5 py-2 text-left text-sm text-stone-700 hover:bg-[#f8f4eb]"
           >
             Log out
           </button>

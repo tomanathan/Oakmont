@@ -31,21 +31,21 @@ export default async function LinkInvitePage({ params }: { params: { token: stri
       {!valid ? (
         <div className="text-center">
           <h1 className="font-display text-[26px] font-semibold text-ink">This link has expired</h1>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-stone-500">
             It may have been used already, or it&apos;s more than 14 days old. Ask your parent to create a new one from their dashboard.
           </p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-[#ece9f7] bg-white p-7 shadow-[0_1px_2px_rgba(26,26,46,0.04),0_8px_24px_rgba(26,26,46,0.06)]">
-          <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#4a5bb0]">Connect your parent</div>
+        <div className="rounded-2xl border border-[#ebe3d3] bg-white p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
+          <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#2c4c3b]">Connect your parent</div>
           <h1 className="mt-1 font-display text-[24px] font-semibold leading-snug text-ink">
             {invite.parent.email} wants to follow your SAT prep
           </h1>
-          <p className="mt-2 text-[14px] leading-relaxed text-gray-600">Once you connect, their dashboard follows your progress:</p>
+          <p className="mt-2 text-[14px] leading-relaxed text-stone-600">Once you connect, their dashboard follows your progress:</p>
           <ul className="mt-3 flex flex-col gap-2">
             {SHARED.map((s) => (
-              <li key={s} className="flex gap-2.5 text-[13.5px] leading-snug text-gray-700">
-                <span className="mt-[3px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#6d7fd6]" />
+              <li key={s} className="flex gap-2.5 text-[13.5px] leading-snug text-stone-700">
+                <span className="mt-[3px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#587356]" />
                 {s}
               </li>
             ))}
@@ -55,12 +55,12 @@ export default async function LinkInvitePage({ params }: { params: { token: stri
               <ApproveInvite token={params.token} studentEmail={user.email} />
             ) : (
               <div className="flex flex-col gap-2 sm:flex-row">
-                <Link href={`/login?next=${back}`} className="flex-1 rounded-lg bg-ink py-2.5 text-center text-sm font-semibold text-white">
+                <Link href={`/login?next=${back}`} className="flex-1 rounded-lg bg-forest py-2.5 text-center text-sm font-semibold text-white">
                   Log in to connect
                 </Link>
                 <Link
                   href={`/login?mode=signup&next=${back}`}
-                  className="flex-1 rounded-lg border border-[#e0defa] py-2.5 text-center text-sm font-semibold text-ink hover:bg-[#f3f2fc]"
+                  className="flex-1 rounded-lg border border-[#ddd3bf] py-2.5 text-center text-sm font-semibold text-ink hover:bg-[#eef3e9]"
                 >
                   I&apos;m new: sign up
                 </Link>

@@ -3,12 +3,12 @@ import { PlaneFigure, SolidShape } from "./PlaneFigure";
 
 // Drawn to scale from the figure's data (see lib/figureTypes.ts). Colors
 // follow the geometry diagrams: ink strokes, a quiet grid, one accent.
-const INK = "#3a3550";
+const INK = "#383a30";
 const GRID = "#e9e6f3";
-const MUTED = "#8a8499";
+const MUTED = "#8f887a";
 const POINT = "#5b6fd0";
 const LINE = "#b5602f";
-const BAR = "#c5cbef";
+const BAR = "#c9d8c2";
 const DOT_R = 5;
 
 const W = 360;
@@ -225,7 +225,7 @@ function viewBox(spec: FigureSpec): string {
 
 export function QuestionFigure({ spec }: { spec: FigureSpec }) {
   return (
-    <figure className="my-1 rounded-lg border border-[#ece9f7] bg-[#fbfaff] px-3 py-3">
+    <figure className="my-1 rounded-lg border border-[#ebe3d3] bg-[#f8f4eb] px-3 py-3">
       {spec.title && (
         <figcaption className="mb-2 text-center text-[12.5px] font-semibold text-ink">{spec.title}</figcaption>
       )}

@@ -30,7 +30,7 @@ export function StepList({ text, className = "" }: { text: string; className?: s
     <ol className={`space-y-2.5 ${className}`}>
       {steps.map((step, i) => (
         <li key={i} className="flex gap-2.5 leading-relaxed">
-          <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-white border border-gray-300 text-gray-500 text-[10px] font-bold flex items-center justify-center">
+          <span className="flex-shrink-0 w-5 h-5 mt-0.5 rounded-full bg-white border border-stone-300 text-stone-500 text-[10px] font-bold flex items-center justify-center">
             {i + 1}
           </span>
           <span>

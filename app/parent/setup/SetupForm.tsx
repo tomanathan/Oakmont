@@ -69,7 +69,7 @@ export function SetupForm({
     return (
       <>
         <h1 className="font-display text-[28px] font-semibold leading-tight text-ink">Removed</h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-gray-600">The account for {email} is deleted. You won&apos;t get any more emails from us.</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-stone-600">The account for {email} is deleted. You won&apos;t get any more emails from us.</p>
       </>
     );
   }
@@ -78,7 +78,7 @@ export function SetupForm({
     return (
       <>
         <h1 className="font-display text-[28px] font-semibold leading-tight text-ink">Not {who}&apos;s parent?</h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-gray-600">
+        <p className="mt-2 text-[15px] leading-relaxed text-stone-600">
           {who} entered {email} as their parent&apos;s email. If that&apos;s a mistake, remove the account and you won&apos;t hear from us again.
         </p>
         {error && <div className="mt-3 text-sm text-red-700">{error}</div>}
@@ -86,7 +86,7 @@ export function SetupForm({
           <button onClick={decline} disabled={busy} className="rounded-lg bg-[#b23b3b] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">
             {busy ? "Removing..." : "Remove this account"}
           </button>
-          <button onClick={() => setDeclining(false)} className="rounded-lg px-5 py-2.5 text-sm font-semibold text-ink ring-1 ring-[#e0defa]">
+          <button onClick={() => setDeclining(false)} className="rounded-lg px-5 py-2.5 text-sm font-semibold text-ink ring-1 ring-[#ddd3bf]">
             Actually, I&apos;m their parent
           </button>
         </div>
@@ -100,15 +100,15 @@ export function SetupForm({
         {claimed ? "Choose a new password" : `Set up your account to follow ${who}`}
       </h1>
       {!claimed && (
-        <p className="mt-2 text-[15px] leading-relaxed text-gray-600">
+        <p className="mt-2 text-[15px] leading-relaxed text-stone-600">
           {who} added you as their parent. Set a password and you&apos;ll go straight to their report: every study session, every skill and
           every practice test score. It&apos;s free.
         </p>
       )}
-      <form onSubmit={submit} className="mt-6 rounded-xl border border-[#ece9f7] bg-white p-6 shadow-[0_1px_2px_rgba(26,26,46,0.04),0_8px_24px_rgba(26,26,46,0.06)]">
-        <label className="mb-1 block text-sm text-gray-700">Email</label>
-        <div className="mb-4 rounded-lg bg-[#f5f4fb] px-3 py-2.5 text-sm text-ink">{email}</div>
-        <label className="mb-1 block text-sm text-gray-700" htmlFor="pw">
+      <form onSubmit={submit} className="mt-6 rounded-xl border border-[#ebe3d3] bg-white p-6 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
+        <label className="mb-1 block text-sm text-stone-700">Email</label>
+        <div className="mb-4 rounded-lg bg-[#f6f1e6] px-3 py-2.5 text-sm text-ink">{email}</div>
+        <label className="mb-1 block text-sm text-stone-700" htmlFor="pw">
           {claimed ? "New password" : "Password"}
         </label>
         <input
@@ -121,15 +121,15 @@ export function SetupForm({
           minLength={6}
           required
           autoComplete="new-password"
-          className="w-full rounded-lg border border-[#e0defa] px-3 py-2.5 text-sm focus:border-[#6d7fd6] focus:outline-none"
+          className="w-full rounded-lg border border-[#ddd3bf] px-3 py-2.5 text-sm focus:border-[#587356] focus:outline-none"
         />
         {error && <div className="mt-3 text-sm text-red-700">{error}</div>}
-        <button type="submit" disabled={busy} className="mt-4 w-full rounded-lg bg-ink py-2.5 text-sm font-semibold text-white disabled:opacity-60">
+        <button type="submit" disabled={busy} className="mt-4 w-full rounded-lg bg-forest py-2.5 text-sm font-semibold text-white disabled:opacity-60">
           {busy ? "Saving..." : claimed ? "Save and log in" : "Set password and see the report"}
         </button>
       </form>
       {!claimed && (
-        <button onClick={() => setDeclining(true)} className="mt-4 text-[13px] text-gray-400 hover:text-ink">
+        <button onClick={() => setDeclining(true)} className="mt-4 text-[13px] text-stone-400 hover:text-ink">
           Not {who}&apos;s parent?
         </button>
       )}
