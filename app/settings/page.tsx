@@ -10,6 +10,7 @@ import { computePetState, PET_NAME, SECOND_PET_NAME, SECOND_PET_UNLOCK_STREAK_DA
 import { AppShell } from "@/components/AppShell";
 import { SettingsClient } from "./SettingsClient";
 import { retakeState } from "@/lib/retakeCover";
+import { stripe } from "@/lib/stripe";
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
@@ -23,6 +24,7 @@ export default async function SettingsPage() {
       select: {
         parentInviteCode: true,
         parentShareToken: true,
+        stripeSubscriptionId: true,
         parentLinks: { select: { id: true, parent: { select: { id: true, email: true, passwordHash: true } } }, orderBy: { createdAt: "asc" } },
       },
     }),
@@ -57,6 +59,32 @@ export default async function SettingsPage() {
       }
     : null;
 
+  // Monthly subscribers only. The webhook mirrors status and period end but
+  // not "set to cancel at period end" -- a subscription canceled from the
+  // Billing Portal stays "active" until the period runs out -- so that one
+  // detail is read live from Stripe, or the page would still say "Renews on".
+  let subscription: { status: string; currentPeriodEnd: string | null; cancelsAt: string | null } | null = null;
+  if (stats.stripeCustomerId && stats.subscriptionStatus) {
+    let cancelsAt: string | null = null;
+    const subscriptionId = parentAccess?.stripeSubscriptionId;
+    if (subscriptionId && ["trialing", "active", "past_due"].includes(stats.subscriptionStatus)) {
+      try {
+        const sub = await stripe.subscriptions.retrieve(subscriptionId);
+        if (sub.cancel_at) cancelsAt = new Date(sub.cancel_at * 1000).toISOString();
+        else if (sub.cancel_at_period_end) cancelsAt = stats.currentPeriodEnd?.toISOString() ?? null;
+      } catch (err) {
+        // Stripe being unreachable shouldn't break Settings; fall back to
+        // the stored status.
+        console.error("Couldn't read subscription from Stripe:", err);
+      }
+    }
+    subscription = {
+      status: stats.subscriptionStatus,
+      currentPeriodEnd: stats.currentPeriodEnd?.toISOString() ?? null,
+      cancelsAt,
+    };
+  }
+
   return (
     <AppShell email={user.email} stats={stats}>
       <SettingsClient
@@ -77,6 +105,7 @@ export default async function SettingsPage() {
         parentShareToken={parentAccess?.parentShareToken ?? null}
         linkedParents={(parentAccess?.parentLinks ?? []).map((l) => ({ id: l.id, parentId: l.parent.id, email: l.parent.email, pending: !l.parent.passwordHash }))}
         pass={pass}
+        subscription={subscription}
       />
     </AppShell>
   );

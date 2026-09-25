@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { PixelDog } from "@/components/PixelDog";
 import { PetCard } from "@/components/PetCard";
 import { AddParentForm, ParentRow } from "@/components/AddParentForm";
@@ -27,6 +28,7 @@ export function SettingsClient({
   parentShareToken,
   linkedParents,
   pass,
+  subscription,
 }: {
   email: string;
   firstName: string | null;
@@ -46,6 +48,9 @@ export function SettingsClient({
   linkedParents: { id: string; parentId: string; email: string; pending: boolean }[];
   // Only for 6-month pass holders; null for everyone else.
   pass: (RetakeCoverProps & { active: boolean }) | null;
+  // Only for monthly subscribers (anyone Stripe has a subscription status
+  // for); null for everyone else.
+  subscription: { status: string; currentPeriodEnd: string | null; cancelsAt: string | null } | null;
 }) {
   const router = useRouter();
   const [name, setName] = useState(firstName ?? "");
@@ -55,6 +60,27 @@ export function SettingsClient({
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
   const [saveError, setSaveError] = useState("");
+
+  const [openingBilling, setOpeningBilling] = useState(false);
+  const [billingError, setBillingError] = useState("");
+
+  async function openBillingPortal() {
+    setBillingError("");
+    setOpeningBilling(true);
+    try {
+      const res = await fetch("/api/stripe/portal", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        setBillingError(data.error || "Couldn't open billing. Please try again.");
+        setOpeningBilling(false);
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      setBillingError("Couldn't reach the server. Please try again.");
+      setOpeningBilling(false);
+    }
+  }
 
   const [costume, setCostume] = useState(equippedCostume);
   const [equipping, setEquipping] = useState<string | null>(null);
@@ -527,6 +553,37 @@ export function SettingsClient({
         </>
       )}
 
+      {subscription && (
+        <>
+          <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Your subscription</div>
+          <div className="mb-8 rounded-xl border border-[#e2d7c1] bg-white p-6">
+            <div className="text-[15px] font-semibold text-ink">Monthly plan</div>
+            <div className="mb-4 mt-0.5 text-[13px] text-stone-600">{subscriptionSummary(subscription)}</div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={openBillingPortal}
+                disabled={openingBilling}
+                className="px-4 py-2.5 rounded-lg bg-forest text-white font-semibold text-sm disabled:opacity-60"
+              >
+                {openingBilling ? "Opening..." : "Manage billing"}
+              </button>
+              {ENDED_STATUSES.has(subscription.status) && (
+                <Link
+                  href="/subscribe"
+                  className="px-4 py-2.5 rounded-lg border border-[#d5c8ae] text-stone-600 font-semibold text-sm"
+                >
+                  Subscribe again
+                </Link>
+              )}
+            </div>
+            {billingError && <div className="text-red-700 text-sm mt-3">{billingError}</div>}
+            <div className="mt-3 text-xs text-stone-500">
+              Cancel, update your card, or download receipts. You&apos;ll go to our payment provider, Stripe, and come back here after.
+            </div>
+          </div>
+        </>
+      )}
+
       <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Account</div>
 
       <div className="bg-white border border-red-100 rounded-xl p-6">
@@ -579,4 +636,30 @@ export function SettingsClient({
       </div>
     </div>
   );
+}
+
+const ENDED_STATUSES = new Set(["canceled", "unpaid", "incomplete_expired"]);
+
+function formatBillingDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+}
+
+// One plain-language line for the plan's current state. Statuses are
+// Stripe's own strings, mirrored by the webhook (see lib/subscription.ts).
+function subscriptionSummary(sub: { status: string; currentPeriodEnd: string | null; cancelsAt: string | null }): string {
+  if (ENDED_STATUSES.has(sub.status)) return "Your subscription has ended.";
+  if (sub.cancelsAt) return `Canceled. You keep access through ${formatBillingDate(sub.cancelsAt)}, and you won't be charged again.`;
+  const end = sub.currentPeriodEnd ? formatBillingDate(sub.currentPeriodEnd) : null;
+  switch (sub.status) {
+    case "trialing":
+      return end ? `Free trial. Your first charge is on ${end}.` : "Free trial.";
+    case "active":
+      return end ? `Active. Renews on ${end}.` : "Active.";
+    case "past_due":
+      return "Your last payment didn't go through. Update your card to keep access.";
+    case "incomplete":
+      return "Your first payment hasn't gone through yet.";
+    default:
+      return end ? `Renews on ${end}.` : "Active.";
+  }
 }
