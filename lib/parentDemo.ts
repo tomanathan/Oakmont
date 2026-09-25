@@ -21,7 +21,10 @@ export function sampleParentReport(now: Date = new Date(), mode?: "idle") {
   const gap = searchParams.mode === "idle" ? 7 : 0;
   for (let dBack = 75; dBack >= gap; dBack--) {
     const weekday = (now.getDay() - dBack + 700) % 7;
-    const p = weekday === 0 || weekday === 6 ? 0.35 : 0.7;
+    // The latest week reads as a student hitting their stride (more days,
+    // a bit more accurate) against a patchier week before it, whatever
+    // weekday it happens to be viewed on.
+    const p = dBack < 7 ? 0.95 : dBack < 14 ? 0.5 : weekday === 0 || weekday === 6 ? 0.35 : 0.7;
     if (r() > p || (dBack > 40 && dBack < 46)) continue;
     const day = new Date(now.getTime() - dBack * 86400000);
     day.setHours(19 + Math.floor(r() * 3), Math.floor(r() * 60), 0, 0);
@@ -43,7 +46,7 @@ export function sampleParentReport(now: Date = new Date(), mode?: "idle") {
       const ms = base * 1000 * (0.25 + r() * 1.3);
       const rushed = ms < base * 400;
       const skillBias = s.id.includes("boundaries") || s.id.includes("inference") ? -0.25 : 0;
-      const correct = r() < 0.72 + skillBias - (rushed ? 0.2 : 0) + (75 - dBack) * 0.002;
+      const correct = r() < 0.72 + skillBias - (rushed ? 0.2 : 0) + (75 - dBack) * 0.002 + (dBack < 7 ? 0.09 : dBack < 14 ? -0.06 : 0);
       const wrongChoices = item.choices.map((_, k) => k).filter((k) => k !== item.answer);
       const choice = correct ? item.answer : wrongChoices[Math.floor(r() * wrongChoices.length)];
       const cr = r();
