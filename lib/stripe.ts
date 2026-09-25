@@ -25,12 +25,11 @@ const PRICE_ENV_VARS: Record<PlanId, string> = {
 // file for the `stripe` client alone never fails just because one price
 // env var happens to be unset. Monthly is a recurring subscription Price
 // (7-day trial applied at checkout time, since Stripe's trial mechanic
-// only exists for subscriptions); the pass ("Full Course Access", plan id
-// and env var still named "sixmonth" from when it was a 6-month pass -- the
-// id is internal and renaming it would mean renaming the deployed env var)
-// is a one-time Price with no trial. (An old Annual subscription price
-// exists in the sandbox but is deactivated -- the one-time pass is the
-// yearly option.)
+// only exists for subscriptions); SixMonth ("Full Course Access") is a
+// one-time Price with no trial. (An Annual price was created and then
+// deactivated in the sandbox -- $99/yr undercut the $100 six-month pass
+// for twice the access, so it was dropped rather than fixed with mismatched
+// numbers.)
 export function getPriceId(plan: PlanId): string {
   const envVar = PRICE_ENV_VARS[plan];
   const value = process.env[envVar];
@@ -40,11 +39,11 @@ export function getPriceId(plan: PlanId): string {
   return value;
 }
 
-// How long the one-time pass (1 year of access) grants access for, from the moment
+// How long a one-time 6-Month Pass grants access for, from the moment
 // payment completes -- kept here (not just in the Stripe Price's own
 // metadata) since app code needs it as a plain number for the
 // accessExpiresAt calculation in the webhook handler.
-export const PASS_DAYS = 365;
+export const SIXMONTH_PASS_DAYS = 182;
 
 // Local dev (via `stripe listen`) and the deployed app (via a Dashboard-
 // configured webhook endpoint) each have their OWN signing secret -- see

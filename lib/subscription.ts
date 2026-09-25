@@ -8,7 +8,7 @@ const ACTIVE_SUBSCRIPTION_STATUSES = new Set(["trialing", "active", "past_due"])
 /**
  * Whether a student currently has paid access, from either purchase path:
  * an active/trialing/past_due subscription (Monthly or Annual), OR an
- * unexpired one-time 1-year pass. A student can hold both -- access is
+ * unexpired one-time 6-Month Pass. A student can hold both -- access is
  * granted if either one is currently valid, not just the first one found.
  */
 export function hasActiveAccess(

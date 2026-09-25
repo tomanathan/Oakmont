@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
-import { stripe, getWebhookSecret, PASS_DAYS } from "@/lib/stripe";
+import { stripe, getWebhookSecret, SIXMONTH_PASS_DAYS } from "@/lib/stripe";
 
 // The actual source of truth for access -- not the browser redirect back
 // from Checkout, which only tells you the *customer's browser* reached the
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
             where: { id: userId },
             data: {
               ...(customerId ? { stripeCustomerId: customerId } : {}),
-              accessExpiresAt: new Date(Date.now() + PASS_DAYS * 24 * 60 * 60 * 1000),
+              accessExpiresAt: new Date(Date.now() + SIXMONTH_PASS_DAYS * 24 * 60 * 60 * 1000),
             },
           });
         }

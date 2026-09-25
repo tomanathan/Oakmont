@@ -114,7 +114,7 @@ export async function DELETE() {
   // disappears -- deleting the account first would leave a subscription with
   // no way back to the student who's still being charged for it every
   // month. Immediate cancellation (not at period end): the student is
-  // leaving entirely, not just downgrading. A one-time 1-year pass has no
+  // leaving entirely, not just downgrading. A one-time 6-Month Pass has no
   // subscription object at all, so most deletions hit the early return
   // below and never call Stripe.
   const dbUser = await prisma.user.findUnique({

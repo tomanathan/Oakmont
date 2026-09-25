@@ -27,6 +27,6 @@ export const FAQ_ITEMS = [
   },
   {
     q: "Is there a free trial? Can I cancel?",
-    a: "The monthly plan includes a 7-day free trial, and your card isn't charged until it ends. Cancel anytime from Settings; the monthly plan stops billing going forward, and the one-time 1-year pass simply runs until it expires.",
+    a: "The monthly plan includes a 7-day free trial, and your card isn't charged until it ends. Cancel anytime from Settings; the monthly plan stops billing going forward, and the one-time 6-month pass simply runs until it expires.",
   },
 ];
