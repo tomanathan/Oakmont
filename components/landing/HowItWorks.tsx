@@ -8,32 +8,32 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
   const steps = [
     {
       title: "Set your test date",
-      body: "We recommend six months, but the week-by-week plan sizes itself to the time you have.",
+      body: "Six months is ideal. The plan fits whatever time you have.",
     },
     {
-      title: "Follow one week at a time",
-      body: "Each week focuses on a few skills, starting with the ones that will raise the score most.",
+      title: "One week at a time",
+      body: "A few skills each week, highest-impact first.",
     },
     {
       title: "Learn, practice, review",
-      body: `A short lesson and quiz for each of the ${subskillCount} skills, then quick mixed reviews that keep every skill fresh until test day.`,
+      body: `A lesson and quiz for each of the ${subskillCount} skills, then short mixed reviews so nothing fades.`,
     },
   ];
 
   const extras = [
     {
       title: "Explanations that teach",
-      body: "Every wrong answer tells your student why it's wrong, and names the pattern behind the question.",
+      body: "Every wrong answer gets its own reason.",
       icon: "?",
     },
     {
       title: "8 full-length practice tests",
-      body: "Scheduled into the plan so test day feels familiar.",
+      body: "Scheduled into the plan.",
       icon: "8",
     },
     {
       title: "Ozho, the study buddy",
-      body: "Streaks keep him happy and earn costumes. It's a small reason to show up every day.",
+      body: "Streaks keep him happy and earn costumes.",
       dog: true,
     },
   ];
@@ -51,7 +51,7 @@ export function HowItWorks({ subskillCount }: { subskillCount: number }) {
             A tutor&apos;s plan, <Highlight>without the hourly rate.</Highlight>
           </h2>
           <p className="mt-4 text-[15px] leading-relaxed text-stone-600">
-            Built by Aman, who has tutored the SAT for six years, around the same week-by-week plan used with private students.
+            The same week-by-week plan Aman has used with private students for six years.
           </p>
         </div>
 

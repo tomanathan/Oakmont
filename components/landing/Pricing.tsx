@@ -20,12 +20,14 @@ export async function Pricing() {
   const sixTotal = (sixmonth.unit_amount ?? 0) / 100;
   const monthlyPrice = (monthly.unit_amount ?? 0) / 100;
 
+  // Listed once, under both cards -- it's the same either way, so printing
+  // it inside each card only made the two look identical.
   const included = [
-    "Your week-by-week plan, paced to your test date",
-    `Lessons, worked examples and quizzes for all ${ALL_SUBSKILLS.length} SAT skills`,
-        "8 full-length practice tests with review",
-    "Ozho, streaks and the costume wardrobe",
-    "Parent dashboard and Sunday email report (parent accounts are free)",
+    "Week-by-week plan to your test date",
+    `Lessons and quizzes for all ${ALL_SUBSKILLS.length} skills`,
+    "8 full-length practice tests",
+    "Parent dashboard and Sunday email",
+    "Ozho and his wardrobe",
   ];
 
   return (
@@ -51,15 +53,7 @@ export async function Pricing() {
               <span className="font-display text-[46px] font-semibold leading-none">${monthlyPrice.toFixed(0)}</span>
               <span className="text-sm text-ivory/60">/month</span>
             </div>
-            <div className="mt-2 text-sm text-ivory/60">Cancel anytime from Settings</div>
-            <ul className="mt-7 flex flex-1 flex-col gap-2.5 text-sm text-ivory/85">
-              {included.map((item) => (
-                <li key={item} className="flex gap-2.5">
-                  <span className="text-sage-light"><Check /></span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="mt-2 flex-1 text-sm text-ivory/60">Cancel anytime</div>
             <TrackedLink
               href="/login?mode=signup"
               event="signup_started"
@@ -80,17 +74,7 @@ export async function Pricing() {
               <span className="font-display text-[46px] font-semibold leading-none">${sixTotal.toFixed(0)}</span>
               <span className="text-sm text-stone-500">one time</span>
             </div>
-            <div className="mt-2 text-sm text-stone-500">
-              About ${(sixTotal / 6).toFixed(0)}/month · one payment, nothing to cancel
-            </div>
-            <ul className="mt-7 flex flex-1 flex-col gap-2.5 text-sm text-stone-700">
-              {included.map((item) => (
-                <li key={item} className="flex gap-2.5">
-                  <span className="text-sage"><Check /></span>
-                  {item}
-                </li>
-              ))}
-            </ul>
+            <div className="mt-2 flex-1 text-sm text-stone-500">About ${(sixTotal / 6).toFixed(0)}/month, paid once</div>
             <TrackedLink
               href="/login?mode=signup"
               event="signup_started"
@@ -99,6 +83,20 @@ export async function Pricing() {
               Get the 6-month pass
             </TrackedLink>
           </div>
+        </div>
+
+        <div className="mx-auto mt-8 max-w-[860px] text-center">
+          <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-sage-light">Both include</div>
+          <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-ivory/85">
+            {included.map((item) => (
+              <li key={item} className="flex items-center gap-2">
+                <span className="text-sage-light">
+                  <Check />
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

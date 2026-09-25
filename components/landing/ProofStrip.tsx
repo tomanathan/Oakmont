@@ -5,10 +5,10 @@ const TINTS = ["bg-pastel-sage", "bg-pastel-sky", "bg-pastel-butter", "bg-pastel
 
 export function ProofStrip({ questionCount, subskillCount }: { questionCount: number; subskillCount: number }) {
   const stats = [
-    { value: String(subskillCount), label: "SAT skills, every one covered" },
-    { value: String(questionCount), label: "original practice questions" },
-    { value: "8", label: "full-length practice tests" },
-    { value: "6 yrs", label: "of SAT tutoring behind the plan" },
+    { value: String(subskillCount), label: "skills covered" },
+    { value: String(questionCount), label: "original questions" },
+    { value: "8", label: "full-length tests" },
+    { value: "6 yrs", label: "tutoring the SAT" },
   ];
   return (
     <section className="border-y border-sage/30 bg-parchment">

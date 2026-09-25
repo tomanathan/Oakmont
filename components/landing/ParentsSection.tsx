@@ -148,10 +148,10 @@ function Kpi({ label, value, delta }: { label: string; value: string; delta: Rea
 // ---- the section ----------------------------------------------------------------
 
 const YOU_SEE = [
-  { title: "Every study session", body: "When they studied, for how long, and what they covered.", tone: "bg-pastel-sage" },
-  { title: "All 29 skills", body: "Which ones are mastered, which need work, and what's next.", tone: "bg-pastel-sky" },
-  { title: "Scores against the goal", body: "Each practice test plotted against their target score.", tone: "bg-pastel-butter" },
-  { title: "What to say", body: "A Sunday email with what to praise and what to ask about.", tone: "bg-pastel-blush" },
+  { title: "Every study session", body: "When, how long, and what they covered.", tone: "bg-pastel-sage" },
+  { title: "All 29 skills", body: "Mastered, shaky, and what's next.", tone: "bg-pastel-sky" },
+  { title: "Scores against the goal", body: "Every practice test, charted.", tone: "bg-pastel-butter" },
+  { title: "What to say", body: "A Sunday email: what to praise, what to ask.", tone: "bg-pastel-blush" },
 ];
 
 export function ParentsSection() {
@@ -166,8 +166,7 @@ export function ParentsSection() {
             And parents get <Highlight>a dashboard of their own.</Highlight>
           </h2>
           <p className="mt-4 max-w-[48ch] text-[16px] leading-relaxed text-gray-600">
-            See every session, skill and score from your side, free. It updates every time your student practices, so you
-            know how prep is going without having to ask.
+            Free, and it updates every time your student practices.
           </p>
           <ul className="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
             {YOU_SEE.map((f) => (
@@ -199,15 +198,12 @@ export function ParentsSection() {
               See the full parent view &rarr;
             </Link>
           </div>
-          <p className="mt-4 text-[13px] text-gray-500">Your student adds your email when they sign up. You set a password from the email we send.</p>
+          <p className="mt-4 text-[13px] text-gray-500">Your student adds your email at sign-up.</p>
         </div>
         <div className="sm:pb-32 sm:pl-10">
           <Snapshot r={r} />
         </div>
       </div>
-      <p className="mx-auto mt-10 max-w-[1120px] text-center text-[13px] text-stone-500">
-        This is how you&apos;ll follow your child&apos;s progress: every session, skill and score, as it happens.
-      </p>
     </section>
   );
 }

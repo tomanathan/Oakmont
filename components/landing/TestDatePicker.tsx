@@ -16,7 +16,6 @@ export function TestDatePicker({ subskillCount }: { subskillCount: number }) {
     <div className="mt-4 grid items-center gap-6 rounded-lg bg-gradient-to-br from-forest-600 to-forest-900 p-6 text-ivory shadow-[0_20px_50px_-28px_rgba(20,34,25,0.9)] ring-1 ring-sage/40 sm:p-8 md:grid-cols-[1fr_1.1fr]">
       <div>
         <div className="font-display text-[22px] font-semibold leading-tight">When&apos;s your test?</div>
-        <p className="mt-1.5 text-sm text-white/65">Pick a date to see how your plan fits the time you have.</p>
         <div className="mt-5 flex flex-wrap gap-2">
           {dates.map((d) => (
             <button
@@ -38,11 +37,10 @@ export function TestDatePicker({ subskillCount }: { subskillCount: number }) {
           ))}
         </div>
       </div>
-      <div className="min-h-[112px] rounded-xl bg-white/[0.06] p-5 ring-1 ring-white/10" aria-live="polite">
+      <div className="flex min-h-[88px] items-center rounded-xl bg-white/[0.06] p-5 ring-1 ring-white/10" aria-live="polite">
         {weeks === null ? (
           <p className="text-sm leading-relaxed text-white/60">
-            Six months is ideal, but your plan fits itself to whatever time is left, with all {subskillCount} skills covered and
-            none skipped.
+            Pick a date to see your plan's length.
           </p>
         ) : (
           <div key={selected} className="animate-fade-up">
@@ -50,8 +48,7 @@ export function TestDatePicker({ subskillCount }: { subskillCount: number }) {
               {weeks} <span className="text-[18px] text-white/70">{weeks === 1 ? "week" : "weeks"} to go</span>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-white/70">
-              Your plan paces all {subskillCount} skills into exactly that: {weeks <= 4 ? "a sprint, " : weeks <= 8 ? "a faster pace, " : ""}
-              nothing skipped.
+              All {subskillCount} skills, paced to fit{weeks <= 4 ? ": a sprint" : weeks <= 8 ? ": a faster pace" : ""}.
             </p>
           </div>
         )}

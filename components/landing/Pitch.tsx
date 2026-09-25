@@ -15,8 +15,8 @@ export function Pitch({ questionCount, subskillCount }: { questionCount: number;
         </h2>
         <Ornament className="mb-6" />
         <p className="mx-auto mb-8 max-w-[560px] text-[16px] leading-relaxed text-stone-600 sm:text-[17px]">
-          A complete SAT plan built around your test date. We recommend six months, but the plan fits whatever time you have. Lessons for all{" "}
-          {subskillCount} skills on the test, {questionCount} original practice questions, and full-length practice tests.
+          A week-by-week plan built around your test date: lessons for all {subskillCount} skills, {questionCount} practice questions
+          and 8 full-length tests.
         </p>
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <TrackedLink
@@ -35,7 +35,7 @@ export function Pitch({ questionCount, subskillCount }: { questionCount: number;
           </TrackedLink>
         </div>
         <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-xs text-stone-500">
-          {["7-day free trial", "Cancel anytime", "No account needed to try"].map((item) => (
+          {["7-day free trial", "Cancel anytime"].map((item) => (
             <li key={item} className="flex items-center gap-1.5">
               <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
                 <path d="M2.5 6.2 5 8.5l4.5-5" fill="none" stroke="#587356" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />

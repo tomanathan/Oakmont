@@ -64,8 +64,7 @@ export function SampleQuestion({
             The SAT, broken down to <Highlight>every kind of question</Highlight> it asks.
           </h2>
           <p className="mb-6 max-w-[460px] text-[15px] leading-relaxed text-gray-600">
-            &ldquo;Reading and math&rdquo; is really {subskillCount} skills, and each skill shows up as a few specific kinds of
-            question. Oakmont teaches every kind on its own, with a lesson, practice and the common mistakes to watch for.
+            Each of the {subskillCount} skills shows up as a few specific kinds of question. Oakmont teaches every kind on its own.
           </p>
           <Ladder
             steps={[
@@ -258,9 +257,6 @@ function TaxonomyMap({ q, typeIndex }: { q: LandingQuestion; typeIndex: number }
           </ul>
         </Level>
       </ol>
-      <p className="mt-4 text-[12px] text-gray-400">
-        {q.skillQuestionCount} practice questions for this one skill alone.
-      </p>
     </div>
   );
 }
