@@ -38,7 +38,7 @@ export function Hero() {
         </h1>
         <Ornament className="my-6 sm:my-7" />
         <p className="mx-auto max-w-[560px] text-[18px] leading-relaxed text-stone-600 sm:text-[21px]">
-          The complete SAT prep course, paced to your test date. Parents get a live dashboard.
+          The complete SAT prep course, paced to your test date, with a dashboard that keeps parents in the loop.
         </p>
         {/* data-hero-actions: HeroPets caps the ball's arc just above this row. */}
         <div data-hero-actions className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
