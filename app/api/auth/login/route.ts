@@ -25,6 +25,14 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Created with Google and never given a password.
+  if (!user.passwordHash) {
+    return NextResponse.json(
+      { error: "This account uses Google sign-in. Choose \"Continue with Google\" above, or use \"Forgot password?\" to set a password." },
+      { status: 401 }
+    );
+  }
+
   const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) {
     return NextResponse.json({ error: "Incorrect password." }, { status: 401 });

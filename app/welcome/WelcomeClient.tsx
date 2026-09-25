@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 import { PET_NAME, SECOND_PET_NAME } from "@/lib/pet";
 import { PetAvatar } from "@/components/PetAvatar";
 import { BrandMark } from "@/components/BrandMark";
@@ -48,6 +49,17 @@ function formatDate(date: string): string {
 export function WelcomeClient(props: Props) {
   const { single, hasAccess, initial, satDates, today, skills, practiceTests } = props;
   const router = useRouter();
+
+  // A new account from "Continue with Google" arrives as ?via=google: count
+  // it as a completed signup (email signups are counted on the login page),
+  // then tidy the address bar.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("via") !== "google") return;
+    track("signup_completed", { method: "google" });
+    url.searchParams.delete("via");
+    window.history.replaceState(null, "", url.pathname + url.search);
+  }, []);
   const [step, setStep] = useState<WelcomeStep>(single ?? (initial.firstName ? "date" : "name"));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");

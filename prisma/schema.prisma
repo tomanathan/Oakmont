@@ -22,7 +22,12 @@ generator client {
 model User {
   id        String     @id @default(cuid())
   email     String     @unique
-  passwordHash String
+  // Null for an account created with Google sign-in; it can gain a password
+  // later through "Forgot password". googleSub is Google's stable account
+  // id, set on first Google sign-in (new account, or linked to an existing
+  // one with the same Google-verified email) -- see app/api/auth/google.
+  passwordHash String?
+  googleSub    String?    @unique
   createdAt DateTime   @default(now())
   progress  Progress[]
   practiceTests PracticeTest[]
