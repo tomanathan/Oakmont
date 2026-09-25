@@ -26,7 +26,7 @@ export async function Pricing() {
     "Lessons and quizzes for every skill",
     "Full-length practice tests",
     "Parent dashboard and Sunday email",
-    "Ozho and his wardrobe",
+    "Ozho, the study-buddy dog",
   ];
 
   return (
@@ -82,7 +82,7 @@ export async function Pricing() {
               <span className="font-display text-[46px] font-semibold leading-none">${sixTotal.toFixed(0)}</span>
               <span className="text-sm text-stone-500">one time</span>
             </div>
-            <div className="mt-2 text-sm text-stone-500">About ${(sixTotal / 6).toFixed(0)}/month, paid once</div>
+            <div className="mt-2 text-sm text-stone-500">One payment, about ${(sixTotal / 6).toFixed(0)} a month</div>
             {/* The pass's one extra: retake cover (lib/retakeCover.ts). */}
             <div className="mb-1 mt-5 flex flex-1 items-start gap-3 rounded-lg bg-pastel-sage px-4 py-3">
               <span className="mt-0.5 text-forest">
@@ -90,7 +90,7 @@ export async function Pricing() {
               </span>
               <div>
                 <div className="text-sm font-semibold text-forest-900">Covered through a retake</div>
-                <div className="text-[13px] text-stone-600">If they sit the SAT again, access extends free.</div>
+                <div className="text-[13px] text-stone-600">If your student takes the SAT again, access extends free.</div>
               </div>
             </div>
             <TrackedLink

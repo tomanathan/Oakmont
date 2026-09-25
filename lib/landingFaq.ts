@@ -7,15 +7,15 @@
 export const FAQ_ITEMS = [
   {
     q: "Is this for the digital SAT?",
-    a: "Yes. It matches the current test: two modules per section, adaptive difficulty.",
+    a: "Yes. It follows the current digital format: two modules per section, with difficulty that adapts as you go.",
   },
   {
     q: "How is this different from Khan Academy?",
-    a: "Khan Academy is a free question bank. Oakmont is a week-by-week plan built around your test date and your weak spots, with every question explained.",
+    a: "Khan Academy offers free practice. Oakmont is a complete week-by-week plan built around your test date and your student's weak spots, with every question explained.",
   },
   {
     q: "How long does it take?",
-    a: "Six months is ideal. A sooner test just means a faster pace; every skill is still covered.",
+    a: "Six months is ideal. If the test is sooner, the plan moves faster and still covers every skill.",
   },
   {
     q: "What do parents get?",
@@ -23,10 +23,10 @@ export const FAQ_ITEMS = [
   },
   {
     q: "What if my student needs to retake?",
-    a: "The 6-month pass covers one retake free: pick the new date in Settings. On monthly, just keep going.",
+    a: "The 6-month pass covers one retake at no extra cost: choose the new test date in Settings. On the monthly plan, simply keep your subscription.",
   },
   {
     q: "Is there a free trial? Can I cancel?",
-    a: "Monthly starts with a 7-day free trial and cancels anytime in Settings. The 6-month pass is one payment and simply runs out.",
+    a: "The monthly plan starts with a 7-day free trial, and you can cancel anytime in Settings. The 6-month pass is a single payment with nothing to cancel.",
   },
 ];

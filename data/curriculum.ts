@@ -6579,7 +6579,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           why: [null, "75° skips a step. The same-side interior angle is 180 − 75 = 105°, and its vertical angle equals that.", "15° is 90 − 75. Same-side interior angles add to 180, not 90.", "Check it: the same-side interior angle is 180 − 75 = 105°, and vertical angles are equal."],
         },
         {
-          q: "Lines p and q are parallel. A zigzag path starts on line p, bends at a point B between the lines, and ends on line q. The angle between line p and the first segment (on the interior side) is 35°, and the angle between line q and the second segment (on the interior side) is 50°. What is the measure of the angle at the bend point B, on the interior side of the zigzag?",
+          q: "Lines p and q are parallel. A zigzag path runs from line p to line q, bending at point B between them. Inside the zigzag, the first segment meets line p at a 35° angle and the second meets line q at a 50° angle. What is the measure of the angle at B, inside the zigzag?",
           choices: ["85°", "15°", "180°", "70°"],
           answer: 0,
           explain:

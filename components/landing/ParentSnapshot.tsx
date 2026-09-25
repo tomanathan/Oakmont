@@ -33,12 +33,6 @@ function Up({ n, unit = "" }: { n: number; unit?: string }) {
   );
 }
 
-const SAMPLE_PILL = (
-  <span className="whitespace-nowrap rounded-full bg-pastel-sage px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-forest">
-    Parent view
-  </span>
-);
-
 // ---- the snapshot: report card + Sunday email + a mastery moment --------------
 
 export function Snapshot({ r }: { r: ParentReport }) {
@@ -58,7 +52,6 @@ export function Snapshot({ r }: { r: ParentReport }) {
               Last studied {agoText(r.lastActive)} &middot; {r.scores.daysUntilTest} days to the SAT
             </div>
           </div>
-          {SAMPLE_PILL}
         </div>
 
         <div className="mt-4 flex items-start gap-3 rounded-xl border border-[#cfe6d8] bg-[#eef7f1] px-4 py-3">
@@ -122,7 +115,7 @@ export function Snapshot({ r }: { r: ParentReport }) {
         </div>
         {help && (
           <div className="mt-1.5 text-[12px] leading-relaxed text-gray-500">
-            <span className="font-semibold text-gray-600">How you can help: </span>
+            <div className="font-semibold text-gray-600">How you can help</div>
             {help.text}
           </div>
         )}

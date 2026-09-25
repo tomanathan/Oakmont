@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { SUPPORT_EMAIL } from "@/components/LegalFooter";
-import { Eyebrow } from "./Flourish";
 
 export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -12,12 +11,11 @@ export function Faq() {
     <section id="faq" className="scroll-mt-20 bg-ivory px-6 py-16 sm:py-20">
       <div className="mx-auto grid max-w-[1120px] gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
         <div>
-          <Eyebrow>FAQ</Eyebrow>
           <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] text-forest-900 sm:text-[42px]">
-            Questions, answered.
+            Frequently asked questions
           </h2>
           <p className="mt-4 text-sm text-gray-500">
-            Something else?{" "}
+            Have another question?{" "}
             <a href={`mailto:${SUPPORT_EMAIL}`} className="font-medium text-ink underline decoration-sage/60 underline-offset-4 hover:decoration-forest">
               Email us
             </a>

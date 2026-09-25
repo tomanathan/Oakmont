@@ -19,8 +19,8 @@ export function Pitch() {
             Every SAT skill, one week at a time, <Highlight>tracked the whole way.</Highlight>
           </h2>
           <p className="mt-5 max-w-[46ch] text-[16px] leading-relaxed text-stone-600 sm:text-[17px]">
-            A week-by-week plan built around your test date, with lessons, practice and full-length tests. Parents follow along
-            on their own free dashboard.
+            A plan built around your test date, with lessons, practice and full-length tests. Parents follow along on a free
+            dashboard of their own.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <TrackedLink
@@ -55,7 +55,7 @@ export function Pitch() {
             </TrackedLink>{" "}
             or{" "}
             <Link href="/parents/sample" className="font-semibold text-forest underline decoration-sage/50 underline-offset-4 hover:decoration-forest">
-              see the full view
+              see a full report
             </Link>
             .
           </p>

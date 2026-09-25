@@ -47,13 +47,13 @@ export function Hero() {
             event="signup_started"
             className="w-full rounded-md bg-forest px-7 py-3.5 text-sm font-semibold tracking-wide text-ivory shadow-[0_10px_24px_-14px_rgba(20,34,25,0.8)] transition-colors hover:bg-forest-600 sm:w-auto"
           >
-            Start free
+            Start free trial
           </TrackedLink>
           <a
             href="#the-course"
             className="w-full rounded-md bg-white/70 px-7 py-3.5 text-sm font-semibold tracking-wide text-forest ring-1 ring-sage/50 transition-colors hover:bg-white sm:w-auto"
           >
-            Take a look &darr;
+            See the course &darr;
           </a>
         </div>
       </div>

@@ -74,7 +74,7 @@ export function LandingPage() {
               event="signup_started"
               className="whitespace-nowrap rounded-md bg-forest px-3 py-2 text-[14px] font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600 sm:px-4 sm:text-[16px]"
             >
-              Start free
+              Start free trial
             </TrackedLink>
           </div>
         </div>

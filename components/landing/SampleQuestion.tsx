@@ -86,7 +86,7 @@ export function SampleQuestion({
             <div>
               <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
                 <span className="rounded-full bg-parchment px-2.5 py-1 font-semibold text-forest ring-1 ring-[#e2d7c1]">
-                  {item.skill} &middot; type {item.typeIndex + 1} of {item.typeCount}
+                  {item.skill} &middot; question type {item.typeIndex + 1} of {item.typeCount}
                 </span>
                 <span className="rounded-full bg-[#fbeaea] px-2 py-0.5 font-semibold text-[#b23b3b]">Hard</span>
                 <span className="text-stone-500">No account needed</span>
@@ -159,16 +159,17 @@ export function SampleQuestion({
                 ))}
               </ol>
               <div className="mt-5 rounded-lg bg-pastel-butter px-4 py-3 text-[14px] leading-relaxed text-ink">
-                <span className="font-semibold">The move to remember:</span> when a path bends between parallel lines, the bend equals the
-                two outside angles added together.
+                <span className="font-semibold">The move to remember:</span> when a path bends between parallel lines, the angle at the
+                bend equals the two angles at the lines added together.
               </div>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <p className="mt-6 text-[14px] text-stone-600">Every lesson teaches this way.</p>
+              <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <TrackedLink
                   href="/login?mode=signup"
                   event="signup_started"
                   className="rounded-md bg-forest px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600"
                 >
-                  Every lesson teaches like this. Start your plan &rarr;
+                  Start your plan &rarr;
                 </TrackedLink>
                 <button
                   onClick={() => setSelected(null)}
