@@ -1,5 +1,5 @@
 import { TrackedLink } from "./TrackedLink";
-import { Eyebrow, Highlight, Ornament } from "./Flourish";
+import { Highlight, Ornament } from "./Flourish";
 
 // The pitch, one scroll below the title page (Hero.tsx): what the course is
 // and how to start, then the proof strip and everything else follow.
@@ -7,7 +7,6 @@ export function Pitch({ questionCount, subskillCount }: { questionCount: number;
   return (
     <section id="the-course" className="scroll-mt-20 border-t border-sage/30 bg-parchment px-6 py-16 sm:py-24">
       <div className="mx-auto max-w-[760px] text-center">
-        <Eyebrow center>Built for the digital SAT</Eyebrow>
         <h2 className="mb-5 text-balance font-display text-[36px] font-semibold leading-[1.05] tracking-[-0.02em] text-forest-900 sm:text-[56px]">
           Every SAT skill.
           <br />

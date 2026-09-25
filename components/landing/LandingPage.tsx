@@ -9,10 +9,8 @@ import { Pitch } from "./Pitch";
 import { ProofStrip } from "./ProofStrip";
 import { SampleQuestion } from "./SampleQuestion";
 import { ParentsSection } from "./ParentsSection";
-import { HowItWorks } from "./HowItWorks";
 import { Pricing } from "./Pricing";
 import { Faq } from "./Faq";
-import { FinalCta } from "./FinalCta";
 import { Reveal } from "./Reveal";
 import { TrackedLink } from "./TrackedLink";
 
@@ -20,10 +18,9 @@ import { TrackedLink } from "./TrackedLink";
 // signed-in visits redirect before this renders). Server-rendered so the
 // pitch, not a login form, is what search engines and shared links see.
 //
-// Story order, told in sequence so it's easy to follow: who we are (title
-// page) -> what the course is -> the numbers -> how the plan works -> what
-// each lesson looks like (a live question) -> and a dashboard for parents
-// too -> price -> objections -> ask again.
+// Short on purpose, and the parent dashboard up front: who we are (title
+// page, which already names the dashboard) -> what the course is -> the
+// numbers -> the parent dashboard -> a live question -> price -> FAQ.
 export function LandingPage() {
   const questionCount = Object.values(QUESTIONS).reduce((n, qs) => n + qs.length, 0);
   const subskillCount = ALL_SUBSKILLS.length;
@@ -51,9 +48,6 @@ export function LandingPage() {
         <div className="mx-auto grid max-w-[1120px] grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 py-3 sm:gap-3 sm:px-6">
           <div className="flex min-w-0 items-center">
             <div className="hidden items-center gap-6 whitespace-nowrap text-[15px] text-gray-500 lg:flex xl:gap-8 xl:text-[16px]">
-              <a href="#how-it-works" className="transition-colors hover:text-ink">
-                How it works
-              </a>
               <a href="#parents" className="font-medium text-forest transition-colors hover:text-sage">
                 For parents
               </a>
@@ -91,11 +85,8 @@ export function LandingPage() {
         <Hero />
         <Pitch questionCount={questionCount} subskillCount={subskillCount} />
         <ProofStrip questionCount={questionCount} subskillCount={subskillCount} />
-        <Reveal>
-          <HowItWorks subskillCount={subskillCount} />
-        </Reveal>
-        <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} typeCount={typeCount} />
         <ParentsSection />
+        <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} typeCount={typeCount} />
         {/* No testimonials section until real, permissioned quotes exist. */}
         <Reveal>
           <Pricing />
@@ -103,7 +94,6 @@ export function LandingPage() {
         <Reveal>
           <Faq />
         </Reveal>
-        <FinalCta />
       </main>
 
       <footer className="border-t border-sage/30 bg-parchment">

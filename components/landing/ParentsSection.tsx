@@ -163,7 +163,7 @@ export function ParentsSection() {
         <div>
           <Eyebrow>For parents</Eyebrow>
           <h2 className="text-balance font-display text-[32px] font-semibold leading-[1.06] tracking-[-0.01em] text-forest-900 sm:text-[46px]">
-            And parents get <Highlight>a dashboard of their own.</Highlight>
+            Parents get <Highlight>a dashboard of their own.</Highlight>
           </h2>
           <p className="mt-4 max-w-[48ch] text-[16px] leading-relaxed text-gray-600">
             Free, and it updates every time your student practices.
