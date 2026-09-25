@@ -802,7 +802,7 @@ export function SubskillClient({
                   {example && (
                     <>
                       <div className="text-sm text-ink mb-3">
-                        <PassageText text={example.q} highlight={example.underline} />
+                        <PassageText text={example.q} highlight={example.underline} figure={example.figure} />
                       </div>
                       {example.diagram && <GeometryDiagram spec={example.diagram} />}
                       <ExampleChoices

@@ -75,8 +75,12 @@ export function splitMathSegments(text: string): MathSegment[] {
     let latex: string;
     if (fraction !== undefined) {
       const slash = fraction.lastIndexOf("/");
-      const num = fraction.slice(0, slash).trim();
-      const den = fraction.slice(slash + 1).trim();
+      // A side that is one parenthesized group -- "(x + 1)/(x − 2)" -- only
+      // needed the parentheses to show where the side ends in inline text;
+      // stacked over a fraction bar they're redundant, so drop that one layer.
+      const unwrap = (t: string) => (t.startsWith("(") && t.endsWith(")") ? t.slice(1, -1) : t);
+      const num = unwrap(fraction.slice(0, slash).trim());
+      const den = unwrap(fraction.slice(slash + 1).trim());
       latex = `\\frac{${toLatex(num)}}{${toLatex(den)}}`;
     } else if (sqrt !== undefined) {
       latex = toLatex(sqrt);

@@ -201,7 +201,11 @@ function describe(spec: FigureSpec): string {
       return (
         `Scatterplot of ${spec.y.label} against ${spec.x.label}: ` +
         spec.points.map(([x, y]) => `(${fmt(x)}, ${fmt(y)})`).join(", ") +
-        (spec.line ? `. Line of best fit y = ${fmt(spec.line.slope)}x + ${fmt(spec.line.intercept)}.` : ".")
+        // The line as a sighted reader meets it -- where it runs from and to
+        // across the plot -- not its equation, which is often the answer.
+        (spec.line
+          ? `. A line of best fit runs from (${fmt(spec.x.min)}, ${fmt(spec.line.slope * spec.x.min + spec.line.intercept)}) to (${fmt(spec.x.max)}, ${fmt(spec.line.slope * spec.x.max + spec.line.intercept)}).`
+          : ".")
       );
     case "bar":
       return `Bar graph of ${spec.y.label} by ${spec.xLabel}: ` + spec.bars.map((b) => `${b.label}: ${fmt(b.value)}`).join(", ");

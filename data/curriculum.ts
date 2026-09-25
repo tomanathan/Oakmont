@@ -3,6 +3,7 @@
 // Source: satsuite.collegeboard.org/practice/student-question-bank
 
 import type { DiagramSpec } from "@/lib/diagramTypes";
+import type { FigureSpec } from "@/lib/figureTypes";
 
 // Deliberately the same shape as data/questions.ts's Question type (q /
 // choices / answer / explain) -- a worked example IS a real exam-format
@@ -21,6 +22,11 @@ export interface WorkedExample {
   // circles, parallel lines, solids, etc.) -- see lib/diagramTypes.ts and
   // components/GeometryDiagram.tsx. Left unset for non-geometry examples.
   diagram?: DiagramSpec;
+  // A table, graph, or plot drawn to scale from its own data (see
+  // lib/figureTypes.ts) -- the same figures practice questions use, for
+  // examples whose method is reading a real graph (a line of best fit, a
+  // curve's intercepts) rather than a schematic.
+  figure?: FigureSpec;
   // For RW passage-based questions that reference one specific sentence
   // (e.g. "the underlined sentence") -- the exact substring of `q`, as it
   // literally appears there, to render underlined so the student sees it
@@ -599,7 +605,7 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Reading Data from a Graph or Table",
       explanation:
-        "Many Command of Evidence questions hand you a graph or table directly, then ask one of two things: to complete a statement using the data ('which choice most effectively uses data from the graph to complete the text'), or to identify which choice describes data that supports or weakens a stated conclusion. There's no trick beyond careful, literal reading: find the exact category, time period, or comparison the question asks about, and check every number and label in each answer choice against the data instead of settling for the first choice that looks plausible. Wrong answers are built by swapping a category, a time period, a direction, or a single digit from the real data, or by citing real numbers that don't actually address what the question is asking.",
+        "Many Command of Evidence questions hand you a graph or table directly, then ask one of three things: to complete a statement using the data ('which choice most effectively uses data from the graph to complete the text'), to identify which choice describes data that supports or weakens a stated conclusion, or to apply a hypothesis stated in the text to the data. For the first two, there's no trick beyond careful, literal reading: find the exact category, time period, or comparison the question asks about, and check every number and label in each answer choice against the data instead of settling for the first choice that looks plausible. For the third, the text states a rule ('the more X, the later Y,' or 'Y happens whenever X is above some level') and the blank follows 'If the hypothesis is correct, then...': find the variable the rule names in the graph, read the values, and apply the rule in exactly the direction it states. Wrong answers are built by swapping a category, a time period, a direction, or a single digit from the real data; by citing real numbers that don't actually address what the question is asking; or, with a hypothesis, by applying the rule backward, treating a cutoff as if it meant only the highest value, or predicting something the hypothesis never mentions.",
       examples: [
         {
           q: "A table shows the average commute time, in minutes, for workers in four cities: Denview, 22; Fairhaven, 31; Grantsville, 18; Millbrook, 27. A student writing about commute times notes that among these four cities, the shortest average commute belongs to ______. Which choice most effectively uses data from the table to complete the statement?",
@@ -671,11 +677,23 @@ const LC_RW_EVIDENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "These are the right numbers attached to the wrong variables. With them swapped, they would argue the opposite.", "True for Neighborhood Z, but one neighborhood can't show how much each rate varies across all three.", "True, but it's about which option is most common, not which one varies more across neighborhoods."],
         },
+        {
+          q: "Botanist Lena Marsh hypothesizes that the more heavily deer browse a meadow, the later in the season the goldenrod growing there will flower, since the plants must regrow the leaves the deer have eaten before they can bloom. The bar graph shows the average number of deer visits per week that Marsh recorded at four meadows during one summer. If Marsh's hypothesis is correct, then goldenrod at ______\n\nWhich choice most effectively uses data from the graph to complete the statement?",
+          choices: ["Pine Gap would be expected to flower later than goldenrod at any of the other three meadows.", "Crestview would be expected to flower earlier than goldenrod at Ashby.", "Fernhill would be expected to flower later than goldenrod at any of the other three meadows.", "Fernhill would be expected to grow shorter than goldenrod at any of the other three meadows."],
+          answer: 2,
+          explain:
+            "Treat the hypothesis as a rule: more deer browsing means later flowering. Find the variable it names in the graph (deer visits) and apply the rule in the stated direction. Fernhill has the most visits (22 per week), so its goldenrod should flower latest. The Pine Gap choice applies the rule backward: Pine Gap has the fewest visits (3), so it should flower earliest. The Crestview choice misapplies the rule to two real values: Crestview (14) gets more visits than Ashby (9), so it should flower later, not earlier. The last choice picks the right meadow but predicts something the hypothesis never mentions; the rule is about when goldenrod flowers, not how tall it grows.",
+          figure: {"kind": "bar", "xLabel": "Meadow", "y": {"label": "Deer visits per week", "min": 0, "max": 25, "step": 5}, "bars": [{"label": "Ashby", "value": 9}, {"label": "Crestview", "value": 14}, {"label": "Fernhill", "value": 22}, {"label": "Pine Gap", "value": 3}]},
+          difficulty: "hard",
+          why: ["This runs the rule backward. Pine Gap has the fewest visits (3), so it should flower earliest, not latest.", "Crestview (14 visits) gets more browsing than Ashby (9), so the rule predicts it flowers later, not earlier.", null, "Right meadow, wrong prediction. The hypothesis is about when goldenrod flowers, not how tall it grows."],
+        },
       ],
       traps: [
         "Citing real numbers from the graph or table that don't actually address what the question is asking (the right city, but the wrong statistic; the right trend, but the wrong time period).",
         "Reporting two real values but swapping which category or variable each one belongs to, which can flip a supporting statement into its opposite.",
         "Overstating what the data shows — a single dip becomes 'fell every quarter,' or a modest gap becomes framed as if it were the entire story.",
+        "Applying a stated hypothesis backward (reading 'the more X, the later Y' as 'the more X, the earlier Y') or stretching it to predict something it never mentions.",
+        "Treating a hypothesis about a cutoff ('whenever the water is warmer than 8°C') as if it were only about the single highest or lowest value in the graph.",
       ],
     },
     {
@@ -1031,7 +1049,7 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Precise Synonym in Context",
       explanation:
-        "You're given a sentence with a blank and four choices that all mean roughly the same thing, but only one fits this sentence's exact tone and logic. The trap: picking the most common synonym instead of the most precise one. Fix: cover the choices, read the sentence, and guess your own word first (often something simple, like 'strict'). Then pick the choice closest to your guess, not the fanciest-sounding option.",
+        "You're given a sentence with a blank and four choices, and you pick the word that makes the text most logical and precise. Usually the four choices have different meanings, and they're often advanced words (a set like 'endorsed,' 'questioned,' 'ignored,' 'expanded'), so the real job is to work out what meaning the blank needs before you look. Cover the choices and hunt for the context clue: a contrast word ('although,' 'rather than,' 'however') means the blank opposes something nearby; a colon or a restatement means the blank is explained right there; cause and effect ('so,' 'as a result') means the blank must lead to the outcome. Predict your own simple word (like 'used for profit' or 'strict'), then pick the choice whose meaning matches it, not the fanciest-sounding option. Sometimes all four choices point the same way and differ only in strength or tone ('diplomatic' vs. 'conciliatory'); then your prediction has to be exact, because the right answer fits this sentence's precise logic, not just its general direction.",
       examples: [
         {
           q: "The committee's ______ approach to spending drew criticism from departments hoping for expanded budgets. Which choice completes the text with the most logical and precise word or phrase?",
@@ -1070,6 +1088,15 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: ["\"Endorse\" means approve as a whole. The director kept only several provisions and threw out the rest.", null, "\"Ratify\" means formally approve the whole thing, which contradicts discarding most of it.", "\"Overturn\" means reject, but the director kept several provisions."],
         },
         {
+          q: "For most of the nineteenth century, the owners of the Carrow textile mill ______ the river that ran beside it, harnessing its current to drive their looms and flushing their dye waste downstream without a second thought for the towns below. Which choice completes the text with the most logical and precise word or phrase?",
+          choices: ["revered", "exploited", "surveyed", "neglected"],
+          answer: 1,
+          explain:
+            "Cover the choices and predict from the details: the owners used the river's current for power and dumped waste in it 'without a second thought,' so they used it for their own gain with no regard for the cost. Something like 'used selfishly' fits, and 'exploited' matches exactly. The four choices mean different things, so the context clue does all the work. 'Revered' means deeply respected, the opposite of dumping waste in it. 'Surveyed' means measured or examined, which says nothing about using it. 'Neglected' is tempting because the owners ignored the harm, but they used the river constantly rather than leaving it alone.",
+          difficulty: "medium",
+          why: ["\"Revered\" means deeply respected. Dumping waste in the river shows the opposite.", null, "\"Surveyed\" means measured or examined. The owners were using the river, not studying it.", "Tempting, since they ignored the harm, but they used the river constantly. \"Neglected\" means left alone or uncared for."],
+        },
+        {
           q: "The panel's final report ran to nearly two hundred pages, cataloguing every one of the agency's oversight failures in methodical, exhaustive detail. Though the report was ______ in its criticism of the agency's failures, it stopped short of recommending anyone's removal. Which choice completes the text with the most logical and precise word or phrase?",
           choices: ["scathing", "exhaustive", "muted", "premature"],
           answer: 1,
@@ -1078,11 +1105,21 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: ["Tempting, but \"scathing\" means harsh and biting. The context stresses thoroughness, not a harsh tone.", null, "A 200-page catalogue of every failure is anything but muted.", "\"Premature\" means too early. Nothing in the context is about timing."],
         },
+        {
+          q: "Historians long treated the grain riots that broke out in a dozen towns of the Aurelle valley in 1788 as isolated local outbursts, each sparked by its own bread shortage. In her new study, however, historian Colette Arnaud ______ the riots, tracing shared pamphlets, overlapping lists of demands, and even individual organizers who traveled from one town to the next. Which choice completes the text with the most logical and precise word or phrase?",
+          choices: ["chronicles", "corroborates", "reconceives", "trivializes"],
+          answer: 2,
+          explain:
+            "The key clue is 'however': Arnaud's study breaks from the old view of the riots as isolated outbursts. The evidence she traces (shared pamphlets, overlapping demands, traveling organizers) shows the riots were connected, so the blank needs a word meaning 'thinks about in a new way.' 'Reconceives' fits. 'Chronicles' is the strongest trap: she does record events, but chronicling is something the earlier historians could have done too, so it doesn't deliver the break that 'however' sets up. 'Corroborates' means confirms, which would support the old view rather than break from it, and 'trivializes' means treats as unimportant, which her careful tracing contradicts.",
+          difficulty: "hard",
+          why: ["Close, but \"chronicles\" only means records in order. It doesn't capture the break from the old view that \"however\" signals.", "\"Corroborates\" means confirms. Her study overturns the old view rather than confirming it.", null, "\"Trivializes\" means treats as unimportant. Tracing pamphlets and organizers takes the riots seriously."],
+        },
       ],
       traps: [
         "Choosing a word that's a synonym for a different, more common meaning of the word rather than the meaning that fits this sentence.",
         "Choosing the answer that sounds most sophisticated rather than the one that's actually most logically precise.",
         "Choosing a word that points in the right direction but has the wrong strength or tone (for example, 'hostile' where the context only supports 'skeptical').",
+        "Skipping the context clue (a contrast word like 'although' or 'rather than,' a colon that restates, or a cause-and-effect link) and choosing a word that fits the topic but not the logic the sentence sets up.",
       ],
     },
     {
@@ -1141,6 +1178,68 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Overlooking context clues elsewhere in the sentence (or in surrounding sentences) that clarify which meaning is intended.",
       ],
     },
+    {
+      name: "Word Meaning As Used in the Text",
+      explanation:
+        "These questions quote a short text, often from an older novel, memoir, or letter, and ask, 'As used in the text, what does the word \"X\" most nearly mean?' The four choices are usually different senses of that same word, so every choice is a real meaning; only one works in this sentence. Method: cover the choices, reread the full sentence and the one around it, and put your own simple word in place of the tested one. Then swap each choice into the sentence and keep the one that makes it say the same thing as your paraphrase. Sometimes the answer is a less common sense (a 'fast' knot is secure, not quick), and sometimes it's the plain everyday meaning, with the unusual senses as the traps. So don't assume it's a trick either way; let the sentence decide.",
+      examples: [
+        {
+          q: "The following text is adapted from a novel.\n\nMiss Hartwell had a keen eye for small faults. She could spot a crooked hem from across the parlor, and no pupil of hers ever formed a letter carelessly without hearing about it the next morning.\n\nAs used in the text, what does the word “keen” most nearly mean?",
+          underline: "keen",
+          choices: ["eager", "perceptive", "sharp-edged", "bitterly cold"],
+          answer: 1,
+          explain:
+            "Cover the choices and put your own word in: Miss Hartwell had a ___ eye for small faults, since she can spot a crooked hem from across the room. Something like 'sharp-sighted' fits, which matches 'perceptive.' The other choices are real senses of 'keen' that fail the swap: an 'eager eye' says she wants something, not that she notices things; 'sharp-edged' describes a blade; and 'bitterly cold' describes a keen wind.",
+          difficulty: "easy",
+          why: ["\"Keen\" can mean eager, but an eager eye doesn't spot a crooked hem. The point is how well she notices.", null, "\"Sharp-edged\" is the sense for a blade. An eye isn't literally sharp-edged.", "\"Bitterly cold\" is the sense for a keen wind, not an eye."],
+        },
+        {
+          q: "The following text is adapted from a memoir.\n\nMy grandfather never threw away a letter. He kept every one he received in a tin biscuit box beneath his bed, tied in bundles by year, and on winter evenings he would take out a bundle and read the letters through again.\n\nAs used in the text, what does the word “kept” most nearly mean?",
+          underline: "kept",
+          choices: ["continued", "obeyed", "supported", "stored"],
+          answer: 3,
+          explain:
+            "Swap in your own word: he ___ every letter in a tin box beneath his bed. The plain, everyday meaning fits: he put the letters away and held on to them, so 'stored' is right. The other choices are real senses of 'keep' (to keep talking, to keep the rules, to keep a family), but none works with letters in a box. Don't reject the ordinary meaning just because it seems too easy.",
+          difficulty: "easy",
+          why: ["\"Continued\" is the sense in \"kept talking.\" He didn't continue the letters; he put them in a box.", "\"Obeyed\" is the sense in \"kept the rules.\" Letters in a box aren't being obeyed.", "\"Supported\" is the sense in \"kept a family.\" Here he's holding on to letters.", null],
+        },
+        {
+          q: "The following text is adapted from a novel.\n\nThe parlor was close that afternoon. No one had opened a window since the rain began three days earlier, and the air smelled of coal smoke and damp wool. Within an hour Harriet's head had begun to ache, and she asked her aunt whether they might walk in the garden instead.\n\nAs used in the text, what does the word “close” most nearly mean?",
+          underline: "close",
+          choices: ["stuffy", "nearby", "intimate", "careful"],
+          answer: 0,
+          explain:
+            "Predict from the clues: no window opened in three days, the air smells of smoke and damp wool, and Harriet's head aches. The room lacks fresh air, so 'stuffy' fits. 'Nearby' is the most familiar meaning of 'close,' but 'the parlor was nearby that afternoon' makes no sense with the details that follow. 'Intimate' (close friends) and 'careful' (close attention) are other real senses that fail when swapped in.",
+          difficulty: "medium",
+          why: [null, "That's the familiar meaning, but the details are all about stale air, not distance.", "\"Intimate\" is the sense in \"close friends.\" A room isn't intimate because its windows are shut.", "\"Careful\" is the sense in \"close attention.\" A room can't be careful."],
+        },
+        {
+          q: "The following text is adapted from a biography of a nineteenth-century naturalist.\n\nAt fifty-two, having raised four children and buried a husband, Margaret Ashby took up the study of mosses. Within five years she had filled eleven notebooks with drawings, and collectors from three counties were sending her specimens they could not identify.\n\nAs used in the text, what does the phrase “took up” most nearly mean?",
+          underline: "took up",
+          choices: ["occupied", "lifted", "began", "shortened"],
+          answer: 2,
+          explain:
+            "Swap in your own phrase: at fifty-two she ___ the study of mosses, and within five years she'd filled eleven notebooks. She started a new pursuit, so 'began' fits. 'Occupied' is the sense in 'took up space,' 'lifted' is the literal sense of picking something up, and 'shortened' is the sense in 'took up a hem.' Each is a real meaning of 'took up,' but none makes sense with 'the study of mosses.'",
+          difficulty: "medium",
+          why: ["\"Occupied\" is the sense in \"took up space.\" She didn't occupy a study; she started one.", "\"Lifted\" is the literal sense of picking something up. You can't lift a field of study.", null, "\"Shortened\" is the sense in \"took up a hem,\" which doesn't fit a study."],
+        },
+        {
+          q: "The following text is adapted from an 1880s novel.\n\nTobias said very little at supper, and his cousin supposed he had not noticed the trouble she had taken to find him a position at the bank. But he was sensible of the favor, more than she knew, and before the month was out he had quietly repaid it by settling a debt she had never mentioned to anyone.\n\nAs used in the text, what does the word “sensible” most nearly mean?",
+          underline: "sensible",
+          choices: ["reasonable", "aware", "practical", "noticeable"],
+          answer: 1,
+          explain:
+            "The modern meaning, 'reasonable,' is the trap. Read the contrast instead: his cousin 'supposed he had not noticed' her help, 'But he was ___ of the favor, more than she knew,' and he repaid it. The word must mean the opposite of 'had not noticed,' so 'aware' fits; 'sensible of' is an older way of saying conscious of. 'Reasonable' and 'practical' are today's meanings, and 'he was reasonable of the favor' doesn't even make sense. 'Noticeable' is another real sense (a sensible change is one you can perceive), but it describes the thing noticed, not the person noticing it.",
+          difficulty: "hard",
+          why: ["That's the modern meaning, but \"reasonable of the favor\" makes no sense. The contrast is with \"had not noticed.\"", null, "\"Practical\" is a modern sense of \"sensible\" that doesn't fit \"of the favor.\" The point is that he noticed.", "\"Noticeable\" describes something that can be perceived. Here Tobias is the one perceiving the favor."],
+        },
+      ],
+      traps: [
+        "Picking a word's most familiar meaning out of habit when the sentence is using a less common or older sense.",
+        "Rejecting the plain, everyday meaning because the question 'must be a trick,' when the sentence actually calls for the ordinary sense.",
+        "Picking a real meaning of the word that fits the passage's general topic but makes no sense when swapped into the actual sentence.",
+      ],
+    },
   ],
   tipsAndTricks: [
     "Always predict your own word before looking at the choices — this prevents being seduced by a choice that sounds smart but doesn't fit.",
@@ -1151,6 +1250,64 @@ const LC_RW_WORDS_CONTEXT: { patterns: Pattern[]; tipsAndTricks: string[] } = {
 
 const LC_RW_TEXT_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
   patterns: [
+    {
+      name: "Main Purpose of the Whole Text",
+      explanation:
+        "'Which choice best states the main purpose of the text?' is the most common Text Structure question, and it shows up on informational texts and literary ones (novels, poems, letters, plays) alike. It asks what the author is DOING across the whole text, not what the text is about (that's a main-idea question) and not the order its parts come in (that's an overall-structure question). After reading, sum up the whole text as a verb phrase: 'to explain how a device works,' 'to report a discovery and give an example,' 'to show how a character feels about his son.' Then match your phrase to the choices, checking both the verb and what follows it. For literary texts, the purpose is usually to portray a setting, a character's feelings, or a relationship, so ask what the details of the scene add up to. Wrong answers usually name the purpose of only one part of the text, use a verb that's too strong (argue or criticize when the text only describes), or name a goal the text never pursues.",
+      examples: [
+        {
+          q: "In 1923, Harriet Vance, a clerk at a busy seed company in Omaha, grew frustrated that customers' handwritten orders were often misread, so that farmers received the wrong seeds weeks too late to replant. She began sketching a paper form with a box for each seed variety and a column for quantities. Within a year, the company had printed thousands of her forms, and misfilled orders fell sharply. Other mail-order businesses soon copied the design.\n\nWhich choice best states the main purpose of the text?",
+          choices: ["To argue that Vance deserves more recognition than other inventors of her era.", "To describe the problems farmers faced when their seed orders arrived late.", "To describe how a clerk's frustration with a recurring problem led her to create a widely adopted order form.", "To explain how mail-order businesses printed and distributed forms in the 1920s."],
+          answer: 2,
+          explain:
+            "Sum up the whole text as a verb phrase before looking at the choices: it tells the story of a problem (misread orders), the clerk's fix (a printed form), and what happened next (fewer errors, copied by others), so its purpose is to describe how an invention came about. The choice about farmers' late seeds names only the problem in the first sentence. Nothing in the text compares Vance with other inventors, so 'argue that she deserves more recognition' is both too strong and a claim the text never makes. And the text never explains printing or distribution methods; it only says the forms were printed. Only the choice about a clerk's frustration leading to a widely adopted form covers the whole text.",
+          difficulty: "easy",
+          why: ["The text never compares Vance with other inventors or argues for anything. It simply tells how the form came about.", "The late seeds are just the problem in the first sentence. The text goes on to the form and its success.", null, "The text never explains how forms were printed or distributed. That's a goal it doesn't pursue."],
+        },
+        {
+          q: "The following text is adapted from a novel. Eleven-year-old Mira has just arrived at the coast for the first time.\n\nMira let go of her uncle's hand at the top of the dunes and simply stood there. The water went on and on until it met the sky, and she could not tell where one stopped and the other began. Each wave rose, curled white at its edge, and spread itself across the sand as if it had traveled a very long way just to arrive at her feet. She had seen pictures, of course. None of them had been this large, or this loud, or this alive.\n\nWhich choice best states the main purpose of the text?",
+          choices: ["To convey Mira's amazement at seeing the ocean for the first time.", "To explain why Mira's family traveled to the coast.", "To suggest that Mira is afraid of the water and wants to go home.", "To describe the pictures of the ocean that Mira had seen before the trip."],
+          answer: 0,
+          explain:
+            "Ask what the whole scene is doing. Mira stops still, the water seems endless, the waves seem to travel just to reach her, and the real ocean is 'this large, or this loud, or this alive.' Every detail builds her sense of wonder, so the purpose is to convey her amazement. The text never says why the family came, so explaining the trip is a goal it doesn't pursue. Nothing suggests fear: she lets go of her uncle's hand and stares, which is awe, not wanting to leave. The pictures come up in one sentence, only to show that the real ocean outdoes them.",
+          difficulty: "easy",
+          why: [null, "The text never says why the family came to the coast. It stays on what Mira sees and feels.", "Nothing shows fear. She stands and stares at something \"alive,\" which is wonder, not wanting to leave.", "The pictures appear in one sentence, only to show that the real ocean is bigger than any of them."],
+        },
+        {
+          q: "For more than a century, naturalists assumed that desert tortoises dig burrows mainly to escape daytime heat. To test this, ecologist Rosa Iturbe tracked 60 tortoises and recorded when each one entered its burrow. On hot afternoons, most did retreat underground, as expected. But the tortoises also spent long stretches in their burrows on cool, overcast days, and those stretches matched the hours when coyotes were most active nearby. Iturbe concludes that avoiding predators may be as important a reason for burrowing as avoiding heat.\n\nWhich choice best states the main purpose of the text?",
+          choices: ["To argue that naturalists were wrong to think tortoises burrow to escape heat.", "To describe the method Iturbe used to track the tortoises.", "To explain how coyotes locate tortoises hidden in desert burrows.", "To present a study that tested a long-held explanation for a behavior and found that explanation incomplete."],
+          answer: 3,
+          explain:
+            "Summarize the whole arc as a verb phrase: the text presents an old assumption, describes a study that tested it, and reports that heat isn't the whole story. Its purpose is to present a study that found a long-held explanation incomplete. Saying the naturalists were simply 'wrong' is too strong: the tortoises did retreat on hot afternoons, so heat still matters, and Iturbe adds a second reason rather than replacing the first. The tracking method is only one sentence of the text. And the text never explains how coyotes find tortoises; coyotes appear only as a possible reason the tortoises hide.",
+          difficulty: "medium",
+          why: ["Too strong. The tortoises did retreat on hot afternoons, so heat still matters. Iturbe adds a reason; she doesn't reject the old one.", "The tracking method is one sentence. The text is about what the study found, not just how it was run.", "The text never explains how coyotes find tortoises. Coyotes appear only as a possible reason for burrowing.", null],
+        },
+        {
+          q: "The following text is adapted from a letter written by a young woman who has recently moved to a distant city to work as a typist. She is writing to her mother.\n\nYou must not worry about the room; it is small, but the window faces east, and I wake with the sun on my pillow as I did at home. The office is noisy, and the first week my fingers ached so that I could hardly hold a fork, but Mrs. Dunmore says my pages are now the cleanest in the building. I have found a church with a good choir and a bakery that sells bread almost as good as yours. Please tell Father I am eating properly.\n\nWhich choice best states the main purpose of the text?",
+          choices: ["To complain to her mother about the hardships of her new job.", "To reassure her mother that she is settling into her new life, despite some early difficulties.", "To describe the view from the window of her rented room.", "To persuade her mother to join her in the city."],
+          answer: 1,
+          explain:
+            "Ask what the writer is doing across the whole letter. Nearly every sentence answers a worry: the room is small but sunny, her fingers ached but her work is now praised, she has found a church and good bread, and she is eating properly. That adds up to reassurance that she is settling in. She does mention hardships (the noise, her aching fingers), but each one is followed by something better, so 'complain' misreads her tone. The window is one detail, not the letter's point. And she never invites her mother to the city.",
+          difficulty: "medium",
+          why: ["She mentions hardships only to show she's gotten past them: aching fingers, then the cleanest pages in the building. That's reassurance, not complaint.", null, "The window is one detail in the first sentence. The whole letter is about how she's settling in.", "She never asks her mother to come to the city. She's easing her mother's worries from far away."],
+        },
+        {
+          q: "The following text is adapted from a novel. For forty years, Aurelio has run a small shoe-repair shop; his son Teo has recently begun working there.\n\nAurelio watched from the back bench as Teo took the customer's boots, turned them once in his hands, and named the problem before the woman had finished describing it. It was exactly what Aurelio would have said. He felt the old pleasure of a job well judged, and then, close behind it, something he did not care to name. The woman thanked Teo and did not look toward the back of the shop at all. Aurelio picked up a heel he had already finished and began, slowly, to polish it again.\n\nWhich choice best states the main purpose of the text?",
+          choices: ["To show that Aurelio resents his son and regrets bringing him into the shop.", "To describe the process of diagnosing and repairing a pair of boots.", "To portray Aurelio's mixed feelings as he watches his son take over the role he has long filled.", "To suggest that Teo is not yet as skilled at shoe repair as his father."],
+          answer: 2,
+          explain:
+            "Track what the whole scene is doing. Teo diagnoses the boots exactly as Aurelio would have, and Aurelio feels 'the old pleasure,' which is pride. But 'close behind it' comes a feeling he won't name, the customer never glances his way, and he re-polishes a finished heel just to keep his hands busy: a quiet sense of being displaced. The purpose is to portray both feelings at once. 'Resents' and 'regrets' flatten this into pure bitterness and ignore the pleasure. The boots are only the occasion for the scene, not its subject. And the text says Teo judged the job exactly as his father would have, the opposite of being less skilled.",
+          difficulty: "hard",
+          why: ["Too strong and one-sided. Aurelio feels real pride in Teo too; \"resents\" and \"regrets\" ignore that.", "The boots are just the occasion. The scene is about how Aurelio feels while watching his son.", null, "The text says Teo named the problem exactly as Aurelio would have. It shows skill, not a lack of it."],
+        },
+      ],
+      traps: [
+        "Choosing the purpose of just one part of the text, such as the problem in the first sentence or a single detail, instead of what the whole text does.",
+        "Choosing a verb that's too strong for the text, like 'argue,' 'criticize,' or 'warn,' when the author only describes, explains, or reassures.",
+        "Choosing a purpose that fits the topic but that the text never actually pursues, such as explaining something it only mentions or making a comparison it never draws.",
+        "In literary texts, flattening or misreading a character's feelings: picking pure anger or pure happiness when the scene shows mixed feelings, or taking a character's words at face value when the actions say otherwise.",
+      ],
+    },
     {
       name: "Function of a Sentence Within a Paragraph",
       explanation:
@@ -1874,6 +2031,64 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
     },
     {
+      name: "Punctuating Around Conjunctive Adverbs",
+      explanation:
+        "These questions put a transition word like 'however,' 'therefore,' 'for example,' 'in fact,' or 'though' where two complete clauses meet, and the choices move a semicolon (or period) and a comma around it: 'X; however, Y' versus 'X, however; Y.' A transition isn't a joining word like 'but,' so commas alone on both sides still make a comma splice; one side needs a strong boundary. To pick the side, decide which clause the transition logically belongs to. If it tells how the second clause relates to the first (the second contrasts with, results from, or gives an example of the first), the strong mark goes before it: 'X; however, Y.' If it links the first clause back to an earlier sentence and the second clause just explains or lists what the first announced, the transition ends the first clause and the mark goes after it ('X, however; Y'), with a colon when what follows explains or lists. Either way, a comma separates the transition from the rest of its own clause, and if what follows isn't a complete clause (an '-ing' phrase, or a main clause after an introductory phrase), there's no seam at all, so no semicolon: just commas around the transition.",
+      examples: [
+        {
+          q: "Engineers predicted that the prototype footbridge would begin to sag under a load of 40 metric ______ it held steady until the load reached 55 metric tons.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["tons, however, it", "tons; however, it", "tons, however; it", "tons however, it"],
+          answer: 1,
+          explain:
+            "Both sides are complete sentences: 'Engineers predicted that the prototype footbridge would begin to sag under a load of 40 metric tons' and 'it held steady until the load reached 55 metric tons.' 'However' belongs to the second one, since it signals that the result contrasted with the prediction, so the semicolon goes before 'however' and a comma follows it. Commas on both sides make a comma splice, because 'however' can't join sentences the way 'but' can. A semicolon after 'however' attaches it to the prediction, where it contrasts with nothing, and leaving out punctuation before 'however' runs the two sentences together.",
+          difficulty: "easy",
+          why: ["\"However\" isn't a joining word like \"but,\" so commas on both sides leave two complete sentences joined by commas alone: a comma splice.", null, "This attaches \"however\" to the prediction. The contrast is between the prediction and the result, so \"however\" starts the second sentence.", "With nothing before \"however,\" the two complete sentences run together."],
+        },
+        {
+          q: "The skin on a glass frog's underside is so transparent that an observer can watch the frog's heart ______ researchers can track the animal's heart rate without ever handling it.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["beat, as a result, researchers", "beat as a result, researchers", "beat, as a result; researchers", "beat. As a result, researchers"],
+          answer: 3,
+          explain:
+            "Both sides are complete sentences, and 'as a result' tells how the second follows from the first: because the skin is see-through, researchers can track the heart rate without touching the frog. So 'as a result' opens the second sentence, with a strong boundary (here a period) before it and a comma after it. Commas on both sides make a comma splice. A semicolon after 'as a result' ties it to the first sentence, making the watching a result, when it's actually the cause. With no punctuation before 'as a result,' the two sentences run together.",
+          difficulty: "easy",
+          why: ["\"As a result\" can't join two complete sentences, so commas on both sides make a comma splice.", "Nothing separates the two complete sentences, so they run together.", "This ties \"as a result\" to the first sentence, but watching the heart is the cause here, not the result.", null],
+        },
+        {
+          q: "Most frog species leave their eggs unattended once they are laid. Male coquí frogs ______ each one guards a clutch of eggs for about three weeks, pressing his body against them to keep them from drying out.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["are an exception, however; each", "are an exception; however, each", "are an exception, however, each", "are an exception however, each"],
+          answer: 0,
+          explain:
+            "Both sides are complete sentences, so read for logic. 'However' contrasts male coquí frogs with the 'most frog species' of the previous sentence, so it belongs at the end of the first clause: 'Male coquí frogs are an exception, however.' The second clause doesn't contrast with being an exception; it explains what makes them one. So the semicolon goes after 'however.' Putting the semicolon before 'however' would present guarding eggs as a contrast to being an exception, which is backward. Commas on both sides, or no comma before 'however' and one after, join two complete sentences with a comma alone.",
+          difficulty: "medium",
+          why: [null, "This makes guarding the eggs a contrast to being an exception, but guarding the eggs is what makes them an exception.", "\"However\" can't join two complete sentences, so commas on both sides make a comma splice.", "With only a comma after \"however,\" the two complete sentences are joined by a comma alone, and \"however\" isn't set off from its clause."],
+        },
+        {
+          q: "The first version of the solar-powered water pump broke down within a week of its installation in 2019. The redesigned pump fared much ______ it ran for eleven months before needing a single repair.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["better; though, it", "better, though, it", "better, though; it", "better though it"],
+          answer: 2,
+          explain:
+            "'Though' here is a transition meaning 'however,' and it contrasts the redesigned pump with the first version from the previous sentence, so it ends the first clause: 'The redesigned pump fared much better, though.' The second clause is evidence of how much better the pump did, not a contrast, so the semicolon goes after 'though.' Moving the semicolon before 'though' makes the eleven months sound like a contrast with faring better. Commas on both sides make a comma splice. And with no punctuation, 'though it ran for eleven months' becomes a concession, as if the pump did better in spite of running for eleven months, which makes no sense.",
+          difficulty: "medium",
+          why: ["This makes the eleven months a contrast to faring better, but they're the proof of it. \"Though\" belongs with the first clause.", "Both sides are complete sentences, and \"though\" can't join them, so commas on both sides make a comma splice.", null, "Without punctuation, \"though it ran for eleven months\" reads as \"even though,\" as if running for months worked against the pump's success."],
+        },
+        {
+          q: "Early marine chronometers kept excellent time in a clockmaker's workshop. Carrying one aboard a ship created three new ______ constant rocking, sudden swings in temperature, and damp sea air that corroded the delicate metal parts.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["problems; however, constant", "problems, however: constant", "problems, however, constant", "problems: however, constant"],
+          answer: 1,
+          explain:
+            "'However' contrasts the ship with the workshop in the previous sentence, so it ends the first clause: 'Carrying one aboard a ship created three new problems, however.' What follows is a list of those three problems, not a complete sentence, so a semicolon can't come before it; a complete clause that announces a list takes a colon. So the comma goes before 'however' and the colon after it. Putting the semicolon or colon before 'however' would make the list contrast with the very problems it names, and a comma after 'however' can't introduce a list after a complete clause.",
+          difficulty: "hard",
+          why: ["A semicolon needs a complete sentence after it, and the list of problems isn't one. \"However\" also belongs with the first clause.", null, "A comma can't introduce a list after a complete clause; this needs a colon after \"however.\"", "This makes the list contrast with the problems it names. \"However\" contrasts the ship with the workshop, so it goes before the colon."],
+        },
+      ],
+      traps: [
+        "Setting off the transition with commas on both sides ('X, however, Y') when both sides are complete sentences — 'however' isn't a joining word like 'but,' so this is still a comma splice.",
+        "Putting the semicolon on the wrong side of the transition — for example, choosing 'X; however, Y' when 'however' actually contrasts X with an earlier sentence and Y just explains X.",
+        "Using a semicolon or period next to the transition when what follows isn't a complete clause, such as an '-ing' phrase, a list (which needs a colon), or a main clause after an introductory phrase.",
+        "Dropping a needed comma or leaving out punctuation altogether, so the transition isn't set off from its clause or the two sentences run together.",
+      ],
+    },
+    {
       name: "Semicolon-Separated Lists with Internal Commas",
       explanation:
         "This pattern covers lists where individual items already contain their own comma, most often a name followed by a description, like 'Chen Liu, a sculptor.' When every list item is a simple word or phrase, ordinary commas work fine. But once one item already has a comma inside it, more commas make it impossible to tell where one item ends and the next begins. That's your signal: introduce the list with a colon and separate items with semicolons instead. Watch for this whenever a sentence lists several people, places, or things: check if any single item already has its own comma.",
@@ -2167,7 +2382,7 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Recognizing When No Punctuation Is Needed",
       explanation:
-        "Every other Boundaries pattern is about adding correct punctuation. This one's the opposite: sometimes the right answer has NO punctuation at all, and the wrong choices tempt you with a comma, dash, or colon that looks plausible but isn't actually justified. This usually happens between a verb and its direct object, between a preposition and its object, or before a short phrase that isn't really nonessential. Apply the same 'what's on each side' checks you use everywhere else in Boundaries — and don't assume one choice must add punctuation just because the others do. Treat 'no punctuation' as a real option every time.",
+        "Every other Boundaries pattern is about adding correct punctuation. This one's the opposite: sometimes the right answer has NO punctuation at all, and the wrong choices tempt you with a comma, dash, or colon that looks plausible but isn't actually justified. This usually happens between a subject and its verb, between a verb and its direct object, between a preposition and its object, or before a short phrase that isn't really nonessential. Two versions come up often. A short title or descriptor with no 'a' or 'the' in front of it, as in 'biologist Ana Ruiz,' works like part of the name, so no comma separates it from the name. And a 'that' clause is always essential, so it never takes a comma; when a noun is followed by a clause of its own, 'that' is often the word that attaches the clause and keeps the sentence from becoming a run-on, while the wrong choices swap in a comma plus 'it' or 'they' (a comma splice). Apply the same 'what's on each side' checks you use everywhere else in Boundaries — and don't assume one choice must add punctuation just because the others do. Treat 'no punctuation' as a real option every time.",
       examples: [
         {
           q: "The negotiators finally agreed ______ a compromise that satisfied both delegations. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2214,11 +2429,22 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "\"Who arrive after nine o'clock\" tells you which employees. Essential information like that takes no comma.", "A semicolon cuts the subject off from its verb, \"must sign in.\"", "A colon here would split the subject from its verb."],
         },
+        {
+          q: "Archaeologists excavating the Vessa hillfort in northern Portugal have uncovered the site's oldest known structure, a circular stone ______ the fort's defensive walls by roughly three centuries.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["hearth, it predates", "hearth that predates", "hearth, that predates", "hearth it predates"],
+          answer: 1,
+          explain:
+            "Everything before the blank is already a complete sentence, ending with the phrase 'a circular stone hearth' that renames 'the site's oldest known structure.' The words after the blank need a verb and a way to attach to the sentence. 'That' does the attaching: 'a circular stone hearth that predates the fort's defensive walls' is one unit, and since 'that' clauses are essential, no comma goes before 'that.' Swapping 'that' for 'it' creates a second complete sentence: joined by only a comma it's a comma splice, and with no punctuation it's a run-on.",
+          difficulty: "hard",
+          why: ["\"It predates the fort's defensive walls...\" is a complete sentence, so joining it to the first with only a comma creates a comma splice.", null, "\"That\" clauses are essential and never take a comma before them.", "\"It predates...\" is a complete sentence, and with no punctuation or connecting word, the two sentences run together."],
+        },
       ],
       traps: [
         "Inserting a comma between a verb (or preposition) and the object that directly completes it, just because a comma is offered as an option.",
         "Over-correcting once you've learned to watch for 'no punctuation needed' cases, and removing a comma that's actually required around a genuine nonessential element.",
         "Treating a restrictive (essential, no-comma) clause and a nonessential (comma-both-sides) clause as interchangeable — the test is always whether removing the clause changes who or what the sentence is actually about.",
+        "Putting a comma between a short title and the name right after it ('biologist, Ana Ruiz') — with no 'a' or 'the' in front, the title works like part of the name.",
+        "Adding a comma before a 'that' clause, or replacing 'that' with a comma plus 'it' or 'they' — 'that' never takes a comma, and without it the sentence becomes a comma splice or run-on.",
       ],
     },
     {
@@ -2277,6 +2503,64 @@ const LC_RW_BOUNDARIES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Choosing a semicolon when the relationship between the two sides is 'this explains/defines that' rather than 'these are two separate, equally weighted points' — that explanatory relationship is a colon's specific job.",
         "Using a colon after an incomplete introductory phrase (like 'such as' or 'including') that isn't itself a full independent clause.",
         "Using a comma, or no punctuation, after a complete sentence that introduces a list or explanation — that 'here's what I mean' job belongs to a colon.",
+      ],
+    },
+    {
+      name: "Direct vs. Embedded Questions",
+      explanation:
+        "These questions end a sentence with a question-like clause, and the choices change the word order and the end mark: 'whether the birds had returned.' / 'had the birds returned?' / 'the birds had returned?' / 'whether had the birds returned?' First decide whether the text is actually asking a question or just reporting one. If the question is tucked inside a statement, after words like 'wondered,' 'asked,' 'investigated,' 'cannot say,' or 'to determine,' it's an embedded question: keep normal statement order, with the subject before the verb ('how the birds navigate'), and end with a period. If the text poses the question itself (as its own sentence, after a colon, or as the main clause after an 'if' clause), it's a direct question: put the helping verb before the subject ('How do the birds navigate?') and end with a question mark. Wrong answers mix the two, pairing question order with a period or statement order with a question mark.",
+      examples: [
+        {
+          q: "For years, hikers on the Tallow Ridge trail noticed that one patch of snow near the summit survived long into August. Geologist Ines Varga wondered ______\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["why did the snow last so long?", "why the snow lasted so long?", "why the snow lasted so long.", "why did the snow last so long."],
+          answer: 2,
+          explain:
+            "The sentence is a statement: it reports what Varga wondered rather than asking the question itself. A question folded into a statement like this is an embedded question, so it keeps statement order (the subject 'the snow' before the verb 'lasted') and ends with a period. Question order ('did the snow last') belongs only to a direct question, and a question mark doesn't fit a sentence that isn't asking anything.",
+          difficulty: "easy",
+          why: ["The sentence reports what Varga wondered; it doesn't ask the question directly. That calls for statement order and a period.", "The word order is right, but the sentence is a statement about her wondering, so it ends with a period.", null, "\"Did the snow last\" is direct-question order. Inside a statement after \"wondered,\" the order is \"the snow lasted.\""],
+        },
+        {
+          q: "The bar-tailed godwit, a long-legged shorebird, can fly more than 11,000 kilometers from Alaska to New Zealand without stopping to eat or rest. ______ Researchers tracking the birds with tiny satellite tags have begun to piece together an answer.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["How does a bird fuel such a long journey?", "How a bird fuels such a long journey?", "How does a bird fuel such a long journey.", "How a bird fuels such a long journey."],
+          answer: 0,
+          explain:
+            "The blank is a sentence of its own, and the next sentence talks about 'an answer,' so the text is posing a question directly. A direct question puts the helping verb before the subject ('does a bird fuel') and ends with a question mark. Statement order ('a bird fuels') can't make a question on its own: with a period it's just a fragment, and with a question mark it's still missing the helping verb. Question order with a period mixes the two forms.",
+          difficulty: "easy",
+          why: [null, "A direct question needs the helping verb before the subject: \"How does a bird fuel...\"", "This is a direct question, so it ends with a question mark, not a period.", "\"How a bird fuels such a long journey\" isn't a complete sentence; it's a fragment."],
+        },
+        {
+          q: "Cuttlefish can match the colors of their surroundings in less than a second, yet their eyes contain only one type of light-sensitive cell, which suggests that they cannot see color at all. In a series of experiments, marine biologist Ruth Okafor investigated ______\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["how could the animals match colors they cannot see?", "how the animals could match colors they cannot see?", "how could the animals match colors they cannot see.", "how the animals could match colors they cannot see."],
+          answer: 3,
+          explain:
+            "'Okafor investigated how...' is a statement reporting her research, so the question after 'investigated' is embedded. It keeps statement order (the subject 'the animals' before the helping verb 'could') and ends with a period. 'Could the animals match' is direct-question order, and a question mark doesn't belong at the end of a statement, even a statement about a question.",
+          difficulty: "medium",
+          why: ["After \"investigated,\" the question is part of a statement, so it takes statement order and a period, not \"could the animals\" and a question mark.", "The word order is right, but the sentence states what Okafor investigated; it isn't asking anything, so it ends with a period.", "\"Could the animals match\" is direct-question order. After \"investigated,\" the subject comes first: \"the animals could match.\"", null],
+        },
+        {
+          q: "When the town of Ridley bought its abandoned train station in 2019, officials planned to turn the building into a public library. But the committee in charge of the project spent months on a question that divided residents: ______\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["whether the library should keep the station's brick front or replace it entirely?", "should the library keep the station's brick front or replace it entirely?", "the library should keep the station's brick front or replace it entirely?", "should the library keep the station's brick front or replace it entirely."],
+          answer: 1,
+          explain:
+            "A colon can introduce a question that the text asks directly, and here the text is stating the committee's question itself. So it takes direct-question form: the helping verb 'should' comes before the subject 'the library,' and the sentence ends with a question mark. A 'whether' clause is an embedded question, so it can't end with a question mark. Statement order with a question mark isn't a real question, and question order needs a question mark, not a period.",
+          difficulty: "medium",
+          why: ["A \"whether\" clause is an embedded question, so it can't end with a question mark.", null, "Statement order (\"the library should\") with a question mark mixes the two forms. A direct question puts \"should\" first.", "\"Should the library keep...\" is a direct question, so it needs a question mark."],
+        },
+        {
+          q: "Astronomers have long known that a comet's tail always points away from the sun, even after the comet swings around the sun and heads back toward the outer solar system. If the tail were simply dust and gas left behind by the moving comet, ______ Astronomer Leonora Hask was determined to find out.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["why it led the way as the comet traveled outward.", "why did it lead the way as the comet traveled outward.", "why did it lead the way as the comet traveled outward?", "why it led the way as the comet traveled outward?"],
+          answer: 2,
+          explain:
+            "The sentence opens with an 'if' clause, which can't stand alone, so the words in the blank must supply the main clause. That main clause is a question the text asks outright, and the next sentence ('Hask was determined to find out') treats it as an open question. So it needs direct-question form: 'did' before the subject 'it,' and a question mark. Statement order ('why it led the way') can't serve as a main clause, so with either end mark the sentence would be left with nothing but an 'if' clause and an embedded question. Question order with a period mixes the two forms.",
+          difficulty: "hard",
+          why: ["\"Why it led the way...\" can't serve as the main clause, so the sentence is left with only an \"if\" clause and no main clause.", "\"Why did it lead the way\" is direct-question order, so it needs a question mark, not a period.", null, "Statement order with a question mark mixes the forms, and \"why it led the way\" still can't serve as the main clause after the \"if\" clause."],
+        },
+      ],
+      traps: [
+        "Ending an embedded question with a question mark — 'She wondered why the lake froze' is a statement about a question, so it ends with a period.",
+        "Using question word order inside an embedded question ('investigated how did the birds navigate'); once a question is folded into a statement, the subject comes before the verb.",
+        "Writing a direct question in statement order or with a period — a direct question needs the helping verb (do, did, could, should) before the subject and a question mark at the end.",
+        "Missing the signs that the text is asking a question itself: the question stands as its own sentence, follows a colon, serves as the main clause after an 'if' clause, or is followed by a line like 'She was determined to find out.'",
       ],
     },
   ],
@@ -2416,7 +2700,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Pronoun Agreement and Reference",
       explanation:
-        "This pattern checks whether a pronoun correctly matches the noun it refers back to, in number (singular or plural), and whether that noun is clear and unambiguous. One common trap: words like 'each' and 'neither' are singular, and need singular pronouns, even though they might feel like they're describing a group.",
+        "This pattern checks whether a pronoun correctly matches the noun it refers back to, in number (singular or plural), and whether that noun is clear and unambiguous. One common trap: words like 'each' and 'neither' are singular, and need singular pronouns, even though they might feel like they're describing a group. Many of these questions also test form along with number by mixing possessives with sound-alike contractions. The possessives 'its,' 'their,' and 'whose' never take an apostrophe; 'it's,' 'they're,' and 'who's' are contractions meaning 'it is,' 'they are,' and 'who is' (or 'has'); and 'there' points to a place. So work in two steps: find the antecedent and decide singular or plural (two people, like 'Maria and her brother,' take 'their,' never 'its'), then check whether the blank needs a possessive in front of a noun or a subject and verb like 'they are.'",
       examples: [
         {
           q: "Each of the students submitted ______ essay by the deadline. Which choice completes the text so that it conforms to the conventions of Standard English?",
@@ -2460,6 +2744,15 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "\"They\" means both people were thrilled, which changes the meaning instead of clarifying who was.", "\"She herself\" is still \"she,\" so it's just as unclear which sister was thrilled.", "\"It was thrilling\" drops the person entirely and changes what the sentence says."],
         },
         {
+          q: "Marine archaeologists Nadia Sorensen and Kwame Asante spent three summers searching Lake Superior for the cargo schooner Wren, which sank in a storm in 1919. When sonar images finally revealed the wreck in 2020, the images confirmed ______ theory that the storm had pushed the ship miles off course.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+          choices: ["it's", "their", "they're", "its"],
+          answer: 1,
+          explain:
+            "First find who owns the theory: Sorensen and Asante, two people, so the pronoun must be plural. The blank also sits right before a noun ('theory'), so it needs a possessive, not a contraction. 'Their' is the plural possessive. 'Its' is singular and would wrongly point to a thing like the wreck or the ship, and 'it's' and 'they're' are contractions ('it is,' 'they are') that make no sense before 'theory.'",
+          difficulty: "medium",
+          why: ["\"It's\" means \"it is,\" and the theory belongs to two people anyway.", null, "\"They're\" means \"they are.\" The blank needs the possessive \"their.\"", "\"Its\" is singular and points to a thing, like the wreck. The theory belongs to two people."],
+        },
+        {
           q: "Either the manager or the interns will need to submit ______ report by Monday. Which choice completes the text so that it conforms to the conventions of Standard English?",
           choices: ["their", "his or her", "its", "they're"],
           answer: 0,
@@ -2474,6 +2767,7 @@ const LC_RW_FORM_STRUCTURE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Overlooking ambiguous pronoun references, where it's unclear which of two nouns a pronoun is meant to replace.",
         "Using 'they' or 'their' for a singular group noun like 'the company' or 'the orchestra,' which takes 'it' and 'its.'",
         "Mixing up sound-alikes — its/it's, their/there/they're — where only one spelling is the possessive pronoun.",
+        "Mixing up 'whose' and 'who's,' or using 'their' where the sentence needs 'whose' — 'whose' shows possession and links a describing clause to the noun before it ('the engineers, whose design...'), while 'who's' only ever means 'who is' or 'who has.'",
       ],
     },
     {
@@ -2813,7 +3107,7 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving for a Related Expression Without Fully Isolating x",
       explanation:
-        "Some questions ask for the value of an expression involving x (like x − 7 or 2x), instead of x itself. The fast method: manipulate the whole equation so it isolates the exact expression being asked for, instead of solving all the way down to x and substituting afterward. Watch for this whenever the question asks for an expression, not a plain 'what is x.' Dividing, adding, or combining terms to land exactly on that expression is almost always faster than solving for x first.",
+        "Some questions ask for the value of an expression involving x (like x − 7 or 2x), instead of x itself. The fast method: manipulate the whole equation so it isolates the exact expression being asked for, instead of solving all the way down to x and substituting afterward. Watch for this whenever the question asks for an expression, not a plain 'what is x.' Dividing, adding, or combining terms to land exactly on that expression is almost always faster than solving for x first. A related version gives a ratio, like x/y = 3/4 or 2x = 5y (which means x/y = 5/2), and asks about an expression such as (x + y)/y or (kx − y)/y. Split the fraction so the ratio appears: (x + y)/y = x/y + y/y = x/y + 1, and (kx − y)/y = k(x/y) − 1. Then substitute the ratio and solve for the value or the unknown constant.",
       examples: [
         {
           q: "If 4x - 28 = -24, what is the value of x - 7?",
@@ -2860,11 +3154,22 @@ const LC_M_LINEAR_EQ_1VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "6 is x itself. The question asks for 4x, which is 24.", "16 comes from subtracting the equations instead of adding them. Adding cancels the 2y terms.", "12 is 2x. Adding the equations gives 4x = 24 directly."],
         },
+        {
+          q: "If x/y = 3/4 and (kx + y)/y = 7, where k is a constant, what is the value of k?",
+          choices: ["9/2", "6", "8", "28/3"],
+          answer: 2,
+          explain:
+            "Split the fraction so the given ratio appears: (kx + y)/y = k(x/y) + y/y = k(x/y) + 1. Substitute x/y = 3/4: k(3/4) + 1 = 7, so k(3/4) = 6 and k = 6 · (4/3) = 8. You never need x or y separately. The value 9/2 uses the flipped ratio 4/3, 6 is k(x/y) rather than k, and 28/3 drops the + 1 from y/y.",
+          difficulty: "hard",
+          why: ["This uses y/x = 4/3 instead of x/y = 3/4. Check it: (9/2)(3/4) + 1 = 35/8, not 7.", "6 is the value of k(x/y), not k. Divide by 3/4: k = 8.", null, "y/y = 1 has to be subtracted first: k(3/4) = 6, not 7. Check it: (28/3)(3/4) + 1 = 8, not 7."],
+        },
       ],
       traps: [
         "Automatically solving all the way for x out of habit, even when the question never asks for x itself and a faster shortcut is available.",
         "Isolating the wrong combination of terms — one that looks similar to the requested expression but isn't an exact match.",
         "Making an arithmetic slip when scaling the equation to match the requested expression's exact coefficient.",
+        "Flipping the given ratio: using y/x = 4/3 when the question gives x/y = 3/4, or reading 2x = 5y as x/y = 2/5.",
+        "Not splitting a fraction like (x + y)/y into x/y + 1: dropping the + 1, or canceling the y's as if they were factors.",
       ],
     },
     {
@@ -2937,7 +3242,7 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Extracting Slope and Intercept from a Real-World Scenario",
       explanation:
-        "Many linear function questions are word problems where you translate a real-world description into slope and y-intercept. The reliable trick: the y-intercept is always the 'starting value' or 'flat fee' — the amount present when the input is zero. The slope is always the 'rate' or 'per unit' language, like per mile or per month. Once you know which number plays which role, writing the function is just mechanical.",
+        "Many linear function questions are word problems where you translate a real-world description into slope and y-intercept. The reliable trick: the y-intercept is the 'starting value' or 'flat fee', the amount present when the input is zero. The slope is the 'rate' or 'per unit' language, like per mile or per month. Watch for a first unit that's priced differently: '$50 for the first day and $30 for each additional day' charges $30 for only d - 1 days, so C(d) = 30(d - 1) + 50 = 30d + 20. The slope is still the per-unit rate, but the intercept, 20, is not the first-day price; you only find it by simplifying. Once you know which number plays which role, writing the function is mechanical.",
       examples: [
         {
           q: "A taxi charges $3 plus $2 per mile. Which function models the cost C for m miles?",
@@ -2989,16 +3294,26 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "$350 is the total for 50 miles, not the flat fee. Solve 350 = 3(50) + b to get b = 200.", "The rate is the change in cost over the change in miles: 210 ÷ 70 = 3, not 7.", "Check it: 3(50) − 200 = −50, not 350. The flat fee is +200."],
         },
+        {
+          q: "A boat rental shop charges $45 for the first hour and $25 for each additional hour. Which function gives the total cost C(h), in dollars, of renting a boat for h hours, where h is a positive whole number?",
+          choices: ["C(h) = 25h + 45", "C(h) = 45h + 25", "C(h) = 25h + 20", "C(h) = 25h + 70"],
+          answer: 2,
+          explain:
+            "Only the hours after the first cost $25, and there are h - 1 of them: C(h) = 45 + 25(h - 1) = 25h + 20. Check: one hour costs 25 + 20 = $45, and two hours cost 50 + 20 = $70. '25h + 45' charges $25 for the first hour on top of the $45, so one hour would cost $70. '45h + 25' swaps the rate and the fixed part, and '25h + 70' counts h + 1 additional hours instead of h - 1.",
+          difficulty: "hard",
+          why: ["This charges $25 for the first hour on top of $45: C(1) would be $70, not $45.", "This swaps the numbers: $25 is the hourly rate, and the first hour costs $45 total.", null, "This adds an extra hour instead of removing one: C(1) would be $95, not $45."],
+        },
       ],
       traps: [
         "Swapping which number is the slope and which is the intercept, especially when the flat fee is mentioned first in the sentence.",
         "Forgetting that a decreasing quantity (like a draining tank) needs a negative sign on the rate term, not just the rate's numeric value.",
+        "Using the first unit's price as the y-intercept when the first unit is priced differently: $50 for the first day plus $30 for each additional day is C = 30(d - 1) + 50 = 30d + 20, not 30d + 50.",
       ],
     },
     {
       name: "Reading Slope and Intercept Directly from a Graph",
       explanation:
-        "This pattern gives you a line's graph (not an equation or table) and asks for its slope, y-intercept, or a specific value. No algebra needed: read the y-intercept where the line crosses the y-axis. Find the slope by picking two clearly marked points and computing rise over run, counting grid squares directly instead of estimating.",
+        "This pattern gives you a line's graph (not an equation or table) and asks for its slope, y-intercept, or a specific value. No algebra needed: read the y-intercept where the line crosses the y-axis. Find the slope by picking two clearly marked points and computing rise over run, counting grid squares directly instead of estimating. Some questions describe the graph with conditions instead of showing it, such as 'the graph of f(x) = ax + b passes through (4, 0), and f(0) is negative,' and ask which inequality must be true. Sketch it: f(0) is the y-intercept, so b < 0, and a line rising from below the x-axis to (4, 0) has a > 0. Then use the x-intercept to connect the constants: 0 = 4a + b, so b = -4a.",
       examples: [
         {
           q: "A line is graphed passing through the marked points (0, 3) and (2, 7). What is the y-intercept of the line?",
@@ -3050,17 +3365,27 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "12 is the height of the first marked point, not where the line crosses the y-axis.", "−1 is the slope. The y-intercept comes from 12 = −1(3) + b, so b = 15.", "3 is the size of one gridline (or the first point's x-value), not the y-intercept."],
         },
+        {
+          q: "The function f is defined by f(x) = ax + b, where a and b are constants. In the xy-plane, the graph of y = f(x) passes through the point (-3, 0), and f(2) < 0. Which of the following must be true?",
+          choices: ["a > 0", "b > 0", "b < a", "a < b"],
+          answer: 2,
+          explain:
+            "Sketch it: the line crosses the x-axis at x = -3 and is below the x-axis at x = 2, so it falls from left to right: a < 0. Since x = 0 lies between -3 and 2, f(0) = b is also below the axis: b < 0. To compare them, use the x-intercept: 0 = a(-3) + b, so b = 3a. Tripling a negative number makes it smaller, so b < a. (For example, a = -1 gives b = -3.) 'a > 0' and 'b > 0' get the signs wrong, and 'a < b' reverses the true relationship.",
+          difficulty: "hard",
+          why: ["The line crosses the x-axis at −3 and is below it at x = 2, so it falls: a < 0.", "Between x = −3 and x = 2 the falling line is already below the x-axis, so b = f(0) < 0.", null, "b = 3a, and tripling a negative number makes it smaller, so b < a, not a < b."],
+        },
       ],
       traps: [
         "Misreading which axis is which, especially when the graph's scale isn't 1 unit per gridline.",
         "Picking two points that aren't both exactly on the line (estimating rather than using clearly marked grid intersections).",
         "Confusing the x-intercept (where the line crosses the x-axis) with the y-intercept when the question asks for one specifically.",
+        "In sign questions, deciding the slope's sign from the y-intercept's sign alone; the slope's direction comes from comparing two points, such as the x-intercept and the other point you're given.",
       ],
     },
     {
       name: "Finding Slope from Two Points or Function Values",
       explanation:
-        "This pattern gives you two data points, either as coordinate pairs, or as two function values like f(2) and f(5), and asks for the slope, or asks you to use the slope to find another value. The formula is always change in output divided by change in input. The real skill is correctly telling which numbers are inputs and which are outputs, especially in a word problem instead of plain coordinates.",
+        "This pattern gives you two data points, either as coordinate pairs or as two function values like f(2) and f(5), and asks for the slope, or asks you to use the slope to find another value. The formula is always change in output divided by change in input. The same formula gives the average rate of change of data or of a nonlinear function over an interval: find the two points at the ends of the interval (read them from a scatterplot or table, or evaluate the function), then divide the change in y by the change in x. Points in between don't matter, even if the values rise and fall along the way. The real skill is correctly telling which numbers are inputs and which are outputs, especially in a word problem instead of plain coordinates.",
       examples: [
         {
           q: "A linear function f has f(0) = 4 and f(3) = 13. What is the slope of f?",
@@ -3108,6 +3433,15 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "19 adds only two steps of 4. From 2 to 5 is three steps: 11 + 3(4) = 23.", "15 adds only one step of 4. From 2 to 5 is three steps: 11 + 12 = 23.", "44 multiplies 11 by 4. The slope is added once for each 1-unit step, not multiplied."],
         },
         {
+          q: "The function f is defined by f(x) = x² - 2x + 5. What is the average rate of change of f from x = 1 to x = 4?",
+          choices: ["9", "1/3", "3", "8.5"],
+          answer: 2,
+          explain:
+            "The graph of f isn't a line, but the average rate of change over an interval uses the same formula as slope, with the interval's endpoints. f(1) = 1 - 2 + 5 = 4 and f(4) = 16 - 8 + 5 = 13, so the average rate of change is (13 - 4)/(4 - 1) = 9/3 = 3. '9' is the change in output without dividing by the change in input, '1/3' flips the fraction, and '8.5' averages the two outputs instead of finding a rate.",
+          difficulty: "medium",
+          why: ["9 is the change in f(x) only. Divide by the change in x, 3.", "This is flipped: change in x over change in f(x). It's 9 ÷ 3 = 3.", null, "8.5 is the average of f(1) and f(4). A rate of change divides the change in output by the change in input."],
+        },
+        {
           q: "A linear function's values are shown in a table: when x = -3, y = 22; when x = 1, y = 10; when x = 6, y = -5. What is the slope of the function?",
           choices: ["-3", "3", "-12", "22"],
           answer: 0,
@@ -3124,9 +3458,69 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
     },
     {
+      name: "Writing a Line's Equation from Slope, a Point, or a Table",
+      explanation:
+        "These questions ask for a line's full equation, y = mx + b or f(x) = mx + b, built from the pieces you're handed: a slope and the y-intercept, a slope and some other point, or a short table of x- and y-values. First pin down the slope m: it's either given, or you find it from any two table rows as (change in y) / (change in x). Then find b, the y-intercept: if you're told the point (0, b), or the table has an x = 0 row, just read it; otherwise plug one known point into y = mx + b and solve for b. When the choices are in standard form (Ax + By = C), or the table's inputs use a letter like s, write y = mx + b first and then rearrange, or test each choice against every row, since the right equation has to fit all of them. If the equation is already in slope-intercept form, the slope is the coefficient of x and the y-intercept is the constant, so there's nothing to solve. Wrong choices usually use a given point's y-value as b, swap m and b, or fit only one row of the table.",
+      examples: [
+        {
+          q: "A line in the xy-plane has a slope of 5 and passes through the point (0, -2). Which equation represents the line?",
+          choices: ["y = -2x + 5", "y = 5x + 2", "y = 5x - 2", "y = -5x - 2"],
+          answer: 2,
+          explain:
+            "The point (0, -2) has x = 0, so it's the y-intercept: b = -2. The slope is given: m = 5. Put them into y = mx + b to get y = 5x - 2. 'y = -2x + 5' swaps the slope and the intercept, 'y = 5x + 2' drops the negative sign on the intercept, and 'y = -5x - 2' puts a negative sign on the slope that isn't there.",
+          difficulty: "easy",
+          why: ["This swaps the numbers: the slope is 5 and the y-intercept is −2.", "The line crosses the y-axis at (0, −2), so b is −2, not 2.", null, "The slope is 5, not −5. Only the intercept is negative."],
+        },
+        {
+          q: "The function f is defined by f(x) = 7 - 4x. What is the y-intercept of the graph of y = f(x) in the xy-plane?",
+          choices: ["(0, 7)", "(0, -4)", "(7, 0)", "(7/4, 0)"],
+          answer: 0,
+          explain:
+            "The y-intercept is the point where x = 0: f(0) = 7 - 4(0) = 7, so it's (0, 7). Written in the usual order the rule is f(x) = -4x + 7, so -4 is the slope, not the intercept. '(7, 0)' puts the 7 in the wrong coordinate, and '(7/4, 0)' is the x-intercept, where 7 - 4x = 0.",
+          difficulty: "easy",
+          why: [null, "−4 is the slope, the number multiplying x. The y-intercept is f(0) = 7.", "This swaps the coordinates. The y-intercept has x = 0: (0, 7).", "(7/4, 0) is where the graph crosses the x-axis, the x-intercept."],
+        },
+        {
+          q: "A line in the xy-plane has a slope of -3 and passes through the point (4, 1). Which equation represents the line?",
+          choices: ["y = -3x + 1", "y = -3x - 11", "y = 3x - 11", "y = -3x + 13"],
+          answer: 3,
+          explain:
+            "The point (4, 1) isn't on the y-axis, so b has to be solved for. Plug the point and the slope into y = mx + b: 1 = -3(4) + b, so 1 = -12 + b and b = 13. The line is y = -3x + 13. 'y = -3x + 1' uses the point's y-value as the intercept, 'y = -3x - 11' subtracts 12 instead of adding it, and 'y = 3x - 11' does pass through (4, 1) but has slope 3, not -3.",
+          difficulty: "medium",
+          why: ["1 is the y-value at x = 4, not at x = 0. Solve 1 = −3(4) + b to get b = 13.", "A sign slip: 1 = −12 + b gives b = 1 + 12 = 13.", "This line passes through (4, 1), but its slope is 3, not −3.", null],
+        },
+        {
+          q: "The table shows three values of x and their corresponding values of f(x), where f is a linear function.\n\nWhich equation defines f?",
+          choices: ["f(x) = (4/3)x + 2", "f(x) = (3/4)x + 2", "f(x) = 3x + 2", "f(x) = (3/4)x - 1"],
+          answer: 1,
+          explain:
+            "The row x = 0 gives the y-intercept directly: b = 2. For the slope, use two rows: from x = -4 to x = 0, f(x) goes from -1 to 2, so m = 3/4. Check the third row: (3/4)(6) + 2 = 6.5. So f(x) = (3/4)x + 2. '(4/3)x + 2' flips the slope, '3x + 2' uses the change in f(x), 3, without dividing by the change in x, 4, and '(3/4)x - 1' uses the first row's output as the intercept.",
+          figure: {"kind": "table", "header": ["x", "f(x)"], "rows": [[-4, -1], [0, 2], [6, 6.5]]},
+          difficulty: "medium",
+          why: ["This flips the slope. f(x) rises 3 while x rises 4, so the slope is 3/4.", null, "3 is the change in f(x). Divide by the change in x, 4: the slope is 3/4.", "−1 is f(−4), not f(0). The x = 0 row shows the intercept is 2."],
+        },
+        {
+          q: "The table shows three values of x and their corresponding values of y, where s is a constant. There is a linear relationship between x and y.\n\nWhich equation represents this relationship?",
+          choices: ["2x + y = 2s + 9", "2x + y = s + 9", "2x - y = 2s - 9", "x + 2y = s + 18"],
+          answer: 0,
+          explain:
+            "Each time x goes up by 2, y goes down by 4, so the slope is -4/2 = -2. Use the first row in point-slope form: y - 9 = -2(x - s), so y = -2x + 2s + 9, and moving -2x to the left gives 2x + y = 2s + 9. Check the second row: 2(s + 2) + 5 = 2s + 9. '2x + y = s + 9' forgets to multiply s by 2, and '2x - y = 2s - 9' (slope +2) and 'x + 2y = s + 18' (slope -1/2) each fit the first row but fail the other two.",
+          figure: {"kind": "table", "header": ["x", "y"], "rows": [["s", 9], ["s + 2", 5], ["s + 4", 1]]},
+          difficulty: "hard",
+          why: [null, "This forgets to multiply s by the slope. y − 9 = −2(x − s) gives +2s, so the right side is 2s + 9.", "This uses a slope of +2, but y falls as x rises. It fits the first row only.", "This flips the slope to −1/2. It fits the first row, but the second row gives s + 12, not s + 18."],
+        },
+      ],
+      traps: [
+        "Using a given point's y-value as the y-intercept b when that point's x-value isn't 0.",
+        "Finding the slope from a table by looking only at how much y changes between rows, without dividing by how much x changes (that shortcut only works when x goes up by exactly 1).",
+        "Swapping the slope and the y-intercept, for example writing y = 4x + 3 for a line with slope 3 through (0, 4).",
+        "Checking a choice against only one row of a table: several wrong equations fit one point, but only the right one fits every row.",
+      ],
+    },
+    {
       name: "Evaluating a Function and Solving for Input Given Output",
       explanation:
-        "This is the most basic linear-function skill, and it's easy to overlook: plug a given input directly into a function's rule to find its output, f(a) — or run it backward, given an output, to solve for the input. Neither direction needs a graph or a second point; it's just substitution and algebra. To find f(a): substitute a for every x in the rule and simplify. To find x such that f(x) = b: set the rule equal to b and solve for x.",
+        "This is the most basic linear-function skill, and it's easy to overlook: plug a given input directly into a function's rule to find its output, f(a), or run it backward, given an output, to solve for the input. Neither direction needs a graph or a second point; it's just substitution and algebra. To find f(a): substitute a for every x in the rule and simplify. To find x such that f(x) = b: set the rule equal to b and solve for x. The same substitution finds an unknown constant in the rule: if f(x) = kx - 7 and f(3) = 11, put 3 in for x and 11 in for f(x) to get 11 = 3k - 7, so k = 6. A value like f(0) is especially quick, since every x-term becomes 0 and only the constant is left.",
       examples: [
         {
           q: "The function is defined by f(x) = 7x + 1. What is f(4)?",
@@ -3162,6 +3556,15 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "6 is (2/3)(9) without the + 4.", "13 adds 9 and 4, skipping the multiplication by 2/3.", "(2/3)(9) is exactly 6, so f(9) = 6 + 4 = 10. There's no decimal."],
         },
         {
+          q: "The function f is defined by f(x) = kx - 7, where k is a constant. If f(3) = 11, what is the value of k?",
+          choices: ["10/11", "18", "6", "4/3"],
+          answer: 2,
+          explain:
+            "f(3) = 11 says that when the input is 3, the output is 11. Substitute both: 11 = k(3) - 7. Add 7: 18 = 3k, so k = 6. Check: f(3) = 6(3) - 7 = 11. '10/11' puts 11 in as the input and 3 as the output, '18' is 3k, one step before dividing, and '4/3' subtracts 7 from 11 instead of adding it.",
+          difficulty: "medium",
+          why: ["This swaps the input and output: f(3) = 11 means x = 3 and f(x) = 11.", "18 is 3k. Divide by 3 to get k = 6.", null, "A sign slip: 11 = 3k − 7 gives 3k = 18, not 4."],
+        },
+        {
           q: "The function is defined by k(x) = 4x - 9. If k(2n) = 15, what is the value of n?",
           choices: ["3", "6", "1.5", "24"],
           answer: 0,
@@ -3188,9 +3591,9 @@ const LC_M_LINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
 const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
   patterns: [
     {
-      name: "Extracting Slope from Standard Form",
+      name: "Reading Slope and Intercepts from Standard Form",
       explanation:
-        "Lines are often given in standard form (Ax + By = C) instead of slope-intercept form, and many students waste time trying to read the slope straight from it. The reliable method: always convert to slope-intercept form (y = mx + b) first by isolating y, then read off the slope. This one habit eliminates nearly all errors on this pattern.",
+        "Lines are often given in standard form (Ax + By = C) instead of slope-intercept form, and many students waste time trying to read the slope straight from it. For the slope, the reliable method is to convert to slope-intercept form (y = mx + b) first by isolating y, then read off the slope. For the intercepts, you don't need to convert: set y = 0 to get the x-intercept, x = C/A, and set x = 0 to get the y-intercept, y = C/B. Intercepts are the fastest way to match a standard-form equation to a graph: read where the line crosses each axis and pick the equation whose C/A and C/B match. In a context such as a budget, 4x + 10y = 200, an intercept means one quantity is zero: the x-intercept, 50, is how many of the $4 items you could buy with none of the $10 items, and a known intercept also lets you work backward to a missing coefficient.",
       examples: [
         {
           q: "What is the slope of the line 4x + 2y = 8?",
@@ -3232,6 +3635,16 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "A sign slip: moving 5x across makes it −5x, so the slope is −5/4.", "5 is the x-coefficient in standard form. Divide by 4 after isolating y.", "This is the flipped fraction. Slope is −5/4: the x-coefficient over the y-coefficient, with the sign changed."],
         },
         {
+          q: "A club bought x T-shirts and y hats, spending all of its budget. The graph shows the possible combinations.\n\nWhich equation could represent the relationship between x and y?",
+          choices: ["8x + 12y = 120", "12x + 8y = 120", "10x + 15y = 120", "12x - 8y = 120"],
+          answer: 1,
+          explain:
+            "The graph crosses the x-axis at 10 and the y-axis at 15. For each choice, find the intercepts: the x-intercept is C/A and the y-intercept is C/B. For 12x + 8y = 120, those are 120/12 = 10 and 120/8 = 15, a match. '8x + 12y = 120' has intercepts 15 and 10, the reverse. '10x + 15y = 120' uses the intercepts as coefficients, which gives intercepts 12 and 8. '12x - 8y = 120' has a y-intercept of -15, below the x-axis.",
+          figure: {"kind": "scatter", "x": {"label": "T-shirts, x", "min": 0, "max": 12, "step": 2}, "y": {"label": "Hats, y", "min": 0, "max": 18, "step": 3}, "points": [[0, 15], [10, 0]], "line": {"slope": -1.5, "intercept": 15}},
+          difficulty: "medium",
+          why: ["This swaps the intercepts: 120/8 = 15 on the x-axis and 120/12 = 10 on the y-axis.", null, "This uses the intercepts as coefficients. Its intercepts are 120/10 = 12 and 120/15 = 8.", "The minus sign makes the y-intercept 120/(−8) = −15, but the graph crosses the y-axis at +15."],
+        },
+        {
           q: "What is the slope of the line -3x - 6y = 18?",
           choices: ["-1/2", "1/2", "-2", "2"],
           answer: 0,
@@ -3241,10 +3654,22 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "A sign slip: 3x ÷ (−6) = −0.5x, so the slope is negative.", "This is the flipped fraction. 3 divided by −6 is −1/2, not −2.", "This is flipped and has the wrong sign. The slope is 3/(−6) = −1/2."],
         },
+        {
+          q: "A truck carries x boxes of tile and y bags of cement. The equation ax + 20y = 900 represents the situation in which the total mass of the load is 900 kilograms, where a is a constant. The graph of this equation is shown.\n\nWhat is the mass, in kilograms, of one box of tile?",
+          choices: ["36", "20", "25", "45"],
+          answer: 2,
+          explain:
+            "The x-intercept is where y = 0: a load of tile only. The graph crosses the x-axis at 36, so 36 boxes of tile weigh 900 kilograms: a(36) = 900, and a = 25. That's the mass of one box. '36' is the number of boxes (the intercept itself), not the mass of each. '20' is the mass of one bag of cement, the coefficient of y, and '45' is the y-intercept, the number of cement bags in a cement-only load.",
+          figure: {"kind": "scatter", "x": {"label": "Boxes of tile, x", "min": 0, "max": 40, "step": 4}, "y": {"label": "Bags of cement, y", "min": 0, "max": 50, "step": 5}, "points": [[36, 0], [0, 45]], "line": {"slope": -1.25, "intercept": 45}},
+          difficulty: "hard",
+          why: ["36 is the number of boxes in a tile-only load. Each box weighs 900 ÷ 36 = 25 kg.", "20 multiplies y, so it's the mass of one bag of cement, not a box of tile.", null, "45 is the y-intercept: the number of cement bags in a cement-only load."],
+        },
       ],
       traps: [
         "Reading the coefficient of x in standard form directly as the slope, without converting — this gives the wrong sign or value.",
         "Sign errors when dividing negative coefficients across the equation.",
+        "Mixing up the intercepts: the x-intercept comes from setting y = 0 (C/A), and the y-intercept from setting x = 0 (C/B).",
+        "Confusing an intercept with a coefficient in context: in 4x + 10y = 200, 4 is the cost of one item, while the x-intercept, 50, is how many of those items the budget covers.",
       ],
     },
     {
@@ -3512,9 +3937,67 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
 const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
   patterns: [
     {
+      name: "Solving by Substitution and Setting Up Systems from Words",
+      explanation:
+        "Some systems give you one equation that's already solved for a variable, like y = 3x - 2 or x = 5, and others come as a word problem you have to turn into two equations first. When one equation already reads 'y = ...' or 'x = ...', substitution beats elimination: replace that variable in the other equation with the expression, in parentheses, solve the one-variable equation, then plug back in if the question asks for the other variable. For word problems, name the two unknowns and translate phrase by phrase: 'a total of' or 'in all' means the two add to that number, 'the difference' or 'more than' (between two quantities) means subtract, and 'k times as many A as B' means A = kB, with 'more than' or 'less than' adding or subtracting after the multiplying ('6 more than twice S' is 2S + 6). The 'times as many' equation is usually already solved for one variable, so substitute it into the other equation. Before you pick an answer, check which quantity the question asks for, since the value of the other variable is always among the choices; other wrong answers come from reversing a 'times as many' relationship or dropping the parentheses when you substitute.",
+      examples: [
+        {
+          q: "x = 4\n3x - 2y = 20\n\nIn the solution (x, y) to the system of equations above, what is the value of y?",
+          choices: ["4", "-4", "-8", "8"],
+          answer: 1,
+          explain:
+            "The first equation hands you x, so substitute it straight into the second: 3(4) - 2y = 20, so 12 - 2y = 20, -2y = 8, and y = -4. '4' is the value of x, not y. '-8' comes from substituting 4 without multiplying it by 3 (4 - 2y = 20), and '8' is the value of -2y, one step before dividing by -2.",
+          difficulty: "easy",
+          why: ["4 is the value of x. The question asks for y.", null, "This substitutes 4 for 3x instead of for x. It's 3(4) = 12, so −2y = 8.", "8 is −2y. Divide by −2 to get y = −4."],
+        },
+        {
+          q: "y = 2x - 7\n5x + 3y = 34\n\nIn the solution (x, y) to the system of equations above, what is the value of x?",
+          choices: ["3", "41/11", "13/11", "5"],
+          answer: 3,
+          explain:
+            "The first equation is already solved for y, so substitute the whole expression, in parentheses: 5x + 3(2x - 7) = 34. Distribute: 5x + 6x - 21 = 34, so 11x = 55 and x = 5. '3' is y (2(5) - 7 = 3), not x. '41/11' multiplies only the 2x by 3 and leaves -7 alone, and '13/11' turns -21 into +21.",
+          difficulty: "easy",
+          why: ["3 is the value of y. The question asks for x.", "This drops the parentheses: 3(2x − 7) is 6x − 21, not 6x − 7.", "A sign slip: 3(−7) is −21, so 11x = 34 + 21 = 55.", null],
+        },
+        {
+          q: "A community orchard has 3 times as many apple trees as pear trees. There are 84 more apple trees than pear trees. How many pear trees are in the orchard?",
+          choices: ["126", "21", "42", "28"],
+          answer: 2,
+          explain:
+            "Let a be the number of apple trees and p the number of pear trees. '3 times as many apple trees as pear trees' is a = 3p, and '84 more apple trees than pear trees' is a - p = 84. Substitute: 3p - p = 84, so 2p = 84 and p = 42. '126' is the number of apple trees. '21' treats 84 as the total (a + p = 84), and '28' treats 84 as the number of apple trees.",
+          difficulty: "medium",
+          why: ["126 is the number of apple trees, 3(42). The question asks for pear trees.", "This treats 84 as the total, a + p. \"84 more\" is a difference: a − p = 84.", null, "This treats 84 as the number of apple trees. 84 is how many more apple trees there are."],
+        },
+        {
+          q: "A 51-foot rope is cut into two pieces. The longer piece is 6 feet more than twice the length of the shorter piece. What is the length, in feet, of the longer piece?",
+          choices: ["36", "15", "38", "32"],
+          answer: 0,
+          explain:
+            "Let L be the longer piece and S the shorter. The pieces make up the whole rope: L + S = 51. '6 more than twice the shorter' is L = 2S + 6. Substitute: (2S + 6) + S = 51, so 3S = 45, S = 15, and L = 2(15) + 6 = 36. '15' is the shorter piece. '38' writes L = 2(S + 6), doubling the 6 too, and '32' subtracts the 6 instead of adding it.",
+          difficulty: "medium",
+          why: [null, "15 is the shorter piece. The question asks for the longer one.", "This doubles the 6 too: L = 2(S + 6). \"6 more than twice S\" is 2S + 6.", "This subtracts 6. \"6 more than\" adds: L = 2S + 6."],
+        },
+        {
+          q: "On Saturday, a museum sold 4 times as many student tickets as adult tickets. Student tickets cost $6 each, adult tickets cost $15 each, and ticket sales totaled $1,716. How many student tickets did the museum sell?",
+          choices: ["44", "176", "26", "220"],
+          answer: 1,
+          explain:
+            "Let s be student tickets and a adult tickets. 'Four times as many student tickets as adult tickets' is s = 4a, and the sales give 6s + 15a = 1,716. Since the question asks for s, find a first: 6(4a) + 15a = 1,716, so 39a = 1,716 and a = 44. Then s = 4(44) = 176. '44' is the number of adult tickets. '26' comes from reversing the relationship (a = 4s gives 66s = 1,716), and '220' is the total number of tickets, s + a.",
+          difficulty: "hard",
+          why: ["44 is the number of adult tickets. Student tickets are 4 times that: 176.", null, "This reverses the relationship. \"4 times as many student tickets as adult tickets\" means s = 4a, not a = 4s.", "220 is the total number of tickets sold, 176 + 44. The question asks for student tickets only."],
+        },
+      ],
+      traps: [
+        "Answering with the value of the other variable: solving correctly for x when the question asks for y (or giving one item's count when it asks for the other's).",
+        "Reversing a 'times as many' phrase: '4 times as many students as adults' means s = 4a, not a = 4s.",
+        "Dropping the parentheses when substituting an expression, so a coefficient multiplies only the first term: 3(2x - 7) becomes 6x - 7 instead of 6x - 21.",
+        "Translating 'more than' or 'less than' in the wrong direction or place: '6 more than twice S' is 2S + 6, not 2S - 6 or 2(S + 6).",
+      ],
+    },
+    {
       name: "Solving for a Specific Value via Elimination",
       explanation:
-        "The most common systems pattern asks you to solve for one variable (or a specific expression) using two equations. Elimination (adding or subtracting the equations to cancel one variable) is almost always faster than substitution, especially when the equations are already in a similar form and the coefficients line up or can be easily matched.",
+        "When neither equation is already solved for a variable, elimination is usually the fastest route: add or subtract the equations so one variable cancels, multiplying one equation first if the coefficients don't line up yet. It's especially quick when both equations are in the same ax + by = c form, and it can hand you a combined expression like x + y or 6x + 2y directly, without finding x and y separately. (When one equation already reads y = ... or x = ..., substitution is faster; see the substitution pattern.)",
       examples: [
         {
           q: "Solve the system: x + y = 10, x - y = 2. What is x?",
@@ -3562,14 +4045,14 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         },
       ],
       traps: [
-        "Defaulting to substitution even when elimination would be much faster, wasting time under exam conditions.",
+        "Defaulting to substitution when both equations are in ax + by = c form and the coefficients already line up, so elimination would be much faster, wasting time under exam conditions.",
         "Sign errors when subtracting (rather than adding) equations — subtracting requires distributing a negative sign across an entire equation.",
       ],
     },
     {
       name: "Determining the Number of Solutions Without Fully Solving",
       explanation:
-        "This pattern asks how many solutions a system has, without requiring you to actually find them. It's purely about comparing slopes and intercepts: different slopes means exactly one solution; same slope with different intercepts means no solution (parallel lines); same slope AND same intercept means infinite solutions (identical lines). You can often answer this in seconds, with no solving at all.",
+        "This pattern asks how many solutions a system has, without requiring you to actually find them. It's purely about comparing slopes and intercepts: different slopes means exactly one solution; same slope with different intercepts means no solution (parallel lines); same slope AND same intercept means infinite solutions (identical lines). You can often answer this in seconds, with no solving at all. A harder version asks you to describe those infinitely many solutions with a constant r: since both equations are the same line, let x = r in either one and solve for y. For 2x + 3y = 12, that gives y = (12 - 2r)/3, so every point (r, (12 - 2r)/3) lies on both lines. To check a choice, plug its coordinates into one equation and make sure the r-terms cancel, or test an easy value like r = 0.",
       examples: [
         {
           q: "How many solutions does this system have? y = 2x + 1 and y = 2x - 3",
@@ -3620,10 +4103,20 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "No solution needs different intercepts, but both equations become y = 0.5x + 2.", "One solution needs different slopes. Both slopes are 0.5.", "It can be determined: the first equation is −3 times the second, so they're the same line."],
         },
+        {
+          q: "4x - 6y = 18\n10x - 15y = 45\n\nThe system of equations above has infinitely many solutions. Which of the following points lies on the graphs of both equations for any real number r?",
+          choices: ["(r, (9 - 2r)/3)", "(r, (3r - 9)/2)", "(r, 2r - 3)", "(r, (2r - 9)/3)"],
+          answer: 3,
+          explain:
+            "Dividing the first equation by 2 and the second by 5 gives 2x - 3y = 9 both times, so it's one line. Let x = r and solve for y: 2r - 3y = 9, so -3y = 9 - 2r and y = (2r - 9)/3. Check with r = 0: y = -3, and 4(0) - 6(-3) = 18. '(9 - 2r)/3' drops the sign flip from dividing by -3, '(3r - 9)/2' mixes up the coefficients of x and y, and '2r - 3' divides only the 9 by 3.",
+          difficulty: "hard",
+          why: ["A sign slip: dividing −3y = 9 − 2r by −3 gives y = (2r − 9)/3.", "This swaps the roles of 2 and 3. It solves 3x − 2y = 9, which isn't the given line.", "This divides only the 9 by 3. Both terms of 2r − 9 must be divided by 3.", null],
+        },
       ],
       traps: [
         "Attempting to fully solve the system algebraically when the question only asks for the *number* of solutions — a slope/intercept comparison is much faster.",
         "Forgetting to convert equations to a comparable form (like slope-intercept) before comparing slopes and intercepts.",
+        "Writing the point for the infinitely-many-solutions case with a sign slip, or dividing only part of the expression: for x + 2y = 8, y = (8 - r)/2, not 8 - 2r or 4 - r.",
       ],
     },
     {
@@ -3632,7 +4125,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       desmosTrick:
         "Step 1: Open Desmos and type the first equation into the first line exactly as it's written; if it's in the form Ax + By = C, you can enter it in that form directly, no need to solve for y first. Step 2: Type the second equation into the next line the same way. Desmos draws both as straight lines. Step 3: Click on the point where the two lines cross (use the +/- zoom buttons if they cross off-screen); Desmos shows a small label with that point's exact coordinates. Step 4: Read the solution straight off that label: the first number is x, the second is y. No elimination or substitution required.",
       explanation:
-        "This pattern shows the graphs of two lines (or a line and a curve) and asks for the system's solution: the point where they cross. No algebra needed: the solution is just the coordinates of that intersection point, read directly off the grid. This is different from counting solutions (no point needed) and from elimination (solved algebraically, no picture); here, the graph already shows you the answer.",
+        "This pattern shows the graphs of two lines (or a line and a curve) and asks for the system's solution: the point where they cross. No algebra needed: the solution is just the coordinates of that intersection point, read directly off the grid. This is different from counting solutions (no point needed) and from elimination (solved algebraically, no picture); here, the graph already shows you the answer. Some questions run it the other way: the graph shows two lines, often in a context, and the choices are systems of equations. Don't solve anything; for each equation, find where it crosses the axes (set x = 0, then y = 0) or check its slope, and see whether one of the graphed lines matches. The right system matches both lines, while wrong ones usually swap two coefficients or get one intercept wrong.",
       examples: [
         {
           q: "The graphs of two linear equations intersect at the point where x = 3 and y = 5, clearly marked on the grid. What is the solution to the system?",
@@ -3673,6 +4166,16 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "This swaps the coordinates. The point is x = −1, y = 6.", "The x-value is −1, not 1.", "The y-value is 6, not −6."],
         },
         {
+          q: "A student bought x notebooks and y pens. The graph shows a system of two linear equations: one represents the total number of items bought, and the other represents the total cost, in dollars.\n\nWhich system of equations is represented by the graph?",
+          choices: ["x + y = 6 and 3x + 1.5y = 12", "x + y = 6 and 1.5x + 3y = 12", "x + y = 8 and 3x + 1.5y = 12", "x + y = 6 and 3x - 1.5y = 12"],
+          answer: 0,
+          explain:
+            "One line crosses both axes at 6, and the other crosses the x-axis at 4 and the y-axis at 8. Check each equation's intercepts. x + y = 6 has intercepts 6 and 6. 3x + 1.5y = 12 has x-intercept 12/3 = 4 and y-intercept 12/1.5 = 8. Both match. '1.5x + 3y = 12' has intercepts 8 and 4, reversed. 'x + y = 8' crosses both axes at 8, but no graphed line crosses the x-axis at 8, and '3x - 1.5y = 12' crosses the y-axis at -8.",
+          figure: {"kind": "geometry", "points": {"p0": [0, 6], "p1": [6, 0], "p2": [0, 8], "p3": [4, 0]}, "dots": ["p0", "p1", "p2", "p3"], "paths": [{"points": [[0, 6], [6, 0]]}, {"points": [[0, 8], [4, 0]]}], "axes": {"x": [-1, 9], "y": [-1, 9], "step": 1}},
+          difficulty: "medium",
+          why: [null, "This line would cross the x-axis at 12/1.5 = 8 and the y-axis at 4, the reverse of the graph.", "x + y = 8 crosses the x-axis at 8, but the graphed lines cross it at 4 and 6.", "The minus sign makes the y-intercept 12/(−1.5) = −8, but the graph's line crosses at +8."],
+        },
+        {
           q: "The graphs of a line and a parabola are shown, crossing at two marked points: (-2, 3) and (5, 10). If the solution to the system must have a positive x-value, what is the solution (x, y)?",
           choices: ["(5, 10)", "(-2, 3)", "(10, 5)", "(3, -2)"],
           answer: 0,
@@ -3686,6 +4189,7 @@ const LC_M_SYSTEMS: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Reading the intersection point's coordinates in the wrong order (mixing up x and y).",
         "Picking an intersection point that isn't exactly where the lines cross (misjudging a close-but-not-exact grid intersection).",
         "Confusing a graph's x-intercept or y-intercept with the actual intersection point of the two lines, when a question asks specifically for the system's solution.",
+        "When matching a system to a graph, checking only one line (or one intercept of a line): every equation in the chosen system has to match a line on the graph.",
       ],
     },
   ],
@@ -3756,7 +4260,7 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Word Problems with Inequality Language",
       explanation:
-        "This pattern involves translating phrases like 'at least,' 'at most,' 'no more than,' and 'exceeds' into the right inequality symbol, then solving. The translation is usually the real difficulty here, not the algebra after it. 'At least' means the value can equal the number or be greater (≥). 'At most' means it can equal the number or be less (≤). 'More than' or 'exceeds' is strictly greater (>) — equality isn't allowed.",
+        "This pattern involves translating phrases like 'at least,' 'at most,' 'no more than,' and 'exceeds' into the right inequality symbol, then solving. The translation is usually the real difficulty here, not the algebra after it. 'At least' means the value can equal the number or be greater (≥). 'At most' means it can equal the number or be less (≤). 'More than' or 'exceeds' is strictly greater (>) — equality isn't allowed. Some problems give two conditions at once, like a budget and a minimum count: 'spend at most $200 on $12 shirts and $5 hats, and buy at least 10 hats.' Write the budget inequality, 12s + 5h ≤ 200, plug in the smallest count allowed for the other item (h = 10) to leave the most room, and solve: 12s ≤ 150, so s ≤ 12.5, and the most shirts is 12.",
       examples: [
         {
           q: "A student needs an average of at least 90 across 4 tests to earn an A. Scores so far are 85, 92, 88. What is the minimum score needed on the 4th test?",
@@ -3807,10 +4311,20 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "\"At least\" and \"no more than\" both include their boundary values, so the signs are ≤, and 70 qualifies.", "The inequality is right, but ≤ 70 includes 70, so a 70-pound package does qualify.", "\"At least 2\" includes 2, so the left side should be ≤, not <."],
         },
+        {
+          q: "An art club can spend at most $350 on supplies. Paint sets cost $18 each and brush packs cost $7 each. The club must buy at least 12 brush packs. What is the maximum number of paint sets the club can buy?",
+          choices: ["19", "15", "14", "18"],
+          answer: 2,
+          explain:
+            "The budget gives 18p + 7b ≤ 350. To leave the most money for paint sets, buy the fewest brush packs allowed, b = 12, which cost 7(12) = $84: 18p ≤ 266, so p ≤ 14.78. The club can't buy part of a set, so the maximum is 14 (14 sets cost $252, and 252 + 84 = $336 ≤ $350). '19' ignores the brush packs, '15' rounds up and goes over budget, and '18' subtracts 12 dollars instead of the cost of 12 brush packs.",
+          difficulty: "hard",
+          why: ["This ignores the 12 required brush packs: 350 ÷ 18 ≈ 19.4.", "15 sets cost $270, and with $84 of brush packs that's $354, over the $350 limit.", null, "This subtracts 12 dollars instead of the cost of 12 brush packs, 7 × 12 = $84."],
+        },
       ],
       traps: [
         "Using strict inequality (> or <) when the phrase 'at least' or 'at most' actually requires ≥ or ≤ (allowing the boundary value itself).",
         "Forgetting to multiply through by the total count when solving an average-based inequality, leading to an incorrect setup.",
+        "In two-condition problems, ignoring the minimum-count requirement, or rounding the answer up instead of down to a whole number that still fits the budget.",
       ],
     },
     {
@@ -3900,6 +4414,64 @@ const LC_M_LINEAR_INEQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
 const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
   patterns: [
     {
+      name: "Factoring Out the Greatest Common Factor",
+      explanation:
+        "These questions give a polynomial like 12x⁴y² - 18x³y⁵ and ask which expression is equivalent. The right answer pulls the greatest common factor (GCF) out front. Build the GCF one piece at a time: the greatest number that divides every coefficient, then each variable that appears in every term, raised to its lowest power in any term. Next, divide every term by the GCF to fill in the parentheses, and check by distributing back. If the leading term is negative, the answer often pulls out a negative GCF, which flips the sign of every term inside the parentheses. Some versions show a partly factored form like 3x(ax² + 5) and ask for the missing coefficient: divide the matching term by the factor outside. Wrong answers usually use the highest power instead of the lowest, drop a variable, forget to divide one of the terms, or flip a sign.",
+      examples: [
+        {
+          q: "Which expression is equivalent to 6x² + 15x?",
+          choices: ["3x²(2 + 5x)", "3x(2x + 15)", "3x(2x + 5)", "3(2x + 5)"],
+          answer: 2,
+          explain:
+            "Build the GCF: the greatest number dividing 6 and 15 is 3, and x appears in both terms with lowest power x¹, so the GCF is 3x. Divide each term by it: 6x² ÷ 3x = 2x and 15x ÷ 3x = 5, giving 3x(2x + 5). Pulling out x² fails because the second term has only one x, leaving 15 undivided fails the check (3x · 15 = 45x), and 3(2x + 5) divides out the x without writing it in front.",
+          difficulty: "easy",
+          why: ["Check it: 3x² · 5x = 15x³, not 15x. The second term has only one x, so the GCF can include only x, not x².", "The 15 wasn't divided by 3. Check it: 3x · 15 = 45x, not 15x.", null, "The x was divided out of both terms but never written in front. Check it: 3(2x + 5) = 6x + 15."],
+        },
+        {
+          q: "The expression 10x³ + 35x is equivalent to 5x(ax² + 7), where a is a constant. What is the value of a?",
+          choices: ["2", "5", "10", "50"],
+          answer: 0,
+          explain:
+            "The factor outside is 5x, so each term inside is the original term divided by 5x. The first term gives 10x³ ÷ 5x = 2x², so a = 2 (and 35x ÷ 5x = 7 matches the second term). The value 5 is the factor outside, not a; 10 is the original coefficient before dividing; and 50 comes from multiplying 10 by 5 instead of dividing.",
+          difficulty: "easy",
+          why: [null, "5 is the coefficient of the factor outside the parentheses. Divide: 10x³ ÷ 5x = 2x², so a = 2.", "10 is the coefficient before factoring. Every term has to be divided by 5x: 10 ÷ 5 = 2.", "This multiplies by 5 instead of dividing. Check it: 5x · 50x² = 250x³, not 10x³."],
+        },
+        {
+          q: "Which expression is equivalent to 16x⁵y³ - 24x²y⁴?",
+          choices: ["8x⁵y⁴(2 - 3y)", "8x²(2x³ - 3y)", "8x²y³(2x³ + 3y)", "8x²y³(2x³ - 3y)"],
+          answer: 3,
+          explain:
+            "Coefficient: the greatest number dividing 16 and 24 is 8. Variables: x appears as x⁵ and x², so take x²; y appears as y³ and y⁴, so take y³. The GCF is 8x²y³. Dividing: 16x⁵y³ ÷ 8x²y³ = 2x³ and 24x²y⁴ ÷ 8x²y³ = 3y, so the answer is 8x²y³(2x³ - 3y). Using x⁵ and y⁴ takes the highest powers, 8x²(2x³ - 3y) loses the y's entirely, and the + sign would make the second term +24x²y⁴.",
+          difficulty: "medium",
+          why: ["This uses the highest powers. Check it: 8x⁵y⁴ · 2 = 16x⁵y⁴, but the first term has only y³. The GCF takes the lowest power of each variable.", "y appears in both terms, so y³ belongs in the GCF. Check it: 8x² · 2x³ = 16x⁵, which has lost its y³.", "The sign flipped. Check it: 8x²y³ · 3y = +24x²y⁴, but the original term is −24x²y⁴.", null],
+        },
+        {
+          q: "Which expression is equivalent to -6x³ + 9x² - 15x?",
+          choices: ["-3x(2x² + 3x + 5)", "-3x(2x² - 3x - 5)", "-3x(2x² - 3x + 5)", "-3x(2x² - 3x + 15)"],
+          answer: 2,
+          explain:
+            "Every choice pulls out -3x, so the work is dividing each term by -3x and watching the signs: -6x³ ÷ -3x = 2x², 9x² ÷ -3x = -3x, and -15x ÷ -3x = +5. That gives -3x(2x² - 3x + 5). A +3x inside would make the middle term -9x², a -5 would make the last term +15x, and a 15 means that term was never divided (-3x · 15 = -45x).",
+          difficulty: "medium",
+          why: ["Dividing by a negative flips the sign: 9x² ÷ (−3x) = −3x. Check it: −3x · 3x = −9x², not +9x².", "The last term flipped the wrong way: −15x ÷ (−3x) = +5. Check it: −3x · (−5) = +15x, not −15x.", null, "The 15 was never divided by 3. Check it: −3x · 15 = −45x, not −15x."],
+        },
+        {
+          q: "The expression 24x⁶y⁴ - 40x⁴y⁷ + 8x³y⁴ is equivalent to kx^m y^n(3x³ - 5xy³ + 1), where k, m, and n are positive integers. What is the value of k + m + n?",
+          choices: ["11", "15", "16", "21"],
+          answer: 1,
+          explain:
+            "The factor outside must be the GCF of all three terms. Coefficient: the greatest number dividing 24, 40, and 8 is 8. Lowest powers: x appears as x⁶, x⁴, and x³, so x³; y appears as y⁴, y⁷, and y⁴, so y⁴. Check the parentheses: 24x⁶y⁴ ÷ 8x³y⁴ = 3x³, 40x⁴y⁷ ÷ 8x³y⁴ = 5xy³, and 8x³y⁴ ÷ 8x³y⁴ = 1, all matching. So k = 8, m = 3, n = 4, and k + m + n = 15. Leaving out the y gives 11, using only the first two terms (lowest x there is x⁴) gives 16, and using the highest powers gives 8 + 6 + 7 = 21.",
+          difficulty: "hard",
+          why: ["This leaves out y, which appears in every term. The GCF is 8x³y⁴, so n = 4 and the total is 15.", null, "x⁴ is the lowest power in the first two terms only. The last term, 8x³y⁴, has just x³, so m = 3.", "This uses the highest powers, x⁶ and y⁷. The GCF takes the lowest: x³ and y⁴."],
+        },
+      ],
+      traps: [
+        "Using the highest power of a variable instead of the lowest. You can pull out only as many copies of x as the term with the fewest x's has.",
+        "Leaving a variable out of the GCF even though it appears in every term, so the parentheses end up missing it too.",
+        "Not dividing every term by the GCF: copying a coefficient into the parentheses unchanged, or building the GCF from only some of the terms.",
+        "Sign errors, especially when a negative factor comes out front and every term inside the parentheses has to flip sign.",
+      ],
+    },
+    {
       name: "Recognizing Factoring Patterns Instantly",
       explanation:
         "Most equivalent-expression questions reward recognizing a pattern instantly, over working out algebra from scratch. Three patterns cover most factoring questions: difference of squares (a² - b² = (a-b)(a+b)), perfect square trinomials (a² ± 2ab + b² = (a±b)²), and simple trinomial factoring (finding two numbers that multiply to the constant and add to the middle coefficient). Training yourself to recognize these shapes ON SIGHT, instead of trial-and-error each time, is the single biggest speed gain on this subskill.",
@@ -3955,9 +4527,9 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
     },
     {
-      name: "Simplifying Rational Expressions via Factoring",
+      name: "Simplifying and Combining Rational Expressions",
       explanation:
-        "This pattern involves simplifying a fraction where both the top and bottom are polynomials. The key move is always the same: factor both completely first, then cancel any shared factors. Trying to simplify without factoring first (like dividing term-by-term) is a common source of errors.",
+        "This pattern covers fractions whose top and bottom are polynomials: simplifying one, or combining two into a single fraction. To simplify, factor both the numerator and the denominator completely first, then cancel any shared factors. Trying to simplify without factoring first (like dividing term-by-term) is a common source of errors, and a factor like (3 - x) is the negative of (x - 3), so canceling it leaves a negative sign behind. To add or subtract, rewrite every term over one common denominator: multiply each numerator by whatever its own denominator is missing, then combine the numerators. A polynomial term like x counts as x/1, so it gets multiplied by the entire denominator. When the denominators are related, like x - 3 and x² - 9, factor them first; the larger one is often the common denominator, and the result may simplify again at the end. Wrong answers usually add straight across, multiply only part of a numerator, or drop the parentheses when subtracting a numerator.",
       examples: [
         {
           q: "Simplify the rational expression: (x² - 4)/(x - 2)",
@@ -3995,6 +4567,15 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "x + 3 appears in both numerator and denominator, so it cancels. The x − 3 stays on top.", "The denominator factors to (x + 3)(x − 2), so the leftover factor is x − 2, not x + 2.", "After canceling (x + 3), the denominator still has (x − 2) left."],
         },
         {
+          q: "For x ≠ 2, which expression is equivalent to 3/(x - 2) + x?",
+          choices: ["(x + 3)/(x - 2)", "(x² - 2x + 3)/(x - 2)", "(x² + 3)/(x - 2)", "(x + 3)/(x - 1)"],
+          answer: 1,
+          explain:
+            "Treat x as x/1 and rewrite it over the denominator (x - 2): x = x(x - 2)/(x - 2) = (x² - 2x)/(x - 2). Now add the numerators: (3 + x² - 2x)/(x - 2), which is (x² - 2x + 3)/(x - 2). Putting x on top without multiplying by (x - 2) gives (x + 3)/(x - 2), multiplying x by only the x in (x - 2) gives x² + 3, and adding straight across (3 + x over (x - 2) + 1) gives (x + 3)/(x - 1).",
+          difficulty: "medium",
+          why: ["x wasn't multiplied by the denominator. Check it at x = 4: the original is 1.5 + 4 = 5.5, but this gives 7/2 = 3.5.", null, "x has to multiply both terms of (x − 2): x(x − 2) = x² − 2x. Check it at x = 4: 19/2 = 9.5, not 5.5.", "This adds straight across: numerators together and denominators together. Check it at x = 4: 7/3, not 5.5."],
+        },
+        {
           q: "Simplify the rational expression: (x² - 9)/(3 - x)",
           choices: ["-(x+3)", "x+3", "-(x-3)", "x-3"],
           answer: 0,
@@ -4003,11 +4584,23 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "3 − x is the negative of x − 3, so canceling leaves a negative sign: −(x + 3).", "The factor that cancels is (x − 3). What's left is −(x + 3), not −(x − 3).", "x − 3 is the factor that cancels with the denominator. The leftover is −(x + 3)."],
         },
+        {
+          q: "For x ≠ 3 and x ≠ -3, which expression is equivalent to 2/(x - 3) - 12/(x² - 9)?",
+          choices: ["-10/(x² - 9)", "2/(x + 3)", "(2x + 18)/(x² - 9)", "2/(x - 3)"],
+          answer: 1,
+          explain:
+            "Factor first: x² - 9 = (x - 3)(x + 3), so it's already a multiple of the other denominator and works as the common denominator. The first fraction is missing a factor of (x + 3): 2(x + 3)/(x² - 9). Subtract the numerators: (2x + 6 - 12)/(x² - 9) = (2x - 6)/(x² - 9). This simplifies: 2(x - 3)/((x - 3)(x + 3)) = 2/(x + 3). Check at x = 0: the original is -2/3 + 12/9 = 2/3, and 2/(0 + 3) = 2/3. The -10 comes from subtracting 2 - 12 without multiplying the 2 by (x + 3), the +18 adds the 12 instead of subtracting, and 2/(x - 3) cancels the wrong factor.",
+          difficulty: "hard",
+          why: ["The 2 wasn't multiplied by (x + 3) before subtracting. Check it at x = 0: −10/(−9) = 10/9, but the original is 2/3.", null, "The 12 is subtracted, not added: 2(x + 3) − 12 = 2x − 6. Check it at x = 0: 18/(−9) = −2, not 2/3.", "The factor that cancels is (x − 3), leaving (x + 3) in the denominator. Check it at x = 0: 2/(−3) = −2/3, not 2/3."],
+        },
       ],
       traps: [
         "Attempting to cancel individual terms (like the x² and x, or the 4 and 2) instead of fully factoring first and canceling entire shared factors.",
         "Forgetting that canceling is only valid for shared multiplicative factors, not for terms being added or subtracted.",
         "Missing that a denominator like (3 - x) is the negative of (x - 3), not an unrelated factor that can't be canceled.",
+        "Adding or subtracting fractions straight across (numerator plus numerator over denominator plus denominator) instead of first rewriting over a common denominator.",
+        "Rewriting over a common denominator but multiplying only part of a numerator, or forgetting that a whole-number or polynomial term must be multiplied by the entire denominator.",
+        "Losing the minus sign in front of a subtracted fraction or polynomial, which applies to every term of what's being subtracted.",
       ],
     },
     {
@@ -4073,7 +4666,7 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Expanding and Combining Polynomial Expressions",
       explanation:
-        "This is the reverse of factoring: multiplying out (distributing) an expression like (x+3)(x-5), or adding, subtracting, and combining like terms across polynomials. Distribute every term in the first factor across every term in the second (the same idea as FOIL, just extended to any size polynomial) then combine the like terms that result. When adding or subtracting whole polynomials, line up matching powers of x before combining coefficients. Be extra careful to distribute a negative sign across EVERY term when subtracting one polynomial from another.",
+        "This is the reverse of factoring: multiplying out (distributing) an expression like (x+3)(x-5), or adding, subtracting, and combining like terms across polynomials. Distribute every term in the first factor across every term in the second (the same idea as FOIL, just extended to any size polynomial) then combine the like terms that result. When adding or subtracting whole polynomials, line up matching powers of x before combining coefficients. Be extra careful to distribute a negative sign across EVERY term when subtracting one polynomial from another. Some questions run this in reverse to find unknown constants: if (ax + 5)(x - b) = 3x² - 10x - 25 for all values of x, expand the side with the unknowns and set the coefficients of matching powers equal (x² terms to x² terms, x terms to x terms, constants to constants). Solve the simplest match first, then check the answer against the remaining terms. The same matching tells you which expression has a given factor, or which quantity must be an integer when all the constants are integers.",
       examples: [
         {
           q: "Simplify: (2x³ - 5x + 1) + (x³ + 4x - 6)",
@@ -4110,6 +4703,15 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "−3 must multiply every term too: that adds −3x² and −12x.", "The x terms are −2x and −12x, which make −14x.", "The x² terms are 8x² and −3x², which make +5x²."],
         },
         {
+          q: "If (ax + 5)(x - b) = 3x² - 10x - 25 for all values of x, where a and b are constants, what is the value of b?",
+          choices: ["-5", "3", "5", "25"],
+          answer: 2,
+          explain:
+            "Expand the left side: ax² - abx + 5x - 5b = ax² + (5 - ab)x - 5b. Match coefficients: the x² terms give a = 3, and the constants give -5b = -25, so b = 5. Check the x-term: 5 - (3)(5) = -10, which matches. The value -5 drops the minus sign in (x - b), 3 is a rather than b, and 25 is the size of the constant term, not b.",
+          difficulty: "medium",
+          why: ["The factor is (x − b), so b = −5 would make it (x + 5). Check it: (3x + 5)(x + 5) = 3x² + 20x + 25.", "3 is the value of a, from matching the x² terms. Match the constants for b: −5b = −25.", null, "25 is the size of the constant term. The constant is −5b, so −5b = −25 and b = 5."],
+        },
+        {
           q: "If P(x) = 3x² - 2x + 5 and Q(x) = x² + 4x - 7, what is 2P(x) - Q(x)?",
           choices: ["5x² - 8x + 17", "7x² - 8x - 2", "5x² + 8x + 3", "5x² - 8x + 3"],
           answer: 0,
@@ -4118,12 +4720,81 @@ const LC_M_EQUIV_EXPR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "Check the constant: 2(5) − (−7) = 17, not −2.", "The x terms: 2(−2x) − 4x = −8x, not +8x.", "Subtracting −7 adds 7: 10 + 7 = 17, not 3."],
         },
+        {
+          q: "The equation 8x² + bx + 15 = (px + 3)(qx + r) is true for all values of x, where b, p, q, and r are positive integers. Which of the following must be an integer?",
+          choices: ["b/5", "8/r", "(b - 5p)/3", "15/q"],
+          answer: 2,
+          explain:
+            "Expand the right side: pqx² + (pr + 3q)x + 3r. Match coefficients: pq = 8, 3r = 15, and b = pr + 3q. The constants force r = 5, so b = 5p + 3q, which rearranges to (b - 5p)/3 = q, a positive integer. The other choices aren't guaranteed. With p = 1 and q = 8, b = 29, so b/5 isn't an integer. Since r = 5, 8/r = 8/5. With q = 2, 15/q = 7.5.",
+          difficulty: "hard",
+          why: ["b = 5p + 3q, and 3q need not be a multiple of 5. With p = 1 and q = 8, b = 29, and 29/5 isn't an integer.", "Matching the constants gives 3r = 15, so r = 5 and 8/r = 8/5, which isn't an integer.", null, "q can be 1, 2, 4, or 8 (since pq = 8). With q = 2, 15/q = 7.5, which isn't an integer."],
+        },
       ],
       traps: [
         "Forgetting to distribute a negative sign across every term of the second polynomial when subtracting one polynomial from another — only flipping the first term's sign.",
         "Combining terms with different powers of x as if they were like terms (for example, adding x² and x directly).",
         "Making a sign error while distributing a binomial across a longer polynomial, especially when the binomial itself contains a subtraction.",
         "Squaring a binomial term by term — (x + 4)² is not x² + 16; the middle term 2·4·x is required.",
+        "Matching only one pair of coefficients: a value that makes the x-terms match must also make the constant and x² terms match, so check every power of x.",
+        "Answering with the wrong number, such as the constant term of the expanded form or a different unknown, instead of the constant the question asks for.",
+      ],
+    },
+    {
+      name: "Rearranging a Formula to Isolate a Variable",
+      explanation:
+        "These questions give a formula with several letters, often from physics, finance, or geometry, and ask something like 'Which equation correctly expresses C in terms of P, N, and k?' Treat every letter except the target as if it were a known number, and undo the operations around the target in reverse order: first whatever was done last (usually adding or subtracting), then multiplying or dividing. Keep any group that contains the target together; in P = N(k - C), divide both sides by N before you touch the parentheses. If the target is in a denominator, multiply both sides by that denominator first; if the formula is a sum of reciprocals, combine them into one fraction before flipping both sides. If the target is under a square root, isolate the root, then square both sides. If the target shows up in two places, collect those terms on one side and factor the target out. Wrong answers usually undo steps in the wrong order, apply an operation to only one term of a side, or flip a sign, so check your choice by plugging in easy numbers.",
+      examples: [
+        {
+          q: "The formula d = rt gives the distance d traveled at a constant rate r for a time t. Which equation correctly expresses t in terms of d and r?",
+          choices: ["t = dr", "t = d/r", "t = r/d", "t = d - r"],
+          answer: 1,
+          explain:
+            "In d = rt, the target t is multiplied by r, so undo that by dividing both sides by r: d/r = t. Plug in easy numbers to check: going 60 miles at 30 miles per hour takes 60/30 = 2 hours. Multiplying d by r does the opposite of what's needed, r/d divides the wrong way, and d - r subtracts when r was never added.",
+          difficulty: "easy",
+          why: ["This multiplies by r instead of dividing. Check it: 60 miles at 30 miles per hour would take 1,800 hours.", null, "This divides the wrong way. Check it: 60 miles at 30 miles per hour would take 30/60 = 1/2 hour instead of 2 hours.", "r multiplies t, so undo it by dividing, not subtracting. Check it: 60 − 30 = 30 hours, not 2."],
+        },
+        {
+          q: "The perimeter P of a rectangle with length l and width w is given by P = 2l + 2w. Which equation correctly expresses w in terms of P and l?",
+          choices: ["w = 2(P - 2l)", "w = P/2 - 2l", "w = (P + 2l)/2", "w = (P - 2l)/2"],
+          answer: 3,
+          explain:
+            "Undo the operations on w in reverse order. The 2l was added last, so subtract it from both sides: P - 2l = 2w. Then divide the whole side by 2: w = (P - 2l)/2. Check with a 5-by-3 rectangle: P = 16, and (16 - 10)/2 = 3. Multiplying by 2 undoes nothing, dividing only P by 2 leaves the 2l undivided, and adding 2l is a sign slip.",
+          difficulty: "easy",
+          why: ["The 2 multiplies w, so divide by 2 instead of multiplying. Check it with P = 16 and l = 5: 2(16 − 10) = 12, not 3.", "Only P was divided by 2; the 2l has to be divided too. Check it with P = 16 and l = 5: 8 − 10 = −2.", "Moving +2l to the other side subtracts it. Check it with P = 16 and l = 5: (16 + 10)/2 = 13.", null],
+        },
+        {
+          q: "A shop's profit P, in dollars, from selling N copies of an item is given by P = N(k - C), where k is the selling price per copy and C is the cost per copy, both in dollars. Which equation correctly expresses C in terms of P, N, and k?",
+          choices: ["C = k - P/N", "C = P/N - k", "C = (k - P)/N", "C = k - PN"],
+          answer: 0,
+          explain:
+            "N multiplies the whole group (k - C), so divide both sides by N first: P/N = k - C. Then move C and P/N across: C = k - P/N. Check with N = 10, k = 8, C = 5: P = 30, and 8 - 30/10 = 5. Writing P/N - k flips the sign; (k - P)/N comes from pulling k out before dividing by N, which undoes the steps in the wrong order; and k - PN multiplies by N instead of dividing.",
+          difficulty: "medium",
+          why: [null, "The sign is flipped. From P/N = k − C, solving gives C = k − P/N. Check it with P = 30, N = 10, k = 8: 3 − 8 = −5, not 5.", "N multiplies k too, so you can't move k before dividing by N. Check it with P = 30, N = 10, k = 8: (8 − 30)/10 = −2.2, not 5.", "This multiplies by N instead of dividing. Check it with P = 30, N = 10, k = 8: 8 − 300 = −292, not 5."],
+        },
+        {
+          q: "Two pipes fill a tank together. The time T, in minutes, to fill the tank is T = V/(r + s), where V is the tank's volume, in gallons, and r and s are the pipes' rates, in gallons per minute. Which equation correctly expresses r in terms of T, V, and s?",
+          choices: ["r = (V - s)/T", "r = VT - s", "r = V/T - s", "r = T/V - s"],
+          answer: 2,
+          explain:
+            "The target sits in the denominator, so multiply both sides by (r + s): T(r + s) = V. Divide both sides by T: r + s = V/T. Then subtract s: r = V/T - s. Check with V = 120, r = 5, s = 3: T = 120/8 = 15, and 120/15 - 3 = 5. Subtracting s before dividing by T undoes the steps in the wrong order, VT multiplies where it should divide, and T/V is the reciprocal of what you need.",
+          difficulty: "medium",
+          why: ["s was never divided by T, so subtract it after dividing, not before. Check it with V = 120, T = 15, s = 3: 117/15 = 7.8, not 5.", "From T(r + s) = V, divide by T; don't multiply. Check it with V = 120, T = 15, s = 3: 1,800 − 3 = 1,797.", null, "This flips the fraction. r + s equals V/T, not T/V. Check it with V = 120, T = 15, s = 3: 0.125 − 3 is negative."],
+        },
+        {
+          q: "A biologist models the growth rate R of a bacterial culture with the formula R = 4c/(c + k), where c is the nutrient concentration and k is a positive constant. Which equation correctly expresses c in terms of R and k?",
+          choices: ["c = k/(4 - R)", "c = (Rk)/(4 - R)", "c = (Rk)/(R - 4)", "c = (4 - R)/(Rk)"],
+          answer: 1,
+          explain:
+            "The target appears twice, so collect it. Multiply both sides by (c + k) and distribute R to both terms: Rc + Rk = 4c. Move the c terms to one side: Rk = 4c - Rc. Factor out c: Rk = c(4 - R). Divide: c = (Rk)/(4 - R). Check with k = 2 and c = 6: R = 24/8 = 3, and (3 · 2)/(4 - 3) = 6. Multiplying R by only the c term loses the R in Rk, subtracting in the wrong order flips the sign of the denominator, and the last choice is the reciprocal.",
+          difficulty: "hard",
+          why: ["R multiplies both terms of (c + k): R(c + k) = Rc + Rk. Check it with R = 3, k = 2: 2/1 = 2, not 6.", null, "The sign is flipped. Rk = 4c − Rc = c(4 − R). Check it with R = 3, k = 2: 6/(−1) = −6, not 6.", "This is the reciprocal of c. Check it with R = 3, k = 2: 1/6, not 6."],
+        },
+      ],
+      traps: [
+        "Undoing operations in the wrong order: moving a term out of a group before dividing by the factor that multiplies the whole group, as in treating P = N(k - C) as if N multiplied only C.",
+        "Applying an operation to only one term of a side: dividing just the first term by 2, or multiplying R by only one of the terms in (c + k).",
+        "Sign errors when moving a term across the equals sign or pulling the target out of a subtraction like k - C.",
+        "Mishandling reciprocals, squares, or a target in two places: flipping 1/x + 1/y term by term, forgetting to flip or square the final result, or leaving the target on both sides instead of factoring it out.",
       ],
     },
   ],
@@ -4139,7 +4810,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Solving a Quadratic by Factoring or the Quadratic Formula",
       explanation:
-        "This is the baseline method every other pattern in this subskill builds on: actually finding the solution(s) to a quadratic equation, not just how many it has. First, get the equation into 'expression = 0' form by moving everything to one side. Then try factoring: look for two numbers that multiply to the constant term and add to the middle coefficient. Once you have two factors, use the zero product property — if (x - p)(x - q) = 0, then x = p or x = q. If it doesn't factor into nice integers, fall back to the quadratic formula, x = (-b ± √(b²-4ac)) / 2a, which always works.",
+        "This is the baseline method the rest of this skill builds on: actually finding the solution(s) to a quadratic equation, not just how many it has. First, get the equation into 'expression = 0' form by moving everything to one side. Then try factoring: look for two numbers that multiply to the constant term and add to the middle coefficient. Once you have two factors, use the zero product property — if (x - p)(x - q) = 0, then x = p or x = q. If it doesn't factor into nice integers, fall back to the quadratic formula, x = (-b ± √(b²-4ac)) / 2a, which always works. If a question asks only for the sum or the product of the solutions, you don't need the solutions at all: once the equation is in ax² + bx + c = 0 form, the sum of the solutions is -b/a and the product is c/a. This shortcut is made for messy, unexpanded equations like (3x + 1)(x - 2) = (x - 1)² + 4, but expand both sides and move everything to one side first, because -b/a and c/a only apply to that final form.",
       examples: [
         {
           q: "Solve for x: x² - 3x - 10 = 0",
@@ -4196,17 +4867,27 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "A sign slip: the formula starts with −b = −6, so the center is −3.", "The whole numerator is divided by 2, so −6 becomes −3, not just the radical.", "√20 also gets divided by 2: √20 = 2√5, so (−6 ± 2√5)/2 = −3 ± √5."],
         },
+        {
+          q: "What is the sum of the solutions to (3x + 1)(x - 2) = (x - 1)² + 4?",
+          choices: ["-3/2", "5/3", "3/2", "-7/2"],
+          answer: 2,
+          explain:
+            "The question asks only for the sum, so use the shortcut instead of solving. First expand both sides: the left side is 3x² - 5x - 2, and the right side is x² - 2x + 1 + 4 = x² - 2x + 5. Moving everything to the left gives 2x² - 3x - 7 = 0, so a = 2, b = -3, c = -7, and the sum of the solutions is -b/a = 3/2. (The solutions themselves are (3 ± √65)/4, which is why solving directly is slow.) -3/2 drops the minus sign in -b/a, 5/3 uses only the left side before the right side was moved over, and -7/2 is c/a, the product rather than the sum.",
+          difficulty: "hard",
+          why: ["The sum is −b/a, not b/a. Here b = −3, so −b/a = 3/2.", "That's the sum for 3x² − 5x − 2 = 0, the left side alone. Move the right side over first: 2x² − 3x − 7 = 0.", null, "That's c/a, the product of the solutions. The sum is −b/a = 3/2."],
+        },
       ],
       traps: [
         "Dividing both sides of an equation like 3x² = 12x by x to 'simplify' — this illegally loses the x = 0 solution; factor out the shared term instead of dividing by a variable.",
         "Forgetting to move all terms to one side before attempting to factor or apply the zero product property — factoring only works once the equation equals zero.",
         "Spending too long forcing integer factoring on an expression that doesn't factor neatly — if two integers that work aren't apparent within a few tries, switch to the quadratic formula.",
+        "Mixing up the sum-and-product shortcut — the sum of the solutions is -b/a (the minus sign matters) and the product is c/a; dropping the minus, forgetting to divide by a, or reporting the product when the question asks for the sum all give a wrong answer that's among the choices.",
       ],
     },
     {
       name: "Solving Absolute Value Equations",
       explanation:
-        "An absolute value equation like |expression| = k has two cases, because whatever's inside the bars could have started out positive or negative: expression = k, or expression = -k. Solve both separately to get up to two solutions. If k is negative, there's no solution at all — an absolute value can never equal a negative number, so check this before doing any algebra. Once you have candidate solutions, check both back in the original equation. It's the same habit that catches extraneous solutions in radical equations.",
+        "An absolute value equation like |expression| = k has two cases, because whatever's inside the bars could have started out positive or negative: expression = k, or expression = -k. Solve both separately to get up to two solutions. If k is negative, there's no solution at all — an absolute value can never equal a negative number, so check this before doing any algebra. The absolute value can also be hidden inside a function, as in f(x) = |x - 3| + 2 with a condition like f(a) - f(1) = 6. Turn that into a plain equation first: evaluate the known value (f(1) = 4), so f(a) = 10, then write f(a) with its formula, isolate the bars (|a - 3| = 8), and split into cases; if the question limits the answer (say, a > 0), use that to pick the case. Once you have candidate solutions, check them back in the original equation. It's the same habit that catches extraneous solutions in radical equations.",
       examples: [
         {
           q: "Solve for x: |x - 5| = 10",
@@ -4244,6 +4925,15 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "Check x = 5: 3|7| − 4 = 17, not 11.", "Check x = −2: 3|0| − 4 = −4, not 11.", "Check x = 7: 3|9| − 4 = 23, not 11."],
         },
         {
+          q: "The function f is defined by f(x) = |x - 3| + 2. If f(a) - f(1) = 6 and a > 0, what is the value of a?",
+          choices: ["7", "11", "9", "-5"],
+          answer: 1,
+          explain:
+            "Start with the value you can compute: f(1) = |1 - 3| + 2 = 2 + 2 = 4. Then f(a) - 4 = 6, so f(a) = 10, which means |a - 3| + 2 = 10 and |a - 3| = 8. The two cases give a - 3 = 8 (a = 11) or a - 3 = -8 (a = -5), and the condition a > 0 keeps a = 11. Choosing 7 sets f(a) itself equal to 6, choosing 9 forgets the + 2 when evaluating f(1), and -5 is the case the condition a > 0 rules out.",
+          difficulty: "medium",
+          why: ["This sets f(a) = 6, but f(a) − f(1) = 6 and f(1) = 4, so f(a) = 10. Check: f(7) − f(1) = 6 − 4 = 2.", null, "f(1) = |1 − 3| + 2 = 4, not 2. Check: f(9) − f(1) = 8 − 4 = 4, not 6.", "a = −5 does make f(a) = 10, but the question says a > 0."],
+        },
+        {
           q: "Find the sum of all solutions to the equation |2x - 7| = 3x - 1.",
           choices: ["8/5", "-22/5", "-6", "-8/5"],
           answer: 0,
@@ -4257,6 +4947,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Forgetting the negative case entirely and reporting only one solution when the equation has two.",
         "Not checking whether the right side of the equation is negative before splitting into cases — if it is, there's no solution at all.",
         "When a variable appears on both sides of the equation, forgetting to check candidate solutions back in the original equation — one of them can turn out to be extraneous, just as with radical equations.",
+        "In a function question like f(a) - f(1) = 6, splitting into cases too early — first evaluate the known function value, add it over so f(a) equals a number, and isolate the absolute value (constants outside the bars and all) before writing the two cases.",
       ],
     },
     {
@@ -4265,7 +4956,7 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       desmosTrick:
         "Step 1: If the equation isn't already in 'expression = 0' form, move everything to one side first. Step 2: Type y = [that side] into Desmos as a new line. Step 3: Look at how many times the curve crosses the x-axis — two crossings means two real solutions, one crossing where the curve just touches the axis (without crossing through) means exactly one repeated solution, and zero crossings means no real solutions. You can count crossings by eye instead of computing b²-4ac.",
       explanation:
-        "For a quadratic ax² + bx + c = 0, the discriminant (b² - 4ac) tells you the number of real solutions without solving the whole equation. Positive means two real solutions. Zero means exactly one repeated solution. Negative means no real solutions. This is much faster than factoring or using the full quadratic formula when a question only asks 'how many solutions' — not what they are.",
+        "For a quadratic ax² + bx + c = 0, the discriminant (b² - 4ac) tells you the number of real solutions without solving the whole equation. Positive means two real solutions. Zero means exactly one repeated solution. Negative means no real solutions. This is much faster than factoring or using the full quadratic formula when a question only asks 'how many solutions' — not what they are. The same idea handles a line and a parabola that meet at exactly one point: set the two expressions equal, move everything to one side, and set the discriminant of that single quadratic equal to 0 to find the unknown constant. When the discriminant is 0, the one solution is x = -b/(2a) of that combined quadratic, which gives the meeting point's x-coordinate directly. For a horizontal line y = k there's an even faster shortcut: it meets a parabola exactly once only at the vertex, so k is the vertex's y-value.",
       examples: [
         {
           q: "How many real solutions does x² + 4x + 5 = 0 have?",
@@ -4315,16 +5006,27 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "k > 9 makes 36 − 4k negative, which gives no real solutions.", "At k = 9, the discriminant is 0, which gives only one solution. It must be strictly less than 9.", "k = 9 gives a discriminant of 0, which is exactly one solution, not two."],
         },
+        {
+          q: "In the xy-plane, the graph of y = x² - 4x + 7 and the line y = 2x + k, where k is a constant, intersect at exactly one point. What is the x-coordinate of that point?",
+          choices: ["-2", "2", "3", "4"],
+          answer: 2,
+          explain:
+            "Set the expressions equal and move everything to one side: x² - 4x + 7 = 2x + k becomes x² - 6x + (7 - k) = 0. Exactly one intersection point means the discriminant is 0: 36 - 4(7 - k) = 0, so 8 + 4k = 0 and k = -2. The equation is then x² - 6x + 9 = 0, or (x - 3)² = 0, so x = 3. (Shortcut: with a zero discriminant the single solution is -b/(2a) = 6/2 = 3, no k needed.) -2 is the value of k, 2 is the x-coordinate of the parabola's vertex, and 4 is the y-coordinate of the point, 2(3) - 2.",
+          difficulty: "hard",
+          why: ["That's k, the line's intercept. The question asks for the x-coordinate of the meeting point.", "That's the vertex of y = x² − 4x + 7. The line isn't horizontal, so it touches somewhere else: x = 3.", null, "That's the y-coordinate, 2(3) − 2 = 4. The x-coordinate is 3."],
+        },
       ],
       traps: [
         "Attempting to factor or use the full quadratic formula when the question only asks for the number of solutions — the discriminant alone answers this faster.",
         "Sign errors when computing -4ac, especially when a or c is negative.",
+        "With a line and a parabola, taking a discriminant before setting the equations equal and moving everything to one side — the line's slope and intercept must be combined into the b and c of one quadratic first.",
+        "Answering with the wrong number — the constant k when the question asks for the x-coordinate of the meeting point, or the vertex's x-coordinate when it asks for the value of the horizontal line y = k.",
       ],
     },
     {
-      name: "Solving Radical Equations and Checking for Extraneous Solutions",
+      name: "Solving Radical and Rational Equations (Checking for Extraneous Solutions)",
       explanation:
-        "Radical (square root) equations require squaring both sides to get rid of the radical — but that step can introduce 'extraneous' solutions: values that satisfy the squared equation but not the original one. The critical, often-skipped last step: plug your solution back into the ORIGINAL equation to verify it actually works.",
+        "Radical (square root) equations require squaring both sides to get rid of the radical — but that step can introduce 'extraneous' solutions: values that satisfy the squared equation but not the original one. Rational equations, which have the variable in a denominator, like (x² + 2x)/(x - 1) = 3/(x - 1), carry the same risk for a different reason. Clear the fractions by multiplying every term, plain constants included, by the common denominator, then solve what's left. Any value that makes an original denominator equal zero must be thrown out, because the original equation isn't defined there; if every candidate gets thrown out, the equation has no solution. If the equation includes a constant like c, follow the same steps and treat c as a number, so the answer is an expression in c. The critical, often-skipped last step for both types: plug your solution back into the ORIGINAL equation to verify it actually works.",
       examples: [
         {
           q: "Solve for x: √(x + 3) = 5",
@@ -4362,6 +5064,15 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "3 is 4 − 1, skipping the squaring step. √(x + 1) = 4 means x + 1 = 16.", "Check x = 35: 3√36 = 18, not 12.", "11 is 12 − 1. Divide by 3 and square first: x + 1 = 16."],
         },
         {
+          q: "Solve for x: (x² + 2x)/(x - 1) = 3/(x - 1)",
+          choices: ["1", "-3 or 1", "3", "-3"],
+          answer: 3,
+          explain:
+            "Both sides share the denominator x - 1, so multiply both sides by it: x² + 2x = 3. Rearranging: x² + 2x - 3 = 0, which factors to (x + 3)(x - 1) = 0, giving candidates x = -3 and x = 1. But x = 1 makes the denominator x - 1 equal 0, so the original equation isn't defined there and x = 1 is extraneous. Checking x = -3: both sides equal -3/4, so x = -3 is the only solution. 1 and '-3 or 1' both keep the extraneous value, and 3 comes from flipping the signs in the factoring.",
+          difficulty: "medium",
+          why: ["x = 1 makes x − 1 = 0, so both fractions are undefined there.", "x = 1 is extraneous: it makes the denominator x − 1 equal 0.", "The signs are flipped: (x − 3)(x + 1) = x² − 2x − 3. Check x = 3: 15/2 on the left, 3/2 on the right.", null],
+        },
+        {
           q: "Solve for x: √(3x + 7) = x - 1",
           choices: ["6", "-1 or 6", "-1", "7"],
           answer: 0,
@@ -4370,10 +5081,21 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "x = −1 is extraneous: √4 = 2, but −1 − 1 = −2.", "Check x = −1: the left side is 2 and the right side is −2. It doesn't work.", "Check x = 7: √28 isn't 6."],
         },
+        {
+          q: "3/(x + c) + 2 = (x + 7)/(x + c)\n\nIn the given equation, c is a constant and c < 4. Which expression represents the solution to the equation?",
+          choices: ["4 - c", "4 + 2c", "4 - 2c", "(4 - 2c)/3"],
+          answer: 2,
+          explain:
+            "Multiply every term by the common denominator x + c, including the plain 2: 3 + 2(x + c) = x + 7. Distribute: 3 + 2x + 2c = x + 7. Subtract x and 3 from both sides: x + 2c = 4, so x = 4 - 2c. The only value to rule out is one that makes x + c = 0; here x + c = 4 - c, which is never 0 because c < 4, so 4 - 2c is a valid solution. 4 - c distributes the 2 to only the x (2x + c instead of 2x + 2c), 4 + 2c moves 2c across without changing its sign, and (4 - 2c)/3 adds x to the left side instead of subtracting it.",
+          difficulty: "hard",
+          why: ["2(x + c) is 2x + 2c, not 2x + c. That slip gives 4 − c.", "A sign slip: subtracting 2c from both sides gives x = 4 − 2c.", null, "Subtract x from both sides, don't add it: 2x − x = x, so x = 4 − 2c."],
+        },
       ],
       traps: [
         "Skipping the final check, and reporting a solution that actually fails when substituted back into the original (unsquared) equation.",
         "Forgetting that squaring both sides can turn a valid equation into one with extra, invalid solutions — this check is not optional busywork.",
+        "Multiplying only the fractions by the common denominator and skipping a plain constant — in x/(x - 5) = 5/(x - 5) + 2, the 2 must become 2(x - 5).",
+        "Keeping a value that makes a denominator equal zero — the original equation isn't defined there, so it must be thrown out even though it solves the cleared equation.",
       ],
     },
     {
@@ -4441,9 +5163,9 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
     },
     {
-      name: "Finding an Unknown Constant from a Given Root, Then Evaluating",
+      name: "Finding an Unknown Constant from a Given Point or Root, Then Evaluating",
       explanation:
-        "Some questions give a function in factored form with an unknown constant, tell you one point its graph passes through, and ask you to first solve for that constant, then use it to evaluate the function somewhere else. The method has two stages: substitute the given point into the function to solve for the unknown constant, then substitute that constant back in (along with the NEW input you're asked about) to get the final answer. Don't stop after finding the constant if the question asks for more.",
+        "Some questions give a function with an unknown constant, tell you a point its graph passes through (or one value it takes), and ask you to first solve for that constant, then use it to evaluate the function somewhere else or find an input. The function might be a factored polynomial, an exponential like f(x) = a(b)^x or f(x) = a^x + b, or a real-world model like h(t) = -16t² + c. The method has two stages: substitute the given point into the function to solve for the unknown constant, then substitute that constant back in (along with the NEW input or output you're asked about) to get the final answer. Translate the wording carefully: 'passes through (p, q)' means f(p) = q, and a y-intercept or an 'initial' value is the output at x = 0 (or t = 0). Since any positive base to the power 0 is 1, a(b)^0 = a, but a^0 + b = 1 + b, not b. When the unknown is an exponential's base, undo the power with a root: b² = 9 means b = 3 when b is positive. Don't stop after finding the constant if the question asks for more.",
       examples: [
         {
           q: "The function f is defined by f(x) = (x - 3)(x - k), where k is a constant. The graph of y = f(x) passes through the point (5, 0). What is f(0)?",
@@ -4486,6 +5208,15 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "3 is the value of 2 + k. Subtract 2 to get k = 1.", "Check k = −1: (2 − 4)(2 − 1) = −2, not −6.", "Check k = −3: (−2)(−1) = 2, not −6."],
         },
         {
+          q: "The function f is defined by f(x) = 5(b)^x, where b is a positive constant. If f(2) = 45, what is the value of f(3)?",
+          choices: ["3", "135", "3,375", "3,645"],
+          answer: 1,
+          explain:
+            "Substitute the given value: f(2) = 5(b)² = 45, so b² = 9, and since b is positive, b = 3. Now evaluate at the new input: f(3) = 5(3)³ = 5 × 27 = 135. 3 stops at the constant b, 3,375 multiplies 5 by 3 before cubing (15³), and 3,645 skips the square root and uses b = 9.",
+          difficulty: "medium",
+          why: ["3 is b. The question asks for f(3) = 5(3)³ = 135.", null, "That's 15³. The exponent applies only to b: 5 × 3³ = 5 × 27 = 135.", "That uses b = 9. b² = 9 means b = 3, so f(3) = 5 × 27 = 135."],
+        },
+        {
           q: "The function p is defined by p(x) = (x + 6)(x - m), where m is a constant. The graph of y = p(x) passes through (10, 0). What is p(-2)?",
           choices: ["-48", "48", "-32", "64"],
           answer: 0,
@@ -4495,11 +5226,22 @@ const LC_M_NONLINEAR_EQ: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "A sign slip: (4)(−12) is −48.", "With m = 10, p(−2) = (−2 + 6)(−2 − 10) = (4)(−12) = −48, not −32.", "64 multiplies 16 by 4. Plug in x = −2: (4)(−12) = −48."],
         },
+        {
+          q: "The function f is defined by f(x) = a^x + b, where a and b are constants and a > 0. The graph of y = f(x) in the xy-plane passes through the points (0, -3) and (2, 5). What is the value of a + b?",
+          choices: ["-7", "5", "2√2 - 3", "-1"],
+          answer: 3,
+          explain:
+            "Use the y-intercept first: f(0) = a^0 + b = 1 + b = -3, so b = -4 (not -3, because a^0 is 1, not 0). Then use the second point: f(2) = a² - 4 = 5, so a² = 9, and since a > 0, a = 3. So a + b = 3 + (-4) = -1. -7 uses a = -3, which the condition a > 0 rules out; 5 adds a² instead of a; and 2√2 - 3 comes from assuming the y-intercept is b, which gives b = -3 and a² = 8.",
+          difficulty: "hard",
+          why: ["That uses a = −3, but the question says a > 0.", "That's a² + b = 5, which is f(2). a + b uses a = 3, not a² = 9.", "This treats the y-intercept as b. But f(0) = a^0 + b = 1 + b, so b = −4.", null],
+        },
       ],
       traps: [
         "Stopping after solving for the unknown constant, without completing the second step the question actually asks for.",
         "Substituting the given point's coordinates into the wrong position (input vs. output) when solving for the constant.",
         "Forgetting that 'the graph passes through (a, 0)' means the function's value at x = a is 0 — the point's x-coordinate is not itself the constant being solved for.",
+        "Assuming the y-intercept of f(x) = a^x + b is just b — at x = 0, a^0 = 1, so the y-intercept is 1 + b.",
+        "Mishandling the exponent — multiplying the coefficient into the base before applying the power (5(3)³ is 5 × 27, not 15³), or stopping at b² = 9 or t² = 16 without taking the square root.",
       ],
     },
   ],
@@ -4515,7 +5257,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Reading Vertex Form Directly",
       explanation:
-        "A quadratic written in vertex form, f(x) = a(x-h)² + k, reveals its vertex (h, k) with zero calculation — one of the fastest free points on the whole test, if you recognize the form. The one common error: a sign mix-up. Since the form has (x - h), a function written as (x + 3)² actually means h = -3, not h = 3.",
+        "A quadratic written in vertex form, f(x) = a(x-h)² + k, reveals its vertex (h, k) with zero calculation — one of the fastest free points on the whole test, if you recognize the form. The one common error: a sign mix-up. Since the form has (x - h), a function written as (x + 3)² actually means h = -3, not h = 3. Vertex form also works in reverse, to build a model: when a problem gives the maximum or minimum point (h, k) and one other point, such as the time an object hits the ground (height 0), write y = a(x - h)² + k, plug in the other point to solve for a, and then evaluate at whatever input the question asks about.",
       examples: [
         {
           q: "The vertex of f(x) = (x - 2)² + 5 is which of the following points?",
@@ -4567,10 +5309,20 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "Rearrange first: y = −(x − 6)² + 4. Moving the 4 across makes it +4.", "(x − 6) means h = +6.", "Both are off: h is +6, and after rearranging, k is +4."],
         },
+        {
+          q: "A ball is thrown from the top of a tower. Its height above the ground, in meters, t seconds after it is thrown is modeled by a quadratic function h. The ball reaches its maximum height of 50 meters at t = 2 and hits the ground at t = 7. According to the model, what is the height of the ball, in meters, at t = 5?",
+          choices: ["41", "20", "32", "44"],
+          answer: 2,
+          explain:
+            "The maximum point (2, 50) is the vertex, so start from vertex form: h(t) = a(t - 2)² + 50. The value of a isn't given, so use the other known point: the ball hits the ground at t = 7, meaning h(7) = 0. Then 0 = a(7 - 2)² + 50 = 25a + 50, so a = -2 and h(t) = -2(t - 2)² + 50. Now evaluate: h(5) = -2(3)² + 50 = -18 + 50 = 32. 41 assumes a = -1 instead of solving for it. 20 treats the fall as a straight line from 50 meters to 0 over 5 seconds, but a quadratic model isn't linear. 44 forgets to square: -2(3) + 50.",
+          difficulty: "hard",
+          why: ["This uses a = −1. Solve for a with h(7) = 0: 25a + 50 = 0, so a = −2.", "A quadratic isn't a straight line. With a = −2, h(5) = −2(9) + 50 = 32.", null, "Square before multiplying: −2(5 − 2)² = −2(9) = −18, so h(5) = 32."],
+        },
       ],
       traps: [
         "Misreading the sign inside the parentheses — (x + 3)² corresponds to h = -3, not h = 3, since the template is (x - h).",
         "Forgetting that a negative leading coefficient (a) means the vertex is a maximum, not a minimum, even though h and k are read the same way.",
+        "Using a = 1 or a = -1 without solving for it when building vertex form — plug in the one extra known point, like a landing time where the height is 0, to find a first.",
       ],
     },
     {
@@ -4635,9 +5387,127 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
     },
     {
-      name: "Reading Linear vs. Exponential Growth From a Table",
+      name: "Initial Value and Growth Factor in Any Exponential Form",
       explanation:
-        "This pattern gives you a table of x and y values (not an equation or word problem) and asks whether the function is linear or exponential, and increasing or decreasing. The method: check how the output changes as the input increases by a constant amount. If it changes by the same ADDED amount each time, it's linear. If it changes by the same MULTIPLIED factor each time, it's exponential. Check at least two consecutive differences or ratios before deciding — one matching pair isn't enough to confirm the pattern.",
+        "In an exponential function written f(x) = a(b)^x, the coefficient a is the initial value, f(0), which is also the y-intercept of the graph, and the base b is the growth or decay factor: the number the output is multiplied by each time x goes up by 1. Questions ask what a number in a model means in context, which equation matches a table, or which of several equivalent forms shows a particular value. From a table, read a from the x = 0 row and find b by dividing an output by the one before it; if x jumps by 2 between rows, that ratio is b², so take its square root. When the exponent is shifted, as in f(x) = 40(3)^(x-2), the coefficient is the output where the exponent equals 0, so 40 is f(2), not f(0); since 3^(x-2) is 3^x divided by 9, the same function is f(x) = (40/9)(3)^x, which shows f(0) = 40/9. Wrong answers usually treat any coefficient as the starting value, mix up a and b, or read a factor like 0.85 as an 85% decrease instead of a 15% one.",
+      examples: [
+        {
+          q: "A library launched an e-book app, and the number of e-books borrowed through the app in month m after the launch is modeled by L(m) = 250(1.15)^m. What is the best interpretation of 250 in this context?",
+          choices: ["Each month, 250 more e-books are borrowed than in the month before.", "The percent by which borrowing increases each month", "The estimated number of e-books borrowed in the month the app launched", "The estimated number of e-books borrowed 1 month after the launch"],
+          answer: 2,
+          explain:
+            "In a(b)^m, the coefficient a is the value when m = 0: L(0) = 250(1.15)^0 = 250(1) = 250, so 250 is the estimated number of e-books borrowed in the launch month. A fixed 250 more each month would be a linear model; this one multiplies by 1.15 each month instead of adding. The percent increase lives in the base: 1.15 means borrowing grows by 15% a month, and 250 isn't a percent at all. One month after the launch is L(1) = 250(1.15) = 287.5, so 250 is the value a month before that.",
+          difficulty: "easy",
+          why: ["Adding 250 each month would be linear. Here the count is multiplied by 1.15 each month.", "The monthly percent increase comes from the base: 1.15 means 15% per month.", null, "One month after launch is L(1) = 250(1.15) = 287.5. 250 is the value at m = 0."],
+        },
+        {
+          q: "The table shows four values of the exponential function f. Which equation defines f?",
+          choices: ["f(x) = 320(4)^x", "f(x) = (1/4)(320)^x", "f(x) = 80(1/4)^x", "f(x) = 320(1/4)^x"],
+          answer: 3,
+          explain:
+            "Read a from the x = 0 row: f(0) = 320. Find b by dividing each output by the one before it: 80/320 = 1/4, 20/80 = 1/4, and 5/20 = 1/4, so every step multiplies by 1/4 and f(x) = 320(1/4)^x. A base of 4 flips the ratio: it would make the output grow to 1,280 at x = 1 instead of shrinking to 80. Putting 1/4 in front and 320 as the base swaps the two roles, giving f(0) = 1/4. Starting at 80 uses the x = 1 row as the initial value, so f(0) would be 80, not 320.",
+          figure: {"kind": "table", "header": ["x", "f(x)"], "rows": [[0, 320], [1, 80], [2, 20], [3, 5]]},
+          difficulty: "easy",
+          why: ["A base of 4 would make f(1) = 1,280. The outputs shrink: 80/320 = 1/4, so the base is 1/4.", "This swaps the parts. The coefficient is f(0) = 320, and the base is the ratio, 1/4.", "80 is f(1). The coefficient is the value at x = 0, which is 320.", null],
+        },
+        {
+          q: "The table shows values of the exponential function g for four values of x. Which equation defines g?",
+          choices: ["g(x) = 5(4)^x", "g(x) = 5(2)^x", "g(x) = 4(5)^x", "g(x) = 5 + 7.5x"],
+          answer: 1,
+          explain:
+            "g(0) = 5, so a = 5. The outputs are multiplied by 4 from row to row (20/5 = 4 and 80/20 = 4), but x goes up by 2 between rows, not 1. That means b² = 4, so b = 2 and g(x) = 5(2)^x; check it: g(4) = 5(2)^4 = 80. Using 4 as the base treats each row as a single step of x, which gives g(2) = 5(4)^2 = 80 instead of 20. Putting 4 in front swaps the coefficient and the base, so it doesn't even give g(0) = 5. The linear rule 5 + 7.5x matches the first two rows but gives g(4) = 35, not 80, because the outputs don't rise by a constant amount.",
+          figure: {"kind": "table", "header": ["x", "g(x)"], "rows": [[0, 5], [2, 20], [4, 80], [6, 320]]},
+          difficulty: "medium",
+          why: ["x goes up by 2 between rows, so 4 is the factor for 2 steps. For one step, b = √4 = 2.", null, "The coefficient must be g(0) = 5. This form gives g(0) = 4.", "Check it: 5 + 7.5(4) = 35, not 80. The outputs multiply, so g is exponential."],
+        },
+        {
+          q: "The function f is defined by f(x) = 18(3)^(x-2). Which of the following is an equivalent form of f that displays the value of f(0) as the coefficient?",
+          choices: ["f(x) = 2(3)^x", "f(x) = 18(3)^x", "f(x) = 162(3)^x", "f(x) = 6(3)^(x-1)"],
+          answer: 0,
+          explain:
+            "The coefficient of a form like a(b)^(x-k) is the output where the exponent is 0, which for the given form is at x = 2: f(2) = 18(3)^0 = 18. To show f(0), split off the shift: 3^(x-2) is 3^x divided by 3², so f(x) = (18/9)(3)^x = 2(3)^x, and f(0) = 2. Dropping the shift to get 18(3)^x changes the function: its value at 0 is 18, but f(0) = 18(3)^(-2) = 2. Multiplying by 9 instead of dividing gives 162(3)^x, which is 81 times too big. 6(3)^(x-1) is equivalent to f, but its exponent is 0 at x = 1, so its coefficient is f(1) = 6, not f(0).",
+          difficulty: "medium",
+          why: [null, "Dropping the − 2 changes the function. 18 is f(2); f(0) = 18/9 = 2.", "3^(x − 2) is 3^x divided by 9, not multiplied by 9. f(0) = 18/9 = 2.", "This form is equivalent, but its exponent is 0 at x = 1, so 6 is f(1). f(0) is 2."],
+        },
+        {
+          q: "The function g is defined by g(x) = 80(0.8)^(x-1). Which of the following equivalent forms of g displays the y-intercept of the graph of y = g(x) as a coefficient?\nI. g(x) = 125(0.8)^(x+1)\nII. g(x) = 100(1.25)^(-x)",
+          choices: ["I only", "II only", "I and II", "Neither I nor II"],
+          answer: 1,
+          explain:
+            "First find the y-intercept: g(0) = 80(0.8)^(-1) = 80/0.8 = 100. In form I, the coefficient 125 is the output where the exponent x + 1 equals 0, which is at x = -1, so 125 is g(-1), not the y-intercept (at x = 0, form I gives 125(0.8) = 100, which isn't displayed). In form II, the exponent -x is 0 exactly when x = 0, so the coefficient 100 is g(0). Form II may look like a different function because its base is 1.25, but (1.25)^(-x) = (1/1.25)^x = (0.8)^x, so it's the same decay. Choosing I only, or I and II, treats 125 as the starting value; choosing Neither misses that a base of 1.25 with exponent -x is still decay by a factor of 0.8.",
+          difficulty: "hard",
+          why: ["In form I the exponent is 0 at x = −1, so 125 is g(−1). The y-intercept is g(0) = 100.", null, "Form I's coefficient, 125, is g(−1), not g(0) = 100. Only form II shows 100.", "Form II works: (1.25)^(−x) = (0.8)^x, and its exponent is 0 at x = 0, so 100 is g(0)."],
+        },
+      ],
+      traps: [
+        "Assuming the coefficient in front is always f(0). That's only true for the plain form a(b)^x: in 40(3)^(x-2), the 40 is f(2), the value where the exponent is 0, and in a(b)^x + c, the y-intercept is a + c.",
+        "Mixing up the two parts: calling the base b the starting amount, or the coefficient a the factor the output is multiplied by each step.",
+        "Misreading a table: subtracting outputs instead of dividing them, using the ratio across an x-jump of 2 as the factor for a single step, or taking the first row as f(0) when that row isn't x = 0.",
+        "Reading the factor as the percent change itself: 0.85 means each value is 85% of the one before (a 15% decrease), not an 85% decrease, and 1.15 means a 15% increase, not 115%.",
+      ],
+    },
+    {
+      name: "Exponential Models with a Time Period in the Exponent",
+      explanation:
+        "Some exponential models put the time period inside the exponent, like P(t) = 500(2)^(t/6): the t/6 counts how many 6-year periods have passed, so the quantity is multiplied by the base once every 6 years (here, it doubles every 6 years). Decay reads the same way: A(t) = 80(1/2)^(t/12) halves every 12 units, so its half-life is 12. To write a model from 'doubles every k years, starting at A,' use A(2)^(t/k); to work backward from a later value, count the full periods that passed and divide by 2 once for each, which is 2^n in total, not 2n. To find the percent change for a single unit, use the exponent rule b^(x/k) = (b^(1/k))^x, so a(1.21)^(x/2) = a(1.1)^x, a 10% increase per unit, and watch the units: an exponent of m/12 with m in months means one full factor of b per year. Wrong answers usually multiply t by the period instead of dividing, swap the base and the period, split a percent evenly (21% ÷ 2 = 10.5%) instead of taking a root, or mix up months and years.",
+      examples: [
+        {
+          q: "The number of bees in a hive t weeks after a colony is introduced is modeled by N(t) = 3200(2)^(t/4). According to the model, how many weeks does it take for the number of bees to double?",
+          choices: ["1/4", "2", "4", "8"],
+          answer: 2,
+          explain:
+            "The exponent t/4 counts how many 4-week periods have passed, and each period multiplies the count by the base, 2. So the bee count doubles every 4 weeks: N(4) = 3200(2)^1 = 6400, twice the starting 3,200. 1/4 is the fraction of a doubling that happens each week, not the doubling time; the count doubles when t/4 = 1, not when t = 1/4. 2 is the base, which says the count doubles, not how long that takes. 8 weeks is two periods: after 8 weeks the count has doubled twice, to 12,800.",
+          difficulty: "easy",
+          why: ["The count doubles when t/4 = 1, so t = 4, not 1/4.", "2 is the base: it tells you the count doubles. The 4 under t tells you how often.", null, "After 8 weeks, t/4 = 2, so the count has doubled twice, to 12,800."],
+        },
+        {
+          q: "An investment of $1,200 doubles in value every 9 years. Which function gives the value V, in dollars, of the investment t years after it was made?",
+          choices: ["V = 1200(2)^(9t)", "V = 1200(9)^(t/2)", "V = 1200 + 1200(t/9)", "V = 1200(2)^(t/9)"],
+          answer: 3,
+          explain:
+            "Start with the initial value, 1,200, and multiply by 2 once per 9-year period. After t years, t/9 periods have passed, so V = 1200(2)^(t/9); check it: at t = 9, V = 1200(2)^1 = 2400. An exponent of 9t would double the value 9 times every year. A base of 9 with an exponent of t/2 swaps the roles, making the value grow ninefold every 2 years. 1200 + 1200(t/9) adds the same $1,200 every 9 years, which matches the first doubling but then falls behind: at t = 18 it gives 3,600 instead of 4,800.",
+          difficulty: "easy",
+          why: ["9t would double the value 9 times each year. It doubles once every 9 years: t/9.", "This swaps the numbers. The base is 2 (doubling), and 9 is how many years each doubling takes.", "This adds $1,200 every 9 years. Doubling multiplies, so at t = 18 the value is 4,800, not 3,600.", null],
+        },
+        {
+          q: "The population of a town has doubled every 15 years since 1980. In 2025, the town's population was 36,000. Based on this, what was the town's population in 1980?",
+          choices: ["12,000", "4,500", "6,000", "288,000"],
+          answer: 1,
+          explain:
+            "From 1980 to 2025 is 45 years, which is 45/15 = 3 doubling periods. So the 2025 population is the 1980 population times 2³ = 8: P(2)³ = 36,000, and P = 36,000/8 = 4,500. Dividing by 3 undoes the number of periods, not the growth, as if the town had tripled once. Dividing by 6 (2 × 3) treats three doublings as a factor of 6, but doubling three times multiplies by 2 × 2 × 2 = 8. 288,000 multiplies by 8 instead of dividing, running the model forward to 2070 instead of back to 1980.",
+          difficulty: "medium",
+          why: ["Check it: 12,000 doubled three times is 96,000, not 36,000. Three doublings multiply by 2³ = 8.", null, "Doubling three times multiplies by 2 × 2 × 2 = 8, not 2 × 3 = 6.", "This multiplies by 8, which runs forward in time. To go back to 1980, divide: 36,000/8 = 4,500."],
+        },
+        {
+          q: "The number of views of an online video x days after it was posted is modeled by V(x) = 5000(1.44)^(x/2). The model can be rewritten as V(x) = 5000(1 + p/100)^x, where p is a constant. What is the value of p?",
+          choices: ["20", "22", "44", "88"],
+          answer: 0,
+          explain:
+            "Use the exponent rule b^(x/2) = (b^(1/2))^x: (1.44)^(x/2) = (√1.44)^x = (1.2)^x. So 1 + p/100 = 1.2, p/100 = 0.2, and p = 20: the views grow 20% per day. 22 splits the 44% two-day increase evenly over the two days, but growth compounds: 1.22 × 1.22 ≈ 1.49, not 1.44. 44 is the percent increase over one full period of 2 days, not over a single day. 88 multiplies the two-day rate by 2, but the daily rate has to be smaller than the two-day rate, not larger.",
+          difficulty: "medium",
+          why: [null, "Growth compounds, so 44% doesn't split evenly: 1.22 × 1.22 ≈ 1.49. Take √1.44 = 1.2.", "44% is the increase over one 2-day period, not one day. Per day it's √1.44 = 1.2, or 20%.", "The daily rate must be smaller than the 2-day rate, not double it. √1.44 = 1.2 gives 20%."],
+        },
+        {
+          q: "The value, in dollars, of a piece of equipment m months after it was purchased is modeled by V(m) = 18000(0.64)^(m/24). According to the model, by what percent does the equipment's value decrease each year?",
+          choices: ["1.5%", "18%", "20%", "36%"],
+          answer: 2,
+          explain:
+            "One year is 12 months, so each year the exponent m/24 goes up by 12/24 = 1/2, and the value is multiplied by (0.64)^(1/2) = √0.64 = 0.8. Keeping 80% of the value means losing 20% a year. 36% is the decrease over 24 months, one full period of the model, which is 2 years, not 1. 18% splits that 36% evenly over the 2 years, but decreases compound: 0.82 × 0.82 ≈ 0.67, not 0.64. 1.5% spreads the 36% evenly over 24 months, which is both the wrong unit (a month, not a year) and an even split of a compounding change.",
+          difficulty: "hard",
+          why: ["36% ÷ 24 spreads the 2-year drop evenly over months. The yearly factor is √0.64 = 0.8, a 20% drop.", "Decreases compound, so 36% doesn't split evenly: 0.82 × 0.82 ≈ 0.67. The yearly factor is √0.64 = 0.8.", null, "36% is the drop over 24 months, which is 2 years. Per year it's √0.64 = 0.8, a 20% drop."],
+        },
+      ],
+      traps: [
+        "Misplacing the period: t/6 means one doubling every 6 years, so writing 2^(6t), or ignoring the 6 and treating the change as happening every single year, gets the timing wrong.",
+        "Swapping the base and the period: in 500(2)^(t/6), the base 2 says what happens (doubling) and the 6 says how often, not the other way around.",
+        "Treating repeated multiplication as repeated addition: splitting 21% over 2 years into 10.5% a year instead of taking √1.21 = 1.1, or undoing 3 doublings by dividing by 6 (or 3) instead of by 2³ = 8.",
+        "Mixing units: if t is in months but the period is given in years (or hours versus minutes), convert first; doubling every 2 years is t/24 when t counts months.",
+      ],
+    },
+    {
+      name: "Telling Linear from Exponential Growth (Table, Graph, or Words)",
+      explanation:
+        "This pattern asks whether a function is linear or exponential, and increasing or decreasing, and the function can come as a table, a graph, or a description in words. In a table, check how the output changes each time the input goes up by the same amount: the same ADDED amount each time means linear, and the same MULTIPLIED factor each time means exponential. Check at least two consecutive differences or ratios before deciding, since one matching pair isn't enough to confirm the pattern. In words, a fixed amount ('increases by 3 each year') is linear, while a fixed percent of the current amount ('increases by 3% each year') is exponential; but 'f(x) is 40% of x' is linear, because it just means f(x) = 0.4x, a percent of x rather than of the previous output. On a graph, a straight line is linear and a curve that bends is exponential; read from left to right to decide increasing or decreasing, and remember that a decreasing exponential flattens out toward a horizontal line as it falls.",
       examples: [
         {
           q: "A table shows x: -1, 0, 1, 2 with f(x): 16, 17, 18, 19. Which best describes f?",
@@ -4658,6 +5528,15 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "The differences (5, 10, 20) aren't constant, so it's not linear. The ratio is constant: ×2.", "The values are rising (5, 10, 20, 40), so it's increasing.", "The values are rising and double each time. That's increasing exponential."],
         },
         {
+          q: "Which of the following describes a quantity that decreases linearly?",
+          choices: ["A car's value falls by 15% each year.", "A water tank loses 15 liters every hour.", "For every value of x, g(x) is 15% of x.", "Each year, a town's population is 85% of what it was the year before."],
+          answer: 1,
+          explain:
+            "Look for a fixed AMOUNT versus a fixed PERCENT of the current amount. Losing 15 liters every hour subtracts the same amount each hour, so the volume falls by a constant difference: decreasing linear. Falling by 15% each year takes 15% of whatever the value is that year, so the yearly drop shrinks as the value shrinks; the value is multiplied by 0.85 each year, which is decreasing exponential. 'g(x) is 15% of x' sounds like a percent change, but it just means g(x) = 0.15x, a straight line with a positive slope: increasing linear, not decreasing. 'Each year is 85% of the year before' is the same multiply-by-0.85 rule as the car, so it's decreasing exponential too.",
+          difficulty: "medium",
+          why: ["15% of a shrinking value is a smaller amount each year. The value is multiplied by 0.85: exponential.", null, "g(x) = 0.15x is linear, but its slope is positive, so it increases.", "Multiplying by 0.85 each year is exponential decay, not a constant drop."],
+        },
+        {
           q: "A table shows x: 0, 1, 2, 3 with h(x): 50, 44, 38, 32. Which best describes h?",
           choices: ["Decreasing linear", "Decreasing exponential", "Increasing linear", "Increasing exponential"],
           answer: 0,
@@ -4674,6 +5553,16 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
             "The differences between consecutive outputs (150-200=-50, 112.5-150=-37.5) are not constant, ruling out linear. The ratios are constant instead: 150/200=0.75, 112.5/150=0.75 — a constant ratio, even one less than 1, is the signature of exponential decay, so this is decreasing exponential.",
           difficulty: "medium",
           why: [null, "The drops (50, then 37.5) aren't constant, so it's not linear. The ratio is constant: ×0.75.", "The values are falling, so it's decreasing.", "The values fall, and by a constant ratio, not a constant amount."],
+        },
+        {
+          q: "The graph of y = h(x) is shown in the xy-plane, with the points (0, 8), (1, 4), (2, 2), and (3, 1) marked. Which best describes h?",
+          choices: ["Increasing linear", "Decreasing linear", "Decreasing exponential", "Increasing exponential"],
+          answer: 2,
+          explain:
+            "The graph is a curve, not a straight line, and the marked points confirm it: each time x increases by 1, y is multiplied by 1/2 (8, 4, 2, 1), while the drops (4, 2, 1) keep shrinking instead of staying constant. Reading from left to right, the graph falls, so h is decreasing exponential. Either linear choice would need a straight line with equal drops. The curve does bend upward and flatten out toward the x-axis as x grows, which can tempt 'increasing,' but its y-values keep getting smaller from left to right, never larger.",
+          figure: {"kind": "geometry", "points": {"p0": [0, 8], "p1": [1, 4], "p2": [2, 2], "p3": [3, 1]}, "dots": ["p0", "p1", "p2", "p3"], "paths": [{"points": [[-0.2, 9.1896], [-0.1, 8.5742], [0, 8], [0.1, 7.4643], [0.2, 6.9644], [0.3, 6.498], [0.4, 6.0629], [0.5, 5.6569], [0.6, 5.278], [0.7, 4.9246], [0.8, 4.5948], [0.9, 4.2871], [1, 4], [1.1, 3.7321], [1.2, 3.4822], [1.3, 3.249], [1.4, 3.0314], [1.5, 2.8284], [1.6, 2.639], [1.7, 2.4623], [1.8, 2.2974], [1.9, 2.1435], [2, 2], [2.1, 1.8661], [2.2, 1.7411], [2.3, 1.6245], [2.4, 1.5157], [2.5, 1.4142], [2.6, 1.3195], [2.7, 1.2311], [2.8, 1.1487], [2.9, 1.0718], [3, 1], [3.1, 0.933], [3.2, 0.8706], [3.3, 0.8123], [3.4, 0.7579], [3.5, 0.7071], [3.6, 0.6598], [3.7, 0.6156], [3.8, 0.5743], [3.9, 0.5359], [4, 0.5], [4.1, 0.4665], [4.2, 0.4353], [4.3, 0.4061], [4.4, 0.3789], [4.5, 0.3536], [4.6, 0.3299], [4.7, 0.3078], [4.8, 0.2872], [4.9, 0.2679], [5, 0.25], [5.1, 0.2333], [5.2, 0.2176], [5.3, 0.2031], [5.4, 0.1895], [5.5, 0.1768], [5.6, 0.1649], [5.7, 0.1539], [5.8, 0.1436], [5.9, 0.134], [6, 0.125], [6.1, 0.1166], [6.2, 0.1088], [6.3, 0.1015], [6.4, 0.0947], [6.5, 0.0884], [6.6, 0.0825], [6.7, 0.0769], [6.8, 0.0718], [6.9, 0.067], [7, 0.0625]]}], "axes": {"x": [-1, 7], "y": [-1, 9], "step": 1, "labelEvery": 2}},
+          difficulty: "medium",
+          why: ["The graph falls from left to right, and it curves rather than following a straight line.", "A line would drop by the same amount each step. The drops here are 4, 2, and 1.", null, "The curve bends upward, but the y-values fall from left to right: 8, 4, 2, 1."],
         },
         {
           q: "A table shows x: 0, 1, 2, 3 with m(x): 3, 6, 12, 20. Based on the first three values (3, 6, 12), a student concludes the function is exponential with a growth factor of 2. Is this conclusion fully supported by the table?",
@@ -4694,12 +5583,15 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Assuming a table shows exponential growth just because the numbers are getting bigger, without checking whether the differences (linear) or ratios (exponential) are actually constant.",
         "Checking only one pair of consecutive values instead of at least two, which can miss a table that isn't following a clean pattern all the way through.",
         "Confusing a constant ratio less than 1 (exponential decay) with a constant negative difference (linear decrease) — both shrink the output, but through different mechanisms.",
+        "Treating any percent as exponential: 'f(x) is 40% of x' means f(x) = 0.4x, a straight line, because the percent is taken of x, not of the previous output.",
+        "Mixing up 'increases by 3 each year' (a fixed amount added: linear) with 'increases by 3% each year' (a fixed percent of the current amount: exponential).",
+        "Misjudging a graph: calling a curve linear because it falls steadily, or calling a decreasing exponential 'increasing' because it bends upward as it flattens out. Read the direction from left to right.",
       ],
     },
     {
       name: "Graph Transformations (Shifts)",
       explanation:
-        "This pattern shows the graph of a function f and asks you to identify a transformed version, like f(x) + k (vertical shift) or f(x - h) (horizontal shift). Know the shift rules directly: adding a constant OUTSIDE the function shifts it vertically — up if positive, down if negative. Adding or subtracting a constant INSIDE the function's input shifts it horizontally, and counterintuitively in the OPPOSITE direction of the sign (f(x-3) shifts right, f(x+3) shifts left). Apply the shift to a few key reference points from the original graph to see exactly where they land.",
+        "This pattern gives a function f, as a graph or an equation, and asks about a transformed version, like f(x) + k (vertical shift) or f(x - h) (horizontal shift). Know the shift rules directly: adding a constant OUTSIDE the function shifts it vertically — up if positive, down if negative. Adding or subtracting a constant INSIDE the function's input shifts it horizontally, and counterintuitively in the OPPOSITE direction of the sign (f(x-3) shifts right, f(x+3) shifts left). Apply the shift to a few key reference points to see exactly where they land. When f is given as an equation, such as a factored cubic or a quadratic in standard form, track its key points instead of expanding: find f's zeros or vertex first, then move them. g(x) = f(x + 3) moves every zero and the vertex 3 units left, so a zero at 1 becomes a zero at -2. A vertical shift works differently: f(x) - 4 lowers every output by 4, so the vertex drops 4, and each old zero of f now has output -4 and is no longer a zero.",
       examples: [
         {
           q: "The graph of f passes through the point (2, 5). If g(x) = f(x) + 3, what corresponding point lies on the graph of g?",
@@ -4738,6 +5630,15 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "f(x − 4) shifts right by 4, so x becomes 1 + 4 = 5.", "− 2 outside shifts down, so y becomes 9 − 2 = 7.", "Both shifts go the wrong way. Right 4 and down 2 gives (5, 7)."],
         },
         {
+          q: "The function f is defined by f(x) = (x - 1)(x + 2)(x - 4). The function g is defined by g(x) = f(x + 3). What is the sum of the x-intercepts of the graph of y = g(x)?",
+          choices: ["12", "-6", "3", "-12"],
+          answer: 1,
+          explain:
+            "Track the zeros instead of expanding. The zeros of f are x = 1, -2, and 4. g(x) = f(x + 3) is f shifted 3 units LEFT, so every zero moves left 3: g's zeros are -2, -5, and 1. (Check one: g(-2) = f(-2 + 3) = f(1) = 0.) Their sum is -2 + (-5) + 1 = -6. 12 shifts each zero right instead of left. 3 is the sum of f's zeros, with no shift at all. -12 reads the zeros with flipped signs (-1, 2, -4) before shifting them left.",
+          difficulty: "medium",
+          why: ["f(x + 3) shifts left, not right: each zero goes down by 3, to −2, −5, and 1.", null, "3 is the sum of f's zeros. Shifting left 3 moves each one: 3 − 9 = −6.", "The zeros of f are 1, −2, and 4 (opposite signs from the factors), then each moves left 3."],
+        },
+        {
           q: "The graph of a rational function f is shown, with a horizontal asymptote at y = 0 for x ≥ 0, starting high near x = 0 and decreasing toward that asymptote as x increases. Which best describes the graph of y = f(x) + 5, where x ≥ 0?",
           choices: [
             "It still decreases toward a horizontal asymptote, but that asymptote is now at y = 5 instead of y = 0",
@@ -4751,11 +5652,21 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "Adding 5 moves every point up, including the level the curve flattens toward. The asymptote moves to y = 5.", "A vertical shift doesn't change the shape. The curve still decreases.", "Shifting up doesn't turn a horizontal asymptote vertical. It just moves it to y = 5."],
         },
+        {
+          q: "The function f is defined by f(x) = 3x² - 24x + 50. The function g is defined by g(x) = f(x + 7). For what value of x does g(x) reach its minimum?",
+          choices: ["-3", "11", "4", "-11"],
+          answer: 0,
+          explain:
+            "First find where f reaches its minimum: the vertex of f is at x = -b/(2a) = -(-24)/(2 · 3) = 4. g(x) = f(x + 7) is f shifted 7 units LEFT, so g's vertex is at 4 - 7 = -3. (Check: g(-3) = f(-3 + 7) = f(4), f's minimum value.) 11 shifts right instead of left. 4 is where f reaches its minimum, before the shift. -11 makes a sign slip in -b/(2a), getting -4, and then shifts left.",
+          difficulty: "hard",
+          why: [null, "f(x + 7) shifts the graph left, so the vertex moves from 4 to 4 − 7 = −3.", "4 is where f has its minimum. g is f moved 7 units left.", "A sign slip: −(−24)/(2 · 3) = +4, not −4. Then 4 − 7 = −3."],
+        },
       ],
       traps: [
         "Shifting the graph in the wrong direction for a horizontal shift, since f(x-h) moves right for positive h, which feels backward compared to vertical shifts.",
         "Confusing a vertical shift (add/subtract outside the function) with a horizontal shift (add/subtract inside the function's parentheses).",
         "Applying the shift amount to only part of the graph's key features instead of every point uniformly, including asymptotes.",
+        "Assuming a vertical shift keeps the same x-intercepts: in f(x) - 4, every output drops by 4, so each old zero of f now has output -4 and is no longer an x-intercept.",
       ],
     },
     {
@@ -4821,9 +5732,9 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
     },
     {
-      name: "Finding the Vertex of a Quadratic from Standard Form",
+      name: "Finding the Vertex of a Quadratic from Standard or Factored Form",
       explanation:
-        "When a quadratic is given in standard form, f(x) = ax² + bx + c, instead of vertex form, its vertex isn't visible at a glance; you have to find it. The fastest method: the vertex's x-coordinate is always -b/2a. Substitute that back into the function to get the y-coordinate. Completing the square works too, and rewrites the function in vertex form directly, useful when the question asks for the rewritten equation itself, beyond the vertex's coordinates alone.",
+        "When a quadratic is given in standard form, f(x) = ax² + bx + c, instead of vertex form, its vertex isn't visible at a glance; you have to find it. The fastest method: the vertex's x-coordinate is always -b/2a. Substitute that back into the function to get the y-coordinate. Completing the square works too, and rewrites the function in vertex form directly, useful when the question asks for the rewritten equation itself, beyond the vertex's coordinates alone. If the quadratic is in factored form, f(x) = a(x - r)(x - s), skip the formula: the zeros r and s are visible, and since a parabola is symmetric, the vertex's x-coordinate is their midpoint, (r + s)/2. Watch the signs, since (x + 11) means a zero at -11, and substitute the midpoint back in if the question asks for the minimum or maximum value itself.",
       examples: [
         {
           q: "What is the vertex of f(x) = x² - 6x + 5?",
@@ -4862,6 +5773,15 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "This adds 25 to complete the square but doesn't subtract it back out: 21 − 25 = −4.", "x² + 10x comes from (x + 5)², not (x − 5)².", "Take half the x-coefficient: 10 ÷ 2 = 5, so it's (x + 5)², not (x + 10)²."],
         },
         {
+          q: "The function f is defined by f(x) = (x - 3)(x + 11). For what value of x does f(x) reach its minimum?",
+          choices: ["4", "-49", "-4", "-8"],
+          answer: 2,
+          explain:
+            "In factored form, the zeros are visible right away: x - 3 = 0 gives x = 3, and x + 11 = 0 gives x = -11. A parabola is symmetric, so its vertex sits exactly halfway between its zeros, at their average: x = (3 + (-11))/2 = -8/2 = -4. Since the leading coefficient is positive, the parabola opens up and the vertex is a minimum, at x = -4. 4 reads the zeros with flipped signs, -3 and 11. -49 is the minimum value, f(-4) = (-7)(7), not the x-value where it occurs. -8 adds the zeros but forgets to divide by 2.",
+          difficulty: "medium",
+          why: ["The zeros are 3 and −11 (the opposite signs from inside the factors), so the midpoint is −4, not 4.", "−49 is the minimum value, f(−4). The question asks for the x-value: −4.", null, "−8 is the sum of the zeros. The vertex is halfway between them: −8 ÷ 2 = −4."],
+        },
+        {
           q: "A ball's height in feet is modeled by h(t) = -16t² + 64t + 5, where t is time in seconds after launch. What is the maximum height the ball reaches?",
           choices: ["69 feet", "2 feet", "5 feet", "64 feet"],
           answer: 0,
@@ -4875,12 +5795,13 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Reporting the vertex's x-coordinate (-b/2a) as the answer when the question asks for the maximum or minimum value, which is actually the y-coordinate found by substituting back in.",
         "Dropping the leading coefficient a from the -b/2a formula when it isn't 1.",
         "Sign errors when substituting a negative b into -b/2a — double negatives here are a common place to lose a point.",
+        "Reading the zeros from factored form with the wrong signs — (x + 11) means x = -11 — or adding the two zeros without dividing by 2 to find the midpoint.",
       ],
     },
     {
       name: "Evaluating a Function and Interpreting Its Output in Context",
       explanation:
-        "These questions ask you to either compute a quadratic or exponential function's output at a given input, or interpret what an already-computed output means in the real-world scenario it describes. Unlike the vertex, growth-rate, or table patterns, there's no shortcut here beyond careful substitution: plug the input into the function, simplify, and follow order of operations exactly. When interpreting an output, connect the input and output variables back to what they mean in the scenario (like 'time in seconds' and 'height in feet'), and state the result using those units, not just as a bare number.",
+        "These questions ask you to either compute a quadratic or exponential function's output at a given input, or interpret what an already-computed output means in the real-world scenario it describes. Unlike the vertex, growth-rate, or table patterns, there's no shortcut here beyond careful substitution: plug the input into the function, simplify, and follow order of operations exactly. When interpreting an output, connect the input and output variables back to what they mean in the scenario (like 'time in seconds' and 'height in feet'), and state the result using those units, not just as a bare number. Some questions run the function backward: they give the output and ask for the input. Set the function equal to that value, solve (usually by factoring), and keep only the solution that fits the context; a negative time or width gets thrown out. Others give a table of values and ask which quadratic rule produced it: test each choice on every row, not just one, and use symmetry as a shortcut, since two inputs with equal outputs sit equally far from the vertex.",
       examples: [
         {
           q: "The function is defined by f(x) = 2x² - 5x + 1. What is f(3)?",
@@ -4929,6 +5850,15 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "This swaps them. The input (2) is the time and the output (10) is the height.", "The rock was dropped from h(0) = 30 meters. h(2) = 10 describes where it is at 2 seconds.", "A quadratic model doesn't fall at a constant rate. h(2) = 10 is a single moment."],
         },
         {
+          q: "A rectangular garden is 6 feet longer than it is wide. Its area, in square feet, is given by A(x) = x(x + 6), where x is the garden's width, in feet. If the area of the garden is 40 square feet, what is its width, in feet?",
+          choices: ["-10", "4", "10", "34"],
+          answer: 1,
+          explain:
+            "This runs the function backward: instead of plugging in x, set the output equal to 40 and solve for x. x(x + 6) = 40 becomes x² + 6x - 40 = 0, which factors as (x + 10)(x - 4) = 0, so x = -10 or x = 4. A width can't be negative, so keep the root that fits the context: x = 4. (Check: 4 · 10 = 40.) -10 is a solution of the equation but not a possible width. 10 flips the sign of that root, and it's actually the length, 4 + 6; a width of 10 gives an area of 10 · 16 = 160. 34 subtracts 6 from 40, treating the area as if it were x + 6.",
+          difficulty: "medium",
+          why: ["−10 solves the equation, but a width can't be negative. Keep x = 4.", null, "A width of 10 gives an area of 10(16) = 160, not 40.", "34 is 40 − 6, which treats the area as x + 6. The area is x(x + 6)."],
+        },
+        {
           q: "An object's velocity in meters per second is modeled by v(x) = 3x² - 12x + 9, where x is the number of seconds since a sensor started recording, valid only for 0 ≤ x ≤ 5. For how many values of x in this interval is the object's velocity equal to 0?",
           choices: ["2", "1", "3", "0"],
           answer: 0,
@@ -4937,11 +5867,144 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "Both roots, x = 1 and x = 3, fall in 0 ≤ x ≤ 5, so there are 2.", "A quadratic has at most two roots. Factoring gives (x − 1)(x − 3).", "Both roots, 1 and 3, are inside the interval 0 to 5."],
         },
+        {
+          q: "The table shows three values of the quadratic function f.\n\nWhich equation defines f?",
+          choices: ["f(x) = -4x + 6", "f(x) = x² - 2x + 3", "f(x) = 2x² - 4x + 4", "f(x) = 2x² + 4x + 4"],
+          answer: 2,
+          explain:
+            "Test each equation on every row, because a wrong equation can match one or two rows by luck. A shortcut narrows it first: f(-1) and f(3) are equal, so the parabola is symmetric about the x-value halfway between them, x = 1, which makes (1, 2) the vertex. f(x) = 2x² - 4x + 4 has its vertex at x = -(-4)/(2 · 2) = 1, and it fits all three rows: 2 + 4 + 4 = 10, 2 - 4 + 4 = 2, and 18 - 12 + 4 = 10. f(x) = -4x + 6 matches the first two rows but gives -6 at x = 3; it isn't even quadratic. f(x) = x² - 2x + 3 has the right vertex, (1, 2), but gives 6 at x = -1, so its a is wrong. f(x) = 2x² + 4x + 4 has its vertex at x = -1 and gives 2, not 10, at x = -1.",
+          figure: {"kind": "table", "header": ["x", "f(x)"], "rows": [[-1, 10], [1, 2], [3, 10]]},
+          difficulty: "hard",
+          why: ["This matches the first two rows, but f(3) = −4(3) + 6 = −6, not 10.", "The vertex (1, 2) is right, but f(−1) = 1 + 2 + 3 = 6, not 10.", null, "This gives f(−1) = 2 − 4 + 4 = 2, not 10. Its vertex is at x = −1, not 1."],
+        },
       ],
       traps: [
         "Substitution errors from skipping steps — especially forgetting to square the entire input, including its sign, before multiplying by other terms.",
         "Swapping which variable represents the input and which represents the output when writing an interpretation in words.",
         "Forgetting to check a solution against a stated domain restriction when a real-world scenario limits which input values actually make sense.",
+        "Choosing an equation after checking only one or two rows of a table — a wrong equation can match some rows by coincidence, so test every row (or use symmetry: equal outputs sit equally far from the vertex).",
+      ],
+    },
+    {
+      name: "Reading Key Features from a Nonlinear Graph",
+      explanation:
+        "These questions show the graph of a nonlinear function (a parabola, an exponential curve, or a cubic, often modeling something real like a drone's height over time) and ask you to read one feature off it: the y-intercept, the x-intercepts, the highest or lowest point, or an interval where the graph rises or falls. First name the feature and where it lives: the y-intercept is where the graph crosses x = 0 (the starting value in a model), the x-intercepts are where y = 0, and a maximum is the peak, whose y-value is the maximum and whose x-value is where it happens. Intervals of increase or decrease are written with x-values: trace the graph left to right and note where it turns. In context, translate back into words: for a height model, an x-intercept is the time the height is 0, when the object reaches the ground. The hardest versions run backward: the y-intercept of y = ax² + bx + c is c, and with a known, the vertex's x-value, -b/(2a), gives b. Wrong answers usually report the other coordinate, read an exponential's asymptote as its y-intercept, or give an interval where the graph is falling.",
+      examples: [
+        {
+          q: "The graph of y = f(x), where f is an exponential function, is shown in the xy-plane. The dashed line is the horizontal asymptote of the graph.\n\nWhat is the y-intercept of the graph?",
+          choices: ["(0, 2)", "(0, 6)", "(6, 0)", "(1, 4)"],
+          answer: 1,
+          explain:
+            "The y-intercept is where the graph crosses the y-axis, the vertical line x = 0. Follow the curve to x = 0: it crosses at height 6, so the y-intercept is (0, 6). (0, 2) is the dashed asymptote, the level the curve flattens toward as x grows; the curve gets close to y = 2 but never touches it, and it is nowhere near the y-axis crossing. (6, 0) swaps the coordinates: a y-intercept always has x-coordinate 0. (1, 4) is a real point on the curve, but it sits at x = 1, one unit to the right of the y-axis.",
+          figure: {"kind": "geometry", "points": {"p0": [0, 6]}, "dots": ["p0"], "paths": [{"points": [[-0.5219, 7.7433], [-0.4649, 7.5207], [-0.4078, 7.3068], [-0.3508, 7.1012], [-0.2938, 6.9035], [-0.2368, 6.7135], [-0.1798, 6.5308], [-0.1228, 6.3553], [-0.0657, 6.1865], [-0.0087, 6.0243], [0.0483, 5.8683], [0.1053, 5.7184], [0.1623, 5.5743], [0.2193, 5.4358], [0.2764, 5.3027], [0.3334, 5.1747], [0.3904, 5.0517], [0.4474, 4.9334], [0.5044, 4.8198], [0.5614, 4.7105], [0.6185, 4.6055], [0.6755, 4.5045], [0.7325, 4.4074], [0.7895, 4.3142], [0.8465, 4.2245], [0.9036, 4.1383], [0.9606, 4.0554], [1.0176, 3.9758], [1.0746, 3.8992], [1.1316, 3.8256], [1.1886, 3.7549], [1.2457, 3.6869], [1.3027, 3.6215], [1.3597, 3.5587], [1.4167, 3.4983], [1.4737, 3.4402], [1.5307, 3.3844], [1.5878, 3.3308], [1.6448, 3.2792], [1.7018, 3.2296], [1.7588, 3.182], [1.8158, 3.1362], [1.8728, 3.0921], [1.9299, 3.0498], [1.9869, 3.0091], [2.0439, 2.97], [2.1009, 2.9324], [2.1579, 2.8963], [2.2149, 2.8616], [2.272, 2.8282], [2.329, 2.7961], [2.386, 2.7653], [2.443, 2.7356], [2.5, 2.7071], [2.557, 2.6797], [2.6141, 2.6534], [2.6711, 2.628], [2.7281, 2.6037], [2.7851, 2.5803], [2.8421, 2.5578], [2.8991, 2.5362], [2.9562, 2.5154], [3.0132, 2.4955], [3.0702, 2.4763], [3.1272, 2.4578], [3.1842, 2.4401], [3.2412, 2.423], [3.2983, 2.4066], [3.3553, 2.3909], [3.4123, 2.3757], [3.4693, 2.3612], [3.5263, 2.3472], [3.5834, 2.3337], [3.6404, 2.3208], [3.6974, 2.3083], [3.7544, 2.2964], [3.8114, 2.2849], [3.8684, 2.2739], [3.9255, 2.2633], [3.9825, 2.2531], [4.0395, 2.2432], [4.0965, 2.2338], [4.1535, 2.2248], [4.2105, 2.2161], [4.2676, 2.2077], [4.3246, 2.1996], [4.3816, 2.1919], [4.4386, 2.1845], [4.4956, 2.1773], [4.5526, 2.1704], [4.6097, 2.1638], [4.6667, 2.1575], [4.7237, 2.1514], [4.7807, 2.1455], [4.8377, 2.1399], [4.8947, 2.1345], [4.9518, 2.1293], [5.0088, 2.1242], [5.0658, 2.1194], [5.1228, 2.1148], [5.1798, 2.1104], [5.2368, 2.1061], [5.2939, 2.102], [5.3509, 2.098], [5.4079, 2.0942], [5.4649, 2.0906], [5.5219, 2.0871], [5.5789, 2.0837], [5.636, 2.0804], [5.693, 2.0773], [5.75, 2.0743]], "arrows": true}, {"points": [[-2, 2], [6, 2]], "dashed": true}], "axes": {"x": [-2, 6], "y": [-1, 8], "step": 1}},
+          difficulty: "easy",
+          why: ["y = 2 is the asymptote, the level the curve flattens toward. The curve crosses x = 0 at y = 6.", null, "This swaps the coordinates. A y-intercept has x = 0, so it's (0, 6).", "(1, 4) is on the curve, but at x = 1. The y-intercept is where x = 0."],
+        },
+        {
+          q: "A drone takes off from the roof of a building and later lands on the ground. The graph of y = h(x) models the drone's height above the ground, in meters, x minutes after takeoff. The graph's x-intercept is marked.\n\nWhat is the best interpretation of the x-intercept (8, 0) in this context?",
+          choices: ["The drone is 8 meters above the ground when it takes off.", "The drone reaches its maximum height 8 minutes after takeoff.", "The drone travels 8 meters before it lands.", "The drone lands on the ground 8 minutes after takeoff."],
+          answer: 3,
+          explain:
+            "An x-intercept is a point where y = 0. Here y is the drone's height, so y = 0 means the drone is on the ground, and x = 8 is the time, in minutes, when that happens: the drone lands 8 minutes after takeoff. The first choice treats 8 as a height, which is what a y-intercept would give; the graph actually starts at (0, 4), a 4-meter roof. The second choice describes the peak of the graph, which is near x = 3, not the point where the graph meets the x-axis. The third choice treats x as a distance, but x counts minutes.",
+          figure: {"kind": "geometry", "points": {"p0": [8, 0]}, "dots": ["p0"], "paths": [{"points": [[0, 4], [0.0727, 4.1078], [0.1455, 4.2129], [0.2182, 4.3154], [0.2909, 4.4152], [0.3636, 4.5124], [0.4364, 4.6069], [0.5091, 4.6988], [0.5818, 4.7881], [0.6545, 4.8747], [0.7273, 4.9587], [0.8, 5.04], [0.8727, 5.1187], [0.9455, 5.1947], [1.0182, 5.2681], [1.0909, 5.3388], [1.1636, 5.4069], [1.2364, 5.4724], [1.3091, 5.5352], [1.3818, 5.5954], [1.4545, 5.6529], [1.5273, 5.7078], [1.6, 5.76], [1.6727, 5.8096], [1.7455, 5.8565], [1.8182, 5.9008], [1.8909, 5.9425], [1.9636, 5.9815], [2.0364, 6.0179], [2.1091, 6.0516], [2.1818, 6.0826], [2.2545, 6.1111], [2.3273, 6.1369], [2.4, 6.16], [2.4727, 6.1805], [2.5455, 6.1983], [2.6182, 6.2136], [2.6909, 6.2261], [2.7636, 6.236], [2.8364, 6.2433], [2.9091, 6.2479], [2.9818, 6.2499], [3.0545, 6.2493], [3.1273, 6.246], [3.2, 6.24], [3.2727, 6.2314], [3.3455, 6.2202], [3.4182, 6.2063], [3.4909, 6.1898], [3.5636, 6.1706], [3.6364, 6.1488], [3.7091, 6.1243], [3.7818, 6.0972], [3.8545, 6.0674], [3.9273, 6.035], [4, 6], [4.0727, 5.9623], [4.1455, 5.922], [4.2182, 5.879], [4.2909, 5.8334], [4.3636, 5.7851], [4.4364, 5.7342], [4.5091, 5.6807], [4.5818, 5.6245], [4.6545, 5.5656], [4.7273, 5.5041], [4.8, 5.44], [4.8727, 5.3732], [4.9455, 5.3038], [5.0182, 5.2317], [5.0909, 5.157], [5.1636, 5.0797], [5.2364, 4.9997], [5.3091, 4.917], [5.3818, 4.8317], [5.4545, 4.7438], [5.5273, 4.6532], [5.6, 4.56], [5.6727, 4.4641], [5.7455, 4.3656], [5.8182, 4.2645], [5.8909, 4.1607], [5.9636, 4.0542], [6.0364, 3.9451], [6.1091, 3.8334], [6.1818, 3.719], [6.2545, 3.602], [6.3273, 3.4823], [6.4, 3.36], [6.4727, 3.235], [6.5455, 3.1074], [6.6182, 2.9772], [6.6909, 2.8443], [6.7636, 2.7088], [6.8364, 2.5706], [6.9091, 2.4298], [6.9818, 2.2863], [7.0545, 2.1402], [7.1273, 1.9914], [7.2, 1.84], [7.2727, 1.686], [7.3455, 1.5293], [7.4182, 1.3699], [7.4909, 1.2079], [7.5636, 1.0433], [7.6364, 0.876], [7.7091, 0.7061], [7.7818, 0.5336], [7.8545, 0.3583], [7.9273, 0.1805], [8, 0]]}], "axes": {"x": [-1, 9], "y": [-1, 7], "step": 1}},
+          difficulty: "easy",
+          why: ["That reads 8 as a height. The x-intercept's 8 is a time, and its height is 0.", "The highest point is near x = 3. At x = 8 the height is 0: the drone is on the ground.", "x is time in minutes, not distance in meters.", null],
+        },
+        {
+          q: "A toy rocket is launched from a platform. The graph of y = r(x) models the rocket's height above the ground, in meters, x seconds after launch, until it lands at x = 5.\n\nOn which interval is the rocket's height increasing?",
+          choices: ["0 < x < 2", "2 < x < 5", "0 < x < 4.5", "2.5 < x < 4.5"],
+          answer: 0,
+          explain:
+            "A function is increasing where its graph rises as you move to the right, and the interval is written with x-values (here, times). The curve rises from the launch at x = 0 up to its peak at x = 2, then falls until it lands at x = 5, so the height increases on 0 < x < 2. 2 < x < 5 is the part after the peak, where the rocket is coming down. 0 < x < 4.5 uses the maximum height, 4.5, as if it were a time. 2.5 < x < 4.5 runs from the starting height to the maximum height: those are y-values, not the x-values an interval needs.",
+          figure: {"kind": "geometry", "points": {"p0": [2, 4.5]}, "dots": ["p0"], "paths": [{"points": [[0, 2.5], [0.0455, 2.5899], [0.0909, 2.6777], [0.1364, 2.7634], [0.1818, 2.8471], [0.2273, 2.9287], [0.2727, 3.0083], [0.3182, 3.0857], [0.3636, 3.1612], [0.4091, 3.2345], [0.4545, 3.3058], [0.5, 3.375], [0.5455, 3.4421], [0.5909, 3.5072], [0.6364, 3.5702], [0.6818, 3.6312], [0.7273, 3.6901], [0.7727, 3.7469], [0.8182, 3.8017], [0.8636, 3.8543], [0.9091, 3.905], [0.9545, 3.9535], [1, 4], [1.0455, 4.0444], [1.0909, 4.0868], [1.1364, 4.1271], [1.1818, 4.1653], [1.2273, 4.2014], [1.2727, 4.2355], [1.3182, 4.2676], [1.3636, 4.2975], [1.4091, 4.3254], [1.4545, 4.3512], [1.5, 4.375], [1.5455, 4.3967], [1.5909, 4.4163], [1.6364, 4.4339], [1.6818, 4.4494], [1.7273, 4.4628], [1.7727, 4.4742], [1.8182, 4.4835], [1.8636, 4.4907], [1.9091, 4.4959], [1.9545, 4.499], [2, 4.5], [2.0455, 4.499], [2.0909, 4.4959], [2.1364, 4.4907], [2.1818, 4.4835], [2.2273, 4.4742], [2.2727, 4.4628], [2.3182, 4.4494], [2.3636, 4.4339], [2.4091, 4.4163], [2.4545, 4.3967], [2.5, 4.375], [2.5455, 4.3512], [2.5909, 4.3254], [2.6364, 4.2975], [2.6818, 4.2676], [2.7273, 4.2355], [2.7727, 4.2014], [2.8182, 4.1653], [2.8636, 4.1271], [2.9091, 4.0868], [2.9545, 4.0444], [3, 4], [3.0455, 3.9535], [3.0909, 3.905], [3.1364, 3.8543], [3.1818, 3.8017], [3.2273, 3.7469], [3.2727, 3.6901], [3.3182, 3.6312], [3.3636, 3.5702], [3.4091, 3.5072], [3.4545, 3.4421], [3.5, 3.375], [3.5455, 3.3058], [3.5909, 3.2345], [3.6364, 3.1612], [3.6818, 3.0857], [3.7273, 3.0083], [3.7727, 2.9287], [3.8182, 2.8471], [3.8636, 2.7634], [3.9091, 2.6777], [3.9545, 2.5899], [4, 2.5], [4.0455, 2.4081], [4.0909, 2.314], [4.1364, 2.218], [4.1818, 2.1198], [4.2273, 2.0196], [4.2727, 1.9174], [4.3182, 1.813], [4.3636, 1.7066], [4.4091, 1.5981], [4.4545, 1.4876], [4.5, 1.375], [4.5455, 1.2603], [4.5909, 1.1436], [4.6364, 1.0248], [4.6818, 0.9039], [4.7273, 0.781], [4.7727, 0.656], [4.8182, 0.5289], [4.8636, 0.3998], [4.9091, 0.2686], [4.9545, 0.1353], [5, 0]]}], "axes": {"x": [-1, 6], "y": [-1, 6], "step": 1}},
+          difficulty: "medium",
+          why: [null, "After the peak at x = 2, the graph falls. That's where the height is decreasing.", "4.5 is the maximum height, a y-value. The peak happens at x = 2.", "2.5 and 4.5 are heights (y-values). The interval should list times: 0 < x < 2."],
+        },
+        {
+          q: "The graph of the polynomial function y = f(x) is shown in the xy-plane. The points where the graph crosses the axes are marked.\n\nWhich of the following statements about f is true?",
+          choices: ["The graph of y = f(x) has exactly two x-intercepts.", "f is increasing for all x between -2 and 1.", "f(x) < 0 for all x > 1.", "The y-intercept of the graph is (0, 3)."],
+          answer: 3,
+          explain:
+            "Check each statement against the graph, one feature at a time. The graph crosses the y-axis at (0, 3), so the last statement is true. The graph meets the x-axis at three marked points, x = -2, 1, and 3, so it has three x-intercepts, not two. Between x = -2 and x = 1 the graph rises to a peak just left of the y-axis and then falls, so f is not increasing on that whole interval; it is increasing only up to the peak. And f(x) is negative only between x = 1 and x = 3: to the right of x = 3 the graph climbs back above the x-axis, so f(x) < 0 fails for x > 3.",
+          figure: {"kind": "geometry", "points": {"p0": [-2, 0], "p1": [1, 0], "p2": [3, 0], "p3": [0, 3]}, "dots": ["p0", "p1", "p2", "p3"], "paths": [{"points": [[-2.407, -3.7488], [-2.3521, -3.158], [-2.2971, -2.5946], [-2.2422, -2.058], [-2.1872, -1.5478], [-2.1323, -1.0634], [-2.0774, -0.6043], [-2.0224, -0.1701], [-1.9675, 0.2397], [-1.9125, 0.6257], [-1.8576, 0.9884], [-1.8027, 1.3282], [-1.7477, 1.6456], [-1.6928, 1.9412], [-1.6378, 2.2154], [-1.5829, 2.4687], [-1.5279, 2.7017], [-1.473, 2.9147], [-1.4181, 3.1085], [-1.3631, 3.2833], [-1.3082, 3.4397], [-1.2532, 3.5783], [-1.1983, 3.6995], [-1.1434, 3.8038], [-1.0884, 3.8917], [-1.0335, 3.9637], [-0.9785, 4.0203], [-0.9236, 4.062], [-0.8687, 4.0893], [-0.8137, 4.1028], [-0.7588, 4.1028], [-0.7038, 4.0899], [-0.6489, 4.0646], [-0.594, 4.0273], [-0.539, 3.9787], [-0.4841, 3.9191], [-0.4291, 3.8492], [-0.3742, 3.7693], [-0.3192, 3.6799], [-0.2643, 3.5817], [-0.2094, 3.475], [-0.1544, 3.3604], [-0.0995, 3.2383], [-0.0445, 3.1093], [0.0104, 2.9739], [0.0653, 2.8325], [0.1203, 2.6857], [0.1752, 2.5339], [0.2302, 2.3777], [0.2851, 2.2175], [0.34, 2.0539], [0.395, 1.8873], [0.4499, 1.7183], [0.5049, 1.5473], [0.5598, 1.3748], [0.6147, 1.2014], [0.6697, 1.0275], [0.7246, 0.8536], [0.7796, 0.6802], [0.8345, 0.5079], [0.8895, 0.3371], [0.9444, 0.1683], [0.9993, 0.002], [1.0543, -0.1613], [1.1092, -0.321], [1.1642, -0.4768], [1.2191, -0.628], [1.274, -0.7743], [1.329, -0.915], [1.3839, -1.0498], [1.4389, -1.178], [1.4938, -1.2993], [1.5487, -1.4131], [1.6037, -1.5188], [1.6586, -1.6161], [1.7136, -1.7044], [1.7685, -1.7833], [1.8234, -1.8521], [1.8784, -1.9105], [1.9333, -1.9579], [1.9883, -1.9939], [2.0432, -2.0178], [2.0982, -2.0293], [2.1531, -2.0279], [2.208, -2.013], [2.263, -1.9841], [2.3179, -1.9407], [2.3729, -1.8825], [2.4278, -1.8087], [2.4827, -1.719], [2.5377, -1.6129], [2.5926, -1.4898], [2.6476, -1.3493], [2.7025, -1.1909], [2.7574, -1.014], [2.8124, -0.8182], [2.8673, -0.6029], [2.9223, -0.3677], [2.9772, -0.1121], [3.0322, 0.1644], [3.0871, 0.4623], [3.142, 0.7822], [3.197, 1.1245], [3.2519, 1.4897], [3.3069, 1.8783], [3.3618, 2.2908], [3.4167, 2.7277], [3.4717, 3.1895], [3.5266, 3.6768], [3.5816, 4.1899], [3.6365, 4.7294]], "arrows": true}], "axes": {"x": [-4, 5], "y": [-4, 5], "step": 1}},
+          difficulty: "medium",
+          why: ["The graph crosses the x-axis at three points: x = −2, 1, and 3.", "The graph rises to a peak just left of x = 0, then falls. It isn't increasing on the whole interval.", "Past x = 3 the graph is back above the x-axis, so f(x) is positive there.", null],
+        },
+        {
+          q: "The graph of y = (1/2)x² + bx + c, where b and c are constants, is shown in the xy-plane. The vertex and the y-intercept are marked.\n\nWhat is the value of bc?",
+          choices: ["-6", "10", "12", "6"],
+          answer: 3,
+          explain:
+            "Work backward from two features. The y-intercept is the value at x = 0, and plugging in x = 0 leaves just c, so c = -3 from the marked point (0, -3). The vertex is at x = 2, and the vertex of ax² + bx + c is at x = -b/(2a). With a = 1/2, that's -b/(2 · 1/2) = -b, so -b = 2 and b = -2. Then bc = (-2)(-3) = 6. -6 gets the sign of b wrong (b = 2). 10 uses the vertex's y-value, -5, as c; c is the y-intercept, not the minimum. 12 drops a from the formula, solving -b/2 = 2 to get b = -4.",
+          figure: {"kind": "geometry", "points": {"p0": [2, -5], "p1": [0, -3]}, "dots": ["p0", "p1"], "paths": [{"points": [[-2.1824, 3.7461], [-2.1063, 3.431], [-2.0303, 3.1216], [-1.9542, 2.818], [-1.8782, 2.5202], [-1.8022, 2.2282], [-1.7261, 1.942], [-1.6501, 1.6615], [-1.574, 1.3868], [-1.498, 1.118], [-1.4219, 0.8548], [-1.3459, 0.5975], [-1.2699, 0.346], [-1.1938, 0.1002], [-1.1178, -0.1398], [-1.0417, -0.3739], [-0.9657, -0.6024], [-0.8896, -0.825], [-0.8136, -1.0418], [-0.7376, -1.2529], [-0.6615, -1.4582], [-0.5855, -1.6577], [-0.5094, -1.8514], [-0.4334, -2.0393], [-0.3573, -2.2215], [-0.2813, -2.3978], [-0.2053, -2.5684], [-0.1292, -2.7332], [-0.0532, -2.8923], [0.0229, -3.0455], [0.0989, -3.1929], [0.175, -3.3346], [0.251, -3.4705], [0.3271, -3.6006], [0.4031, -3.7249], [0.4791, -3.8435], [0.5552, -3.9562], [0.6312, -4.0632], [0.7073, -4.1644], [0.7833, -4.2598], [0.8594, -4.3495], [0.9354, -4.4333], [1.0114, -4.5114], [1.0875, -4.5837], [1.1635, -4.6502], [1.2396, -4.7109], [1.3156, -4.7658], [1.3917, -4.815], [1.4677, -4.8583], [1.5437, -4.8959], [1.6198, -4.9277], [1.6958, -4.9537], [1.7719, -4.974], [1.8479, -4.9884], [1.924, -4.9971], [2, -5], [2.076, -4.9971], [2.1521, -4.9884], [2.2281, -4.974], [2.3042, -4.9537], [2.3802, -4.9277], [2.4563, -4.8959], [2.5323, -4.8583], [2.6083, -4.815], [2.6844, -4.7658], [2.7604, -4.7109], [2.8365, -4.6502], [2.9125, -4.5837], [2.9886, -4.5114], [3.0646, -4.4333], [3.1406, -4.3495], [3.2167, -4.2598], [3.2927, -4.1644], [3.3688, -4.0632], [3.4448, -3.9562], [3.5209, -3.8435], [3.5969, -3.7249], [3.673, -3.6006], [3.749, -3.4705], [3.825, -3.3346], [3.9011, -3.1929], [3.9771, -3.0455], [4.0532, -2.8923], [4.1292, -2.7332], [4.2053, -2.5684], [4.2813, -2.3978], [4.3573, -2.2215], [4.4334, -2.0393], [4.5094, -1.8514], [4.5855, -1.6577], [4.6615, -1.4582], [4.7376, -1.2529], [4.8136, -1.0418], [4.8896, -0.825], [4.9657, -0.6024], [5.0417, -0.3739], [5.1178, -0.1398], [5.1938, 0.1002], [5.2699, 0.346], [5.3459, 0.5975], [5.4219, 0.8548], [5.498, 1.118], [5.574, 1.3868], [5.6501, 1.6615], [5.7261, 1.942], [5.8022, 2.2282], [5.8782, 2.5202], [5.9542, 2.818], [6.0303, 3.1216], [6.1063, 3.431], [6.1824, 3.7461]], "arrows": true}], "axes": {"x": [-3, 7], "y": [-6, 4], "step": 1}},
+          difficulty: "hard",
+          why: ["Check the sign of b: −b/(2 · 1/2) = 2 gives −b = 2, so b = −2, not 2.", "c is the y-intercept, −3. The vertex's y-value, −5, is the minimum, not c.", "This drops a from −b/(2a). With a = 1/2, the denominator is 1, so b = −2.", null],
+        },
+      ],
+      traps: [
+        "Reporting the wrong coordinate or the wrong feature — giving the time of the maximum instead of the maximum value, or treating the y-intercept (the starting value) as the point where the height reaches 0 (an x-intercept).",
+        "Reading the horizontal asymptote, the level an exponential curve flattens toward, as the y-intercept, which is where the curve actually crosses x = 0.",
+        "Choosing an interval where the graph falls instead of rises, or writing an increasing interval with y-values instead of the x-values it runs between.",
+        "Slipping when working backward to a coefficient: from the vertex at x = -b/(2a), b = -2a·(vertex x), so dropping a or losing a negative sign gives the wrong b.",
+      ],
+    },
+    {
+      name: "Zeros, Factors, and x-Intercepts of Polynomials",
+      explanation:
+        "These questions connect three views of one fact: if p(a) = 0, then a is a zero of p, the graph of p meets the x-axis at (a, 0), and (x - a) is a factor of p(x). So x-intercepts at 3 and -2 mean (x - 3) and (x + 2) are factors; the sign in the factor is always the opposite of the zero. Going the other way, set each factor of a factored polynomial equal to 0 (the zero product property): 2x + 3 = 0 gives x = -3/2, and a repeated factor like (x - 1)² gives just one zero, where the graph touches the axis without crossing. To build a quadratic from its zeros, write a(x - r)(x - s) with the given leading coefficient and expand. To count distinct real solutions, list the different real values: x² = -4 has none, x³ = 8 has one, and x^4 = 16 has two (2 and -2). When the input is shifted, as in p(k - 2) = 0, set k - 2 equal to each zero and solve for k. Wrong answers usually flip a sign between a zero and its factor, count a repeated or non-real solution, or shift the wrong way.",
+      examples: [
+        {
+          q: "The graph of the polynomial function y = p(x) is shown in the xy-plane. The graph crosses the x-axis only at the marked points.\n\nWhich of the following must be a factor of p(x)?",
+          choices: ["x + 2", "x - 2", "x + 1", "x + 4"],
+          answer: 0,
+          explain:
+            "Each x-intercept of a polynomial's graph is a zero, and every zero gives a factor: if p(a) = 0, then (x - a) is a factor of p(x). The graph crosses the x-axis at x = -2, 1, and 4, so the factors are (x - (-2)) = (x + 2), (x - 1), and (x - 4). Only x + 2 is among the choices. x - 2 flips the sign of the zero at -2: it would mean a zero at x = 2, where the graph doesn't touch the axis. x + 1 flips the sign of the zero at 1, and x + 4 flips the sign of the zero at 4; the correct factors for those are x - 1 and x - 4.",
+          figure: {"kind": "geometry", "points": {"p0": [-2, 0], "p1": [1, 0], "p2": [4, 0]}, "dots": ["p0", "p1", "p2"], "paths": [{"points": [[-2.6244, -3.7477], [-2.5585, -3.2585], [-2.4926, -2.7924], [-2.4267, -2.3491], [-2.3608, -1.9281], [-2.2949, -1.5291], [-2.229, -1.1514], [-2.1631, -0.7948], [-2.0972, -0.4589], [-2.0313, -0.143], [-1.9654, 0.153], [-1.8995, 0.4298], [-1.8336, 0.6876], [-1.7677, 0.9271], [-1.7018, 1.1484], [-1.6359, 1.3522], [-1.57, 1.5388], [-1.5041, 1.7087], [-1.4382, 1.8623], [-1.3723, 1.9999], [-1.3064, 2.1222], [-1.2405, 2.2294], [-1.1746, 2.322], [-1.1087, 2.4004], [-1.0428, 2.4651], [-0.9769, 2.5165], [-0.911, 2.555], [-0.8451, 2.5811], [-0.7792, 2.5952], [-0.7133, 2.5976], [-0.6474, 2.5889], [-0.5815, 2.5695], [-0.5156, 2.5398], [-0.4498, 2.5002], [-0.3839, 2.4511], [-0.318, 2.3931], [-0.2521, 2.3264], [-0.1862, 2.2516], [-0.1203, 2.1691], [-0.0544, 2.0793], [0.0115, 1.9826], [0.0774, 1.8795], [0.1433, 1.7703], [0.2092, 1.6556], [0.2751, 1.5357], [0.341, 1.4112], [0.4069, 1.2823], [0.4728, 1.1495], [0.5387, 1.0134], [0.6046, 0.8742], [0.6705, 0.7324], [0.7364, 0.5885], [0.8023, 0.4429], [0.8682, 0.296], [0.9341, 0.1482], [1, 0], [1.0659, -0.1482], [1.1318, -0.296], [1.1977, -0.4429], [1.2636, -0.5885], [1.3295, -0.7324], [1.3954, -0.8742], [1.4613, -1.0134], [1.5272, -1.1495], [1.5931, -1.2823], [1.659, -1.4112], [1.7249, -1.5357], [1.7908, -1.6556], [1.8567, -1.7703], [1.9226, -1.8795], [1.9885, -1.9826], [2.0544, -2.0793], [2.1203, -2.1691], [2.1862, -2.2516], [2.2521, -2.3264], [2.318, -2.3931], [2.3839, -2.4511], [2.4497, -2.5002], [2.5156, -2.5398], [2.5815, -2.5695], [2.6474, -2.5889], [2.7133, -2.5976], [2.7792, -2.5952], [2.8451, -2.5811], [2.911, -2.555], [2.9769, -2.5165], [3.0428, -2.4651], [3.1087, -2.4004], [3.1746, -2.322], [3.2405, -2.2294], [3.3064, -2.1222], [3.3723, -1.9999], [3.4382, -1.8623], [3.5041, -1.7087], [3.57, -1.5388], [3.6359, -1.3522], [3.7018, -1.1484], [3.7677, -0.9271], [3.8336, -0.6876], [3.8995, -0.4298], [3.9654, -0.153], [4.0313, 0.143], [4.0972, 0.4589], [4.1631, 0.7948], [4.229, 1.1514], [4.2949, 1.5291], [4.3608, 1.9281], [4.4267, 2.3491], [4.4926, 2.7924], [4.5585, 3.2585], [4.6244, 3.7477]], "arrows": true}], "axes": {"x": [-3, 5], "y": [-4, 4], "step": 1}},
+          difficulty: "easy",
+          why: [null, "x − 2 would mean a zero at x = +2. The intercept is at −2, which gives x + 2.", "The zero at x = 1 gives the factor x − 1, not x + 1.", "The zero at x = 4 gives the factor x − 4, not x + 4."],
+        },
+        {
+          q: "The function f is defined by f(x) = (x - 4)(2x + 3)(x + 1). Which of the following is an x-intercept of the graph of y = f(x) in the xy-plane?",
+          choices: ["(3/2, 0)", "(1, 0)", "(-3/2, 0)", "(-3, 0)"],
+          answer: 2,
+          explain:
+            "An x-intercept is where f(x) = 0, and a product is 0 only when one of its factors is 0 (the zero product property). Set each factor equal to 0: x - 4 = 0 gives x = 4; 2x + 3 = 0 gives 2x = -3, so x = -3/2; and x + 1 = 0 gives x = -1. So (-3/2, 0) is an x-intercept. (3/2, 0) solves 2x - 3 = 0, flipping the sign. (1, 0) flips the sign of the zero from x + 1, which is x = -1. (-3, 0) stops at 2x = -3 without dividing by 2.",
+          difficulty: "easy",
+          why: ["2x + 3 = 0 gives x = −3/2. The sign is negative.", "x + 1 = 0 gives x = −1, not 1.", null, "2x + 3 = 0 gives 2x = −3; divide by 2 to get x = −3/2."],
+        },
+        {
+          q: "How many distinct real solutions does the equation (x - 3)²(x² - 9)(x² + 4) = 0 have?",
+          choices: ["3", "4", "6", "2"],
+          answer: 3,
+          explain:
+            "Set each factor equal to 0 and collect the different real values of x. (x - 3)² = 0 gives x = 3. x² - 9 = 0 gives x² = 9, so x = 3 or x = -3. x² + 4 = 0 gives x² = -4, and no real number squared is negative, so this factor adds nothing. The distinct real solutions are 3 and -3: two in all. 3 counts x = 3 twice, once from each factor that produces it. 4 treats x² = -4 as if it gave x = 2 and x = -2; it gives no real solutions (2² is 4, not -4). 6 is the degree of the polynomial, which counts every solution with repeats and non-real ones included.",
+          difficulty: "medium",
+          why: ["x = 3 comes from two factors, but it's one solution. The distinct real solutions are 3 and −3.", "x² = −4 has no real solutions: 2² is 4, not −4.", "6 is the degree. It counts x = 3 more than once and includes the non-real solutions of x² = −4.", null],
+        },
+        {
+          q: "The function f(x) = ax² + bx + c, where a, b, and c are constants, has zeros at x = -1 and x = 5, and a = 2. What is the value of b + c?",
+          choices: ["-2", "-18", "-9", "2"],
+          answer: 1,
+          explain:
+            "Zeros at -1 and 5 mean (x + 1) and (x - 5) are factors, and the leading coefficient 2 multiplies the whole product: f(x) = 2(x + 1)(x - 5). Expanding, (x + 1)(x - 5) = x² - 4x - 5, so f(x) = 2x² - 8x - 10. Then b = -8 and c = -10, and b + c = -18. -2 comes from the factors (x - 1)(x + 5), which flip both zeros' signs: 2(x² + 4x - 5) gives b + c = 8 - 10. -9 forgets to multiply by a = 2, using x² - 4x - 5. 2 slips the sign of the constant: -8 + 10.",
+          difficulty: "medium",
+          why: ["These factors, (x − 1)(x + 5), give zeros at 1 and −5. A zero at −1 means x + 1.", null, "This forgets a = 2. Multiply every term: 2x² − 8x − 10.", "The constant is 2(1)(−5) = −10, so b + c = −8 + (−10) = −18."],
+        },
+        {
+          q: "The function p is defined by p(x) = (x + 4)(x - 1)(x - 6). If p(k - 2) = 0, what is the sum of all possible values of k?",
+          choices: ["9", "3", "-3", "-9"],
+          answer: 0,
+          explain:
+            "p equals 0 only at its zeros, x = -4, 1, and 6. So p(k - 2) = 0 means the input k - 2 must be one of those zeros: k - 2 = -4, k - 2 = 1, or k - 2 = 6. Adding 2 to each gives k = -2, 3, or 8, and the sum is -2 + 3 + 8 = 9. (Each k is exactly 2 more than a zero, so the sum is 3 + 3 · 2.) 3 is the sum of the zeros themselves, forgetting that the input is k - 2, not k. -3 subtracts 2 from each zero instead of adding it. -9 also flips the zeros' signs, reading (x + 4) as a zero at 4.",
+          difficulty: "hard",
+          why: [null, "3 is the sum of p's zeros. Here k − 2 is the zero, so each k is 2 more.", "If k − 2 = −4, then k = −2: add 2 to each zero, don't subtract.", "The zeros are −4, 1, and 6 (opposite signs from the factors), and each k is 2 more than a zero."],
+        },
+      ],
+      traps: [
+        "Flipping the sign between a zero and its factor — an x-intercept at 3 gives the factor (x - 3), and the factor (x + 4) gives the zero x = -4.",
+        "Miscounting solutions: counting a repeated value like x = 3 more than once, treating x² = -4 as if it had real solutions, or missing one, such as the zero x = 0 from a factor of x or the negative solution of x^4 = 16.",
+        "Stopping one step early on a factor with a coefficient: 2x + 3 = 0 gives x = -3/2, not -3.",
+        "Shifting in the wrong direction when the input is changed: if p(k - 2) = 0, then k - 2 is a zero of p, so k is 2 more than that zero, not 2 less.",
       ],
     },
   ],
@@ -4957,7 +6020,7 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Setting Up Proportions Correctly",
       explanation:
-        "The most reliable trick for ratio and rate word problems: set up two fractions with matching units in matching positions (both numerators are the same kind of quantity, both denominators are the same kind of quantity) then cross-multiply. Errors here almost always come from a mismatched setup, not from the arithmetic itself.",
+        "The most reliable trick for ratio and rate word problems: set up two fractions with matching units in matching positions (both numerators are the same kind of quantity, both denominators are the same kind of quantity) then cross-multiply. Errors here almost always come from a mismatched setup, not from the arithmetic itself. Some questions need only one division: a unit rate such as population density (people per square mile) or density (grams per cubic centimeter). Let the units tell you the direction: 'people per square mile' means people ÷ square miles. To work backward from a rate, multiply the rate by the amount (people = density × area) or divide by the rate (area = people ÷ density).",
       examples: [
         {
           q: "A recipe uses 2 cups of flour for 12 cookies. How many cups are needed for 30 cookies?",
@@ -4996,6 +6059,15 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "0.75 is the sugar for 18 cookies. 30 cookies need more.", "Check it: 1.8 cups for 30 cookies is 0.06 cups each, but the recipe uses 0.75 ÷ 18, about 0.042 cups each.", "22.5 is 18x. Divide by 18 to get 1.25."],
         },
         {
+          q: "In 2020, Marlow County had a population of 52,650 and a land area of 390 square miles. Neighboring Pell County had a population of 61,200 and a land area of 510 square miles. How many more people per square mile lived in Marlow County than in Pell County?",
+          choices: ["8,550", "15", "71.25", "120"],
+          answer: 1,
+          explain:
+            "Population density is people per square mile, so divide each county's population by its own area. Marlow: 52,650 ÷ 390 = 135. Pell: 61,200 ÷ 510 = 120. Marlow has 135 − 120 = 15 more people per square mile, even though Pell has more people. 8,550 compares total populations and ignores area. 71.25 divides the difference in population by the difference in area, which isn't either county's density. 120 is Pell County's density alone.",
+          difficulty: "medium",
+          why: ["8,550 is the difference in total population. Density divides each population by its own area first.", null, "71.25 divides the population difference by the area difference. Find each density on its own: 135 and 120.", "120 is Pell County's density. Marlow's is 52,650 ÷ 390 = 135, so the difference is 15."],
+        },
+        {
           q: "A factory's 5 machines produce 600 units in 4 hours. If 2 of the machines break down, how many units will the remaining machines produce in 6 hours, assuming each machine works at the same constant rate?",
           choices: ["540", "900", "360", "450"],
           answer: 0,
@@ -5008,12 +6080,13 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       traps: [
         "Setting up the proportion with mismatched units (e.g., cups over cookies on one side, cookies over cups on the other).",
         "Cross-multiplying correctly but from an incorrectly set-up proportion, producing a confidently wrong answer.",
+        "Dividing a unit rate the wrong way (square miles per person instead of people per square mile), or multiplying when the rate calls for division; the units in the question tell you which quantity goes on top.",
       ],
     },
     {
       name: "Unit Conversion Chains",
       explanation:
-        "This pattern requires converting between units (like miles to feet, or hours to seconds), before or after a rate calculation. The safest method: write out a chain of conversion factors, each one arranged so the unwanted unit cancels out (appearing once on top, once on bottom). That's more reliable than trying to remember whether to multiply or divide by the conversion number.",
+        "This pattern requires converting between units (like miles to feet, or hours to seconds), before or after a rate calculation. The safest method: write out a chain of conversion factors, each one arranged so the unwanted unit cancels out (appearing once on top, once on bottom). That's more reliable than trying to remember whether to multiply or divide by the conversion number. Areas and volumes need the factor more than once: because 1 yard = 3 feet, 1 square yard = 3 × 3 = 9 square feet and 1 cubic yard = 3 × 3 × 3 = 27 cubic feet. So square the length conversion for square units, cube it for cubic units, and put every length in the same unit before multiplying dimensions together.",
       examples: [
         {
           q: "A car travels at 60 miles per hour. What is this speed in feet per minute? (1 mile = 5,280 feet)",
@@ -5060,10 +6133,20 @@ const LC_M_RATIOS_RATES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "8 is meters per second, not miles per hour.", "29 is about kilometers per hour (28,800 ÷ 1,000). A mile is 1,609 meters.", "The speed is 28,800 meters per hour. Divide by 1,609 to get about 18 miles per hour."],
         },
+        {
+          q: "A landscaper will spread mulch 4 inches deep over a rectangular yard that is 30 feet long and 18 feet wide. Mulch is sold by the cubic yard. To the nearest tenth, how many cubic yards of mulch are needed? (1 yard = 3 feet, 1 foot = 12 inches)",
+          choices: ["80", "6.7", "20", "60"],
+          answer: 1,
+          explain:
+            "Put every length in feet first: 4 inches is 4 ÷ 12 = 1/3 foot, so the mulch fills 30 × 18 × 1/3 = 180 cubic feet. A cubic yard is 3 × 3 × 3 = 27 cubic feet, because the 3-feet-per-yard factor applies once for each of the three dimensions. So 180 ÷ 27 ≈ 6.7 cubic yards. 80 uses 4 feet as the depth instead of 4 inches (30 × 18 × 4 = 2,160, and 2,160 ÷ 27 = 80). 20 divides 180 by 9, the factor for square yards, and 60 divides by 3, the factor for plain yards of length.",
+          difficulty: "hard",
+          why: ["80 treats the 4-inch depth as 4 feet. Convert first: 4 inches = 1/3 foot.", null, "20 divides by 9, the conversion for square yards. Volume needs cubic yards: 3 × 3 × 3 = 27 cubic feet each.", "60 divides by 3, the conversion for yards of length. A cubic yard is 27 cubic feet."],
+        },
       ],
       traps: [
         "Multiplying by a conversion factor upside-down (e.g., using feet/mile when you needed mile/feet to cancel the existing units).",
         "Losing track of units partway through a multi-step conversion and guessing whether to multiply or divide at the end.",
+        "Using the plain length conversion for an area or volume (dividing square feet by 3 to get square yards) instead of squaring it for area or cubing it for volume.",
       ],
     },
     {
@@ -5136,7 +6219,7 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Straightforward Percent Change and Discount Problems",
       explanation:
-        "Basic percentage problems (discounts, tax, tips, simple percent change) all follow the same formula: percent change = (new - old)/old × 100. For direct calculations, like 'find the sale price,' it's often faster to think in multipliers: a 25% discount means the customer pays 75% of the original price. Just multiply by 0.75 directly, instead of calculating the discount amount and subtracting it.",
+        "Basic percentage problems (discounts, tax, tips, simple percent change) all follow the same formula: percent change = (new - old)/old × 100. For direct calculations, like 'find the sale price,' it's often faster to think in multipliers: a 25% discount means the customer pays 75% of the original price, so just multiply by 0.75 instead of calculating the discount amount and subtracting it. To reverse a change and find the original, divide by the multiplier: if a jacket costs $64 after a 20% discount, the original price was 64 ÷ 0.80 = $80. Adding 20% of $64 back on doesn't work, because the 20% was taken from the original price, not from $64. For a chain of percent relations ('the sale price is 15% less than the regular price, which is 40% more than the cost'), write each one as a multiplier on the quantity it refers to (sale = 0.85 × regular, regular = 1.40 × cost), then divide back through the chain one step at a time.",
       examples: [
         {
           q: "A shirt originally $40 is discounted 25%. What is the sale price?",
@@ -5183,10 +6266,21 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "$47.20 applies the coupon before the tip. The tip comes first: 50 × 1.18 = 59, then subtract 10.", "Check it: 50 × 1.18 = 59, and 59 − 10 = 49, not 41.80.", "$59 is the total with tip, before the $10 coupon."],
         },
+        {
+          q: "At a furniture store, the sale price of a desk is 15% less than its regular price, and the regular price is 40% more than the store's cost for the desk. If the sale price of the desk is $238, what is the store's cost for the desk?",
+          choices: ["$280", "$190.40", "$200", "$164.22"],
+          answer: 2,
+          explain:
+            "Write each relation as a multiplier on the quantity it refers to: sale = 0.85 × regular, and regular = 1.40 × cost. Then work backward by dividing. Regular price: 238 ÷ 0.85 = 280. Cost: 280 ÷ 1.40 = 200. (Check: 200 × 1.40 × 0.85 = 238.) $280 stops at the regular price, one step short. $190.40 combines the percents into a single 25% increase (40% − 15%) and divides 238 by 1.25, but the two percents are taken of different prices, so they can't be combined that way. $164.22 undoes each change with the opposite percent of the new value, adding 15% to $238 and then taking 40% off, instead of dividing by each multiplier.",
+          difficulty: "hard",
+          why: ["$280 is the regular price. One more step: the regular price is 40% more than the cost, so cost = 280 ÷ 1.40 = 200.", "$190.40 adds the percents into one 25% increase. The 40% and the 15% are taken of different prices, so undo them one at a time: 238 ÷ 0.85 ÷ 1.40.", null, "$164.22 adds 15% of $238 and then takes off 40%. Undo each change by dividing: 238 ÷ 0.85 = 280, and 280 ÷ 1.40 = 200."],
+        },
       ],
       traps: [
         "Calculating the discount amount correctly but then forgetting to subtract it from the original price (reporting the discount amount itself as the final answer).",
         "Confusing 'the price is 25% off' with 'the price is 25% of the original' — these produce very different final prices.",
+        "Undoing a percent change by applying the opposite percent to the new value (adding 20% back onto a sale price) instead of dividing by the multiplier.",
+        "In a chain of percent relations, stopping partway, combining the percents by adding them, or applying a percent to the wrong quantity, instead of dividing by each multiplier in turn.",
       ],
     },
     {
@@ -5246,9 +6340,9 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       ],
     },
     {
-      name: "Finding What Percent One Number Is of Another",
+      name: "Percent, Part, and Whole: Solving for the Missing One",
       explanation:
-        "Not every percentage question involves a change or discount; some just ask what percent one quantity is of another, with no 'before and after' at all. The formula: percent = (part / whole) × 100. The main skill is correctly telling which quantity is the 'part' and which is the 'whole': the whole is whatever's being compared TO, usually right after the word 'of.'",
+        "Not every percentage question involves a change or discount; many just connect three numbers with no 'before and after': a part, a whole, and the percent the part is of the whole. The relationship is part = (percent ÷ 100) × whole, and the question gives two of the three and asks for the missing one. First label them: the whole is whatever's being compared TO, usually right after the word 'of,' and the part is the piece of it. To find the part, multiply: 40% of 150 is 0.40 × 150 = 60. To find the percent, divide the part by the whole: 75 out of 300 is 75 ÷ 300 = 0.25, or 25%. To find the whole, divide the part by the percent's decimal: if 18 is 30% of a number, the number is 18 ÷ 0.30 = 60. Convert small percents carefully (0.4% is 0.004), and don't be alarmed by a percent over 100, which just means the part is larger than the whole.",
       examples: [
         {
           q: "What percent of 300 is 75?",
@@ -5287,6 +6381,15 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "80% divides 36 by 45. The part goes on top: 45 ÷ 36 = 125%.", "9 is 45 − 36, not a percent.", "45 is larger than 36, so it's more than 100% of it."],
         },
         {
+          q: "A 2,500-milliliter water sample is 0.4% salt by volume. How many milliliters of salt are in the sample?",
+          choices: ["100", "10", "625,000", "2,490"],
+          answer: 1,
+          explain:
+            "The whole (2,500 milliliters) and the percent (0.4%) are given, so the missing piece is the part: multiply. As a decimal, 0.4% is 0.4 ÷ 100 = 0.004, and 0.004 × 2,500 = 10 milliliters. 100 converts 0.4% to 0.04, moving the decimal one place too few. 625,000 divides 2,500 by 0.004, which is how you'd find a whole from a part, not a part from a whole. 2,490 is the amount of the sample that is not salt.",
+          difficulty: "medium",
+          why: ["100 uses 0.04 for 0.4%. Percent means divide by 100: 0.4% = 0.004, and 0.004 × 2,500 = 10.", null, "625,000 divides by 0.004. The salt is a part of the sample, so multiply: 0.004 × 2,500.", "2,490 is the part of the sample that isn't salt."],
+        },
+        {
           q: "In a survey, 63 out of 180 respondents preferred option A, and the rest preferred option B. What percent of respondents preferred option B?",
           choices: ["65%", "35%", "63%", "31.5%"],
           answer: 0,
@@ -5300,6 +6403,8 @@ const LC_M_PERCENTAGES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Reversing the part and the whole — dividing the whole by the part instead of the part by the whole.",
         "Treating a result over 100% as a sign of a mistake, when it's a completely valid outcome whenever the 'part' is actually larger than the 'whole.'",
         "Using the wrong quantity as the 'part' when the question requires an extra subtraction step to find it first (like a 'remaining' or 'the rest' amount).",
+        "Dividing when you should multiply, or the reverse: to find the part, multiply the whole by the percent's decimal; to find the whole, divide the part by it.",
+        "Converting a percent to a decimal incorrectly, especially a small one (0.4% is 0.004, not 0.04).",
       ],
     },
   ],
@@ -5462,7 +6567,7 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Reading Values and Basic Statistics Directly from a Graph or Table",
       explanation:
-        "Not every data question requires computing a statistic — many just ask you to read a value, count, or range directly off a graph or table, or compute a simple mean or range from a short list. It's mostly about careful reading: find exactly which bar, dot, or row the question means, read its value precisely, and watch for off-by-one errors when counting. For a plain range: subtract the smallest value from the largest. For a plain mean: add every value and divide by the count.",
+        "Not every data question requires heavy computation: many just ask you to read a value, count, or range directly off a graph or table, or compute a simple mean or median. It's mostly about careful reading: find exactly which bar, dot, or row the question means, read its value precisely, and watch for off-by-one errors when counting. For a plain range: subtract the smallest value from the largest. For a plain mean: add every value and divide by the count. For a median from a frequency table, don't just pick the middle row: find the middle position (with n values, the average of the n/2-th and next values when n is even, or the (n + 1)/2-th value when n is odd), then add the frequencies row by row until you reach that position; in a grouped table, that tells you which interval the median falls in. To combine two groups' means, turn each mean back into a total (total = count × mean), add the totals, and divide by the combined count; simply averaging the two means only works when the groups are the same size.",
       examples: [
         {
           q: "A bar graph shows the number of books read by each of 5 students: 3, 5, 2, 6, 4. What is the range of this data set?",
@@ -5501,6 +6606,16 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "3 is how many students scored 100, not the score itself.", "90 is a score, but 100 is higher and at least one student earned it.", "9 is how many students scored 90. The question asks for the highest score."],
         },
         {
+          q: "The table shows the number of students in each of two sections of a chemistry course and the mean score of each section on a lab exam.\n\nWhat is the mean score of all 30 students in the two sections combined?",
+          choices: ["81.5", "82", "81", "2,460"],
+          answer: 1,
+          explain:
+            "Turn each mean back into a total: Section A's 18 students scored 18 × 84 = 1,512 points, and Section B's 12 students scored 12 × 79 = 948 points. Together that's 2,460 points for 30 students, so the combined mean is 2,460 ÷ 30 = 82. 81.5 averages the two means as if the sections were the same size, but the larger Section A pulls the combined mean toward 84. 81 pairs each mean with the other section's size. 2,460 is the total of all the scores, not yet divided by the 30 students.",
+          figure: {"kind": "table", "header": ["Section", "Number of students", "Mean score"], "rows": [["A", 18, 84], ["B", 12, 79]]},
+          difficulty: "medium",
+          why: ["81.5 averages 84 and 79 as if the sections were the same size. Section A has more students, so its mean counts more.", null, "81 gives Section A's mean only 12 students' weight and Section B's 18. Use 18 × 84 + 12 × 79.", "2,460 is the total of all 30 scores. Divide by 30 to get the mean."],
+        },
+        {
           q: "A histogram groups delivery times (in minutes) into bins: 10 deliveries took 0-10 minutes, 25 took 10-20 minutes, 40 took 20-30 minutes, 15 took 30-40 minutes, and 10 took 40-50 minutes. What percent of deliveries took 20 minutes or more?",
           choices: ["65%", "40%", "75%", "35%"],
           answer: 0,
@@ -5509,11 +6624,23 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "40% counts only the 20–30 bin. The 30–40 and 40–50 bins also qualify: 40 + 15 + 10 = 65.", "75 includes a bin that doesn't qualify. Only 20–30, 30–40, and 40–50 count: 65 of 100.", "35% is the share that took less than 20 minutes (10 + 25), the opposite of what's asked."],
         },
+        {
+          q: "The table summarizes the wait times, rounded to the nearest minute, of 40 customers at a clinic.\n\nWhich of the following could be the median wait time, in minutes, of these 40 customers?",
+          choices: ["5", "25", "20", "15"],
+          answer: 3,
+          explain:
+            "With 40 values, the median is the average of the 20th and 21st values in order. Count down the table: the first row holds values 1 through 13, and the second row holds values 14 through 22. Both the 20th and 21st values fall in the 10–19 row, so the median is between 10 and 19, and only 15 fits. 5 comes from the row with the most customers, which locates the mode, not the median. 25 comes from the middle row of the table, but the rows hold different numbers of customers. 20 treats the middle position (the 20th value) as if it were a wait time.",
+          figure: {"kind": "table", "header": ["Wait time (minutes)", "Number of customers"], "rows": [["0–9", 13], ["10–19", 9], ["20–29", 8], ["30–39", 6], ["40–49", 4]]},
+          difficulty: "hard",
+          why: ["5 is in the 0–9 row, the most common interval. The 20th and 21st values, which set the median, are in the 10–19 row.", "25 is in the middle row, but the rows hold different numbers of customers. Counting 13 + 9 = 22 already passes the 21st value.", "20 is the middle position (the 20th value), not a wait time. That 20th value falls in the 10–19 row.", null],
+        },
       ],
       traps: [
         "Misreading a bar's height or a dot's position against the axis, especially when gridlines aren't spaced at intervals of 1.",
         "Confusing a value's frequency (how many data points have that value) with the value itself.",
         "For a histogram question about a range of values ('20 or more'), forgetting to include every bin that satisfies the condition, not just the first one.",
+        "Averaging two group means directly instead of weighting each by its group size (turn each mean into a total first: total = count × mean).",
+        "Taking the middle row of a frequency table, or the row with the largest frequency, as the median's location instead of counting through the frequencies to the middle position.",
       ],
     },
     {
@@ -5659,6 +6786,69 @@ const LC_M_TWO_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       traps: [
         "Assuming any 'increasing' pattern must be linear, without checking whether the rate of increase itself is constant, accelerating, or otherwise.",
         "Confusing exponential growth (accelerating rate) with linear growth (constant rate) when a scatterplot's curve is subtle.",
+      ],
+    },
+    {
+      name: "Using a Line of Best Fit",
+      explanation:
+        "These questions show a scatterplot with its line of best fit drawn in and ask you to use the line: pick its equation, estimate its slope, read off a prediction, say what the slope means, or tell how the line changes when every data value changes. Work from the line, not the dots. For the slope, find two points where the line crosses gridline intersections and divide the change in y by the change in x, using the numbers on the axes rather than a count of gridlines; in context, the slope is the predicted change in y for each increase of 1 in x. To match an equation, check the sign first (a line that falls from left to right has a negative slope), then the y-intercept, which is where the line meets x = 0, then the steepness. A prediction is the line's height at the given x, even when a data point sits right there. If every y-value is multiplied by a number, the slope and the intercept are both multiplied by it; if a number is added to every y-value, only the intercept changes.",
+      examples: [
+        {
+          q: "The scatterplot shows the number of days x after a spring snowstorm and the depth of snow y, in inches, measured at a weather station, along with a line of best fit.\n\nWhich equation best represents the line of best fit?",
+          choices: ["y = 2x + 24", "y = -2x + 12", "y = -2x + 24", "y = -0.5x + 24"],
+          answer: 2,
+          explain:
+            "Start with the sign: the line falls from left to right, so the slope is negative. The line meets the y-axis at 24 and reaches 0 at x = 12, so the slope is (0 - 24)/12 = -2, giving y = -2x + 24. y = 2x + 24 has the right intercept but a positive slope, which would make the line rise. y = -2x + 12 uses 12, where the line meets the x-axis, as if it were the y-intercept. y = -0.5x + 24 reads the slope upside down, dividing the change in x (12) by the change in y (24).",
+          figure: {"kind": "scatter", "x": {"label": "Days after storm", "min": 0, "max": 12, "step": 1}, "y": {"label": "Snow depth (inches)", "min": 0, "max": 28, "step": 4}, "points": [[1, 23.5], [2, 18], [3, 20], [4, 15], [5, 14.5], [6, 13.5], [7, 7.5], [8, 9], [9, 5], [10, 4.5], [11, 1.5]], "line": {"slope": -2, "intercept": 24}},
+          difficulty: "easy",
+          why: ["A slope of 2 would make the line rise from left to right, but this line falls.", "12 is where the line meets the x-axis. The y-intercept is where it meets the y-axis, at 24.", null, "−0.5 is the slope upside down. The line drops 24 inches over 12 days: −24 ÷ 12 = −2."],
+        },
+        {
+          q: "The scatterplot shows the air temperature x, in degrees Fahrenheit, and the number of chirps per minute y made by a snowy tree cricket on 12 evenings, along with a line of best fit.\n\nAccording to the line of best fit, how many chirps per minute are predicted when the air temperature is 65°F?",
+          choices: ["108", "100", "120", "80"],
+          answer: 1,
+          explain:
+            "Go up from 65 on the horizontal axis to the line, then across to the vertical axis: the line is at 100. 108 is the actual count on the evening it was 65°F, but that data point sits above the line, and the question asks what the line predicts. 120 is the line's height at 70°F, and 80 is its height at 60°F; both read the line at the wrong temperature.",
+          figure: {"kind": "scatter", "x": {"label": "Temperature (°F)", "min": 50, "max": 90, "step": 5}, "y": {"label": "Chirps per minute", "min": 0, "max": 200, "step": 20}, "points": [[52, 54], [55, 52], [58, 77], [60, 76], [63, 85], [65, 108], [68, 115], [71, 118], [74, 143], [77, 143], [80, 164], [84, 173]], "line": {"slope": 4, "intercept": -160}},
+          difficulty: "easy",
+          why: ["108 is the chirp count on the evening that was actually 65°F. The line, which is what the question asks about, is at 100 there.", null, "120 is the line's height at 70°F. At 65°F the line is at 100.", "80 is the line's height at 60°F, one gridline too far left."],
+        },
+        {
+          q: "The scatterplot shows the age x, in years, and the trunk diameter y, in centimeters, of 12 oak trees in a park, along with a line of best fit.\n\nWhich of the following is closest to the slope of the line of best fit?",
+          choices: ["0.75", "1.33", "0.875", "-0.75"],
+          answer: 0,
+          explain:
+            "Pick two points where the line crosses gridlines: (0, 5) and (40, 35). The slope is the change in y over the change in x: (35 - 5)/(40 - 0) = 30/40 = 0.75, so the model predicts about 0.75 centimeter of growth in diameter per year. 1.33 divides the change in x by the change in y (40 ÷ 30). 0.875 divides 35 by 40 as if the line started at 0, ignoring that it starts at 5. -0.75 has the wrong sign for a line that rises from left to right.",
+          figure: {"kind": "scatter", "x": {"label": "Age (years)", "min": 0, "max": 40, "step": 5}, "y": {"label": "Trunk diameter (cm)", "min": 0, "max": 40, "step": 5}, "points": [[4, 6.5], [7, 12], [10, 10], [13, 16], [16, 16], [20, 22.5], [23, 20], [26, 25.5], [30, 26], [33, 32], [36, 33], [38, 32]], "line": {"slope": 0.75, "intercept": 5}},
+          difficulty: "medium",
+          why: [null, "1.33 is the change in x over the change in y (40 ÷ 30). Slope is change in y over change in x: 30 ÷ 40.", "0.875 divides 35 by 40 as if the line started at 0. It starts at 5, so the rise is 35 − 5 = 30.", "The line rises from left to right, so its slope is positive."],
+        },
+        {
+          q: "The scatterplot shows the high temperature x, in degrees Fahrenheit, and the number of cups of hot cocoa y sold at a café on 12 days, along with a line of best fit.\n\nWhich statement is the best interpretation of the slope of the line of best fit?",
+          choices: ["For each increase of 1°F in the high temperature, the predicted number of cups sold increases by about 2.5.", "For each increase of 1°F in the high temperature, the predicted number of cups sold decreases by about 0.4.", "For each increase of 1°F in the high temperature, the predicted number of cups sold decreases by about 25.", "For each increase of 1°F in the high temperature, the predicted number of cups sold decreases by about 2.5."],
+          answer: 3,
+          explain:
+            "The line passes through (20, 150) and (60, 50), so the slope is (50 - 150)/(60 - 20) = -100/40 = -2.5: predicted sales drop about 2.5 cups for each degree warmer. The 'increases' choice has the right size but the wrong direction for a falling line. 0.4 divides degrees by cups (40 ÷ 100), the slope upside down. 25 is the drop per gridline, but each gridline on the temperature axis is 10°F, not 1°F.",
+          figure: {"kind": "scatter", "x": {"label": "High temperature (°F)", "min": 0, "max": 80, "step": 10}, "y": {"label": "Cups of cocoa sold", "min": 0, "max": 200, "step": 25}, "points": [[15, 170], [20, 140], [25, 144], [30, 120], [35, 124], [40, 93], [45, 92], [50, 66], [55, 70], [60, 53], [65, 32], [70, 23]], "line": {"slope": -2.5, "intercept": 200}},
+          difficulty: "medium",
+          why: ["The line falls from left to right, so predicted sales go down as the temperature goes up.", "0.4 is the change in temperature over the change in cups (40 ÷ 100). Slope is cups per degree: 100 ÷ 40 = 2.5.", "25 is the drop per gridline, and each gridline on the temperature axis is 10°F. Per 1°F, the drop is 2.5.", null],
+        },
+        {
+          q: "The scatterplot shows the time x, in seconds, after a toy boat was released and its distance y, in yards, from a dock, measured 12 times, along with a line of best fit. Each distance is then converted from yards to feet (1 yard = 3 feet), and a new line of best fit is found for the time and the distance in feet.\n\nWhich equation best represents the new line of best fit?",
+          choices: ["y = 0.5x + 12", "y = 1.5x + 4", "y = 1.5x + 12", "y = 6x + 12"],
+          answer: 2,
+          explain:
+            "First read the original line: it meets the y-axis at 4 and rises from 4 to 14 over 20 seconds, a slope of 10/20 = 0.5, so y = 0.5x + 4 in yards. Converting to feet multiplies every y-value by 3, which stretches the whole line by 3: y = 3(0.5x + 4) = 1.5x + 12. y = 0.5x + 12 triples only the intercept, and y = 1.5x + 4 triples only the slope; every point moves, so both change. y = 6x + 12 comes from reading the slope upside down as 2 and then tripling it.",
+          figure: {"kind": "scatter", "x": {"label": "Time (seconds)", "min": 0, "max": 20, "step": 2}, "y": {"label": "Distance from dock (yards)", "min": 0, "max": 16, "step": 2}, "points": [[1, 5], [3, 4.5], [4, 7], [6, 6.5], [8, 9], [9, 7.5], [11, 10], [13, 9.5], [14, 12], [16, 12.5], [18, 12.5], [19, 13]], "line": {"slope": 0.5, "intercept": 4}},
+          difficulty: "hard",
+          why: ["This triples the intercept but not the slope. Every distance triples, so the rise per second triples too: 0.5 × 3 = 1.5.", "This triples the slope but not the intercept. The starting distance, 4 yards, is also 12 feet.", null, "6 comes from reading the slope upside down (2 instead of 0.5) and tripling it. The line rises 0.5 yard per second."],
+        },
+      ],
+      traps: [
+        "Choosing an equation whose slope has the wrong sign, or whose intercept doesn't match where the line meets the y-axis (not where it meets the x-axis, and not the left edge of a graph whose x-axis doesn't start at 0).",
+        "Getting rise over run wrong: dividing the change in x by the change in y, counting gridlines instead of reading the axis values, or forgetting to divide by the change in x at all.",
+        "Reading a nearby data point, or the line at the wrong x-value, instead of the line's height at the x the question gives.",
+        "Mishandling a change to every y-value: multiplying every y-value by a number multiplies both the slope and the intercept, while adding a number to every y-value changes only the intercept.",
       ],
     },
     {
@@ -6334,7 +7524,7 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Composite Figures and Formula Selection",
       explanation:
-        "This pattern involves picking and correctly applying the right area or volume formula for a shape — often in a word problem that disguises what the shape actually is (a 'can' is a cylinder, a 'ball' is a sphere). The reliable approach: figure out exactly which formula applies before calculating anything, and write it out explicitly instead of trying to recall it from memory mid-problem.",
+        "This pattern involves picking and correctly applying the right area, perimeter, or volume formula for a shape — often in a word problem that disguises what the shape actually is (a 'can' is a cylinder, a 'ball' is a sphere). The reliable approach: figure out exactly which formula applies before calculating anything, and write it out explicitly instead of trying to recall it from memory mid-problem. Flat figures follow the same rule. Perimeter is just the sum of the side lengths, so a missing side is the perimeter minus all the known sides. A right triangle's area is (1/2)(leg)(leg): if you're given all three sides, the longest one is the hypotenuse, and it never goes into the area. With radical side lengths, compare them by squaring ((4√3)² = 48, (6√2)² = 72), and check that the two smaller squares add to the largest.",
       examples: [
         {
           q: "A cylindrical water tank has a radius of 3 and a height of 10. What is its volume in terms of π?",
@@ -6377,6 +7567,16 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "160π is only the cylinder. Add the hemisphere, (128/3)π.", "(128/3)π is only the hemisphere. Add the cylinder, 160π.", "288π adds 128π for the hemisphere, forgetting to divide by 3."],
         },
         {
+          q: "A right triangle has side lengths of √10, 2√7, and 3√2 units, as shown. What is the area of the triangle, in square units?",
+          choices: ["3√14", "3√5", "√70", "6√5"],
+          answer: 1,
+          explain:
+            "Square each side to find the hypotenuse: (√10)² = 10, (2√7)² = 28, and (3√2)² = 18. The largest, 2√7, is the hypotenuse (and 10 + 18 = 28 confirms the right angle), so the legs are √10 and 3√2. The area is (1/2)(√10)(3√2) = (1/2)(3√20) = (1/2)(6√5) = 3√5. 3√14 uses 3√2 and the hypotenuse 2√7 as the base and height. √70 uses √10 and the hypotenuse. 6√5 multiplies the legs correctly but forgets the 1/2.",
+          figure: {"kind": "geometry", "points": {"C": [0, 0], "B": [4.2426, 0], "A": [0, 3.1623]}, "polygons": [{"points": ["A", "B", "C"]}], "segments": [{"from": "C", "to": "B", "label": "3√2"}, {"from": "C", "to": "A", "label": "√10"}, {"from": "A", "to": "B", "label": "2√7"}], "angles": [{"vertex": "C", "from": "B", "to": "A", "right": true}]},
+          difficulty: "medium",
+          why: ["3√14 uses the hypotenuse, 2√7. The area uses the two legs, √10 and 3√2.", null, "√70 uses the hypotenuse, 2√7. The legs are √10 and 3√2.", "6√5 is the product of the legs. A triangle's area is half of that: 3√5."],
+        },
+        {
           q: "A cylindrical pipe has an outer radius of 5 cm and an inner radius of 3 cm (it's hollow), and a length of 20 cm. What is the volume of the material making up the pipe, in terms of π?",
           choices: ["320π", "500π", "180π", "680π"],
           answer: 0,
@@ -6390,12 +7590,15 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       traps: [
         "Confusing similar formulas (e.g., using the cone volume formula, which includes a factor of 1/3, for what is actually a cylinder).",
         "Substituting the diameter where the radius is needed (or vice versa), especially when a problem gives diameter directly.",
+        "Using the hypotenuse in a right triangle's area — the area uses the two legs, which meet at the right angle, and the longest side is the hypotenuse.",
+        "Forgetting the 1/2 in a triangle's area formula.",
+        "Finding a missing side from a perimeter by subtracting only one of the known sides (or adding the known sides to the perimeter).",
       ],
     },
     {
-      name: "Building a Volume Expression Algebraically from a Word Description",
+      name: "Building an Area, Surface Area, or Volume Expression from a Description",
       explanation:
-        "This pattern gives no numeric dimensions at all; it describes a solid's dimensions in words, often with one dimension defined in terms of another using a variable, and asks for a volume FORMULA, not a number. The method: find the correct volume formula for the shape first, then carefully translate each worded dimension into algebra before substituting. Pay close attention to phrases like '3 more than,' 'twice,' or 'half of': they describe one dimension in terms of another.",
+        "This pattern gives no numeric dimensions at all; it describes a figure's dimensions in words, often with one dimension defined in terms of another using a variable, and asks for an area, surface area, or volume FORMULA, not a number. The method: find the correct formula for the shape first, then carefully translate each worded dimension into algebra before substituting. Pay close attention to phrases like '3 more than,' 'twice,' or 'half of': they describe one dimension in terms of another. Some versions make you back out a missing dimension first: if a rectangle's area is 3x(x + 7) and its width is 3x, the length is the other factor, x + 7 (area ÷ width); if a square's perimeter is 12 more than another square's, each side is only 12/4 = 3 more, so its area is (s + 3)². Surface area of a rectangular prism adds all six faces, which come in three matching pairs: SA = 2(lw + lh + wh).",
       examples: [
         {
           q: "A rectangular box has a length of x, a width of 3, and a height of 5. Which expression gives the volume V of the box, in terms of x?",
@@ -6438,6 +7641,15 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "The height is 2r, so there's a factor of 2: πr²(2r) = 2πr³.", "This forgets that the height 2r includes another r: πr² × 2r = 2πr³.", "The height gets multiplied in, not added: πr² × 2r."],
         },
         {
+          q: "Square A has a side length of s centimeters. The perimeter of square B is 12 centimeters greater than the perimeter of square A. Which expression gives the area, in square centimeters, of square B?",
+          choices: ["(s + 12)²", "s² + 9", "(s + 3)²", "4s + 12"],
+          answer: 2,
+          explain:
+            "Square A's perimeter is 4s, so square B's perimeter is 4s + 12. A square's side is its perimeter divided by 4: (4s + 12)/4 = s + 3. Its area is the side squared: (s + 3)². (s + 12)² adds the whole perimeter difference to one side, but that extra 12 is shared among four sides, so each side grows by only 3. s² + 9 squares s + 3 incorrectly, dropping the middle term: (s + 3)² = s² + 6s + 9. 4s + 12 is square B's perimeter, not its area.",
+          difficulty: "medium",
+          why: ["The extra 12 is spread over four sides, so each side is only 3 longer: (s + 3)².", "(s + 3)² = s² + 6s + 9. This drops the middle term.", null, "4s + 12 is square B's perimeter. Its area is the side squared, and the side is (4s + 12)/4 = s + 3."],
+        },
+        {
           q: "A rectangular box has a length of x. Its width is half its length, and its height is 4 inches less than its width. Which expression gives the volume V of the box, in terms of x?",
           choices: ["V = x³/4 - 2x²", "V = x³/2 - 4x", "V = x²/2 - 4x", "V = x³/4 + 2x²"],
           answer: 0,
@@ -6447,11 +7659,23 @@ const LC_M_AREA_VOLUME: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "Multiply it out: x · (x/2) · (x/2 − 4) = x³/4 − 2x², not x³/2 − 4x.", "This has only two dimensions multiplied. Volume needs all three.", "The height is x/2 − 4, so the second term is negative: −2x²."],
         },
+        {
+          q: "A rectangular prism has a height of 4 centimeters. The area of its base is (x² + 5x) square centimeters, and one side of the base has a length of x centimeters. Which expression gives the surface area, in square centimeters, of the prism?",
+          choices: ["x² + 13x + 20", "2x² + 26x + 40", "4x² + 20x", "2x² + 26x"],
+          answer: 1,
+          explain:
+            "First find the missing side of the base: x² + 5x = x(x + 5), so if one side is x, the other is x + 5. The six faces come in three pairs: two bases, each x² + 5x; two side faces that are x by 4, each 4x; and two side faces that are (x + 5) by 4, each 4x + 20. The total is 2(x² + 5x) + 2(4x) + 2(4x + 20) = 2x² + 10x + 8x + 8x + 40 = 2x² + 26x + 40. x² + 13x + 20 counts only one face from each pair. 4x² + 20x is the volume, base area times height. 2x² + 26x treats all four side faces as x by 4, but two of them are (x + 5) by 4.",
+          difficulty: "hard",
+          why: ["This counts one face from each pair. A prism has six faces, so double it: 2x² + 26x + 40.", null, "4x² + 20x is the volume, base area × height. Surface area adds the six faces.", "This makes all four side faces x by 4. Two of them are (x + 5) by 4, which adds 40 more."],
+        },
       ],
       traps: [
         "Substituting a worded dimension into the wrong part of the formula (e.g., swapping which expression represents length vs. width).",
         "Mistranslating a comparative phrase like '5 more than the width' as '5 times the width,' or vice versa.",
         "Forgetting to expand or simplify the resulting algebraic expression into its most standard form once it's fully substituted.",
+        "Adding a perimeter difference straight onto a side length: if one square's perimeter is 12 more than another's, each side is 12/4 = 3 more, not 12 more.",
+        "Counting only three faces of a rectangular prism, or treating every side face as the same size — the six faces come in three matching pairs, so SA = 2(lw + lh + wh).",
+        "Backing out a missing dimension with the wrong operation: the missing side is the area divided by the known side, which is the other factor of a factored area expression.",
       ],
     },
   ],
@@ -6467,7 +7691,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
     {
       name: "Triangle Angle Sum and Exterior Angles",
       explanation:
-        "Every triangle's interior angles add up to exactly 180°, so you can always find a missing angle if you know the other two. A related, often-overlooked rule: a triangle's exterior angle equals the sum of the two non-adjacent interior angles. This can shortcut problems that would otherwise take two separate steps.",
+        "Every triangle's interior angles add up to exactly 180°, so you can always find a missing angle if you know the other two. A related, often-overlooked rule: a triangle's exterior angle equals the sum of the two non-adjacent interior angles. This can shortcut problems that would otherwise take two separate steps. Isosceles triangles add one more fact: the two angles opposite the equal sides are equal. When tick marks show two equal sides, find the angles across from those sides (they aren't always the two at the bottom of the figure), then use the 180° rule; the angle between the equal sides is 180° minus twice one of the equal angles.",
       examples: [
         {
           q: "A triangle's exterior angle measures 110°, and it is not adjacent to one of the triangle's interior angles of 40°. What is the measure of the third interior angle?",
@@ -6500,6 +7724,16 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           why: [null, "120° adds the two angles. Subtract them from 180: 180 − 120 = 60.", "20° is 70 − 50. The three angles must total 180: 180 − 50 − 70 = 60.", "180° is the total of all three angles, not the missing one."],
         },
         {
+          q: "In the figure, PQ = QR, and the measure of angle QPR is 48°.\n\nWhat is the value of x?",
+          choices: ["66", "48", "132", "84"],
+          answer: 3,
+          explain:
+            "The tick marks show PQ = QR. The angles opposite those sides are equal: angle R (across from PQ) and angle P (across from QR). So angle R = 48°, and x = 180 - 48 - 48 = 84. 66 treats angle Q as one of the equal angles: (180 - 48)/2 = 66 assumes the 48° angle is the one between the equal sides. 48 makes angle Q equal to angle P, but Q is the angle between the two marked sides, not across from one. 132 subtracts only one 48° angle from 180.",
+          figure: {"kind": "geometry", "points": {"Q": [0, 0], "P": [6, 0], "R": [0.6272, 5.9671]}, "names": ["P", "Q", "R"], "polygons": [{"points": ["P", "Q", "R"]}], "segments": [{"from": "Q", "to": "P", "ticks": 1}, {"from": "Q", "to": "R", "ticks": 1}], "angles": [{"vertex": "P", "from": "R", "to": "Q", "label": "48°"}, {"vertex": "Q", "from": "P", "to": "R", "label": "x°"}]},
+          difficulty: "medium",
+          why: ["66 treats 48° as the angle between the equal sides. It's one of the equal angles, so angle R is also 48°.", "Angle Q sits between the two marked sides. The equal angles are P and R, across from them.", "132 subtracts only one 48° angle. Angle R is also 48°: 180 − 96 = 84.", null],
+        },
+        {
           q: "A triangle's exterior angle measures 115°. What is the measure of the interior angle adjacent to this exterior angle?",
           choices: ["65°", "115°", "55°", "180°"],
           answer: 0,
@@ -6523,6 +7757,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
       traps: [
         "Not recognizing the exterior angle shortcut, and instead trying to first find the triangle's adjacent interior angle (180° - exterior angle) before proceeding — this works but takes an unnecessary extra step.",
         "Confusing which two angles are 'non-adjacent' to a given exterior angle.",
+        "In an isosceles triangle, making the wrong pair of angles equal — the equal angles are the ones opposite the equal sides, not the angle between those sides.",
       ],
     },
     {
@@ -6595,9 +7830,9 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
       ],
     },
     {
-      name: "Similar Triangles and Proportional Sides",
+      name: "Similar and Congruent Triangles: Corresponding Parts",
       explanation:
-        "This pattern tests whether corresponding sides of two similar triangles (same shape, possibly different size) keep a constant ratio, called the scale factor. The method: first match each side of one triangle to its corresponding side in the other. Matching is based on the triangles' matching angles, rather than which sides look similar in length or happen to be listed near each other. Then set up a proportion using that scale factor to solve for the unknown side. The proportion itself is rarely the hard part; mismatching which sides actually correspond is.",
+        "Similar triangles have the same shape, possibly in different sizes; congruent triangles have the same shape AND the same size. A statement like triangle ABC ~ triangle DEF (or ≅) lists the vertices in matching order: A↔D, B↔E, C↔F. Corresponding angles are always equal, because scaling a triangle never changes its angles. Corresponding sides keep a constant ratio, the scale factor k (new length = k × original length), so k > 1 enlarges and 0 < k < 1 shrinks. To find a missing side, match it to its partner using the vertex order or the matching angles, rather than which sides look similar in length or happen to be listed near each other, then apply k. The proportion itself is rarely the hard part; mismatching which parts correspond is. Two pairs of equal angles prove similarity (AA) but not congruence: congruence also needs one pair of corresponding sides equal (ASA or AAS), or SAS or SSS. When triangles are given by coordinates, read the side lengths off the coordinates and match angles the same way.",
       examples: [
         {
           q: "Triangle ABC is similar to triangle DEF. If AB = 6, DE = 9, and BC = 8, what is EF?",
@@ -6664,6 +7899,15 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           why: [null, "49 multiplies by 7/3. The scale factor from GHI to JKL is 6/14 = 3/7: 21 × 3/7.", "Check it: 21 × 3/7 = 9, not 3.", "14 is GH. KL corresponds to HI: 21 × 3/7 = 9."],
         },
         {
+          q: "Right triangles JKL and PQR are similar, with vertices J, K, and L corresponding to vertices P, Q, and R, respectively. Angles K and Q are right angles, and the measure of angle L is 34°. Each side of triangle PQR is 3 times as long as the corresponding side of triangle JKL. What is the measure of angle P?",
+          choices: ["34°", "56°", "102°", "146°"],
+          answer: 1,
+          explain:
+            "The vertex order gives the matching angles: J↔P, K↔Q, L↔R. So angle P equals angle J. In triangle JKL, angle K is 90° and angle L is 34°, so angle J = 180 - 90 - 34 = 56°, and angle P = 56°. The scale factor of 3 changes only the side lengths; angles never scale. 34° is angle L, which matches angle R, not angle P. 102° multiplies 34° by the scale factor, but angles stay the same size when a triangle is enlarged. 146° is 180 - 34, which leaves out the right angle.",
+          difficulty: "medium",
+          why: ["34° is angle L, which corresponds to R. P corresponds to J.", null, "Angles don't scale. Enlarging a triangle keeps every angle the same.", "146° is 180 − 34, which forgets the right angle at K."],
+        },
+        {
           q: "Triangle ABC has angle A = 50° and angle B = 70°. Triangle DEF has angle D = 50° and angle F = 60°. Are triangles ABC and DEF similar? If so, and if AB = 9 while DE = 6, what is the scale factor from ABC to DEF?",
           choices: [
             "Similar, with a scale factor of 2/3 from ABC to DEF",
@@ -6684,11 +7928,23 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
           difficulty: "hard",
           why: [null, "Find the missing angles: ABC has 60° and DEF has 70°, so all three angles match.", "3/2 is flipped. From ABC to DEF, sides shrink: 6/9 = 2/3.", "The missing angles can be found (180 minus the other two), which is enough to show similarity."],
         },
+        {
+          q: "In triangles ABC and DEF, angle A is congruent to angle D, and angle B is congruent to angle E. Which additional piece of information is enough to prove that triangle ABC is congruent to triangle DEF?",
+          choices: ["Angle C is congruent to angle F.", "AB/DE = BC/EF", "AB = EF", "AB = DE"],
+          answer: 3,
+          explain:
+            "Two pairs of congruent angles already make the triangles similar (AA): the same shape, but possibly different sizes. To be congruent, they also need the same size, so one pair of CORRESPONDING sides must be equal. AB and DE correspond (A↔D and B↔E), and AB = DE gives two angles and the side between them (ASA), so the triangles are congruent. Angle C ≅ angle F adds nothing new: the third angles are already equal, since each is 180° minus the other two. AB/DE = BC/EF says the sides are in proportion, which is true of any two similar triangles, whatever their sizes. AB = EF pairs sides that don't correspond, so it doesn't force the triangles to be the same size.",
+          difficulty: "hard",
+          why: ["The third angles are already equal, since each is 180° minus the other two. That still shows only similarity.", "Proportional sides describe any two similar triangles, of any size.", "AB corresponds to DE, not EF. Unmatched sides can be equal without the triangles being the same size.", null],
+        },
       ],
       traps: [
         "Matching sides based on their order of appearance in the problem rather than their actual corresponding angles, leading to an incorrect ratio.",
         "Setting up the scale factor upside down (e.g., using the smaller triangle's side over the larger one when the reverse was needed).",
         "Assuming triangles are similar just because one angle matches, without checking that a second angle (or proportional sides) confirms it.",
+        "Scaling an angle by the scale factor — corresponding angles stay equal no matter how much a triangle grows or shrinks.",
+        "Treating two pairs of equal angles (or proportional sides) as proof of congruence — that only proves similarity; congruence also needs a pair of equal corresponding sides.",
+        "Choosing a scale factor between 0 and 1 for an enlargement (or greater than 1 for a reduction).",
       ],
     },
     {
@@ -6802,7 +8058,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "SOH-CAH-TOA Setup",
       explanation:
-        "The foundational skill here: correctly identify which sides are 'opposite,' 'adjacent,' and 'hypotenuse' relative to the specific angle in question, then apply the matching trig ratio. SOH: sine = opposite/hypotenuse. CAH: cosine = adjacent/hypotenuse. TOA: tangent = opposite/adjacent. The most common error isn't the formula — it's misidentifying which side is 'opposite' versus 'adjacent' for the angle being used.",
+        "The foundational skill here: correctly identify which sides are 'opposite,' 'adjacent,' and 'hypotenuse' relative to the specific angle in question, then apply the matching trig ratio. SOH: sine = opposite/hypotenuse. CAH: cosine = adjacent/hypotenuse. TOA: tangent = opposite/adjacent. The most common error isn't the formula — it's misidentifying which side is 'opposite' versus 'adjacent' for the angle being used. Trig ratios depend only on the angle, not the triangle's size, so similar right triangles share them: if angle A corresponds to angle D, then sin A = sin D, even when every side of one triangle is 3 times the other's. The altitude drawn from the right angle to the hypotenuse splits a right triangle into two smaller right triangles, each similar to the original, so an angle's ratio can come from whichever of the three triangles has the sides you know; just keep both sides of a ratio from the same right triangle.",
       examples: [
         {
           q: "A support cable is anchored 15 feet from the base of a pole and meets the top of the pole at a 40° angle of elevation. Which expression gives the pole's height?",
@@ -6845,6 +8101,15 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "Sine gives the vertical rise (opposite the angle), not the horizontal distance.", "Tangent relates the two legs. The ramp is the hypotenuse, so use cosine.", "This divides by cosine. cos(15°) = horizontal/20, so multiply: 20cos(15°)."],
         },
         {
+          q: "Right triangles ABC and DEF are similar, with vertices A, B, and C corresponding to vertices D, E, and F, respectively. Angles C and F are right angles, and sin A = 12/13. Each side of triangle DEF is 3 times as long as the corresponding side of triangle ABC. What is the value of sin E?",
+          choices: ["12/13", "5/13", "15/13", "5/12"],
+          answer: 1,
+          explain:
+            "Angle E corresponds to angle B, and corresponding angles of similar triangles have equal trig ratios, so sin E = sin B. In triangle ABC, sin A = 12/13, so take the side opposite A (BC) as 12 and the hypotenuse (AB) as 13; the third side is AC = √(13² - 12²) = 5. AC is opposite angle B, so sin B = 5/13, and sin E = 5/13. The scale factor of 3 doesn't matter: tripling both the opposite side and the hypotenuse leaves their ratio unchanged. 12/13 is sin D (and sin A), the other acute angle. 15/13 multiplies by the scale factor, and a sine can never be greater than 1. 5/12 is tan E, opposite over adjacent, not opposite over hypotenuse.",
+          difficulty: "medium",
+          why: ["12/13 is sin D, which matches sin A. Angle E matches angle B.", null, "The scale factor cancels in a ratio. Also, a sine can never be greater than 1.", "5/12 is tan E, opposite over adjacent. Sine uses the hypotenuse: 5/13."],
+        },
+        {
           q: "An isosceles triangle has two equal sides of length 13 and a base of 10. An altitude is drawn from the apex to the midpoint of the base, forming two right triangles. What is the sine of the angle between one of the equal sides and the base?",
           choices: ["12/13", "5/13", "5/12", "12/5"],
           answer: 0,
@@ -6854,10 +8119,22 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "5/13 is adjacent over hypotenuse, which is cosine.", "5/12 is adjacent over opposite. Sine uses the hypotenuse: 12/13.", "12/5 is opposite over adjacent, which is tangent."],
         },
+        {
+          q: "In the figure, angle ACB is a right angle, and CD is perpendicular to AB. AD = 9 and CD = 12.\n\nWhat is the value of tan B?",
+          choices: ["4/3", "3/5", "3/4", "4/5"],
+          answer: 2,
+          explain:
+            "Triangle ADC has its right angle at D, and its angle at C, angle ACD, is 90° minus angle A. Angle B is also 90° minus angle A (in the large triangle), so angle ACD = angle B: the altitude made triangle ADC similar to triangle ACB. In triangle ADC, the side opposite angle ACD is AD = 9 and the side adjacent is CD = 12, so tan B = 9/12 = 3/4. Check it another way: tan A = 12/9 = 4/3, so DB = 12 × 4/3 = 16, and in triangle CDB, tan B = CD/DB = 12/16 = 3/4. 4/3 is tan A, the other acute angle. 3/5 is sin B: CB = √(12² + 16²) = 20, and 12/20 = 3/5. 4/5 is cos B, 16/20.",
+          figure: {"kind": "geometry", "points": {"A": [0, 0], "B": [25, 0], "C": [9, 12], "D": [9, 0]}, "names": ["A", "B", "C", "D"], "polygons": [{"points": ["A", "B", "C"]}], "segments": [{"from": "A", "to": "D", "label": "9"}, {"from": "C", "to": "D", "label": "12"}], "angles": [{"vertex": "C", "from": "A", "to": "B", "right": true}, {"vertex": "D", "from": "B", "to": "C", "right": true}]},
+          difficulty: "hard",
+          why: ["4/3 is tan A. Angle B is the other acute angle, so its tangent is the reciprocal.", "3/5 is sin B, which uses the hypotenuse CB = 20. Tangent is opposite over adjacent: 12/16.", null, "4/5 is cos B, 16/20. Tangent is 12/16 = 3/4."],
+        },
       ],
       traps: [
         "Misidentifying which side is opposite versus adjacent relative to the specific angle being used — this depends on the angle's position, not just the shape of the triangle.",
         "Choosing the wrong trig ratio (sine instead of tangent, etc.) because the opposite/adjacent/hypotenuse sides weren't correctly identified first.",
+        "Multiplying a trig ratio by the scale factor between similar triangles — corresponding angles are equal, so their trig ratios are exactly equal.",
+        "In a right triangle split by the altitude to the hypotenuse, taking the two sides of one ratio from different small triangles, or naming the wrong side as opposite in the small triangle.",
       ],
     },
     {
@@ -6993,7 +8270,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Radian Measure and Coterminal Angles",
       explanation:
-        "This pattern tests angles measured in radians instead of degrees, especially values larger than 2π (a full circle) or negative angles. The method: find a coterminal angle within the standard 0-to-2π range, by adding or subtracting multiples of 2π until it lands there. Then evaluate the trig function using that simpler, equivalent angle. Coterminal angles always share identical trig values, since they land in the exact same position on the circle.",
+        "This pattern tests angles measured in radians instead of degrees, especially values larger than 2π (a full circle) or negative angles. The method: find a coterminal angle within the standard 0-to-2π range, by adding or subtracting multiples of 2π until it lands there. Then evaluate the trig function using that simpler, equivalent angle. Coterminal angles always share identical trig values, since they land in the exact same position on the circle. Some questions just convert units: π radians = 180°, so multiply by 180/π to go from radians to degrees and by π/180 to go from degrees to radians. If two angles are given in radians and you need their total in degrees, add them first over a common denominator (π/3 + π/2 = 2π/6 + 3π/6 = 5π/6), then convert once.",
       examples: [
         {
           q: "What is the value of cos(2π + π/3)?",
@@ -7014,6 +8291,15 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           diagram: { kind: "unitCircleAngle", rawLabel: "-π/6", angleDegrees: -30 },
           difficulty: "easy",
           why: [null, "The angle is below the x-axis, where sine is negative.", "√3/2 is the cosine value for π/6. Sine of π/6 is 1/2.", "√3/2 is cosine's value, and the sign should be negative."],
+        },
+        {
+          q: "Angle P measures 3π/4 radians, and angle Q measures 5π/6 radians. What is the sum of the measures of the two angles, in degrees?",
+          choices: ["144", "285", "570", "19π/12"],
+          answer: 1,
+          explain:
+            "Add first, over a common denominator of 12: 3π/4 + 5π/6 = 9π/12 + 10π/12 = 19π/12. Then convert by multiplying by 180/π: (19/12)(180) = 285. Converting each angle separately gives the same total, 135 + 150 = 285. 144 adds straight across, (3 + 5)π/(4 + 6) = 4π/5, which isn't how fractions add. 570 uses 360° for π, but π radians is 180°. 19π/12 is the correct sum, but in radians, not degrees.",
+          difficulty: "medium",
+          why: ["144 comes from adding numerators and denominators: 8π/10. With a common denominator, the sum is 19π/12 = 285°.", null, "570 treats π as 360°. π radians is 180°: (19/12)(180) = 285.", "19π/12 is the sum in radians. Multiply by 180/π to get degrees: 285."],
         },
         {
           q: "What is the value of tan(13π/4)?",
@@ -7050,6 +8336,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         "Trying to evaluate a trig function directly at a large or negative radian value without first reducing it to a coterminal angle within one full rotation.",
         "Subtracting or adding the wrong number of full rotations (2π), leaving an angle that's still outside the standard range or overshoots into the wrong quadrant.",
         "Converting between radians and degrees incorrectly, especially forgetting that π radians equals 180°, not 360°.",
+        "Adding radian fractions by adding the numerators and the denominators (π/3 + π/2 is not 2π/5) instead of using a common denominator.",
       ],
     },
     {
@@ -7192,7 +8479,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
       desmosTrick:
         "Step 1: Type the equation exactly as given, using ^2 for squares — for example (x-3)^2+(y+1)^2=25. Desmos draws the circle immediately. Step 2: Read the center straight off what's being subtracted from x and y inside the parentheses (watch the sign carefully: (x-3) means the center's x-coordinate is +3, not -3). Step 3: The radius is the square root of the number on the right side. Step 4: You can also click any point on the drawn circle to read its coordinates directly, instead of plugging a value into the equation algebraically.",
       explanation:
-        "A circle's equation in the form (x-h)² + (y-k)² = r² directly encodes its center (h, k) and radius r. Just like with vertex form for parabolas, the most common error is a sign mix-up: an equation with (x+3)² actually means h = -3, not h = 3, since the template subtracts h.",
+        "A circle's equation in the form (x-h)² + (y-k)² = r² directly encodes its center (h, k) and radius r. Just like with vertex form for parabolas, the most common error is a sign mix-up: an equation with (x+3)² actually means h = -3, not h = 3, since the template subtracts h. If the equation comes expanded, like x² + y² + 6x - 4y - 12 = 0, complete the square in x and in y: make the x² and y² coefficients 1, move the constant to the right, and add (half the x-coefficient)² and (half the y-coefficient)² to BOTH sides; the right side becomes r². Once you have the center and radius, you know where the circle reaches: every point on it has an x-coordinate from h - r to h + r and a y-coordinate from k - r to k + r. That also tells you when a circle touches an axis at exactly one point (is tangent to it): the y-axis when |h| = r, and the x-axis when |k| = r.",
       examples: [
         {
           q: "What is the equation of a circle with center (2, -3) and radius 5?",
@@ -7235,6 +8522,15 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           why: [null, "(x + 1) means x − (−1), so the x-coordinate is −1.", "The radius is the square root of 49: 7.", "(y − 8) means the y-coordinate is +8."],
         },
         {
+          q: "Which equation represents a circle in the xy-plane that intersects the y-axis at exactly one point?",
+          choices: ["(x - 3)² + (y - 4)² = 16", "(x - 4)² + (y - 3)² = 4", "(x - 4)² + (y - 3)² = 16", "(x - 16)² + (y - 3)² = 16"],
+          answer: 2,
+          explain:
+            "A circle touches the y-axis at exactly one point when the distance from its center to the y-axis, |h|, equals its radius. For (x - 4)² + (y - 3)² = 16, the center is (4, 3) and the radius is √16 = 4: the center is 4 units from the y-axis, so the circle just touches it, at (0, 3). (x - 3)² + (y - 4)² = 16 has radius 4 but a center only 3 units from the y-axis, so it crosses the y-axis twice; it's the x-axis this circle touches once, since k = 4. (x - 4)² + (y - 3)² = 4 has radius 2, not 4, so it never reaches the y-axis. (x - 16)² + (y - 3)² = 16 treats 16 as the radius; its radius is 4 and its center is 16 units away, so it misses the y-axis completely.",
+          difficulty: "medium",
+          why: ["The center is only 3 units from the y-axis, less than the radius 4, so it crosses twice. It touches the x-axis once.", "The radius is √4 = 2, not 4. A center 4 units away never reaches the y-axis.", null, "The radius is √16 = 4, not 16. A center 16 units away misses the y-axis."],
+        },
+        {
           q: "A circle has the equation x² + y² + 6x - 4y - 12 = 0. What is the circle's radius?",
           choices: ["5", "25", "12", "3"],
           answer: 0,
@@ -7244,10 +8540,22 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "25 is r². The radius is √25 = 5.", "12 is the constant before completing the square. Add 9 and 4 to get 25, then take the root.", "3 is how far the center is from the y-axis, not the radius."],
         },
+        {
+          q: "The graph of the equation x² + y² - 10x + 4y + 13 = 0 in the xy-plane is a circle. Which of the following could be the x-coordinate of a point on the circle?",
+          choices: ["-8", "8", "10", "20"],
+          answer: 1,
+          explain:
+            "Complete the square in x and in y. Move the constant: x² - 10x + y² + 4y = -13. Add (-10/2)² = 25 and (4/2)² = 4 to both sides: (x - 5)² + (y + 2)² = -13 + 25 + 4 = 16. The center is (5, -2) and the radius is 4, so every point on the circle has an x-coordinate from 5 - 4 = 1 to 5 + 4 = 9. Only 8 is in that range. -8 comes from reading the center as (-5, 2), with the signs flipped, which would put x between -9 and -1. 10 comes from forgetting to move the 13 across, which makes r² = 29 and the radius about 5.4. 20 uses r² = 16 as the reach instead of r = 4.",
+          difficulty: "hard",
+          why: ["The center is (5, −2), not (−5, 2). x runs from 5 − 4 = 1 to 5 + 4 = 9.", null, "Once the 13 moves across, r² = −13 + 25 + 4 = 16, so r = 4 and x can go only as high as 9.", "20 uses 16 as the reach. The radius is √16 = 4, so x stops at 9."],
+        },
       ],
       traps: [
         "Writing the wrong sign for a negative coordinate in the center — forgetting that subtracting a negative number flips to addition.",
         "Forgetting to square the radius on the right side of the equation (writing r instead of r²), or forgetting to take the square root when working backward from an equation to find r.",
+        "Mishandling the steps of completing the square: divide so x² and y² have a coefficient of 1, move the constant across (flipping its sign), and add each (half the coefficient)² to BOTH sides.",
+        "Mixing up which coordinate controls tangency: the distance from the center to the y-axis is |h|, and the distance to the x-axis is |k|.",
+        "Using r² instead of r for how far the circle reaches: its points run from h − r to h + r, not h − r² to h + r².",
       ],
     },
     {
@@ -7386,7 +8694,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
     {
       name: "Circle Theorems: Central Angles, Arcs, and Tangent Lines",
       explanation:
-        "Not every circle question involves the coordinate-plane equation — many are classic geometry facts about a circle drawn with no coordinates at all. Core facts: a central angle (vertex at the circle's center) always equals the arc it cuts off, in degrees. A radius drawn to where a tangent line touches the circle is always perpendicular to that tangent line, which often creates a right triangle you can solve with the Pythagorean theorem. Two radii of the same circle are always equal in length, which often makes a triangle formed by two radii isosceles. Basic area and circumference (A = πr², C = 2πr) show up here too, with no coordinate equation involved.",
+        "Not every circle question involves the coordinate-plane equation — many are classic geometry facts about a circle drawn with no coordinates at all. Core facts: a central angle (vertex at the circle's center) always equals the arc it cuts off, in degrees. A radius drawn to where a tangent line touches the circle is always perpendicular to that tangent line, which often creates a right triangle you can solve with the Pythagorean theorem. Two radii of the same circle are always equal in length, which often makes a triangle formed by two radii isosceles. Basic area and circumference (A = πr², C = 2πr) show up here too, with no coordinate equation involved. The tangent fact also works in the xy-plane: if the center and the point of tangency are given as coordinates, find the slope of the radius between them; the tangent line is perpendicular to it, so its slope is the negative reciprocal (a radius slope of 4/3 means a tangent slope of -3/4). Write that line through the point of tangency, not the center, then use it to test points or match an equation.",
       examples: [
         {
           q: "A central angle in a circle measures 70°. What is the measure of the arc it intercepts?",
@@ -7438,11 +8746,86 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           difficulty: "hard",
           why: [null, "90° is a quarter of the circle. The arc is 4π of 24π, a sixth.", "30° is a twelfth. The arc is a sixth: 360 ÷ 6 = 60°.", "45° is an eighth. The arc is a sixth of the circle."],
         },
+        {
+          q: "In the xy-plane, a circle has center (2, -1). Line ℓ is tangent to the circle at the point (5, 3), as shown. Which of the following points also lies on line ℓ?",
+          choices: ["(8, 7)", "(9, 6)", "(-2, 2)", "(9, 0)"],
+          answer: 3,
+          explain:
+            "The radius from the center (2, -1) to the point of tangency (5, 3) has slope (3 - (-1))/(5 - 2) = 4/3. A tangent line is perpendicular to that radius, so ℓ has slope -3/4 and passes through (5, 3): y - 3 = -(3/4)(x - 5). At x = 9, y = 3 - (3/4)(4) = 0, so (9, 0) is on ℓ. (8, 7) is on the line through (5, 3) with slope 4/3, which just extends the radius. (9, 6) uses slope 3/4, the reciprocal without the sign change, which isn't perpendicular. (-2, 2) is on the line with slope -3/4 through the center, (2, -1), rather than through the point of tangency.",
+          figure: {"kind": "geometry", "points": {"C": [2, -1], "T": [5, 3], "L1": [1, 6], "L2": [7, 1.5]}, "dots": ["C", "T"], "circles": [{"center": "C", "radius": 5}], "segments": [{"from": "C", "to": "T", "dashed": true}, {"from": "L1", "to": "L2", "arrows": true}], "angles": [{"vertex": "T", "from": "C", "to": "L2", "right": true}], "axes": {"x": [-4, 11], "y": [-7, 7], "step": 1, "labelEvery": 2}, "notes": [{"at": [0.4, 6.4], "text": "ℓ"}]},
+          difficulty: "hard",
+          why: ["(8, 7) continues the radius, with slope 4/3. The tangent is perpendicular: slope −3/4.", "Slope 3/4 isn't perpendicular to 4/3. Flip the fraction and change the sign: −3/4.", "This line has the right slope but runs through the center. The tangent passes through (5, 3).", null],
+        },
       ],
       traps: [
         "Confusing a central angle (vertex at the circle's center, equal to its arc) with an inscribed angle (vertex on the circle itself, equal to HALF its intercepted arc) — these follow different rules.",
         "Forgetting that a tangent line and the radius drawn to the point of tangency are perpendicular, missing an available right angle and Pythagorean setup.",
         "Not recognizing when two radii of the same circle create an isosceles (or, with a 60° angle between them, equilateral) triangle.",
+        "Giving the tangent line the radius's slope, or only flipping its sign, or only taking its reciprocal — a perpendicular slope is the negative reciprocal.",
+        "Running the tangent line through the circle's center instead of through the point of tangency.",
+      ],
+    },
+    {
+      name: "Inscribed Figures and Radii as Equal Sides",
+      explanation:
+        "Many circle questions hide a triangle or polygon built from the circle's radii. When a triangle has one vertex at the center and two on the circle, two of its sides are radii, so it's isosceles: its base angles are equal, each (180° − central angle)/2, and a right central angle makes an isosceles right triangle whose chord is r√2 (a 60° central angle makes it equilateral, so the chord equals r). When a polygon is inscribed, with every vertex on the circle, draw a diagonal or the radii to the vertices: a square's or rectangle's diagonal is a diameter, 2r; an equilateral triangle's radii make three 120° angles at the center, and a regular hexagon's make six 60° angles, so the hexagon's side equals r and the triangle's side is r√3. Then work from what's given (a perimeter, an area, a radius) to the length you need with the Pythagorean theorem or a special right triangle. Wrong answers usually use the radius where the diameter belongs, assume a chord equals the radius, or forget that both radii count toward a perimeter.",
+      examples: [
+        {
+          q: "In the figure, O is the center of the circle, and points A and B lie on the circle. The measure of angle AOB is 110°.\n\nWhat is the value of x?",
+          choices: ["70", "55", "35", "110"],
+          answer: 2,
+          explain:
+            "OA and OB are both radii, so they're equal, and triangle AOB is isosceles: the angles at A and B, across from those equal sides, are equal. Together they take up 180 - 110 = 70°, so each one is 70/2 = 35°, and x = 35. 70 is both base angles together; it stops before splitting what's left evenly between A and B. 55 is half the central angle, which borrows the inscribed-angle rule, but no angle here has its vertex on the circle facing arc AB. 110 is the central angle itself, not the angle at A.",
+          figure: {"kind": "geometry", "points": {"O": [0, 0], "A": [-4.0958, -2.8679], "B": [4.0958, -2.8679]}, "names": ["O", "A", "B"], "namePos": {"O": 90}, "dots": ["O"], "circles": [{"center": "O", "radius": 5}], "segments": [{"from": "O", "to": "A"}, {"from": "O", "to": "B"}, {"from": "A", "to": "B"}], "angles": [{"vertex": "O", "from": "A", "to": "B", "label": "110°"}, {"vertex": "A", "from": "O", "to": "B", "label": "x°"}]},
+          difficulty: "easy",
+          why: ["70 is both base angles together. Split it evenly between A and B: 35.", "55 is half of 110, the inscribed-angle rule. Here the angles at A and B share 180 − 110 = 70.", null, "110 is the angle at the center, O. x is the angle at A."],
+        },
+        {
+          q: "In the figure, square ABCD is inscribed in a circle with center O. The radius of the circle is 3√2.\n\nWhat is the side length of the square?",
+          choices: ["6", "3", "3√2", "6√2"],
+          answer: 0,
+          explain:
+            "Every vertex of the square is on the circle, so a diagonal of the square, like AC, passes through the center and is a diameter: 2 × 3√2 = 6√2. A diagonal cuts the square into two 45-45-90 triangles, where the diagonal is a side times √2, so the side is 6√2/√2 = 6. 3 divides the radius by √2, treating the radius as if it were the whole diagonal. 3√2 assumes the side equals the radius. 6√2 is the diagonal (the diameter), not a side.",
+          figure: {"kind": "geometry", "points": {"O": [0, 0], "A": [-3, 3], "B": [3, 3], "C": [3, -3], "D": [-3, -3]}, "names": ["A", "B", "C", "D", "O"], "namePos": {"O": 0}, "dots": ["O"], "circles": [{"center": "O", "radius": 4.242641}], "polygons": [{"points": ["A", "B", "C", "D"]}], "segments": [{"from": "A", "to": "C", "dashed": true}, {"from": "O", "to": "B", "label": "3√2"}]},
+          difficulty: "easy",
+          why: [null, "3 treats the radius as the diagonal. The diagonal is the diameter, 6√2, so the side is 6√2/√2 = 6.", "The side isn't the radius. The diagonal is the diameter, 6√2, and the side is 6√2/√2 = 6.", "6√2 is the diagonal, a diameter. A side is the diagonal divided by √2: 6."],
+        },
+        {
+          q: "In the figure, O is the center of the circle, and points P and Q lie on the circle. The radius of the circle is 9, and the perimeter of triangle OPQ is 34.\n\nWhat is the length of PQ?",
+          choices: ["25", "9", "18", "16"],
+          answer: 3,
+          explain:
+            "OP and OQ are both radii, so each is 9. The perimeter adds all three sides: 9 + 9 + PQ = 34, so PQ = 34 - 18 = 16. 25 subtracts only one radius from the perimeter, forgetting that OQ is also 9. 9 assumes the chord equals the radius, which is true only when the angle at O is 60°. 18 is the diameter; a chord that doesn't pass through the center is shorter than that, and 9 + 9 + 18 would make the perimeter 36, not 34.",
+          figure: {"kind": "geometry", "points": {"O": [0, 0], "P": [-8, -4.1231], "Q": [8, -4.1231]}, "names": ["O", "P", "Q"], "namePos": {"O": 90}, "dots": ["O"], "circles": [{"center": "O", "radius": 9}], "segments": [{"from": "O", "to": "P", "label": "9"}, {"from": "O", "to": "Q"}, {"from": "P", "to": "Q"}]},
+          difficulty: "medium",
+          why: ["25 subtracts only one radius. OQ is a radius too: 34 − 9 − 9 = 16.", "The chord equals the radius only when angle POQ is 60°. Use the perimeter: 34 − 18 = 16.", "18 is the diameter. PQ doesn't pass through O, and 9 + 9 + 18 would be 36, not 34.", null],
+        },
+        {
+          q: "In the figure, an equilateral triangle ABC is inscribed in a circle with center O. The perimeter of the triangle is 36.\n\nWhat is the radius of the circle?",
+          choices: ["12", "4√3", "6√3", "2√3"],
+          answer: 1,
+          explain:
+            "Each side is 36/3 = 12. The radii to the three vertices split the 360° around O into three 120° angles. The perpendicular from O to side BC cuts BC in half (6 on each side) and splits that 120° angle into two 60° angles, making 30-60-90 triangles. In the one with hypotenuse OC, the 6 is opposite the 60° angle at O, so it's the long leg: x√3 = 6 gives x = 6/√3 = 2√3 for the short leg, and the hypotenuse, the radius, is 2x = 4√3. 12 assumes the side equals the radius, which is true for a regular hexagon, not a triangle. 6√3 is the triangle's height from A down to BC; the center sits only two-thirds of the way down it. 2√3 is the distance from the center to a side, not to a vertex.",
+          figure: {"kind": "geometry", "points": {"O": [0, 0], "A": [0, 6.9282], "B": [-6, -3.4641], "C": [6, -3.4641], "M": [0, -3.4641]}, "names": ["A", "B", "C", "O"], "namePos": {"O": 180}, "dots": ["O"], "circles": [{"center": "O", "radius": 6.928203}], "polygons": [{"points": ["A", "B", "C"]}], "segments": [{"from": "O", "to": "C", "dashed": true}, {"from": "O", "to": "M", "dashed": true}], "angles": [{"vertex": "M", "from": "C", "to": "O", "right": true}]},
+          difficulty: "medium",
+          why: ["A side equals the radius in a regular hexagon, not a triangle. Here the radius is 12/√3 = 4√3.", null, "6√3 is the triangle's height. The center is only two-thirds of the way down it: 4√3.", "2√3 is the distance from the center to a side. The radius reaches a vertex: twice that, 4√3."],
+        },
+        {
+          q: "A rectangle is inscribed in a circle, as shown. The length of the rectangle's diagonal is twice the length of its shorter side, and the area of the rectangle is 36√3 square units.\n\nWhat is the diameter of the circle, in units?",
+          choices: ["6", "6√3", "12", "12√3"],
+          answer: 2,
+          explain:
+            "Call the shorter side s, so the diagonal is 2s. The diagonal splits the rectangle into two right triangles with short leg s and hypotenuse 2s, which is a 30-60-90 triangle, so the longer side is s√3. The area is s × s√3 = s²√3 = 36√3, so s² = 36 and s = 6. The diagonal is 2s = 12, and because every vertex is on the circle, the diagonal is a diameter: 12. 6 is the shorter side (and the radius), not the diameter. 6√3 is the rectangle's longer side. 12√3 comes from solving s²√3 = 36√3 as s² = 108 instead of dividing both sides by √3.",
+          figure: {"kind": "geometry", "points": {"O": [0, 0], "A": [-5.1962, 3], "B": [5.1962, 3], "C": [5.1962, -3], "D": [-5.1962, -3]}, "dots": ["O"], "circles": [{"center": "O", "radius": 6}], "polygons": [{"points": ["A", "B", "C", "D"]}], "segments": [{"from": "A", "to": "C", "dashed": true}], "angles": [{"vertex": "D", "from": "C", "to": "A", "right": true}, {"vertex": "B", "from": "A", "to": "C", "right": true}]},
+          difficulty: "hard",
+          why: ["6 is the shorter side, which also equals the radius. The diameter is the diagonal: 2 × 6 = 12.", "6√3 is the rectangle's longer side. The diameter is the diagonal, 12.", null, "Dividing s²√3 = 36√3 by √3 gives s² = 36, not 108. So s = 6 and the diagonal is 12."],
+        },
+      ],
+      traps: [
+        "Using the radius where the diameter belongs (or the reverse): an inscribed square's or rectangle's diagonal is the full diameter, 2r, not r.",
+        "Forgetting that two sides of a center-and-chord triangle are both radii — for example, subtracting only one radius from a perimeter, or not making the two base angles equal.",
+        "Assuming a chord equals the radius for any central angle. That's only true at 60°; at 90° the chord is r√2, and at 120° it's r√3.",
+        "Mixing up the special-right-triangle ratios (√2 where √3 belongs, or the short leg where the hypotenuse belongs) when converting between a side of the figure and the radius.",
       ],
     },
   ],
