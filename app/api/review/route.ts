@@ -15,7 +15,7 @@ async function guard() {
   const user = await getCurrentUser();
   if (!user) return { error: NextResponse.json({ error: "Not logged in." }, { status: 401 }) };
   const stats = await getUserStats(user.userId);
-  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) {
+  if (!hasActiveAccess(stats)) {
     return { error: NextResponse.json({ error: "Your access has expired." }, { status: 402 }) };
   }
   return { user };

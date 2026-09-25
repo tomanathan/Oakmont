@@ -27,16 +27,19 @@ export default function TermsPage() {
       </p>
 
       <h2>3. Plans &amp; billing</h2>
-      <p>Oakmont is paid access, offered two ways:</p>
+      <p>
+        Every new account starts with a 7-day free trial with full access. No card is needed to start, and nothing
+        is charged when it ends; to keep using Oakmont after that, choose one of two paid plans:
+      </p>
       <ul>
         <li>
-          <strong>Monthly ($25/month):</strong> starts with a 7-day free trial. Your card isn&apos;t charged until
-          the trial ends, and it renews automatically each month after that until you cancel. Cancel anytime from
-          Settings — access continues through the end of the period you already paid for.
+          <strong>Monthly ($25/month):</strong> renews automatically each month until you cancel. If you choose it
+          during your free trial, your first charge is on the day the trial ends. Cancel anytime from Settings —
+          access continues through the end of the period you already paid for.
         </li>
         <li>
           <strong>Full Course Access ($100 one time):</strong> a single payment that unlocks everything for 182
-          days from the date you pay. It does not renew or charge you again. It includes one free retake extension: in
+          days from the date you pay (or, if you buy during your free trial, from the day the trial ends). It does not renew or charge you again. It includes one free retake extension: in
           Settings, choose an upcoming official SAT date within six months of your access ending, and access extends
           through three days after that date. It can be claimed once, up to 90 days after the pass ends.
         </li>
@@ -50,7 +53,7 @@ export default function TermsPage() {
         with heavier use, reach out anyway — we look at these individually rather than applying a hard rule.
       </p>
       <p>
-        <strong>Monthly:</strong> the 7-day trial exists so you can decide before anything is charged. Once a
+        <strong>Monthly:</strong> the free trial exists so you can decide before anything is charged. Once a
         billing period is paid for, we don&apos;t refund it partway through, but canceling stops all future
         charges immediately.
       </p>

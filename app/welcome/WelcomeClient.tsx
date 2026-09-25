@@ -565,7 +565,7 @@ export function WelcomeClient(props: Props) {
                   <button onClick={() => finish("/subscribe")} disabled={saving} className={PRIMARY}>
                     {saving ? "Opening..." : "Choose a plan to start"}
                   </button>
-                  <span className="text-[13px] text-stone-500">The monthly plan starts with a 7-day free trial.</span>
+                  <span className="text-[13px] text-stone-500">Your free trial has ended. Your plan is saved.</span>
                 </>
               )}
             </div>

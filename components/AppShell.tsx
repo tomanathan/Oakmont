@@ -9,6 +9,7 @@ import { MOOD_BY_STAGE } from "./PetAvatar";
 import { PET_NAME, type PetStage } from "@/lib/pet";
 import { dedupedFetchJson } from "@/lib/dedupeFetch";
 import { LegalFooter } from "./LegalFooter";
+import { trialDaysLeft, type AccessFields } from "@/lib/subscription";
 
 const STAGE_PILL: Record<PetStage, string> = {
   thriving: "bg-[#eaf6ef] border-[#cde8d9] text-[#2f6f4f]",
@@ -32,7 +33,8 @@ export function AppShell({
   wide = false,
 }: {
   email: string;
-  stats?: { currentStreak: number };
+  // Pages pass the whole stats row; the access fields drive the free-trial bar.
+  stats?: { currentStreak: number } & Partial<AccessFields>;
   children: React.ReactNode;
   // The lesson page's own content column was measuring ~42 characters per
   // line at desktop widths -- narrower than the same page on a phone --
@@ -53,6 +55,13 @@ export function AppShell({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const trialLeft = stats
+    ? trialDaysLeft({
+        subscriptionStatus: stats.subscriptionStatus ?? null,
+        accessExpiresAt: stats.accessExpiresAt ?? null,
+        trialEndsAt: stats.trialEndsAt ?? null,
+      })
+    : null;
   const [pet, setPet] = useState<{ stage: PetStage; costume: string | null } | null>(null);
 
   // Fetched fresh on every mount rather than shared with ScoutCompanion's
@@ -170,11 +179,33 @@ export function AppShell({
           </div>
         </div>
       </header>
+      {trialLeft !== null && <TrialBar daysLeft={trialLeft} width={width} />}
       <div className={`${width} mx-auto px-4 pb-12 pt-5 font-sans`}>
         {children}
         <LegalFooter className="mt-10" />
       </div>
     </>
+  );
+}
+
+// Shown on every app page during the no-card free week: how long is left,
+// and the way to keep going. Quiet for most of the week, warmer at the end.
+function TrialBar({ daysLeft, width }: { daysLeft: number; width: string }) {
+  const urgent = daysLeft <= 2;
+  return (
+    <div className={`border-b font-sans ${urgent ? "border-[#f0ddb8] bg-[#fbf1df]" : "border-[#e2d7c1] bg-[#eef3e9]"}`}>
+      <div className={`${width} mx-auto flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 py-2 text-[13px]`}>
+        <span className={urgent ? "text-[#8a5d0f]" : "text-[#2c4c3b]"}>
+          {daysLeft === 1 ? "Last day of your free trial." : `Free trial: ${daysLeft} days left.`}
+        </span>
+        <Link
+          href="/subscribe"
+          className={`font-semibold underline underline-offset-4 ${urgent ? "text-[#8a5d0f] decoration-[#d9b77a]" : "text-forest decoration-sage/60"} hover:decoration-current`}
+        >
+          Choose a plan
+        </Link>
+      </div>
+    </div>
   );
 }
 

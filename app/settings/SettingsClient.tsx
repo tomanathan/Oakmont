@@ -29,6 +29,7 @@ export function SettingsClient({
   linkedParents,
   pass,
   subscription,
+  trial,
 }: {
   email: string;
   firstName: string | null;
@@ -51,6 +52,9 @@ export function SettingsClient({
   // Only for monthly subscribers (anyone Stripe has a subscription status
   // for); null for everyone else.
   subscription: { status: string; currentPeriodEnd: string | null; cancelsAt: string | null } | null;
+  // Only while in (or just past) the no-card free week without a plan;
+  // daysLeft is null once it has ended.
+  trial: { daysLeft: number | null; endsOn: string } | null;
 }) {
   const router = useRouter();
   const [name, setName] = useState(firstName ?? "");
@@ -535,6 +539,27 @@ export function SettingsClient({
       {/* Account -- neither Ozho's nor the study plan's, so it stays its
           own labeled section rather than trailing after Study plan
           unlabeled the way it used to. */}
+      {trial && (
+        <>
+          <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Your free trial</div>
+          <div className="mb-8 rounded-xl border border-[#e2d7c1] bg-white p-6">
+            <div className="text-[15px] font-semibold text-ink">
+              {trial.daysLeft === null
+                ? `Ended ${trial.endsOn}`
+                : `${trial.daysLeft} ${trial.daysLeft === 1 ? "day" : "days"} left, ends ${trial.endsOn}`}
+            </div>
+            <div className="mb-4 mt-0.5 text-[13px] text-stone-600">
+              {trial.daysLeft === null
+                ? "Your progress is saved. Choose a plan to keep studying."
+                : "Nothing is charged: there's no card on file. Choose a plan any time to keep going after your trial."}
+            </div>
+            <Link href="/subscribe" className="inline-block px-4 py-2.5 rounded-lg bg-forest text-white font-semibold text-sm">
+              See plans
+            </Link>
+          </div>
+        </>
+      )}
+
       {pass && (
         <>
           <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Your pass</div>

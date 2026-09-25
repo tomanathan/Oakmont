@@ -11,7 +11,7 @@ export default async function ReviewPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
   const stats = await getUserStats(user.userId);
-  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
+  if (!hasActiveAccess(stats)) redirect("/subscribe");
 
   return (
     <AppShell email={user.email} stats={stats}>

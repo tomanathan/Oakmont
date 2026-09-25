@@ -39,6 +39,7 @@ export async function Pricing() {
           <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[42px]">
             Same course, two ways to pay.
           </h2>
+          <p className="mt-4 text-[15px] text-ivory/70">Start with 7 days free, no card needed. Choose a plan if it&apos;s working.</p>
         </div>
 
         <div className="mx-auto grid max-w-[860px] gap-4 md:grid-cols-2">
@@ -46,7 +47,7 @@ export async function Pricing() {
             <div className="mb-6 flex items-center justify-between">
               <div className="font-display text-[19px] font-semibold">Monthly</div>
               <div className="rounded-full px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-sage-light ring-1 ring-sage-light/50">
-                7-day free trial
+                Flexible
               </div>
             </div>
             <div className="flex items-baseline gap-2">

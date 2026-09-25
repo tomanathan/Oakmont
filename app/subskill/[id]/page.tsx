@@ -22,7 +22,7 @@ export default async function SubskillPage({ params }: { params: { id: string } 
   });
   const questions = pickQuizItems(itemsForSubskill(params.id), attempts);
   const stats = await getUserStats(user.userId);
-  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
+  if (!hasActiveAccess(stats)) redirect("/subscribe");
 
   return (
     <AppShell email={user.email} stats={stats} wide>

@@ -27,6 +27,6 @@ export const FAQ_ITEMS = [
   },
   {
     q: "Is there a free trial? Can I cancel?",
-    a: "The monthly plan starts with a 7-day free trial, and you can cancel anytime in Settings. The 6-month pass is a single payment with nothing to cancel.",
+    a: "Yes. Every account gets 7 days of full access, and you don't need a card to start. If it's working, choose monthly (cancel anytime in Settings) or the 6-month pass, a single payment with nothing to cancel.",
   },
 ];

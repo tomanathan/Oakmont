@@ -11,6 +11,7 @@ import { AppShell } from "@/components/AppShell";
 import { SettingsClient } from "./SettingsClient";
 import { retakeState } from "@/lib/retakeCover";
 import { stripe } from "@/lib/stripe";
+import { trialDaysLeft, trialEnded } from "@/lib/subscription";
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
@@ -106,6 +107,18 @@ export default async function SettingsPage() {
         linkedParents={(parentAccess?.parentLinks ?? []).map((l) => ({ id: l.id, parentId: l.parent.id, email: l.parent.email, pending: !l.parent.passwordHash }))}
         pass={pass}
         subscription={subscription}
+        trial={
+          trialDaysLeft(stats) !== null || trialEnded(stats)
+            ? {
+                daysLeft: trialDaysLeft(stats),
+                endsOn: stats.trialEndsAt!.toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  timeZone: "America/Chicago",
+                }),
+              }
+            : null
+        }
       />
     </AppShell>
   );

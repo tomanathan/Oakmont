@@ -23,10 +23,10 @@ const PRICE_ENV_VARS: Record<PlanId, string> = {
 // The two Prices configured in the Stripe Dashboard, both under one
 // Product -- looked up lazily (not read at module load) so importing this
 // file for the `stripe` client alone never fails just because one price
-// env var happens to be unset. Monthly is a recurring subscription Price
-// (7-day trial applied at checkout time, since Stripe's trial mechanic
-// only exists for subscriptions); SixMonth ("Full Course Access") is a
-// one-time Price with no trial. (An Annual price was created and then
+// env var happens to be unset. Monthly is a recurring subscription Price;
+// SixMonth ("Full Course Access") is a one-time Price. The free week is
+// the app's own (User.trialEndsAt, no card) -- Stripe only sees a trial
+// when someone subscribes during it, to delay their first charge. (An Annual price was created and then
 // deactivated in the sandbox -- $99/yr undercut the $100 six-month pass
 // for twice the access, so it was dropped rather than fixed with mismatched
 // numbers.)

@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Not logged in." }, { status: 401 });
   }
   const stats = await getUserStats(user.userId);
-  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) {
+  if (!hasActiveAccess(stats)) {
     return NextResponse.json({ error: "Your access has expired." }, { status: 402 });
   }
 

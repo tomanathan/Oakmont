@@ -26,7 +26,7 @@ export default async function WelcomePage({ searchParams }: { searchParams: { st
       },
     }),
   ]);
-  const hasAccess = hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt);
+  const hasAccess = hasActiveAccess(stats);
   const single = REVISIT_STEPS.find((s) => s === searchParams.step) ?? null;
   if (stats.welcomeSeenAt && !single) redirect(hasAccess ? "/dashboard" : "/subscribe");
 

@@ -17,7 +17,9 @@ function formatAmount(cents: number, currency: string): string {
   return `${symbol}${formatted}`;
 }
 
-export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
+// trialEndsOn: set while the student is still in their free week, so each
+// plan can say when it actually starts.
+export function SubscribeClient({ plans, trialEndsOn }: { plans: PlanOption[]; trialEndsOn: string | null }) {
   const [loadingPlan, setLoadingPlan] = useState<PlanId | null>(null);
   const [error, setError] = useState("");
 
@@ -58,15 +60,15 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
               <span className="text-sm text-stone-500">/month</span>
             </div>
             <div className="text-sm text-stone-500 mb-5">
-              Pay month to month, cancel anytime. Starts with a 7-day free trial — your card isn&apos;t
-              charged until it ends.
+              Pay month to month, cancel anytime.
+              {trialEndsOn ? ` Your first charge is on ${trialEndsOn}, when your free trial ends.` : ""}
             </div>
             <button
               onClick={() => startCheckout("monthly")}
               disabled={loadingPlan !== null}
               className="mt-auto w-full py-3 rounded-lg border border-[#d5c8ae] text-ink font-semibold text-sm disabled:opacity-60"
             >
-              {loadingPlan === "monthly" ? "Redirecting..." : "Start free trial"}
+              {loadingPlan === "monthly" ? "Redirecting..." : "Choose monthly"}
             </button>
           </div>
         )}
@@ -87,7 +89,8 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
               <span className="text-sm text-stone-500">one time</span>
             </div>
             <div className="text-sm text-stone-500 mb-5">
-              6 months of access, paid once. Covered through a retake: if they sit the SAT again, access extends free.
+              6 months of access, paid once{trialEndsOn ? `, counted from ${trialEndsOn}` : ""}. Covered through a retake: if
+              they sit the SAT again, access extends free.
             </div>
             <button
               onClick={() => startCheckout("sixmonth")}

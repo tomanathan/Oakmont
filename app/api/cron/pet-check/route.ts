@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { PET_NAME, shouldDie, shouldWarn } from "@/lib/pet";
+import { sendTrialReminders } from "@/lib/trialReminder";
 
-// Runs once a day (see vercel.json) to check every user's study-streak pet:
+// Runs once a day (see vercel.json). Also sends the "free trial ends
+// tomorrow" emails (lib/trialReminder.ts), since the plan allows only two
+// cron jobs. The pet check itself:
+//
+// Checks every user's study-streak pet:
 // send a warning email 2 days before it would die, mark it dead and send a
 // death email once a full week of inactivity passes. Protected by
 // CRON_SECRET so the endpoint can't be triggered by anyone who finds the
@@ -69,7 +74,9 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, checked: users.length, warned, died });
+  const trialReminders = await sendTrialReminders(now);
+
+  return NextResponse.json({ ok: true, checked: users.length, warned, died, trialReminders });
 }
 
 // Falls back to the known production URL so emails still link somewhere

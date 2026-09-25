@@ -32,7 +32,7 @@ export default async function DashboardPage() {
   ]);
   // Onboarding comes before choosing a plan, so check it first.
   if (!stats.welcomeSeenAt) redirect("/welcome");
-  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
+  if (!hasActiveAccess(stats)) redirect("/subscribe");
 
   const progress = progressMapFromRows(rows);
   const createdAt = stats.createdAt ?? new Date();

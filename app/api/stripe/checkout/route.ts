@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   const dbUser = await prisma.user.findUnique({
     where: { id: user.userId },
-    select: { email: true, stripeCustomerId: true },
+    select: { email: true, stripeCustomerId: true, trialEndsAt: true },
   });
   if (!dbUser) {
     return NextResponse.json({ error: "Account not found." }, { status: 404 });
@@ -62,6 +62,18 @@ export async function POST(req: NextRequest) {
 
   const isSubscription = plan === "monthly";
 
+  // Choosing a plan during the free week shouldn't cost the rest of it:
+  // monthly billing starts when the week ends (as a Stripe trial, so the
+  // card is saved now and charged then). Stripe needs a trial end at least
+  // 48 hours out, so on the last day or two the student simply gets a
+  // little extra. After the free week, billing starts right away. The
+  // 6-month pass handles the same thing on the webhook side.
+  const now = Date.now();
+  const trialEnd =
+    isSubscription && dbUser.trialEndsAt && dbUser.trialEndsAt.getTime() > now
+      ? Math.floor(Math.max(dbUser.trialEndsAt.getTime(), now + 49 * 60 * 60 * 1000) / 1000)
+      : null;
+
   const session = await stripe.checkout.sessions.create({
     mode: isSubscription ? "subscription" : "payment",
     customer: customerId,
@@ -81,7 +93,7 @@ export async function POST(req: NextRequest) {
     // Subscription object at all, so its userId has to live on the Checkout
     // Session itself instead, which checkout.session.completed does receive.
     ...(isSubscription
-      ? { subscription_data: { trial_period_days: 7, metadata: { userId: user.userId } } }
+      ? { subscription_data: { metadata: { userId: user.userId }, ...(trialEnd ? { trial_end: trialEnd } : {}) } }
       : { metadata: { userId: user.userId, plan } }),
   });
 

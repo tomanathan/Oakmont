@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { hashPassword, createSessionToken, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/auth";
+import { trialEndFrom } from "@/lib/subscription";
 
 export async function POST(req: NextRequest) {
   let body: { email?: string; password?: string; firstName?: string };
@@ -35,8 +36,11 @@ export async function POST(req: NextRequest) {
   }
 
   const passwordHash = await hashPassword(password);
+  // The free week starts now: full access, no card, no checkout. Paying
+  // is a choice made later from /subscribe, not a step in signing up.
+  const now = new Date();
   const user = await prisma.user.create({
-    data: { email, passwordHash, firstName, lastLoginAt: new Date() },
+    data: { email, passwordHash, firstName, lastLoginAt: now, trialEndsAt: trialEndFrom(now) },
   });
 
   const token = await createSessionToken({ userId: user.id, email: user.email });

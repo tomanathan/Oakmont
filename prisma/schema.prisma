@@ -109,6 +109,13 @@ model User {
   // student picks the retake date; accessExpiresAt moves to just after it).
   // Set when claimed, so it can only be claimed once -- see lib/retakeCover.ts.
   passRetakeClaimedAt  DateTime?
+  // Free trial: every account gets full access for 7 days from signup, no
+  // card needed (see lib/subscription.ts). Choosing a plan during the
+  // trial doesn't cut it short: monthly billing starts when it ends and a
+  // 6-month pass starts counting after it. trialReminderSentAt stops the
+  // daily cron from sending the "your trial ends tomorrow" email twice.
+  trialEndsAt          DateTime?
+  trialReminderSentAt  DateTime?
 
   // Forgot-password: both null until a reset is requested. The token itself
   // (not a hash of it) is what's stored -- same convention as

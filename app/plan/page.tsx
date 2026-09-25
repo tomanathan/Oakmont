@@ -28,7 +28,7 @@ export default async function PlanPage() {
     getUserStats(user.userId),
     prisma.practiceTest.findMany({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
   ]);
-  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
+  if (!hasActiveAccess(stats)) redirect("/subscribe");
 
   const progress = progressMapFromRows(rows);
 

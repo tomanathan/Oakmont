@@ -35,13 +35,20 @@ export async function POST(req: NextRequest) {
       const session = event.data.object as Stripe.Checkout.Session;
       if (session.mode === "payment") {
         const userId = session.metadata?.userId;
-        if (userId) {
+        const row = userId
+          ? await prisma.user.findUnique({ where: { id: userId }, select: { trialEndsAt: true, accessExpiresAt: true } })
+          : null;
+        if (userId && row) {
           const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id;
+          // The pass's 182 days start after whatever access the student
+          // already has -- the rest of their free week, or a pass still
+          // running -- so buying early never costs them days.
+          const start = Math.max(Date.now(), row.trialEndsAt?.getTime() ?? 0, row.accessExpiresAt?.getTime() ?? 0);
           await prisma.user.update({
             where: { id: userId },
             data: {
               ...(customerId ? { stripeCustomerId: customerId } : {}),
-              accessExpiresAt: new Date(Date.now() + SIXMONTH_PASS_DAYS * 24 * 60 * 60 * 1000),
+              accessExpiresAt: new Date(start + SIXMONTH_PASS_DAYS * 24 * 60 * 60 * 1000),
             },
           });
         }

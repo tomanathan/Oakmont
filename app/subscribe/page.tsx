@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { getUserStats } from "@/lib/user";
-import { hasActiveAccess } from "@/lib/subscription";
+import { hasPaidAccess, trialDaysLeft, trialEnded } from "@/lib/subscription";
 import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
 import { BrandMark } from "@/components/BrandMark";
 import { LegalFooter } from "@/components/LegalFooter";
@@ -14,13 +14,18 @@ export default async function SubscribePage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  // Already paid (or in an active trial) -- nothing to sell them, and
-  // showing a pricing page to someone who already has access reads as
-  // broken, not just redundant.
+  // Already paid -- nothing to sell them, and showing a pricing page to
+  // someone who already has access reads as broken, not just redundant.
+  // Students in their free week can come here to choose a plan early.
   const stats = await getUserStats(user.userId);
-  if (hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) {
+  if (hasPaidAccess(stats)) {
     redirect("/dashboard");
   }
+  const daysLeft = trialDaysLeft(stats);
+  const trialOver = trialEnded(stats);
+  const trialEndsOn = stats.trialEndsAt
+    ? stats.trialEndsAt.toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "America/Chicago" })
+    : null;
 
   // Fetched live from Stripe, not hardcoded, so the amount shown here can
   // never drift from what Checkout will actually charge.
@@ -53,10 +58,15 @@ export default async function SubscribePage() {
             {planLine}
           </div>
         )}
-        <div className="font-display font-semibold text-[28px] text-ink mb-1.5">Choose your plan</div>
+        <div className="font-display font-semibold text-[28px] text-ink mb-1.5">
+          {trialOver ? "Your free week is over" : "Choose your plan"}
+        </div>
         <div className="text-sm text-stone-500 max-w-[520px] mx-auto">
-          Every plan includes the full curriculum, all 8 practice tests, your adaptive study plan, and Ozho.
-          The monthly plan starts with a 7-day free trial — your card won't be charged until it ends.
+          {daysLeft !== null
+            ? `You have ${daysLeft} ${daysLeft === 1 ? "day" : "days"} left in your free trial. Choose a plan now and you won't lose them: monthly billing starts when the trial ends, and the 6-month pass starts counting after it.`
+            : trialOver
+              ? "Your progress, study plan, and Ozho are all saved. Choose a plan to pick up right where you left off."
+              : "Every plan includes the full curriculum, all 8 practice tests, your adaptive study plan, and Ozho."}
         </div>
       </div>
       {retake.options.length > 0 && (
@@ -66,7 +76,7 @@ export default async function SubscribePage() {
           <RetakeCover claimedAt={null} accessExpiresAt={null} options={retake.options} after="dashboard" />
         </div>
       )}
-      <SubscribeClient plans={plans} />
+      <SubscribeClient plans={plans} trialEndsOn={daysLeft !== null ? trialEndsOn : null} />
       <div className="text-center text-xs text-stone-500 mt-6">
         See our <a href="/terms" className="underline hover:text-ink">Terms</a> for full billing and refund
         details.

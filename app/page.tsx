@@ -30,7 +30,7 @@ export default async function Home() {
   if (!user) return <LandingPage />;
 
   const stats = await getUserStats(user.userId);
-  if (!hasActiveAccess(stats.subscriptionStatus, stats.accessExpiresAt)) redirect("/subscribe");
+  if (!hasActiveAccess(stats)) redirect("/subscribe");
 
   redirect("/dashboard");
 }

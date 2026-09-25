@@ -66,6 +66,7 @@ export function Hero() {
             See the course &darr;
           </a>
         </div>
+        <p className="mt-4 text-[13px] text-stone-500">7 days free. No card needed.</p>
       </div>
     </section>
   );

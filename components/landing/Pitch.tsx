@@ -39,7 +39,7 @@ export function Pitch() {
             </TrackedLink>
           </div>
           <ul className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-stone-500">
-            {["7-day free trial", "Cancel anytime"].map((item) => (
+            {["7-day free trial", "No card needed"].map((item) => (
               <li key={item} className="flex items-center gap-1.5">
                 <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
                   <path d="M2.5 6.2 5 8.5l4.5-5" fill="none" stroke="#587356" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
