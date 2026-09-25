@@ -224,11 +224,13 @@ export function QuizBuddy({ className = "" }: { className?: string }) {
 // the way -- bounding hops of different heights, surges and slow-downs that
 // swap who's in front, a play bow and pounce, a quick wheel-around to chase
 // back at the other, and now and then the ball gets tossed ahead and both
-// race for it. Every run is different. Runs only while the section is on
+// race for it. Jumps stay short (a hard cap well inside the strip); the
+// play happens in them instead -- bunny-hop runs, one dog leapfrogging the
+// other, and both stopping face to face to bounce around each other. Every run is different. Runs only while the section is on
 // screen, every several seconds. Positions are written straight to the DOM;
 // React only hears about pose changes (legs, facing, bow, ball).
 
-type RunAct = "run" | "bow" | "wheel";
+type RunAct = "run" | "bow" | "wheel" | "romp";
 interface Runner {
   x: number;
   h: number; // height above the ground
@@ -242,6 +244,8 @@ interface Runner {
   stride: number;
   leg: 0 | 1;
   hasBall: boolean;
+  hopsLeft: number; // bunny-hops still to chain after this landing
+  leapUntil: number; // mid-leapfrog: a burst of speed to pass over the other
 }
 interface Pose {
   leg: 0 | 1;
@@ -253,6 +257,10 @@ interface Pose {
 
 const GRAVITY = 1500; // px/s^2
 const PACE = 150; // the pair's average speed, px/s
+// Launch speeds for each kind of jump; peak height = v^2 / (2 * GRAVITY).
+const HOP = [140, 200] as const; // ~6-13px, the everyday playful bounce
+const LEAP = 255; // ~22px, just enough to clear the other dog
+const MAX_H = 26; // hard ceiling, far inside the 96px strip
 
 export function Runners({ className = "" }: { className?: string }) {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -302,6 +310,8 @@ export function Runners({ className = "" }: { className?: string }) {
         stride: 0,
         leg: 0 as 0 | 1,
         hasBall: i === first,
+        hopsLeft: 0,
+        leapUntil: 0,
       }));
       // The ball when it's loose: x, height, velocities.
       let ball: { x: number; h: number; vx: number; vh: number; bounces: number; at: number; by: number } | null = null;
@@ -325,21 +335,40 @@ export function Runners({ className = "" }: { className?: string }) {
               // Toss the ball ahead; whoever gets there first has it.
               tossed = true;
               d.hasBall = false;
-              ball = { x: d.x + dir * 14, h: 18, vx: dir * rand(260, 340), vh: rand(380, 470), bounces: 0, at: now, by: i };
+              ball = { x: d.x + dir * 14, h: 14, vx: dir * rand(250, 320), vh: rand(200, 250), bounces: 0, at: now, by: i };
               d.target = 1.7;
               other.target = 1.8;
-            } else if (r < 0.34) {
-              // A bounding hop -- sometimes a big leap.
-              d.vh = Math.random() < 0.3 ? rand(520, 640) : rand(300, 440);
-              d.target = rand(1.1, 1.45);
-            } else if (r < 0.5 && ahead > 30) {
+            } else if (r < 0.3) {
+              // A little bounce, often chained into a run of bunny-hops.
+              d.vh = rand(HOP[0], HOP[1]);
+              d.hopsLeft = Math.random() < 0.55 ? 1 + Math.floor(Math.random() * 2) : 0;
+              d.target = rand(1.05, 1.35);
+            } else if (r < 0.45 && ahead > 12 && ahead < 70 && other.h === 0) {
+              // Right behind the other: leapfrog over it and land in front.
+              d.vh = LEAP;
+              d.leapUntil = now + 450;
+              d.target = 2.1;
+            } else if (r < 0.56 && Math.abs(ahead) < 60 && other.act === "run" && other.h === 0) {
+              // Close together: both stop, face each other and bounce around
+              // one another for a moment.
+              const until = now + rand(1100, 1600);
+              for (const [dog, face] of [
+                [d, Math.sign(other.x - d.x) || dir],
+                [other, Math.sign(d.x - other.x) || -dir],
+              ] as [Runner, number][]) {
+                dog.act = "romp";
+                dog.actUntil = until;
+                dog.facing = face as 1 | -1;
+                dog.nextThink = until + rand(300, 700);
+              }
+            } else if (r < 0.64 && ahead > 30) {
               d.target = rand(1.5, 1.9); // surge to catch up
-            } else if (r < 0.62 && ahead < -40) {
+            } else if (r < 0.74 && ahead < -40) {
               // Out in front: stop and play-bow at the other one.
               d.act = "bow";
               d.actUntil = now + 900;
               d.facing = (-dir) as 1 | -1;
-            } else if (r < 0.72 && ahead < -60) {
+            } else if (r < 0.82 && ahead < -60) {
               // Wheel around and dash back at the other for a moment.
               d.act = "wheel";
               d.actUntil = now + rand(350, 600);
@@ -359,18 +388,38 @@ export function Runners({ className = "" }: { className?: string }) {
             // Pounce out of the bow, toward the other dog.
             d.act = "run";
             d.facing = dir;
-            d.vh = rand(420, 520);
+            d.vh = rand(200, 235);
             d.target = 1.6;
           } else if (d.act === "wheel" && now > d.actUntil) {
             d.act = "run";
             d.facing = dir;
-            d.vh = rand(260, 340);
+            d.vh = rand(HOP[0], HOP[1]);
+          } else if (d.act === "romp") {
+            if (now > d.actUntil) {
+              d.act = "run";
+              d.facing = dir;
+              d.vh = rand(HOP[0], HOP[1]);
+              d.target = rand(1.2, 1.6);
+            } else if (d.h === 0 && Math.random() < dt * 5) {
+              // Trade little hops, sometimes switching sides.
+              d.vh = rand(HOP[0], HOP[1] + 20);
+              if (Math.random() < 0.35) d.facing = (-d.facing) as 1 | -1;
+            }
           }
 
           // Move.
           d.speed += (d.target - d.speed) * Math.min(1, dt * 3);
           const moving = d.act !== "bow";
-          let vx = !moving ? 0 : d.act === "wheel" ? -dir * PACE * d.speed * 0.9 : dir * PACE * d.speed;
+          let vx =
+            !moving
+              ? 0
+              : d.act === "wheel"
+              ? -dir * PACE * d.speed * 0.9
+              : d.act === "romp"
+              ? // Bouncing around each other: small hops toward and past the
+                // other dog, drifting along with the pair.
+                (d.h > 0 ? d.facing * 70 : 0) + dir * PACE * 0.35
+              : dir * PACE * (now < d.leapUntil ? 2.1 : d.speed);
           // A loose ball behind them: turn back and go get it.
           if (ball && moving && ball.h < 40 && (ball.x - d.x) * dir < -8) {
             vx = Math.sign(ball.x - d.x) * PACE * 1.5;
@@ -380,9 +429,16 @@ export function Runners({ className = "" }: { className?: string }) {
           }
           d.x += vx * dt;
           if (d.h > 0 || d.vh > 0) {
-            d.h = Math.max(0, d.h + d.vh * dt);
+            d.h = Math.min(MAX_H, Math.max(0, d.h + d.vh * dt));
             d.vh -= GRAVITY * dt;
-            if (d.h === 0) d.vh = 0;
+            if (d.h === 0) {
+              d.vh = 0;
+              // Bunny-hops: bounce straight back up, a little lower each time.
+              if (d.hopsLeft > 0 && d.act === "run") {
+                d.hopsLeft -= 1;
+                d.vh = rand(HOP[0], HOP[1] - 30);
+              }
+            }
           }
           // Legs cycle with distance covered; tucked mid-air.
           if (moving && d.h === 0) {
@@ -407,7 +463,7 @@ export function Runners({ className = "" }: { className?: string }) {
             d.hasBall = true;
             ball = null;
             tossed = false;
-            d.vh = Math.max(d.vh, 240); // a happy little bounce
+            d.vh = Math.max(d.vh, HOP[0]); // a happy little bounce
           }
         });
 
