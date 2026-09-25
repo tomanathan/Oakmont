@@ -37,7 +37,7 @@ function LoginPageContent() {
         </div>
         <LoginCard initialMode={initialMode} next={searchParams.get("next")} />
       </div>
-      <div className="text-center text-xs text-stone-400 mt-4">
+      <div className="text-center text-xs text-stone-500 mt-4">
         Your progress is saved automatically and syncs whenever you log back in.
       </div>
       <LegalFooter className="mt-6" />

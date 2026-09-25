@@ -65,6 +65,24 @@ export function ExamChoices({
         // the whole group in one stop and arrow keys move within it --
         // exactly how a native radio group behaves.
         const tabIndex = disabled ? -1 : isSelected || (selected === null && ci === 0) ? 0 : -1;
+        // Row and letter badge share one state: resting (warm border,
+        // pale sage badge), picked (green outline, solid badge), and once
+        // revealed, right (green) or wrong (red). The badge carries the
+        // state even for readers who don't register the row tint.
+        const row = isCorrect
+          ? "border-accent bg-[#edf6f0] ring-1 ring-accent"
+          : isWrongSelected
+          ? "border-[#c0524f] bg-[#fcefee] ring-1 ring-[#c0524f]"
+          : isSelected
+          ? "border-forest bg-[#f2f5ee] ring-1 ring-forest"
+          : `border-[#d9ceb7] bg-white ${disabled ? "" : "hover:border-[#587356] hover:bg-[#fbf8f1]"}`;
+        const badge = isCorrect
+          ? "bg-accent text-white"
+          : isWrongSelected
+          ? "bg-[#b23b3b] text-white"
+          : isSelected
+          ? "bg-forest text-white"
+          : "bg-[#eef3e9] text-[#2c4c3b]";
         return (
           <div
             key={ci}
@@ -74,19 +92,20 @@ export function ExamChoices({
             tabIndex={tabIndex}
             onClick={() => !disabled && onSelect(ci)}
             onKeyDown={(e) => handleKeyDown(e, ci)}
-            className={`px-3 py-2.5 rounded-lg text-[13.5px] border focus:outline-none focus-visible:ring-2 focus-visible:ring-[#587356] focus-visible:ring-offset-1 ${
+            className={`flex items-center gap-3 rounded-xl border px-3.5 py-3 text-[14.5px] leading-snug text-ink shadow-[0_1px_2px_rgba(38,34,24,0.05)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#587356] focus-visible:ring-offset-2 ${
               disabled ? "cursor-default" : "cursor-pointer"
-            } ${
-              isCorrect
-                ? "border-accent bg-[#f0f7f2]"
-                : isWrongSelected
-                ? "border-red-700 bg-[#fdf0f0]"
-                : isSelected
-                ? "border-ink bg-[#f5f5f8]"
-                : "border-[#ebe3d3] bg-white hover:border-[#ddd3bf]"
-            } text-ink`}
+            } ${row}`}
           >
-            {String.fromCharCode(65 + ci)}. <MathText text={choice} />
+            <span
+              className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-[12.5px] font-bold transition-colors ${badge}`}
+              aria-hidden
+            >
+              {isCorrect ? "✓" : isWrongSelected ? "✕" : String.fromCharCode(65 + ci)}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="sr-only">{String.fromCharCode(65 + ci)}. </span>
+              <MathText text={choice} />
+            </span>
           </div>
         );
       })}

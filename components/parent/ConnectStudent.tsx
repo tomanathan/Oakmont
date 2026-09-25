@@ -66,13 +66,13 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
   const message = inviteUrl
     ? `Hi${name ? ` ${name}` : ""}! I set up a parent account on Oakmont so I can follow along with your SAT prep. Open this link while you're logged in to connect us: ${inviteUrl}`
     : "";
-  const input = "w-full rounded-lg border border-[#ddd3bf] px-3 py-2.5 text-sm focus:border-[#587356] focus:outline-none";
+  const input = "w-full rounded-lg border border-[#d5c8ae] px-3 py-2.5 text-sm focus:border-[#587356] focus:outline-none";
 
   return (
     <div className={compact ? "" : "mx-auto max-w-[860px]"}>
       {!compact && (
         <div className="mb-6">
-          <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-stone-400">Get started</div>
+          <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-stone-500">Get started</div>
           <h1 className="font-display text-[30px] font-semibold text-ink">Connect your student</h1>
           <p className="mt-1 max-w-[60ch] text-[14px] leading-relaxed text-stone-600">
             Once connected, this page becomes a live report of their studying.
@@ -84,7 +84,7 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Maya" maxLength={40} className={`${input} max-w-[320px]`} />
       </div>
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-[#ebe3d3] bg-white p-6">
+        <div className="rounded-2xl border border-[#e2d7c1] bg-white p-6">
           <div className="font-display text-[18px] font-semibold text-ink">Send them a link</div>
           <p className="mt-1 text-[13px] leading-relaxed text-stone-600">
             Best if they&apos;re new to Oakmont. They sign up (or log in), open the link, and tap Connect.
@@ -104,26 +104,26 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
             <div className="mt-4">
               <div className="flex gap-2">
                 <input readOnly value={inviteUrl} onFocus={(e) => e.currentTarget.select()} className={`${input} font-mono text-[12px]`} />
-                <button onClick={copy} className="whitespace-nowrap rounded-lg border border-[#ddd3bf] px-3 text-sm font-medium text-ink hover:bg-[#eef3e9]">
+                <button onClick={copy} className="whitespace-nowrap rounded-lg border border-[#d5c8ae] px-3 text-sm font-medium text-ink hover:bg-[#eef3e9]">
                   {copied ? "Copied" : "Copy"}
                 </button>
               </div>
               <div className="mt-3 flex flex-wrap gap-2 text-sm">
-                <a href={`sms:?&body=${encodeURIComponent(message)}`} className="rounded-lg border border-[#ddd3bf] px-3 py-1.5 font-medium text-ink hover:bg-[#eef3e9]">
+                <a href={`sms:?&body=${encodeURIComponent(message)}`} className="rounded-lg border border-[#d5c8ae] px-3 py-1.5 font-medium text-ink hover:bg-[#eef3e9]">
                   Text it
                 </a>
                 <a
                   href={`mailto:?subject=${encodeURIComponent("Connect my Oakmont parent account")}&body=${encodeURIComponent(message)}`}
-                  className="rounded-lg border border-[#ddd3bf] px-3 py-1.5 font-medium text-ink hover:bg-[#eef3e9]"
+                  className="rounded-lg border border-[#d5c8ae] px-3 py-1.5 font-medium text-ink hover:bg-[#eef3e9]"
                 >
                   Email it
                 </a>
               </div>
-              <p className="mt-3 text-[12px] text-stone-400">Works once, for 14 days. This page updates once they connect; refresh to check.</p>
+              <p className="mt-3 text-[12px] text-stone-500">Works once, for 14 days. This page updates once they connect; refresh to check.</p>
             </div>
           )}
         </div>
-        <form onSubmit={linkWithCode} className="rounded-2xl border border-[#ebe3d3] bg-white p-6">
+        <form onSubmit={linkWithCode} className="rounded-2xl border border-[#e2d7c1] bg-white p-6">
           <div className="font-display text-[18px] font-semibold text-ink">Use their code</div>
           <p className="mt-1 text-[13px] leading-relaxed text-stone-600">
             If they already use Oakmont: Settings &rarr; Parent access &rarr; Generate code.

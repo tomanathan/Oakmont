@@ -72,7 +72,7 @@ function ParentLoginContent() {
     }
   }
 
-  const input = "w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] text-sm focus:outline-none focus:border-[#587356]";
+  const input = "w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] text-sm focus:outline-none focus:border-[#587356]";
 
   return (
     <div className="mx-auto max-w-[980px] px-6 py-8 font-sans">
@@ -97,18 +97,18 @@ function ParentLoginContent() {
               </li>
             ))}
           </ul>
-          <p className="mt-6 max-w-[48ch] text-[12.5px] leading-relaxed text-stone-500">
+          <p className="mt-6 max-w-[48ch] text-[12.5px] leading-relaxed text-stone-600">
             Parent accounts are free with your student&apos;s plan, and one account can follow more than one student.
           </p>
         </div>
 
-        <div className="rounded-xl border border-[#ebe3d3] bg-white p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
+        <div className="rounded-xl border border-[#e2d7c1] bg-white p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
           <div className="mb-6 flex gap-2">
             {(["signup", "login"] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => setMode(m)}
-                className={`flex-1 rounded-lg border py-2 text-sm font-medium ${mode === m ? "border-ink bg-forest text-white" : "border-[#ddd3bf] bg-[#eef3e9] text-ink"}`}
+                className={`flex-1 rounded-lg border py-2 text-sm font-medium ${mode === m ? "border-ink bg-forest text-white" : "border-[#d5c8ae] bg-[#eef3e9] text-ink"}`}
               >
                 {m === "signup" ? "Create account" : "Log in"}
               </button>
@@ -123,7 +123,7 @@ function ParentLoginContent() {
                 </p>
               ) : (
                 <>
-                  <p className="text-sm leading-relaxed text-stone-500">
+                  <p className="text-sm leading-relaxed text-stone-600">
                     We&apos;ll email you a link. This also works if your student created your account for you.
                   </p>
                   <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" className={input} required />
@@ -140,7 +140,7 @@ function ParentLoginContent() {
                   setForgotSent(false);
                   setError("");
                 }}
-                className="text-xs text-stone-400 hover:text-ink"
+                className="text-xs text-stone-500 hover:text-ink"
               >
                 &larr; Back to log in
               </button>
@@ -161,7 +161,7 @@ function ParentLoginContent() {
                       setForgot(true);
                       setError("");
                     }}
-                    className="text-xs text-stone-400 hover:text-ink"
+                    className="text-xs text-stone-500 hover:text-ink"
                   >
                     Forgot password?
                   </button>
@@ -177,7 +177,7 @@ function ParentLoginContent() {
                 </div>
                 <div>
                   <label className="mb-1 block text-sm text-stone-700">
-                    Student code <span className="text-stone-400">(optional)</span>
+                    Student code <span className="text-stone-500">(optional)</span>
                   </label>
                   <input
                     type="text"
@@ -186,7 +186,7 @@ function ParentLoginContent() {
                     placeholder="e.g. 7K9QXFRT"
                     className={`${input} uppercase tracking-wide`}
                   />
-                  <div className="mt-1 text-xs leading-relaxed text-stone-400">
+                  <div className="mt-1 text-xs leading-relaxed text-stone-600">
                     If your student already uses Oakmont, it&apos;s under Settings &rarr; Parent access. No code? Create your account and
                     you&apos;ll get a link to send them.
                   </div>

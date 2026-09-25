@@ -64,7 +64,7 @@ function ResetPasswordForm() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="At least 6 characters"
-        className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+        className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
         required
         minLength={6}
       />
@@ -74,7 +74,7 @@ function ResetPasswordForm() {
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         placeholder="Type it again"
-        className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+        className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
         required
         minLength={6}
       />
@@ -97,8 +97,8 @@ export default function ResetPasswordPage() {
         <BrandMark size={56} className="mx-auto mb-3" />
         <div className="font-display font-semibold text-[28px] text-ink mb-1">Set a new password</div>
       </div>
-      <div className="bg-white border border-[#ebe3d3] rounded-xl p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
-        <Suspense fallback={<div className="text-sm text-stone-400">Loading...</div>}>
+      <div className="bg-white border border-[#e2d7c1] rounded-xl p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
+        <Suspense fallback={<div className="text-sm text-stone-500">Loading...</div>}>
           <ResetPasswordForm />
         </Suspense>
       </div>

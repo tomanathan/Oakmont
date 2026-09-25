@@ -344,7 +344,7 @@ export function ReviewClient() {
         </div>
 
         {(meta.toConfirm.length > 0 || meta.refreshers.length > 0) && (
-          <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-[#ebe3d3] bg-white p-4 text-[13.5px] text-stone-600">
+          <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-[#e2d7c1] bg-white p-4 text-[13.5px] text-stone-600">
             {meta.toConfirm.length > 0 && (
               <div className="flex items-start gap-2.5">
                 <span className="mt-0.5 flex-shrink-0 whitespace-nowrap rounded-full bg-[#fbf3dc] px-2 py-0.5 text-[11px] font-semibold text-[#8a5f0c]">
@@ -405,9 +405,9 @@ export function ReviewClient() {
           <div className="min-w-0 flex-1">
             <div className="mb-2 flex items-baseline gap-2">
               <span className="text-[13px] font-semibold text-ink">
-                Question {idx + 1} <span className="font-normal text-stone-400">of {items.length}</span>
+                Question {idx + 1} <span className="font-normal text-stone-500">of {items.length}</span>
               </span>
-              <span className="text-[11px] uppercase tracking-[0.08em] text-stone-400">
+              <span className="text-[11px] uppercase tracking-[0.08em] text-stone-500">
                 {it.section === "Math" ? "Math" : "Reading & Writing"}
               </span>
             </div>
@@ -416,7 +416,7 @@ export function ReviewClient() {
                 <span
                   key={i}
                   className={`h-1.5 flex-1 rounded-full ${
-                    i < idx || conf[i] ? "bg-[#587356]" : i === idx ? "bg-[#c9d8c2]" : "bg-[#eef3e9]"
+                    i < idx || conf[i] ? "bg-[#3d7a56]" : i === idx ? "bg-forest" : "bg-[#e6dcc8]"
                   }`}
                 />
               ))}
@@ -425,7 +425,7 @@ export function ReviewClient() {
           <PaceClock elapsed={elapsed} target={it.pace} label="this question" />
         </div>
 
-        <div className="rounded-2xl border border-[#ebe3d3] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.03),0_4px_14px_rgba(38,34,24,0.04)] sm:p-6">
+        <div className="rounded-2xl border border-[#e2d7c1] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.03),0_4px_14px_rgba(38,34,24,0.04)] sm:p-6">
           <div className="mb-4 text-[15px] text-ink">
             <PassageText text={it.q} highlight={it.underline ?? undefined} figure={it.figure} />
           </div>
@@ -439,7 +439,7 @@ export function ReviewClient() {
           />
 
           <div className="mt-5 border-t border-[#eef3e9] pt-4">
-            <div className="mb-2 text-[12px] text-stone-400">
+            <div className="mb-2 text-[12px] text-stone-500">
               {picked === null ? "Pick an answer, then lock it in:" : "Lock it in. How sure are you?"}
             </div>
             <div className="grid grid-cols-3 gap-2">
@@ -448,10 +448,10 @@ export function ReviewClient() {
                   key={o.value}
                   disabled={picked === null || phase === "submitting"}
                   onClick={() => lockIn(o.value)}
-                  className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-40 ${
+                  className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition-all disabled:cursor-not-allowed ${
                     i === 0
-                      ? "bg-forest text-white hover:opacity-90"
-                      : "border border-[#ddd3bf] bg-white text-ink hover:border-[#c9d8c2]"
+                      ? "bg-forest text-white shadow-[0_6px_16px_-10px_rgba(31,59,45,0.8)] hover:opacity-90 disabled:bg-[#e6dece] disabled:text-stone-500 disabled:shadow-none"
+                      : "border border-[#d5c8ae] bg-white text-ink hover:border-[#587356] disabled:opacity-50"
                   }`}
                 >
                   {o.label}
@@ -472,7 +472,7 @@ export function ReviewClient() {
           >
             &larr; Previous
           </button>
-          <span className="text-[12px] text-stone-400">
+          <span className="text-[12px] text-stone-500">
             {phase === "submitting" ? "Checking your answers…" : "Keys: A–D to pick, Enter for Sure"}
           </span>
         </div>
@@ -560,12 +560,12 @@ function ReviewResults({
     <div>
       <div
         ref={cardRef}
-        className="mb-6 overflow-hidden rounded-2xl border border-[#ebe3d3] bg-white shadow-[0_1px_2px_rgba(38,34,24,0.04),0_12px_32px_-12px_rgba(38,34,24,0.14)]"
+        className="mb-6 overflow-hidden rounded-2xl border border-[#e2d7c1] bg-white shadow-[0_1px_2px_rgba(38,34,24,0.04),0_12px_32px_-12px_rgba(38,34,24,0.14)]"
       >
         <div className="flex flex-wrap items-center gap-5 p-5 sm:p-6">
           <ScoreRing score={right} total={total} />
           <div className="min-w-[200px] flex-1">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-400">Mixed review</div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-500">Mixed review</div>
             <div className="mt-1 font-display text-[26px] font-semibold leading-tight text-ink">{copy.headline}</div>
             <p className="mt-1 max-w-[46ch] text-sm leading-relaxed text-stone-600">{copy.body}</p>
           </div>
@@ -573,10 +573,10 @@ function ReviewResults({
 
         <div className="grid gap-px border-t border-[#eef3e9] bg-[#eef3e9] sm:grid-cols-2">
           <div className="bg-white px-5 py-3.5 sm:px-6">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-400">Your pace</div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-500">Your pace</div>
             <div className="mt-1 text-[14px] text-ink">
               <span className="font-semibold tabular-nums">{formatSeconds(spent / Math.max(1, total))}</span> per question
-              <span className="text-stone-400"> · SAT pace {formatSeconds(target / Math.max(1, total))}</span>
+              <span className="text-stone-500"> · SAT pace {formatSeconds(target / Math.max(1, total))}</span>
             </div>
             <div className="mt-0.5 text-[12.5px] text-stone-500">
               {spent <= target * 1.05
@@ -587,7 +587,7 @@ function ReviewResults({
             </div>
           </div>
           <div className="bg-white px-5 py-3.5 sm:px-6">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-400">Right, but not sure</div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-500">Right, but not sure</div>
             <div className="mt-1 text-[14px] text-ink">
               <span className="font-semibold tabular-nums">{shaky.length}</span>{" "}
               {shaky.length === 1 ? "question" : "questions"}
@@ -650,14 +650,14 @@ function ReviewResults({
           <Link
             href="/dashboard"
             className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
-              firstMiss < 0 ? "bg-forest text-white hover:opacity-90" : "border border-[#ddd3bf] bg-white text-ink hover:border-[#c9d8c2]"
+              firstMiss < 0 ? "bg-forest text-white hover:opacity-90" : "border border-[#d5c8ae] bg-white text-ink hover:border-[#c9d8c2]"
             }`}
           >
             Back to dashboard
           </Link>
           <button
             onClick={onAnother}
-            className="rounded-lg border border-[#ddd3bf] bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:border-[#c9d8c2] hover:text-ink"
+            className="rounded-lg border border-[#d5c8ae] bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:border-[#c9d8c2] hover:text-ink"
           >
             Another set
           </button>
@@ -690,10 +690,10 @@ function ReviewResults({
                 </span>
                 <span className="text-[12px] text-stone-500">
                   Question {i + 1} tested <span className="font-semibold text-ink">{r.subskillName}</span>
-                  <span className="text-stone-400"> · {r.domain}</span>
+                  <span className="text-stone-500"> · {r.domain}</span>
                 </span>
                 {c && (
-                  <span className="ml-auto text-[11.5px] text-stone-400">
+                  <span className="ml-auto text-[11.5px] text-stone-500">
                     You said: {CONFIDENCE_OPTIONS.find((o) => o.value === c)?.label}
                     {times[i] ? ` · ${formatSeconds((times[i] ?? 0) / 1000)}` : ""}
                   </span>
@@ -716,7 +716,7 @@ function ReviewResults({
                 </WhyWrong>
               ) : (
                 <>
-                  <div className="mt-2.5 text-[13px] leading-relaxed text-stone-500">
+                  <div className="mt-2.5 text-[13px] leading-relaxed text-stone-600">
                     <strong className="text-ink">Explanation: </strong>
                     <MathText text={r.explain} />
                   </div>
@@ -744,13 +744,13 @@ function Eyebrow() {
 }
 
 function Panel({ children }: { children: React.ReactNode }) {
-  return <div className="rounded-2xl border border-[#ebe3d3] bg-white p-6 sm:p-8">{children}</div>;
+  return <div className="rounded-2xl border border-[#e2d7c1] bg-white p-6 sm:p-8">{children}</div>;
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-[#ebe3d3] bg-white px-4 py-3.5">
-      <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-400">{label}</div>
+    <div className="rounded-2xl border border-[#e2d7c1] bg-white px-4 py-3.5">
+      <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-500">{label}</div>
       <div className="mt-1 font-display text-[22px] font-semibold text-ink">{value}</div>
     </div>
   );

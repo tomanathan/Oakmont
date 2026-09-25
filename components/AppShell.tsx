@@ -107,7 +107,7 @@ export function AppShell({
           same product. On phones the right edge is left clear: that's
           where Ozho (and Mochi, once earned) dock as fixed badges -- see
           ScoutCompanion's MOBILE_DOCK_* and SecondCompanion's DOCK_*. */}
-      <header className="sticky top-0 z-30 border-b border-[#ebe3d3] bg-[#faf6ec]/90 backdrop-blur-md font-sans">
+      <header className="sticky top-0 z-30 border-b border-[#e2d7c1] bg-[#faf6ec]/90 backdrop-blur-md font-sans">
         <div className={`${width} mx-auto flex items-center gap-2 pl-4 pr-[100px] py-2.5 sm:gap-3 sm:pr-4`}>
           <Link href="/dashboard" className="flex flex-shrink-0 items-center gap-2" aria-label="Oakmont Study Center, dashboard">
             <BrandMark size={26} />
@@ -228,10 +228,10 @@ function AccountMenu({ email, onLogout }: { email: string; onLogout: () => void 
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-xl border border-[#ebe3d3] bg-white py-1 shadow-[0_12px_32px_-8px_rgba(38,34,24,0.2)]"
+          className="absolute right-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-xl border border-[#e2d7c1] bg-white py-1 shadow-[0_12px_32px_-8px_rgba(38,34,24,0.2)]"
         >
           <div className="border-b border-[#eef3e9] px-3.5 py-2.5">
-            <div className="text-[11px] text-stone-400">Signed in as</div>
+            <div className="text-[11px] text-stone-500">Signed in as</div>
             <div className="truncate text-[13px] font-medium text-ink">{email}</div>
           </div>
           <Link role="menuitem" href="/settings" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-stone-700 hover:bg-[#f8f4eb]">

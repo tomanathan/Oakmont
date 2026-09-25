@@ -34,7 +34,7 @@ export function ParentShell({
           <BrandMark size={28} />
           <div className="min-w-0">
             <div className="truncate font-display text-[14px] font-semibold leading-tight text-ink">Oakmont for Parents</div>
-            <div className="truncate text-[10.5px] text-stone-400">{parentEmail}</div>
+            <div className="truncate text-[10.5px] text-stone-500">{parentEmail}</div>
           </div>
         </div>
 
@@ -59,7 +59,7 @@ export function ParentShell({
             + Add a student
           </Link>
           <span className="mx-1 hidden h-5 w-px bg-stone-200 sm:inline-block" />
-          <button onClick={handleLogout} className="px-2 text-xs text-stone-400 transition-colors hover:text-ink">
+          <button onClick={handleLogout} className="px-2 text-xs text-stone-500 transition-colors hover:text-ink">
             Log out
           </button>
         </div>

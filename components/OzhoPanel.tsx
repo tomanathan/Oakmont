@@ -128,7 +128,7 @@ export function OzhoPanel({
       ref={ref}
       role="dialog"
       aria-label={`${PET_NAME}`}
-      className={`pointer-events-auto fixed z-[60] rounded-2xl border border-[#ebe3d3] bg-white p-3.5 font-sans shadow-[0_18px_48px_-12px_rgba(38,34,24,0.28)] ${
+      className={`pointer-events-auto fixed z-[60] rounded-2xl border border-[#e2d7c1] bg-white p-3.5 font-sans shadow-[0_18px_48px_-12px_rgba(38,34,24,0.28)] ${
         sheet ? "inset-x-3 bottom-3 animate-ozho-sheet" : "animate-ozho-panel"
       }`}
       style={
@@ -148,7 +148,7 @@ export function OzhoPanel({
         <button
           onClick={onClose}
           aria-label="Close"
-          className="-mr-1 -mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-stone-400 transition-colors hover:bg-[#f5f0e5] hover:text-ink"
+          className="-mr-1 -mt-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-stone-500 transition-colors hover:bg-[#f5f0e5] hover:text-ink"
         >
           <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
             <path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />

@@ -79,7 +79,7 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
         )}
 
         {monthly && (
-          <div className="bg-white border border-[#ebe3d3] rounded-2xl p-6 flex flex-col">
+          <div className="bg-white border border-[#e2d7c1] rounded-2xl p-6 flex flex-col">
             <div className="mb-1 flex items-baseline gap-1.5">
               <span className="text-[36px] leading-none font-display font-semibold text-ink">
                 {formatAmount(monthly.amountCents, monthly.currency)}
@@ -93,7 +93,7 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
             <button
               onClick={() => startCheckout("monthly")}
               disabled={loadingPlan !== null}
-              className="mt-auto w-full py-3 rounded-lg border border-[#ddd3bf] text-ink font-semibold text-sm disabled:opacity-60"
+              className="mt-auto w-full py-3 rounded-lg border border-[#d5c8ae] text-ink font-semibold text-sm disabled:opacity-60"
             >
               {loadingPlan === "monthly" ? "Redirecting..." : "Start free trial"}
             </button>

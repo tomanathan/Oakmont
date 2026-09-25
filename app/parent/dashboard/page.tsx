@@ -49,7 +49,7 @@ export default async function ParentDashboardPage({
           <ParentControls linkId={active.id} nickname={active.nickname} weeklyReport={account.weeklyReport} savedTimeZone={account.timeZone} />
         }
         footer={
-          <p className="text-center text-[12px] leading-relaxed text-stone-400">
+          <p className="text-center text-[12px] leading-relaxed text-stone-600">
             Times are shown in {report.timeZone.replace(/_/g, " ")}.
           </p>
         }

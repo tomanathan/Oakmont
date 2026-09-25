@@ -32,12 +32,12 @@ export default async function SharePage({ params }: { params: { token: string } 
       <header className="mb-4 flex items-center gap-2.5 px-4 py-3">
         <BrandMark size={26} />
         <div className="font-display text-[14px] font-semibold text-ink">Oakmont Study Center</div>
-        <span className="text-xs text-stone-400">&middot; shared study report</span>
+        <span className="text-xs text-stone-500">&middot; shared study report</span>
       </header>
       <ParentReportView
         report={report}
         footer={
-          <p className="text-center text-[12px] leading-relaxed text-stone-400">
+          <p className="text-center text-[12px] leading-relaxed text-stone-600">
             For the Sunday email and times in your own time zone, <a href="/parent/login?mode=signup" className="text-[#2c4c3b] underline">create a free parent account</a>.
           </p>
         }

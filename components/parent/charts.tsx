@@ -7,7 +7,7 @@ import type { DayCell, WeekPoint } from "@/lib/parentInsights";
 // numbers, no chart library.
 
 const INK = "#1d2621";
-const GRID = "#ebe3d3";
+const GRID = "#e2d7c1";
 const MUTED = "#8f887a";
 const GREEN = "#2f6f4f";
 

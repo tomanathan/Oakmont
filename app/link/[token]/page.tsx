@@ -36,7 +36,7 @@ export default async function LinkInvitePage({ params }: { params: { token: stri
           </p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-[#ebe3d3] bg-white p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
+        <div className="rounded-2xl border border-[#e2d7c1] bg-white p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
           <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#2c4c3b]">Connect your parent</div>
           <h1 className="mt-1 font-display text-[24px] font-semibold leading-snug text-ink">
             {invite.parent.email} wants to follow your SAT prep
@@ -45,7 +45,7 @@ export default async function LinkInvitePage({ params }: { params: { token: stri
           <ul className="mt-3 flex flex-col gap-2">
             {SHARED.map((s) => (
               <li key={s} className="flex gap-2.5 text-[13.5px] leading-snug text-stone-700">
-                <span className="mt-[3px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#587356]" />
+                <span className="mt-[3px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#3d7a56]" />
                 {s}
               </li>
             ))}
@@ -60,7 +60,7 @@ export default async function LinkInvitePage({ params }: { params: { token: stri
                 </Link>
                 <Link
                   href={`/login?mode=signup&next=${back}`}
-                  className="flex-1 rounded-lg border border-[#ddd3bf] py-2.5 text-center text-sm font-semibold text-ink hover:bg-[#eef3e9]"
+                  className="flex-1 rounded-lg border border-[#d5c8ae] py-2.5 text-center text-sm font-semibold text-ink hover:bg-[#eef3e9]"
                 >
                   I&apos;m new: sign up
                 </Link>

@@ -605,7 +605,7 @@ export function SubskillClient({
       >
         &larr; Back to dashboard
       </button>
-      <div className="flex items-center gap-1.5 text-xs text-stone-400 mb-1.5">
+      <div className="flex items-center gap-1.5 text-xs text-stone-500 mb-1.5">
         <span className={`w-1.5 h-1.5 rounded-full ${sectionTheme(subskill.section).dot}`} />
         {subskill.section} · {subskill.domain}
       </div>
@@ -663,14 +663,14 @@ export function SubskillClient({
           )}
 
           {/* Main lesson column */}
-          <div className="bg-white border border-[#ebe3d3] shadow-[0_1px_2px_rgba(38,34,24,0.03),0_4px_14px_rgba(38,34,24,0.04)] rounded-xl p-6 min-w-0">
+          <div className="bg-white border border-[#e2d7c1] shadow-[0_1px_2px_rgba(38,34,24,0.03),0_4px_14px_rgba(38,34,24,0.04)] rounded-xl p-6 min-w-0">
             <div className="flex items-center justify-between mb-3 gap-3">
-              <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide">
+              <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide">
                 Question patterns within this subskill
               </div>
               {subskill.patterns.length > 1 && (
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-stone-400 whitespace-nowrap">
+                  <span className="text-[11px] text-stone-500 whitespace-nowrap">
                     {subskill.patterns.filter((_, i) => isPatternViewed(i)).length}/
                     {subskill.patterns.length} viewed
                   </span>
@@ -701,14 +701,14 @@ export function SubskillClient({
                               ? "bg-forest border-ink text-white"
                               : complete
                               ? "bg-accent border-accent text-white"
-                              : "bg-white border-stone-300 text-stone-400 group-hover:border-stone-400"
+                              : "bg-white border-stone-300 text-stone-500 group-hover:border-stone-400"
                           }`}
                         >
                           {complete && !active ? "✓" : i + 1}
                         </span>
                         <span
                           className={`text-[10px] font-medium text-center leading-tight ${
-                            active ? "text-ink" : "text-stone-400"
+                            active ? "text-ink" : "text-stone-500"
                           }`}
                         >
                           {p.name}
@@ -736,7 +736,7 @@ export function SubskillClient({
                     producing it are different skills, and the test only
                     asks for the second. One click brings it back. */}
                 {activeExample >= FADE_FROM_EXAMPLE && !methodShown ? (
-                  <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-[#ddd3bf] px-3.5 py-2.5">
+                  <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-[#d5c8ae] px-3.5 py-2.5">
                     <span className="text-[13px] text-stone-600">
                       Try this one from memory. The method is folded away.
                     </span>
@@ -989,7 +989,7 @@ export function SubskillClient({
                     ? isCorrect
                       ? "bg-[#fbfefc] border-[#cde8d9]"
                       : "bg-[#fefbfb] border-[#f0d0d0]"
-                    : "bg-white border-[#ebe3d3]"
+                    : "bg-white border-[#e2d7c1]"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3 mb-3">
@@ -1015,7 +1015,7 @@ export function SubskillClient({
                   <ConfidencePicker value={confidence[i] ?? null} onChange={(c) => selectConfidence(i, c)} />
                 )}
                 {submitted && confidence[i] && (
-                  <div className="mt-2 text-[11.5px] text-stone-400">
+                  <div className="mt-2 text-[11.5px] text-stone-500">
                     You said: {CONFIDENCE_OPTIONS.find((o) => o.value === confidence[i])?.label}
                     {isCorrect && confidence[i] !== "sure" ? " · this one will come back in mixed review" : ""}
                   </div>
@@ -1029,7 +1029,7 @@ export function SubskillClient({
                 ) : (
                   <>
                     {submitted && (
-                      <div className="text-[13px] text-stone-500 mt-2.5 leading-relaxed">
+                      <div className="text-[13px] text-stone-600 mt-2.5 leading-relaxed">
                         <strong className="text-ink">Explanation: </strong>
                         <MathText text={q.explain} />
                       </div>
@@ -1059,11 +1059,11 @@ export function SubskillClient({
               </button>
             )
           ) : (
-            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#ebe3d3] bg-white px-4 py-3">
+            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[#e2d7c1] bg-white px-4 py-3">
               <span className="text-sm font-semibold text-ink tabular-nums">
                 {score ?? 0} / {quizQuestions.length} correct
               </span>
-              <span className="text-stone-300">·</span>
+              <span className="text-stone-400">·</span>
               <button
                 onClick={() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                 className="text-sm text-stone-500 hover:text-ink"
@@ -1073,7 +1073,7 @@ export function SubskillClient({
               {!saving && (
                 <button
                   onClick={retakeQuiz}
-                  className="ml-auto rounded-lg border border-[#ddd3bf] px-4 py-2 text-sm font-medium text-stone-600 transition-colors hover:border-[#c9d8c2] hover:text-ink"
+                  className="ml-auto rounded-lg border border-[#d5c8ae] px-4 py-2 text-sm font-medium text-stone-600 transition-colors hover:border-[#c9d8c2] hover:text-ink"
                 >
                   Retake quiz
                 </button>
@@ -1104,16 +1104,16 @@ function QuizProgress({
   const pct = total > 0 ? Math.round((answeredCount / total) * 100) : 0;
   const elapsed = useElapsed(startedAt, startedAt !== null);
   return (
-    <div className="sticky top-[62px] z-10 mb-3.5 flex items-center gap-4 rounded-lg border border-[#ebe3d3] bg-white/95 px-3.5 py-2 shadow-[0_1px_2px_rgba(38,34,24,0.03)] backdrop-blur-sm">
+    <div className="sticky top-[62px] z-10 mb-3.5 flex items-center gap-4 rounded-lg border border-[#e2d7c1] bg-white/95 px-3.5 py-2 shadow-[0_1px_2px_rgba(38,34,24,0.03)] backdrop-blur-sm">
       <div className="min-w-0 flex-1">
         <div className="mb-1 flex items-baseline justify-between">
           <span className="text-xs font-semibold text-ink">
             {answeredCount} of {total} answered
           </span>
-          <span className="text-xs text-stone-400">{pct}%</span>
+          <span className="text-xs text-stone-500">{pct}%</span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-md bg-[#eef3e9]">
-          <div className="h-full bg-[#587356] transition-all duration-300 ease-out" style={{ width: `${pct}%` }} />
+        <div className="h-1.5 overflow-hidden rounded-md bg-[#e6dcc8]">
+          <div className="h-full bg-[#3d7a56] transition-all duration-300 ease-out" style={{ width: `${pct}%` }} />
         </div>
       </div>
       {startedAt !== null && <PaceClock elapsed={elapsed} target={paceTotal} label="whole quiz" />}
@@ -1234,14 +1234,14 @@ function ResultsCard({
     <div
       ref={cardRef}
       className={`scroll-mt-[72px] mb-5 overflow-hidden rounded-2xl border bg-white shadow-[0_1px_2px_rgba(38,34,24,0.04),0_12px_32px_-12px_rgba(38,34,24,0.14)] ${
-        perfect ? "border-[#f0e0b0]" : "border-[#ebe3d3]"
+        perfect ? "border-[#f0e0b0]" : "border-[#e2d7c1]"
       }`}
       aria-live="polite"
     >
       <div className={`flex flex-wrap items-center gap-5 p-5 sm:p-6 ${perfect ? "bg-[#fffcf3]" : ""}`}>
         <ScoreRing score={score} total={total} />
         <div className="min-w-[200px] flex-1">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-400">Quiz results</div>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-500">Quiz results</div>
           <div className="mt-1 font-display text-[26px] font-semibold leading-tight text-ink">{copy.headline}</div>
           <p className="mt-1 max-w-[46ch] text-sm leading-relaxed text-stone-600">{copy.body}</p>
         </div>
@@ -1252,7 +1252,7 @@ function ResultsCard({
           {avgSeconds !== null && (
             <span>
               <span className="font-semibold tabular-nums text-ink">{formatSeconds(avgSeconds)}</span> per question
-              <span className="text-stone-400"> · SAT pace {formatSeconds(paceSeconds)}</span>
+              <span className="text-stone-500"> · SAT pace {formatSeconds(paceSeconds)}</span>
             </span>
           )}
           {unsureRight > 0 && (
@@ -1317,7 +1317,7 @@ function ResultsCard({
               className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
                 missed === 0 && result?.alreadyMastered
                   ? "bg-forest text-white hover:opacity-90"
-                  : "border border-[#ddd3bf] bg-white text-ink hover:border-[#c9d8c2]"
+                  : "border border-[#d5c8ae] bg-white text-ink hover:border-[#c9d8c2]"
               }`}
             >
               Up next: {nextUp.label} →
@@ -1325,7 +1325,7 @@ function ResultsCard({
           )}
           <button
             onClick={onRetake}
-            className="rounded-lg border border-[#ddd3bf] bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:border-[#c9d8c2] hover:text-ink"
+            className="rounded-lg border border-[#d5c8ae] bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:border-[#c9d8c2] hover:text-ink"
           >
             Retake quiz
           </button>
@@ -1521,8 +1521,8 @@ function LessonOutline({
   onSelectExample: (patternIdx: number, exampleIdx: number) => void;
 }) {
   return (
-    <nav className="hidden lg:block lg:sticky lg:top-[72px] pr-3 border-r border-[#ebe3d3] self-start">
-      <div className="text-[10px] font-semibold text-stone-400 uppercase tracking-wide mb-2 px-2">
+    <nav className="hidden lg:block lg:sticky lg:top-[72px] pr-3 border-r border-[#e2d7c1] self-start">
+      <div className="text-[10px] font-semibold text-stone-500 uppercase tracking-wide mb-2 px-2">
         On this lesson
       </div>
       <ol className="flex flex-col gap-0.5">
@@ -1541,7 +1541,7 @@ function LessonOutline({
                     ? "border-ink text-ink font-semibold bg-[#f6f1e6]"
                     : complete
                     ? "border-accent/50 text-stone-600 hover:bg-[#f8f4eb]"
-                    : "border-transparent text-stone-400 hover:text-stone-600 hover:bg-[#f8f4eb]"
+                    : "border-transparent text-stone-500 hover:text-stone-600 hover:bg-[#f8f4eb]"
                 }`}
               >
                 <span className="flex-shrink-0 w-3.5">{complete && !active ? "✓" : `${i + 1}.`}</span>
@@ -1557,7 +1557,7 @@ function LessonOutline({
                         <button
                           onClick={() => onSelectExample(i, j)}
                           className={`w-full text-left px-2 py-1 rounded text-[11px] flex items-center gap-1.5 ${
-                            isCurrent ? "text-ink font-semibold" : isViewed ? "text-stone-500" : "text-stone-400"
+                            isCurrent ? "text-ink font-semibold" : isViewed ? "text-stone-500" : "text-stone-500"
                           }`}
                         >
                           <span

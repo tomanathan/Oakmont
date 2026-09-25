@@ -59,7 +59,7 @@ export function SubskillStatusBadge({
       );
     default:
       return showNew ? (
-        <span className={`${base} font-normal text-stone-300`} title={title}>
+        <span className={`${base} font-normal text-stone-400`} title={title}>
           Not started
         </span>
       ) : null;

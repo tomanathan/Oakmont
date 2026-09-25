@@ -225,7 +225,7 @@ function viewBox(spec: FigureSpec): string {
 
 export function QuestionFigure({ spec }: { spec: FigureSpec }) {
   return (
-    <figure className="my-1 rounded-lg border border-[#ebe3d3] bg-[#f8f4eb] px-3 py-3">
+    <figure className="my-1 rounded-lg border border-[#e2d7c1] bg-[#f8f4eb] px-3 py-3">
       {spec.title && (
         <figcaption className="mb-2 text-center text-[12.5px] font-semibold text-ink">{spec.title}</figcaption>
       )}

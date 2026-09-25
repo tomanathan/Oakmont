@@ -8,7 +8,7 @@ export const SUPPORT_EMAIL = "aman.vishwanathan@gmail.com";
 
 export function LegalFooter({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-stone-400 ${className}`}>
+    <div className={`flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-stone-500 ${className}`}>
       <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-ink transition-colors">
         Contact support
       </a>

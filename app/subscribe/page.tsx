@@ -56,7 +56,7 @@ export default async function SubscribePage() {
         </div>
       </div>
       <SubscribeClient plans={plans} />
-      <div className="text-center text-xs text-stone-400 mt-6">
+      <div className="text-center text-xs text-stone-500 mt-6">
         See our <a href="/terms" className="underline hover:text-ink">Terms</a> for full billing and refund
         details.
       </div>

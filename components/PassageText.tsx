@@ -70,7 +70,7 @@ export function PassageText({
   return (
     <div>
       {number !== undefined && (
-        <div className="text-[11px] font-semibold text-stone-400 uppercase tracking-wide mb-2">
+        <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">
           Question {number}
         </div>
       )}
@@ -81,8 +81,8 @@ export function PassageText({
             const label = m[1];
             const body = para.slice(m[0].length);
             return (
-              <div key={i} className="bg-[#f8f5ee] border border-[#ebe3d3] rounded-lg px-3.5 py-3">
-                <div className="text-[10px] font-bold uppercase tracking-wide text-stone-400 mb-1.5">
+              <div key={i} className="bg-[#f8f5ee] border border-[#e2d7c1] rounded-lg px-3.5 py-3">
+                <div className="text-[10px] font-bold uppercase tracking-wide text-stone-500 mb-1.5">
                   {label}
                 </div>
                 <p className="leading-relaxed">

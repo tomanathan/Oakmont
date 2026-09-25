@@ -22,7 +22,7 @@ export function LegalPageShell({
           <span className="font-display font-semibold text-sm text-ink">Oakmont Study Center</span>
         </Link>
         <h1 className="font-display font-semibold text-[28px] text-ink mb-1">{title}</h1>
-        <div className="text-xs text-stone-400">Last updated {updated}</div>
+        <div className="text-xs text-stone-500">Last updated {updated}</div>
       </div>
       <div className="space-y-6 text-[14.5px] leading-relaxed text-stone-700 [&_h2]:font-display [&_h2]:font-semibold [&_h2]:text-[17px] [&_h2]:text-ink [&_h2]:mt-8 [&_h2]:mb-2 [&_p]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1.5 [&_ul]:mb-3 [&_strong]:text-ink [&_strong]:font-semibold [&_a]:text-[#2c4c3b] [&_a]:underline">
         {children}

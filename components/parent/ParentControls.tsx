@@ -74,7 +74,7 @@ export function ParentControls({
             onChange={(e) => setName(e.target.value)}
             maxLength={40}
             placeholder="First name"
-            className="w-36 rounded-lg border border-[#ddd3bf] px-2.5 py-1.5 text-sm focus:border-[#587356] focus:outline-none"
+            className="w-36 rounded-lg border border-[#d5c8ae] px-2.5 py-1.5 text-sm focus:border-[#587356] focus:outline-none"
           />
           <button type="submit" disabled={saving} className="rounded-lg bg-forest px-3 py-1.5 text-sm font-semibold text-white">
             Save
@@ -84,7 +84,7 @@ export function ParentControls({
           </button>
         </form>
       ) : (
-        <button onClick={() => setEditing(true)} className="rounded-lg border border-[#ddd3bf] bg-white px-3 py-1.5 text-[13px] font-medium text-ink hover:bg-[#eef3e9]">
+        <button onClick={() => setEditing(true)} className="rounded-lg border border-[#d5c8ae] bg-white px-3 py-1.5 text-[13px] font-medium text-ink hover:bg-[#eef3e9]">
           Rename
         </button>
       )}
@@ -92,7 +92,7 @@ export function ParentControls({
         onClick={toggleWeekly}
         role="switch"
         aria-checked={weekly}
-        className="flex items-center gap-2 rounded-lg border border-[#ddd3bf] bg-white px-3 py-1.5 text-[13px] font-medium text-ink hover:bg-[#eef3e9]"
+        className="flex items-center gap-2 rounded-lg border border-[#d5c8ae] bg-white px-3 py-1.5 text-[13px] font-medium text-ink hover:bg-[#eef3e9]"
       >
         <span className={`relative inline-block h-4 w-7 rounded-full transition-colors ${weekly ? "bg-accent" : "bg-stone-300"}`}>
           <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${weekly ? "left-3.5" : "left-0.5"}`} />

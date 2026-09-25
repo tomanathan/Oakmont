@@ -11,8 +11,8 @@ export function sectionTheme(section: string) {
       // (the dashboard's per-subject mastery ring).
       dotHex: "#c9826a",
       text: "text-[#9c4f35]",
-      bar: "bg-[#e2b3a1]",
-      barHex: "#e2b3a1",
+      bar: "bg-[#d38f76]",
+      barHex: "#d38f76",
       cardBg: "bg-[#f7e7e1]",
       cardBorder: "border-[#ecd2c7] hover:border-[#dfb8a8]",
       // A single strong hue for a thin accent strip -- the same color as
@@ -25,8 +25,8 @@ export function sectionTheme(section: string) {
     dot: "bg-[#6f93b5]",
     dotHex: "#6f93b5",
     text: "text-[#35607f]",
-    bar: "bg-[#a9c3da]",
-    barHex: "#a9c3da",
+    bar: "bg-[#6f98bd]",
+    barHex: "#6f98bd",
     cardBg: "bg-[#e6eef5]",
     cardBorder: "border-[#cfdde9] hover:border-[#b3c8dc]",
     accentBorder: "border-l-[#6f93b5]",

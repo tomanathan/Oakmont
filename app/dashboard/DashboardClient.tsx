@@ -147,11 +147,11 @@ export function DashboardClient({
               className={`relative overflow-hidden rounded-2xl border-2 p-5 text-left transition-all duration-200 ${
                 active
                   ? `${theme.cardBg} ${theme.cardBorder.split(" ")[0]} shadow-[0_4px_18px_rgba(38,34,24,0.1)] scale-[1.02]`
-                  : "bg-white border-[#ebe3d3] hover:border-[#ddd3bf] hover:shadow-[0_2px_10px_rgba(38,34,24,0.06)]"
+                  : "bg-white border-[#e2d7c1] hover:border-[#d5c8ae] hover:shadow-[0_2px_10px_rgba(38,34,24,0.06)]"
               }`}
             >
               <div className="flex items-start justify-between gap-2 mb-2">
-                <div className={`text-[11px] font-bold uppercase tracking-wide ${active ? theme.text : "text-stone-400"}`}>
+                <div className={`text-[11px] font-bold uppercase tracking-wide ${active ? theme.text : "text-stone-500"}`}>
                   {label}
                 </div>
                 <SubjectRing
@@ -168,7 +168,7 @@ export function DashboardClient({
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <span className="text-[32px] leading-none font-display font-semibold text-ink">{avgPct}%</span>
                   {attemptedCount === 1 ? (
-                    <span className="text-xs text-stone-400">first attempt</span>
+                    <span className="text-xs text-stone-500">first attempt</span>
                   ) : (
                     <span className="text-xs text-stone-500">average score</span>
                   )}
@@ -192,7 +192,7 @@ export function DashboardClient({
             return (
               <div
                 key={d.domain}
-                className={`overflow-hidden rounded-2xl border border-[#ebe3d3] border-l-[3px] ${theme.accentBorder} bg-white transition-colors`}
+                className={`overflow-hidden rounded-2xl border border-[#e2d7c1] border-l-[3px] ${theme.accentBorder} bg-white transition-colors`}
               >
                 <button
                   onClick={() => toggleDomain(d.domain)}
@@ -211,7 +211,7 @@ export function DashboardClient({
                       mastered (that's what the stars are for). Only drawn
                       where there's room for it. */}
                   <div className="flex-1 mx-3">
-                    <div className="hidden md:block h-1.5 rounded-full bg-stone-100 overflow-hidden">
+                    <div className="hidden md:block h-1.5 rounded-full bg-[#e6dcc8] overflow-hidden">
                       <div
                         className={`h-full rounded-full ${theme.bar}`}
                         style={{ width: `${(domainDone / d.subskills.length) * 100}%` }}
@@ -225,7 +225,7 @@ export function DashboardClient({
                       height="16"
                       viewBox="0 0 16 16"
                       aria-hidden="true"
-                      className={`text-stone-400 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
+                      className={`text-stone-500 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
                     >
                       <path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -255,7 +255,7 @@ export function DashboardClient({
                               <span className="text-sm font-medium text-ink">{s.name}</span>
                               <SubskillStatusBadge progress={p} />
                             </div>
-                            <div className="text-xs text-stone-400 mt-1">{s.blurb}</div>
+                            <div className="text-xs text-stone-500 mt-1">{s.blurb}</div>
                           </div>
                         );
                       })}
@@ -287,7 +287,7 @@ function Greeting({ name }: { name: string | null }) {
   return (
     <div className="mb-4 flex min-h-[40px] items-baseline justify-between gap-3 flex-wrap">
       <h1 className="font-display text-[26px] font-semibold leading-tight text-ink">{text?.hello ?? (name ? `Welcome back, ${name}.` : "Welcome back.")}</h1>
-      {text && <span className="text-[13px] text-stone-400">{text.date}</span>}
+      {text && <span className="text-[13px] text-stone-500">{text.date}</span>}
     </div>
   );
 }
@@ -321,7 +321,7 @@ function PlanCard({
   const router = useRouter();
   const weekPct = thisWeek.total > 0 ? Math.round((thisWeek.done / thisWeek.total) * 100) : 0;
   const weekOfCourse = Math.min(pacing.totalWeeks, Math.ceil(pacing.dayOfCourse / 7));
-  const eyebrow = "text-[10px] font-bold uppercase tracking-[0.12em] text-stone-400";
+  const eyebrow = "text-[10px] font-bold uppercase tracking-[0.12em] text-stone-500";
 
   // Which of today's subskills is the one the primary action already
   // points at -- so it isn't listed a second time in the "also today" rows
@@ -335,13 +335,13 @@ function PlanCard({
       : [];
 
   return (
-    <div className="flex flex-col bg-white border border-[#ebe3d3] rounded-2xl p-4 shadow-[0_1px_3px_rgba(38,34,24,0.03)]">
+    <div className="flex flex-col bg-white border border-[#e2d7c1] rounded-2xl p-4 shadow-[0_1px_3px_rgba(38,34,24,0.03)]">
       {(today || recommended || daysUntilTest !== null) && (
         <div className="flex items-center justify-between gap-3 mb-2.5 flex-wrap">
           <div className="flex items-baseline gap-2">
             <span className={eyebrow}>{today ? DAY_TYPE_COPY[today.type] : recommended ? "Up next" : "Countdown"}</span>
             {today && (
-              <span className="text-[11px] text-stone-300">
+              <span className="text-[11px] text-stone-400">
                 Week {today.week} of {pacing.totalWeeks}
               </span>
             )}
@@ -406,7 +406,7 @@ function PlanCard({
                     <SubskillStatusBadge progress={p} />
                   </span>
                 ) : (
-                  <span className="text-[11px] text-stone-300 flex-shrink-0">Also today</span>
+                  <span className="text-[11px] text-stone-400 flex-shrink-0">Also today</span>
                 )}
               </div>
             );
@@ -419,7 +419,7 @@ function PlanCard({
       {review.ready && recommended?.kind !== "review" && review.toConfirm + review.refreshers > 0 && (
         <button
           onClick={() => router.push("/review")}
-          className="mt-2 flex w-full items-center justify-between gap-3 rounded-xl border border-[#ddd3bf] px-4 py-2.5 text-left transition-colors hover:border-[#c9d8c2] hover:bg-[#f8f4eb]"
+          className="mt-2 flex w-full items-center justify-between gap-3 rounded-xl border border-[#d5c8ae] px-4 py-2.5 text-left transition-colors hover:border-[#c9d8c2] hover:bg-[#f8f4eb]"
         >
           <div className="min-w-0">
             <div className="text-[13.5px] font-semibold text-ink">Mixed review</div>
@@ -432,7 +432,7 @@ function PlanCard({
                 .join(" · ")}
             </div>
           </div>
-          <span className="flex-shrink-0 text-stone-400">&rarr;</span>
+          <span className="flex-shrink-0 text-stone-500">&rarr;</span>
         </button>
       )}
 
@@ -450,7 +450,7 @@ function PlanCard({
           </span>
         </div>
         <PacingBar pacing={pacing} />
-        <div className="flex justify-between items-baseline mt-1 text-[11px] text-stone-400">
+        <div className="flex justify-between items-baseline mt-1 text-[11px] text-stone-500">
           <span>
             Week {weekOfCourse} of {pacing.totalWeeks}
             {thisWeek.total > 0 && (

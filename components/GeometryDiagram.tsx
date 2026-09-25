@@ -1467,7 +1467,7 @@ export function GeometryDiagram({ spec }: { spec: DiagramSpec }) {
         {spec.kind === "exponentialGraph" && <ExponentialGraph {...spec} />}
         {spec.kind === "scatterGraph" && <ScatterGraph {...spec} />}
       </svg>
-      <div className="text-[10px] text-stone-400 mt-1">Figure not drawn to scale.</div>
+      <div className="text-[10px] text-stone-500 mt-1">Figure not drawn to scale.</div>
     </div>
   );
 }

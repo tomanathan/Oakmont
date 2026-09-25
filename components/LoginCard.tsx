@@ -83,7 +83,7 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
   }
 
   return (
-    <div className="bg-white border border-[#ebe3d3] rounded-xl p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
+    <div className="bg-white border border-[#e2d7c1] rounded-xl p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
       {mode === "forgot" ? (
         <>
           <div className="text-[15px] font-semibold text-ink mb-1">Reset your password</div>
@@ -104,7 +104,7 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+                  className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
                   required
                 />
                 {error && <div className="text-red-700 text-sm mb-3">{error}</div>}
@@ -120,7 +120,7 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
           )}
           <button
             onClick={backToLogin}
-            className="w-full text-center text-xs text-stone-400 hover:text-ink transition-colors mt-4"
+            className="w-full text-center text-xs text-stone-500 hover:text-ink transition-colors mt-4"
           >
             &larr; Back to log in
           </button>
@@ -131,7 +131,7 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
             <button
               onClick={() => setMode("login")}
               className={`flex-1 py-2 rounded-lg border text-sm font-medium ${
-                mode === "login" ? "bg-forest text-white border-ink" : "bg-[#eef3e9] text-ink border-[#ddd3bf]"
+                mode === "login" ? "bg-forest text-white border-ink" : "bg-[#eef3e9] text-ink border-[#d5c8ae]"
               }`}
             >
               Log in
@@ -139,7 +139,7 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
             <button
               onClick={() => setMode("signup")}
               className={`flex-1 py-2 rounded-lg border text-sm font-medium ${
-                mode === "signup" ? "bg-forest text-white border-ink" : "bg-[#eef3e9] text-ink border-[#ddd3bf]"
+                mode === "signup" ? "bg-forest text-white border-ink" : "bg-[#eef3e9] text-ink border-[#d5c8ae]"
               }`}
             >
               Sign up
@@ -155,7 +155,7 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
                   placeholder="What should we call you?"
                   autoComplete="given-name"
                   maxLength={40}
-                  className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+                  className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
                   required
                 />
               </>
@@ -166,7 +166,7 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
-              className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+              className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
               required
             />
             <div className="flex items-center justify-between mb-1">
@@ -178,7 +178,7 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
                     setMode("forgot");
                     setError("");
                   }}
-                  className="text-xs text-stone-400 hover:text-ink transition-colors"
+                  className="text-xs text-stone-500 hover:text-ink transition-colors"
                 >
                   Forgot password?
                 </button>
@@ -189,7 +189,7 @@ export function LoginCard({ initialMode = "login", next }: { initialMode?: "logi
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="At least 6 characters"
-              className="w-full px-3 py-2.5 rounded-lg border border-[#ddd3bf] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+              className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
               required
               minLength={6}
             />

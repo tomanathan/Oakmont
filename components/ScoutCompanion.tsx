@@ -2715,11 +2715,11 @@ export function ScoutCompanion() {
               : "left-1/2 -translate-x-1/2 animate-pop-in"
           }`}
         >
-          <div className="bg-white border border-[#ebe3d3] shadow-[0_6px_20px_rgba(38,34,24,0.12)] rounded-xl px-3 py-2 text-xs text-ink leading-snug text-center">
+          <div className="bg-white border border-[#e2d7c1] shadow-[0_6px_20px_rgba(38,34,24,0.12)] rounded-xl px-3 py-2 text-xs text-ink leading-snug text-center">
             {bubble}
           </div>
           <div
-            className={`w-2.5 h-2.5 bg-white border-r border-b border-[#ebe3d3] rotate-45 -mt-[7px] ${
+            className={`w-2.5 h-2.5 bg-white border-r border-b border-[#e2d7c1] rotate-45 -mt-[7px] ${
               bubbleAlign === "left" ? "ml-6" : bubbleAlign === "right" ? "ml-auto mr-6" : "mx-auto"
             }`}
           />

@@ -36,7 +36,7 @@ export function PacingBar({ pacing }: { pacing: Pacing }) {
       {/* Neutral ink fill, not a subject color -- this bar is the whole
           course's trajectory, not Math's or Reading's, and it sits right
           under the two subject cards, which are each strongly hued. */}
-      <div className="relative h-2.5 bg-stone-100 rounded-full overflow-hidden">
+      <div className="relative h-2.5 bg-[#e6dcc8] rounded-full overflow-hidden">
         <div
           className="h-full bg-[#2c4c3b] rounded-full transition-all duration-700 ease-out"
           style={{ width: `${pacing.pctComplete}%` }}

@@ -66,7 +66,7 @@ function callLine(c: CompanionSummary): string {
 function Meter({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = Math.min(100, Math.round((value / Math.max(1, max)) * 100));
   return (
-    <div className="h-1.5 overflow-hidden rounded-full bg-[#eef3e9]">
+    <div className="h-1.5 overflow-hidden rounded-full bg-[#e6dcc8]">
       <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${pct}%`, background: color }} />
     </div>
   );
@@ -112,7 +112,7 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
   return (
     <div
       ref={cardRef}
-      className="flex flex-col rounded-2xl border border-[#ebe3d3] bg-white p-4 shadow-[0_1px_3px_rgba(38,34,24,0.03)]"
+      className="flex flex-col rounded-2xl border border-[#e2d7c1] bg-white p-4 shadow-[0_1px_3px_rgba(38,34,24,0.03)]"
     >
       <div className="flex items-start gap-3.5">
         <button
@@ -140,7 +140,7 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
             <span className={`rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${pill.cls}`}>{pill.label}</span>
           </div>
           <div className="mt-1 text-[13.5px] font-semibold leading-snug text-ink">{copy.headline}</div>
-          <div className="mt-0.5 text-[12.5px] leading-relaxed text-stone-500">{copy.body}</div>
+          <div className="mt-0.5 text-[12.5px] leading-relaxed text-stone-600">{copy.body}</div>
         </div>
       </div>
 
@@ -243,7 +243,7 @@ function Reward({
           <span className="truncate text-[12.5px] text-stone-600">
             <span className="font-semibold text-ink">{title}</span> · {detail}
           </span>
-          <span className="flex-shrink-0 text-[11px] tabular-nums text-stone-400">
+          <span className="flex-shrink-0 text-[11px] tabular-nums text-stone-500">
             {Math.min(value, max)}/{max} {unit}
           </span>
         </div>

@@ -33,7 +33,7 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
   }
 
   return (
-    <section className="mb-4 rounded-2xl border border-[#ebe3d3] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_6px_20px_rgba(38,34,24,0.05)]">
+    <section className="mb-4 rounded-2xl border border-[#e2d7c1] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_6px_20px_rgba(38,34,24,0.05)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-display text-[18px] font-semibold text-ink">Getting started</h2>
@@ -41,11 +41,11 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
             {done} of {items.length} done. A quick way to try everything Oakmont does.
           </p>
         </div>
-        <button onClick={dismiss} className="text-xs text-stone-400 underline underline-offset-2 hover:text-stone-600">
+        <button onClick={dismiss} className="text-xs text-stone-500 underline underline-offset-2 hover:text-stone-600">
           Hide this
         </button>
       </div>
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#efe9dc]">
+      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#e6dcc8]">
         <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${(done / items.length) * 100}%` }} />
       </div>
       <ul className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -58,7 +58,7 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
                   ? "bg-[#f7faf8] ring-[#e3efe8]"
                   : item === nextUp
                   ? "bg-[#f6f1e6] ring-[#c9d8c2] hover:ring-[#b7cbb0]"
-                  : "bg-white ring-[#ebe3d3] hover:ring-[#c9d8c2]"
+                  : "bg-white ring-[#e2d7c1] hover:ring-[#c9d8c2]"
               }`}
             >
               <span
@@ -70,7 +70,7 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
                 {item.done ? "✓" : ""}
               </span>
               <span className="min-w-0">
-                <span className={`block text-[14px] font-semibold ${item.done ? "text-stone-400 line-through decoration-gray-300" : "text-ink"}`}>
+                <span className={`block text-[14px] font-semibold ${item.done ? "text-stone-500 line-through decoration-gray-300" : "text-ink"}`}>
                   {item.title}
                 </span>
                 {!item.done && <span className="mt-0.5 block text-[12.5px] leading-snug text-stone-500">{item.body}</span>}

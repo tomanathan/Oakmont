@@ -50,7 +50,7 @@ export function AddParentForm({ onAdded, cta = "Add parent" }: { onAdded: (p: Ad
           onChange={(e) => setEmail(e.target.value)}
           placeholder="parent@example.com"
           aria-label="Parent or guardian's email"
-          className="min-w-0 flex-1 rounded-lg border border-[#ddd3bf] px-3 py-2.5 text-sm focus:border-[#587356] focus:outline-none"
+          className="min-w-0 flex-1 rounded-lg border border-[#d5c8ae] px-3 py-2.5 text-sm focus:border-[#587356] focus:outline-none"
         />
         <button type="submit" disabled={sending} className="whitespace-nowrap rounded-lg bg-forest px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60">
           {sending ? "Adding..." : cta}
@@ -84,7 +84,7 @@ export function ParentRow({ parent, onUnlink }: { parent: AddedParent; onUnlink?
       </div>
       <div className="flex items-center gap-3">
       {onUnlink && (
-        <button onClick={onUnlink} className="text-xs font-semibold text-stone-400 hover:text-red-700">
+        <button onClick={onUnlink} className="text-xs font-semibold text-stone-500 hover:text-red-700">
           Unlink
         </button>
       )}
