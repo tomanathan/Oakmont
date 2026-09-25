@@ -37,6 +37,20 @@ export async function POST(req: NextRequest) {
   // -- a student who abandons checkout and comes back shouldn't accumulate
   // duplicate Customer objects.
   let customerId = dbUser.stripeCustomerId;
+  // A saved customer can be stale -- e.g. one created in test mode, before
+  // the switch to live keys, which the live API reports as missing. Check
+  // it still exists; if not, start this student over with a fresh one.
+  if (customerId) {
+    try {
+      const existing = await stripe.customers.retrieve(customerId);
+      if ((existing as { deleted?: boolean }).deleted) customerId = null;
+    } catch (err) {
+      // Only "no such customer" means stale; anything else (a network blip)
+      // should fail the request rather than quietly create a duplicate.
+      if ((err as { code?: string }).code !== "resource_missing") throw err;
+      customerId = null;
+    }
+  }
   if (!customerId) {
     const customer = await stripe.customers.create({
       email: dbUser.email,
