@@ -1,13 +1,9 @@
-import Link from "next/link";
-import { sampleParentReport } from "@/lib/parentDemo";
 import type { ParentReport } from "@/lib/parentInsights";
-import { TrackedLink } from "./TrackedLink";
-import { Eyebrow, Highlight } from "./Flourish";
 
-// The parent pitch: what a parent sees, next to a composed snapshot of the
-// real report, filled in for an example student ("Maya") and presented as
-// the parent's view rather than flagged as sample data. The whole report
-// lives at /parents/sample.
+// The parent dashboard, composed for the homepage: the report card, the
+// Sunday email and a mastery moment, filled in for an example student
+// ("Maya") and presented as the parent's view. Shown beside the pitch in
+// Pitch.tsx; the whole report lives at /parents/sample.
 
 const GREEN = "#2f6f4f";
 
@@ -45,7 +41,7 @@ const SAMPLE_PILL = (
 
 // ---- the snapshot: report card + Sunday email + a mastery moment --------------
 
-function Snapshot({ r }: { r: ParentReport }) {
+export function Snapshot({ r }: { r: ParentReport }) {
   const w = r.week;
   const maxDay = Math.max(1, ...w.dayFlags.map((d) => d.minutes));
   const help = r.talkingPoints.find((t) => t.kind === "celebrate") ?? r.talkingPoints[0];
@@ -146,64 +142,3 @@ function Kpi({ label, value, delta }: { label: string; value: string; delta: Rea
 }
 
 // ---- the section ----------------------------------------------------------------
-
-const YOU_SEE = [
-  { title: "Every study session", body: "When, how long, and what they covered.", tone: "bg-pastel-sage" },
-  { title: "All 29 skills", body: "Mastered, shaky, and what's next.", tone: "bg-pastel-sky" },
-  { title: "Scores against the goal", body: "Every practice test, charted.", tone: "bg-pastel-butter" },
-  { title: "What to say", body: "A Sunday email: what to praise, what to ask.", tone: "bg-pastel-blush" },
-];
-
-export function ParentsSection() {
-  const r = sampleParentReport(new Date());
-
-  return (
-    <section id="parents" className="scroll-mt-20 overflow-hidden border-t border-sage/30 bg-ivory px-4 py-16 sm:px-6 sm:py-24">
-      <div className="mx-auto grid max-w-[1120px] items-center gap-12 lg:grid-cols-[1fr_520px] lg:gap-16">
-        <div>
-          <Eyebrow>For parents</Eyebrow>
-          <h2 className="text-balance font-display text-[32px] font-semibold leading-[1.06] tracking-[-0.01em] text-forest-900 sm:text-[46px]">
-            Parents get <Highlight>a dashboard of their own.</Highlight>
-          </h2>
-          <p className="mt-4 max-w-[48ch] text-[16px] leading-relaxed text-gray-600">
-            Free, and it updates every time your student practices.
-          </p>
-          <ul className="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
-            {YOU_SEE.map((f) => (
-              <li key={f.title} className="flex gap-3">
-                <span className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-forest ${f.tone}`} aria-hidden>
-                  <svg width="12" height="12" viewBox="0 0 12 12">
-                    <path d="M2.5 6.2 5 8.5l4.5-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-                <span>
-                  <span className="block text-[14.5px] font-semibold text-ink">{f.title}</span>
-                  <span className="block text-[13.5px] leading-snug text-gray-600">{f.body}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <TrackedLink
-              href="/parent/login?mode=signup"
-              event="parent_signup_started"
-              className="rounded-md bg-forest px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600"
-            >
-              Create a free parent account
-            </TrackedLink>
-            <Link
-              href="/parents/sample"
-              className="rounded-md bg-white/60 px-5 py-3.5 text-center text-sm font-semibold tracking-wide text-forest ring-1 ring-sage/45 transition-colors hover:bg-white"
-            >
-              See the full parent view &rarr;
-            </Link>
-          </div>
-          <p className="mt-4 text-[13px] text-gray-500">Your student adds your email at sign-up.</p>
-        </div>
-        <div className="sm:pb-32 sm:pl-10">
-          <Snapshot r={r} />
-        </div>
-      </div>
-    </section>
-  );
-}

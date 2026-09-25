@@ -8,7 +8,6 @@ import { Hero } from "./Hero";
 import { Pitch } from "./Pitch";
 import { ProofStrip } from "./ProofStrip";
 import { SampleQuestion } from "./SampleQuestion";
-import { ParentsSection } from "./ParentsSection";
 import { Pricing } from "./Pricing";
 import { Faq } from "./Faq";
 import { Reveal } from "./Reveal";
@@ -19,8 +18,9 @@ import { TrackedLink } from "./TrackedLink";
 // pitch, not a login form, is what search engines and shared links see.
 //
 // Short on purpose, and the parent dashboard up front: who we are (title
-// page, which already names the dashboard) -> what the course is -> the
-// numbers -> the parent dashboard -> a live question -> price -> FAQ.
+// page, which already names the dashboard) -> the course and its tracking,
+// with the parent dashboard beside it -> the numbers -> a live question ->
+// price -> FAQ.
 export function LandingPage() {
   const questionCount = Object.values(QUESTIONS).reduce((n, qs) => n + qs.length, 0);
   const subskillCount = ALL_SUBSKILLS.length;
@@ -85,7 +85,6 @@ export function LandingPage() {
         <Hero />
         <Pitch questionCount={questionCount} subskillCount={subskillCount} />
         <ProofStrip questionCount={questionCount} subskillCount={subskillCount} />
-        <ParentsSection />
         <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} typeCount={typeCount} />
         {/* No testimonials section until real, permissioned quotes exist. */}
         <Reveal>
