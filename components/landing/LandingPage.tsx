@@ -20,10 +20,10 @@ import { TrackedLink } from "./TrackedLink";
 // signed-in visits redirect before this renders). Server-rendered so the
 // pitch, not a login form, is what search engines and shared links see.
 //
-// Story order, kept short on purpose: who we are (title page) -> the
-// pitch -> what parents get
-// (often the ones deciding) -> a live question -> how the plan works and
-// who built it -> price -> objections -> ask again.
+// Story order, told in sequence so it's easy to follow: who we are (title
+// page) -> what the course is -> the numbers -> how the plan works -> what
+// each lesson looks like (a live question) -> and a dashboard for parents
+// too -> price -> objections -> ask again.
 export function LandingPage() {
   const questionCount = Object.values(QUESTIONS).reduce((n, qs) => n + qs.length, 0);
   const subskillCount = ALL_SUBSKILLS.length;
@@ -51,11 +51,11 @@ export function LandingPage() {
         <div className="mx-auto grid max-w-[1120px] grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 py-3 sm:gap-3 sm:px-6">
           <div className="flex min-w-0 items-center">
             <div className="hidden items-center gap-6 whitespace-nowrap text-[15px] text-gray-500 lg:flex xl:gap-8 xl:text-[16px]">
-              <a href="#parents" className="font-medium text-forest transition-colors hover:text-sage">
-                For parents
-              </a>
               <a href="#how-it-works" className="transition-colors hover:text-ink">
                 How it works
+              </a>
+              <a href="#parents" className="font-medium text-forest transition-colors hover:text-sage">
+                For parents
               </a>
               <a href="#pricing" className="transition-colors hover:text-ink">
                 Pricing
@@ -91,11 +91,11 @@ export function LandingPage() {
         <Hero />
         <Pitch questionCount={questionCount} subskillCount={subskillCount} />
         <ProofStrip questionCount={questionCount} subskillCount={subskillCount} />
-        <ParentsSection />
-        <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} typeCount={typeCount} />
         <Reveal>
           <HowItWorks subskillCount={subskillCount} />
         </Reveal>
+        <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} typeCount={typeCount} />
+        <ParentsSection />
         {/* No testimonials section until real, permissioned quotes exist. */}
         <Reveal>
           <Pricing />

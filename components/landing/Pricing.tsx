@@ -40,6 +40,35 @@ export async function Pricing() {
         </div>
 
         <div className="mx-auto grid max-w-[860px] gap-4 md:grid-cols-2">
+          <div className="flex flex-col rounded-lg bg-white/[0.06] p-7 ring-1 ring-sage-light/30 sm:p-8">
+            <div className="mb-6 flex items-center justify-between">
+              <div className="font-display text-[19px] font-semibold">Monthly</div>
+              <div className="rounded-full px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-sage-light ring-1 ring-sage-light/50">
+                7-day free trial
+              </div>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="font-display text-[46px] font-semibold leading-none">${monthlyPrice.toFixed(0)}</span>
+              <span className="text-sm text-ivory/60">/month</span>
+            </div>
+            <div className="mt-2 text-sm text-ivory/60">Cancel anytime from Settings</div>
+            <ul className="mt-7 flex flex-1 flex-col gap-2.5 text-sm text-ivory/85">
+              {included.map((item) => (
+                <li key={item} className="flex gap-2.5">
+                  <span className="text-sage-light"><Check /></span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <TrackedLink
+              href="/login?mode=signup"
+              event="signup_started"
+              className="mt-8 rounded-md px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory ring-1 ring-sage-light/50 transition-colors hover:bg-white/10"
+            >
+              Start free trial
+            </TrackedLink>
+          </div>
+
           <div className="relative flex flex-col rounded-lg bg-ivory p-7 text-forest-900 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.6)] ring-1 ring-sage/60 ring-offset-4 ring-offset-ivory sm:p-8">
             <div className="mb-6 flex items-center justify-between">
               <div className="font-display text-[19px] font-semibold">6-month pass</div>
@@ -68,35 +97,6 @@ export async function Pricing() {
               className="mt-8 rounded-md bg-forest px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600"
             >
               Get the 6-month pass
-            </TrackedLink>
-          </div>
-
-          <div className="flex flex-col rounded-lg bg-white/[0.06] p-7 ring-1 ring-sage-light/30 sm:p-8">
-            <div className="mb-6 flex items-center justify-between">
-              <div className="font-display text-[19px] font-semibold">Monthly</div>
-              <div className="rounded-full px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-sage-light ring-1 ring-sage-light/50">
-                7-day free trial
-              </div>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="font-display text-[46px] font-semibold leading-none">${monthlyPrice.toFixed(0)}</span>
-              <span className="text-sm text-ivory/60">/month</span>
-            </div>
-            <div className="mt-2 text-sm text-ivory/60">Cancel anytime from Settings</div>
-            <ul className="mt-7 flex flex-1 flex-col gap-2.5 text-sm text-ivory/85">
-              {included.map((item) => (
-                <li key={item} className="flex gap-2.5">
-                  <span className="text-sage-light"><Check /></span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-            <TrackedLink
-              href="/login?mode=signup"
-              event="signup_started"
-              className="mt-8 rounded-md px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory ring-1 ring-sage-light/50 transition-colors hover:bg-white/10"
-            >
-              Start free trial
             </TrackedLink>
           </div>
         </div>

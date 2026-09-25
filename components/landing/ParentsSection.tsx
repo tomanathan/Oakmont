@@ -56,7 +56,7 @@ function Snapshot({ r }: { r: ParentReport }) {
       <div className="relative z-10 rounded-2xl border border-[#e6e3f3] bg-white p-5 shadow-[0_2px_4px_rgba(26,26,46,0.04),0_24px_60px_-20px_rgba(26,26,46,0.25)] sm:p-6">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-gray-400">Study report</div>
+            <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-gray-500">Your parent dashboard</div>
             <div className="font-display text-[26px] font-semibold leading-tight text-ink">{r.name}</div>
             <div className="text-[12px] text-gray-500">
               Last studied {agoText(r.lastActive)} &middot; {r.scores.daysUntilTest} days to the SAT
@@ -158,15 +158,16 @@ export function ParentsSection() {
   const r = sampleParentReport(new Date());
 
   return (
-    <section id="parents" className="scroll-mt-20 overflow-hidden bg-ivory px-4 py-16 sm:px-6 sm:py-24">
+    <section id="parents" className="scroll-mt-20 overflow-hidden border-t border-sage/30 bg-ivory px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto grid max-w-[1120px] items-center gap-12 lg:grid-cols-[1fr_520px] lg:gap-16">
         <div>
           <Eyebrow>For parents</Eyebrow>
           <h2 className="text-balance font-display text-[32px] font-semibold leading-[1.06] tracking-[-0.01em] text-forest-900 sm:text-[46px]">
-            Know how SAT prep is going <Highlight>without having to ask.</Highlight>
+            And parents get <Highlight>a dashboard of their own.</Highlight>
           </h2>
-          <p className="mt-4 max-w-[46ch] text-[16px] leading-relaxed text-gray-600">
-            Your own free dashboard updates every time your student practices.
+          <p className="mt-4 max-w-[48ch] text-[16px] leading-relaxed text-gray-600">
+            See every session, skill and score from your side, free. It updates every time your student practices, so you
+            know how prep is going without having to ask.
           </p>
           <ul className="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
             {YOU_SEE.map((f) => (

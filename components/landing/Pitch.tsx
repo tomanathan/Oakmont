@@ -44,14 +44,6 @@ export function Pitch({ questionCount, subskillCount }: { questionCount: number;
             </li>
           ))}
         </ul>
-        <a
-          href="#parents"
-          className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-[13px] text-stone-600 ring-1 ring-sage/40 transition-colors hover:text-forest hover:ring-sage/70"
-        >
-          <span className="rounded-full bg-pastel-blush px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-forest">Parents</span>
-          See every session, skill and score, in your own dashboard
-          <span aria-hidden>&rarr;</span>
-        </a>
       </div>
     </section>
   );

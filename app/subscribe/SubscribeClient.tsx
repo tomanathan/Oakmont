@@ -49,7 +49,29 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Full Course Access leads -- one payment, nothing to cancel, and
+        {monthly && (
+          <div className="bg-white border border-[#e2d7c1] rounded-2xl p-6 flex flex-col">
+            <div className="mb-1 flex items-baseline gap-1.5">
+              <span className="text-[36px] leading-none font-display font-semibold text-ink">
+                {formatAmount(monthly.amountCents, monthly.currency)}
+              </span>
+              <span className="text-sm text-stone-500">/month</span>
+            </div>
+            <div className="text-sm text-stone-500 mb-5">
+              Pay month to month, cancel anytime. Starts with a 7-day free trial — your card isn&apos;t
+              charged until it ends.
+            </div>
+            <button
+              onClick={() => startCheckout("monthly")}
+              disabled={loadingPlan !== null}
+              className="mt-auto w-full py-3 rounded-lg border border-[#d5c8ae] text-ink font-semibold text-sm disabled:opacity-60"
+            >
+              {loadingPlan === "monthly" ? "Redirecting..." : "Start free trial"}
+            </button>
+          </div>
+        )}
+
+        {/* Full Course Access, second after Monthly -- one payment, nothing to cancel, and
             enough runway (6 months) for nearly any student's whole prep
             window, so it's framed as the primary way to get this rather
             than a discount alternative to the subscription. */}
@@ -74,28 +96,6 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
               className="mt-auto w-full py-3 rounded-lg bg-forest text-white font-semibold text-sm disabled:opacity-60"
             >
               {loadingPlan === "sixmonth" ? "Redirecting..." : "Get full access"}
-            </button>
-          </div>
-        )}
-
-        {monthly && (
-          <div className="bg-white border border-[#e2d7c1] rounded-2xl p-6 flex flex-col">
-            <div className="mb-1 flex items-baseline gap-1.5">
-              <span className="text-[36px] leading-none font-display font-semibold text-ink">
-                {formatAmount(monthly.amountCents, monthly.currency)}
-              </span>
-              <span className="text-sm text-stone-500">/month</span>
-            </div>
-            <div className="text-sm text-stone-500 mb-5">
-              Pay month to month, cancel anytime. Starts with a 7-day free trial — your card isn&apos;t
-              charged until it ends.
-            </div>
-            <button
-              onClick={() => startCheckout("monthly")}
-              disabled={loadingPlan !== null}
-              className="mt-auto w-full py-3 rounded-lg border border-[#d5c8ae] text-ink font-semibold text-sm disabled:opacity-60"
-            >
-              {loadingPlan === "monthly" ? "Redirecting..." : "Start free trial"}
             </button>
           </div>
         )}
