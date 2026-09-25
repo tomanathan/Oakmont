@@ -87,8 +87,7 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
               <span className="text-sm text-stone-500">one time</span>
             </div>
             <div className="text-sm text-stone-500 mb-5">
-              6 months of access — plenty for most students' whole prep window. One payment, nothing to
-              remember to cancel.
+              6 months of access, paid once. Covered through a retake: if they sit the SAT again, access extends free.
             </div>
             <button
               onClick={() => startCheckout("sixmonth")}

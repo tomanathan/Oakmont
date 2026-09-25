@@ -24,6 +24,7 @@ export async function getUserStats(userId: string) {
       subscriptionStatus: true,
       currentPeriodEnd: true,
       accessExpiresAt: true,
+      passRetakeClaimedAt: true,
     },
   });
   return (
@@ -48,6 +49,7 @@ export async function getUserStats(userId: string) {
       subscriptionStatus: null,
       currentPeriodEnd: null,
       accessExpiresAt: null,
+      passRetakeClaimedAt: null,
     }
   );
 }

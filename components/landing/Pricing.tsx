@@ -37,7 +37,7 @@ export async function Pricing() {
         <div className="mx-auto mb-10 max-w-[620px] text-center">
           <Eyebrow center light>Pricing</Eyebrow>
           <h2 className="text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] sm:text-[42px]">
-            <em className="font-medium italic text-pastel-blush">Everything included</em>, either way.
+            Same course, <em className="font-medium italic text-pastel-blush">two ways to pay.</em>
           </h2>
         </div>
 
@@ -53,7 +53,16 @@ export async function Pricing() {
               <span className="font-display text-[46px] font-semibold leading-none">${monthlyPrice.toFixed(0)}</span>
               <span className="text-sm text-ivory/60">/month</span>
             </div>
-            <div className="mt-2 flex-1 text-sm text-ivory/60">Cancel anytime</div>
+            <div className="mt-2 text-sm text-ivory/60">Cancel anytime</div>
+            <div className="mb-1 mt-5 flex flex-1 items-start gap-3 rounded-lg bg-white/[0.06] px-4 py-3 ring-1 ring-sage-light/20">
+              <span className="mt-0.5 text-sage-light">
+                <Check />
+              </span>
+              <div>
+                <div className="text-sm font-semibold text-ivory">Pay as you go</div>
+                <div className="text-[13px] text-ivory/60">Stop whenever prep is done.</div>
+              </div>
+            </div>
             <TrackedLink
               href="/login?mode=signup"
               event="signup_started"
@@ -74,7 +83,17 @@ export async function Pricing() {
               <span className="font-display text-[46px] font-semibold leading-none">${sixTotal.toFixed(0)}</span>
               <span className="text-sm text-stone-500">one time</span>
             </div>
-            <div className="mt-2 flex-1 text-sm text-stone-500">About ${(sixTotal / 6).toFixed(0)}/month, paid once</div>
+            <div className="mt-2 text-sm text-stone-500">About ${(sixTotal / 6).toFixed(0)}/month, paid once</div>
+            {/* The pass's one extra: retake cover (lib/retakeCover.ts). */}
+            <div className="mb-1 mt-5 flex flex-1 items-start gap-3 rounded-lg bg-pastel-sage px-4 py-3">
+              <span className="mt-0.5 text-forest">
+                <Check />
+              </span>
+              <div>
+                <div className="text-sm font-semibold text-forest-900">Covered through a retake</div>
+                <div className="text-[13px] text-stone-600">If they sit the SAT again, access extends free.</div>
+              </div>
+            </div>
             <TrackedLink
               href="/login?mode=signup"
               event="signup_started"

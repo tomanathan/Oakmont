@@ -5,7 +5,7 @@ export const metadata = { title: "Terms of Service — Oakmont Study Center" };
 
 export default function TermsPage() {
   return (
-    <LegalPageShell title="Terms of Service" updated="September 22, 2026">
+    <LegalPageShell title="Terms of Service" updated="September 24, 2026">
       <p>
         These terms cover your use of Oakmont Study Center (&ldquo;Oakmont,&rdquo; &ldquo;we,&rdquo; &ldquo;us&rdquo;), an
         online SAT preparation course. By creating an account or paying for access, you agree to them. If you&apos;re
@@ -36,7 +36,9 @@ export default function TermsPage() {
         </li>
         <li>
           <strong>Full Course Access ($100 one time):</strong> a single payment that unlocks everything for 182
-          days from the date you pay. It does not renew or charge you again.
+          days from the date you pay. It does not renew or charge you again. It includes one free retake extension: in
+          Settings, choose an upcoming official SAT date within six months of your access ending, and access extends
+          through three days after that date. It can be claimed once, up to 90 days after the pass ends.
         </li>
       </ul>
       <p>All payments are processed by Stripe. We never see or store your card number.</p>

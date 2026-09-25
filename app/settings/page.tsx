@@ -9,6 +9,7 @@ import { isCostumeUnlocked, bestUnlockedCostume } from "@/lib/costumes";
 import { computePetState, PET_NAME, SECOND_PET_NAME, SECOND_PET_UNLOCK_STREAK_DAYS } from "@/lib/pet";
 import { AppShell } from "@/components/AppShell";
 import { SettingsClient } from "./SettingsClient";
+import { retakeState } from "@/lib/retakeCover";
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
@@ -46,6 +47,15 @@ export default async function SettingsPage() {
       : bestUnlockedCostume(unlockProgress).id;
 
   const petState = computePetState(stats.lastActiveDate ?? null, stats.petDiedAt ?? null, stats.petBornAt);
+  const retake = retakeState(stats.accessExpiresAt ?? null, stats.passRetakeClaimedAt ?? null);
+  const pass = retake.hasPass
+    ? {
+        active: !!stats.accessExpiresAt && stats.accessExpiresAt.getTime() > Date.now(),
+        claimedAt: retake.claimedAt?.toISOString() ?? null,
+        accessExpiresAt: retake.accessExpiresAt?.toISOString() ?? null,
+        options: retake.options,
+      }
+    : null;
 
   return (
     <AppShell email={user.email} stats={stats}>
@@ -66,6 +76,7 @@ export default async function SettingsPage() {
         parentInviteCode={parentAccess?.parentInviteCode ?? null}
         parentShareToken={parentAccess?.parentShareToken ?? null}
         linkedParents={(parentAccess?.parentLinks ?? []).map((l) => ({ id: l.id, parentId: l.parent.id, email: l.parent.email, pending: !l.parent.passwordHash }))}
+        pass={pass}
       />
     </AppShell>
   );

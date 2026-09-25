@@ -26,6 +26,10 @@ export const FAQ_ITEMS = [
     a: "When your student signs up, they choose parent supervision and enter your email. You'll get an email to set a password, and their report is waiting. If you'd rather start yourself, create a parent account and send them an invite link, or enter the code from their Settings.",
   },
   {
+    q: "What if my student needs to retake the SAT?",
+    a: "The 6-month pass covers it: pick the retake date in Settings and access extends free through that test. On the monthly plan, just keep the subscription going.",
+  },
+  {
     q: "Is there a free trial? Can I cancel?",
     a: "The monthly plan includes a 7-day free trial, and your card isn't charged until it ends. Cancel anytime from Settings; the monthly plan stops billing going forward, and the one-time 6-month pass simply runs until it expires.",
   },

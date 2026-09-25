@@ -7,6 +7,7 @@ import { PetCard } from "@/components/PetCard";
 import { AddParentForm, ParentRow } from "@/components/AddParentForm";
 import { COSTUMES } from "@/lib/costumes";
 import type { PetState } from "@/lib/pet";
+import { RetakeCover, type RetakeCoverProps } from "@/components/RetakeCover";
 
 export function SettingsClient({
   email,
@@ -25,6 +26,7 @@ export function SettingsClient({
   parentInviteCode,
   parentShareToken,
   linkedParents,
+  pass,
 }: {
   email: string;
   firstName: string | null;
@@ -42,6 +44,8 @@ export function SettingsClient({
   parentInviteCode: string | null;
   parentShareToken: string | null;
   linkedParents: { id: string; parentId: string; email: string; pending: boolean }[];
+  // Only for 6-month pass holders; null for everyone else.
+  pass: (RetakeCoverProps & { active: boolean }) | null;
 }) {
   const router = useRouter();
   const [name, setName] = useState(firstName ?? "");
@@ -505,6 +509,24 @@ export function SettingsClient({
       {/* Account -- neither Ozho's nor the study plan's, so it stays its
           own labeled section rather than trailing after Study plan
           unlabeled the way it used to. */}
+      {pass && (
+        <>
+          <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Your pass</div>
+          <div className="mb-8 rounded-xl border border-[#e2d7c1] bg-white p-6">
+            <div className="text-[15px] font-semibold text-ink">6-month pass</div>
+            {pass.accessExpiresAt && !pass.claimedAt && (
+              <div className="mb-4 mt-0.5 text-[13px] text-stone-600">
+                {pass.active ? "Access through " : "Access ended "}
+                {new Date(pass.accessExpiresAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })}.
+              </div>
+            )}
+            <div className={pass.claimedAt ? "mt-1" : ""}>
+              <RetakeCover claimedAt={pass.claimedAt} accessExpiresAt={pass.accessExpiresAt} options={pass.options} />
+            </div>
+          </div>
+        </>
+      )}
+
       <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Account</div>
 
       <div className="bg-white border border-red-100 rounded-xl p-6">

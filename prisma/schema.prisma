@@ -105,6 +105,10 @@ model User {
   subscriptionStatus   String?
   currentPeriodEnd     DateTime?
   accessExpiresAt      DateTime?
+  // Retake cover: a 6-month pass extends free through one SAT retake (the
+  // student picks the retake date; accessExpiresAt moves to just after it).
+  // Set when claimed, so it can only be claimed once -- see lib/retakeCover.ts.
+  passRetakeClaimedAt  DateTime?
 
   // Forgot-password: both null until a reset is requested. The token itself
   // (not a hash of it) is what's stored -- same convention as
