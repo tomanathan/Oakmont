@@ -555,6 +555,36 @@ const SLEEP_ANIM_MS = 450;
 const WAKE_PAUSE_MIN_MS = 150;
 const WAKE_PAUSE_MAX_MS = 400;
 
+// Picking him up: a press on him that travels farther than this is a
+// carry, not a click (a click still opens the menu).
+const DRAG_THRESHOLD = 6;
+// Legs paddle once per this many px of carrying.
+const CARRY_PADDLE_PX = 16;
+const CARRY_TILT_DEG = 12;
+const CARRY_PHRASES = ["Whoa! Up we go.", "Wheee!", "I can see everything from up here.", "Careful. Precious cargo."];
+const DROP_PHRASES = ["Here? Okay.", "Thanks for the lift.", "Nice spot."];
+// Edge mode: carried off text onto a clear spot, he takes the hint and
+// keeps to the edges of the screen, clear of all text, for the rest of the
+// page (a route change resets it). See pickEdgeTarget.
+const EDGE_ON_PHRASES = ["Got it. I'll keep out of your way.", "I'll stick to the edges.", "Out of the way, right over here."];
+const EDGE_SIDE_MARGIN = 34; // his body plus a little, from the screen edge
+const EDGE_BAND = 150; // how far in from a side still counts as "the edge"
+const EDGE_TOP_CLEAR = 96; // below the sticky top bar
+const EDGE_BOTTOM_CLEAR = 36;
+const EDGE_TEXT_PAD = 18; // extra clearance from text while in edge mode
+const EDGE_CANDIDATES = 60;
+// A pickup "from text" counts anything within this of a text box.
+const NEAR_TEXT_PAD = 30;
+// Fetch now ends at the cursor, wherever it is by then: he stops this far
+// beside it, and keeps coming if it has moved farther than the tolerance.
+const FETCH_CURSOR_OFFSET_X = 26;
+const FETCH_CURSOR_OFFSET_Y = 14;
+const FETCH_RETURN_TOLERANCE = 60;
+const FETCH_DROP_PHRASES = ["Here you go!", "*drops it at your feet*", "Again? Again!"];
+// Near a screen edge the bubble anchors to that side instead of centering,
+// so it never runs off the screen.
+const BUBBLE_EDGE_PX = 130;
+
 function rectsOverlap(
   al: number,
   at: number,
@@ -662,6 +692,14 @@ export function ScoutCompanion() {
   // below) -- draws the ball held at his mouth on PixelDog instead of
   // sitting out on the page, since he's carrying it, not chasing it.
   const [carryingBall, setCarryingBall] = useState(false);
+  // Being carried by the mouse (see onDogPointerDown and friends).
+  const [dragging, setDragging] = useState(false);
+  const draggingRef = useRef(false);
+  const dragRef = useRef<{ id: number; sx: number; sy: number; offX: number; offY: number; moved: boolean; fromText: boolean; paddle: number } | null>(null);
+  const suppressClickRef = useRef(false);
+  // Edge mode -- see EDGE_ON_PHRASES. Reset on every route change.
+  const edgeModeRef = useRef(false);
+  const [bubbleAlign, setBubbleAlign] = useState<"center" | "left" | "right">("center");
 
   const router = useRouter();
 
@@ -676,6 +714,10 @@ export function ScoutCompanion() {
   const strideRef = useRef(0);
   const pathSpeedRef = useRef(1);
   const mouseRef = useRef<{ x: number; y: number } | null>(null);
+  const mouseClientRef = useRef<{ x: number; y: number } | null>(null);
+  // Which side of the cursor he brings the ball back to, fixed per trip so
+  // it can't flip-flop as he closes in.
+  const fetchSideRef = useRef<1 | -1>(-1);
   const mouseAnchorRef = useRef<{ x: number; y: number } | null>(null);
   const nextMouseCheckRef = useRef(0);
   const noticeCooldownRef = useRef(0);
@@ -814,6 +856,7 @@ export function ScoutCompanion() {
 
     function onMove(e: PointerEvent) {
       mouseRef.current = { x: e.clientX + window.scrollX, y: e.clientY + window.scrollY };
+      mouseClientRef.current = { x: e.clientX, y: e.clientY };
       lastInteractionAtRef.current = Date.now();
     }
     window.addEventListener("pointermove", onMove);
@@ -988,6 +1031,8 @@ export function ScoutCompanion() {
     // A route change is its own interaction -- whatever the menu was for,
     // it's stale on the new page.
     closeMenu();
+    // "Keep to the edges" was about the last page's text, not this one's.
+    edgeModeRef.current = false;
 
     refreshTextRects();
     // A page change swaps the whole text layout out from under him. If
@@ -1042,6 +1087,72 @@ export function ScoutCompanion() {
     return null;
   }
 
+  // overlapsText with extra clearance all round -- edge mode's "clear of
+  // all text", and the "was he on or near text" test for a pickup.
+  function overlapsTextPadded(x: number, y: number, pad: number) {
+    const l = x - BODY_HALF_W - pad;
+    const r = x + BODY_HALF_W + pad;
+    const t = y - BODY_ABOVE - pad;
+    const b = y + BODY_BELOW + pad;
+    const rects = textRectsRef.current;
+    for (let i = 0; i < rects.length; i++) {
+      const rc = rects[i];
+      if (rectsOverlap(l, t, r, b, rc.left, rc.top, rc.right, rc.bottom)) return rc;
+    }
+    return null;
+  }
+
+  // How close to the page edge he may go: the usual bubble-sized margin,
+  // or right up to the screen edge in edge mode.
+  function sideMargin() {
+    return edgeModeRef.current ? EDGE_SIDE_MARGIN : SIDE_MARGIN;
+  }
+
+  // Edge mode's resting spot: somewhere in the current screen's side or
+  // bottom bands that's clear of text (with padding), preferring spots
+  // hugging an edge and not too far from where he already is. Sampled
+  // rather than searched -- cheap, and plenty on real pages.
+  function pickEdgeTarget(): { x: number; y: number } {
+    const sx = window.scrollX;
+    const sy = window.scrollY;
+    const vw = document.documentElement.clientWidth;
+    const vh = window.innerHeight;
+    const pos = posRef.current;
+    const minX = sx + EDGE_SIDE_MARGIN;
+    const maxX = sx + vw - EDGE_SIDE_MARGIN;
+    const minY = Math.max(TOP_MARGIN, sy + EDGE_TOP_CLEAR);
+    const maxY = Math.max(minY, Math.min(pageContentBottom() - BOTTOM_MARGIN, sy + vh - EDGE_BOTTOM_CLEAR));
+    const band = Math.min(EDGE_BAND, Math.max(0, (maxX - minX) / 3));
+    let best: { x: number; y: number } | null = null;
+    let bestScore = Infinity;
+    for (let i = 0; i < EDGE_CANDIDATES; i++) {
+      const r = Math.random();
+      let x: number;
+      let y: number;
+      if (r < 0.4) {
+        x = minX + Math.random() * band;
+        y = minY + Math.random() * (maxY - minY);
+      } else if (r < 0.8) {
+        x = maxX - Math.random() * band;
+        y = minY + Math.random() * (maxY - minY);
+      } else {
+        x = minX + Math.random() * (maxX - minX);
+        y = maxY - Math.random() * 40;
+      }
+      if (overlapsTextPadded(x, y, EDGE_TEXT_PAD)) continue;
+      const edgeDist = Math.min(x - minX, maxX - x, maxY - y);
+      const score = edgeDist + 0.25 * Math.hypot(x - pos.x, y - pos.y);
+      if (score < bestScore) {
+        bestScore = score;
+        best = { x, y };
+      }
+    }
+    if (best) return best;
+    // Nowhere clear on this screen: the nearer side edge, level with him.
+    const nearLeft = pos.x - sx < vw / 2;
+    return { x: nearLeft ? minX : maxX, y: clamp(pos.y, minY, maxY) };
+  }
+
   // Would a speech bubble popped up from (x,y) land on a heading-like
   // element? Only checked when picking a spot to REST (isValidLanding) --
   // deliberately not part of overlapsText/the mid-walk fade, so this can't
@@ -1074,6 +1185,9 @@ export function ScoutCompanion() {
   }
 
   function speak(text: string, ms = 4500) {
+    const vx = posRef.current.x - window.scrollX;
+    const vw = document.documentElement.clientWidth;
+    setBubbleAlign(vx < BUBBLE_EDGE_PX ? "left" : vx > vw - BUBBLE_EDGE_PX ? "right" : "center");
     setBubble(text);
     if (bubbleTimeoutRef.current) clearTimeout(bubbleTimeoutRef.current);
     bubbleTimeoutRef.current = setTimeout(() => setBubble(null), ms);
@@ -1264,8 +1378,12 @@ export function ScoutCompanion() {
     // content-height reading (e.g. mid-layout) can never push max below
     // min. See pageContentBottom() for why that's used for the Y bound
     // instead of document.documentElement.scrollHeight.
-    const maxX = Math.max(SIDE_MARGIN, document.documentElement.clientWidth - SIDE_MARGIN);
+    const SIDE = sideMargin();
+    const maxX = Math.max(SIDE, document.documentElement.clientWidth - SIDE);
     const maxY = Math.max(TOP_MARGIN, pageContentBottom() - BOTTOM_MARGIN);
+    // Edge mode picks its own resting spots; forced targets (a thrown
+    // ball, the cursor) still go where they're asked.
+    if (edgeModeRef.current && !forceTarget) return { start, end: pickEdgeTarget(), maxX, maxY };
 
     function randomCandidate() {
       let angle: number;
@@ -1279,7 +1397,7 @@ export function ScoutCompanion() {
       }
       const radius = WANDER_MIN + Math.random() * (WANDER_MAX - WANDER_MIN);
       return {
-        x: clamp(anchor.x + Math.cos(angle) * radius, SIDE_MARGIN, maxX),
+        x: clamp(anchor.x + Math.cos(angle) * radius, SIDE, maxX),
         y: clamp(anchor.y + Math.sin(angle) * radius, TOP_MARGIN, maxY),
       };
     }
@@ -1315,13 +1433,13 @@ export function ScoutCompanion() {
       const jitterAngle = Math.random() * Math.PI * 2;
       const jitterRadius = 30 + tries * 25;
       return {
-        x: clamp(forceTarget!.x + Math.cos(jitterAngle) * jitterRadius, SIDE_MARGIN, maxX),
+        x: clamp(forceTarget!.x + Math.cos(jitterAngle) * jitterRadius, SIDE, maxX),
         y: clamp(forceTarget!.y + Math.sin(jitterAngle) * jitterRadius, TOP_MARGIN, maxY),
       };
     }
 
     let end = forceTarget
-      ? { x: clamp(forceTarget.x, SIDE_MARGIN, maxX), y: clamp(forceTarget.y, TOP_MARGIN, maxY) }
+      ? { x: clamp(forceTarget.x, SIDE, maxX), y: clamp(forceTarget.y, TOP_MARGIN, maxY) }
       : randomCandidate();
     for (let tries = 0; !isValidLanding(end.x, end.y) && tries < 12; tries++) {
       end = forceTarget ? nearbyForceTargetCandidate(tries) : randomCandidate();
@@ -1331,7 +1449,7 @@ export function ScoutCompanion() {
     // insurance against a degenerate 0-size viewport reading (see the
     // render loop's own guard for the same case) ever producing something
     // out of bounds.
-    end = { x: clamp(end.x, SIDE_MARGIN, maxX), y: clamp(end.y, TOP_MARGIN, maxY) };
+    end = { x: clamp(end.x, SIDE, maxX), y: clamp(end.y, TOP_MARGIN, maxY) };
 
     return { start, end, maxX, maxY };
   }
@@ -1349,8 +1467,8 @@ export function ScoutCompanion() {
     pos.y = farAbove ? sy - 20 : sy + vh + 20;
     pos.x = clamp(
       target.x + (Math.random() - 0.5) * 160,
-      SIDE_MARGIN,
-      Math.max(SIDE_MARGIN, document.documentElement.clientWidth - SIDE_MARGIN)
+      sideMargin(),
+      Math.max(sideMargin(), document.documentElement.clientWidth - sideMargin())
     );
     velRef.current = { x: 0, y: farAbove ? 220 : -220 };
     walkingRef.current = true;
@@ -1599,6 +1717,13 @@ export function ScoutCompanion() {
         }
       }
 
+      // Being carried: the pointer handlers own his position; the loop
+      // just keeps Mochi posted.
+      if (draggingRef.current) {
+        if (!isMobileRef.current) companionBus.ozho = { ...posRef.current, at: Date.now(), resting: false };
+        return;
+      }
+
       // The action menu is open: he holds dead still under it (a drifting
       // target would slide out from under the buttons) but keeps wagging,
       // which the block above already handled. Nothing else this tick.
@@ -1656,11 +1781,14 @@ export function ScoutCompanion() {
       const scrollY = window.scrollY;
       const vw = window.innerWidth;
       const vh = window.innerHeight;
+      // Edge mode keeps him on screen: he heads back the moment he's
+      // scrolled out of view rather than once he's well past it.
+      const oov = edgeModeRef.current ? 0 : OUT_OF_VIEW_MARGIN;
       const outOfView =
-        pos.x < scrollX - OUT_OF_VIEW_MARGIN ||
-        pos.x > scrollX + vw + OUT_OF_VIEW_MARGIN ||
-        pos.y < scrollY - OUT_OF_VIEW_MARGIN ||
-        pos.y > scrollY + vh + OUT_OF_VIEW_MARGIN;
+        pos.x < scrollX - oov ||
+        pos.x > scrollX + vw + oov ||
+        pos.y < scrollY - oov ||
+        pos.y > scrollY + vh + oov;
 
       if (outOfView && !returningRef.current && !fetchingRef.current) {
         // Breaks a "Sit" rather than honoring it here -- staying seated
@@ -1671,7 +1799,7 @@ export function ScoutCompanion() {
           setSitting(false);
         }
         returningRef.current = true;
-        const back = pickReturnTarget();
+        const back = edgeModeRef.current ? pickEdgeTarget() : pickReturnTarget();
         enterFromEdge(back);
         beginWalk({ urgent: true, forceTarget: back });
         speak(pick(RETURN_PHRASES), 2400);
@@ -1711,15 +1839,17 @@ export function ScoutCompanion() {
       // sitting for the same reason "Sit" excludes it from the idle-wander
       // branch below -- staying seated on command shouldn't itself get
       // interrupted by standing on text.
+      // In edge mode "on text" includes being close to it.
+      const restHit = edgeModeRef.current && !walkingRef.current ? overlapsTextPadded(pos.x, pos.y, EDGE_TEXT_PAD) : hit;
       if (
-        hit &&
+        restHit &&
         !walkingRef.current &&
         fetchingRef.current !== "flying" &&
         !sittingRef.current &&
         nowMs > textEscapeUntilRef.current
       ) {
         textEscapeUntilRef.current = nowMs + TEXT_ESCAPE_COOLDOWN_MS;
-        beginWalk({ avoid: { x: (hit.left + hit.right) / 2, y: (hit.top + hit.bottom) / 2 } });
+        beginWalk({ avoid: { x: (restHit.left + restHit.right) / 2, y: (restHit.top + restHit.bottom) / 2 } });
       }
 
       // "Noticing" the cursor -- see the Cursor behavior note up top. Only
@@ -1772,6 +1902,12 @@ export function ScoutCompanion() {
           (stageRef.current === "critical" && !returningRef.current ? 0.5 : 1);
         const sec = dt / 1000;
         const v = velRef.current;
+        // Bringing the ball back: aim at wherever the cursor is right now,
+        // every frame, not where it was when he picked the ball up.
+        if (fetchingRef.current === "back" && mouseRef.current) {
+          const spot = fetchReturnSpot();
+          if (Math.hypot(spot.x - targetRef.current.x, spot.y - targetRef.current.y) > 6) targetRef.current = spot;
+        }
         const tgt = targetRef.current;
         const tdx = tgt.x - pos.x;
         const tdy = tgt.y - pos.y;
@@ -1822,11 +1958,27 @@ export function ScoutCompanion() {
             stopBall();
             setCarryingBall(true);
             speak(pick(FETCH_RETURN_PHRASES), 2600);
-            const home = fetchHomeRef.current ?? pickReturnTarget();
-            beginWalk({ urgent: true, forceTarget: home });
+            if (mouseRef.current) fetchSideRef.current = pos.x <= mouseRef.current.x ? -1 : 1;
+            const home = mouseRef.current ? fetchReturnSpot() : fetchHomeRef.current ?? pickReturnTarget();
+            beginWalk({ urgent: true, straight: true, forceTarget: home });
           } else if (fetchingRef.current === "back") {
-            fetchingRef.current = null;
-            setCarryingBall(false);
+            const m = mouseRef.current;
+            if (m && Math.hypot(pos.x - m.x, pos.y - m.y) > FETCH_RETURN_TOLERANCE + FETCH_CURSOR_OFFSET_X) {
+              // The cursor moved on while he was arriving -- keep coming.
+              beginWalk({ urgent: true, straight: true, forceTarget: fetchReturnSpot() });
+            } else {
+              fetchingRef.current = null;
+              setCarryingBall(false);
+              if (m) {
+                facingRef.current = m.x >= pos.x ? 1 : -1;
+                setFacing(facingRef.current);
+              }
+              // Present it for a moment before anything (text included)
+              // moves him on.
+              textEscapeUntilRef.current = nowMs + 1800;
+              behaviorUntilRef.current = nowMs + 2500;
+              if (Math.random() < 0.6) speak(pick(FETCH_DROP_PHRASES), 2000);
+            }
           }
         } else {
           // Arrive: full speed until ARRIVE_RADIUS, then ease off.
@@ -1848,8 +2000,8 @@ export function ScoutCompanion() {
           v.y += ay * k;
           pos.x = clamp(
             pos.x + v.x * sec,
-            SIDE_MARGIN,
-            Math.max(SIDE_MARGIN, document.documentElement.clientWidth - SIDE_MARGIN)
+            sideMargin(),
+            Math.max(sideMargin(), document.documentElement.clientWidth - sideMargin())
           );
           pos.y = clamp(pos.y + v.y * sec, TOP_MARGIN, Math.max(TOP_MARGIN, pageContentBottom() - BOTTOM_MARGIN));
           if (Math.abs(v.x) > 12) {
@@ -1943,7 +2095,7 @@ export function ScoutCompanion() {
           // it and bolts, or pounces at the cursor that caught his eye.
           if (act === "bow" && next === "dash") {
             beginWalk({ gait: "gallop" });
-          } else if (act === "bow" && next === "pounce" && mouseRef.current) {
+          } else if (act === "bow" && next === "pounce" && mouseRef.current && !edgeModeRef.current) {
             const m = mouseRef.current;
             beginWalk({ urgent: true, straight: true, speedMult: 2.4, forceTarget: { x: m.x - facingRef.current * 28, y: m.y + 18 } });
           }
@@ -2073,13 +2225,157 @@ export function ScoutCompanion() {
     const sx = window.scrollX;
     const anchor = followAnchor();
     const side = anchor.x - sx > vw / 2 ? -1 : 1;
-    const x = clamp(anchor.x + side * FOLLOW_OFFSET_X, sx + SIDE_MARGIN, sx + vw - SIDE_MARGIN);
+    const x = clamp(anchor.x + side * FOLLOW_OFFSET_X, sx + sideMargin(), sx + vw - sideMargin());
     return { x, y: anchor.y + FOLLOW_OFFSET_Y };
   }
 
   // Called once the thrown ball has come to rest (see throwBall) -- the
   // one place he actually starts moving toward it. Guarded on fetchingRef
   // still being "flying" so a stray extra call is a harmless no-op.
+  // Where to bring the ball: just beside the cursor as it is right now
+  // (client position + current scroll, so scrolling without moving the
+  // mouse still counts), on the side he's coming from.
+  function fetchReturnSpot() {
+    const c = mouseClientRef.current;
+    const m = c ? { x: c.x + window.scrollX, y: c.y + window.scrollY } : mouseRef.current ?? posRef.current;
+    const vw = document.documentElement.clientWidth;
+    const side = sideMargin();
+    return {
+      x: clamp(m.x + fetchSideRef.current * FETCH_CURSOR_OFFSET_X, side, Math.max(side, vw - side)),
+      y: clamp(m.y + FETCH_CURSOR_OFFSET_Y, TOP_MARGIN, Math.max(TOP_MARGIN, pageContentBottom() - BOTTOM_MARGIN)),
+    };
+  }
+
+  // ---- Carrying him ------------------------------------------------------
+  // Press on him and drag: he's lifted, legs paddling, and goes wherever
+  // the pointer does. A press that never travels DRAG_THRESHOLD is still
+  // a plain click (the menu). Desktop only -- on phones he's docked.
+
+  function tiltWhileCarried() {
+    if (bodyRef.current) bodyRef.current.style.transform = `rotate(${(-CARRY_TILT_DEG * facingRef.current).toFixed(1)}deg)`;
+  }
+
+  function startCarry() {
+    draggingRef.current = true;
+    setDragging(true);
+    lastInteractionAtRef.current = Date.now();
+    beginWakeUp();
+    if (menuOpenRef.current) {
+      menuOpenRef.current = false;
+      setMenuOpen(false);
+    }
+    cancelZoomies();
+    afterBowRef.current = null;
+    // Picking him up ends any game of fetch outright.
+    if (fetchingRef.current) {
+      fetchingRef.current = null;
+      fetchLandingRef.current = null;
+      stopBall();
+      setCarryingBall(false);
+    }
+    walkingRef.current = false;
+    setIsWalking(false);
+    returningRef.current = false;
+    velRef.current = { x: 0, y: 0 };
+    setIdle("none");
+    if (sittingRef.current) {
+      sittingRef.current = false;
+      setSitting(false);
+    }
+    onTextRef.current = false;
+    setBehindText(false);
+    tiltWhileCarried();
+    speak(pick(CARRY_PHRASES), 1600);
+  }
+
+  function onDogPointerDown(e: React.PointerEvent<HTMLButtonElement>) {
+    if (isMobileRef.current || e.button !== 0) return;
+    // No text selection streaking across the page while he's carried.
+    e.preventDefault();
+    const p = posRef.current;
+    dragRef.current = {
+      id: e.pointerId,
+      sx: e.clientX,
+      sy: e.clientY,
+      offX: p.x - (e.clientX + window.scrollX),
+      offY: p.y - (e.clientY + window.scrollY),
+      moved: false,
+      fromText: !!overlapsTextPadded(p.x, p.y, NEAR_TEXT_PAD),
+      paddle: 0,
+    };
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {}
+  }
+
+  function onDogPointerMove(e: React.PointerEvent<HTMLButtonElement>) {
+    const d = dragRef.current;
+    if (!d || d.id !== e.pointerId) return;
+    if (!d.moved) {
+      if (Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < DRAG_THRESHOLD) return;
+      d.moved = true;
+      startCarry();
+    }
+    const vw = document.documentElement.clientWidth;
+    const nx = clamp(e.clientX + window.scrollX + d.offX, EDGE_SIDE_MARGIN, Math.max(EDGE_SIDE_MARGIN, vw - EDGE_SIDE_MARGIN));
+    const ny = clamp(e.clientY + window.scrollY + d.offY, 30, Math.max(30, pageContentBottom() - BOTTOM_MARGIN));
+    const dx = nx - posRef.current.x;
+    d.paddle += Math.hypot(dx, ny - posRef.current.y);
+    if (d.paddle > CARRY_PADDLE_PX) {
+      d.paddle = 0;
+      setLegFrame((f) => (f === 0 ? 1 : 0));
+    }
+    if (Math.abs(dx) > 1.5) {
+      const f: 1 | -1 = dx > 0 ? 1 : -1;
+      if (f !== facingRef.current) {
+        facingRef.current = f;
+        setFacing(f);
+        tiltWhileCarried();
+      }
+    }
+    posRef.current = { x: nx, y: ny };
+    targetRef.current = { x: nx, y: ny };
+    if (wrapperRef.current) {
+      wrapperRef.current.style.left = `${nx}px`;
+      wrapperRef.current.style.top = `${ny}px`;
+    }
+  }
+
+  function onDogPointerUp(e: React.PointerEvent<HTMLButtonElement>) {
+    const d = dragRef.current;
+    if (!d || d.id !== e.pointerId) return;
+    dragRef.current = null;
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {}
+    if (!d.moved) return;
+    // The click that follows this pointerup was a drop, not a click.
+    suppressClickRef.current = true;
+    setTimeout(() => {
+      suppressClickRef.current = false;
+    }, 0);
+    draggingRef.current = false;
+    setDragging(false);
+    resetBody();
+    if (landTimeoutRef.current) clearTimeout(landTimeoutRef.current);
+    setLand(true);
+    landTimeoutRef.current = setTimeout(() => setLand(false), 260);
+    const p = posRef.current;
+    // Carried from on or near text to somewhere clear of it: take the hint
+    // and keep to the edges for the rest of this page.
+    if (d.fromText && !overlapsText(p.x, p.y) && !edgeModeRef.current) {
+      edgeModeRef.current = true;
+      speak(pick(EDGE_ON_PHRASES), 2800);
+    } else {
+      speak(pick(DROP_PHRASES), 1800);
+    }
+    // Stay where he was put for a while.
+    const now = Date.now();
+    behaviorUntilRef.current = now + 5000 + Math.random() * 3000;
+    textEscapeUntilRef.current = now + 600;
+    holdIdle(4000);
+  }
+
   function handleBallLanded() {
     if (fetchingRef.current !== "flying") return;
     fetchingRef.current = "chasing";
@@ -2287,6 +2583,10 @@ export function ScoutCompanion() {
   }
 
   function onClickDog() {
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
     // The window-level click listener (see the init effect) already stamps
     // lastInteractionAtRef for the generic idle timer; a direct click on
     // him specifically gets its own reaction. Captured before beginWakeUp()
@@ -2403,11 +2703,26 @@ export function ScoutCompanion() {
         // edge undetected by the position-picking margins (which assume
         // it's centered). Fixed at the keyframes, which now carry
         // translateX(-50%) through every step.
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-[240px] pointer-events-none animate-pop-in">
+        // Near a screen edge (see BUBBLE_EDGE_PX) it anchors to that side
+        // instead, with the tail still over him -- no translate, so it
+        // uses fade-up rather than pop-in's centered keyframes.
+        <div
+          className={`absolute bottom-full mb-2 w-max max-w-[240px] pointer-events-none ${
+            bubbleAlign === "left"
+              ? "-left-3 animate-fade-up"
+              : bubbleAlign === "right"
+              ? "-right-3 animate-fade-up"
+              : "left-1/2 -translate-x-1/2 animate-pop-in"
+          }`}
+        >
           <div className="bg-white border border-[#ebe3d3] shadow-[0_6px_20px_rgba(38,34,24,0.12)] rounded-xl px-3 py-2 text-xs text-ink leading-snug text-center">
             {bubble}
           </div>
-          <div className="w-2.5 h-2.5 bg-white border-r border-b border-[#ebe3d3] rotate-45 mx-auto -mt-[7px]" />
+          <div
+            className={`w-2.5 h-2.5 bg-white border-r border-b border-[#ebe3d3] rotate-45 -mt-[7px] ${
+              bubbleAlign === "left" ? "ml-6" : bubbleAlign === "right" ? "ml-auto mr-6" : "mx-auto"
+            }`}
+          />
         </div>
       )}
       {asleep && sleepAnim !== "waking" && !bubble && (
@@ -2446,9 +2761,17 @@ export function ScoutCompanion() {
       )}
       <button
         onClick={onClickDog}
+        onPointerDown={onDogPointerDown}
+        onPointerMove={onDogPointerMove}
+        onPointerUp={onDogPointerUp}
+        onPointerCancel={onDogPointerUp}
         aria-label="Ozho, your study companion"
-        className={`relative pointer-events-auto block cursor-pointer bg-transparent border-none p-0 transition-transform duration-150 ease-out ${
-          sleepAnim === "falling"
+        className={`relative pointer-events-auto block select-none bg-transparent border-none p-0 transition-transform duration-150 ease-out ${
+          isMobile ? "cursor-pointer" : dragging ? "cursor-grabbing" : "cursor-grab"
+        } ${
+          dragging
+            ? ""
+            : sleepAnim === "falling"
             ? "animate-fall-asleep"
             : sleepAnim === "waking"
             ? "animate-wake-up"
@@ -2506,7 +2829,7 @@ export function ScoutCompanion() {
           // The trick is a jump-spin from standing, even if he was sitting;
           // a "Sit" he was told resumes once he lands.
           sitting={(sitting || idleAct === "rest") && !isWalking && !trick}
-          legFrame={isWalking ? legFrame : 0}
+          legFrame={isWalking || dragging ? legFrame : 0}
           tailFrame={tailFrame}
           facing={facing}
           costume={costume}
