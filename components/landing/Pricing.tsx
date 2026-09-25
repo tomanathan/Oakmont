@@ -1,4 +1,3 @@
-import { ALL_SUBSKILLS } from "@/data/curriculum";
 import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
 import { TrackedLink } from "./TrackedLink";
 import { ViewTracker } from "./ViewTracker";
@@ -24,8 +23,8 @@ export async function Pricing() {
   // it inside each card only made the two look identical.
   const included = [
     "Week-by-week plan to your test date",
-    `Lessons and quizzes for all ${ALL_SUBSKILLS.length} skills`,
-    "8 full-length practice tests",
+    "Lessons and quizzes for every skill",
+    "Full-length practice tests",
     "Parent dashboard and Sunday email",
     "Ozho and his wardrobe",
   ];

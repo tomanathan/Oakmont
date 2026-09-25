@@ -1,12 +1,10 @@
 import { BrandMark } from "@/components/BrandMark";
 import { LegalFooter } from "@/components/LegalFooter";
-import { ALL_SUBSKILLS, ALL_DOMAINS } from "@/data/curriculum";
-import { landingQuestions } from "@/lib/landingQuestions";
-import { QUESTIONS } from "@/data/questions";
+import { ALL_SUBSKILLS, ALL_DOMAINS, CURRICULUM } from "@/data/curriculum";
+import { landingShowcase } from "@/lib/landingShowcase";
 import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { Hero } from "./Hero";
 import { Pitch } from "./Pitch";
-import { ProofStrip } from "./ProofStrip";
 import { SampleQuestion } from "./SampleQuestion";
 import { Pricing } from "./Pricing";
 import { Faq } from "./Faq";
@@ -19,13 +17,12 @@ import { TrackedLink } from "./TrackedLink";
 //
 // Short on purpose, and the parent dashboard up front: who we are (title
 // page, which already names the dashboard) -> the course and its tracking,
-// with the parent dashboard beside it -> the numbers -> a live question ->
-// price -> FAQ.
+// with the parent dashboard beside it -> one showcase problem, taught (the
+// only place the page talks numbers) -> price -> FAQ.
 export function LandingPage() {
-  const questionCount = Object.values(QUESTIONS).reduce((n, qs) => n + qs.length, 0);
   const subskillCount = ALL_SUBSKILLS.length;
   const typeCount = ALL_SUBSKILLS.reduce((n, s) => n + s.patterns.length, 0);
-  const sampleQuestions = landingQuestions();
+  const showcase = landingShowcase();
 
   const faqJsonLd = {
     "@context": "https://schema.org",
@@ -83,9 +80,16 @@ export function LandingPage() {
 
       <main id="top">
         <Hero />
-        <Pitch questionCount={questionCount} subskillCount={subskillCount} />
-        <ProofStrip questionCount={questionCount} subskillCount={subskillCount} />
-        <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} typeCount={typeCount} />
+        <Pitch />
+        {showcase && (
+          <SampleQuestion
+            item={showcase}
+            sectionCount={CURRICULUM.length}
+            domainCount={ALL_DOMAINS.length}
+            skillCount={subskillCount}
+            typeCount={typeCount}
+          />
+        )}
         {/* No testimonials section until real, permissioned quotes exist. */}
         <Reveal>
           <Pricing />

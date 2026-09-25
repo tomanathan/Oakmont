@@ -2,277 +2,272 @@
 
 import { useState } from "react";
 import { track } from "@vercel/analytics";
-import type { LandingQuestion } from "@/lib/landingQuestions";
-import { PassageText } from "@/components/PassageText";
+import type { LandingShowcase } from "@/lib/landingShowcase";
 import { TrackedLink } from "./TrackedLink";
 import { Eyebrow } from "./Flourish";
 
 const LETTERS = ["A", "B", "C", "D"];
+const BLUE = "#5f8fb8";
+const ORANGE = "#d3805f";
 
-// The breakdown is the pitch; the question is the proof. The section leads
-// with how finely the test is split (sections -> subject areas -> skills ->
-// question types), then lets a visitor answer a real bank question and see
-// exactly where it sits. Questions arrive as props from the server.
+// The homepage showcase: one problem that looks hard, answered here with no
+// login, then taught the way every lesson teaches -- the diagram redraws
+// itself with the one extra line that solves it, and three short steps walk
+// through why. The only place on the page that talks numbers (how finely
+// the test is broken down) sits beside it, since that's what the problem
+// is an example of.
 export function SampleQuestion({
-  questionCount,
-  questions,
-  subskillCount,
+  item,
+  sectionCount,
   domainCount,
+  skillCount,
   typeCount,
 }: {
-  questionCount: number;
-  questions: LandingQuestion[];
-  subskillCount: number;
+  item: LandingShowcase;
+  sectionCount: number;
   domainCount: number;
+  skillCount: number;
   typeCount: number;
 }) {
-  const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
-
-  const question = questions[index];
-  if (!question) return null;
   const answered = selected !== null;
-  const correct = answered && selected === question.answer;
-  const typeIndex = question.types.indexOf(question.type);
-  const trap = answered && !correct && selected !== null ? question.traps[selected] : null;
+  const correct = answered && selected === item.answer;
 
-  function selectChoice(i: number) {
+  function pick(i: number) {
     if (answered) return;
     setSelected(i);
-    const isCorrect = i === question.answer;
+    const isCorrect = i === item.answer;
     track("sample_answered", { correct: isCorrect });
     if (isCorrect) {
-      // GlobalConfetti (app/layout.tsx) listens for the first; the hero dogs
-      // celebrate on the second.
       window.dispatchEvent(new CustomEvent("ozho:celebrate", { detail: { tier: "big" } }));
       window.dispatchEvent(new CustomEvent("landing:correct"));
     }
   }
 
-  function tryAnother() {
-    track("sample_try_another");
-    setSelected(null);
-    setIndex((i) => (i + 1) % questions.length);
-  }
-
   return (
     <section id="try-a-question" className="scroll-mt-20 border-t border-sage/30 bg-parchment px-6 py-16 sm:py-20">
-      <div className="mx-auto grid max-w-[1120px] items-start gap-10 lg:grid-cols-[1fr_1.25fr] lg:gap-16">
+      <div className="mx-auto grid max-w-[1120px] items-start gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
         <div className="lg:sticky lg:top-24">
           <Eyebrow>Try a question</Eyebrow>
           <h2 className="mb-4 text-balance font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.01em] text-forest-900 sm:text-[42px]">
             The SAT, broken down to every kind of question it asks.
           </h2>
-          <p className="mb-6 max-w-[460px] text-[15px] leading-relaxed text-gray-600">
-            Each of the {subskillCount} skills shows up as a few specific kinds of question. Oakmont teaches every kind on its own.
+          <p className="mb-6 max-w-[440px] text-[15px] leading-relaxed text-stone-600">
+            Each kind gets its own lesson. Here&apos;s one of them: answer it, then see how it&apos;s taught.
           </p>
           <Ladder
             steps={[
-              { n: 2, label: "test sections", tone: "bg-pastel-sky text-forest" },
-              { n: domainCount, label: "subject areas", tone: "bg-pastel-sage text-forest" },
-              { n: subskillCount, label: "skills", tone: "bg-pastel-butter text-forest" },
-              { n: typeCount, label: "question types", tone: "bg-forest text-ivory" },
+              { n: sectionCount, label: "test sections", tone: "bg-pastel-sky" },
+              { n: domainCount, label: "subject areas", tone: "bg-pastel-sage" },
+              { n: skillCount, label: "skills", tone: "bg-pastel-butter" },
+              { n: typeCount, label: "question types", tone: "bg-forest text-ivory", last: true },
             ]}
           />
-          {/* Beside the question on wide screens; below it on phones (see
-              the second copy), so the question itself isn't pushed down. */}
-          <div className="hidden lg:block">
-            <TaxonomyMap q={question} typeIndex={typeIndex} />
+          <div className="mt-6 max-w-[440px] text-[13px] leading-relaxed text-stone-600">
+            <span className="font-semibold text-ink">This one:</span> {item.section} &rsaquo; {item.domain} &rsaquo; {item.skill} &rsaquo;{" "}
+            <span className="font-semibold text-forest">{item.type}</span>
           </div>
         </div>
 
-        <div>
-          <div className="rounded-lg bg-white p-6 shadow-[0_1px_2px_rgba(60,42,15,0.05),0_16px_40px_-22px_rgba(60,42,15,0.45)] ring-1 ring-sage/25 sm:p-8">
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <span className="rounded-full bg-parchment px-2.5 py-1 font-semibold text-forest ring-1 ring-sage/30">
-                {question.skill} &middot; question type {typeIndex + 1} of {question.types.length}
-              </span>
-              <span className="text-gray-400">No account needed</span>
-            </div>
-            <div className="mb-6 text-[16px]">
-              <PassageText text={question.q} highlight={question.underline ?? undefined} />
-            </div>
-            <div className="flex flex-col gap-2.5">
-              {question.choices.map((choice, i) => {
-                const isCorrectChoice = i === question.answer;
-                const isSelected = i === selected;
-                let tone = "border-[#e8dfcc] bg-white hover:border-sage hover:bg-ivory";
-                let badge = "bg-parchment text-forest";
-                if (answered && isCorrectChoice) {
-                  tone = "border-[#2f6f4f] bg-[#eef7f1] text-[#1f5a3c]";
-                  badge = "bg-[#2f6f4f] text-white";
-                } else if (answered && isSelected) {
-                  tone = "border-red-300 bg-red-50 text-red-800";
-                  badge = "bg-red-500 text-white";
-                } else if (answered) {
-                  tone = "border-[#eeedf6] bg-white opacity-55";
-                }
-                return (
-                  <button
-                    key={i}
-                    onClick={() => selectChoice(i)}
-                    disabled={answered}
-                    className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-left text-[15px] font-medium transition-colors ${tone}`}
-                  >
-                    <span className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md text-xs font-semibold ${badge}`}>
-                      {LETTERS[i]}
-                    </span>
-                    {choice}
-                  </button>
-                );
-              })}
-            </div>
+        <div className="rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(60,42,15,0.05),0_18px_44px_-24px_rgba(60,42,15,0.45)] ring-1 ring-[#e2d7c1] sm:p-7">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span className="rounded-full bg-parchment px-2.5 py-1 font-semibold text-forest ring-1 ring-[#e2d7c1]">
+              {item.skill} &middot; type {item.typeIndex + 1} of {item.typeCount}
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="rounded-full bg-[#fbeaea] px-2 py-0.5 font-semibold text-[#b23b3b]">Hard</span>
+              <span className="text-stone-500">No account needed</span>
+            </span>
+          </div>
 
-            {answered && (
-              <div className="mt-6 animate-fade-up rounded-xl bg-[#faf8f4] p-5">
-                <div className={`mb-2 text-sm font-semibold ${correct ? "text-[#2f6f4f]" : "text-ink"}`}>
-                  {correct ? "Correct." : "Not quite."} This is one of {question.types.length} kinds of {question.skill} questions:
-                  &ldquo;{question.type}.&rdquo;
+          <ZigzagDiagram revealed={answered} />
+
+          <p className="mb-5 mt-4 text-[15.5px] leading-relaxed text-ink">{item.q}</p>
+
+          <div className="grid grid-cols-2 gap-2.5" role="radiogroup" aria-label="Answer choices">
+            {item.choices.map((choice, i) => {
+              const isAnswer = i === item.answer;
+              const isPicked = i === selected;
+              let row = "border-[#d9ceb7] bg-white hover:border-[#587356] hover:bg-[#fbf8f1]";
+              let badge = "bg-[#eef3e9] text-[#2c4c3b]";
+              if (answered && isAnswer) {
+                row = "border-accent bg-[#edf6f0] ring-1 ring-accent";
+                badge = "bg-accent text-white";
+              } else if (answered && isPicked) {
+                row = "border-[#c0524f] bg-[#fcefee] ring-1 ring-[#c0524f]";
+                badge = "bg-[#b23b3b] text-white";
+              } else if (answered) {
+                row = "border-[#e8dfcc] bg-white opacity-60";
+              }
+              return (
+                <button
+                  key={i}
+                  role="radio"
+                  aria-checked={isPicked}
+                  onClick={() => pick(i)}
+                  disabled={answered}
+                  className={`flex items-center gap-3 rounded-xl border px-3.5 py-3 text-left text-[15px] font-medium text-ink transition-colors ${row}`}
+                >
+                  <span className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-[12.5px] font-bold ${badge}`}>
+                    {answered && isAnswer ? "✓" : answered && isPicked ? "✕" : LETTERS[i]}
+                  </span>
+                  {choice}
+                </button>
+              );
+            })}
+          </div>
+
+          {answered && (
+            <div className="mt-6 animate-fade-up">
+              {correct ? (
+                <div className="mb-4 text-[15px] font-semibold text-accent">Right: {item.choices[item.answer]}. Here&apos;s why it works.</div>
+              ) : (
+                <div className="mb-4 rounded-lg bg-[#fcefee] px-4 py-3 text-[14px] leading-relaxed text-ink ring-1 ring-[#f0d0d0]">
+                  <span className="font-semibold text-[#b23b3b]">Why {LETTERS[selected!]} is wrong: </span>
+                  {item.why[selected!]}
                 </div>
-                {!correct && selected !== null && question.why[selected] ? (
+              )}
+              <ol className="space-y-3">
+                {[
                   <>
-                    <div className="mb-2 rounded-lg bg-white px-3 py-2 text-sm leading-relaxed text-gray-700 ring-1 ring-[#f0d0d0]">
-                      <span className="font-semibold text-[#b23b3b]">Why {LETTERS[selected]} is wrong: </span>
-                      {question.why[selected]}
-                      {trap && (
-                        <span className="mt-1.5 block text-[13px] text-[#6b3a14]">
-                          <span className="font-semibold text-[#b4541a]">The trap: </span>
-                          {trap}
-                        </span>
-                      )}
-                    </div>
-                    <details className="group">
-                      <summary className="cursor-pointer list-none text-sm font-semibold text-forest hover:underline">
-                        Why {LETTERS[question.answer]} is right<span className="group-open:hidden"> &rarr;</span>
-                      </summary>
-                      <p className="mt-1.5 text-sm leading-relaxed text-gray-600">{question.explain}</p>
-                    </details>
-                  </>
-                ) : (
+                    Draw a line through <b>B</b> parallel to <i>p</i> and <i>q</i>. It splits the angle at B into two pieces.
+                  </>,
                   <>
-                    {trap && (
-                      <div className="mb-2 rounded-lg bg-white px-3 py-2 text-sm leading-relaxed text-gray-700 ring-1 ring-[#f0d0d0]">
-                        <span className="font-semibold text-[#b23b3b]">The trap you fell for: </span>
-                        {trap}
-                      </div>
-                    )}
-                    <p className="text-sm leading-relaxed text-gray-600">{question.explain}</p>
-                  </>
-                )}
+                    The top piece and the <b style={{ color: BLUE }}>35°</b> angle are alternate interior angles, so it&apos;s 35°.
+                    The bottom piece pairs with the <b style={{ color: ORANGE }}>50°</b> angle the same way.
+                  </>,
+                  <>
+                    Add the pieces: 35° + 50° = <b>85°</b>.
+                  </>,
+                ].map((step, i) => (
+                  <li key={i} className="flex gap-3 text-[14.5px] leading-relaxed text-stone-700">
+                    <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-forest text-[11px] font-bold text-white">
+                      {i + 1}
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+              <div className="mt-5 rounded-lg bg-pastel-butter px-4 py-3 text-[14px] leading-relaxed text-ink">
+                <span className="font-semibold">The move to remember:</span> when a path bends between parallel lines, the bend equals the
+                two outside angles added together.
               </div>
-            )}
-          </div>
-
-          <div className="mt-5 flex flex-col items-center gap-3 sm:flex-row">
-            {answered && (
-              <TrackedLink
-                href="/login?mode=signup"
-                event="signup_started"
-                className="w-full rounded-md bg-forest px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600 sm:w-auto"
-              >
-                That&apos;s 1 of {questionCount}. Get the full plan →
-              </TrackedLink>
-            )}
-            <button
-              onClick={tryAnother}
-              className="w-full rounded-md bg-white/70 px-6 py-3.5 text-sm font-semibold tracking-wide text-forest ring-1 ring-sage/45 transition-colors hover:bg-white sm:w-auto"
-            >
-              {answered ? "Try a different type" : "Skip to a different type"}
-            </button>
-          </div>
-          <div className="mt-8 lg:hidden">
-            <TaxonomyMap q={question} typeIndex={typeIndex} />
-          </div>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <TrackedLink
+                  href="/login?mode=signup"
+                  event="signup_started"
+                  className="rounded-md bg-forest px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600"
+                >
+                  Every lesson teaches like this. Start your plan &rarr;
+                </TrackedLink>
+                <button
+                  onClick={() => setSelected(null)}
+                  className="rounded-md px-5 py-3.5 text-sm font-semibold text-forest ring-1 ring-sage/45 transition-colors hover:bg-parchment"
+                >
+                  Try it again
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>
   );
 }
 
-// The whole breakdown in four numbers, the last one (the level Oakmont
-// teaches at) set in green.
-function Ladder({ steps }: { steps: { n: number; label: string; tone: string }[] }) {
+// The four levels of the breakdown, the last (what Oakmont teaches) in green.
+function Ladder({ steps }: { steps: { n: number; label: string; tone: string; last?: boolean }[] }) {
   return (
-    <ol className="grid max-w-[460px] grid-cols-4 gap-2 lg:mb-8" aria-label="How the SAT breaks down">
-      {steps.map((s, i) => {
-        const last = i === steps.length - 1;
-        return (
-          <li key={s.label} className={`rounded-md px-3 py-3 ring-1 ring-sage/35 shadow-[0_10px_24px_-18px_rgba(60,42,15,0.5)] ${s.tone}`}>
-            <div className="font-display text-[24px] font-semibold leading-none tabular-nums">{s.n}</div>
-            <div className={`mt-1 text-[11.5px] leading-tight ${last ? "text-pastel-sage" : "text-stone-600"}`}>{s.label}</div>
-          </li>
-        );
-      })}
+    <ol className="grid max-w-[440px] grid-cols-4 gap-2" aria-label="How the SAT breaks down">
+      {steps.map((s) => (
+        <li key={s.label} className={`rounded-md px-3 py-3 ring-1 ring-sage/25 ${s.tone} ${s.last ? "" : "text-forest"}`}>
+          <div className="font-display text-[24px] font-semibold leading-none tabular-nums">{s.n}</div>
+          <div className={`mt-1 text-[11.5px] leading-tight ${s.last ? "text-ivory/75" : "text-stone-600"}`}>{s.label}</div>
+        </li>
+      ))}
     </ol>
   );
 }
 
-// Where this question lives: section -> domain -> skill -> question type,
-// each level showing its siblings with the current one picked out.
-function TaxonomyMap({ q, typeIndex }: { q: LandingQuestion; typeIndex: number }) {
-  const domainIndex = q.domains.indexOf(q.domain);
-  const skillIndex = q.skills.indexOf(q.skill);
-  const chip = (on: boolean) =>
-    `rounded-md px-2 py-1 text-[12px] leading-tight transition-colors ${
-      on ? "bg-forest font-semibold text-ivory" : "bg-white text-stone-500 ring-1 ring-sage/20"
-    }`;
-  return (
-    <div key={q.q} className="animate-fade-up rounded-lg bg-white/80 p-5 ring-1 ring-sage/25">
-      <div className="mb-4 text-[10.5px] font-bold uppercase tracking-[0.12em] text-gray-400">Where this question fits</div>
-      <ol className="relative flex flex-col gap-4 border-l border-dashed border-sage/40 pl-5">
-        <Level label="Test section" count={null}>
-          <span className="text-[14px] font-semibold text-ink">{q.section}</span>
-        </Level>
-        <Level label="Subject area" count={`${domainIndex + 1} of ${q.domains.length}`}>
-          <div className="flex flex-wrap gap-1.5">
-            {q.domains.map((d) => (
-              <span key={d} className={chip(d === q.domain)}>
-                {d}
-              </span>
-            ))}
-          </div>
-        </Level>
-        <Level label="Skill" count={`${skillIndex + 1} of ${q.skills.length}`}>
-          <div className="flex flex-wrap gap-1.5">
-            {q.skills.map((s) => (
-              <span key={s} className={chip(s === q.skill)}>
-                {s}
-              </span>
-            ))}
-          </div>
-        </Level>
-        <Level label="Question type" count={`${typeIndex + 1} of ${q.types.length}`} last>
-          <ul className="flex flex-col gap-1">
-            {q.types.map((t, i) => (
-              <li
-                key={t}
-                className={`flex items-start gap-2 rounded-lg px-2.5 py-1.5 text-[12.5px] leading-snug ${
-                  i === typeIndex ? "bg-[#eef7f1] font-semibold text-[#1f5a3c] ring-1 ring-[#cfe6d8]" : "text-gray-500"
-                }`}
-              >
-                <span className="w-4 flex-shrink-0 tabular-nums text-gray-400">{i + 1}</span>
-                {t}
-              </li>
-            ))}
-          </ul>
-        </Level>
-      </ol>
-    </div>
-  );
+// ---- The figure --------------------------------------------------------------
+// Drawn to scale: A on p, B between the lines, C on q, with the 35° at A
+// and the 50° at C as in the problem, so the auxiliary line really does
+// split B into those two angles. Before answering: the zigzag and a "?" at
+// B. After: the dashed parallel through B, the split pieces color-matched
+// to the angles they equal, and the 85° total.
+
+const A: [number, number] = [70, 44];
+const B: [number, number] = [184, 124];
+const C: [number, number] = [117, 204];
+
+function arcPath(c: [number, number], r: number, a0: number, a1: number) {
+  const rad = (d: number) => (d * Math.PI) / 180;
+  const p0 = [c[0] + r * Math.cos(rad(a0)), c[1] + r * Math.sin(rad(a0))];
+  const p1 = [c[0] + r * Math.cos(rad(a1)), c[1] + r * Math.sin(rad(a1))];
+  const large = Math.abs(a1 - a0) > 180 ? 1 : 0;
+  return `M ${c[0]} ${c[1]} L ${p0[0].toFixed(1)} ${p0[1].toFixed(1)} A ${r} ${r} 0 ${large} 1 ${p1[0].toFixed(1)} ${p1[1].toFixed(1)} Z`;
 }
 
-function Level({ label, count, last = false, children }: { label: string; count: string | null; last?: boolean; children: React.ReactNode }) {
+function at(c: [number, number], r: number, deg: number): [number, number] {
+  const rad = (deg * Math.PI) / 180;
+  return [c[0] + r * Math.cos(rad), c[1] + r * Math.sin(rad)];
+}
+
+function ZigzagDiagram({ revealed }: { revealed: boolean }) {
+  const ink = "#1d2621";
+  const fade = (on: boolean) => ({ opacity: on ? 1 : 0, transition: "opacity 500ms ease 150ms" });
+  const t = (p: [number, number], text: string, color: string, size = 13, weight = 700) => (
+    <text x={p[0]} y={p[1]} fill={color} fontSize={size} fontWeight={weight} textAnchor="middle" dominantBaseline="middle">
+      {text}
+    </text>
+  );
   return (
-    <li className="relative">
-      <span
-        className={`absolute -left-[25px] top-[3px] h-2.5 w-2.5 rounded-full ring-4 ring-white ${last ? "bg-forest" : "bg-sage-light"}`}
-        aria-hidden
-      />
-      <div className="mb-1.5 flex items-baseline gap-2">
-        <span className="text-[10.5px] font-bold uppercase tracking-[0.1em] text-gray-400">{label}</span>
-        {count && <span className="text-[11px] font-semibold tabular-nums text-sage">{count}</span>}
-      </div>
-      {children}
-    </li>
+    <figure className="overflow-hidden rounded-xl bg-[#fbf9f4] ring-1 ring-[#ece4d4]">
+      <svg viewBox="0 0 340 248" className="block h-auto w-full" role="img" aria-label="Parallel lines p and q with a zigzag path from A on p, bending at B, to C on q">
+        {/* the parallel lines, with their arrow marks */}
+        {[A[1], C[1]].map((y) => (
+          <g key={y}>
+            <line x1={16} y1={y} x2={324} y2={y} stroke={ink} strokeWidth={2} />
+            <path d={`M ${292} ${y - 5} l 7 5 l -7 5`} fill="none" stroke={ink} strokeWidth={1.6} />
+          </g>
+        ))}
+        {t([24, A[1] - 12], "p", ink, 14, 600)}
+        {t([24, C[1] - 12], "q", ink, 14, 600)}
+
+        {/* the auxiliary line, drawn on reveal */}
+        <g style={fade(revealed)}>
+          <line x1={16} y1={B[1]} x2={324} y2={B[1]} stroke={ink} strokeWidth={1.5} strokeDasharray="6 5" opacity={0.55} />
+        </g>
+
+        {/* the given angles */}
+        <path d={arcPath(A, 30, 0, 35)} fill={BLUE} fillOpacity={0.22} stroke={BLUE} strokeWidth={1.5} />
+        {t(at(A, 48, 17), "35°", BLUE)}
+        <path d={arcPath(C, 28, -50, 0)} fill={ORANGE} fillOpacity={0.22} stroke={ORANGE} strokeWidth={1.5} />
+        {t(at(C, 46, -24), "50°", ORANGE)}
+
+        {/* the angle at B: one "?" wedge before, two matched pieces after */}
+        <g style={fade(!revealed)}>
+          <path d={arcPath(B, 26, 130, 215)} fill={ink} fillOpacity={0.08} stroke={ink} strokeWidth={1.5} />
+          {t(at(B, 44, 172), "?", ink, 16)}
+        </g>
+        <g style={fade(revealed)}>
+          <path d={arcPath(B, 26, 180, 215)} fill={BLUE} fillOpacity={0.22} stroke={BLUE} strokeWidth={1.5} />
+          <path d={arcPath(B, 26, 130, 180)} fill={ORANGE} fillOpacity={0.22} stroke={ORANGE} strokeWidth={1.5} />
+          {t(at(B, 47, 199), "35°", BLUE, 12)}
+          {t(at(B, 47, 157), "50°", ORANGE, 12)}
+          <rect x={B[0] + 14} y={B[1] - 30} width={48} height={22} rx={6} fill={ink} />
+          {t([B[0] + 38, B[1] - 19], "85°", "#ffffff", 13)}
+        </g>
+
+        {/* the zigzag itself, on top */}
+        <polyline points={`${A.join(",")} ${B.join(",")} ${C.join(",")}`} fill="none" stroke={ink} strokeWidth={2.5} strokeLinejoin="round" />
+        {[A, B, C].map((p, i) => (
+          <circle key={i} cx={p[0]} cy={p[1]} r={3.5} fill={ink} />
+        ))}
+        {t([A[0] - 8, A[1] - 12], "A", ink, 12, 600)}
+        {t([B[0] + 12, B[1] + 4], "B", ink, 12, 600)}
+        {t([C[0] - 10, C[1] + 16], "C", ink, 12, 600)}
+      </svg>
+    </figure>
   );
 }

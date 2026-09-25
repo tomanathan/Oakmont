@@ -7,7 +7,7 @@ import { Snapshot } from "./ParentSnapshot";
 // The pitch and the parent dashboard as one idea: the course, and the
 // tracking that runs the whole way through it. Copy on the left, the
 // parent's view of it on the right. One scroll below the title page.
-export function Pitch({ questionCount, subskillCount }: { questionCount: number; subskillCount: number }) {
+export function Pitch() {
   const r = sampleParentReport(new Date());
   return (
     <section id="the-course" className="scroll-mt-20 overflow-hidden border-t border-sage/30 bg-parchment px-6 py-16 sm:py-24">
@@ -19,8 +19,8 @@ export function Pitch({ questionCount, subskillCount }: { questionCount: number;
             Every SAT skill, one week at a time, <Highlight>tracked the whole way.</Highlight>
           </h2>
           <p className="mt-5 max-w-[46ch] text-[16px] leading-relaxed text-stone-600 sm:text-[17px]">
-            A plan built around your test date: lessons for all {subskillCount} skills, {questionCount} practice questions and 8
-            full-length tests. Parents follow along on their own free dashboard.
+            A week-by-week plan built around your test date, with lessons, practice and full-length tests. Parents follow along
+            on their own free dashboard.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <TrackedLink
