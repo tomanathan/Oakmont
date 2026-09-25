@@ -42,7 +42,7 @@ export async function Pricing() {
         <div className="mx-auto grid max-w-[860px] gap-4 md:grid-cols-2">
           <div className="relative flex flex-col rounded-lg bg-ivory p-7 text-forest-900 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.6)] ring-1 ring-sage/60 ring-offset-4 ring-offset-ivory sm:p-8">
             <div className="mb-6 flex items-center justify-between">
-              <div className="font-display text-[19px] font-semibold">6-month pass</div>
+              <div className="font-display text-[19px] font-semibold">1-year pass</div>
               <div className="rounded-full bg-pastel-butter px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-forest">
                 Best value
               </div>
@@ -52,7 +52,7 @@ export async function Pricing() {
               <span className="text-sm text-stone-500">one time</span>
             </div>
             <div className="mt-2 text-sm text-stone-500">
-              About ${(sixTotal / 6).toFixed(0)}/month · one payment, nothing to cancel
+              About ${(sixTotal / 12).toFixed(0)}/month · one payment, a full year of access
             </div>
             <ul className="mt-7 flex flex-1 flex-col gap-2.5 text-sm text-stone-700">
               {included.map((item) => (
@@ -67,7 +67,7 @@ export async function Pricing() {
               event="signup_started"
               className="mt-8 rounded-md bg-forest px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600"
             >
-              Get the 6-month pass
+              Get the 1-year pass
             </TrackedLink>
           </div>
 

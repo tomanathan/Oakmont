@@ -50,7 +50,7 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Full Course Access leads -- one payment, nothing to cancel, and
-            enough runway (6 months) for nearly any student's whole prep
+            a full year of runway for any student's whole prep
             window, so it's framed as the primary way to get this rather
             than a discount alternative to the subscription. */}
         {sixmonth && (
@@ -65,8 +65,8 @@ export function SubscribeClient({ plans }: { plans: PlanOption[] }) {
               <span className="text-sm text-stone-500">one time</span>
             </div>
             <div className="text-sm text-stone-500 mb-5">
-              6 months of access — plenty for most students' whole prep window. One payment, nothing to
-              remember to cancel.
+              A full year of access, enough for any student's whole prep window, retakes included. One payment,
+              nothing to remember to cancel.
             </div>
             <button
               onClick={() => startCheckout("sixmonth")}
