@@ -5,6 +5,7 @@ import { landingQuestions } from "@/lib/landingQuestions";
 import { QUESTIONS } from "@/data/questions";
 import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { Hero } from "./Hero";
+import { Pitch } from "./Pitch";
 import { ProofStrip } from "./ProofStrip";
 import { SampleQuestion } from "./SampleQuestion";
 import { ParentsSection } from "./ParentsSection";
@@ -19,7 +20,8 @@ import { TrackedLink } from "./TrackedLink";
 // signed-in visits redirect before this renders). Server-rendered so the
 // pitch, not a login form, is what search engines and shared links see.
 //
-// Story order, kept short on purpose: promise (hero) -> what parents get
+// Story order, kept short on purpose: who we are (title page) -> the
+// pitch -> what parents get
 // (often the ones deciding) -> a live question -> how the plan works and
 // who built it -> price -> objections -> ask again.
 export function LandingPage() {
@@ -86,7 +88,8 @@ export function LandingPage() {
       </nav>
 
       <main id="top">
-        <Hero questionCount={questionCount} subskillCount={subskillCount} />
+        <Hero />
+        <Pitch questionCount={questionCount} subskillCount={subskillCount} />
         <ProofStrip questionCount={questionCount} subskillCount={subskillCount} />
         <ParentsSection />
         <SampleQuestion questionCount={questionCount} questions={sampleQuestions} subskillCount={subskillCount} domainCount={ALL_DOMAINS.length} typeCount={typeCount} />
