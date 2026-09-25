@@ -1,5 +1,6 @@
 import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
 import { TrackedLink } from "./TrackedLink";
+import { Runners } from "./SectionPets";
 import { ViewTracker } from "./ViewTracker";
 import { Eyebrow } from "./Flourish";
 
@@ -30,7 +31,7 @@ export async function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="scroll-mt-20 bg-gradient-to-b from-forest-600 to-forest-900 px-6 py-16 text-ivory sm:py-20">
+    <section id="pricing" className="relative scroll-mt-20 overflow-hidden bg-gradient-to-b from-forest-600 to-forest-900 px-6 pb-24 pt-16 text-ivory sm:pb-28 sm:pt-20">
       <ViewTracker event="pricing_viewed" />
       <div className="mx-auto max-w-[1120px]">
         <div className="mx-auto mb-10 max-w-[620px] text-center">
@@ -117,6 +118,8 @@ export async function Pricing() {
           </ul>
         </div>
       </div>
+      {/* Now and then, the dogs chase a ball along the bottom. */}
+      <Runners className="bottom-3" />
     </section>
   );
 }

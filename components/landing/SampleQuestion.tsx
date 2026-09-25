@@ -5,6 +5,7 @@ import { track } from "@vercel/analytics";
 import type { LandingShowcase } from "@/lib/landingShowcase";
 import { TrackedLink } from "./TrackedLink";
 import { Eyebrow } from "./Flourish";
+import { QuizBuddy } from "./SectionPets";
 
 const LETTERS = ["A", "B", "C", "D"];
 const BLUE = "#5f8fb8";
@@ -43,6 +44,8 @@ export function SampleQuestion({
     if (isCorrect) {
       window.dispatchEvent(new CustomEvent("ozho:celebrate", { detail: { tier: "big" } }));
       window.dispatchEvent(new CustomEvent("landing:correct"));
+    } else {
+      window.dispatchEvent(new CustomEvent("landing:wrong"));
     }
   }
 
@@ -52,7 +55,7 @@ export function SampleQuestion({
         {/* Header row: the claim on the left, the numbers on the right, with
             the question count as the headline figure. Kept short so the
             whole problem below fits on one screen. */}
-        <div className="mb-5 grid items-end gap-5 lg:grid-cols-[1fr_auto] lg:gap-10">
+        <div className="mb-9 grid items-end gap-5 lg:grid-cols-[1fr_auto] lg:gap-10">
           <div>
             <Eyebrow>Try a question</Eyebrow>
             <h2 className="text-balance font-display text-[28px] font-semibold leading-[1.1] tracking-[-0.01em] text-forest-900 sm:text-[34px]">
@@ -80,7 +83,8 @@ export function SampleQuestion({
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(60,42,15,0.05),0_18px_44px_-24px_rgba(60,42,15,0.45)] ring-1 ring-[#e2d7c1] sm:p-6">
+        <div className="relative rounded-2xl bg-white p-5 shadow-[0_1px_2px_rgba(60,42,15,0.05),0_18px_44px_-24px_rgba(60,42,15,0.45)] ring-1 ring-[#e2d7c1] sm:p-6">
+          <QuizBuddy className="-top-[31px] left-10" />
           <div className="grid items-center gap-5 lg:grid-cols-[1fr_1.05fr] lg:gap-7">
             <ZigzagDiagram revealed={answered} />
             <div>
@@ -113,6 +117,7 @@ export function SampleQuestion({
                       role="radio"
                       aria-checked={isPicked}
                       onClick={() => pick(i)}
+                      onPointerEnter={() => window.dispatchEvent(new CustomEvent("landing:hover-choice", { detail: i % 2 === 0 ? -1 : 1 }))}
                       disabled={answered}
                       className={`flex items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left text-[15px] font-medium text-ink transition-colors ${row}`}
                     >
@@ -172,7 +177,10 @@ export function SampleQuestion({
                   Start your plan &rarr;
                 </TrackedLink>
                 <button
-                  onClick={() => setSelected(null)}
+                  onClick={() => {
+                    setSelected(null);
+                    window.dispatchEvent(new CustomEvent("landing:reset"));
+                  }}
                   className="rounded-md px-5 py-3.5 text-sm font-semibold text-forest ring-1 ring-sage/45 transition-colors hover:bg-parchment"
                 >
                   Try it again

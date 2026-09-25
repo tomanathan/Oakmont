@@ -1,4 +1,5 @@
 import type { ParentReport } from "@/lib/parentInsights";
+import { PerchPet } from "./SectionPets";
 
 // The parent dashboard, composed for the homepage: the report card, the
 // Sunday email and a mastery moment, filled in for an example student
@@ -42,8 +43,9 @@ export function Snapshot({ r }: { r: ParentReport }) {
   const mastered = r.strengths.find((s) => s.status === "mastered");
   return (
     <div className="relative mx-auto w-full max-w-[520px] lg:mx-0">
-      {/* The report card. */}
-      <div className="relative z-10 rounded-2xl border border-[#e6e3f3] bg-white p-5 shadow-[0_2px_4px_rgba(26,26,46,0.04),0_24px_60px_-20px_rgba(26,26,46,0.25)] sm:p-6">
+      {/* The report card, with Mochi perched on top of it. */}
+      <div className="relative z-10 rounded-2xl border border-[#e8dfcc] bg-white p-5 shadow-[0_2px_4px_rgba(38,34,24,0.04),0_24px_60px_-20px_rgba(38,34,24,0.25)] sm:p-6">
+        <PerchPet className="-top-[29px] right-7" />
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-gray-500">Your parent dashboard</div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FAQ_ITEMS } from "@/lib/landingFaq";
 import { SUPPORT_EMAIL } from "@/components/LegalFooter";
+import { NapPet } from "./SectionPets";
 
 export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -21,6 +22,7 @@ export function Faq() {
             </a>
             .
           </p>
+          <NapPet className="mt-8 md:mt-12" />
         </div>
         <div className="divide-y divide-sage/25 border-y border-sage/30">
           {FAQ_ITEMS.map((item, i) => {
