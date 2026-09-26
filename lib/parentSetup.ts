@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { prisma } from "./prisma";
 import { sendEmail } from "./email";
+import { parentClaimed } from "./parentAuth";
 
 // Parent accounts a student creates at signup start without a password.
 // The parent sets one through an emailed link (/parent/setup?token=...);
@@ -112,7 +113,7 @@ export async function sendParentSetupLink(parentId: string, studentName?: string
   if (parent.setupEmailSentAt && Date.now() - parent.setupEmailSentAt.getTime() < RESEND_COOLDOWN_MS) {
     return { sent: false, throttled: true };
   }
-  const claimed = !!parent.passwordHash;
+  const claimed = parentClaimed(parent);
   // An unclaimed parent's long-lived link is reused so an earlier email
   // keeps working; a password reset always gets a fresh, short one.
   const reuse = !claimed && parent.setupToken && parent.setupTokenExpires && parent.setupTokenExpires.getTime() - Date.now() > 7 * 86400000;
@@ -150,7 +151,7 @@ export async function addParentForStudent({
   });
   const link = existingLink ?? (await prisma.parentLink.create({ data: { parentId: parent.id, studentId, nickname: studentName || null } }));
 
-  const claimed = !!parent.passwordHash;
+  const claimed = parentClaimed(parent);
   let token: string | null = null;
   if (!claimed) {
     if (parent.setupToken && parent.setupTokenExpires && parent.setupTokenExpires.getTime() - Date.now() > 7 * 86400000) {

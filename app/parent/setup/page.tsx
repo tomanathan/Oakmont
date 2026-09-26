@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { displayName } from "@/lib/parentReportData";
 import { BrandMark } from "@/components/BrandMark";
 import { SetupForm } from "./SetupForm";
+import { parentClaimed } from "@/lib/parentAuth";
+import { googleEnabled } from "@/lib/googleAuth";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +17,7 @@ export default async function ParentSetupPage({ searchParams }: { searchParams: 
         select: {
           email: true,
           passwordHash: true,
+          googleSub: true,
           setupTokenExpires: true,
           links: { select: { nickname: true, student: { select: { email: true, firstName: true } } } },
         },
@@ -41,9 +44,10 @@ export default async function ParentSetupPage({ searchParams }: { searchParams: 
         <SetupForm
           token={token}
           email={parent.email}
-          claimed={!!parent.passwordHash}
+          claimed={parentClaimed(parent)}
           studentNames={names}
-          startDeclining={searchParams.decline === "1" && !parent.passwordHash}
+          startDeclining={searchParams.decline === "1" && !parentClaimed(parent)}
+          googleEnabled={googleEnabled()}
         />
       )}
     </div>

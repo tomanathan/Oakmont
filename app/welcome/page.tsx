@@ -6,6 +6,7 @@ import { hasActiveAccess } from "@/lib/subscription";
 import { upcomingSatDates, weeksUntil } from "@/lib/satDates";
 import { ALL_SUBSKILLS, NUM_FULL_LENGTH_TESTS } from "@/data/curriculum";
 import { WelcomeClient, type WelcomeStep } from "./WelcomeClient";
+import { parentClaimed } from "@/lib/parentAuth";
 
 const REVISIT_STEPS: WelcomeStep[] = ["name", "date", "score", "parent", "tour"];
 
@@ -22,7 +23,7 @@ export default async function WelcomePage({ searchParams }: { searchParams: { st
       where: { id: user.userId },
       select: {
         parentOptOutAt: true,
-        parentLinks: { select: { parent: { select: { id: true, email: true, passwordHash: true } } }, orderBy: { createdAt: "asc" } },
+        parentLinks: { select: { parent: { select: { id: true, email: true, passwordHash: true, googleSub: true } } }, orderBy: { createdAt: "asc" } },
       },
     }),
   ]);
@@ -42,7 +43,7 @@ export default async function WelcomePage({ searchParams }: { searchParams: { st
         goalScore: stats.goalScore ?? null,
         targetTestDate: stats.targetTestDate ? stats.targetTestDate.toISOString().slice(0, 10) : null,
       }}
-      parents={(parent?.parentLinks ?? []).map((l) => ({ id: l.parent.id, email: l.parent.email, pending: !l.parent.passwordHash }))}
+      parents={(parent?.parentLinks ?? []).map((l) => ({ id: l.parent.id, email: l.parent.email, pending: !parentClaimed(l.parent) }))}
       optedOut={!!parent?.parentOptOutAt}
       satDates={upcomingSatDates(now).map((d) => ({ ...d, weeks: weeksUntil(d.date, now) }))}
       today={now.toISOString().slice(0, 10)}

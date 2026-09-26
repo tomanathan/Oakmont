@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { GoogleButton, OrWithEmail } from "@/components/GoogleButton";
 
 function joinNames(names: string[]): string {
   if (names.length <= 1) return names[0] ?? "your student";
@@ -14,12 +15,14 @@ export function SetupForm({
   claimed,
   studentNames,
   startDeclining,
+  googleEnabled = false,
 }: {
   token: string;
   email: string;
   claimed: boolean;
   studentNames: string[];
   startDeclining: boolean;
+  googleEnabled?: boolean;
 }) {
   const router = useRouter();
   const [password, setPassword] = useState("");
@@ -101,11 +104,19 @@ export function SetupForm({
       </h1>
       {!claimed && (
         <p className="mt-2 text-[15px] leading-relaxed text-stone-600">
-          {who} added you as their parent. Set a password and you&apos;ll go straight to their report: every study session, every skill and
+          {who} added you as their parent. {googleEnabled ? "Continue with Google or set a password" : "Set a password"} and you&apos;ll go straight to their report: every study session, every skill and
           every practice test score. It&apos;s free.
         </p>
       )}
       <form onSubmit={submit} className="mt-6 rounded-xl border border-[#e2d7c1] bg-white p-6 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
+        {!claimed && googleEnabled && (
+          <>
+            {/* The emailed link proves the address is theirs, so any Google
+                account can claim it (see the callback's setup branch). */}
+            <GoogleButton href={`/api/auth/google?as=parent&setup=${encodeURIComponent(token)}`} />
+            <OrWithEmail className="my-5" />
+          </>
+        )}
         <label className="mb-1 block text-sm text-stone-700">Email</label>
         <div className="mb-4 rounded-lg bg-[#f6f1e6] px-3 py-2.5 text-sm text-ink">{email}</div>
         <label className="mb-1 block text-sm text-stone-700" htmlFor="pw">

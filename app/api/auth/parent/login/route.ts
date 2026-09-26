@@ -31,6 +31,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  if (!parent.passwordHash && parent.googleSub) {
+    return NextResponse.json(
+      { error: "This account uses Google sign-in. Choose \"Continue with Google\", or use \"Forgot password?\" to set a password." },
+      { status: 401 }
+    );
+  }
   if (!parent.passwordHash) {
     await sendParentSetupLink(parent.id);
     return NextResponse.json(

@@ -12,6 +12,7 @@ import { SettingsClient } from "./SettingsClient";
 import { retakeState } from "@/lib/retakeCover";
 import { stripe } from "@/lib/stripe";
 import { trialDaysLeft, trialEnded } from "@/lib/subscription";
+import { parentClaimed } from "@/lib/parentAuth";
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
@@ -26,7 +27,7 @@ export default async function SettingsPage() {
         parentInviteCode: true,
         parentShareToken: true,
         stripeSubscriptionId: true,
-        parentLinks: { select: { id: true, parent: { select: { id: true, email: true, passwordHash: true } } }, orderBy: { createdAt: "asc" } },
+        parentLinks: { select: { id: true, parent: { select: { id: true, email: true, passwordHash: true, googleSub: true } } }, orderBy: { createdAt: "asc" } },
       },
     }),
   ]);
@@ -104,7 +105,7 @@ export default async function SettingsPage() {
         secondPetUnlockDays={SECOND_PET_UNLOCK_STREAK_DAYS}
         parentInviteCode={parentAccess?.parentInviteCode ?? null}
         parentShareToken={parentAccess?.parentShareToken ?? null}
-        linkedParents={(parentAccess?.parentLinks ?? []).map((l) => ({ id: l.id, parentId: l.parent.id, email: l.parent.email, pending: !l.parent.passwordHash }))}
+        linkedParents={(parentAccess?.parentLinks ?? []).map((l) => ({ id: l.id, parentId: l.parent.id, email: l.parent.email, pending: !parentClaimed(l.parent) }))}
         pass={pass}
         subscription={subscription}
         trial={

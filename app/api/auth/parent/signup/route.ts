@@ -7,6 +7,7 @@ import {
   createParentSessionToken,
   PARENT_SESSION_COOKIE_NAME,
   PARENT_SESSION_MAX_AGE,
+  parentClaimed,
 } from "@/lib/parentAuth";
 
 export async function POST(req: NextRequest) {
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
   }
 
   const existing = await prisma.parent.findUnique({ where: { email } });
-  if (existing && !existing.passwordHash) {
+  if (existing && !parentClaimed(existing)) {
     // A student already created this account for them: the password has
     // to be set through the emailed link, which proves the address is theirs.
     await sendParentSetupLink(existing.id);

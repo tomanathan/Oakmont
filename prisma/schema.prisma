@@ -144,6 +144,9 @@ model Parent {
   // their parent's account and emails them a setup link (setupToken), which
   // doubles as the parent's password-reset link later.
   passwordHash      String?
+  // Google's account id once the parent signs in with Google. Either this
+  // or a password means the parent has claimed the account (parentClaimed).
+  googleSub         String?   @unique
   setupToken        String?   @unique
   setupTokenExpires DateTime?
   setupEmailSentAt  DateTime?

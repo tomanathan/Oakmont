@@ -39,3 +39,9 @@ export async function verifyParentSessionToken(token: string): Promise<ParentSes
 
 export const PARENT_SESSION_COOKIE_NAME = PARENT_SESSION_COOKIE;
 export const PARENT_SESSION_MAX_AGE = PARENT_SESSION_DURATION_SECONDS;
+
+// A parent has claimed their account once they've set a password or signed
+// in with Google. Until then (a student added them by email) it's pending.
+export function parentClaimed(p: { passwordHash: string | null; googleSub?: string | null }): boolean {
+  return !!p.passwordHash || !!p.googleSub;
+}

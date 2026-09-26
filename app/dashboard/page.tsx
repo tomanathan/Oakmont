@@ -15,6 +15,7 @@ import { AppShell } from "@/components/AppShell";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
 import { type ChecklistItem } from "@/components/GettingStarted";
 import { DashboardClient } from "./DashboardClient";
+import { parentClaimed } from "@/lib/parentAuth";
 
 // Only worth a "welcome back" recap if there was an actual gap since the
 // last login -- logging in again a few minutes later (a dropped session,
@@ -128,7 +129,7 @@ export default async function DashboardPage() {
     const [lessonViews, reviewAttempts, parentLinks] = await Promise.all([
       prisma.lessonView.count({ where: { userId: user.userId } }),
       prisma.itemAttempt.count({ where: { userId: user.userId, source: "review" } }),
-      prisma.parentLink.findMany({ where: { studentId: user.userId }, select: { parent: { select: { email: true, passwordHash: true } } } }),
+      prisma.parentLink.findMany({ where: { studentId: user.userId }, select: { parent: { select: { email: true, passwordHash: true, googleSub: true } } } }),
     ]);
     const firstId = todayItem?.day.subskillIds[0] ?? weaknessOrderedIds[0];
     checklist = [
@@ -174,7 +175,7 @@ export default async function DashboardPage() {
             ? `Waiting for ${parentLinks[0].parent.email} to set a password. You can resend it in Settings.`
             : "They get their own dashboard of your progress and a Sunday email.",
           href: parentLinks.length ? "/settings#parents" : "/welcome?step=parent",
-          done: parentLinks.some((l) => !!l.parent.passwordHash),
+          done: parentLinks.some((l) => parentClaimed(l.parent)),
         },
     ];
   }
