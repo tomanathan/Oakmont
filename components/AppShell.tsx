@@ -26,12 +26,23 @@ const STAGE_LABEL: Record<PetStage, string> = {
   dead: "Gone",
 };
 
+// What the header last showed, kept in the browser across client-side
+// navigations (this module stays loaded between pages), so a route's
+// loading screen draws the exact same header and nothing blinks while the
+// next page is on its way. Written only in effects, so it never exists on
+// the server, where one module is shared by every visitor.
+type ShellMemo = { email: string; streak: number; trialLeft: number | null; pet: { stage: PetStage; costume: string | null } | null };
+let lastShell: ShellMemo | null = null;
+
 export function AppShell({
   email,
   stats,
   children,
   wide = false,
+  loading = false,
 }: {
+  // loading: the route's loading screen -- header from memory, no fetches.
+  loading?: boolean;
   email: string;
   // Pages pass the whole stats row; the access fields drive the free-trial bar.
   stats?: { currentStreak: number } & Partial<AccessFields>;
@@ -55,14 +66,23 @@ export function AppShell({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const trialLeft = stats
-    ? trialDaysLeft({
-        subscriptionStatus: stats.subscriptionStatus ?? null,
-        accessExpiresAt: stats.accessExpiresAt ?? null,
-        trialEndsAt: stats.trialEndsAt ?? null,
-      })
-    : null;
-  const [pet, setPet] = useState<{ stage: PetStage; costume: string | null } | null>(null);
+  const memo = loading ? lastShell : null;
+  const shownEmail = memo?.email ?? email;
+  const streak = memo ? memo.streak : stats?.currentStreak ?? 0;
+  const trialLeft = memo
+    ? memo.trialLeft
+    : stats
+      ? trialDaysLeft({
+          subscriptionStatus: stats.subscriptionStatus ?? null,
+          accessExpiresAt: stats.accessExpiresAt ?? null,
+          trialEndsAt: stats.trialEndsAt ?? null,
+        })
+      : null;
+  const [pet, setPet] = useState<{ stage: PetStage; costume: string | null } | null>(() => lastShell?.pet ?? null);
+
+  useEffect(() => {
+    if (!loading) lastShell = { email, streak, trialLeft, pet };
+  }, [loading, email, streak, trialLeft, pet]);
 
   // Fetched fresh on every mount rather than shared with ScoutCompanion's
   // own fetch -- AppShell lives inside each page, not the root layout, so
@@ -72,6 +92,7 @@ export function AppShell({
   // that without depending on a remount or a Next.js router refresh ever
   // actually re-running this effect (it doesn't, reliably).
   useEffect(() => {
+    if (loading) return;
     let cancelled = false;
     dedupedFetchJson<{ stage: PetStage; costume: string | null }>("/api/pet/state")
       .then((data) => {
@@ -83,7 +104,7 @@ export function AppShell({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [loading]);
 
   // The instant, reliable way this pill's costume stays in sync after the
   // student equips something in Settings: SettingsClient fires this plain
@@ -159,10 +180,10 @@ export function AppShell({
               </Link>
             )}
 
-            {stats && stats.currentStreak > 0 && (
+            {streak > 0 && (
               <div
                 className="hidden items-center gap-1 rounded-full bg-[#fff4e6] py-1 pl-2 pr-2.5 text-[11px] font-semibold text-[#b4541a] sm:flex"
-                title={`${stats.currentStreak}-day streak`}
+                title={`${streak}-day streak`}
               >
                 <svg width="10" height="12" viewBox="0 0 12 14" aria-hidden="true">
                   <path
@@ -170,12 +191,12 @@ export function AppShell({
                     fill="currentColor"
                   />
                 </svg>
-                {stats.currentStreak}
-                <span className="font-medium opacity-80">day{stats.currentStreak === 1 ? "" : "s"}</span>
+                {streak}
+                <span className="font-medium opacity-80">day{streak === 1 ? "" : "s"}</span>
               </div>
             )}
 
-            <AccountMenu email={email} onLogout={handleLogout} />
+            <AccountMenu email={shownEmail} onLogout={handleLogout} />
           </div>
         </div>
       </header>
@@ -254,7 +275,7 @@ function AccountMenu({ email, onLogout }: { email: string; onLogout: () => void 
         aria-label="Account"
         className="flex h-8 w-8 items-center justify-center rounded-full bg-forest text-[13px] font-semibold uppercase text-white transition-opacity hover:opacity-85"
       >
-        {email.trim()[0] ?? "?"}
+        {email.trim()[0] ?? ""}
       </button>
       {open && (
         <div

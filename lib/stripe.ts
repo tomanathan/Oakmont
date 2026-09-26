@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { unstable_cache } from "next/cache";
 
 // A single Stripe SDK client, read only server-side (STRIPE_SECRET_KEY is
 // never exposed to the browser -- nothing client-side talks to Stripe
@@ -55,3 +56,27 @@ export function getWebhookSecret(): string {
   }
   return secret;
 }
+
+export interface PlanPrice {
+  amountCents: number;
+  currency: string;
+  interval: string | null;
+}
+
+// What each plan costs, read from Stripe (never hard-coded) but cached for
+// an hour: the homepage and /subscribe render per request, and a Stripe
+// round trip on every visit was a noticeable part of their load time. A
+// price change in the Dashboard shows up within the hour.
+export const getPlanPrices = unstable_cache(
+  async (): Promise<Record<PlanId, PlanPrice>> => {
+    const ids: PlanId[] = ["monthly", "sixmonth"];
+    const prices = await Promise.all(ids.map((id) => stripe.prices.retrieve(getPriceId(id))));
+    const out = {} as Record<PlanId, PlanPrice>;
+    prices.forEach((p, i) => {
+      out[ids[i]] = { amountCents: p.unit_amount ?? 0, currency: p.currency, interval: p.recurring?.interval ?? null };
+    });
+    return out;
+  },
+  ["stripe-plan-prices"],
+  { revalidate: 3600 }
+);

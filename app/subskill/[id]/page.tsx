@@ -16,13 +16,15 @@ export default async function SubskillPage({ params }: { params: { id: string } 
   const sub = getSubskill(params.id);
   if (!sub) notFound();
 
-  const attempts = await prisma.itemAttempt.findMany({
-    where: { userId: user.userId, subskillId: params.id },
-    select: { itemId: true, correct: true, confidence: true, createdAt: true },
-  });
-  const questions = pickQuizItems(itemsForSubskill(params.id), attempts);
-  const stats = await getUserStats(user.userId);
+  const [attempts, stats] = await Promise.all([
+    prisma.itemAttempt.findMany({
+      where: { userId: user.userId, subskillId: params.id },
+      select: { itemId: true, correct: true, confidence: true, createdAt: true },
+    }),
+    getUserStats(user.userId),
+  ]);
   if (!hasActiveAccess(stats)) redirect("/subscribe");
+  const questions = pickQuizItems(itemsForSubskill(params.id), attempts);
 
   return (
     <AppShell email={user.email} stats={stats} wide>

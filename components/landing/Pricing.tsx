@@ -1,4 +1,4 @@
-import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
+import { getPlanPrices } from "@/lib/stripe";
 import { TrackedLink } from "./TrackedLink";
 import { Runners } from "./SectionPets";
 import { ViewTracker } from "./ViewTracker";
@@ -12,13 +12,12 @@ function Check() {
   );
 }
 
-// Reads the same live Stripe Prices /subscribe uses -- one source of truth
+// Reads the same Stripe Prices /subscribe uses (cached an hour, see getPlanPrices) -- one source of truth
 // for what things cost, never a hard-coded number that could drift.
 export async function Pricing() {
-  const planIds: PlanId[] = ["sixmonth", "monthly"];
-  const [sixmonth, monthly] = await Promise.all(planIds.map((id) => stripe.prices.retrieve(getPriceId(id))));
-  const sixTotal = (sixmonth.unit_amount ?? 0) / 100;
-  const monthlyPrice = (monthly.unit_amount ?? 0) / 100;
+  const prices = await getPlanPrices();
+  const sixTotal = prices.sixmonth.amountCents / 100;
+  const monthlyPrice = prices.monthly.amountCents / 100;
 
   // Listed once, under both cards -- it's the same either way, so printing
   // it inside each card only made the two look identical.

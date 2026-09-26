@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { getUserStats } from "@/lib/user";
 import { hasPaidAccess, trialDaysLeft, trialEnded } from "@/lib/subscription";
-import { stripe, getPriceId, type PlanId } from "@/lib/stripe";
+import { getPlanPrices } from "@/lib/stripe";
 import { BrandMark } from "@/components/BrandMark";
 import { LegalFooter } from "@/components/LegalFooter";
 import { courseLengthDaysForUser } from "@/lib/pacing";
@@ -27,16 +27,10 @@ export default async function SubscribePage() {
     ? stats.trialEndsAt.toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "America/Chicago" })
     : null;
 
-  // Fetched live from Stripe, not hardcoded, so the amount shown here can
-  // never drift from what Checkout will actually charge.
-  const planIds: PlanId[] = ["monthly", "sixmonth"];
-  const prices = await Promise.all(planIds.map((id) => stripe.prices.retrieve(getPriceId(id))));
-  const plans: PlanOption[] = prices.map((p, i) => ({
-    id: planIds[i],
-    amountCents: p.unit_amount ?? 0,
-    currency: p.currency,
-    interval: p.recurring?.interval ?? null,
-  }));
+  // From Stripe, not hardcoded, so the amount shown here can never drift
+  // from what Checkout charges (cached an hour, see getPlanPrices).
+  const prices = await getPlanPrices();
+  const plans: PlanOption[] = (["monthly", "sixmonth"] as const).map((id) => ({ id, ...prices[id] }));
 
   const retake = retakeState(stats.accessExpiresAt ?? null, stats.passRetakeClaimedAt ?? null);
 
