@@ -96,7 +96,7 @@ export async function GET() {
     // Mochi (the second companion) reads this to decide whether to render
     // at all -- see components/SecondCompanion.tsx.
     mochiUnlocked: isSecondPetUnlocked(stats.longestStreak),
-    // A quiz finished today -- the only thing that feeds him. Ozho's panel
+    // Studied today (a finished lesson, quiz, or review) -- what feeds him. Ozho's panel
     // leads with it (see components/OzhoPanel.tsx).
     fedToday: !!stats.lastActiveDate && state.stage !== "dead" && state.daysInactive <= 0,
   });

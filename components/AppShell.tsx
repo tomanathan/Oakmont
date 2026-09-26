@@ -94,15 +94,20 @@ export function AppShell({
   useEffect(() => {
     if (loading) return;
     let cancelled = false;
-    dedupedFetchJson<{ stage: PetStage; costume: string | null }>("/api/pet/state")
-      .then((data) => {
-        if (!cancelled && data?.stage) {
-          setPet({ stage: data.stage, costume: data.costume && data.costume !== "none" ? data.costume : null });
-        }
-      })
-      .catch(() => {});
+    const load = () =>
+      dedupedFetchJson<{ stage: PetStage; costume: string | null }>("/api/pet/state")
+        .then((data) => {
+          if (!cancelled && data?.stage) {
+            setPet({ stage: data.stage, costume: data.costume && data.costume !== "none" ? data.costume : null });
+          }
+        })
+        .catch(() => {});
+    load();
+    // A finished lesson, quiz, or review just fed him: re-read his mood.
+    window.addEventListener("ozho:fed", load);
     return () => {
       cancelled = true;
+      window.removeEventListener("ozho:fed", load);
     };
   }, [loading]);
 

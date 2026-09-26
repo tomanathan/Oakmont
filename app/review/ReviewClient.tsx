@@ -222,6 +222,8 @@ export function ReviewClient() {
       const data = (await res.json()) as SubmitResponse;
       clearDraft();
       setResult(data);
+      // The review counts as today's study: every mounted Ozho re-reads his mood.
+      window.dispatchEvent(new CustomEvent("ozho:fed"));
       setPhase("results");
       router.refresh();
       requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));

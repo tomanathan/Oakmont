@@ -136,7 +136,7 @@ export function AdminView({
           <Tile label="In free trial" value={inTrial} sub="right now" />
           <Tile label="Paying" value={paying.length} sub={`${monthly} monthly · ${passes} pass`} />
           <Tile label="Trial → paid" value={pct(paying.length, paying.length + ended)} sub={`of ${paying.length + ended} whose trial ended`} />
-          <Tile label="Studied this week" value={active7} sub="answered a question" />
+          <Tile label="Studied this week" value={active7} sub="finished a lesson or quiz" />
           <Tile label="Google sign-in" value={pct(viaGoogle, total)} sub={`${viaGoogle} accounts`} />
         </section>
 

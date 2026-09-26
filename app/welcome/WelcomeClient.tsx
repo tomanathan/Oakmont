@@ -689,7 +689,7 @@ function MeetOzho() {
     setGreeted(true);
   }
   const facts = [
-    { title: "Feed him", body: "Every quiz you finish is a meal. One a day keeps him thriving." },
+    { title: "Feed him", body: "Every lesson or quiz you finish is a meal. One a day keeps him thriving." },
     { title: "Play with him", body: "Click him to pet him, play fetch, see a trick, or have him lead you to what's next." },
     { title: "Dress him up", body: "Streaks and finished sections unlock outfits in his wardrobe." },
     { title: "Make a friend", body: `Keep a 30-day streak and ${SECOND_PET_NAME} comes to stay.` },

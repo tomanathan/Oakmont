@@ -8,7 +8,7 @@ import { COSTUMES, isCostumeUnlocked, bestUnlockedCostume } from "./costumes";
 export interface CompanionSummary {
   stage: PetStage;
   daysInactive: number;
-  // "Fed" = a quiz finished today, the only thing that feeds him.
+  // "Fed" = studied today: a finished lesson, quiz, or review.
   fedToday: boolean;
   hasEverStudied: boolean;
   daysLeft: number;

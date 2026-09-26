@@ -1,5 +1,6 @@
 // Pure functions for the study-streak pet: a small companion that stays
-// happy as long as the student keeps completing quizzes, and dies if they
+// happy as long as the student keeps studying (a finished lesson, quiz, or
+// review each count as that day's study), and dies if they
 // go a full week without one. Kept separate from the UI and the cron route
 // so the rules are easy to see and test in one place.
 
@@ -46,7 +47,7 @@ function referenceDate(lastActiveDate: Date | null, petBornAt: Date): Date {
 }
 
 /**
- * Computes the pet's current stage from the student's last quiz-completion
+ * Computes the pet's current stage from the student's last day of study
  * date. `petDiedAt` being set always wins -- once dead, the pet stays dead
  * (it doesn't auto-revive just because time has passed or the student is
  * active again), until the student explicitly starts a new one.
@@ -76,17 +77,17 @@ export function computePetState(
       daysInactive,
       message: hasEverStudied
         ? `${PET_NAME} is thriving! Great job studying today.`
-        : `${PET_NAME} is happy and waiting. Complete your first quiz to start feeding it.`,
+        : `${PET_NAME} is happy and waiting. Finish your first lesson or quiz to start feeding it.`,
     };
   }
   if (daysInactive <= 1) {
-    return { stage: "content", daysInactive, message: `${PET_NAME} is doing well. Complete a quiz today to keep it that way.` };
+    return { stage: "content", daysInactive, message: `${PET_NAME} is doing well. Finish a lesson or quiz today to keep it that way.` };
   }
   if (daysInactive <= 3) {
     return {
       stage: "hungry",
       daysInactive,
-      message: `${PET_NAME} is getting hungry — it's been ${daysInactive} days. A quick quiz will perk it right up.`,
+      message: `${PET_NAME} is getting hungry — it's been ${daysInactive} days. A lesson or a quick quiz will perk it right up.`,
     };
   }
   if (daysInactive < PET_DEATH_DAYS) {
@@ -100,7 +101,7 @@ export function computePetState(
   return {
     stage: "critical",
     daysInactive,
-    message: `${PET_NAME} is on its very last day. Complete a quiz right now to save it.`,
+    message: `${PET_NAME} is on its very last day. Finish a lesson or quiz right now to save it.`,
   };
 }
 

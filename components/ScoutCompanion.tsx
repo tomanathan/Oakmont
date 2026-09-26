@@ -49,9 +49,9 @@ const ENCOURAGEMENTS = [
   "Showing up is the hard part, and you already did it.",
 ];
 const NUDGES = [
-  "Tummy's rumbling a little. One quiz would fix that.",
+  "Tummy's rumbling a little. One lesson would fix that.",
   "No pressure, but a quiz would really make my day.",
-  "Even a five-minute quiz counts as dinner for me.",
+  "A lesson or a quick quiz counts as dinner for me.",
   "I'll be right here. Quiz whenever you're ready.",
 ];
 // What he says if you click him awake -- distinct from the normal
@@ -820,31 +820,38 @@ export function ScoutCompanion() {
       // storage disabled -- just default to free-roam
     }
 
-    dedupedFetchJson<{
-      stage: PetStage;
-      currentStreak?: number;
-      costume?: string | null;
-      subskillsMastered?: number;
-      totalSubskills?: number;
-      daysUntilTest?: number | null;
-      weakestDomain?: string | null;
-      fedToday?: boolean;
-    }>("/api/pet/state")
-      .then((data) => {
-        if (data && data.stage) {
-          stageRef.current = data.stage;
-          streakRef.current = data.currentStreak ?? 0;
-          setStreak(data.currentStreak ?? 0);
-          setFedToday(!!data.fedToday);
-          setStage(data.stage);
-          setCostume(data.costume && data.costume !== "none" ? data.costume : null);
-          subskillsMasteredRef.current = data.subskillsMastered ?? 0;
-          totalSubskillsRef.current = data.totalSubskills ?? 0;
-          daysUntilTestRef.current = data.daysUntilTest ?? null;
-          weakestDomainRef.current = data.weakestDomain ?? null;
-        }
-      })
-      .catch(() => {});
+    // Read on mount, and again whenever a study session lands ("ozho:fed",
+    // sent after a finished lesson, quiz, or review), so his mood and the
+    // fed-today flag update without a page reload.
+    function loadPetState() {
+      dedupedFetchJson<{
+        stage: PetStage;
+        currentStreak?: number;
+        costume?: string | null;
+        subskillsMastered?: number;
+        totalSubskills?: number;
+        daysUntilTest?: number | null;
+        weakestDomain?: string | null;
+        fedToday?: boolean;
+      }>("/api/pet/state")
+        .then((data) => {
+          if (data && data.stage) {
+            stageRef.current = data.stage;
+            streakRef.current = data.currentStreak ?? 0;
+            setStreak(data.currentStreak ?? 0);
+            setFedToday(!!data.fedToday);
+            setStage(data.stage);
+            setCostume(data.costume && data.costume !== "none" ? data.costume : null);
+            subskillsMasteredRef.current = data.subskillsMastered ?? 0;
+            totalSubskillsRef.current = data.totalSubskills ?? 0;
+            daysUntilTestRef.current = data.daysUntilTest ?? null;
+            weakestDomainRef.current = data.weakestDomain ?? null;
+          }
+        })
+        .catch(() => {});
+    }
+    loadPetState();
+    window.addEventListener("ozho:fed", loadPetState);
 
     function checkMobile() {
       const mobile = window.innerWidth < MOBILE_BREAKPOINT;
@@ -956,6 +963,7 @@ export function ScoutCompanion() {
       window.removeEventListener("ozho:celebrate", onCelebrate);
       window.removeEventListener("ozho:say", onSay);
       window.removeEventListener("ozho:costume", onCostumeChange);
+      window.removeEventListener("ozho:fed", loadPetState);
       if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
       if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
       if (pettingTimeoutRef.current) clearTimeout(pettingTimeoutRef.current);

@@ -19,6 +19,9 @@ import { WhyWrong, FullExplanation } from "@/components/WhyWrong";
 import { PixelDog } from "@/components/PixelDog";
 import { sectionTheme } from "@/lib/sectionTheme";
 
+// Time on a lesson before finishing it counts as the day's study (see below).
+const MIN_LESSON_MS = 2 * 60 * 1000;
+
 interface SubmitResult {
   justPassed: boolean;
   alreadyMastered: boolean;
@@ -363,6 +366,49 @@ export function SubskillClient({
     return p.examples.some((_, j) => viewedExamples.has(`${i}-${j}`));
   }
 
+  // Finishing the lesson counts as today's study, same as a finished quiz:
+  // it feeds Ozho and keeps the streak (see /api/activity/lesson-complete).
+  // "Finished" means every question type has been opened AND at least a
+  // couple of minutes spent here -- a one-type lesson would otherwise count
+  // the moment the page opened. Sent at most once per visit.
+  const lessonFinished = subskill.patterns.every((_, i) => isPatternViewed(i));
+  const pageOpenedAtRef = useRef(Date.now());
+  const lessonCreditSentRef = useRef(false);
+  useEffect(() => {
+    if (!lessonFinished || lessonCreditSentRef.current) return;
+    const wait = Math.max(0, MIN_LESSON_MS - (Date.now() - pageOpenedAtRef.current));
+    const t = window.setTimeout(() => {
+      if (lessonCreditSentRef.current) return;
+      lessonCreditSentRef.current = true;
+      fetch("/api/activity/lesson-complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subskillId: subskill.id }),
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (!data) return;
+          // Every mounted Ozho (the companion, the header pill) re-reads his state.
+          window.dispatchEvent(new CustomEvent("ozho:fed"));
+          if (data.newCostume) window.dispatchEvent(new CustomEvent("ozho:costume", { detail: { costume: data.newCostume.id } }));
+          if (data.secondPetJustUnlocked) window.dispatchEvent(new CustomEvent("ozho:mochi-unlocked"));
+          const celebration = data.secondPetJustUnlocked
+            ? { message: `${data.currentStreak} days straight, and look who showed up. Say hi to Mochi!`, tier: "big" }
+            : data.streakMilestone
+              ? { message: `${data.currentStreak} days straight! Victory lap!`, tier: "big" }
+              : data.newCostume
+                ? { message: `That streak just earned me the ${data.newCostume.name}. How do I look?`, tier: "big" }
+                : null;
+          if (celebration) window.dispatchEvent(new CustomEvent("ozho:celebrate", { detail: celebration }));
+          else if (data.firstToday) {
+            window.dispatchEvent(new CustomEvent("ozho:say", { detail: { message: "Lesson done! That counts for today, and I'm fed. Thanks!" } }));
+          }
+        })
+        .catch(() => {});
+    }, wait);
+    return () => window.clearTimeout(t);
+  }, [lessonFinished, subskill.id]);
+
   const pattern = shuffledPatterns[activePattern];
   const isLastExampleInPattern = !!pattern && activeExample === pattern.examples.length - 1;
   const isLastPattern = activePattern === subskill.patterns.length - 1;
@@ -502,6 +548,8 @@ export function SubskillClient({
         // not this now-scored attempt.
         clearQuizDraft(subskill.id);
         const data = await res.json();
+        // The quiz counts as today's study: every mounted Ozho re-reads his mood.
+        window.dispatchEvent(new CustomEvent("ozho:fed"));
         setResult({
           justPassed: !!data.justPassed,
           alreadyMastered: !!data.alreadyMastered,
