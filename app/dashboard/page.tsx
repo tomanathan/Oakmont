@@ -16,6 +16,7 @@ import { WelcomeBackModal } from "@/components/WelcomeBackModal";
 import { type ChecklistItem } from "@/components/GettingStarted";
 import { DashboardClient } from "./DashboardClient";
 import { parentClaimed } from "@/lib/parentAuth";
+import { leadWith } from "@/lib/planOrder";
 
 // Only worth a "welcome back" recap if there was an actual gap since the
 // last login -- logging in again a few minutes later (a dropped session,
@@ -56,7 +57,7 @@ export default async function DashboardPage() {
   // they're worst at -- see lib/mastery.ts's own doc for why this is a
   // stable reorder (a brand-new student with no data gets the original
   // order back unchanged) rather than a different subskill set.
-  const weaknessOrderedIds = orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery);
+  const weaknessOrderedIds = leadWith(orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery), stats.firstSkillId);
 
   // Enough whole weeks to reach the exact day count -- the final week is
   // truncated at render/lookup time (see getTodayPlanItem) so the plan
@@ -170,7 +171,7 @@ export default async function DashboardPage() {
       },
       {
           id: "parent",
-          title: parentLinks.length ? "Get your parent set up" : "Add a parent",
+          title: parentLinks.length ? "Get your parent set up" : "Connect with your parents",
           body: parentLinks.length
             ? `Waiting for ${parentLinks[0].parent.email} to set a password. You can resend it in Settings.`
             : "They get their own dashboard of your progress and a Sunday email.",

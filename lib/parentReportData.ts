@@ -6,6 +6,7 @@ import { progressMapFromRows, isPassed } from "@/lib/progressState";
 import { getTodayPlanItem } from "@/lib/studyPlan";
 import { ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan } from "@/data/curriculum";
 import { buildParentReport, type ParentReport } from "@/lib/parentInsights";
+import { leadWith } from "@/lib/planOrder";
 
 // Loads everything a parent report needs for one student and builds it.
 // Pace and "this week" are computed exactly as the student's own dashboard
@@ -64,7 +65,7 @@ export async function loadParentReport(
 
   const createdAt = stats.createdAt ?? now;
   const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null);
-  const studyPlan = buildStudyPlan(Math.ceil(courseLengthDays / 7), orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery));
+  const studyPlan = buildStudyPlan(Math.ceil(courseLengthDays / 7), leadWith(orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery), stats.firstSkillId));
   const planSubskillIds = new Set(studyPlan.flatMap((w) => w.subskillIds));
   const completedInPlan = Object.entries(progress).filter(([id, p]) => planSubskillIds.has(id) && isPassed(p)).length;
   const pacing = computePacing(createdAt, now, planSubskillIds.size, completedInPlan, courseLengthDays);

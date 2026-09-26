@@ -52,21 +52,24 @@ export function Hero() {
         </p>
         {/* data-hero-actions: HeroPets caps the ball's arc just above this row. */}
         <div data-hero-actions className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          {/* Two front doors: students start with questions (/start), parents
+              with their own quick setup that ends in sending the teen a link. */}
           <TrackedLink
-            href="/login?mode=signup"
+            href="/start"
             event="signup_started"
             className="w-full rounded-md bg-forest px-7 py-3.5 text-sm font-semibold tracking-wide text-ivory shadow-[0_10px_24px_-14px_rgba(20,34,25,0.8)] transition-colors hover:bg-forest-600 sm:w-auto"
           >
-            Start free trial
+            I&apos;m a student: start free
           </TrackedLink>
-          <a
-            href="#the-course"
+          <TrackedLink
+            href="/parent/login?mode=signup"
+            event="parent_signup_started"
             className="w-full rounded-md bg-white/70 px-7 py-3.5 text-sm font-semibold tracking-wide text-forest ring-1 ring-sage/50 transition-colors hover:bg-white sm:w-auto"
           >
-            See the course &darr;
-          </a>
+            I&apos;m a parent: start free
+          </TrackedLink>
         </div>
-        <p className="mt-4 text-[13px] text-stone-500">7 days free. No card needed.</p>
+        <p className="mt-4 text-[13px] text-stone-500">7 days free. No card needed. Students start with 5 quick questions.</p>
       </div>
     </section>
   );

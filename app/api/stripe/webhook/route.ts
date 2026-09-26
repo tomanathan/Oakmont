@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       if (session.mode === "payment") {
         const userId = session.metadata?.userId;
         const row = userId
-          ? await prisma.user.findUnique({ where: { id: userId }, select: { trialEndsAt: true, accessExpiresAt: true } })
+          ? await prisma.user.findUnique({ where: { id: userId }, select: { trialEndsAt: true, accessExpiresAt: true, firstPaidAt: true } })
           : null;
         if (userId && row) {
           const customerId = typeof session.customer === "string" ? session.customer : session.customer?.id;
@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
             data: {
               ...(customerId ? { stripeCustomerId: customerId } : {}),
               accessExpiresAt: new Date(start + SIXMONTH_PASS_DAYS * 24 * 60 * 60 * 1000),
+              ...(row.firstPaidAt ? {} : { firstPaidAt: new Date() }),
             },
           });
         }
@@ -71,6 +72,11 @@ export async function POST(req: NextRequest) {
         // confirmed against a real test subscription before writing this,
         // since the "classic" top-level field silently doesn't exist here.
         const periodEndUnix = subscription.items.data[0]?.current_period_end;
+        // First time this student commits to a plan (a monthly subscription
+        // starts, even if its first charge waits for the free week to end).
+        if (["trialing", "active", "past_due"].includes(subscription.status)) {
+          await prisma.user.updateMany({ where: { id: userId, firstPaidAt: null }, data: { firstPaidAt: new Date() } });
+        }
         await prisma.user.update({
           where: { id: userId },
           data: {

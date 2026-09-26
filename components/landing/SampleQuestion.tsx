@@ -170,7 +170,7 @@ export function SampleQuestion({
               <p className="mt-6 text-[14px] text-stone-600">Every lesson teaches this way.</p>
               <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <TrackedLink
-                  href="/login?mode=signup"
+                  href="/start"
                   event="signup_started"
                   className="rounded-md bg-forest px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600"
                 >

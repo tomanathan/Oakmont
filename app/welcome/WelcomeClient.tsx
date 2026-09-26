@@ -212,7 +212,7 @@ export function WelcomeClient(props: Props) {
       ? `Hi ${displayName}! I'm ${PET_NAME}, and I'll be studying right alongside you. First up: when's the big day?`
       : `Hi! I'm ${PET_NAME}, and I'll be studying right alongside you. First up: when's the big day?`,
     score: "Where are we starting, and where are we headed?",
-    parent: "Let's get your parent in the loop. They'll love seeing this.",
+    parent: "Let your parents connect. They'll love seeing your wins.",
     tour: "Here's how we'll get there, in two minutes.",
     ready: displayName ? `That's everything, ${displayName}. Your plan is ready!` : "That's everything. Your plan is ready!",
   };
@@ -425,16 +425,16 @@ export function WelcomeClient(props: Props) {
 
         {step === "parent" && (
           <div className={CARD}>
-            <h1 className={H1}>Add your parent</h1>
+            <h1 className={H1}>Connect with your parents</h1>
             <p className={SUB}>
               Your parent gets their own dashboard that follows your prep as you go, plus a summary every Sunday, so everyone at home is on
               the same page.
             </p>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Add your parent">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Connect with your parents">
               <button role="radio" aria-checked={parentChoice === "yes"} onClick={() => setParentChoice("yes")} className={choiceCard(parentChoice === "yes")}>
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[15px] font-semibold">Add my parent</span>
+                  <span className="text-[15px] font-semibold">Connect my parent</span>
                   <span className={`rounded-full px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wide ${parentChoice === "yes" ? "bg-white/15 text-white" : "bg-[#eef6f1] text-[#2f6b4a]"}`}>
                     Recommended
                   </span>
@@ -457,7 +457,7 @@ export function WelcomeClient(props: Props) {
                   <div className="text-sm font-semibold text-ink">Your parent or guardian&apos;s email</div>
                   <p className="mb-3 mt-1 text-[13px] text-stone-500">We&apos;ll set up their account and email them a link to choose a password.</p>
                   <AddParentForm
-                    cta={parents.length ? "Add another" : "Add parent"}
+                    cta={parents.length ? "Connect another" : "Connect"}
                     onAdded={(p) => setParents((ps) => [...ps.filter((x) => x.id !== p.id), p])}
                   />
                   {parents.length > 0 && (

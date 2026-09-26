@@ -59,7 +59,7 @@ export default async function LinkInvitePage({ params }: { params: { token: stri
                   Log in to connect
                 </Link>
                 <Link
-                  href={`/login?mode=signup&next=${back}`}
+                  href={`/start?invite=${params.token}`}
                   className="flex-1 rounded-lg border border-[#d5c8ae] py-2.5 text-center text-sm font-semibold text-ink hover:bg-[#eef3e9]"
                 >
                   I&apos;m new: sign up

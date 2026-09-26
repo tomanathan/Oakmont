@@ -64,8 +64,17 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
   }
 
   const message = inviteUrl
-    ? `Hi${name ? ` ${name}` : ""}! I set up a parent account on Oakmont so I can follow along with your SAT prep. Open this link while you're logged in to connect us: ${inviteUrl}`
+    ? `Hi${name ? ` ${name}` : ""}! Try this SAT prep: 5 quick questions and you get a study plan built for you. Save it and we're connected, so I can cheer on your wins: ${inviteUrl}`
     : "";
+
+  async function share() {
+    if (!inviteUrl) return;
+    try {
+      await navigator.share({ text: message });
+    } catch {
+      // Cancelled, or no share sheet: the Text/Email buttons are right there.
+    }
+  }
   const input = "w-full rounded-lg border border-[#d5c8ae] px-3 py-2.5 text-sm focus:border-[#587356] focus:outline-none";
 
   return (
@@ -87,7 +96,7 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
         <div className="rounded-2xl border border-[#e2d7c1] bg-white p-6">
           <div className="font-display text-[18px] font-semibold text-ink">Send them a link</div>
           <p className="mt-1 text-[13px] leading-relaxed text-stone-600">
-            Best if they&apos;re new to Oakmont. They sign up (or log in), open the link, and tap Connect.
+            They answer 5 quick SAT questions, save their plan, and you&apos;re connected. Already on Oakmont? The same link connects you.
           </p>
           {!inviteUrl ? (
             <>
@@ -109,11 +118,16 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
                 </button>
               </div>
               <div className="mt-3 flex flex-wrap gap-2 text-sm">
+                {typeof navigator !== "undefined" && "share" in navigator && (
+                  <button onClick={share} className="rounded-lg bg-forest px-3 py-1.5 font-semibold text-white">
+                    Share
+                  </button>
+                )}
                 <a href={`sms:?&body=${encodeURIComponent(message)}`} className="rounded-lg border border-[#d5c8ae] px-3 py-1.5 font-medium text-ink hover:bg-[#eef3e9]">
                   Text it
                 </a>
                 <a
-                  href={`mailto:?subject=${encodeURIComponent("Connect my Oakmont parent account")}&body=${encodeURIComponent(message)}`}
+                  href={`mailto:?subject=${encodeURIComponent("Your SAT study plan")}&body=${encodeURIComponent(message)}`}
                   className="rounded-lg border border-[#d5c8ae] px-3 py-1.5 font-medium text-ink hover:bg-[#eef3e9]"
                 >
                   Email it

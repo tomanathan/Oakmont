@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { PET_NAME, shouldDie, shouldWarn } from "@/lib/pet";
 import { sendTrialReminders } from "@/lib/trialReminder";
+import { inFreeTrial } from "@/lib/subscription";
 
 // Runs once a day (see vercel.json). Also sends the "free trial ends
 // tomorrow" emails (lib/trialReminder.ts), since the plan allows only two
@@ -35,6 +36,9 @@ export async function GET(req: NextRequest) {
       petDiedAt: true,
       petWarningEmailSentAt: true,
       petDeathEmailSentAt: true,
+      trialEndsAt: true,
+      subscriptionStatus: true,
+      accessExpiresAt: true,
     },
   });
 
@@ -46,7 +50,11 @@ export async function GET(req: NextRequest) {
       user.petWarningEmailSentAt &&
       user.petWarningEmailSentAt.toDateString() === now.toDateString();
 
-    if (shouldDie(user.lastActiveDate, user.petBornAt, user.petDiedAt, now)) {
+    // Ozho can't die during the free week: a student who tried it on day 0
+    // and came back on day 7 shouldn't find him gone on the day the trial ends.
+    const inFreeWeek = inFreeTrial(user, now);
+
+    if (!inFreeWeek && shouldDie(user.lastActiveDate, user.petBornAt, user.petDiedAt, now)) {
       await prisma.user.update({
         where: { id: user.id },
         data: { petDiedAt: now, petDeathEmailSentAt: now },

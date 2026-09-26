@@ -81,6 +81,7 @@ export async function finishActivity(userId: string, rowsBefore: Progress[]): Pr
       currentStreak: streak.currentStreak,
       longestStreak: streak.longestStreak,
       lastActiveDate: streak.lastActiveDate,
+      ...(dbUser?.firstStudiedAt ? {} : { firstStudiedAt: streak.lastActiveDate }),
     },
   });
 

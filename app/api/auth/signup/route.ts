@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { hashPassword, createSessionToken, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/auth";
 import { trialEndFrom } from "@/lib/subscription";
+import { START_COOKIE, applyStartOnSignup, clearStartCookie } from "@/lib/starter";
 
 export async function POST(req: NextRequest) {
   let body: { email?: string; password?: string; firstName?: string };
@@ -43,9 +44,13 @@ export async function POST(req: NextRequest) {
     data: { email, passwordHash, firstName, lastLoginAt: now, trialEndsAt: trialEndFrom(now) },
   });
 
+  // Came through /start: their answers, test date, plan, and any parent invite come with them.
+  const started = await applyStartOnSignup(user.id, req.cookies.get(START_COOKIE)?.value);
+
   const token = await createSessionToken({ userId: user.id, email: user.email });
 
-  const res = NextResponse.json({ ok: true, email: user.email });
+  const res = NextResponse.json({ ok: true, email: user.email, started });
+  if (started) clearStartCookie(res);
   res.cookies.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

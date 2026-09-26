@@ -13,6 +13,7 @@ import { AppShell } from "@/components/AppShell";
 import { PlanClient } from "./PlanClient";
 import { AnalysisClient } from "./AnalysisClient";
 import { TestDuePrompt } from "./TestDuePrompt";
+import { leadWith } from "@/lib/planOrder";
 
 export default async function PlanPage() {
   const user = await getCurrentUser();
@@ -44,7 +45,7 @@ export default async function PlanPage() {
     progress,
     (tests[0]?.domainScores as Record<string, number> | null) ?? null
   );
-  const weaknessOrderedIds = orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery);
+  const weaknessOrderedIds = leadWith(orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery), stats.firstSkillId);
 
   const courseStartDate = stats.createdAt ?? new Date();
   const courseLengthDays = courseLengthDaysForUser(courseStartDate, stats.targetTestDate ?? null);

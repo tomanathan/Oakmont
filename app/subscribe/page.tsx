@@ -9,6 +9,7 @@ import { courseLengthDaysForUser } from "@/lib/pacing";
 import { SubscribeClient, type PlanOption } from "./SubscribeClient";
 import { retakeState } from "@/lib/retakeCover";
 import { RetakeCover } from "@/components/RetakeCover";
+import { prisma } from "@/lib/prisma";
 
 export default async function SubscribePage() {
   const user = await getCurrentUser();
@@ -32,6 +33,7 @@ export default async function SubscribePage() {
   const prices = await getPlanPrices();
   const plans: PlanOption[] = (["monthly", "sixmonth"] as const).map((id) => ({ id, ...prices[id] }));
 
+  const parentCount = await prisma.parentLink.count({ where: { studentId: user.userId } });
   const retake = retakeState(stats.accessExpiresAt ?? null, stats.passRetakeClaimedAt ?? null);
 
   // Fresh from onboarding: remind them what they just set up.
@@ -70,7 +72,7 @@ export default async function SubscribePage() {
           <RetakeCover claimedAt={null} accessExpiresAt={null} options={retake.options} after="dashboard" />
         </div>
       )}
-      <SubscribeClient plans={plans} trialEndsOn={daysLeft !== null ? trialEndsOn : null} />
+      <SubscribeClient plans={plans} trialEndsOn={daysLeft !== null ? trialEndsOn : null} parentConnected={parentCount > 0} />
       <div className="text-center text-xs text-stone-500 mt-6">
         See our <a href="/terms" className="underline hover:text-ink">Terms</a> for full billing and refund
         details.

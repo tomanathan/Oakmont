@@ -1,6 +1,7 @@
 import { prisma } from "./prisma";
 import { sendEmail } from "./email";
 import { hasPaidAccess } from "./subscription";
+import { emailParentsAboutPlan } from "./parentSetup";
 
 const APP_URL = process.env.APP_URL || "https://oakmontsat.com";
 const HOUR_MS = 60 * 60 * 1000;
@@ -30,6 +31,8 @@ export async function sendTrialReminders(now: Date = new Date()): Promise<number
       html: trialEndingHtml(u.firstName, ends),
     });
     if (result.sent) sent++;
+    // Parents usually pay: every connected parent hears about it too.
+    sent += await emailParentsAboutPlan(u.id, "trialEnding", ends);
   }
   return sent;
 }

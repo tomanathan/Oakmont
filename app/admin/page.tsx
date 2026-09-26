@@ -12,7 +12,8 @@ export const metadata: Metadata = { title: "Admin · Oakmont", robots: { index: 
 export const dynamic = "force-dynamic";
 
 function loadUsers(): Promise<AdminRow[]> {
-  return prisma.user.findMany({
+  return prisma.user
+    .findMany({
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
@@ -27,6 +28,10 @@ function loadUsers(): Promise<AdminRow[]> {
       subscriptionStatus: true,
       accessExpiresAt: true,
       trialEndsAt: true,
+      starterResult: true,
+      firstStudiedAt: true,
+      firstPaidAt: true,
+      parentLinks: { select: { createdAt: true, parent: { select: { passwordHash: true, googleSub: true } } } },
       _count: {
         select: {
           itemAttempts: true,
@@ -35,7 +40,14 @@ function loadUsers(): Promise<AdminRow[]> {
         },
       },
     },
-  });
+  })
+    .then((rows) =>
+      rows.map(({ starterResult, parentLinks, ...r }) => ({
+        ...r,
+        viaStart: starterResult !== null,
+        parentsConnectedAt: parentLinks.filter((l) => !!l.parent.passwordHash || !!l.parent.googleSub).map((l) => l.createdAt),
+      }))
+    );
 }
 
 export default async function AdminPage() {

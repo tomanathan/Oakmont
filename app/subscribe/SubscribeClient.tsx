@@ -19,7 +19,21 @@ function formatAmount(cents: number, currency: string): string {
 
 // trialEndsOn: set while the student is still in their free week, so each
 // plan can say when it actually starts.
-export function SubscribeClient({ plans, trialEndsOn }: { plans: PlanOption[]; trialEndsOn: string | null }) {
+export function SubscribeClient({
+  plans,
+  trialEndsOn,
+  parentConnected = false,
+}: {
+  plans: PlanOption[];
+  trialEndsOn: string | null;
+  parentConnected?: boolean;
+}) {
+  const [asked, setAsked] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  async function askParent() {
+    setAsked("sending");
+    const res = await fetch("/api/account/ask-parent-pay", { method: "POST" }).catch(() => null);
+    setAsked(res?.ok ? "sent" : "error");
+  }
   const [loadingPlan, setLoadingPlan] = useState<PlanId | null>(null);
   const [error, setError] = useState("");
 
@@ -104,6 +118,35 @@ export function SubscribeClient({ plans, trialEndsOn }: { plans: PlanOption[]; t
       </div>
 
       {error && <div className="text-red-700 text-sm mt-4 text-center">{error}</div>}
+
+      {/* Parents usually pay: one tap sends them straight to it. */}
+      <div className="mt-6 rounded-2xl border border-[#e2d7c1] bg-[#faf6ec] p-5 text-center">
+        {parentConnected ? (
+          asked === "sent" ? (
+            <div className="text-sm font-semibold text-[#2f6f4f]">Sent. We emailed your parent a link to choose your plan.</div>
+          ) : (
+            <>
+              <div className="text-sm text-stone-600">Is a parent paying?</div>
+              <button
+                onClick={askParent}
+                disabled={asked === "sending"}
+                className="mt-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-ink ring-1 ring-[#d5c8ae] disabled:opacity-60"
+              >
+                {asked === "sending" ? "Sending..." : "Ask my parent to choose my plan"}
+              </button>
+              {asked === "error" && <div className="mt-2 text-sm text-red-700">Couldn&apos;t send it. Please try again.</div>}
+            </>
+          )
+        ) : (
+          <div className="text-sm text-stone-600">
+            Is a parent paying?{" "}
+            <a href="/settings#parents" className="font-semibold text-forest underline underline-offset-4">
+              Connect with your parents
+            </a>{" "}
+            and they can choose your plan from their dashboard.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

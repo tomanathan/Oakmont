@@ -5,6 +5,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { SetupForm } from "./SetupForm";
 import { parentClaimed } from "@/lib/parentAuth";
 import { googleEnabled } from "@/lib/googleAuth";
+import { isInAppBrowser } from "@/lib/inAppBrowser";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +48,7 @@ export default async function ParentSetupPage({ searchParams }: { searchParams: 
           claimed={parentClaimed(parent)}
           studentNames={names}
           startDeclining={searchParams.decline === "1" && !parentClaimed(parent)}
-          googleEnabled={googleEnabled()}
+          googleEnabled={googleEnabled() && !isInAppBrowser()}
         />
       )}
     </div>

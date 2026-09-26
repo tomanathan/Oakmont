@@ -122,6 +122,17 @@ model User {
   trialEndsAt          DateTime?
   trialReminderSentAt  DateTime?
 
+  // The /start onboarding (lib/starter.ts): the pre-signup starter questions
+  // as graded when the account was created, and the skill they picked out to
+  // lead the study plan. Kept as a summary, not as ItemAttempt rows, so the
+  // parent report and admin numbers only count real practice.
+  starterResult Json?
+  firstSkillId  String?
+  // Funnel timestamps for the admin cohort numbers: the first day of study
+  // (a finished starter, lesson, quiz, or review) and the first payment.
+  firstStudiedAt DateTime?
+  firstPaidAt    DateTime?
+
   // Forgot-password: both null until a reset is requested. The token itself
   // (not a hash of it) is what's stored -- same convention as
   // parentShareToken above -- with the short expiry doing the real work of

@@ -24,7 +24,7 @@ export function Pitch() {
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <TrackedLink
-              href="/login?mode=signup"
+              href="/start"
               event="signup_started"
               className="rounded-md bg-forest px-7 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory shadow-[0_10px_24px_-14px_rgba(20,34,25,0.8)] transition-colors hover:bg-forest-600"
             >

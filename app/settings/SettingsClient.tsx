@@ -423,7 +423,7 @@ export function SettingsClient({
           quizzes and reviews, accuracy on every skill, the mistakes that repeat, and your practice test scores against your goal. They
           also get a summary email every Sunday.
         </div>
-        <div className="text-[15px] font-semibold text-ink mb-1">{parents.length ? "Your parents" : "Add a parent"}</div>
+        <div className="text-[15px] font-semibold text-ink mb-1">{parents.length ? "Your parents" : "Connect with your parents"}</div>
         <div className="text-xs text-stone-500 mb-3">
           Enter their email and we&apos;ll set up their free parent account and email them a link to choose a password.
         </div>
@@ -439,7 +439,7 @@ export function SettingsClient({
           </div>
         )}
         <AddParentForm
-          cta={parents.length ? "Add another" : "Add parent"}
+          cta={parents.length ? "Connect another" : "Connect"}
           onAdded={(a) =>
             setParents((prev) => [
               ...prev.filter((x) => x.parentId !== a.id),

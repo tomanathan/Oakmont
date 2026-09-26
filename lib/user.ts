@@ -25,6 +25,7 @@ export async function getUserStats(userId: string) {
       currentPeriodEnd: true,
       accessExpiresAt: true,
       passRetakeClaimedAt: true,
+      firstSkillId: true,
       trialEndsAt: true,
     },
   });
@@ -51,6 +52,7 @@ export async function getUserStats(userId: string) {
       currentPeriodEnd: null,
       accessExpiresAt: null,
       passRetakeClaimedAt: null,
+      firstSkillId: null,
       trialEndsAt: null,
     }
   );

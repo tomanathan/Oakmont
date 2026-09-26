@@ -9,6 +9,7 @@ import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { findRecommended } from "@/lib/recommend";
 import { reviewReady } from "@/lib/reviewSet";
+import { leadWith } from "@/lib/planOrder";
 
 // Powers Ozho's "what should I do next?" click action. Mirrors the same
 // pipeline the dashboard runs server-side (weakness-ordered plan ->
@@ -37,7 +38,7 @@ export async function GET() {
     progress,
     (latestTest?.domainScores as Record<string, number> | null) ?? null
   );
-  const weaknessOrderedIds = orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery);
+  const weaknessOrderedIds = leadWith(orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery), stats.firstSkillId);
   const studyPlan = buildStudyPlan(Math.ceil(courseLengthDays / 7), weaknessOrderedIds);
 
   const todayItem = getTodayPlanItem(studyPlan, createdAt, new Date(), courseLengthDays);

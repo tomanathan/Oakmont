@@ -167,3 +167,43 @@ export async function addParentForStudent({
   await prisma.parent.update({ where: { id: parent.id }, data: { setupEmailSentAt: new Date() } });
   return { parentId: parent.id, linkId: link.id, alreadyLinked: !!existingLink, claimed, sent: res.sent };
 }
+
+// Emails every parent connected to a student about choosing the student's
+// plan: when the student asks them to ("ask"), or the day before the free
+// trial ends ("trialEnding"). A set-up parent goes to their dashboard, where
+// the plan card takes payment; a pending one gets their setup link first.
+export async function emailParentsAboutPlan(
+  studentId: string,
+  kind: "ask" | "trialEnding",
+  endsOn?: string
+): Promise<number> {
+  const links = await prisma.parentLink.findMany({
+    where: { studentId },
+    include: {
+      parent: { select: { id: true, email: true, passwordHash: true, googleSub: true, setupToken: true, setupTokenExpires: true } },
+      student: { select: { firstName: true, email: true } },
+    },
+  });
+  let sent = 0;
+  for (const l of links) {
+    const name = l.nickname || l.student.firstName || "Your student";
+    const claimed = parentClaimed(l.parent);
+    const href = claimed ? `${APP_URL}/parent/dashboard?student=${encodeURIComponent(studentId)}` : await ensureSetupLink(l.parent);
+    const subject =
+      kind === "ask" ? `${name} asked you to choose their Oakmont plan` : `${name}'s free week of Oakmont ends ${endsOn ?? "soon"}`;
+    const lead =
+      kind === "ask"
+        ? `${esc(name)} would like to keep studying on Oakmont and asked you to choose their plan.`
+        : `${esc(name)}'s free trial ends ${esc(endsOn ?? "soon")}. Their progress and study plan are saved either way.`;
+    const res = await sendEmail({
+      to: l.parent.email,
+      subject,
+      html: shell(`
+  <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 16px;">${lead}</p>
+  <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 20px;">Monthly is $25 and cancels anytime. The 6-month pass is one payment of $100 and covers a retake. Receipts come to you.</p>
+  ${button(href, claimed ? `Choose ${name}'s plan` : "Set up your account to choose a plan")}`),
+    });
+    if (res.sent) sent++;
+  }
+  return sent;
+}

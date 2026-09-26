@@ -7,7 +7,12 @@ import { googleConfig, googleRedirectUri, safeNext, GOOGLE_STATE_COOKIE } from "
 export async function GET(req: NextRequest) {
   const cfg = googleConfig();
   if (!cfg) {
-    const back = req.nextUrl.searchParams.get("as") === "parent" ? "/parent/login?error=google" : "/login?error=google";
+    const back =
+      req.nextUrl.searchParams.get("as") === "parent"
+        ? "/parent/login?error=google"
+        : req.nextUrl.searchParams.get("from") === "start"
+          ? "/start?error=google"
+          : "/login?error=google";
     return NextResponse.redirect(new URL(back, req.url));
   }
 
@@ -15,6 +20,8 @@ export async function GET(req: NextRequest) {
   const nonce = randomBytes(24).toString("base64url");
   const q = req.nextUrl.searchParams;
   const next = safeNext(q.get("next"));
+  // From the /start save screen: a failure returns there, not to /login.
+  const from = q.get("from") === "start" ? "start" : null;
   // ?as=parent: a parent account instead of a student's, optionally with
   // what the parent signup form collects (student code, student name, time
   // zone), or the setup token from a "finish setting up" email.
@@ -40,7 +47,7 @@ export async function GET(req: NextRequest) {
   }).toString();
 
   const res = NextResponse.redirect(url);
-  res.cookies.set(GOOGLE_STATE_COOKIE, JSON.stringify({ state, nonce, next, parent }), {
+  res.cookies.set(GOOGLE_STATE_COOKIE, JSON.stringify({ state, nonce, next, parent, from }), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     // Lax, not strict: the callback is a top-level redirect back from Google.

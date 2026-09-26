@@ -6,6 +6,9 @@ import { ParentShell } from "@/components/ParentShell";
 import { ParentReportView } from "@/components/parent/ParentReportView";
 import { ParentControls } from "@/components/parent/ParentControls";
 import { ConnectStudent } from "@/components/parent/ConnectStudent";
+import { ParentPlanCard, type ParentPlanState } from "@/components/parent/ParentPlanCard";
+import { hasPaidAccess, trialDaysLeft, trialEnded } from "@/lib/subscription";
+import { getPlanPrices } from "@/lib/stripe";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +24,11 @@ export default async function ParentDashboardPage({
     prisma.parent.findUnique({ where: { id: session.parentId }, select: { timeZone: true, weeklyReport: true } }),
     prisma.parentLink.findMany({
       where: { parentId: session.parentId },
-      include: { student: { select: { id: true, email: true, firstName: true } } },
+      include: {
+        student: {
+          select: { id: true, email: true, firstName: true, subscriptionStatus: true, accessExpiresAt: true, trialEndsAt: true },
+        },
+      },
       orderBy: { createdAt: "asc" },
     }),
   ]);
@@ -39,10 +46,30 @@ export default async function ParentDashboardPage({
 
   const active = links.find((l) => l.studentId === searchParams.student) ?? links[0];
   const name = displayName(active.nickname || active.student.firstName, active.student.email);
-  const report = await loadParentReport(active.studentId, { name, timeZone: account.timeZone });
+  const [report, prices] = await Promise.all([loadParentReport(active.studentId, { name, timeZone: account.timeZone }), getPlanPrices()]);
+  const st = active.student;
+  const now = new Date();
+  const planState: ParentPlanState =
+    st.accessExpiresAt && st.accessExpiresAt > now
+      ? { kind: "pass", until: st.accessExpiresAt.toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: account.timeZone ?? "America/Chicago" }) }
+      : st.subscriptionStatus === "past_due"
+        ? { kind: "pastDue" }
+        : hasPaidAccess(st, now)
+          ? { kind: "monthly" }
+          : trialDaysLeft(st, now) !== null
+            ? { kind: "trial", daysLeft: trialDaysLeft(st, now)! }
+            : trialEnded(st, now)
+              ? { kind: "trialEnded" }
+              : { kind: "none" };
 
   return (
     <ParentShell parentEmail={session.email} students={students} activeStudentId={active.studentId}>
+      <ParentPlanCard
+        studentId={active.studentId}
+        name={name}
+        state={planState}
+        prices={{ monthly: prices.monthly.amountCents / 100, sixmonth: prices.sixmonth.amountCents / 100 }}
+      />
       <ParentReportView
         report={report}
         headerExtra={

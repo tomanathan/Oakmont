@@ -4,6 +4,7 @@ import { createSessionToken, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/
 import { createParentSessionToken, PARENT_SESSION_COOKIE_NAME, PARENT_SESSION_MAX_AGE } from "@/lib/parentAuth";
 import { safeTimeZone } from "@/lib/parentReportData";
 import { trialEndFrom } from "@/lib/subscription";
+import { START_COOKIE, applyStartOnSignup, clearStartCookie } from "@/lib/starter";
 import { GOOGLE_STATE_COOKIE, googleRedirectUri, identityFromCode, safeNext, type GoogleIdentity } from "@/lib/googleAuth";
 
 // Step 2 of "Continue with Google": Google sends the browser back here with
@@ -24,6 +25,7 @@ interface Saved {
   nonce?: string;
   next?: string | null;
   parent?: ParentContext | null;
+  from?: "start" | null;
 }
 
 export async function GET(req: NextRequest) {
@@ -33,7 +35,7 @@ export async function GET(req: NextRequest) {
   } catch {
     saved = {};
   }
-  const loginPage = saved.parent ? "/parent/login" : "/login";
+  const loginPage = saved.parent ? "/parent/login" : saved.from === "start" ? "/start" : "/login";
   const fail = (reason: string) => {
     const res = NextResponse.redirect(new URL(`${loginPage}?error=${reason}`, req.url));
     res.cookies.delete({ name: GOOGLE_STATE_COOKIE, path: "/api/auth/google" });
@@ -50,7 +52,9 @@ export async function GET(req: NextRequest) {
   const identity = await identityFromCode(code, googleRedirectUri(req.nextUrl.origin), saved.nonce);
   if (!identity) return fail("google");
 
-  const done = saved.parent ? await signInParent(identity, saved.parent) : await signInStudent(identity, saved.next ?? null);
+  const done = saved.parent
+    ? await signInParent(identity, saved.parent)
+    : await signInStudent(identity, saved.next ?? null, req.cookies.get(START_COOKIE)?.value);
   if ("error" in done) return fail(done.error);
 
   const res = NextResponse.redirect(new URL(done.dest, req.url));
@@ -62,12 +66,13 @@ export async function GET(req: NextRequest) {
     maxAge: done.maxAge,
   });
   res.cookies.delete({ name: GOOGLE_STATE_COOKIE, path: "/api/auth/google" });
+  if ("started" in done && done.started) clearStartCookie(res);
   return res;
 }
 
-type Outcome = { dest: string; cookie: string; token: string; maxAge: number } | { error: string };
+type Outcome = { dest: string; cookie: string; token: string; maxAge: number; started?: boolean } | { error: string };
 
-async function signInStudent(identity: GoogleIdentity, next: string | null): Promise<Outcome> {
+async function signInStudent(identity: GoogleIdentity, next: string | null, startCookie: string | undefined): Promise<Outcome> {
   const now = new Date();
   let user = await prisma.user.findUnique({ where: { googleSub: identity.sub } });
   let isNew = false;
@@ -95,8 +100,12 @@ async function signInStudent(identity: GoogleIdentity, next: string | null): Pro
   if (!isNew) {
     await prisma.user.update({ where: { id: user.id }, data: { previousLoginAt: user.lastLoginAt, lastLoginAt: now } });
   }
+  // A new account from /start brings its answers, plan, and invite along
+  // (only ever a new one: an existing account never inherits them).
+  const started = isNew ? await applyStartOnSignup(user.id, startCookie) : false;
   return {
-    dest: safeNext(next) ?? (isNew ? "/welcome?via=google" : "/dashboard"),
+    started,
+    dest: safeNext(next) ?? (started ? "/start/practice?via=google" : isNew ? "/welcome?via=google" : "/dashboard"),
     cookie: SESSION_COOKIE_NAME,
     token: await createSessionToken({ userId: user.id, email: user.email, method: "google" }),
     maxAge: SESSION_MAX_AGE,

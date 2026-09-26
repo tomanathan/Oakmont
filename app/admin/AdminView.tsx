@@ -23,6 +23,45 @@ export interface AdminRow {
   accessExpiresAt: Date | null;
   trialEndsAt: Date | null;
   _count: { itemAttempts: number; progress: number; parentLinks: number };
+  viaStart: boolean; // came in through the /start questions
+  firstStudiedAt: Date | null;
+  firstPaidAt: Date | null;
+  parentsConnectedAt: Date[]; // links to parents who've set up their account
+}
+
+// Weekly signup cohorts (Monday start, Central time), newest first: the three
+// numbers the onboarding is judged on. Counts, not just rates -- at this
+// traffic a single account moves a percentage a lot.
+function cohorts(users: AdminRow[], now: Date) {
+  // The Central-time calendar date, then back to that week's Monday, all in
+  // plain date arithmetic so no other time zone can shift the day.
+  const weekKey = (d: Date) => {
+    const [y, m, day] = dayKey(d).split("-").map(Number);
+    const t = new Date(Date.UTC(y, m - 1, day));
+    t.setUTCDate(t.getUTCDate() - ((t.getUTCDay() + 6) % 7));
+    return t.toISOString().slice(0, 10);
+  };
+  const map = new Map<string, AdminRow[]>();
+  for (const u of users) map.set(weekKey(u.createdAt), [...(map.get(weekKey(u.createdAt)) ?? []), u]);
+  return [...map.entries()]
+    .sort((a, b) => (a[0] < b[0] ? 1 : -1))
+    .slice(0, 8)
+    .map(([week, us]) => {
+      const within = (d: Date | null, u: AdminRow, hours: number) => !!d && d.getTime() - u.createdAt.getTime() <= hours * 3600000;
+      const paid = us.filter((u) => !!u.firstPaidAt);
+      const withParent = us.filter((u) => u.parentsConnectedAt.length > 0);
+      return {
+        week,
+        signups: us.length,
+        viaStart: us.filter((u) => u.viaStart).length,
+        day0: us.filter((u) => within(u.firstStudiedAt, u, 24)).length,
+        parent3: us.filter((u) => u.parentsConnectedAt.some((d) => within(d, u, 72))).length,
+        paid: paid.length,
+        paidWithParent: paid.filter((u) => u.parentsConnectedAt.length > 0).length,
+        withParent: withParent.length,
+        open: now.getTime() - Date.parse(`${week}T00:00:00Z`) < 14 * DAY,
+      };
+    });
 }
 type Row = AdminRow;
 
@@ -188,6 +227,54 @@ export function AdminView({
             </p>
           </section>
         </div>
+
+        <section className="mb-8 rounded-xl border border-[#e2d7c1] bg-white">
+          <div className="px-5 pb-3 pt-5">
+            <h2 className="text-[15px] font-semibold">Weekly signup groups</h2>
+            <p className="mt-0.5 text-[12px] text-stone-500">
+              Studied on day 0 = finished the starter questions, a lesson, or a quiz within 24 hours. Parent by day 3 = a parent who set up their account, connected within 72 hours. Recent weeks are still filling in.
+            </p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[760px] text-left text-[13px] tabular-nums">
+              <thead>
+                <tr className="border-y border-[#efe7d6] bg-[#faf6ec] text-[11px] uppercase tracking-[0.06em] text-stone-500">
+                  <th className="px-5 py-2 font-semibold">Week of</th>
+                  <th className="px-3 py-2 text-right font-semibold">Signups</th>
+                  <th className="px-3 py-2 text-right font-semibold">Via questions</th>
+                  <th className="px-3 py-2 text-right font-semibold">Studied day 0</th>
+                  <th className="px-3 py-2 text-right font-semibold">Parent by day 3</th>
+                  <th className="px-3 py-2 text-right font-semibold">Paid</th>
+                  <th className="px-5 py-2 text-right font-semibold">Paid, with / without parent</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cohorts(users, now).map((c) => (
+                  <tr key={c.week} className="border-b border-[#f3eee2] last:border-0">
+                    <td className="px-5 py-2.5">
+                      {fmtDate(new Date(`${c.week}T17:00:00Z`))}
+                      {c.open && <span className="ml-2 text-[11px] text-stone-400">filling in</span>}
+                    </td>
+                    <td className="px-3 py-2.5 text-right">{c.signups}</td>
+                    <td className="px-3 py-2.5 text-right">{c.viaStart}</td>
+                    <td className="px-3 py-2.5 text-right">
+                      {c.day0} <span className="text-stone-400">· {pct(c.day0, c.signups)}</span>
+                    </td>
+                    <td className="px-3 py-2.5 text-right">
+                      {c.parent3} <span className="text-stone-400">· {pct(c.parent3, c.signups)}</span>
+                    </td>
+                    <td className="px-3 py-2.5 text-right">
+                      {c.paid} <span className="text-stone-400">· {pct(c.paid, c.signups)}</span>
+                    </td>
+                    <td className="px-5 py-2.5 text-right">
+                      {pct(c.paidWithParent, c.withParent)} / {pct(c.paid - c.paidWithParent, c.signups - c.withParent)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         <section className="rounded-xl border border-[#e2d7c1] bg-white">
           <div className="flex items-baseline justify-between gap-3 px-5 pb-3 pt-5">

@@ -11,7 +11,7 @@ export interface AddedParent {
 
 // Add a parent by email: creates their free account (or connects an
 // existing one) and emails them. Used in onboarding and Settings.
-export function AddParentForm({ onAdded, cta = "Add parent" }: { onAdded: (p: AddedParent) => void; cta?: string }) {
+export function AddParentForm({ onAdded, cta = "Connect" }: { onAdded: (p: AddedParent) => void; cta?: string }) {
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
@@ -53,7 +53,7 @@ export function AddParentForm({ onAdded, cta = "Add parent" }: { onAdded: (p: Ad
           className="min-w-0 flex-1 rounded-lg border border-[#d5c8ae] px-3 py-2.5 text-sm focus:border-[#587356] focus:outline-none"
         />
         <button type="submit" disabled={sending} className="whitespace-nowrap rounded-lg bg-forest px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60">
-          {sending ? "Adding..." : cta}
+          {sending ? "Connecting..." : cta}
         </button>
       </div>
       {error && <div className="mt-2 text-sm text-red-700">{error}</div>}

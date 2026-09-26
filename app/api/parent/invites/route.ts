@@ -6,8 +6,8 @@ import { getCurrentParent } from "@/lib/parentSession";
 const INVITE_DAYS = 14;
 
 // Parent-first linking: creates a single-use link the parent sends to
-// their student. The student opens it signed in and approves sharing
-// (app/link/[token]); nothing is shared until they do.
+// their student. A new student starts at /start and is connected when they
+// save their plan; an existing one confirms on app/link/[token].
 export async function POST(req: NextRequest) {
   const parent = await getCurrentParent();
   if (!parent) return NextResponse.json({ error: "Not logged in." }, { status: 401 });
@@ -23,5 +23,7 @@ export async function POST(req: NextRequest) {
     },
   });
   const origin = process.env.APP_URL || req.nextUrl.origin;
-  return NextResponse.json({ ok: true, url: `${origin}/link/${token}`, expiresInDays: INVITE_DAYS });
+  // Opens straight onto the /start questions for a new student; one who
+  // already has an account is sent on to the /link connect page.
+  return NextResponse.json({ ok: true, url: `${origin}/start?invite=${token}`, expiresInDays: INVITE_DAYS });
 }

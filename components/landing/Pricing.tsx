@@ -64,8 +64,8 @@ export async function Pricing() {
               </div>
             </div>
             <TrackedLink
-              href="/login?mode=signup"
-              event="signup_started"
+              href="/parent/login?mode=signup"
+              event="parent_signup_started"
               className="mt-8 rounded-md px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory ring-1 ring-sage-light/50 transition-colors hover:bg-white/10"
             >
               Start free trial
@@ -95,14 +95,21 @@ export async function Pricing() {
               </div>
             </div>
             <TrackedLink
-              href="/login?mode=signup"
-              event="signup_started"
+              href="/parent/login?mode=signup"
+              event="parent_signup_started"
               className="mt-8 rounded-md bg-forest px-6 py-3.5 text-center text-sm font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600"
             >
               Get the 6-month pass
             </TrackedLink>
           </div>
         </div>
+
+        <p className="mx-auto mt-5 max-w-[860px] text-center text-[14px] text-ivory/70">
+          Student?{" "}
+          <TrackedLink href="/start" event="signup_started" className="font-semibold text-ivory underline decoration-sage-light/60 underline-offset-4">
+            Start with 5 free questions
+          </TrackedLink>
+        </p>
 
         <div className="mx-auto mt-8 max-w-[860px] text-center">
           <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-sage-light">Both include</div>
