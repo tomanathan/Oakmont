@@ -29,6 +29,9 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 export interface SessionPayload {
   userId: string;
   email: string;
+  // "google" when this session came from Google sign-in, which has verified
+  // the email -- password signups never verify it. The admin page requires it.
+  method?: "google";
 }
 
 export async function createSessionToken(payload: SessionPayload): Promise<string> {
@@ -43,7 +46,7 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
   try {
     const { payload } = await jwtVerify(token, getSecretKey());
     if (typeof payload.userId === "string" && typeof payload.email === "string") {
-      return { userId: payload.userId, email: payload.email };
+      return { userId: payload.userId, email: payload.email, ...(payload.method === "google" ? { method: "google" as const } : {}) };
     }
     return null;
   } catch {

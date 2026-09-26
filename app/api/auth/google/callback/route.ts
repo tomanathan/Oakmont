@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
     await prisma.user.update({ where: { id: user.id }, data: { previousLoginAt: user.lastLoginAt, lastLoginAt: now } });
   }
 
-  const token = await createSessionToken({ userId: user.id, email: user.email });
+  const token = await createSessionToken({ userId: user.id, email: user.email, method: "google" });
   const dest = safeNext(saved.next) ?? (isNew ? "/welcome?via=google" : "/dashboard");
   const res = NextResponse.redirect(new URL(dest, req.url));
   res.cookies.set(SESSION_COOKIE_NAME, token, {
