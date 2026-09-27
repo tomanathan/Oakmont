@@ -28,7 +28,7 @@ const PRICE_ENV_VARS: Record<PlanId, string> = {
 // SixMonth ("Full Course Access") is a one-time Price. The free week is
 // the app's own (User.trialEndsAt, no card) -- Stripe only sees a trial
 // when someone subscribes during it, to delay their first charge. (An Annual price was created and then
-// deactivated in the sandbox -- $99/yr undercut the $100 six-month pass
+// deactivated in the sandbox -- $99/yr undercut the then-$100 six-month pass
 // for twice the access, so it was dropped rather than fixed with mismatched
 // numbers.)
 export function getPriceId(plan: PlanId): string {
@@ -66,17 +66,18 @@ export interface PlanPrice {
 // What each plan costs, read from Stripe (never hard-coded) but cached for
 // an hour: the homepage and /subscribe render per request, and a Stripe
 // round trip on every visit was a noticeable part of their load time. A
-// price change in the Dashboard shows up within the hour.
-export const getPlanPrices = unstable_cache(
-  async (): Promise<Record<PlanId, PlanPrice>> => {
-    const ids: PlanId[] = ["monthly", "sixmonth"];
-    const prices = await Promise.all(ids.map((id) => stripe.prices.retrieve(getPriceId(id))));
-    const out = {} as Record<PlanId, PlanPrice>;
-    prices.forEach((p, i) => {
-      out[ids[i]] = { amountCents: p.unit_amount ?? 0, currency: p.currency, interval: p.recurring?.interval ?? null };
-    });
-    return out;
+// price change shows up within the hour. The Price ids are part of the cache
+// key, so pointing the env vars at new Prices takes effect on the next deploy.
+const loadPlanPrices = unstable_cache(
+  async (monthlyId: string, sixmonthId: string): Promise<Record<PlanId, PlanPrice>> => {
+    const [monthly, sixmonth] = await Promise.all([stripe.prices.retrieve(monthlyId), stripe.prices.retrieve(sixmonthId)]);
+    const shape = (p: Stripe.Price): PlanPrice => ({ amountCents: p.unit_amount ?? 0, currency: p.currency, interval: p.recurring?.interval ?? null });
+    return { monthly: shape(monthly), sixmonth: shape(sixmonth) };
   },
   ["stripe-plan-prices"],
   { revalidate: 3600 }
 );
+
+export function getPlanPrices(): Promise<Record<PlanId, PlanPrice>> {
+  return loadPlanPrices(getPriceId("monthly"), getPriceId("sixmonth"));
+}

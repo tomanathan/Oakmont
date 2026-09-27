@@ -33,12 +33,12 @@ export default function TermsPage() {
       </p>
       <ul>
         <li>
-          <strong>Monthly ($25/month):</strong> renews automatically each month until you cancel. If you choose it
+          <strong>Monthly ($14.99/month):</strong> renews automatically each month until you cancel. If you choose it
           during your free trial, your first charge is on the day the trial ends. Cancel anytime from Settings —
           access continues through the end of the period you already paid for.
         </li>
         <li>
-          <strong>Full Course Access ($100 one time):</strong> a single payment that unlocks everything for 182
+          <strong>Full Course Access ($69.99 one time):</strong> a single payment that unlocks everything for 182
           days from the date you pay (or, if you buy during your free trial, from the day the trial ends). It does not renew or charge you again. It includes one free retake extension: in
           Settings, choose an upcoming official SAT date within six months of your access ending, and access extends
           through three days after that date. It can be claimed once, up to 90 days after the pass ends.

@@ -1,4 +1,5 @@
 import { getPlanPrices } from "@/lib/stripe";
+import { formatPrice } from "@/lib/price";
 import { TrackedLink } from "./TrackedLink";
 import { Runners } from "./SectionPets";
 import { ViewTracker } from "./ViewTracker";
@@ -17,7 +18,6 @@ function Check() {
 export async function Pricing() {
   const prices = await getPlanPrices();
   const sixTotal = prices.sixmonth.amountCents / 100;
-  const monthlyPrice = prices.monthly.amountCents / 100;
 
   // Listed once, under both cards -- it's the same either way, so printing
   // it inside each card only made the two look identical.
@@ -50,7 +50,7 @@ export async function Pricing() {
               </div>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="font-display text-[46px] font-semibold leading-none">${monthlyPrice.toFixed(0)}</span>
+              <span className="font-display text-[46px] font-semibold leading-none">{formatPrice(prices.monthly.amountCents, prices.monthly.currency)}</span>
               <span className="text-sm text-ivory/60">/month</span>
             </div>
             <div className="mt-2 text-sm text-ivory/60">Cancel anytime</div>
@@ -80,7 +80,7 @@ export async function Pricing() {
               </div>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="font-display text-[46px] font-semibold leading-none">${sixTotal.toFixed(0)}</span>
+              <span className="font-display text-[46px] font-semibold leading-none">{formatPrice(prices.sixmonth.amountCents, prices.sixmonth.currency)}</span>
               <span className="text-sm text-stone-500">one time</span>
             </div>
             <div className="mt-2 text-sm text-stone-500">One payment, about ${(sixTotal / 6).toFixed(0)} a month</div>

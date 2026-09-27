@@ -200,7 +200,7 @@ export async function emailParentsAboutPlan(
       subject,
       html: shell(`
   <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 16px;">${lead}</p>
-  <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 20px;">Monthly is $25 and cancels anytime. The 6-month pass is one payment of $100 and covers a retake. Receipts come to you.</p>
+  <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 20px;">Monthly is $14.99 and cancels anytime. The 6-month pass is one payment of $69.99 and covers a retake. Receipts come to you.</p>
   ${button(href, claimed ? `Choose ${name}'s plan` : "Set up your account to choose a plan")}`),
     });
     if (res.sent) sent++;

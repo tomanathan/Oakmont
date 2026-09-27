@@ -41,7 +41,7 @@ function trialEndingHtml(firstName: string | null, ends: string): string {
   return `
     <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
       <h2 style="color: #1a1a2e;">${firstName ? `${escapeHtml(firstName)}, your` : "Your"} free week ends ${ends}</h2>
-      <p style="color: #444;">If Oakmont has been helping, choose a plan to keep your study plan, your progress, and Ozho going. Monthly is $25 and cancels anytime; the 6-month pass is one payment of $100.</p>
+      <p style="color: #444;">If Oakmont has been helping, choose a plan to keep your study plan, your progress, and Ozho going. Monthly is $14.99 and cancels anytime; the 6-month pass is one payment of $69.99.</p>
       <p style="color: #444;">If it isn't for you, there's nothing to do: no card is on file, so nothing will be charged.</p>
       <p><a href="${APP_URL}/subscribe" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Choose a plan</a></p>
     </div>

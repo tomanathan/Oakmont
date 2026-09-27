@@ -2,19 +2,13 @@
 
 import { useState } from "react";
 import type { PlanId } from "@/lib/stripe";
+import { formatPrice } from "@/lib/price";
 
 export interface PlanOption {
   id: PlanId;
   amountCents: number;
   currency: string;
   interval: string | null;
-}
-
-function formatAmount(cents: number, currency: string): string {
-  const amount = cents / 100;
-  const formatted = Number.isInteger(amount) ? amount.toString() : amount.toFixed(2);
-  const symbol = currency.toLowerCase() === "usd" ? "$" : `${currency.toUpperCase()} `;
-  return `${symbol}${formatted}`;
 }
 
 // trialEndsOn: set while the student is still in their free week, so each
@@ -69,7 +63,7 @@ export function SubscribeClient({
           <div className="bg-white border border-[#e2d7c1] rounded-2xl p-6 flex flex-col">
             <div className="mb-1 flex items-baseline gap-1.5">
               <span className="text-[36px] leading-none font-display font-semibold text-ink">
-                {formatAmount(monthly.amountCents, monthly.currency)}
+                {formatPrice(monthly.amountCents, monthly.currency)}
               </span>
               <span className="text-sm text-stone-500">/month</span>
             </div>
@@ -98,7 +92,7 @@ export function SubscribeClient({
             </div>
             <div className="mt-2 mb-1 flex items-baseline gap-1.5">
               <span className="text-[36px] leading-none font-display font-semibold text-ink">
-                {formatAmount(sixmonth.amountCents, sixmonth.currency)}
+                {formatPrice(sixmonth.amountCents, sixmonth.currency)}
               </span>
               <span className="text-sm text-stone-500">one time</span>
             </div>
