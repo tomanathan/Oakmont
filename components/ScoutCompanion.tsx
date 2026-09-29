@@ -16,8 +16,8 @@ import { PixelBall, planToss, stepBall, ballGround, setBallTurn, type BallSim } 
 // mistakes are just things to dig up) and genuinely believes in you. Short
 // lines, one idea each, funny where it's natural, never at the expense of
 // being encouraging. Warm and low-pressure on purpose: he's a companion,
-// not a nag, so even the hungry/critical pools invite rather than
-// guilt-trip, however close the pet-death countdown actually is. Study
+// not a nag, so even the hungry and napping lines invite rather than
+// guilt-trip (he never dies, see lib/pet.ts). Study
 // tips he gives are real SAT strategy, never made-up claims.
 //
 // Kept free of anything presupposing a *return* visit (no "welcome back")
@@ -544,6 +544,8 @@ const NAV_SPEAK_DELAY_MAX_MS = 1300;
 // an already-resting state, never mid-stride. Anything that counts as
 // interaction wakes him again immediately.
 const IDLE_SLEEP_MS = 60000;
+// How soon a napping Ozho (see lib/pet.ts) dozes back off after being woken.
+const NAPPING_SLEEP_MS = 6000;
 // How long the curl-up/stretch-awake transition plays (see globals.css)
 // before the pose actually swaps between standing and curled -- he's
 // frozen for the whole thing, same as full sleep.
@@ -1274,7 +1276,7 @@ export function ScoutCompanion() {
   function pickMessage(): string {
     const s = stageRef.current;
     const roll = Math.random();
-    if ((s === "hungry" || s === "critical") && roll < 0.3) return pick(NUDGES);
+    if ((s === "hungry" || s === "napping") && roll < 0.3) return pick(NUDGES);
     if (streakRef.current >= 2 && (s === "thriving" || s === "content") && roll < 0.22) {
       return pick(streakLines(streakRef.current));
     }
@@ -1322,9 +1324,9 @@ export function ScoutCompanion() {
   // simply as less busy) than frequent short hops.
   function pickPauseMs(): number {
     const r = Math.random();
-    // A near-death Ozho lingers between walks -- longer rests, fewer
-    // brief hops -- so he reads as low on energy rather than restless.
-    if (stageRef.current === "critical") {
+    // A napping Ozho (a few days without study) lingers between walks --
+    // longer rests, fewer brief hops -- so he reads as sleepy, not restless.
+    if (stageRef.current === "napping") {
       if (r < 0.55) return 9000 + Math.random() * 9000;
       return 4000 + Math.random() * 4000;
     }
@@ -1674,11 +1676,12 @@ export function ScoutCompanion() {
       if (sleepy) {
         if (idleMs < IDLE_SLEEP_MS) beginWakeUp();
       } else if (
-        idleMs > IDLE_SLEEP_MS &&
+        // Napping (a few days without study): he dozes off again soon after
+        // being woken, until a session gets him properly up (see lib/pet.ts).
+        idleMs > (stageRef.current === "napping" ? NAPPING_SLEEP_MS : IDLE_SLEEP_MS) &&
         !walkingRef.current &&
         !menuOpenRef.current &&
-        !fetchingRef.current &&
-        stageRef.current !== "dead"
+        !fetchingRef.current
       ) {
         beginFallAsleep();
       }
@@ -1695,16 +1698,13 @@ export function ScoutCompanion() {
       // (not gated by) whatever else this tick does -- walking, standing
       // still, talking, wandering off text, all of it. That's the point:
       // wagging almost regardless of what he's otherwise up to, rather
-      // than only in specific states. Skipped entirely once he's in real
-      // trouble -- critical (about to die) or dead -- where PixelDog draws
-      // the tail down/limp and ignores tailFrame anyway, so this is also
-      // just not wasting the tick. Same for sitting: that pose draws its
-      // own fixed curled tail and ignores tailFrame too. A merely-hungry
-      // Ozho still wags, only noticeably slower, so the drop in energy
-      // reads as a gradient rather than a switch.
-      if (stageRef.current !== "dead" && stageRef.current !== "critical" && !sittingRef.current) {
+      // than only in specific states. Skipped while sitting: that pose
+      // draws its own fixed curled tail and ignores tailFrame. A hungry or
+      // napping Ozho still wags, only noticeably slower, so the drop in
+      // energy reads as a gradient rather than a switch.
+      if (!sittingRef.current) {
         tailTimerRef.current += dt;
-        const swapMs = stageRef.current === "hungry" ? TAIL_SWAP_MS * 2.4 : TAIL_SWAP_MS;
+        const swapMs = stageRef.current === "hungry" || stageRef.current === "napping" ? TAIL_SWAP_MS * 2.4 : TAIL_SWAP_MS;
         if (tailTimerRef.current > swapMs) {
           tailTimerRef.current = 0;
           // Ping-pong through the six frames (0..5..0) rather than
@@ -1903,11 +1903,9 @@ export function ScoutCompanion() {
           RUN_SPEED *
           pathSpeedRef.current *
           (onText ? BEHIND_TEXT_SPEED_MULT : 1) *
-          // A near-death Ozho trudges rather than trots -- part of the
-          // same "he is not okay" read as the tucked tail, stopped wag,
-          // and shiver. Not applied to the urgent dash back into view
-          // (returningRef), which should still look purposeful.
-          (stageRef.current === "critical" && !returningRef.current ? 0.5 : 1);
+          // A napping Ozho ambles rather than trots. Not applied to the
+          // dash back into view (returningRef), which should look purposeful.
+          (stageRef.current === "napping" && !returningRef.current ? 0.6 : 1);
         const sec = dt / 1000;
         const v = velRef.current;
         // Bringing the ball back: aim at wherever the cursor is right now,
@@ -2791,8 +2789,6 @@ export function ScoutCompanion() {
             ? "animate-perk"
             : land && !isWalking
             ? "animate-ozho-land"
-            : stage === "critical" && !isWalking
-            ? "animate-worried"
             : isWalking
             ? ""
             : idleAct === "sniff"
@@ -2832,7 +2828,6 @@ export function ScoutCompanion() {
         <PixelDog
           size={isMobile ? MOBILE_DOCK_SIZE : 44}
           mood={mood}
-          dead={stage === "dead"}
           asleep={asleep}
           // The trick is a jump-spin from standing, even if he was sitting;
           // a "Sit" he was told resumes once he lands.

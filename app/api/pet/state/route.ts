@@ -19,7 +19,6 @@ export async function GET() {
       where: { id: user.userId },
       select: {
         lastActiveDate: true,
-        petDiedAt: true,
         petBornAt: true,
         currentStreak: true,
         longestStreak: true,
@@ -34,7 +33,7 @@ export async function GET() {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }
 
-  const state = computePetState(stats.lastActiveDate, stats.petDiedAt, stats.petBornAt);
+  const state = computePetState(stats.lastActiveDate, stats.petBornAt);
 
   const progress = progressMapFromRows(progressRows);
   const subskillsByDomain: Record<string, string[]> = {};
@@ -98,6 +97,6 @@ export async function GET() {
     mochiUnlocked: isSecondPetUnlocked(stats.longestStreak),
     // Studied today (a finished lesson, quiz, or review) -- what feeds him. Ozho's panel
     // leads with it (see components/OzhoPanel.tsx).
-    fedToday: !!stats.lastActiveDate && state.stage !== "dead" && state.daysInactive <= 0,
+    fedToday: !!stats.lastActiveDate && state.daysInactive <= 0,
   });
 }

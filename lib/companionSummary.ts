@@ -1,4 +1,4 @@
-import { computePetState, isSecondPetUnlocked, SECOND_PET_UNLOCK_STREAK_DAYS, PET_DEATH_DAYS, type PetStage } from "./pet";
+import { computePetState, isSecondPetUnlocked, SECOND_PET_UNLOCK_STREAK_DAYS, type PetStage } from "./pet";
 import { COSTUMES, isCostumeUnlocked, bestUnlockedCostume } from "./costumes";
 
 // Everything the dashboard's Ozho card shows, worked out server-side from
@@ -11,7 +11,6 @@ export interface CompanionSummary {
   // "Fed" = studied today: a finished lesson, quiz, or review.
   fedToday: boolean;
   hasEverStudied: boolean;
-  daysLeft: number;
   costume: string | null;
   currentStreak: number;
   longestStreak: number;
@@ -24,14 +23,13 @@ export interface CompanionSummary {
 
 export function companionSummary(input: {
   lastActiveDate: Date | null;
-  petDiedAt: Date | null;
   petBornAt: Date;
   currentStreak: number;
   longestStreak: number;
   equippedCostume: string | null;
   domainsCompleted: number;
 }): CompanionSummary {
-  const state = computePetState(input.lastActiveDate, input.petDiedAt, input.petBornAt);
+  const state = computePetState(input.lastActiveDate, input.petBornAt);
   const unlock = { domainsCompleted: input.domainsCompleted, longestStreak: input.longestStreak };
   const costume =
     input.equippedCostume && isCostumeUnlocked(input.equippedCostume, unlock)
@@ -51,9 +49,8 @@ export function companionSummary(input: {
   return {
     stage: state.stage,
     daysInactive: state.daysInactive,
-    fedToday: !!input.lastActiveDate && state.daysInactive <= 0 && state.stage !== "dead",
+    fedToday: !!input.lastActiveDate && state.daysInactive <= 0,
     hasEverStudied: !!input.lastActiveDate,
-    daysLeft: Math.max(0, PET_DEATH_DAYS - state.daysInactive),
     costume: costume === "none" ? null : costume,
     currentStreak: input.currentStreak,
     longestStreak: input.longestStreak,

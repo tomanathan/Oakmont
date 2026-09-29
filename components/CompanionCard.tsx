@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
 import { PET_NAME, SECOND_PET_NAME } from "@/lib/pet";
@@ -11,8 +10,7 @@ const STAGE_PILL: Record<CompanionSummary["stage"], { label: string; cls: string
   thriving: { label: "Thriving", cls: "bg-[#eaf6ef] text-accent" },
   content: { label: "Doing fine", cls: "bg-[#eaf1e5] text-[#2c4c3b]" },
   hungry: { label: "Hungry", cls: "bg-[#fbf1df] text-[#9a6a12]" },
-  critical: { label: "In trouble", cls: "bg-[#fbeaea] text-[#b23b3b]" },
-  dead: { label: "Gone", cls: "bg-[#f1ece2] text-stone-500" },
+  napping: { label: "Napping", cls: "bg-[#eef0f7] text-[#4a5275]" },
 };
 
 // Where Ozho stands today, in a sentence -- written from what actually
@@ -20,42 +18,35 @@ const STAGE_PILL: Record<CompanionSummary["stage"], { label: string; cls: string
 function statusCopy(c: CompanionSummary): { headline: string; body: string } {
   const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
   switch (c.stage) {
-    case "dead":
+    case "napping":
       return {
-        headline: `${PET_NAME} didn't make it.`,
-        body: "A week without practice is too long for a study pet. Start fresh whenever you're ready.",
+        headline: "Napping till you're back.",
+        body: "He curled up after a few quiet days. One lesson or quiz wakes him up.",
       };
-    case "critical":
-      return c.daysLeft <= 1
-        ? { headline: "His last day.", body: "Finish a quiz today to save him. One is all it takes." }
-        : {
-            headline: "He needs you today.",
-            body: `${plural(c.daysLeft, "day")} left before he's gone for good. One quiz is all it takes.`,
-          };
     case "hungry":
       return {
         headline: "Getting hungry.",
-        body: `It's been ${plural(c.daysInactive, "day")} since his last meal. Any quiz feeds him.`,
+        body: `It's been ${plural(c.daysInactive, "day")} since his last meal. Any lesson or quiz feeds him.`,
       };
     case "content":
       return {
         headline: "Hasn't eaten today.",
         body:
           c.currentStreak > 0
-            ? `Finish any quiz today to feed him and keep your ${c.currentStreak}-day streak.`
-            : "Finish any quiz today to feed him and start a streak.",
+            ? `Finish a lesson or quiz today to feed him and keep your ${c.currentStreak}-day streak.`
+            : "Finish a lesson or quiz today to feed him and start a streak.",
       };
     default:
       return c.fedToday
-        ? { headline: "Fed and happy.", body: "Today's quiz counted. Back tomorrow keeps the streak going." }
-        : { headline: "Waiting for his first meal.", body: "Finish any quiz to feed him and start your streak." };
+        ? { headline: "Fed and happy.", body: "Today's session counted. Back tomorrow keeps the streak going." }
+        : { headline: "Waiting for his first meal.", body: "Finish a lesson or quiz to feed him and start your streak." };
   }
 }
 
 // Lines he says when called over from the card -- the same voice as the
 // rest of his dialogue (see ScoutCompanion), keyed to how he's doing.
 function callLine(c: CompanionSummary): string {
-  if (c.stage === "critical") return "I'm here. A little wobbly. One quiz would help a lot.";
+  if (c.stage === "napping") return "*yawn* Oh, you're back. Lesson? I'm up. I'm up.";
   if (c.stage === "hungry") return "Did someone say quiz? I'm so hungry.";
   if (c.stage === "content") return "Here! Haven't had my quiz yet today. Just saying.";
   if (c.nextStreakCostume && c.currentStreak > 0 && c.nextStreakCostume.days - c.longestStreak === 1)
@@ -77,10 +68,8 @@ function Meter({ value, max, color }: { value: number; max: number; color: strin
 // real, roaming Ozho trotting to the card -- this portrait is his profile,
 // not a second dog.
 export function CompanionCard({ companion: c }: { companion: CompanionSummary }) {
-  const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
   const [hop, setHop] = useState(false);
-  const [reviving, setReviving] = useState(false);
   const hopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => {
     if (hopTimer.current) clearTimeout(hopTimer.current);
@@ -88,7 +77,6 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
 
   const pill = STAGE_PILL[c.stage];
   const copy = statusCopy(c);
-  const dead = c.stage === "dead";
 
   function callOzho() {
     setHop(true);
@@ -99,15 +87,7 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
     window.dispatchEvent(new CustomEvent("ozho:say", { detail: { message: callLine(c), near } }));
   }
 
-  async function startNewPet() {
-    setReviving(true);
-    try {
-      await fetch("/api/pet/revive", { method: "POST" });
-      router.refresh();
-    } finally {
-      setReviving(false);
-    }
-  }
+
 
   return (
     <div
@@ -116,20 +96,18 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
     >
       <div className="flex items-start gap-3.5">
         <button
-          onClick={dead ? undefined : callOzho}
-          aria-label={dead ? PET_NAME : `Call ${PET_NAME} over`}
-          title={dead ? undefined : `Call ${PET_NAME} over`}
-          className={`relative flex h-[76px] w-[76px] flex-shrink-0 items-end justify-center rounded-2xl pb-2 transition-colors ${
-            dead ? "cursor-default bg-[#f4f3f6]" : "bg-[#f6f1e6] hover:bg-[#eef3e9]"
-          }`}
+          onClick={callOzho}
+          aria-label={`Call ${PET_NAME} over`}
+          title={`Call ${PET_NAME} over`}
+          className="relative flex h-[76px] w-[76px] flex-shrink-0 items-end justify-center rounded-2xl bg-[#f6f1e6] pb-2 transition-colors hover:bg-[#eef3e9]"
         >
           <span className={hop ? "animate-ozho-hop" : ""}>
             <PixelDog
               size={56}
               mood={MOOD_BY_STAGE[c.stage]}
-              dead={dead}
+              asleep={c.stage === "napping"}
               costume={c.costume}
-              sitting={!dead && !c.fedToday}
+              sitting={!c.fedToday}
               tailFrame={c.fedToday ? 3 : 0}
             />
           </span>
@@ -144,16 +122,7 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
         </div>
       </div>
 
-      {dead ? (
-        <button
-          onClick={startNewPet}
-          disabled={reviving}
-          className="mt-4 rounded-lg bg-forest px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
-        >
-          {reviving ? "Starting…" : "Start a new pet"}
-        </button>
-      ) : (
-        <>
+      <>
           <div className="mt-4 flex flex-col gap-3 border-t border-stone-100 pt-3.5">
             {c.nextStreakCostume && (
               <Reward
@@ -204,8 +173,7 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
               Wardrobe →
             </a>
           </div>
-        </>
-      )}
+      </>
     </div>
   );
 }

@@ -1,18 +1,21 @@
 // Pure functions for the study-streak pet: a small companion that stays
 // happy as long as the student keeps studying (a finished lesson, quiz, or
-// review each count as that day's study), and dies if they
-// go a full week without one. Kept separate from the UI and the cron route
-// so the rules are easy to see and test in one place.
+// review each count as that day's study). He never dies: a few days away
+// makes him hungry, a longer break and he naps until the next session wakes
+// him up. Punishing a break backfires with teens (a broken streak lowers
+// engagement on its own), so the way back is always one session. Kept
+// separate from the UI and the cron route so the rules are easy to see.
 
 import { utcDayDiff } from "./dateOnly";
 
 export const PET_NAME = "Ozho";
-export const PET_DEATH_DAYS = 7;
-export const PET_WARNING_DAYS = 5;
+// Days away before Ozho naps instead of just being hungry.
+export const PET_NAP_DAYS = 4;
+// The one gentle "Ozho misses you" email goes out this many days in.
+export const PET_NUDGE_DAYS = 5;
 
 // Mochi: a second companion earned at a long daily-practice streak, rather
-// than tied to quiz progress at all. Unlike Ozho, Mochi has no hunger clock
-// and can't die -- once earned at this streak length, Mochi stays earned
+// than tied to quiz progress at all. Unlike Ozho, Mochi has no hunger clock -- once earned at this streak length, Mochi stays earned
 // even if the streak itself later resets to 0, the same "ever achieved"
 // philosophy the wardrobe's section-completion costumes already use (see
 // lib/costumes.ts) rather than something that can be lost by missing a
@@ -27,7 +30,7 @@ export function isSecondPetUnlocked(longestStreak: number): boolean {
   return longestStreak >= SECOND_PET_UNLOCK_STREAK_DAYS;
 }
 
-export type PetStage = "thriving" | "content" | "hungry" | "critical" | "dead";
+export type PetStage = "thriving" | "content" | "hungry" | "napping";
 
 export interface PetState {
   stage: PetStage;
@@ -35,40 +38,15 @@ export interface PetState {
   message: string;
 }
 
-function daysBetween(from: Date, to: Date): number {
-  return utcDayDiff(from, to);
-}
-
-// Starting a new pet is itself a fresh start: its hunger clock should never
-// run on quiz activity from before it was born, or reviving after a long
-// absence would produce an already-starving "new" pet.
+// The hunger clock starts from whichever is later: the last day of study or
+// when this pet started (accounts from before the clock existed start fresh).
 function referenceDate(lastActiveDate: Date | null, petBornAt: Date): Date {
   return lastActiveDate && lastActiveDate > petBornAt ? lastActiveDate : petBornAt;
 }
 
-/**
- * Computes the pet's current stage from the student's last day of study
- * date. `petDiedAt` being set always wins -- once dead, the pet stays dead
- * (it doesn't auto-revive just because time has passed or the student is
- * active again), until the student explicitly starts a new one.
- */
-export function computePetState(
-  lastActiveDate: Date | null,
-  petDiedAt: Date | null,
-  petBornAt: Date,
-  now: Date = new Date()
-): PetState {
-  const reference = referenceDate(lastActiveDate, petBornAt);
-
-  if (petDiedAt) {
-    return {
-      stage: "dead",
-      daysInactive: daysBetween(reference, now),
-      message: `${PET_NAME} didn't make it — a week with no practice is too long for a study pet. Start a new one whenever you're ready.`,
-    };
-  }
-
-  const daysInactive = daysBetween(reference, now);
+/** Ozho's current stage from the student's last day of study. */
+export function computePetState(lastActiveDate: Date | null, petBornAt: Date, now: Date = new Date()): PetState {
+  const daysInactive = utcDayDiff(referenceDate(lastActiveDate, petBornAt), now);
   const hasEverStudied = !!lastActiveDate;
 
   if (daysInactive <= 0) {
@@ -76,43 +54,28 @@ export function computePetState(
       stage: "thriving",
       daysInactive,
       message: hasEverStudied
-        ? `${PET_NAME} is thriving! Great job studying today.`
-        : `${PET_NAME} is happy and waiting. Finish your first lesson or quiz to start feeding it.`,
+        ? `${PET_NAME} ate today. Bowl's full.`
+        : `${PET_NAME} is waiting. Finish your first lesson or quiz to feed him.`,
     };
   }
   if (daysInactive <= 1) {
-    return { stage: "content", daysInactive, message: `${PET_NAME} is doing well. Finish a lesson or quiz today to keep it that way.` };
+    return { stage: "content", daysInactive, message: `${PET_NAME} is doing fine. A lesson or quiz today keeps it that way.` };
   }
-  if (daysInactive <= 3) {
+  if (daysInactive < PET_NAP_DAYS) {
     return {
       stage: "hungry",
       daysInactive,
-      message: `${PET_NAME} is getting hungry — it's been ${daysInactive} days. A lesson or a quick quiz will perk it right up.`,
-    };
-  }
-  if (daysInactive < PET_DEATH_DAYS) {
-    const daysLeft = PET_DEATH_DAYS - daysInactive;
-    return {
-      stage: "critical",
-      daysInactive,
-      message: `${PET_NAME} is in trouble! ${daysLeft} day${daysLeft === 1 ? "" : "s"} left before it's gone for good.`,
+      message: `${PET_NAME} is getting hungry. It's been ${daysInactive} days. One lesson or a quick quiz fills the bowl.`,
     };
   }
   return {
-    stage: "critical",
+    stage: "napping",
     daysInactive,
-    message: `${PET_NAME} is on its very last day. Finish a lesson or quiz right now to save it.`,
+    message: `${PET_NAME} is napping until you're back. One session wakes him up.`,
   };
 }
 
-/** Whether this student's pet should be marked dead as of `now`. */
-export function shouldDie(lastActiveDate: Date | null, petBornAt: Date, petDiedAt: Date | null, now: Date = new Date()): boolean {
-  if (petDiedAt) return false;
-  return daysBetween(referenceDate(lastActiveDate, petBornAt), now) >= PET_DEATH_DAYS;
-}
-
-/** Whether a warning email should go out today (exactly PET_WARNING_DAYS in). */
-export function shouldWarn(lastActiveDate: Date | null, petBornAt: Date, petDiedAt: Date | null, now: Date = new Date()): boolean {
-  if (petDiedAt) return false;
-  return daysBetween(referenceDate(lastActiveDate, petBornAt), now) === PET_WARNING_DAYS;
+/** Whether today is the day for the one gentle "Ozho misses you" email. */
+export function shouldNudge(lastActiveDate: Date | null, petBornAt: Date, now: Date = new Date()): boolean {
+  return utcDayDiff(referenceDate(lastActiveDate, petBornAt), now) === PET_NUDGE_DAYS;
 }

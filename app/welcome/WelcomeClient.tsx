@@ -722,8 +722,8 @@ function MeetOzho() {
         ))}
       </div>
       <p className="mt-3 text-xs leading-relaxed text-stone-600">
-        One honest warning: he depends on you. After a few days without practice he gets hungry, and a full week without any means
-        starting over with a new pet.
+        He counts on you, but he doesn't hold a grudge. After a couple of days without practice he gets hungry, and after a few more
+        he naps until you're back. One session wakes him up.
       </p>
     </div>
   );

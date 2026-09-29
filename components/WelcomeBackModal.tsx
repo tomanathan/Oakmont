@@ -7,22 +7,17 @@ import { MOOD_BY_STAGE } from "./PetAvatar";
 import { PET_NAME, type PetStage } from "@/lib/pet";
 
 // Only the stages worth interrupting for -- there's no point telling
-// someone their pet is fine. Styling and label escalate with severity.
+// someone their pet is fine.
 const PET_ALERT: Partial<Record<PetStage, { box: string; label: string; labelClass: string }>> = {
   hungry: {
     box: "bg-[#fbf1df] border-[#f0ddb8]",
     label: `${PET_NAME} is getting hungry`,
     labelClass: "text-[#9a6a12]",
   },
-  critical: {
-    box: "bg-[#fbeaea] border-[#f0d0d0]",
-    label: `${PET_NAME} needs you today`,
-    labelClass: "text-[#b23b3b]",
-  },
-  dead: {
-    box: "bg-[#f1ece2] border-[#e2dccf]",
-    label: `${PET_NAME} didn't make it`,
-    labelClass: "text-stone-500",
+  napping: {
+    box: "bg-[#eef0f7] border-[#d8dcec]",
+    label: `${PET_NAME} is napping`,
+    labelClass: "text-[#4a5275]",
   },
 };
 
@@ -121,8 +116,8 @@ export function WelcomeBackModal({
             <PixelDog
               size={40}
               mood={MOOD_BY_STAGE[petStage]}
-              dead={petStage === "dead"}
-              className={`flex-shrink-0 ${petStage === "critical" ? "animate-worried" : ""}`}
+              asleep={petStage === "napping"}
+              className="flex-shrink-0"
             />
             <div className="min-w-0">
               <div className={`text-xs font-bold mb-0.5 ${PET_ALERT[petStage]!.labelClass}`}>

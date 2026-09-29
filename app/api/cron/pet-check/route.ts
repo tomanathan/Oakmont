@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
-import { PET_NAME, shouldDie, shouldWarn } from "@/lib/pet";
+import { PET_NAME, shouldNudge } from "@/lib/pet";
 import { sendTrialReminders } from "@/lib/trialReminder";
-import { inFreeTrial } from "@/lib/subscription";
 
 // Runs once a day (see vercel.json). Also sends the "free trial ends
 // tomorrow" emails (lib/trialReminder.ts), since the plan allows only two
-// cron jobs. The pet check itself:
-//
-// Checks every user's study-streak pet:
-// send a warning email 2 days before it would die, mark it dead and send a
-// death email once a full week of inactivity passes. Protected by
-// CRON_SECRET so the endpoint can't be triggered by anyone who finds the
-// URL -- if that env var isn't set, the route refuses all requests rather
-// than silently running unauthenticated.
+// cron jobs. The pet check itself sends the one gentle "Ozho misses you"
+// email a few days into a break. Ozho never dies (see lib/pet.ts), so
+// there's nothing else to do here. Protected by CRON_SECRET so the endpoint
+// can't be triggered by anyone who finds the URL -- if that env var isn't
+// set, the route refuses all requests rather than silently running
+// unauthenticated.
 export async function GET(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
   if (!secret) {
@@ -27,64 +24,21 @@ export async function GET(req: NextRequest) {
 
   const now = new Date();
   const users = await prisma.user.findMany({
-    where: { petDiedAt: null },
-    select: {
-      id: true,
-      email: true,
-      lastActiveDate: true,
-      petBornAt: true,
-      petDiedAt: true,
-      petWarningEmailSentAt: true,
-      petDeathEmailSentAt: true,
-      trialEndsAt: true,
-      subscriptionStatus: true,
-      accessExpiresAt: true,
-    },
+    select: { id: true, email: true, lastActiveDate: true, petBornAt: true, petWarningEmailSentAt: true },
   });
 
-  let warned = 0;
-  let died = 0;
-
+  let nudged = 0;
   for (const user of users) {
-    const alreadyWarnedToday =
-      user.petWarningEmailSentAt &&
-      user.petWarningEmailSentAt.toDateString() === now.toDateString();
-
-    // Ozho can't die during the free week: a student who tried it on day 0
-    // and came back on day 7 shouldn't find him gone on the day the trial ends.
-    const inFreeWeek = inFreeTrial(user, now);
-
-    if (!inFreeWeek && shouldDie(user.lastActiveDate, user.petBornAt, user.petDiedAt, now)) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { petDiedAt: now, petDeathEmailSentAt: now },
-      });
-      await sendEmail({
-        to: user.email,
-        subject: `${PET_NAME} didn't make it \u{1F494}`,
-        html: deathEmailHtml(),
-      });
-      died++;
-      continue;
-    }
-
-    if (!alreadyWarnedToday && shouldWarn(user.lastActiveDate, user.petBornAt, user.petDiedAt, now)) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { petWarningEmailSentAt: now },
-      });
-      await sendEmail({
-        to: user.email,
-        subject: `${PET_NAME} is getting hungry \u{1F41F}`,
-        html: warningEmailHtml(),
-      });
-      warned++;
-    }
+    const alreadyToday = user.petWarningEmailSentAt && user.petWarningEmailSentAt.toDateString() === now.toDateString();
+    if (alreadyToday || !shouldNudge(user.lastActiveDate, user.petBornAt, now)) continue;
+    await prisma.user.update({ where: { id: user.id }, data: { petWarningEmailSentAt: now } });
+    await sendEmail({ to: user.email, subject: `${PET_NAME} is napping till you're back`, html: nudgeEmailHtml() });
+    nudged++;
   }
 
   const trialReminders = await sendTrialReminders(now);
 
-  return NextResponse.json({ ok: true, checked: users.length, warned, died, trialReminders });
+  return NextResponse.json({ ok: true, checked: users.length, nudged, trialReminders });
 }
 
 // Falls back to the known production URL so emails still link somewhere
@@ -92,22 +46,12 @@ export async function GET(req: NextRequest) {
 // working if the domain ever changes.
 const APP_URL = process.env.APP_URL || "https://oakmontsat.com";
 
-function warningEmailHtml(): string {
+function nudgeEmailHtml(): string {
   return `
     <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
-      <h2 style="color: #1a1a2e;">${PET_NAME} misses you</h2>
-      <p style="color: #444;">It's been a few days since your last practice session. ${PET_NAME} has 2 days left before it's gone for good — finish a lesson or a quiz on Oakmont Study Center today to bring it back to full health.</p>
-      <p><a href="${APP_URL}/dashboard" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Open Oakmont Study Center</a></p>
-    </div>
-  `;
-}
-
-function deathEmailHtml(): string {
-  return `
-    <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
-      <h2 style="color: #1a1a2e;">${PET_NAME} has passed away</h2>
-      <p style="color: #444;">A full week went by without a practice session, and ${PET_NAME} couldn't hang on. The good news: you can start over with a new study pet any time, and your SAT progress is completely untouched.</p>
-      <p><a href="${APP_URL}/dashboard" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Start a new pet</a></p>
+      <h2 style="color: #1a1a2e;">${PET_NAME} is napping till you're back</h2>
+      <p style="color: #444;">It's been a few days since your last session, so ${PET_NAME} curled up for a nap. One lesson or a quick quiz wakes him up, and your plan picks up right where you left off.</p>
+      <p><a href="${APP_URL}/dashboard" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Open Oakmont</a></p>
     </div>
   `;
 }

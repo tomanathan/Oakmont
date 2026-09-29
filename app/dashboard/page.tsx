@@ -119,10 +119,10 @@ export default async function DashboardPage() {
     stats.lastLoginAt.getTime() - stats.previousLoginAt.getTime() > WELCOME_BACK_GAP_MS;
 
   // Coming back after a gap is exactly when the pet is most likely to be
-  // hungry, critical, or already gone -- so the welcome-back modal is
+  // hungry or napping -- so the welcome-back modal is
   // where that lands hardest. Same computation the settings card and the
   // header pill use.
-  const petState = computePetState(stats.lastActiveDate ?? null, stats.petDiedAt ?? null, stats.petBornAt);
+  const petState = computePetState(stats.lastActiveDate ?? null, stats.petBornAt);
 
   // Getting-started checklist: each item checked off by real activity.
   let checklist: ChecklistItem[] | null = null;
@@ -208,7 +208,6 @@ export default async function DashboardPage() {
         review={reviewCounts(progress)}
         companion={companionSummary({
           lastActiveDate: stats.lastActiveDate ?? null,
-          petDiedAt: stats.petDiedAt ?? null,
           petBornAt: stats.petBornAt,
           currentStreak: stats.currentStreak,
           longestStreak: stats.longestStreak,

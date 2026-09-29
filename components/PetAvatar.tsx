@@ -5,8 +5,7 @@ export const MOOD_BY_STAGE: Record<PetStage, DogMood> = {
   thriving: "happy",
   content: "neutral",
   hungry: "tired",
-  critical: "sad",
-  dead: "sad",
+  napping: "tired",
 };
 
 export function PetAvatar({
@@ -22,11 +21,9 @@ export function PetAvatar({
     <PixelDog
       size={size}
       mood={MOOD_BY_STAGE[stage]}
-      dead={stage === "dead"}
+      asleep={stage === "napping"}
       costume={costume}
-      className={
-        stage === "thriving" ? "animate-flame-pulse" : stage === "critical" ? "animate-worried" : ""
-      }
+      className={stage === "thriving" ? "animate-flame-pulse" : ""}
     />
   );
 }
