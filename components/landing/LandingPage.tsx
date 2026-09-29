@@ -1,25 +1,29 @@
-import { BrandMark } from "@/components/BrandMark";
 import { LegalFooter } from "@/components/LegalFooter";
+import { PixelDog } from "@/components/PixelDog";
 import { ALL_SUBSKILLS, ALL_DOMAINS, CURRICULUM } from "@/data/curriculum";
 import { landingShowcase } from "@/lib/landingShowcase";
 import { QUESTIONS } from "@/data/questions";
 import { FAQ_ITEMS } from "@/lib/landingFaq";
-import { Hero } from "./Hero";
-import { Pitch } from "./Pitch";
 import { SampleQuestion } from "./SampleQuestion";
-import { Pricing } from "./Pricing";
-import { Faq } from "./Faq";
-import { Reveal } from "./Reveal";
 import { TrackedLink } from "./TrackedLink";
+import { Nav, Logo } from "./notebook/Nav";
+import { Hero } from "./notebook/Hero";
+import { HowItWorks } from "./notebook/HowItWorks";
+import { ForParents } from "./notebook/ForParents";
+import { Pricing } from "./notebook/Pricing";
+import { Faq } from "./notebook/Faq";
+import { C, Tape } from "./notebook/art";
+import "./notebook/notebook.css";
 
 // The public, logged-out front door at oakmontsat.com (see app/page.tsx --
 // signed-in visits redirect before this renders). Server-rendered so the
 // pitch, not a login form, is what search engines and shared links see.
 //
-// Short on purpose, and the parent dashboard up front: who we are (title
-// page, which already names the dashboard) -> the course and its tracking,
-// with the parent dashboard beside it -> one showcase problem, taught (the
-// only place the page talks numbers) -> price -> FAQ.
+// "Ozho's Notebook": one long notebook page on a lilac-to-butter desk.
+// Three layers (see the notebook.css header): the world (Ozho's room),
+// plain paper content (the sample question, pricing, FAQ) and the reward
+// stickers (the costume closet). Only the poke, the sample question and
+// the analytics links ship client JS.
 export function LandingPage() {
   const subskillCount = ALL_SUBSKILLS.length;
   const typeCount = ALL_SUBSKILLS.reduce((n, s) => n + s.patterns.length, 0);
@@ -37,82 +41,62 @@ export function LandingPage() {
   };
 
   return (
-    <div className="bg-ivory font-sans text-ink">
+    <div className="nb-root" id="top">
       {/* eslint-disable-next-line react/no-danger */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
-      {/* Brand centered, Khan Academy style: page links on the left, account
-          actions on the right, the mark between them. */}
-      <nav className="sticky top-0 z-30 border-b border-sage/30 bg-ivory/90 backdrop-blur-md">
-        <div className="mx-auto grid max-w-[1120px] grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 py-3 sm:gap-3 sm:px-6">
-          <div className="flex min-w-0 items-center">
-            <div className="hidden items-center gap-6 whitespace-nowrap text-[15px] text-gray-500 lg:flex xl:gap-8 xl:text-[16px]">
-              <a href="#parents" className="font-medium text-forest transition-colors hover:text-sage">
-                For parents
-              </a>
-              <a href="#pricing" className="transition-colors hover:text-ink">
-                Pricing
-              </a>
-              <a href="#faq" className="transition-colors hover:text-ink">
-                FAQ
-              </a>
-            </div>
-            <a href="#parents" className="-ml-1 rounded-lg px-1 py-1.5 text-[14px] font-medium text-forest sm:text-[15px] lg:hidden">
-              Parents
-            </a>
-          </div>
-          <a href="#top" className="flex items-center justify-center gap-2.5" aria-label="Oakmont Study Center, back to top">
-            <BrandMark size={40} className="flex-shrink-0" />
-            <span className="hidden whitespace-nowrap font-display text-[21px] font-semibold tracking-[-0.01em] text-forest-900 sm:inline">Oakmont Study Center</span>
-          </a>
-          <div className="flex items-center justify-end gap-1 sm:gap-3">
-            <a href="/login" className="rounded-lg px-2 py-2 text-[14px] text-gray-600 transition-colors hover:text-ink sm:px-3 sm:text-[16px]">
-              Log in
-            </a>
-            <TrackedLink
-              href="/start"
-              event="signup_started"
-              className="whitespace-nowrap rounded-md bg-forest px-3 py-2 text-[14px] font-semibold tracking-wide text-ivory transition-colors hover:bg-forest-600 sm:px-4 sm:text-[16px]"
-            >
-              Start free trial
-            </TrackedLink>
-          </div>
-        </div>
-      </nav>
-
-      <main id="top">
-        <Hero />
-        <Pitch />
-        {showcase && (
-          <SampleQuestion
-            item={showcase}
-            questionCount={questionCount}
-            sectionCount={CURRICULUM.length}
-            domainCount={ALL_DOMAINS.length}
-            skillCount={subskillCount}
-            typeCount={typeCount}
-          />
-        )}
-        {/* No testimonials section until real, permissioned quotes exist. */}
-        <Reveal>
+      <div className="nb-page">
+        <div className="nb-spiral" aria-hidden />
+        <Nav />
+        <main>
+          <Hero />
+          <HowItWorks />
+          {showcase && (
+            <SampleQuestion
+              item={showcase}
+              questionCount={questionCount}
+              sectionCount={CURRICULUM.length}
+              domainCount={ALL_DOMAINS.length}
+              skillCount={subskillCount}
+              typeCount={typeCount}
+            />
+          )}
+          <ForParents />
+          {/* No testimonials section until real, permissioned quotes exist. */}
           <Pricing />
-        </Reveal>
-        <Reveal>
           <Faq />
-        </Reveal>
-      </main>
 
-      <footer className="border-t border-sage/30 bg-parchment">
-        <div className="mx-auto flex max-w-[1120px] flex-col gap-6 px-6 py-10 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <BrandMark size={22} />
-            <span className="font-display text-sm font-semibold">Oakmont Study Center</span>
-          </div>
-          <LegalFooter className="sm:justify-end" />
+          <section className="nb-final" aria-labelledby="nb-final-h">
+            <Tape color={C.cyan} pattern="grid" className="nb-final-tape" />
+            <div className="nb-final-copy">
+              <h2 id="nb-final-h" className="nb-h2 nb-h2--md">
+                Start with five questions.
+              </h2>
+              <p className="nb-body">No account and no card. If you like it, the plan is ready when you are.</p>
+              <TrackedLink href="/start" event="signup_started" className="nb-cta">
+                <span className="nb-cta-in">
+                  <b>Try 5 SAT questions</b>
+                  <small>no signup · about 5 minutes</small>
+                </span>
+                <span className="nb-cta-arrow" aria-hidden>
+                  →
+                </span>
+              </TrackedLink>
+            </div>
+            <div className="nb-final-dog" aria-hidden>
+              <PixelDog size={150} mood="happy" sitting costume="sunglasses" shadow={false} />
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <footer className="nb-foot">
+        <div className="nb-foot-row">
+          <Logo size="sm" />
+          <LegalFooter className="nb-legal" />
         </div>
-        <p className="mx-auto max-w-[1120px] px-6 pb-10 text-[11px] leading-relaxed text-gray-400">
-          SAT® is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this
-          product.
+        <p className="nb-tm">
+          SAT® is a trademark registered by the College Board, which is not affiliated with, and does not endorse, this product.
         </p>
       </footer>
     </div>

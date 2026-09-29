@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces } from "next/font/google";
+import { Caveat, Fraunces, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import { Analytics } from "@vercel/analytics/next";
@@ -10,13 +10,20 @@ import { GlobalConfetti } from "@/components/GlobalConfetti";
 // (top bar, login/welcome/settle-back-in screens) -- everything else stays
 // on the plain sans stack. Self-hosted at build time via next/font, so it
 // never depends on a runtime font CDN.
+// Loaded as the full variable font (weight plus the SOFT/WONK/opsz axes):
+// the notebook design (the homepage onward) sets its big headlines in the
+// heavy, soft, wonky cut, while older screens keep using 500/600.
 const fraunces = Fraunces({
   subsets: ["latin"],
-  weight: ["500", "600"],
   style: ["normal", "italic"],
+  axes: ["SOFT", "WONK", "opsz"],
   variable: "--font-display",
   display: "swap",
 });
+// The notebook design's UI and body face, and its hand-lettered
+// annotation face (short margin doodles only, never information).
+const instrumentSans = Instrument_Sans({ subsets: ["latin"], variable: "--font-ui", display: "swap" });
+const caveat = Caveat({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-hand", display: "swap" });
 
 export const metadata: Metadata = {
   // Resolves relative OG/Twitter image URLs (e.g. app/opengraph-image.tsx)
@@ -28,7 +35,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={fraunces.variable}>
+    <html lang="en" className={`${fraunces.variable} ${instrumentSans.variable} ${caveat.variable}`}>
       {/* Ozho, Mochi, and the confetti layer are mounted once here, above
           the per-page content: both companions persist across client-side
           navigation instead of resetting (position, mood, walk state)
