@@ -211,6 +211,10 @@ export default async function DashboardPage() {
           petBornAt: stats.petBornAt,
           currentStreak: stats.currentStreak,
           longestStreak: stats.longestStreak,
+          daysStudied: stats.daysStudied,
+          streakFreezes: stats.streakFreezes,
+          streakRepairTo: stats.streakRepairTo ?? null,
+          streakRepairDay: stats.streakRepairDay ?? null,
           equippedCostume: stats.equippedCostume ?? null,
           domainsCompleted: completedDomainCount(domainMastery),
         })}

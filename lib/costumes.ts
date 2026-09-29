@@ -12,7 +12,7 @@ export interface Costume {
   // Exactly one of these three -- a discriminated union rather than two
   // optional numbers, so a costume can never accidentally end up gated by
   // both a domain count AND a streak length, or by neither.
-  requirement: { type: "free" } | { type: "domains"; count: number } | { type: "streak"; days: number };
+  requirement: { type: "free" } | { type: "domains"; count: number } | { type: "days"; days: number };
   // Shown in the wardrobe picker to explain what's still needed.
   blurb: string;
 }
@@ -22,7 +22,9 @@ export interface Costume {
 // bestUnlockedCostume) reads the exact same rule.
 export interface UnlockProgress {
   domainsCompleted: number;
-  longestStreak: number;
+  // Days with any study, ever (never resets). The "streak" costumes unlock
+  // on this, so a missed day never takes progress away.
+  daysStudied: number;
 }
 
 function meetsRequirement(c: Costume, progress: UnlockProgress): boolean {
@@ -31,8 +33,8 @@ function meetsRequirement(c: Costume, progress: UnlockProgress): boolean {
       return true;
     case "domains":
       return progress.domainsCompleted >= c.requirement.count;
-    case "streak":
-      return progress.longestStreak >= c.requirement.days;
+    case "days":
+      return progress.daysStudied >= c.requirement.days;
   }
 }
 
@@ -52,11 +54,11 @@ export const COSTUMES: Costume[] = [
   { id: "sunglasses", name: "Sunglasses", requirement: { type: "free" }, blurb: "Effortlessly cool. Free from the start." },
   { id: "bowtie", name: "Bow tie", requirement: { type: "free" }, blurb: "Sharp and a little formal. Free from the start." },
   { id: "scarf", name: "Scarf", requirement: { type: "free" }, blurb: "Cozy for a long study session. Free from the start." },
-  { id: "flame-collar", name: "Flame collar", requirement: { type: "streak", days: 3 }, blurb: "A 3-day streak. You're heating up." },
+  { id: "flame-collar", name: "Flame collar", requirement: { type: "days", days: 3 }, blurb: "Three days of study. You're heating up." },
   { id: "bandana", name: "Bandana", requirement: { type: "domains", count: 1 }, blurb: "A jaunty neck bandana." },
-  { id: "star-badge", name: "Star badge", requirement: { type: "streak", days: 7 }, blurb: "A full week of practice, without a miss." },
+  { id: "star-badge", name: "Star badge", requirement: { type: "days", days: 7 }, blurb: "Seven days of study. That's a habit." },
   { id: "cap", name: "Backwards cap", requirement: { type: "domains", count: 3 }, blurb: "Ready to study, or skate." },
-  { id: "explorer-hat", name: "Explorer hat", requirement: { type: "streak", days: 14 }, blurb: "Two weeks in a row. You've earned the brim." },
+  { id: "explorer-hat", name: "Explorer hat", requirement: { type: "days", days: 14 }, blurb: "Fourteen days of study. You've earned the brim." },
   { id: "cape", name: "Hero cape", requirement: { type: "domains", count: 5 }, blurb: "For a bona fide study champion." },
   { id: "crown", name: "Golden crown", requirement: { type: "domains", count: 8 }, blurb: "Every section, mastered." },
 ];

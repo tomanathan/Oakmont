@@ -6,7 +6,7 @@ import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { computeDomainMastery, completedDomainCount } from "@/lib/mastery";
 import { progressMapFromRows } from "@/lib/progressState";
 import { isCostumeUnlocked, bestUnlockedCostume } from "@/lib/costumes";
-import { computePetState, PET_NAME, SECOND_PET_NAME, SECOND_PET_UNLOCK_STREAK_DAYS } from "@/lib/pet";
+import { computePetState, PET_NAME, SECOND_PET_NAME, SECOND_PET_UNLOCK_DAYS } from "@/lib/pet";
 import { AppShell } from "@/components/AppShell";
 import { SettingsClient } from "./SettingsClient";
 import { retakeState } from "@/lib/retakeCover";
@@ -44,7 +44,7 @@ export default async function SettingsPage() {
   // costume"), the best costume they've earned is what's shown as worn --
   // so this page always agrees with what Ozho is actually wearing
   // elsewhere in the app.
-  const unlockProgress = { domainsCompleted: sectionsCompleted, longestStreak: stats.longestStreak };
+  const unlockProgress = { domainsCompleted: sectionsCompleted, daysStudied: stats.daysStudied };
   const equippedCostume =
     stats.equippedCostume && isCostumeUnlocked(stats.equippedCostume, unlockProgress)
       ? stats.equippedCostume
@@ -100,9 +100,9 @@ export default async function SettingsPage() {
         equippedCostume={equippedCostume}
         petName={PET_NAME}
         petState={petState}
-        longestStreak={stats.longestStreak}
+        daysStudied={stats.daysStudied}
         secondPetName={SECOND_PET_NAME}
-        secondPetUnlockDays={SECOND_PET_UNLOCK_STREAK_DAYS}
+        secondPetUnlockDays={SECOND_PET_UNLOCK_DAYS}
         parentInviteCode={parentAccess?.parentInviteCode ?? null}
         parentShareToken={parentAccess?.parentShareToken ?? null}
         linkedParents={(parentAccess?.parentLinks ?? []).map((l) => ({ id: l.id, parentId: l.parent.id, email: l.parent.email, pending: !parentClaimed(l.parent) }))}

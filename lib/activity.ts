@@ -1,7 +1,7 @@
 import type { Progress } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
-import { updateStreak, isStreakMilestone } from "@/lib/gamification";
+import { advanceStreak, isStreakMilestone } from "@/lib/gamification";
 import { computeDomainMastery, completedDomainCount, isSectionComplete, isCurriculumComplete } from "@/lib/mastery";
 import { progressMapFromRows } from "@/lib/progressState";
 import { bestUnlockedCostume } from "@/lib/costumes";
@@ -19,6 +19,12 @@ for (const s of ALL_SUBSKILLS) (SUBSKILLS_BY_DOMAIN[s.domain] ??= []).push(s.id)
 export interface ActivityOutcome {
   currentStreak: number;
   longestStreak: number;
+  daysStudied: number;
+  streakFreezes: number;
+  freezesUsed: number;
+  freezeEarned: boolean;
+  repairOffered: boolean;
+  streakRepaired: boolean;
   streakMilestone: boolean;
   justCompletedDomain: string | null;
   justCompletedSection: string | null;
@@ -59,20 +65,29 @@ export async function finishActivity(userId: string, rowsBefore: Progress[]): Pr
     sections.find((sec) => !isSectionComplete(before, sec) && isSectionComplete(after, sec)) ?? null;
   const justCompletedCurriculum = !isCurriculumComplete(before) && isCurriculumComplete(after);
 
-  const streak = updateStreak(dbUser?.lastActiveDate ?? null, dbUser?.currentStreak ?? 0, dbUser?.longestStreak ?? 0);
+  const streak = advanceStreak({
+    lastActiveDate: dbUser?.lastActiveDate ?? null,
+    currentStreak: dbUser?.currentStreak ?? 0,
+    longestStreak: dbUser?.longestStreak ?? 0,
+    daysStudied: dbUser?.daysStudied ?? 0,
+    streakFreezes: dbUser?.streakFreezes ?? 1,
+    activitiesToday: dbUser?.activitiesToday ?? 0,
+    streakRepairTo: dbUser?.streakRepairTo ?? null,
+    streakRepairDay: dbUser?.streakRepairDay ?? null,
+  });
 
+  // Costumes and Mochi unlock on days studied, which never resets.
   const costumeBefore = bestUnlockedCostume({
     domainsCompleted: completedDomainCount(before),
-    longestStreak: dbUser?.longestStreak ?? 0,
+    daysStudied: dbUser?.daysStudied ?? 0,
   });
   const costumeAfter = bestUnlockedCostume({
     domainsCompleted: completedDomainCount(after),
-    longestStreak: streak.longestStreak,
+    daysStudied: streak.daysStudied,
   });
   const newCostume = costumeAfter.id !== costumeBefore.id ? { id: costumeAfter.id, name: costumeAfter.name } : null;
 
-  const secondPetJustUnlocked =
-    !isSecondPetUnlocked(dbUser?.longestStreak ?? 0) && isSecondPetUnlocked(streak.longestStreak);
+  const secondPetJustUnlocked = !isSecondPetUnlocked(dbUser?.daysStudied ?? 0) && isSecondPetUnlocked(streak.daysStudied);
   const streakMilestone = streak.currentStreak !== (dbUser?.currentStreak ?? 0) && isStreakMilestone(streak.currentStreak);
 
   const updated = await prisma.user.update({
@@ -81,6 +96,11 @@ export async function finishActivity(userId: string, rowsBefore: Progress[]): Pr
       currentStreak: streak.currentStreak,
       longestStreak: streak.longestStreak,
       lastActiveDate: streak.lastActiveDate,
+      daysStudied: streak.daysStudied,
+      streakFreezes: streak.streakFreezes,
+      activitiesToday: streak.activitiesToday,
+      streakRepairTo: streak.streakRepairTo,
+      streakRepairDay: streak.streakRepairDay,
       ...(dbUser?.firstStudiedAt ? {} : { firstStudiedAt: streak.lastActiveDate }),
     },
   });
@@ -88,6 +108,12 @@ export async function finishActivity(userId: string, rowsBefore: Progress[]): Pr
   return {
     currentStreak: updated.currentStreak,
     longestStreak: updated.longestStreak,
+    daysStudied: updated.daysStudied,
+    streakFreezes: updated.streakFreezes,
+    freezesUsed: streak.freezesUsed,
+    freezeEarned: streak.freezeEarned,
+    repairOffered: streak.repairOffered,
+    streakRepaired: streak.repaired,
     streakMilestone,
     justCompletedDomain,
     justCompletedSection,

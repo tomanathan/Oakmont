@@ -21,7 +21,7 @@ export function SettingsClient({
   equippedCostume,
   petName,
   petState,
-  longestStreak,
+  daysStudied,
   secondPetName,
   secondPetUnlockDays,
   parentInviteCode,
@@ -41,7 +41,7 @@ export function SettingsClient({
   equippedCostume: string;
   petName: string;
   petState: PetState;
-  longestStreak: number;
+  daysStudied: number;
   secondPetName: string;
   secondPetUnlockDays: number;
   parentInviteCode: string | null;
@@ -288,7 +288,7 @@ export function SettingsClient({
             const unlocked =
               c.requirement.type === "free" ||
               (c.requirement.type === "domains" && sectionsCompleted >= c.requirement.count) ||
-              (c.requirement.type === "streak" && longestStreak >= c.requirement.days);
+              (c.requirement.type === "days" && daysStudied >= c.requirement.days);
             const selected = costume === c.id;
             return (
               <button
@@ -316,8 +316,8 @@ export function SettingsClient({
                     ? c.requirement.count === 1
                       ? "Complete 1 section"
                       : `Complete ${c.requirement.count} sections`
-                    : c.requirement.type === "streak"
-                    ? `${c.requirement.days}-day streak`
+                    : c.requirement.type === "days"
+                    ? `${c.requirement.days} days of study`
                     : ""}
                 </div>
               </button>
@@ -326,23 +326,23 @@ export function SettingsClient({
         </div>
       </div>
 
-      {/* Mochi -- the bigger streak reward, a second companion rather than
+      {/* Mochi -- the bigger days-studied reward, a second companion rather than
           a costume. Shown here in the Ozho section (not its own top-level
           section) since it's still fundamentally about Ozho's world, just
           a rarer unlock than anything in the wardrobe above. */}
       <div className="bg-white border border-[#e2d7c1] rounded-xl p-6 mb-6 flex items-center gap-4">
-        <PixelDog size={56} variant="mochi" costume={null} className={longestStreak < secondPetUnlockDays ? "opacity-40 grayscale" : ""} />
+        <PixelDog size={56} variant="mochi" costume={null} className={daysStudied < secondPetUnlockDays ? "opacity-40 grayscale" : ""} />
         <div className="flex-1 min-w-0">
           <div className="text-[15px] font-semibold text-ink mb-1">{secondPetName}</div>
-          {longestStreak >= secondPetUnlockDays ? (
+          {daysStudied >= secondPetUnlockDays ? (
             <div className="text-xs text-stone-600 leading-relaxed">
-              Unlocked at a {secondPetUnlockDays}-day streak &mdash; {secondPetName} is out there roaming
+              Moved in after {secondPetUnlockDays} days of study. {secondPetName} is out there roaming
               alongside {petName} now.
             </div>
           ) : (
             <div className="text-xs text-stone-600 leading-relaxed">
-              A second companion, earned by keeping a {secondPetUnlockDays}-day practice streak going.
-              Longest streak so far: {longestStreak} of {secondPetUnlockDays} days.
+              A second companion who moves in after {secondPetUnlockDays} days of study. Days studied never
+              reset. So far: {daysStudied} of {secondPetUnlockDays}.
             </div>
           )}
         </div>

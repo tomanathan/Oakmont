@@ -6,6 +6,10 @@ export async function getUserStats(userId: string) {
     select: {
       currentStreak: true,
       longestStreak: true,
+      daysStudied: true,
+      streakFreezes: true,
+      streakRepairTo: true,
+      streakRepairDay: true,
       createdAt: true,
       baselineScore: true,
       goalScore: true,
@@ -32,6 +36,10 @@ export async function getUserStats(userId: string) {
     user ?? {
       currentStreak: 0,
       longestStreak: 0,
+      daysStudied: 0,
+      streakFreezes: 1,
+      streakRepairTo: null,
+      streakRepairDay: null,
       createdAt: new Date(),
       baselineScore: null,
       goalScore: null,

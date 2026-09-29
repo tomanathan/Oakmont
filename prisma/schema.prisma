@@ -34,11 +34,22 @@ model User {
   itemAttempts ItemAttempt[]
   lessonViews  LessonView[]
 
-  // Daily practice streak (consecutive calendar days with at least one quiz
-  // submission). Computed in app/api/progress/route.ts on each submission.
+  // Daily practice streak (consecutive UTC days with a finished lesson,
+  // quiz or review). Computed in lib/gamification.ts on each finished activity.
   currentStreak  Int       @default(0)
   longestStreak  Int       @default(0)
   lastActiveDate DateTime?
+  // Days with any study, ever. Never resets; costumes and Mochi unlock on it.
+  daysStudied    Int       @default(0)
+  // Banked streak freezes (each covers one missed day automatically). One to
+  // start, one more per 7 days in a row, at most 2 banked.
+  streakFreezes  Int       @default(1)
+  // Finished activities on lastActiveDate's day (the streak repair needs 2).
+  activitiesToday Int      @default(0)
+  // Streak repair offer: on the UTC day in streakRepairDay, finishing a second
+  // activity restores the streak to streakRepairTo.
+  streakRepairTo  Int?
+  streakRepairDay DateTime?
 
   // Study goals: a baseline score, target score, and SAT test date, used to
   // build a custom-length timeline in place of the default 6-month plan.

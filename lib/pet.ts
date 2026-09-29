@@ -14,20 +14,15 @@ export const PET_NAP_DAYS = 4;
 // The one gentle "Ozho misses you" email goes out this many days in.
 export const PET_NUDGE_DAYS = 5;
 
-// Mochi: a second companion earned at a long daily-practice streak, rather
-// than tied to quiz progress at all. Unlike Ozho, Mochi has no hunger clock -- once earned at this streak length, Mochi stays earned
-// even if the streak itself later resets to 0, the same "ever achieved"
-// philosophy the wardrobe's section-completion costumes already use (see
-// lib/costumes.ts) rather than something that can be lost by missing a
-// day. 30 is one of lib/gamification.ts's own STREAK_MILESTONES (a full
-// month), picked because it's meaningfully bigger than the wardrobe's
-// biggest streak-gated costume (14 days, see lib/costumes.ts) -- this is
-// the rarer, bigger reward the streak track builds toward.
+// Mochi: a second companion who moves in after 30 days of study (days
+// studied, which never reset -- see lib/gamification.ts). Unlike Ozho, Mochi
+// has no hunger clock. 30 is well past the biggest days-studied costume (14,
+// see lib/costumes.ts), so this is the rarer, bigger reward.
 export const SECOND_PET_NAME = "Mochi";
-export const SECOND_PET_UNLOCK_STREAK_DAYS = 30;
+export const SECOND_PET_UNLOCK_DAYS = 30;
 
-export function isSecondPetUnlocked(longestStreak: number): boolean {
-  return longestStreak >= SECOND_PET_UNLOCK_STREAK_DAYS;
+export function isSecondPetUnlocked(daysStudied: number): boolean {
+  return daysStudied >= SECOND_PET_UNLOCK_DAYS;
 }
 
 export type PetStage = "thriving" | "content" | "hungry" | "napping";

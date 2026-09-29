@@ -17,6 +17,11 @@ const STAGE_PILL: Record<CompanionSummary["stage"], { label: string; cls: string
 // feeds him (a finished quiz), so every line says what to do about it.
 function statusCopy(c: CompanionSummary): { headline: string; body: string } {
   const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
+  if (c.repairOpen && c.repairTo)
+    return {
+      headline: "One more brings the streak back.",
+      body: `Finish one more lesson or quiz today and your ${c.repairTo}-day streak is back, gap patched.`,
+    };
   switch (c.stage) {
     case "napping":
       return {
@@ -49,8 +54,8 @@ function callLine(c: CompanionSummary): string {
   if (c.stage === "napping") return "*yawn* Oh, you're back. Lesson? I'm up. I'm up.";
   if (c.stage === "hungry") return "Did someone say quiz? I'm so hungry.";
   if (c.stage === "content") return "Here! Haven't had my quiz yet today. Just saying.";
-  if (c.nextStreakCostume && c.currentStreak > 0 && c.nextStreakCostume.days - c.longestStreak === 1)
-    return `One more day and I get the ${c.nextStreakCostume.name}. No pressure.`;
+  if (c.nextDaysCostume && c.nextDaysCostume.days - c.daysStudied === 1)
+    return `One more day of study and I get the ${c.nextDaysCostume.name}. No pressure.`;
   return "You called? I came. I always come.";
 }
 
@@ -119,18 +124,23 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
           </div>
           <div className="mt-1 text-[13.5px] font-semibold leading-snug text-ink">{copy.headline}</div>
           <div className="mt-0.5 text-[12.5px] leading-relaxed text-stone-600">{copy.body}</div>
+          {c.streakFreezes > 0 && (
+            <div className="mt-1.5 text-[12px] font-semibold text-[#2c6f8f]" title="A streak freeze covers a missed day on its own. You earn one every 7 days in a row, up to 2.">
+              ❄ {c.streakFreezes} streak {c.streakFreezes === 1 ? "freeze" : "freezes"} saved
+            </div>
+          )}
         </div>
       </div>
 
       <>
           <div className="mt-4 flex flex-col gap-3 border-t border-stone-100 pt-3.5">
-            {c.nextStreakCostume && (
+            {c.nextDaysCostume && (
               <Reward
-                costume={c.nextStreakCostume.id}
-                title={c.nextStreakCostume.name}
-                detail={`${c.nextStreakCostume.days}-day streak`}
-                value={c.longestStreak}
-                max={c.nextStreakCostume.days}
+                costume={c.nextDaysCostume.id}
+                title={c.nextDaysCostume.name}
+                detail={`${c.nextDaysCostume.days} days of study`}
+                value={c.daysStudied}
+                max={c.nextDaysCostume.days}
                 unit="days"
                 color="#e07a3a"
               />
@@ -150,8 +160,8 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
               <Reward
                 mochi
                 title={`${SECOND_PET_NAME} joins`}
-                detail={`${c.mochiNeeds}-day streak`}
-                value={c.longestStreak}
+                detail={`${c.mochiNeeds} days of study`}
+                value={c.daysStudied}
                 max={c.mochiNeeds}
                 unit="days"
                 color="#8a8fd0"

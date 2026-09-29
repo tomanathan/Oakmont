@@ -22,6 +22,7 @@ export async function GET() {
         petBornAt: true,
         currentStreak: true,
         longestStreak: true,
+        daysStudied: true,
         equippedCostume: true,
         targetTestDate: true,
       },
@@ -46,7 +47,7 @@ export async function GET() {
   );
   const sectionsCompleted = completedDomainCount(mastery);
 
-  const unlockProgress = { domainsCompleted: sectionsCompleted, longestStreak: stats.longestStreak };
+  const unlockProgress = { domainsCompleted: sectionsCompleted, daysStudied: stats.daysStudied };
 
   // Re-validate the saved pick is still unlocked rather than trusting it
   // forever, falling back to the best costume still earned.
@@ -94,7 +95,7 @@ export async function GET() {
     weakestDomain,
     // Mochi (the second companion) reads this to decide whether to render
     // at all -- see components/SecondCompanion.tsx.
-    mochiUnlocked: isSecondPetUnlocked(stats.longestStreak),
+    mochiUnlocked: isSecondPetUnlocked(stats.daysStudied),
     // Studied today (a finished lesson, quiz, or review) -- what feeds him. Ozho's panel
     // leads with it (see components/OzhoPanel.tsx).
     fedToday: !!stats.lastActiveDate && state.daysInactive <= 0,

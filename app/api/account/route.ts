@@ -44,7 +44,7 @@ export async function PATCH(req: NextRequest) {
     const [progressRows, latestTest, streakUser] = await Promise.all([
       prisma.progress.findMany({ where: { userId: user.userId } }),
       prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
-      prisma.user.findUnique({ where: { id: user.userId }, select: { longestStreak: true } }),
+      prisma.user.findUnique({ where: { id: user.userId }, select: { daysStudied: true } }),
     ]);
     const progress = progressMapFromRows(progressRows);
     const subskillsByDomain: Record<string, string[]> = {};
@@ -55,7 +55,7 @@ export async function PATCH(req: NextRequest) {
       progress,
       (latestTest?.domainScores as Record<string, number> | null) ?? null
     );
-    const unlockProgress = { domainsCompleted: completedDomainCount(mastery), longestStreak: streakUser?.longestStreak ?? 0 };
+    const unlockProgress = { domainsCompleted: completedDomainCount(mastery), daysStudied: streakUser?.daysStudied ?? 0 };
     if (!isCostumeUnlocked(equippedCostume, unlockProgress)) {
       return NextResponse.json({ error: "That costume isn't unlocked yet." }, { status: 400 });
     }
