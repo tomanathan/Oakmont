@@ -7,7 +7,7 @@ lib/lessonVideos/audio.json. Videos whose script changed since they were
 voiced are left out (they play captions-only until re-voiced), so the audio
 can never disagree with the captions.
 
-  python3 scripts/voice/publish.py --lines /tmp/lesson-video-lines.json --run /tmp/ozho-voice/michael
+  python3 scripts/voice/publish.py --run scripts/voice/out/michael
 """
 import argparse, json, os, shutil
 
@@ -16,7 +16,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--lines", required=True)
+    ap.add_argument("--lines", default=os.path.join(ROOT, "scripts", "voice", "lines.json"))
     ap.add_argument("--run", required=True)
     args = ap.parse_args()
 

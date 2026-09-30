@@ -21,10 +21,9 @@ For every spoken line in the lesson videos (scripts/export-lesson-video-lines.ts
   4. Re-listen to the finished line and write a report (JSON + a pitch plot
      per line) for the reviewer agents and a human ear.
 
-Run with the voice env:
-  ~/oakmont-voice/env/bin/python scripts/voice/ozho_voice.py \
-     --lines /tmp/lesson-video-lines.json --ref ~/oakmont-voice/refs/am_michael.wav \
-     --out /tmp/ozho-voice/michael [--only <slug>] [--takes 4] [--publish]
+Run with the voice env (see scripts/voice/README.md for setup):
+  python scripts/voice/ozho_voice.py --ref scripts/voice/refs/michael.wav \
+     --out scripts/voice/out/michael [--only <slug>] [--takes 4]
 
 --publish writes public/lesson-audio/<slug>.mp3 and lib/lessonVideos/audio.json.
 """
@@ -96,7 +95,8 @@ class Voice:
         from chatterbox.tts import ChatterboxTTS
 
         self.torch = torch
-        dev = "mps" if torch.backends.mps.is_available() else "cpu"
+        dev = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+        print(f"voice model on {dev}", flush=True)
         self.m = ChatterboxTTS.from_pretrained(device=dev)
 
         class NoWatermark:  # the Perth watermark is audible as static here
@@ -144,6 +144,36 @@ def align(expected, heard):
         if k is not None:
             j = k + 1
     return idx
+
+
+ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split()
+TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
+
+
+def num_words(n):
+    """Integer to spoken words (0-999), e.g. 34 -> ['thirty', 'four']."""
+    if n < 20:
+        return [ONES[n]]
+    if n < 100:
+        return [TENS[n // 10]] + ([ONES[n % 10]] if n % 10 else [])
+    return [ONES[n // 100], "hundred"] + (num_words(n % 100) if n % 100 else [])
+
+
+def normalize_heard(words):
+    """The recognizer writes numbers as digits; the scripts spell them out."""
+    out = []
+    for w in words:
+        if re.fullmatch(r"\d{1,3}", w):
+            out += num_words(int(w))
+        elif re.fullmatch(r"\d{1,3}%", w):
+            out += num_words(int(w[:-1])) + ["percent"]
+        else:
+            out.append(w)
+    return out
+
+
+def split_hyphens(words):
+    return [p for w in words for p in w.split("-") if p]
 
 
 def wer(expected, heard_words):
@@ -217,10 +247,10 @@ def clean_audio(audio):
 
 def listen(ear, audio, sr, sentence):
     """Score one take of one sentence. Higher is better; notes explain."""
-    expected = words_of(sentence)
+    expected = split_hyphens(words_of(sentence))
     heard = ear.hear(audio, sr)
-    heard_words = [re.sub(r"[^a-z0-9']", "", h["w"].lower()) for h in heard]
-    heard_words = [w for w in heard_words if w]
+    heard_words = [re.sub(r"[^a-z0-9'%-]", "", h["w"].lower()) for h in heard]
+    heard_words = split_hyphens(normalize_heard([w for w in heard_words if w]))
     e = wer(expected, heard_words)
     low = [h["w"] for h in heard if h["p"] < 0.55]
     notes = []
@@ -370,7 +400,7 @@ def plot_line(path, audio, sr, text):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--lines", required=True)
+    ap.add_argument("--lines", default=os.path.join(ROOT, "scripts", "voice", "lines.json"))
     ap.add_argument("--ref", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--only", default=None)

@@ -1,0 +1,2628 @@
+[
+ {
+  "slug": "rw-central-ideas--whole-passage-main-idea",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Main idea questions aren't asking what the passage mentions. They're asking what it's for.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Ask yourself: if I could keep only one sentence, which one explains why all the others are there?",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The main idea is almost never handed to you up top. You build it from the whole passage.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Wrong answers usually grab one small detail, or go so vague they could describe a totally different passage.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 10
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Before this part, the team thought temperature was the big threat. Then fifteen years of data changed their minds.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Genetically diverse reefs survived the heat waves. Uniform ones didn't. And the last sentence turns that into advice: protect diversity, not just temperature.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Temperature as the biggest threat? That's the belief they moved past. And how long they studied is true, but it's just a detail.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "A wide variety of threats could describe any reef article ever written. It never mentions what this study found.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Genetic diversity, not temperature alone. That's the finding and the point, so that's the answer.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Passages love to open with an idea just so they can overturn it. Don't pick the idea they overturned.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find the sentence that makes all the others make sense. Then pick the choice that says it. No bigger, no smaller.",
+    "minDur": 10.5
+   }
+  ]
+ },
+ {
+  "slug": "rw-central-ideas--detail-comprehension-in-informational-texts",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Detail questions don't want your opinion. They want you to find one sentence and say it back accurately.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "However the question is worded, the move is the same. Find the sentence that answers it, then read it again.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The right choice says what that sentence says. No outside knowledge, no flipped direction, no bigger claim.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Slowing isn't stopping. Some isn't all. If a choice makes the finding sound stronger, be suspicious.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 8.57
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The question asks what she found, not what she did. The finding is right here: thirty-four of the forty came back.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Tagging turtles over two years is what she did. It's true, but it isn't a finding.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "All forty? The text says thirty-four, so that's overstating it. And six is the number that didn't come back.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Thirty-four of forty, exactly the way the text says it. Nothing added, nothing flipped.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Six and thirty-four both describe this study. Only one answers the question. Go back and check instead of trusting memory.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find the sentence, read it again, and pick the choice that says the same thing at the same strength.",
+    "minDur": 9.7
+   }
+  ]
+ },
+ {
+  "slug": "rw-central-ideas--reading-literary-narratives-and-poetry",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Stories and poems feel harder, but the question is the same one: what does the text actually show?",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Go by what the character actually does and says. Not by what a character like that would usually feel.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Nervous doesn't always mean unhappy. Silence doesn't always mean disapproval. Let the text tell you.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "And don't add a motive or a habit the text never mentions, no matter how believable it sounds.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 13.1
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Setup: Wen's grandfather just paid for a stranger's groceries. Then he tells no one. Not even his wife.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "When Wen brings it up, he gives a short answer and picks up the paper. He's closing the subject.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Wanting recognition is the opposite of telling no one. And regularly? We only see him do this once.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Disapproves of his grandson? He's dodging the topic, not scolding anyone. Nothing shows he's annoyed at Wen.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "He keeps his kindness private. That matches everything he actually does.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A short reply feels cold, so disapproval sounds right. But the text only shows him keeping something private.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Stick to what the character does and says. If the text doesn't show it, don't pick it.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "rw-central-ideas--reasonable-conclusions-supported-by-the-text",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Conclusion questions ask for something the text never says out loud. But it has to follow from what it does say.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Take two facts the passage gives you and put them together. The conclusion lives where they meet.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "It has to follow from the text, not just sound plausible. If the text could be true and the choice false, drop it.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Wrong answers add outside information, make the conclusion stronger than it is, or flip what caused what.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 10.48
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Fact one: ninety-one percent of people who tried the bike-share would use it again. They like it.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Fact two: only twelve percent of residents have tried it at all. So most people haven't given it a shot.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Most residents dislike it? We don't know what non-users think. Not trying something isn't the same as disliking it.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Getting canceled, being too expensive: the text never mentions either one. Those choices are invented.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Liked by the people who tried it, but most haven't tried it yet. Both facts, nothing extra.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Low usage makes dislike sound reasonable. But reasonable isn't enough. The text has to back it up.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Put the stated facts together and pick the choice that follows from them. Nothing added, nothing stretched.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "rw-evidence--direct-quantitative-support",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Which choice best supports this claim? It's an easy question to ask, and a sneaky one to answer.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Before the choices, pin down what the claim is actually about. That's the thing your evidence has to measure.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Fast filter: cross out anything that's just a general statement about the topic. That's bait.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Of what's left, pick the specific number that measures the claim's exact outcome. Related isn't enough.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The claim: the bike lanes reduced traffic congestion. So we need a number about congestion.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Cyclists feeling safer is a feeling, not a traffic measurement. That one's out.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Twelve million dollars and forty miles are real numbers. But one measures spending, the other measures size. Neither is congestion.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Commute times fell fifteen percent. That's a number about congestion, tied to the bike lanes.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A big, specific number feels like strong evidence. It isn't, unless it measures what the claim is about.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find what the claim says changed. Then pick the number that measures that change.",
+    "minDur": 7.7
+   }
+  ]
+ },
+ {
+  "slug": "rw-evidence--ruling-out-alternative-explanations",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Some claims say one thing caused another. Those need tougher evidence than a nice number.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "When a claim says caused or led to, the evidence has to rule out other explanations.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The best way is a comparison: a similar group that didn't get the change, and didn't see the result.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Something dropping after a change doesn't prove the change did it. Something else could have happened at the same time.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.52
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The claim: the training reduced injuries. That's a cause, so we need to rule out other causes.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "A two-hour session and a helpful rating don't measure injuries at all. Those go first.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Injuries fell eighteen percent. Sounds good. But maybe production just slowed down that year. This choice can't rule that out.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Same eighteen percent drop, plus a sister factory without the training that saw no change. That rules out a company-wide slowdown.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A clean before-and-after number is tempting. For a cause claim, it only shows two things happened around the same time.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "When the claim says caused, look for the choice with a comparison group. It's the one that rules things out.",
+    "minDur": 10.1
+   }
+  ]
+ },
+ {
+  "slug": "rw-evidence--reading-data-from-a-graph-or-table",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Graph questions don't need tricks. They need you to read the numbers slowly.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Find the exact category or time period the question points to before you look at the choices.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then check each choice against the data. Don't stop at the first one that sounds plausible.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Wrong answers swap a label, flip a direction, or stretch one small change into a whole trend.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 12.38
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "We need what happened after quarter two. Revenue went from five point one down to four point eight. A small dip.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Then quarter four jumps to six point three. So it dipped, then rose again.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Rose in every quarter misses the dip. Remained flat ignores that anything changed at all.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Fell in every quarter takes one dip and stretches it through the whole year. Quarter four went up.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Fell slightly, then rose again. That's exactly what the numbers do.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "One small drop can get stretched into a claim that it fell every quarter. Check each number before you believe a pattern.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find the part the question asks about, read the actual numbers, and match them one by one.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "rw-evidence--selecting-the-best-supporting-quotation",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Picking the best quote isn't about finding the most dramatic line. It's about finding the most exact one.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "First, figure out exactly what the claim names. Not just a feeling, but the specific kind of feeling.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then find the quote that actually shows that thing, not one that just mentions the same person or scene.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.48
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The claim isn't just pride. It's quiet pride. That word quiet is doing a lot of work.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Eleven hours on beadwork is a fact with no feeling in it. And wondering if anyone will notice? That's doubt.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Telling the whole shop it's her finest dress is pride, sure. But it's loud. The claim says quiet.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Holding it up, saying nothing, smoothing one seam. That's pride, and it's quiet.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The loudest quote grabs your attention first. Often the quieter one matches the claim better.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Pin down exactly what the claim describes, then pick the quote that shows that, not just something close.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "rw-evidence--evaluating-a-hypothetical-finding-s-effect-on-a-claim",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Some evidence questions give you findings that don't exist yet. Your job is to judge which one would matter.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Ask yourself: if this claim is true, what would we expect to see? Say it in your own words first.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then pick the finding that matches that prediction exactly. Being about the same topic doesn't count.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "If the question says weaken, look for the opposite of your prediction, or the same result without the cause.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The claim: the new line means fewer people drive downtown for work. So we'd expect less downtown driving after it opened.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Three years to build, and riders liking the comfort. Neither one tells us anything about driving.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Forty thousand riders a day sounds huge. But they could be new commuters who never drove. It doesn't show driving dropped.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Downtown parking permits dropped after the line opened. Fewer permits means fewer people driving in. That's the prediction.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Ridership is about the train, so it feels relevant. But the claim is about driving. Match the prediction, not the topic.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Turn the claim into what you'd expect to see. Then pick the finding that shows exactly that.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "rw-inferences--logical-completion-fill-in-the-blank-style",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Fill-in-the-blank inferences reward the careful answer, not the exciting one.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The answer has to follow from the text alone. No outside knowledge, no creative leaps.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Ask what must be true next, given only what's here. Not what would be interesting.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.43
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The key fact: these results contradicted decades of research. That's surprising, and surprising results need checking.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Abandoning the whole question overreacts. And publishing right away skips the checking.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "One result can't show decades of research were done wrong. The text never makes that leap.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Replicating the experiment. It's the cautious next step, straight from the text.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Breakthroughs and big reversals sound exciting. The right answer is the one the text forces.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Stick to the text, and pick the smallest step it supports.",
+    "minDur": 6.5
+   }
+  ]
+ },
+ {
+  "slug": "rw-inferences--multi-step-and-conditional-inferences",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Some inference questions hand you two facts and quietly expect you to use both.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Keep each fact separate, then ask what they add up to together.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The answer is the narrowest conclusion all the facts support. Not a sweeping one.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 11.19
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Fact one: three times as many loaves per batch. Fact two: it heats up in half the time.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "More bread per batch, less waiting per batch. So output dropping, or staying the same, goes against both facts.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "And customers never come up. The question is how much bread the bakery can make.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Output could go up a lot, without necessarily hiring more staff. Both facts, nothing extra.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Stop after fact one, and extra choices start to look fine. The second fact is there for a reason.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Line up every fact, and claim no more than they show together.",
+    "minDur": 6.9
+   }
+  ]
+ },
+ {
+  "slug": "rw-words-context--precise-synonym-in-context",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "These look like vocab questions. Mostly, they're about finding one clue.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Cover the choices. Look for the clue: a contrast, a restatement, or a cause and its result.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Guess your own plain word for the blank. Then pick the choice that means it, not the fanciest one.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.67
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The clue: departments wanted bigger budgets, and they criticized the approach. So spending was tight. My word: strict.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Generous is the opposite. Nobody hoping for more money complains about generosity.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Confusing and enthusiastic don't explain the complaint. It's about how little got spent.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Austere means strict and bare-bones. That matches my word.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A harder word isn't more likely to be right. Pick the one that means what the sentence needs.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find the clue, predict your word, then match it.",
+    "minDur": 5.7
+   }
+  ]
+ },
+ {
+  "slug": "rw-words-context--multiple-meaning-word-trap",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Sometimes the right answer looks wrong, because you only know its everyday meaning.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The test likes words with two common meanings, and then it uses the less familiar one.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If a choice seems too easy, or makes no sense at first, check its other meaning.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 11.19
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The critic recommended the film, but spent three paragraphs on its flaws. So the review was mixed.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Glowing is too positive for all those flaws. Dismissive is too negative, since the critic still recommended it.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Brief doesn't fit three paragraphs of flaws. And qualified? You probably hear credentials. That's the wrong meaning here.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Qualified also means held back by reservations. Praise with conditions. That's this review.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Know only one meaning, and you'll cross off the right answer without a second thought.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "When a choice seems off, try its other meaning. The sentence tells you which one it wants.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "rw-words-context--word-meaning-as-used-in-the-text",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Here, every choice is a real meaning of the word. Only one fits this sentence.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Cover the choices, reread the sentence, and put your own simple word in its place.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then swap each choice in. Unusual meaning or everyday one, let the sentence decide.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 13.57
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "She has a keen eye for small faults. She spots a crooked hem from across the room. My word: sharp-sighted.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Keen can mean eager. But an eager eye wants something. It doesn't spot a crooked hem.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Sharp-edged is for a blade, and bitterly cold is for a keen wind. Neither describes an eye.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Perceptive. Good at noticing things, which is exactly what she does.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Every wrong choice is a real meaning of keen. It just breaks when you swap it in.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Say it in your own words, then keep the choice that says the same thing.",
+    "minDur": 8.1
+   }
+  ]
+ },
+ {
+  "slug": "rw-text-structure--main-purpose-of-the-whole-text",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Main purpose questions don't ask what a text is about. They ask what it's doing.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Sum up the whole text as a verb phrase, like to explain a discovery, or to show how someone feels.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "In a story, ask what the details add up to. Usually a feeling, a place, or a relationship.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 11.9
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "It's Mira's first time at the coast. She stops and stares, and the water seems endless. The rest of the scene keeps building that wonder.",
+    "minDur": 10.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Scared? Nothing says so. She lets go of her uncle's hand to stand and stare. That's awe.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The text never says why the family came. And the pictures she'd seen get one line, just to show the real ocean beats them.",
+    "minDur": 10.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "To convey Mira's amazement at seeing the ocean for the first time.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A choice that fits one detail isn't the purpose. It has to cover the whole text.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Name what the whole text is doing, then match the verb and the aim.",
+    "minDur": 7.7
+   }
+  ]
+ },
+ {
+  "slug": "rw-text-structure--function-of-a-sentence-within-a-paragraph",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Some questions don't care what a sentence says. They care what job it's doing.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A sentence might introduce a claim, give an example, or qualify one, meaning limit it without rejecting it.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The best test: delete it in your head. What would the passage lose?",
+    "minDur": 6.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 12.38
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The claim: narrow streets slow drivers, so they're safer. Then our sentence, starting with however.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Delete it, and narrow streets sound safer no matter what. It adds a condition: no clear sightlines, more risk.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "It never says narrow streets are always more dangerous. There's no statistic. And sightlines aren't a new topic.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "It qualifies the main claim. It limits it without throwing it out.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A however sentence often just limits a claim. Don't read it as a full contradiction.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Don't restate the sentence. Ask what the passage would lose without it.",
+    "minDur": 6.9
+   }
+  ]
+ },
+ {
+  "slug": "rw-text-structure--function-of-an-entire-paragraph",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Same idea as a sentence's job, just bigger. What is this paragraph there to do?",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A paragraph usually gives background, raises an opposing view, offers evidence, or draws a conclusion.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Look at the paragraphs around it. Words like however and for example are big clues.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 12.14
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Paragraph one starts with: many people assume. Paragraph two starts with: in reality. Belief, then correction.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "No invention history here. And the passage never says rods don't work, just not like a decoy.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "It's not a rare exception either. It's a belief lots of people share.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "It presents a common misconception, and sets up the real explanation that follows.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Skim past a phrase like in reality, and you can miss the paragraph's whole job.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Ask what the paragraph does for the ones around it.",
+    "minDur": 6.1
+   }
+  ]
+ },
+ {
+  "slug": "rw-text-structure--describing-the-structure-of-an-entire-passage",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "This one zooms all the way out. Not one sentence, but the shape of the whole passage.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Before the choices, sketch the shape. Claim, then example. Problem, then solution.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then find the choice with the same moves in the same order. The right topic isn't enough.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "First, a general pattern: most Arctic songbirds take the same routes. Then the tern breaks it. Pattern, then exception.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "No hypothesis gets tested with experiments. And it's not told from one bird's point of view.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "It does end on a debate, but about the tern's route. Not two theories of why birds migrate.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "A general pattern, then one species as the exception.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A choice can name the right ideas and still get the order backwards.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Sketch the shape first, then match the moves in order.",
+    "minDur": 6.1
+   }
+  ]
+ },
+ {
+  "slug": "rw-cross-text--finding-common-ground-between-disagreeing-authors",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Two authors disagree, and you're asked what they'd both still say. Sounds impossible. It isn't.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Split each passage in two: the facts it starts from, and the conclusion it reaches.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Authors who disagree usually share the facts. They're fighting about what those facts mean.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 11.9
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Passage one says social media boosts civic engagement. Passage two says it breeds isolation. B takes passage one's side.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Neither passage mentions regulation. And nobody calls in-person relationships entirely obsolete.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The fact under both arguments: social media has changed how people interact. Passage one needs that to be true too.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "It's choice A. Same starting fact, opposite conclusions.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A tempting choice often restates one side. If only one author would sign it, it isn't common ground.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Separate facts from conclusions, then find the fact both authors stand on.",
+    "minDur": 6.9
+   }
+  ]
+ },
+ {
+  "slug": "rw-cross-text--predicting-one-author-s-response-to-the-other-s-claim",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Here you predict a reply. One author hears the other's point. What do they say back?",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Every author has one core value driving the argument. Name it in a few words.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then let that value answer the new claim. Usually it accepts the facts and argues about what matters more.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 11.9
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Passage one cares about residents: better sleep, calmer neighborhoods. Its value is quality of life.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Calling the ordinance a mistake would flip passage one's whole position. B is out.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Denying that any business was hurt ignores the real losses passage two describes. And telling businesses to move cities goes way past anything passage one argues.",
+    "minDur": 11.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "It's choice A. Sure, businesses feel it, but residents' quality of life matters more.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Skip replies that deny the other side's facts. A reasonable author admits them and argues about what they mean.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find what the author cares about, then let that answer the new claim.",
+    "minDur": 7.3
+   }
+  ]
+ },
+ {
+  "slug": "rw-rhetorical-synthesis--goal-filtered-selection",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "You get some notes and a goal. Here's the secret: almost every choice is true.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "So don't ask which sentence is accurate. Ask which one does the exact job the goal names.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Goals are specific. One small phrase can rule out half the choices.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The goal: impact on staff work. Not patron convenience. That second part matters.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Shorter wait times help patrons, not staff. So A and C, built on wait times, miss the goal.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "D calls the kiosks a technology investment. True enough, but it says nothing about staff.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Here's the staff note: more time helping patrons find books.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "B pairs the kiosks with the staff note. Exactly what the goal asks.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Accurate isn't enough. The wrong choices here are true. They just serve a different goal.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Read the goal closely, then pick the sentence that does that exact job.",
+    "minDur": 7.3
+   }
+  ]
+ },
+ {
+  "slug": "rw-transitions--identify-the-logical-relationship-first",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Transitions look like a vocab test. They're really a logic test.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Before you read a single choice, decide how the two sentences connect.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "It's almost always one of four: contrast, cause and effect, addition, or example.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Only then find the word that signals that relationship. Don't test which one sounds right.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.71
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "First sentence: the results looked promising.",
+    "minDur": 3.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Second sentence: the trials failed to replicate it. Good news, then bad news. That's a contrast.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The word similarly signals a match. The phrase for example signals an illustration. Neither is a contrast.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "As a result would mean the good results caused the failure. They didn't.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "The word however is the only contrast here. That's the answer.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Every choice can sound fine out loud. Only one matches the logic.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Name the relationship, then pick the word. Every time.",
+    "minDur": 5.7
+   }
+  ]
+ },
+ {
+  "slug": "rw-transitions--contrast-vs-concession",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "However and nonetheless both sound like contrast words. They're not quite the same.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The word however sets two opposite ideas side by side. This one, but that one.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The words nonetheless, still, and even so mean: yes, that happened, but this is true anyway.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "So ask: do the ideas clash head on, or does the second hold up despite the first?",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 7.14
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "First sentence: the repairs ran months late. A setback.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Then the bridge passed every inspection. Being late doesn't cancel that. It's good news despite bad news.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The word consequently says the delay caused the clean inspection. It didn't.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "And passing isn't similar to running late, or an example of it.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "It's nonetheless. The setback is admitted, and the result still holds.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Contrast words aren't interchangeable. Concession means despite this, still. Not a flat contradiction.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Opposites side by side? However. True despite a setback? Nonetheless.",
+    "minDur": 6.1
+   }
+  ]
+ },
+ {
+  "slug": "rw-boundaries--independent-clause-joins-comma-semicolon-period-or-conjunction",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Two full sentences, one blank between them. There are only a few legal ways to glue them together.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "First question, every time: could each side stand on its own as a full sentence? That's what an independent clause is.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If both sides are full sentences, use a period, a semicolon, or a comma plus a joining word like and or but.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "A colon works only if the second part explains the first. A comma by itself never works. That's a comma splice.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.67
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Left side: the results were surprising. Subject, verb, complete thought. That's a sentence.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Right side: no one had predicted such a sharp decline. Also a full sentence. So a comma alone is a splice.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The word so, with no comma before it, runs them together. And the second part isn't a result of the first anyway.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Comma plus but is legal punctuation, but there's no contrast here. The second part explains why the results were surprising.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "A semicolon joins two related full sentences, no joining word needed. That's the one.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A lone comma between two full sentences is the most popular wrong answer. It feels natural. It's still a splice.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Check both sides first. If they're both full sentences, you already know which choices can work.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "rw-boundaries--punctuating-around-conjunctive-adverbs",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Words like however look like they could glue sentences together. They can't. They need a strong mark on one side.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The word however isn't a joining word like but. Commas on both sides of it still leave you with a comma splice.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "So one side needs something strong, a semicolon or a period, and the other side just gets a comma.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "To pick the side, ask which sentence the however belongs to. What is it actually contrasting?",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 10
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "First sentence: engineers predicted the bridge would sag at forty tons. That's a full sentence.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Second: it held steady until fifty-five tons. Also full. However marks the contrast between the prediction and what happened.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "So commas on both sides are a splice, and nothing before however runs the two sentences together.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "A semicolon after however ties it to the prediction, where it contrasts with nothing.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Semicolon before however, comma after. However opens the second sentence, right where the contrast happens.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Comma, however, comma looks tidy. Between two full sentences, it's still a comma splice.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Figure out which sentence the transition belongs to. The strong mark goes at that sentence's edge, the comma inside it.",
+    "minDur": 10.1
+   }
+  ]
+ },
+ {
+  "slug": "rw-boundaries--semicolon-separated-lists-with-internal-commas",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Some lists already have commas inside the items. Add more commas and nobody can tell who's who.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "When every item is a single word or a short phrase, ordinary commas between them are fine.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "But if even one item has its own comma, like a name and a job, switch to semicolons between the items.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "And the list itself gets introduced by a colon, right after a full sentence.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Three volunteers organized the event. That's a full sentence announcing a list. A semicolon can't introduce a list. A colon can.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Choice C opens with a comma and drops the commas around each job. Two problems at once.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Now the colon choices. Each item is a name, a comma, then a job. With commas everywhere, you can't tell where one volunteer ends.",
+    "minDur": 10.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Colon to open, semicolons between people, commas inside each one. Three volunteers, easy to tell apart.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Don't overcorrect. Muffins, scones, and croissants don't need semicolons. No commas inside the items, no semicolons.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Look inside each item. If any one of them has a comma, the whole list switches to semicolons.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "rw-boundaries--nonessential-appositives-and-descriptive-phrases",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Some phrases are just bonus info. Drop them and the sentence still works. Those get boxed off with commas.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Ask one thing: do you need this phrase to know who or what the sentence means? If yes, no commas.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If it's just extra detail, box it off with commas, like parentheses you could lift right out.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "In the middle of a sentence, that means a comma on both sides. At the very start or end, just one.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.95
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "My uncle Raymond. The name already tells us exactly who this is.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "So a retired firefighter is extra detail. Lift it out and the sentence still works. It needs commas.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "It sits mid-sentence, so it needs a comma on each side. One choice opens without closing. The other closes without opening.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Commas on both sides. The extra detail is boxed in, and Raymond still volunteers.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The half-boxed version is the sneaky one. One comma looks almost right. In the middle, you need the pair.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "If you can drop it, box it. Commas on both sides in the middle, one at the edges.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "rw-boundaries--introductory-phrases-and-single-boundary-commas",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Not every sentence is two sentences glued together. Sometimes only one side can stand on its own.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "These start with a lead-in phrase, like despite the storm, followed by a full sentence.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The lead-in can't stand on its own. So a period or a semicolon is wrong. Those need full sentences on both sides.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "The fix is almost always a single comma, right where the lead-in ends and the main sentence starts.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The flight departed on time. That's a full sentence. Now the front part: despite the storm. Could that stand alone?",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Nope. So a semicolon, which needs a full sentence on both sides, is out.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "No comma at all runs the lead-in into the sentence. And a comma after despite splits it from the storm.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "One comma, right after the word storm. Lead-in, comma, sentence.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Once you learn the semicolon rule, it's tempting everywhere. Check both sides first. Here only one side is a sentence.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "A lead-in phrase before a full sentence gets one comma. Not a semicolon, not a period.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "rw-boundaries--possessive-vs-plural-noun-forms",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Plural, possessive, plural possessive. Out loud they sound exactly the same, so your ear is no help here.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "First ask: does the noun own the word right after it? If nothing's owned, it's a plain plural. No apostrophe.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If it owns something, count the owners. One owner gets apostrophe s. A plural ending in s just gets an apostrophe after the s.",
+    "minDur": 10.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.71
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Right after the blank comes identities. Those belong to the ghostwriters. So we need a possessive, not a plain plural.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "And the sentence says two. More than one owner. The apostrophe s version would mean just one ghostwriter.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The last one adds apostrophe s after the s. That's not a real form. A plural ending in s just takes the apostrophe.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Ghostwriters, with the apostrophe after the s. Two owners, one possessive.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Don't sprinkle apostrophes on every plural. If nothing after the word belongs to it, there's no apostrophe.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Is something owned? If not, plain plural. If so, count the owners, then place the apostrophe.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "rw-boundaries--recognizing-when-no-punctuation-is-needed",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Here's the sneaky one. Sometimes the right answer adds no punctuation at all.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "When three choices add a comma or a semicolon, it's easy to assume one must be needed. Not always.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Some words go together with nothing between them: a subject and its verb, a verb and its object, a preposition and its object.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Run the same check as always. What's on each side of the mark? If there's no real boundary, leave it clean.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.67
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The blank holds the words during the, right before performance. During is a preposition, and the performance is its object.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "A comma or a semicolon after during splits it from its object. And a semicolon needs full sentences on both sides anyway.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "A comma after the word the cuts it off from performance, breaking one little phrase in half.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "During the performance, with no marks inside. It's one unit, so it stays together.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A comma in the choices isn't a hint. Don't add one just because it's on the menu.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Check what's on each side. If nothing needs separating, the cleanest choice wins.",
+    "minDur": 7.3
+   }
+  ]
+ },
+ {
+  "slug": "rw-boundaries--using-a-colon-to-introduce-a-list-explanation-or-elaboration",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A colon basically says, here's what I mean. And it's less picky than a semicolon about what comes after it.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The rule lives on the left. Everything before a colon has to stand on its own as a full sentence.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "After it, you can have a list, a short phrase, or a sentence that explains the first one.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "That's the difference from a semicolon, which needs full sentences on both sides.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 8.33
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Left side ends with: the team packed everything they would need. That's a full sentence, and it promises something.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Right side: tents, dried food, water filters, and a satellite phone. That's a list, not a sentence. So no semicolon.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "A comma doesn't introduce a list after a full sentence. And like would make these just examples, when it's everything they needed.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "The colon. A full sentence on the left, and here's what I mean on the right.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Don't treat a colon like a semicolon. Only the left side has to be a full sentence.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Check the left side. If it's a full sentence that sets something up, the colon delivers it.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "rw-boundaries--direct-vs-embedded-questions",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Is this sentence asking a question, or just talking about one? That decides the word order and the ending.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "If a question is tucked inside a statement, after words like wondered or asked, keep normal order and end with a period.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If the text asks the question itself, the helping verb comes before the subject, and it ends with a question mark.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Ines Varga wondered. The sentence is reporting what she wondered, not asking us anything. So it's an embedded question.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "That means statement order: the snow lasted, not did the snow last. Both choices with did are out.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "B has the right order but a question mark. The sentence is a statement, so it ends with a period.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Why the snow lasted so long, with a period. Statement order, statement ending.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "There's a why in it, so a question mark feels right. But she wondered makes the whole thing a statement.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "First decide whether the text asks or reports. The word order and the end mark follow from that.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "rw-form-structure--subject-verb-agreement-with-distracting-phrases",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A verb has to match its subject. The trick is that the subject gets buried under extra words.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Mentally cross out any phrase sitting between the subject and its verb.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then match the verb to the real subject. One thing, singular verb. More than one, plural.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 7.62
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The phrase of the survey is just describing. Cross it out. Same with conducted across all twelve regions.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "What's left: the results, blank, still being reviewed. Results means more than one. Plural.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Is, was, and has been are all singular. They'd match survey, but survey isn't the subject.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Are. Plural subject, plural verb.",
+    "minDur": 3.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A noun tucked inside an extra phrase is often a decoy. Match the verb to the real subject.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Cross out the extras, find the real subject, then match the verb.",
+    "minDur": 6.9
+   }
+  ]
+ },
+ {
+  "slug": "rw-form-structure--parallel-structure-in-lists-and-comparisons",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Lists have a rhythm. Every item has to match the ones that came before it.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "In a list, every item uses the same grammatical shape. That's called parallel structure.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Look at the first couple of items, notice their form, and make the last one match exactly.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.19
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Writing clear emails. Giving effective feedback. Both start with a word that ends the same way, in ing.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The choices to lead and leads switch shapes partway through the list. That breaks the rhythm.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Having led is closer, but it's still a different form. The list needs the same kind of word, like writing and giving.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Leading meetings efficiently. Writing, giving, leading. All three match.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Some choices are perfectly good English on their own. What matters is whether they match the rest of the list.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Spot the form of the first items, then make every item match it.",
+    "minDur": 7.3
+   }
+  ]
+ },
+ {
+  "slug": "rw-form-structure--pronoun-agreement-and-reference",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Pronoun questions are two checks in one: who it points to, and what job it's doing.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Find the noun the pronoun points back to. Is it one thing, or more than one?",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then check its job. Right before a noun, you need an owner word, like its or their, with no apostrophe.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 15.24
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Whose theory? Sorensen and Asante's. Two people, so it's plural.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Its, with no apostrophe, is singular. It would point to the ship, not two archaeologists.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The blank sits right before theory, so it needs an owner word. The apostrophe choices just mean it is and they are.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Their. Plural, and it shows ownership.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Several choices sound identical out loud. Check the apostrophe. Owner words never have one.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find who the pronoun means, then check whether the blank needs an owner word.",
+    "minDur": 7.7
+   }
+  ]
+ },
+ {
+  "slug": "rw-form-structure--verb-tense-and-form-consistency",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Verb tense questions are really timeline questions. Work out when things happened, then pick the verb.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Before the choices, ask: one past event, one before another, or something still going now?",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "When one past event happens before another, the earlier one takes had. Like had finished, or had left.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.43
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "By the time the store closed. That's a past moment, and the restocking was finished before it.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Plain restocked blurs the order. We need to show the restocking came first.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Has restocked ties it to now, but the whole scene is past. Was restocking sounds unfinished, but every shelf twice is done.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Had restocked. Done before the store closed.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Plain past tense sounds natural. But when one event comes before another, the earlier one needs had.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Map when things happened, then pick the verb that fits that timeline.",
+    "minDur": 6.9
+   }
+  ]
+ },
+ {
+  "slug": "rw-form-structure--modifier-placement-and-dangling-modifiers",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "An opening phrase describes whatever comes right after the comma. When that's wrong, things get weird.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A describing phrase at the start of a sentence belongs to the noun right after the comma.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "So ask who actually does what the phrase says. If it isn't that noun, the phrase is dangling.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.24
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The noun after the blank is the ancient manuscript. So the opener has to describe the manuscript.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Discovering it, or having discovered it, makes the manuscript the discoverer. Manuscripts don't go searching.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "To discover it says it was restored in order to discover itself. That makes no sense.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Discovered in a monastery archive. The manuscript was found. It didn't do the finding.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Every choice makes a full sentence. The real test is whether the opener fits the noun after it.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Figure out who the opener describes, then make sure that's the noun right after the comma.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "rw-form-structure--finite-vs-non-finite-verb-forms",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Some verb forms can run a sentence on their own. Others can't. Which kind does the blank need?",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A main verb shows tense and can carry a sentence by itself. Like inspected.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Any other verb-looking word needs a form that can't stand alone, like finding or to find. So find the main verb first.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 7.62
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The main verb is already here: inspected. The engineer inspected the beams. That's a full sentence.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "So the blank starts an add-on. Found would be a second main verb, two sentences glued with just a comma.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Finds has the same problem. Having find isn't grammatical at all.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Finding. It attaches and tells us what the engineer found.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Found looks normal. But with a main verb already there, it makes a run-on.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find the one main verb. Everything else that looks like a verb has to attach, not stand alone.",
+    "minDur": 9.3
+   }
+  ]
+ }
+]
