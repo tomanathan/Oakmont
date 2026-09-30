@@ -2037,3 +2037,57 @@
   width: fit-content;
   max-width: 100%;
 }
+
+/* ---------- restored original wording: extra pieces ---------- */
+.nb-root .nb-par {
+  position: relative;
+}
+.nb-root .nb-anchor {
+  position: absolute;
+  top: -90px;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  visibility: hidden;
+}
+/* Phones: the mark alone, as on the original page. */
+@media (max-width: 640px) {
+  .nb-root .nb-logo-word {
+    display: none;
+  }
+}
+.nb-root .nb-hl--static {
+  animation: none;
+  background-size: 100% 48%;
+}
+.nb-root .nb-incl--row {
+  margin: 18px 0 14px;
+}
+.nb-root .nb-chip--line {
+  background: var(--paper);
+}
+.nb-root .nb-plan-perk {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 14px 0 18px;
+  padding: 11px 13px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: var(--paper);
+  font-size: 15px;
+  line-height: 1.35;
+}
+.nb-root .nb-plan-perk .nb-tick {
+  margin-top: 3px;
+}
+.nb-root .nb-plan-perk b {
+  display: block;
+  font-weight: 700;
+}
+.nb-root .nb-plan-perk span {
+  color: var(--ink-deep);
+}
+.nb-root .nb-hero .nb-cta-row .nb-btn--lg {
+  min-height: 56px;
+}

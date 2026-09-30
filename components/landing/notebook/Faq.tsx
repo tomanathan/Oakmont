@@ -10,7 +10,7 @@ export function Faq() {
       <div className="nb-faq-side">
         <div className="nb-sec-head">
           <h2 id="nb-faq-h" className="nb-h2 nb-h2--md">
-            Questions, answered
+            Frequently asked questions
           </h2>
           <Scribble w={220} className="nb-scribble" />
         </div>

@@ -1,45 +1,37 @@
 import { TrackedLink } from "../TrackedLink";
-import { DoodleArrow, Sparkle } from "./art";
 import { Room } from "./Room";
 
 const d = (ms: number) => ({ ["--d" as string]: `${ms}ms` });
 
+// The front door: who this is and what it's for, nothing else. Two ways in:
+// students start with questions (/start), parents with their own quick
+// setup that ends in sending the teen a link.
 export function Hero() {
   return (
     <section className="nb-hero" aria-labelledby="nb-hero-h">
       <div className="nb-hero-copy">
-        <span className="nb-chip nb-chip--butter nb-rise" style={d(60)}>
-          SAT prep, built by a tutor of 8 years
-        </span>
         <h1 id="nb-hero-h" className="nb-h1 nb-rise" style={d(140)}>
-          Your SAT plan comes with a <span className="nb-hl">dog.</span>
+          Oakmont <span className="nb-hl">SAT Prep</span>
         </h1>
         <p className="nb-lede nb-rise" style={d(240)}>
-          A week-by-week plan to your test date, lessons and quizzes for every SAT skill, and full-length practice tests. You study, Ozho eats.
+          The complete SAT prep course, paced to your test date, with a dashboard that keeps parents in the loop.
         </p>
         <div className="nb-cta-row nb-rise" style={d(340)}>
           <TrackedLink href="/start" event="signup_started" className="nb-cta">
             <span className="nb-cta-in">
-              <b>Try 5 SAT questions</b>
-              <small>no signup · about 5 minutes</small>
+              <b>I&apos;m a student: start free</b>
             </span>
             <span className="nb-cta-arrow" aria-hidden>
               →
             </span>
           </TrackedLink>
-          <span className="nb-anno nb-cta-anno" aria-hidden>
-            <DoodleArrow w={70} className="nb-cta-doodle" />
-            start here
-          </span>
-        </div>
-        <div className="nb-under nb-rise" style={d(420)}>
-          <span className="nb-free">
-            <Sparkle size={16} /> 7 days free, no card
-          </span>
-          <TrackedLink href="/parent/login?mode=signup" event="parent_signup_started" className="nb-parent">
-            Parent? Connect to your student&apos;s plan <span aria-hidden>→</span>
+          <TrackedLink href="/parent/login?mode=signup" event="parent_signup_started" className="nb-btn nb-btn--raised nb-btn--lg">
+            I&apos;m a parent: start free
           </TrackedLink>
         </div>
+        <p className="nb-under nb-rise" style={d(420)}>
+          7 days free. No card needed. Students start with 5 quick questions.
+        </p>
       </div>
 
       <div className="nb-hero-art nb-slap-in">

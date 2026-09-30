@@ -42,13 +42,6 @@ export function Room() {
         </div>
         <OzhoPoke />
       </div>
-      <div className="nb-say" aria-hidden>
-        <span className="nb-say-name">ozho</span>
-        psst. five questions, no account. i&apos;ll wait right here.
-      </div>
-      <p className="nb-dio-cap" aria-hidden>
-        ozho&apos;s room
-      </p>
     </div>
   );
 }

@@ -7,7 +7,7 @@ export function Logo({ size = "lg" }: { size?: "lg" | "sm" }) {
       <span className="nb-logo-face" aria-hidden>
         <PixelDog size={46} mood="happy" costume="sunglasses" shadow={false} />
       </span>
-      <span className="nb-logo-word">Oakmont</span>
+      <span className="nb-logo-word">Oakmont Study Center</span>
     </span>
   );
 }
@@ -17,13 +17,10 @@ export function Logo({ size = "lg" }: { size?: "lg" | "sm" }) {
 export function Nav() {
   return (
     <nav className="nb-nav" aria-label="Main">
-      <a href="#top" className="nb-logo-link" aria-label="Oakmont, back to top">
+      <a href="#top" className="nb-logo-link" aria-label="Oakmont Study Center, back to top">
         <Logo />
       </a>
       <div className="nb-navlinks">
-        <a href="#how" className="nb-navlink">
-          How it works
-        </a>
         <a href="#parents" className="nb-navlink">
           For parents
         </a>
@@ -39,7 +36,7 @@ export function Nav() {
           Log in
         </a>
         <TrackedLink href="/start" event="signup_started" className="nb-btn nb-btn--raised">
-          Start free
+          Start free trial
         </TrackedLink>
       </div>
     </nav>
