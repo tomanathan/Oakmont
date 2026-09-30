@@ -17,6 +17,7 @@ import { GeometryDiagram } from "@/components/GeometryDiagram";
 import { ExamChoices } from "@/components/ExamChoices";
 import { WhyWrong, FullExplanation } from "@/components/WhyWrong";
 import { PixelDog } from "@/components/PixelDog";
+import { PatternVideo } from "@/components/lessonVideo/PatternVideo";
 import { sectionTheme } from "@/lib/sectionTheme";
 
 // Time on a lesson before finishing it counts as the day's study (see below).
@@ -778,6 +779,16 @@ export function SubskillClient({
             {pattern && (
               <div>
                 <div className="text-[17px] font-bold text-ink mb-2.5">{pattern.name}</div>
+                {/* Reading & Writing question types have a short video: Ozho
+                    explains the idea, then walks through a worked example.
+                    Uses the unshuffled pattern (the video's cross-outs
+                    follow the example's original choice order). */}
+                <PatternVideo
+                  key={pattern.name}
+                  subskillId={subskill.id}
+                  skillName={subskill.name}
+                  pattern={subskill.patterns.find((p) => p.name === pattern.name) ?? pattern}
+                />
                 {/* Fading: the first two examples are solved with the method
                     right there; from the third on it's folded away, so she
                     has to call it up herself -- following a method and

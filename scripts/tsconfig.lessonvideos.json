@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "outDir": "/tmp/lvcheck",
+    "module": "commonjs",
+    "target": "es2020",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "baseUrl": "..",
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "files": [
+    "check-lesson-videos.ts",
+    "export-lesson-video-lines.ts"
+  ]
+}

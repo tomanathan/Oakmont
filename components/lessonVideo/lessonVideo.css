@@ -1,0 +1,617 @@
+/* Lesson video: every class is lv- and scoped under .lv. Notebook tokens. */
+.lv {
+  --ink: #2a2fe0;
+  --ink-deep: #1d22a8;
+  --paper: #fffcf1;
+  --pink: #ff5fb4;
+  --butter: #ffee7c;
+  --cyan: #4fe6f2;
+  --lilac: #c8b4ff;
+  --tang: #ff9a4d;
+  --right: #1fa971;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-ui), system-ui, sans-serif;
+}
+.lv * {
+  box-sizing: border-box;
+}
+.lv-box {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  background: linear-gradient(160deg, #e4daff 0%, #efe8ff 45%, #fff3c4 100%);
+}
+.lv-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+.lv-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* the notebook page behind the Polaroid */
+.lv-page {
+  position: absolute;
+  inset: 0;
+  background-color: var(--paper);
+  background-image: linear-gradient(90deg, transparent 54px, rgba(255, 154, 77, 0.5) 54px, rgba(255, 154, 77, 0.5) 56px, transparent 56px),
+    repeating-linear-gradient(180deg, transparent 0 31px, rgba(42, 47, 224, 0.08) 31px 32px);
+}
+
+/* the Polaroid */
+.lv-pol {
+  position: absolute;
+  left: 44px;
+  top: 20px;
+  width: 712px;
+  height: 460px;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 6px 6px 0 var(--ink);
+  transform-origin: 50% 40%;
+}
+.lv-tape {
+  position: absolute;
+  top: -14px;
+  width: 120px;
+  height: 28px;
+  background: var(--cyan);
+  opacity: 0.9;
+  mix-blend-mode: multiply;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.75) 2.4px, transparent 2.8px);
+  background-size: 11px 11px;
+  z-index: 4;
+}
+.lv-tape--a {
+  left: 60px;
+  transform: rotate(-5deg);
+}
+.lv-tape--b {
+  right: 60px;
+  transform: rotate(6deg);
+  background-color: var(--tang);
+  background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.55) 0 7px, transparent 7px 14px);
+}
+.lv-photo {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 16px;
+  height: 352px;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+}
+.lv-wall {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(rgba(200, 180, 255, 0.85) 1.6px, transparent 2.2px) 0 0 / 22px 22px, linear-gradient(180deg, #fff6c6, #ffee9c);
+}
+.lv-floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 70px;
+  border-top: 2px solid var(--ink);
+  background: repeating-linear-gradient(180deg, #dccbff 0 22px, #d2beff 22px 24px);
+}
+.lv-floor::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  height: 10px;
+  background: var(--tang);
+  border-top: 2px solid var(--ink);
+}
+.lv-ozho {
+  position: absolute;
+  left: 0;
+  bottom: 18px;
+  z-index: 3;
+  line-height: 0;
+}
+
+/* the board Ozho teaches from */
+.lv-board {
+  position: absolute;
+  left: 196px;
+  right: 14px;
+  top: 14px;
+  bottom: 14px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 18px 22px;
+  overflow: hidden;
+  z-index: 2;
+}
+.lv-kicker {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-deep);
+}
+.lv-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  gap: 10px;
+}
+.lv-title b,
+.lv-note b {
+  font-family: var(--font-display), Georgia, serif;
+  font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-size: 34px;
+}
+.lv-points {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.lv-points li {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  font-family: var(--font-display), Georgia, serif;
+  font-variation-settings: "SOFT" 100, "opsz" 72;
+  font-weight: 700;
+  font-size: 25px;
+  line-height: 1.15;
+}
+.lv-num {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--butter);
+  font-family: var(--font-ui), sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+}
+.lv-note {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+  padding: 26px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+}
+.lv-note--trap {
+  background: #ffd9bd;
+}
+.lv-note--recap {
+  background: var(--butter);
+}
+
+/* the worked example */
+.lv-q {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+.lv-passage {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--ink-deep);
+}
+.lv-passage mark {
+  color: inherit;
+  background: linear-gradient(var(--butter), var(--butter)) no-repeat 0 60% / 0% 100%;
+  border-radius: 3px;
+  padding: 0 1px;
+}
+.lv-prompt {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+.lv-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: auto;
+}
+.lv-choice {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+.lv-choice.is-struck {
+  opacity: 0.45;
+}
+.lv-choice.is-right {
+  border-color: var(--right);
+  background: #e6f6ee;
+}
+.lv-letter {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 800;
+}
+.lv-choice.is-right .lv-letter {
+  border-color: var(--right);
+  background: var(--right);
+  color: #fff;
+}
+.lv-ctext {
+  position: relative;
+}
+.lv-strike {
+  position: absolute;
+  left: -3px;
+  top: 52%;
+  height: 2.5px;
+  background: var(--ink);
+  border-radius: 2px;
+}
+.lv-circle {
+  position: absolute;
+  inset: -8px -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 16px);
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+/* the caption strip: the Polaroid's white margin */
+.lv-cap {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 372px;
+  bottom: 8px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+.lv-cap-t {
+  margin: 0;
+  max-width: 640px;
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink-deep);
+  text-wrap: balance;
+  animation: lv-cap-in 0.25s ease-out both;
+}
+@keyframes lv-cap-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* big play button and the control bar */
+.lv-bigplay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  border: 0;
+  background: rgba(29, 34, 168, 0.18);
+  cursor: pointer;
+  font: inherit;
+  color: var(--ink);
+}
+.lv-bigplay-dot {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 4px 4px 0 var(--ink);
+  font-size: 26px;
+  padding-left: 5px;
+  transition: transform 0.1s ease-out;
+}
+.lv-bigplay:active .lv-bigplay-dot {
+  transform: scale(0.95);
+}
+.lv-bigplay-t {
+  padding: 6px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  font-weight: 700;
+  font-size: 15px;
+}
+.lv-bigplay-t small {
+  margin-left: 6px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+.lv-bigplay:focus-visible,
+.lv-btn:focus-visible,
+.lv-scrub:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+.lv-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.lv-btn {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+}
+.lv-scrub {
+  flex: 1;
+  min-width: 60px;
+  accent-color: var(--ink);
+  height: 44px;
+}
+.lv-time {
+  flex: none;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-deep);
+}
+@media (max-width: 480px) {
+  .lv-time {
+    display: none;
+  }
+}
+.lv-q--list .lv-choices {
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+.lv-q--list .lv-choice {
+  min-height: 32px;
+  padding: 4px 10px;
+  font-size: 13.5px;
+  line-height: 1.25;
+}
+.lv-q--dense .lv-passage {
+  font-size: 13.5px;
+  line-height: 1.42;
+}
+.lv-q--dense .lv-prompt {
+  font-size: 13px;
+}
+.lv-q--xlong .lv-choice {
+  min-height: 0;
+  padding: 3px 9px;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.lv-q--xlong .lv-letter {
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+}
+.lv-q--xlong .lv-passage {
+  font-size: 13px;
+}
+
+/* worked example: the board takes the whole photo */
+.lv-board {
+  transition: left 0.4s cubic-bezier(0.34, 1.3, 0.5, 1);
+}
+.lv-board.is-wide {
+  left: 14px;
+}
+.lv-board.is-wide .lv-q--stack .lv-choices {
+  grid-template-columns: 1fr 1fr;
+  margin-top: 8px;
+}
+.lv-board.is-wide .lv-q--cols {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  grid-template-rows: auto 1fr;
+  column-gap: 20px;
+  row-gap: 8px;
+}
+.lv-board.is-wide .lv-q--cols .lv-passage {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: start;
+}
+.lv-board.is-wide .lv-q--cols .lv-prompt {
+  grid-column: 2;
+  grid-row: 1;
+}
+.lv-board.is-wide .lv-q--cols .lv-choices {
+  grid-column: 2;
+  grid-row: 2;
+  grid-template-columns: 1fr;
+  margin-top: 0;
+  align-content: start;
+  gap: 7px;
+}
+.lv-choice.is-right {
+  box-shadow: 0 0 0 3px var(--right);
+}
+.lv-watch {
+  position: absolute;
+  right: 22px;
+  bottom: 10px;
+  z-index: 5;
+  line-height: 0;
+}
+.lv-cap.is-narrow {
+  right: 110px;
+}
+.lv-q-fit {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+.lv-q-fit > .lv-q {
+  height: auto;
+  transform-origin: 0 0;
+}
+.lv-choice.is-crossed .lv-ctext {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--ink);
+}
+.lv-q--list .lv-choice,
+.lv-board.is-wide .lv-choice {
+  font-size: 14px;
+  line-height: 1.28;
+}
+.lv-cap.is-narrow .lv-cap-t {
+  font-size: 19px;
+}
+
+/* the lesson page's entry card */
+.lv-open {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 10px 14px 10px 10px;
+  border: 2px solid #2a2fe0;
+  border-radius: 14px;
+  background: #fffcf1;
+  box-shadow: 3px 3px 0 #2a2fe0;
+  color: #2a2fe0;
+  font-family: var(--font-ui), system-ui, sans-serif;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+}
+.lv-open:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 #2a2fe0;
+}
+.lv-open:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 #2a2fe0;
+}
+.lv-open:focus-visible {
+  outline: 3px solid #2a2fe0;
+  outline-offset: 3px;
+}
+.lv-open-dog {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 44px;
+  border-radius: 10px;
+  background: #ffee7c;
+  border: 2px solid #2a2fe0;
+}
+.lv-open-t {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.lv-open-t b {
+  font-size: 15px;
+  font-weight: 700;
+}
+.lv-open-t small {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #1d22a8;
+}
+.lv-open-play {
+  flex: none;
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #2a2fe0;
+  background: #ff5fb4;
+  font-size: 13px;
+  padding-left: 3px;
+}
+.lv-embed {
+  margin: 0 0 18px;
+}
+.lv-close {
+  margin-top: 6px;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 0;
+  background: none;
+  color: #1d22a8;
+  font: 600 13px var(--font-ui), system-ui, sans-serif;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.lv-ai {
+  flex: none;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink-deep);
+  opacity: 0.8;
+}
+@media (max-width: 480px) {
+  .lv-ai {
+    display: none;
+  }
+}
