@@ -1,6 +1,6 @@
 # Ozho's voice: generating the lesson-video audio
 
-This makes Ozho's voice for the 38 Reading & Writing lesson videos
+This makes Ozho's voice for all 120 lesson videos (38 Reading & Writing, 82 Math)
 (`lib/lessonVideos`). It runs locally and for free with
 [Chatterbox](https://github.com/resemble-ai/chatterbox) (MIT). Every
 sentence gets several takes, and the best one is kept based on three
@@ -23,7 +23,7 @@ Everything needed is in this folder:
 | --- | --- |
 | `ozho_voice.py` | The generator |
 | `publish.py` | Copies finished tracks into the app |
-| `lines.json` | Every spoken line of all 38 videos, exported from the scripts |
+| `lines.json` | Every spoken line of all 120 videos, exported from the scripts |
 | `refs/michael.wav` | Michael, the chosen reference voice |
 | `refs/onyx.wav` | Onyx, the alternative |
 
@@ -65,7 +65,7 @@ job never needs them.
    & $py -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
    ```
 
-6. **Generate all 38 videos in Michael's voice.**
+6. **Generate all 120 videos in Michael's voice.**
    - The first run downloads the Chatterbox and Whisper model weights from Hugging Face (a few GB).
    - The run resumes where it left off if it's stopped: finished lines are saved in the output folder.
    - It should print `voice model on cuda`.

@@ -2624,5 +2624,6769 @@
     "minDur": 9.3
    }
   ]
+ },
+ {
+  "slug": "m-linear-eq-1var--standard-isolate-the-variable-equations",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Solving for x is unwrapping a present. Take off the outside layers first.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "If there are parentheses, multiply them out first, and hit every term inside.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then undo adding and subtracting, and only after that, undo multiplying and dividing.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Write one move per line. Almost every mistake here is a sign slip done in your head.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the equation. Five times the quantity x plus two equals three x plus eighteen.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Distribute the five to both terms. Five x plus ten.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Get the x terms on one side. Subtract three x from both sides.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Now undo the plus ten. Subtract ten from both sides.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Last layer: divide both sides by two. X equals four.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Eight is what you get if you forget to multiply the two by five. One and negative four are sign slips.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "X equals four. Plug it back in and both sides come out to thirty.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The five multiplies everything in the parentheses, not just the x.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Clear the parentheses, undo plus and minus, then times and divide. One move per line.",
+    "minDur": 8.1
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-eq-1var--no-solution-and-infinite-solution-equations",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Sometimes x just vanishes from the equation. That's not a mistake. That's the answer showing up.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Distribute and combine on each side first. The x terms often only match once everything's cleaned up.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If the x terms cancel, stop solving. There's no x left to find. Look at the leftover numbers.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "A false statement like five equals seven means no solution. A true one like five equals five means every number works.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.81
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the equation. Five x minus three times the quantity x plus four equals two x plus three.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Distribute the negative three to both terms. Negative three x, and negative twelve.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Combine the x terms on the left. Five x minus three x is two x.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Now subtract two x from both sides. The x terms cancel completely, and we're left with negative twelve equals three.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "That's false for every x. So it isn't exactly one solution, and it can't be infinitely many, since that needs a true statement.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And exactly two is out on principle. A linear equation has none, one, or infinitely many solutions. Never two.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "No solution. Negative twelve never equals three, no matter what x is.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A false leftover means no solution. A true leftover means infinitely many. Don't swap them.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "When the x terms cancel, don't hunt for x. Check if what's left is true or false.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-eq-1var--solving-for-a-related-expression-without-fully-isolating-x",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Read the question before you start solving. Sometimes they don't even want x.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "If the question asks for x minus seven, or two x, that's your target. Not x itself.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Divide, add, or combine the whole equation so the exact target lands on one side. Usually one move.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.33
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Four x minus twenty-eight equals negative twenty-four, and they want x minus seven.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Notice four x divided by four is x, and twenty-eight divided by four is seven. So divide every term by four.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "That lands right on the target. X minus seven equals negative six. No need to find x first.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "One is x itself, which they didn't ask for. Positive six is a sign slip on negative twenty-four divided by four.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "And negative one isn't what you get when every term is divided by four.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Negative six. One division, and you're done.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Solving all the way to x out of habit hands you the wrong answer, and it's always a choice.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find the expression they asked for, then reshape the whole equation to land on it.",
+    "minDur": 8.1
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-eq-1var--translating-a-word-problem-into-an-equation",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Word problems are a translation job. Go phrase by phrase, and watch out for less than.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Pick a letter for the unknown, and say in plain words what it stands for.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "More than means add. Times means multiply. Is means equals. Do it piece by piece, not all at once.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Less than is the sneaky one. It's written in the opposite order from how you say it.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.05
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Twelve less than a number is forty-five. The number is n.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Twelve less than a number means start with the number, then take twelve away. So n minus twelve, not twelve minus n.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The word is becomes the equals sign. N minus twelve equals forty-five.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Twelve minus n reverses the order. N plus twelve adds when it should subtract, and twelve n multiplies.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "N minus twelve equals forty-five. The number comes first, then twelve comes off.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Twelve less than n is n minus twelve. Writing it in the order you hear it flips the meaning.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Name your variable, translate one phrase at a time, and flip the order for less than.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-lines-angles-tri--triangle-angle-sum-and-exterior-angles",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "There's a shortcut for exterior angles that saves you a whole step.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The three angles inside any triangle add up to one hundred eighty degrees.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "And an exterior angle equals the two inside angles that aren't next to it, added together.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The exterior angle is one hundred ten degrees, and one far angle is forty.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The exterior angle equals the two far angles together. So forty plus x equals one hundred ten.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Subtract forty from both sides. X is seventy degrees.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "One hundred ten is the exterior angle itself, and forty is the angle we were given.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "And one fifty adds them. The exterior angle is already the sum, so subtract.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Seventy degrees. One step, no need to find the angle next to it first.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The exterior angle is already the total. Take away the angle you know.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "An exterior angle equals the two far inside angles added together. Use it to skip a step.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-lines-angles-tri--parallel-lines-cut-by-a-transversal",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Parallel lines give you a bunch of angles for free. You just have to know which pairs match.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Corresponding angles and alternate interior angles are equal. Same spot, or a clean zigzag across.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "But two angles between the lines, on the same side of the transversal, add up to one hundred eighty.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "So before any math, name which kind of pair you're looking at. That decides everything.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.48
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "One angle is sixty-five degrees, and we want its same-side interior partner.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Same-side interior angles are supplementary. So sixty-five plus the unknown makes one hundred eighty.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Subtract sixty-five from both sides. The angle is one hundred fifteen degrees.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Sixty-five treats the pair as equal, which only works for corresponding or alternate angles.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Twenty-five uses ninety instead of one eighty, and one eighty is the total, not the missing angle.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "One hundred fifteen degrees. One sharp angle, one wide one, adding to a straight line.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Same-side interior angles look like partners, so it's tempting to make them equal. They add to one eighty instead.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Figure out the pair type first. Equal for corresponding and alternate, one eighty for same-side interior.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-lines-angles-tri--similar-and-congruent-triangles-corresponding-parts",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "The letters in a similarity statement are a map. Follow the order, not the picture.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Triangle ABC similar to EFD means A matches E, B matches F, and C matches D, in that order.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Matching sides all share one ratio, the scale factor. Find it from one known pair, then use it.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.95
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Read the letters in order. A goes with E, B with F, C with D.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "A B matches E F, and those are both given. Fifteen over ten is one and a half.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Now D E. D goes with C and E goes with A, so D E matches C A, which is eight.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Multiply by the scale factor. Eight times one and a half is twelve.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Eight is C A itself, and ten is A B. Neither one got scaled.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And five point three three divides by the scale factor. DE is on the bigger triangle, so multiply.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Twelve. The bigger triangle's side should be bigger, and it is.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Don't pair sides because they look alike or sit near each other. The vertex order tells you who matches whom.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Use the vertex order to find each side's partner, get the scale factor from a known pair, and apply it.",
+    "minDur": 10.1
+   }
+  ]
+ },
+ {
+  "slug": "m-lines-angles-tri--vertical-angles-and-basic-angle-relationships",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Two lines cross, and you get two facts that crack almost every one of these.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Angles straight across from each other at a crossing are vertical angles, and they're always equal.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Angles next to each other along one line add to one hundred eighty, since a line is straight.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.43
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "These two angles are vertical, straight across from each other. So their expressions are equal.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Subtract three x from both sides to get the x terms together.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Add twenty-five to both sides.",
+    "minDur": 2.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Divide by two. X is twenty, and both angles come out to seventy-five degrees.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Forty is two x, one step early. Five doesn't check out, and negative twenty is a sign slip.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "X equals twenty. Plug it in and both angles are seventy-five degrees, as vertical angles should be.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Across the crossing means equal. Next to each other on a line means they add to one eighty. Don't swap them.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Spot where the angles sit, write the equation that matches, and solve.",
+    "minDur": 6.9
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-func--extracting-slope-and-intercept-from-a-real-world-scenario",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Every linear word problem hides two numbers: where you start, and how fast you change.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The starting amount, or flat fee, is the y-intercept. It's what you have when the input is zero.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Anything per minute, per mile, or per month is the rate. That's the slope.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "If the amount is shrinking, like draining or burning, the rate gets a negative sign.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The tank starts with two hundred gallons. That's the amount at zero minutes, so it's the y-intercept.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "It drains fifteen gallons per minute. Per means rate, and draining means going down, so the slope is negative fifteen.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Slope times minutes, plus the start. W equals negative fifteen m plus two hundred.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Positive fifteen forgets the tank is draining. Negative two hundred makes the starting water negative.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "And two hundred m minus fifteen swaps the roles. Two hundred is the start, not the rate.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "W equals negative fifteen m plus two hundred. Start at two hundred, lose fifteen every minute.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Whichever number comes first in the sentence, the per number is the slope and the starting number is the intercept.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find the starting value, find the per rate, check the sign, then write it as rate times input plus start.",
+    "minDur": 10.1
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-func--reading-slope-and-intercept-directly-from-a-graph",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "When they hand you the graph, the answer's already drawn. You just have to read it right.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The y-intercept is where the line crosses the y-axis, where x is zero. Read it straight off.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "For slope, take two marked points. Change in y over change in x. Rise over run.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Then sanity check. A line falling left to right has a negative slope.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.48
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The line crosses the y-axis at zero comma eight, and the x-axis at four comma zero.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Rise over run, going from four comma zero to zero comma eight. Eight minus zero, over zero minus four.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The rise is eight, and the run is negative four.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Eight divided by negative four is negative two. And the line falls, so negative makes sense.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Positive two ignores that the line falls. Negative one half is run over rise. And four is where it crosses the x-axis.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Negative two. Down two for every one step right.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The x-intercept is where it crosses the x-axis. Don't hand that in when they want slope or the y-intercept.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Read the crossing points off the graph, find rise over run, and check the sign against the picture.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-func--finding-slope-from-two-points-or-function-values",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Function notation looks fancy, but g of negative two equals nine is just a point.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The number in the parentheses is the input, x. The value it equals is the output, y.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Slope is always change in output over change in input. Never the other way around.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.29
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "G of negative two is nine, and g of four is negative three. As points, that's negative two comma nine, and four comma negative three.",
+    "minDur": 10.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Change in output over change in input. Negative three minus nine, over four minus negative two.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "On top, negative twelve. On the bottom, subtracting a negative adds, so four plus two is six.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Negative twelve over six is negative two.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Positive two misses that the output drops. Negative twelve is only the top. Negative six uses two for the bottom instead of six.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Negative two. The output falls two for every one the input rises.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Change in input over change in output gives you the upside-down slope. Output always goes on top.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Turn the function values into points, then divide the change in output by the change in input.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-func--writing-a-line-s-equation-from-slope-a-point-or-a-table",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "You've got the slope and one point. That's everything you need for the whole line.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Every line here is y equals m x plus b. Pin down the slope first, then the intercept.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If the point isn't on the y-axis, its y-value isn't b. Plug the point in and solve.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.24
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Slope of negative three, through the point four comma one. Four isn't zero, so one isn't the intercept.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Put in the slope, and the point's x and y. One equals negative three times four, plus b.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Negative three times four is negative twelve.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Add twelve to both sides. B is thirteen.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Now write the line. Y equals negative three x plus thirteen.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Plus one uses the point's y-value as b. Minus eleven subtracts twelve instead of adding. And positive three x has the wrong slope.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Y equals negative three x plus thirteen. Plug in four, and you get one back.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A point's y-value is only the intercept when its x is zero. Otherwise, solve for b.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Put the slope and the point into y equals m x plus b, solve for b, then write the line.",
+    "minDur": 10.1
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-func--evaluating-a-function-and-solving-for-input-given-output",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "F of three equals eleven packs two facts into one line. Unpack them in the right slots.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The number inside the parentheses is the input. It goes wherever x is.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The number f of x equals is the output. Put both in, and what's left is ordinary algebra.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.19
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The rule is k x minus seven, with k unknown. And f of three is eleven.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Three is the input, so it replaces x. Eleven is the output, so it replaces f of x.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Add seven to both sides. Eighteen equals three k.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Divide by three. K is six. Check it: six times three, minus seven, is eleven.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Ten elevenths swaps the input and output. Eighteen is three k, one step early. Four thirds subtracts seven instead of adding.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "K equals six. The rule is six x minus seven.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "In f of three equals eleven, three is x and eleven is the output. Swap them and you solve a different problem.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Put the input where x goes and the output where f of x goes, then solve like any equation.",
+    "minDur": 9.7
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-eq-2var--reading-slope-and-intercepts-from-standard-form",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "In standard form, the slope is hiding. The number in front of x is not it.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Get y by itself. Once it's y equals m x plus b, the slope is just the number on x.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "For intercepts, skip the rearranging. Set y to zero for the x-intercept, and x to zero for the y-intercept.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Six x minus three y equals twelve. They want the slope, so we need y alone.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Subtract six x from both sides. Negative three y equals negative six x plus twelve.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Divide every term by negative three. Negative six x over negative three is positive two x. So y equals two x minus four.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Negative two misses that two negatives make a positive. Six is the standard-form coefficient. Negative six forgets to divide by negative three.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Two. Read it off once y is by itself.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The x coefficient in standard form isn't the slope. Solve for y first, and watch the signs when you divide.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Solve for y, then the number on x is the slope. For intercepts, set the other variable to zero.",
+    "minDur": 9.7
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-eq-2var--parallel-and-perpendicular-line-relationships",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Parallel or perpendicular comes down to two slopes. Get both, then compare.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Parallel lines have exactly the same slope. They run side by side forever.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Perpendicular slopes are negative reciprocals. Flip the fraction and change the sign. Multiplied together, they give negative one.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.29
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Our line has slope two. The other is two x plus four y equals sixteen, so first we find its slope.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Subtract two x from both sides.",
+    "minDur": 3.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Divide everything by four. Its slope is negative one half.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Now compare. Two times negative one half is negative one. Flip negative one half, change the sign, and you get two.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Parallel and the same line both need matching slopes, and these don't match. And negative reciprocals are exactly perpendicular, so the neither choice is out.",
+    "minDur": 10.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Perpendicular. Two and negative one half are negative reciprocals.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Perpendicular takes two moves. Flip the fraction and change the sign. Just flipping gets you the wrong slope.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Put each line in slope-intercept form. Same slope is parallel. Negative reciprocals are perpendicular.",
+    "minDur": 7.7
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-eq-2var--interpreting-a-constant-or-coefficient-in-a-real-world-equation",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "They give you the equation and ask what one number means. Look at what it's attached to.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A number multiplying a variable is a rate. It counts once for each unit of that variable.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "A number standing alone is a fixed amount. It's there even when the variables are zero.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.67
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Y equals five x plus two hundred, the cost of renting a hall, where x is the number of guests.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The five multiplies x, the guests. So you pay five dollars once for every guest. That's a per-guest cost.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The two hundred stands alone. You pay it even with zero guests, so it's the flat rental fee.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "The flat fee is the two hundred, not the five. And x is the guest count, not five.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Nothing in this equation sets a maximum. The five is just added per guest.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Five is the extra cost, in dollars, for each guest.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The coefficient rides along with a variable. The constant doesn't. Keep them straight and most of these answer themselves.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Ask what the number is attached to. Tied to a variable, it's a rate. Standing alone, it's a fixed amount.",
+    "minDur": 10.1
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-eq-2var--translating-a-word-scenario-into-a-two-variable-equation",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Two kinds of things, one total. That's the whole shape of this equation.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Name each quantity with its own letter, and say in words what it counts.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Each or per means multiply that number by its own variable. Then the pieces add up to the total.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 10.71
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Chickens have two legs, cows have four, and there are one hundred seventy-two legs in all.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Two legs for each chicken, and there are h chickens. So chicken legs total two h.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Four legs for each cow, and w cows. Cow legs total four w.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Together they make the total. Two h plus four w equals one hundred seventy-two.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Four h plus two w gives chickens four legs. Subtracting h and w means nothing here. And h plus w counts animals, not legs.",
+    "minDur": 10.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Two h plus four w equals one hundred seventy-two. Legs per animal, times animals, added up.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Double check which variable each per number belongs to. Four goes with cows, not chickens.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Name both quantities, multiply each by its own rate, and set the sum equal to the total.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-eq-2var--solving-for-one-variable-given-the-other-s-value",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Two variables, but they give you one of them. Now it's just a one-variable equation.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Put the known value in for its variable, in parentheses. Make sure it's the right variable.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "What's left is an ordinary equation. Watch the sign if the variable you want has a minus in front.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Four a minus b equals fifteen, and a is six.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Put six in for a.",
+    "minDur": 2.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Four times six is twenty-four.",
+    "minDur": 2.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Subtract twenty-four from both sides. Negative b equals negative nine.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "That's negative b, not b. Multiply both sides by negative one, and b is nine.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Thirty-nine adds fifteen to twenty-four. And three fails the check: twenty-four minus three is twenty-one.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "B equals nine. Twenty-four minus nine is fifteen.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Negative b equals negative nine isn't finished. Flip the sign to get b.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Plug in the value you're given, then solve the one-variable equation that's left. Check the sign at the end.",
+    "minDur": 9.7
+   }
+  ]
+ },
+ {
+  "slug": "m-systems--solving-by-substitution-and-setting-up-systems-from-words",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A word problem with two unknowns is really two equations wearing a trench coat.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Give each unknown a letter. Then turn each fact into its own equation, one phrase at a time.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If one equation already says L equals something, swap that whole expression into the other, in parentheses.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Before you pick, check which unknown they want. The other one's always sitting in the choices.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 7.86
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "A fifty-one foot rope, cut in two. The longer piece plus the shorter piece is the whole rope.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Six more than twice the shorter. Twice S first, then add six. L equals two S plus six.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The second equation is already solved for L, so swap it into the first.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Combine to get three S plus six, then subtract six from both sides. Three S equals forty-five.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Divide by three. S is fifteen. That's the shorter piece, and it's sitting in the choices as bait.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Plug back in. The longer piece is thirty-six. Thirty-eight comes from setting it up with the six doubled, and thirty-two with it subtracted.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Thirty-six feet. And thirty-six plus fifteen is fifty-one, so it checks out.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "You solved for the short piece first, but they asked for the long one. Read the question again before choosing.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Turn each fact into an equation, substitute the one that's already solved, and give them the unknown they asked for.",
+    "minDur": 10.1
+   }
+  ]
+ },
+ {
+  "slug": "m-systems--solving-for-a-specific-value-via-elimination",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "If two equations share a term, you can make it disappear in one move.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "When both equations look like a x plus b y equals c, stack them and compare the terms.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If a term matches, subtract. If it's opposite, add. Otherwise, multiply one equation first.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.81
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Three x plus two y equals sixteen.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "And three x minus five y equals negative twelve. Both start with three x, so subtracting will cancel it.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Subtract the whole second equation from the first. Every term in it gets a minus, including the negative twelve.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Three x minus three x is zero. Two y minus negative five y is seven y. Sixteen minus negative twelve is twenty-eight.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Divide by seven. Y is four.",
+    "minDur": 3.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Negative four is a sign slip in the subtraction. Twenty-eight is seven y, and seven is just the coefficient.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Y equals four. One subtraction and x was gone.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Subtracting an equation means subtracting every term. Minus a negative becomes plus, on both sides.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Line the equations up, add or subtract to cancel one variable, and solve for the one that's left.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "m-systems--determining-the-number-of-solutions-without-fully-solving",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "How many solutions? You don't have to solve anything. Just compare the lines.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Different slopes means the lines cross once. Exactly one solution.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Same slope with different intercepts means parallel lines. They never meet, so no solution.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Same slope and same intercept means it's the same line twice. Every point on it works.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.29
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Two x plus y equals five, and four x plus two y equals ten. Put both in y equals m x plus b form.",
+    "minDur": 10.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "First one: subtract two x. Y equals negative two x plus five.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Second one: subtract four x first. Two y equals negative four x plus ten.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Divide by two. Y equals negative two x plus five. Same slope, same intercept. It's the first line again.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "No solution needs different intercepts. Exactly one needs different slopes. And it can be determined: we just did it.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Infinitely many. It's one line written two ways, so every point on it works.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Two equations can look different and still be the same line. Put both in the same form before you compare.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Different slopes, one solution. Same slope, different intercept, none. Same slope and intercept, infinitely many.",
+    "minDur": 8.1
+   }
+  ]
+ },
+ {
+  "slug": "m-systems--reading-the-solution-directly-from-a-graph",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "When the lines are drawn for you, the solution is just the spot where they cross.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A system's solution is the point on both lines at once. On a graph, that's the crossing.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Read the crossing point's x, then its y, and write them in that order.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.05
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "One line crosses the y-axis at zero comma six, the other at zero comma one.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Those are where each line meets the y-axis. Neither is on both lines, so neither is the solution.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The two lines cross each other at two comma four. That point is on both lines.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "And six comma one just glues the two intercept values together. It isn't on the graph at all.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Two comma four. The one point both lines share.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Each y-intercept belongs to one line only. The solution has to be on both, so it's the crossing.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find where the lines cross, then read its x and y in order. That's the solution.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-ineq--solving-with-the-sign-flip-rule",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Inequalities are equations with one extra rule. Forget it and you get the exact opposite answer.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "You isolate x the same way you would in an equation. Add, subtract, multiply, divide.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The one exception: multiply or divide both sides by a negative number, and the sign flips.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Adding or subtracting a negative doesn't count. Only multiplying or dividing by one does.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the inequality. Negative three x plus six is greater than zero.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Subtract six from both sides. No flip here, it's just subtraction.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Now divide by negative three. That's a negative, so the greater than turns into less than. X is less than two.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "X greater than two is what you get if you forget the flip.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "And the boundary is positive two, since negative six over negative three is two. So both negative twos are out.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "X is less than two. Try zero: six is greater than zero, so it checks.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The flip often hides in the last step. Every time you divide by a negative, say flip out loud.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Solve it like an equation. Multiply or divide by a negative, and the sign turns around.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-ineq--word-problems-with-inequality-language",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "In these, the algebra is easy. The hard part is turning the words into the right sign.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "At least means that number or more. At most, or no more than, means that number or less.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "More than, or exceeds, is strict. The number itself doesn't count.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Write the inequality from the words, then solve it just like you normally would.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Four dollars for the first hour, two for each extra hour, and no more than sixteen total.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "No more than means sixteen is allowed. So four plus two a is less than or equal to sixteen.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Subtract the four dollars for the first hour. That leaves twelve dollars for extra hours.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Divide by two. A is at most six.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Eight forgets the first hour's four dollars. Twelve is the money left, not the hours.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Five works, but six costs exactly sixteen, and that's still no more than sixteen.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Six extra hours. Four plus twelve is sixteen, right at the limit, and that's allowed.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "At least and at most include the number itself. Using a strict sign throws away the right answer.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Translate the phrase into the sign first. After that it's the same algebra as always.",
+    "minDur": 8.1
+   }
+  ]
+ },
+ {
+  "slug": "m-linear-ineq--matching-a-graph-table-or-point-to-an-inequality-or-system",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Sometimes they hand you the answer and ask if it works. That's the easiest kind of checking.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "For a single point, plug in its x and y and see if the statement comes out true.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "For a table, every row has to pass. One failing row rules it out.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "For a shaded graph, find the line, then test a point clearly inside the shading.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the inequality. Y is greater than two x minus four. The point is three, one.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Put in x equals three and y equals one.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Two times three is six, minus four is two. So the question is, is one greater than two?",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "It isn't. So the yes choices are out, and comparing three to one isn't the test anyway.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "And flipping it to one less than two changes the inequality you were asked to check.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "No. Plugging in gives one greater than two, which is false.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "With a table or a system, one pass isn't enough. Every point has to satisfy every inequality.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Given a point, substitute it. True means it works, false means it doesn't.",
+    "minDur": 7.3
+   }
+  ]
+ },
+ {
+  "slug": "m-equiv-expr--factoring-out-the-greatest-common-factor",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Factoring out the common piece is like pulling the same item out of every bag at once.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Start with the biggest number that divides every coefficient.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then each variable that's in every term, at its lowest power. You can only take what every term has.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Divide each term by that factor to fill the parentheses, then multiply back out to check.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the expression. Six x squared plus fifteen x.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Three divides six and fifteen. X is in both terms, but the second has only one x. So the factor is three x.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Divide each term by three x. Six x squared becomes two x, and fifteen x becomes five.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "So it's three x times the quantity two x plus five. Multiply back and you get the original.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Three x squared pulls out too many x's. The second choice never divided the fifteen by three.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And the last one divided out the x but never wrote it in front.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Three x times the quantity two x plus five. Distribute it and you're back to the start.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "You can only pull out as many x's as the term with the fewest has.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Biggest number, lowest power of each shared variable, divide every term, and multiply back to check.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-equiv-expr--recognizing-factoring-patterns-instantly",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A few shapes show up over and over. Spot them on sight and factoring takes seconds.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A square minus a square splits into a minus b times a plus b. No middle term.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If the middle term is twice the two square roots multiplied, it's a perfect square.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "If neither shape fits, find two numbers that multiply to the constant and add to the middle.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the expression. Four x squared minus twenty five.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Four x squared is two x, squared. Twenty five is five squared. A square minus a square.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "That's the difference of squares shape, with a as two x and b as five.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Fill them in. Two x minus five, times two x plus five.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Multiply out the second and fourth choices and you get a middle x term. The original has none.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And two x minus five, squared, gives a middle term and a plus twenty five.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Two x minus five, times two x plus five. The middle terms cancel, just like they should.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Know your squares cold. If you don't see that twenty five is five squared, you'll miss the shape.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Before trial and error, check for a difference of squares or a perfect square. It's faster.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-equiv-expr--simplifying-and-combining-rational-expressions",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Canceling in a fraction feels like magic, until you cancel something you weren't allowed to.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Factor the top and the bottom completely before you do anything else.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Only whole factors that multiply can cancel. Pieces being added or subtracted can't.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "To add or subtract fractions, rewrite them over one common denominator first. Never add straight across.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the fraction. X squared minus nine, over x squared plus x minus six.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The top is a difference of squares. X minus three, times x plus three.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The bottom needs two numbers that multiply to negative six and add to one. Three and negative two.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Now x plus three is a factor on top and bottom. Cancel it.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "The second choice cancels the wrong factor. The third gets the bottom factoring wrong.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And plain x minus three forgets that x minus two is still on the bottom.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "X minus three, over x minus two. Factor first, and the cancel is obvious.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "You can't cross out the x squareds. They're being added and subtracted, not multiplied.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Factor the top and bottom all the way, then cancel only matching factors.",
+    "minDur": 7.3
+   }
+  ]
+ },
+ {
+  "slug": "m-equiv-expr--applying-the-laws-of-exponents",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Exponent rules are easy to mix up. Each one matches a different operation, so ask which one you're doing.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Multiplying the same base adds the exponents. Dividing subtracts them.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "A power raised to a power multiplies the exponents.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "A fraction exponent is a root. The bottom number is the root, the top is the power.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the expression. X cubed y squared, all to the fourth, over x squared.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The fourth power hits each factor inside. Three times four is twelve, two times four is eight.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Now divide by x squared. Same base, so subtract. Twelve minus two is ten. The y has nothing to cancel with.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "X to the twelfth forgot to divide. X to the sixth divided the exponents instead of subtracting.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "And y to the sixth added the exponents when the power rule multiplies them.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "X to the tenth, y to the eighth. Multiply for the power, subtract for the division.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Multiplying powers adds exponents. Raising a power to a power multiplies them. Name the operation first.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Multiply, add. Divide, subtract. Power of a power, multiply. Say which one before you do it.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-equiv-expr--expanding-and-combining-polynomial-expressions",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Subtracting a polynomial is where the signs go missing. The minus has to reach everything.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "When you multiply, every term in the first part hits every term in the second.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "When you subtract a polynomial, the minus flips the sign of every term inside, not just the first.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Then combine like terms. X squared with x squared, x with x, numbers with numbers.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the problem. One polynomial minus another.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Drop the parentheses. The minus flips all three signs, so minus six x becomes plus six x.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Group the matching powers together.",
+    "minDur": 2.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Combine them. Three x squared, plus three x, plus seven.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Minus nine x never flipped the six x. Plus nine added the one instead of subtracting it.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And seven x squared added the x squared terms when they subtract.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Three x squared plus three x plus seven.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The minus in front of the parentheses reaches every term, all the way to the end.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Flip every sign in what you subtract, then combine the terms with matching powers.",
+    "minDur": 7.7
+   }
+  ]
+ },
+ {
+  "slug": "m-equiv-expr--rearranging-a-formula-to-isolate-a-variable",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A formula full of letters is still just an equation. Pretend the other letters are numbers.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Every letter except the one you want is just a number you happen not to know.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Undo what was done last first. Usually that's the adding, then the multiplying.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Then plug in easy numbers to make sure your answer actually works.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 7.38
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the perimeter formula. We want w by itself.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The two l is added on, so undo that first. Subtract two l from both sides.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Now divide by two. The whole left side, not just the P.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Check it with a five by three rectangle. The perimeter's sixteen, and sixteen minus ten, over two, is three.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Multiplying by two goes the wrong way, since undoing times two means dividing. And dividing only the P leaves the two l undivided.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Plus two l is a sign slip. Moving it across subtracts it.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "W equals P minus two l, all over two. The easy numbers confirm it.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "When you divide a side, divide all of it. Every term on that side gets divided.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Undo the last thing first, keep groups together, and check with easy numbers.",
+    "minDur": 7.3
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-eq--solving-a-quadratic-by-factoring-or-the-quadratic-formula",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A quadratic usually has two answers. The trick is setting it up so they fall right out.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "First move everything to one side, so the equation equals zero.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then factor. If two things multiply to zero, one of them has to be zero.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "If no nice numbers work after a few tries, switch to the quadratic formula. It always works.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the equation. X squared minus three x minus ten equals zero. It already equals zero.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Find two numbers that multiply to negative ten and add to negative three. Negative five and two.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Two things multiply to zero, so one of them is zero.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "So x is five or negative two. Those are where the graph crosses the x-axis.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Negative five and two is the classic sign flip.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And two, or negative five, don't make it zero when you plug them in.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "X equals five or negative two. Plug either one in and you get zero.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Never divide by x to simplify. You'll throw away the answer x equals zero. Factor it out instead.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Get it equal to zero, factor, and set each factor to zero. Formula if it won't factor.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-eq--solving-absolute-value-equations",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Absolute value hides a sign. So you have to ask what's inside the bars both ways.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "If the absolute value of something equals k, that something is k or negative k. Two cases.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Get the absolute value alone before you split. Anything outside the bars has to go first.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "And if it equals a negative number, stop. An absolute value can never be negative.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's the equation. Three times the absolute value of x plus two, minus four, equals eleven.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Isolate the bars. Add four to both sides.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Divide by three. The absolute value of x plus two is five.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Now split. X plus two is five, or x plus two is negative five.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Subtract two in each case. X is three or negative seven.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Plug in five, negative two, or seven and none of them give eleven.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "X equals three or negative seven. Both check out in the original.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Solve only the positive case and you've found half the answer.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Get the bars alone, split into a positive and a negative case, then check your answers.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-eq--determining-the-number-of-solutions-via-the-discriminant",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "When they only ask how many solutions, don't solve. One small calculation tells you.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The discriminant is b squared minus four a c. It's the part under the root in the quadratic formula.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Positive means two real solutions, zero means one, negative means none.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Read off the coefficients. A is negative two, b is three, c is negative five. Keep those signs.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Plug into b squared minus four a c.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Negative two times negative five is positive ten, times four is forty. So nine minus forty.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "That's negative thirty one. Negative means no real solutions. The parabola never reaches the x-axis.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "One solution needs exactly zero, and two needs a positive number. Neither fits.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And it can be determined. We just did it.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "No real solutions. The discriminant is negative thirty one.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "When a or c is negative, write the multiplication out. That minus four a c is where the signs go wrong.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Only asked how many? Compute b squared minus four a c and read the sign.",
+    "minDur": 8.1
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-eq--solving-radical-and-rational-equations-checking-for-extraneous-solutions",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Squaring both sides can sneak in a fake answer. It solves the new equation, not the original.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Get the square root alone, then square both sides to get rid of it.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "With fractions, any value that makes a denominator zero gets thrown out.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Then plug every answer into the original equation. This step isn't optional.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The square root is already alone, so square both sides. X minus two, squared, is x squared minus four x plus four.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Move everything to one side.",
+    "minDur": 2.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Factor. So x is one or five. Those are candidates, not answers yet.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Check one. The root of one is one, but one minus two is negative one. Fake answer.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Check five. The root of nine is three, and five minus two is three. It works.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Negative five would put a negative under the square root. Not a real number.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Just five. One solved the squared equation but not the original.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Squaring can create an answer that doesn't really work. If you skip the check, you'll pick it.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Isolate the root, square, solve, then check each answer in the original equation.",
+    "minDur": 7.3
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-eq--solving-a-linear-quadratic-system-by-substitution",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A line and a parabola can cross twice. So expect two answers, then see which ones the question wants.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Get the linear equation into y equals form.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Put that into the quadratic. Now there's one variable, and you solve it like any quadratic.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Don't stop at one answer. Find both, then use any condition in the question.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.95
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Solve the line for y. Y equals ten minus x.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Put ten minus x in for y in the quadratic.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Move everything to one side.",
+    "minDur": 2.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Factor. So x is four or negative one. Those are the two crossing points.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "But the question says x is less than three. That rules out four, alone or in the pair.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Three doesn't work at all. The line gives seven, the parabola gives three.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Negative one. It's a crossing point, and it's less than three.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A line can cross a parabola twice. Find both, then let the question choose.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Solve the line for y, substitute, solve the quadratic, then apply any condition.",
+    "minDur": 7.3
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-eq--finding-an-unknown-constant-from-a-given-point-or-root-then-evaluating",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "These are two questions in one. Find the missing number, then actually answer what they asked.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Plug the given point into the function and solve for the unknown constant.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then put that constant back in and evaluate at the new input.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Watch the wording. Passes through a point means that input gives that output. Initial means x is zero.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.95
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "F of two is forty five. So five times b squared equals forty five.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Divide by five. B squared is nine.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "B is positive, so b is three. That's stage one, not the answer.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Now stage two. They asked for f of three. Five times three cubed.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Cube first, then multiply. Twenty seven times five is one hundred thirty five.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Three is just b, where we stopped halfway. The two huge ones cube fifteen, or skip the square root.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "One hundred thirty five. Find b first, then use it.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Finding b feels like finishing. It isn't. Go back and answer the question they asked.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Use the given point to find the constant, then use the constant to get the real answer.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-func--reading-vertex-form-directly",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Vertex form hands you the vertex for free. You just have to read the signs right.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "In the form a times x minus h, squared, plus k, the vertex is h comma k. No work needed.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The template subtracts h, so the number inside shows up with the opposite sign. The number outside keeps its sign.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.81
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here's our function. Negative two times x plus three, squared, minus one.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Plus three is really minus negative three. Match it to the template, and h is negative three.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Outside, it's minus one, and that sign stays put. So k is negative one.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Put them together: negative three, negative one. That's the peak on the graph.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Three, negative one is the classic slip: reading plus three as h equals three.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Negative three, one flips the sign of k. And three, one flips both.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Negative three, negative one. The negative two out front flips the parabola upside down, but it doesn't move the vertex.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Plus three inside the parentheses means h is negative three, not three. The inside sign always flips.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Match to the template, flip the inside number, keep the outside one, and the vertex reads itself.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-func--modeling-growth-and-decay-with-exponential-functions",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "When something changes by a percent every year, it doesn't lose the same amount each time. That's the whole trick.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A percent of the current amount, again and again, means multiplying. That's exponential, not linear.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The base is what's left after each period. Growing by a rate, use one plus it. Shrinking, use one minus it.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.95
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The car loses twelve percent a year, starting from thirty thousand dollars.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "If it loses twelve percent, it keeps eighty-eight percent. That's the base.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Multiply by point eight eight once for each year. Two years, so square it.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Point one two is what the car loses, not what it keeps. So that base is wrong.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Subtracting twelve percent of the original twice is linear. And one point one two would mean the value is growing.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Thirty thousand times point eight eight squared. That's about twenty-three thousand two hundred dollars.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Point one two is the loss. The base is what remains, point eight eight.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Percent change each period means exponential. Build the base from what's left, then raise it to the number of periods.",
+    "minDur": 10.1
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-func--initial-value-and-growth-factor-in-any-exponential-form",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Every exponential has two numbers that matter: where it starts, and what it multiplies by. A table shows you both.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "In a times b to the x, a is the value at x equals zero. It's also the y-intercept.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "B is the factor. Divide any output by the one before it, and check that it holds every time.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.33
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Find the x equals zero row. The output there is three hundred twenty, so that's a.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Now divide each output by the one before it. Eighty over three twenty is one fourth.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Twenty over eighty, five over twenty. Every step is one fourth, so that's the base.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Put them together: three twenty times one fourth to the x.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "A base of four would make the outputs grow. And eighty is the value at x equals one, not the start.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "One fourth in front with three twenty as the base just swaps the two jobs.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Three hundred twenty times one fourth to the x. Start at three twenty, and multiply by one fourth each step.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The starting value comes from the x equals zero row, not just whichever row you see first.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Read a where x is zero. Divide neighboring outputs to get b. Then check it on every row.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-func--exponential-models-with-a-time-period-in-the-exponent",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Doubling every fifteen years doesn't mean doubling every year. Count the periods first, then do the multiplying.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "In a model like two to the t over k, the t over k counts how many full periods have passed.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Each period multiplies by the base again. Three doublings is two times two times two, which is eight.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "From nineteen eighty to twenty twenty-five is forty-five years.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Fifteen years per doubling, so that's three doublings.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Three doublings multiply by two cubed, which is eight. So the old population times eight is thirty-six thousand.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "To go back in time, divide. Thirty-six thousand over eight is four thousand five hundred.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Twelve thousand divides by three, as if the town only tripled. Six thousand treats three doublings as times six.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Two hundred eighty-eight thousand multiplies by eight, which runs forward to twenty seventy instead of back.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Four thousand five hundred. Double it three times and you land right on thirty-six thousand.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Repeated doubling multiplies. Three doublings is times eight, never times six.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Divide the time by the period length, then multiply or divide by the base once per period.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-func--telling-linear-from-exponential-growth-table-graph-or-words",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Linear adds the same amount each step. Exponential multiplies by the same amount. Every one of these comes down to that.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "If the output changes by the same amount each time x goes up by one, it's linear.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If it's multiplied by the same factor each time, it's exponential. Check at least two steps before you decide.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Then read the graph left to right to decide increasing or decreasing.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.67
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The marked points go eight, four, two, one.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The drops are four, then two, then one. They're not the same, so it isn't a line.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "But each point is half the one before. Same factor every time: that's exponential.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Left to right, the values fall. So it's decreasing.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Both linear choices need a straight line, changing by the same amount every step. This one curves.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "The curve bends upward as it flattens out, but the values keep getting smaller. It isn't increasing.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Decreasing exponential. It halves every step, flattening toward the x axis as it goes.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A decaying curve bends upward as it levels off. Look at the y values, not the bend.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Check the differences and the ratios. Whichever stays constant names the function, and left to right gives the direction.",
+    "minDur": 9.7
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-func--graph-transformations-shifts",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A shift moves every point on a graph the same way. Track one point and you've tracked them all.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A number added outside the function moves the graph up or down, the way the sign says.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "A number inside the parentheses moves it sideways, and backwards from how it looks. Minus four goes right.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.19
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The maximum of f is at one, nine.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Minus four inside the parentheses shifts right by four. Add four to x.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Minus two outside shifts down by two. Subtract two from y.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "So the maximum moves to five, seven.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Negative three, seven shifts left, reading the inside sign at face value.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "The two with eleven add two, when the minus sign outside says go down.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Five, seven. Right four, down two.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Minus inside means right, plus inside means left. It's the one place the sign lies to you.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Move one key point. Inside numbers shift it sideways, opposite the sign. Outside numbers shift it up or down, with the sign.",
+    "minDur": 10.9
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-func--minimum-maximum-and-asymptote-reasoning-for-exponential-functions",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Exponential functions don't have a vertex. They have a level they creep toward and never quite touch.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "In a times b to the x, plus c, the exponential part fades toward zero, so the function levels off at c.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Whether c is a floor or a ceiling depends on the signs of a and b. The level itself is always c.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 8.81
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The coffee's model is seventy times point nine to the t, plus sixty-eight.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Point nine is less than one, so every minute that part shrinks. Over time, it heads toward zero.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Seventy times almost nothing is still almost nothing.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "What's left is the sixty-eight. That's room temperature, the level it cools toward.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Seventy is the coefficient and point nine is the base. Neither one is where it levels off.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "One thirty-eight is seventy plus sixty-eight. That's the temperature when it was poured, not where it ends up.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Sixty-eight degrees. The coffee cools toward the room and never quite gets there.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The number in front shrinks away. The level comes from the constant added at the end.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Let the exponential part fade to zero. Whatever's left over is where the function levels off.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-func--finding-the-vertex-of-a-quadratic-from-standard-or-factored-form",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Standard form hides the vertex. One short formula digs it out.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The vertex's x value is always negative b over two a.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then plug that x back into the function to get the y value.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Here a is one and b is negative six.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Negative b over two a. The negative of negative six is positive six, over two. That's three.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Plug in three. Nine minus eighteen plus five.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "That's negative four. So the vertex is three, negative four.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Negative three is a sign slip in the formula. Positive four is an arithmetic slip.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Six, five just reads b and c off the equation. Those aren't coordinates.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Three, negative four. The formula gives x, and plugging in gives y.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "When b is negative, negative b is positive. That's where most points get lost here.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find x with negative b over two a, then plug it back in. The vertex needs both numbers.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-func--evaluating-a-function-and-interpreting-its-output-in-context",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Sometimes they give you the output and ask for the input. Then you're running the function backward.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "If they tell you the output, set the function equal to it and solve for the input.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then check each solution against the story. A negative width or time gets thrown out.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 11.43
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The area is x times x plus six, and it equals forty.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Multiply out and move the forty over, so one side is zero.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Two numbers that multiply to negative forty and add to six: ten and negative four.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "So x is negative ten or four.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "A garden can't be negative ten feet wide. So it's four, and four times ten is forty.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Ten is actually the length, and a width of ten gives one sixty. Thirty-four just subtracts six from forty.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Four feet. Four wide, ten long, forty square feet.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Both roots solve the equation, but only one can be a real width. Check the story.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Set the function equal to the output, solve, and keep only the answer that makes sense.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-func--reading-key-features-from-a-nonlinear-graph",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A graph can hand you the coefficients, if you know which feature holds which number.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Plug in x equals zero and everything drops out except c. So the y-intercept is c.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The vertex sits at x equals negative b over two a. Know a, read the vertex, and solve for b.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The graph crosses the y axis at negative three. That's c.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The vertex is at x equals two. Set negative b over two a equal to two.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Two times one half is one, so negative b is two, and b is negative two.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Multiply them. Negative two times negative three is positive six.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Negative six loses the sign on b. Ten uses negative five, the vertex's height, as c.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Twelve drops the a from the formula, which makes b negative four.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Six. The y-intercept gave c, and the vertex gave b.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "C is where the graph crosses the y axis, not its lowest point. Those are different here.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Name the feature, then find where it lives. The y-intercept gives c, and the vertex's x value gives b.",
+    "minDur": 9.7
+   }
+  ]
+ },
+ {
+  "slug": "m-nonlinear-func--zeros-factors-and-x-intercepts-of-polynomials",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A zero, an x-intercept, and a factor are the same fact written three ways.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "If p of a is zero, the graph hits the x axis at a, and x minus a is a factor.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "So the sign in the factor is always the opposite of the zero. A zero at negative two gives x plus two.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The graph crosses the x axis at negative two, one, and four.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Each crossing is a zero. Write x minus each one.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "X minus negative two is x plus two.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "The other two factors are x minus one and x minus four.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "X minus two would mean a zero at positive two, and the graph doesn't cross there.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "X plus one and x plus four flip the signs. Those zeros give x minus one and x minus four.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "X plus two. The crossing at negative two, with the sign flipped.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "A zero at negative two means x plus two. The factor and the zero always have opposite signs.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Read each crossing, then write x minus that number. Watch the double negative.",
+    "minDur": 7.3
+   }
+  ]
+ },
+ {
+  "slug": "m-ratios-rates--setting-up-proportions-correctly",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Proportion problems are rarely hard to compute. They're just easy to set up wrong.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Put the same kind of thing on top of both fractions, and the same kind on the bottom.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Once the units line up, cross-multiply and solve. The arithmetic is the easy part.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.29
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Cups over cookies on both sides. Two over twelve equals x over thirty.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Cross-multiply. Twelve x equals two times thirty, which is sixty.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Divide both sides by twelve. X is five.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Point eight goes the wrong way. More cookies need more than two cups, not less.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "One eighty flips one side, putting cookies on top. And twenty fails a quick check: one cup per six cookies means thirty cookies need five.",
+    "minDur": 10.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Five cups. One cup for every six cookies, and thirty cookies is five sixes.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "If one fraction has cups on top and the other has cookies on top, the answer comes out confidently wrong.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Line up the units first, then cross-multiply. If the units match, the math follows.",
+    "minDur": 7.7
+   }
+  ]
+ },
+ {
+  "slug": "m-ratios-rates--unit-conversion-chains",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Don't guess whether to multiply or divide. Line up the units and let them cancel.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Write each conversion as a fraction, so the unit you don't want sits once on top and once on the bottom.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Cancel them, and whatever units survive should be exactly what the question asks for.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Start with sixty miles per hour. We want feet per minute.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Multiply by five thousand two hundred eighty feet per mile. Miles cancel.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Multiply by one hour over sixty minutes. Hours cancel, leaving feet per minute.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Sixty over sixty is one, so it's five thousand two hundred eighty feet per minute.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Three hundred sixteen thousand eight hundred skips the hours step. That's feet per hour.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Eighty-eight is feet per second, and sixty-three thousand three hundred sixty is the inches in a mile.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Five thousand two hundred eighty feet per minute. Sixty miles an hour is exactly a mile a minute.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "If a unit doesn't cancel, that fraction is flipped. Fix it before you touch the numbers.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Build the chain so every unwanted unit cancels. If what's left matches the question, the setup is right.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "m-ratios-rates--expressing-one-quantity-as-an-algebraic-ratio-expression",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A ratio question with letters is still just multiplying. The hard part is which way.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Turn the ratio into a fraction exactly as it's stated, then multiply the known quantity by it.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then sanity-check. If there are more of one thing, its expression should come out bigger.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.52
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "One manager for every six engineers, so engineers are six times managers.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Three engineers for every ten interns, so interns are ten thirds of the engineers.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Swap in six m for the engineers.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Ten thirds of six is twenty. So the interns are twenty m.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Eighteen m multiplies six by three, and sixty m multiplies six by ten. Neither one divides by three.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "M over twenty flips it. There are more interns than managers, not fewer.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Twenty m. Every manager comes with six engineers, and those six engineers come with twenty interns.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Three to ten means interns are ten thirds of the engineers, not three tenths. More interns, bigger fraction.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Chain one ratio at a time, as fractions, and check that the bigger group gets the bigger expression.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "m-percentages--straightforward-percent-change-and-discount-problems",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Going forward with a discount is easy. Going backward is where people slip.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Think in multipliers. Twenty-five percent off means you pay seventy-five percent, so multiply by zero point seven five.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "To get back to the original, divide by that multiplier. Don't just add the percent back on.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The jacket is twenty percent off, and it now costs sixty-four dollars. We want the price before the sale.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Twenty percent off means the sale price is eighty percent of the original. So zero point eight times the original is sixty-four.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Undo the multiply by dividing both sides by zero point eight.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Sixty-four divided by zero point eight is eighty. The original was eighty dollars.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Seventy-six dollars and eighty cents adds twenty percent of sixty-four. But the twenty percent came off the original, not off sixty-four.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Fifty-one dollars and twenty cents takes the discount off a second time. And eighty-four just adds twenty dollars back.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Eighty dollars. Check it: twenty percent of eighty is sixteen, and eighty minus sixteen is sixty-four.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The percent was taken from the original price. Adding it to the sale price uses the wrong base.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Turn the percent into a multiplier. Multiply to go forward, and divide by it to go back.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-percentages--successive-percent-changes-compounding-not-additive",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Up twenty percent, then down twenty percent. Back where you started? Nope.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Percent changes stack by multiplying. Each one is taken from whatever the value is at that moment.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The easy way to see it: start with a price of one hundred and apply each change in order.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The price goes up twenty percent, then down twenty percent.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Start at one hundred. Up twenty percent means times one point two. That's one hundred twenty.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Now down twenty percent, but from one hundred twenty. Times zero point eight gives ninety-six.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Ninety-six is four less than where we started. On a start of one hundred, that's four percent lower.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "So it's not the same. The drop was taken from a bigger number, so it took away more.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Four percent higher gets the direction wrong, and forty percent lower adds the two percents together.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Four percent lower. One hundred, then one twenty, then ninety-six.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "They don't cancel. The second twenty percent is taken from a new, bigger base.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Turn each change into a multiplier and apply them one after another. Starting at one hundred makes it easy.",
+    "minDur": 9.7
+   }
+  ]
+ },
+ {
+  "slug": "m-percentages--percent-part-and-whole-solving-for-the-missing-one",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Every one of these is the same three numbers: a part, a whole, and a percent.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The part equals the percent times the whole. You're given two of them, and you find the third.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "To find a percent, divide the part by the whole. The whole is what you're comparing to.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Sometimes the part isn't given directly, and you have to subtract to find it first.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.71
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Sixty-three out of one eighty picked option A. But the question asks about option B.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Everyone else picked B. One eighty minus sixty-three is one hundred seventeen.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Now it's part over whole. B's part is one seventeen, and the whole is all one eighty.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "One seventeen over one eighty is zero point six five. That's sixty-five percent.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Thirty-five percent is option A's share. Sixty-three is a count of people, not a percent.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And thirty-one and a half doesn't match any split here. B's share really is sixty-five.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Sixty-five percent. And A's thirty-five plus B's sixty-five makes a hundred, so it checks out.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The number in the question belongs to option A. Subtract first to get B's part.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Figure out which number is the part and which is the whole. Then the percent is part over whole.",
+    "minDur": 9.7
+   }
+  ]
+ },
+ {
+  "slug": "m-one-var-data--comparing-mean-and-median-to-detect-skew",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "One mansion on the block, and suddenly the average house looks way pricier than it is.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The mean uses every value, so one extreme value drags it toward itself.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The median only cares about the middle of the sorted list, so outliers barely touch it.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "If the mean sits well above the median, a few high values are pulling it up. That's right skew.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.29
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Five sale prices, in thousands. One of them, eight ninety, is way off from the rest.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Sort them first. The median is the middle of the sorted list, not the middle of the list as given.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Five values, so the median is the third one. Two thirty.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Compare the mean. Everything adds to seventeen ninety-five, divided by five is three fifty-nine. The outlier pulled it way up.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "So three fifty-nine is the mean, not the median. And eight ninety is the outlier itself.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Two twenty-five is second in the sorted list. The middle is one spot over.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Two thirty. The median stays with the typical homes while the mean chases the big sale.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The median is the middle of the sorted list. Pick the middle of the list as given, and you'll land on the wrong value.",
+    "minDur": 10.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Outliers pull the mean toward them. The median holds steady, so it shows a typical value better.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-one-var-data--interpreting-standard-deviation-as-spread",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Two classes, same average. Totally different stories.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Standard deviation measures how far values typically sit from the mean. It says nothing about how big the mean is.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Two data sets can share a mean and still have very different standard deviations.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 10.48
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Both classes have a mean of seventy-eight. So the center is a tie, and the question is all about spread.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Class A is tightly clustered near seventy-eight. Class B runs all the way from forty to a hundred.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Wider spread around the same mean means a bigger standard deviation. That's Class B, so the Class A choice has them backwards.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Sharing a mean doesn't mean sharing a spread. And the descriptions are enough to decide, even without every score.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Class B. Its scores wander much farther from seventy-eight.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Standard deviation and the mean answer different questions. One is how spread out, the other is where the middle is.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "A bigger standard deviation means values sit farther from the mean. That's less consistent, not bigger.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-one-var-data--reading-values-and-basic-statistics-directly-from-a-graph-or-table",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Two sections, two averages. You can't just average the averages.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Most of these are careful reading. Find the right row or bar, and read its value exactly.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "To combine groups, turn each mean back into a total. The count times the mean gives the total.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Add the totals, then divide by the combined count. Bigger groups count for more.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Section A has eighteen students with a mean of eighty-four. That's fifteen hundred twelve points total.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Section B has twelve students with a mean of seventy-nine. Nine hundred forty-eight points.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Add the two totals. Two thousand four hundred sixty points in all.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Divide by all thirty students. The combined mean is eighty-two.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Eighty-one and a half averages the two means as if the sections were the same size. Section A is bigger, so it counts more.",
+    "minDur": 10.5
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Eighty-one swaps the class sizes. And twenty-four sixty is the total before dividing.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Eighty-two. It lands closer to eighty-four, because Section A has more students.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "That only works when the groups are the same size. Here they aren't, so weight each mean by its count.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Turn each mean into a total, add the totals, and divide by the total count.",
+    "minDur": 8.1
+   }
+  ]
+ },
+ {
+  "slug": "m-one-var-data--how-changing-a-data-set-changes-its-statistics",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Add one score to a list, and the mean moves. The question is how far.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Add the same amount to every value, and the mean and median move by that amount. The range stays put.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "When one new value joins, rebuild the old total from the mean, add the new value, and divide again.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Five scores with a mean of eighty, and a sixth score of ninety-two joins.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Five scores averaging eighty means they add to four hundred.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Add the new score. Four hundred plus ninety-two is four ninety-two.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Now there are six scores, so divide by six. The new mean is eighty-two.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Eighty-six averages eighty and ninety-two as if they counted equally. But eighty stands for five scores.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Eighty ignores the new score, which is above the mean and pulls it up. Ninety-two is just the new score.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Eighty-two. One high score nudges the mean up, but only a little.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The old mean stands for five scores, not one. Rebuild the total before you add anything.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Turn the mean into a total, add or remove the value, and divide by the new count.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-two-var-data--choosing-the-right-model-shape-from-a-scatterplot-s-pattern",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Lots of scatterplots go up and to the right. What matters is how they go up.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "If the points climb by the same amount each step, that's a straight line. Linear.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "If each jump is bigger than the last, and it never turns around, that's exponential.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "If the points rise and then fall, or fall and then rise, that's a quadratic.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Slow at first, then steeper and steeper. Each step's jump is bigger than the one before.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The rate itself is changing, so it can't be a straight line. Linear's out.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "It curves up, which might tempt you toward quadratic. But a quadratic turns around at its vertex, and this never does.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Speeding up in one direction forever is exactly what exponential growth looks like. So one of these models definitely fits.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Exponential. The rate of increase keeps increasing.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Curving isn't enough. Ask whether it ever turns around. Quadratics do. Exponentials just keep speeding up.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Steady rate, linear. Growing rate, exponential. A rate that flips direction, quadratic.",
+    "minDur": 6.9
+   }
+  ]
+ },
+ {
+  "slug": "m-two-var-data--using-a-line-of-best-fit",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "When there's a line drawn through the dots, work from the line, not the dots.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Start with the sign. A line that falls from left to right has a negative slope.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The y-intercept is where the line meets the y-axis, at x equals zero.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Then slope is the change in y over the change in x, read off the axis numbers.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Snow melting over the days after a storm. The line falls, so the slope is negative.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The line meets the y-axis at twenty-four inches, and hits zero on day twelve. Rise over run.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Negative twenty-four over twelve is negative two. It loses about two inches a day.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Put the slope and intercept together. Y equals negative two x plus twenty-four.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "A positive two would make the line rise. And twelve is where it meets the x-axis, not the y-axis.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Negative one half is the slope upside down: the change in x over the change in y.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Y equals negative two x plus twenty-four. Right sign, right intercept, right steepness.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Slope is change in y over change in x. Flip it and you get the wrong steepness.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Check the sign, find where it meets the y-axis, then work out rise over run.",
+    "minDur": 8.1
+   }
+  ]
+ },
+ {
+  "slug": "m-two-var-data--interpreting-residuals",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A residual tells you how far off the model was, and in which direction.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A residual is the actual value minus the predicted value. Always in that order.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "A negative residual means the real value came in below what the model predicted.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 8.33
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The model predicted twenty-four centimeters. The plant actually measured nineteen.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Residual is actual minus predicted.",
+    "minDur": 2.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Nineteen minus twenty-four is negative five.",
+    "minDur": 3.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Negative means the plant came in under the prediction. It grew less than expected.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "The positive fives flip the subtraction. And negative five meaning grew more gets the sign backwards.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Negative five, and the plant grew less than predicted.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Subtract in the wrong order and the sign flips, and so does the meaning.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Actual minus predicted. Positive means above the model, negative means below it.",
+    "minDur": 6.9
+   }
+  ]
+ },
+ {
+  "slug": "m-probability--basic-and-compound-probability",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "\"And\" and \"or\" look like tiny words. In probability, they change the whole method.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Basic probability is favorable outcomes over total outcomes.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "For two independent events both happening, multiply their probabilities.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "For either one happening, add them, then subtract the chance of both, so you don't count it twice.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.05
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Five red, three blue, and the marble goes back in. We want first red, or second blue.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Both can happen at once. Since the marble's replaced, the draws are independent, so multiply for the overlap.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Or means add the two, then take away the overlap.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Put it all over sixty-four. Forty plus twenty-four minus fifteen is forty-nine.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "One comes from adding without subtracting the overlap. It counts the both case twice.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Five eighths is only the first draw, and fifteen sixty-fourths is only the overlap.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Forty-nine sixty-fourths. Add the two, minus the part you counted twice.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "If both events can happen together, adding them counts that outcome twice. Take it out once.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Independent and, multiply. Or, add them and subtract the chance of both.",
+    "minDur": 6.9
+   }
+  ]
+ },
+ {
+  "slug": "m-probability--conditional-probability",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "\"Given that\" is the most important phrase in the question. It shrinks your world.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Given that tells you to ignore everyone outside a certain group.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "The size of that group becomes your denominator, not the whole sample.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 8.81
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Given that they play a sport. So we only look at the one hundred twenty athletes.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Of those one twenty, forty-five also play an instrument.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Both divide by fifteen. Forty-five over one twenty is three eighths.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Forty-five over two hundred uses everyone surveyed. Nine fortieths is that same fraction, reduced.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "And eighty is the number who don't play a sport. The condition says we only want the ones who do.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Three eighths. Forty-five out of the one hundred twenty athletes.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The condition cuts the group down. Divide by the size of that smaller group, not everyone.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find the group the condition describes. Then count only inside it.",
+    "minDur": 6.5
+   }
+  ]
+ },
+ {
+  "slug": "m-inference--interpreting-confidence-intervals-correctly",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A confidence interval is a range of believable answers. Not a promise, and not a prediction about individuals.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The interval gives a plausible range for the true average of the whole population.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "It doesn't say where individual data points fall, and it doesn't guarantee anything.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "A claimed value inside the interval is plausible. One outside it isn't well supported.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 8.81
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The claim is twenty-seven minutes. The interval runs from twenty-four to thirty.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Is twenty-seven between twenty-four and thirty? Yes, so the data doesn't contradict the claim.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "It doesn't have to sit in the exact center. Any value inside the interval counts as plausible.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Since twenty-seven is inside, the data can't rule it out. But it doesn't prove it either, since other values are just as plausible.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "No contradiction. Twenty-seven is inside the interval, so it's a plausible value.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "An interval makes a value plausible or questionable. It never proves the mean is exactly one number.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Ask whether the claimed value lands inside the range. Inside is plausible, outside is questionable.",
+    "minDur": 8.1
+   }
+  ]
+ },
+ {
+  "slug": "m-inference--sample-size-s-effect-on-margin-of-error",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Two knobs control how wide a confidence interval is, and they turn in opposite directions.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A bigger sample gives a smaller margin of error, so the interval gets narrower.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "A higher confidence level does the opposite. To be more sure, you need a wider range.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.05
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "This study turns both knobs at once: bigger sample, and higher confidence level.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The bigger sample pushes the interval narrower.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The higher confidence level pushes it wider.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Two pushes in opposite directions. Without their sizes, you can't tell which wins, so the colleague ignored half the story.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "So the colleague isn't fully correct. And a higher confidence level widens an interval; it doesn't narrow it.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Each change matters on its own. They don't need to happen at the same rate to have an effect.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "The reasoning is incomplete. The higher confidence level pushes the other way.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Bigger samples narrow the interval. Higher confidence widens it. Don't let one rule stand in for the other.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "More data, narrower. More confidence, wider. If both change, check each one.",
+    "minDur": 6.9
+   }
+  ]
+ },
+ {
+  "slug": "m-inference--estimating-a-population-count-from-a-sample-proportion",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A good random sample is a tiny model of the whole population. Scale it up.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "First turn the sample's count into a proportion: the count over the sample size.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then apply that same proportion to the full population.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "This only works if the sample was random. A self-selected sample can't stand in for everyone.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "One seventy-five out of two fifty support the measure. But the question asks who does not.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The supporting proportion is one seventy-five over two fifty. That's zero point seven.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Everyone else doesn't support it. One minus zero point seven is zero point three.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Scale up to the district. Zero point three times sixty thousand is eighteen thousand.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Forty-two thousand estimates the supporters instead, and one seventy-five is the raw sample count.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Twelve thousand uses twenty percent. Non-supporters are seventy-five out of two fifty, which is thirty percent.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Eighteen thousand. Thirty percent of the district doesn't support it.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Read the question twice. If it asks about who does not, use the other part of the sample.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Turn the sample count into a proportion, check that it's the right group, then multiply by the population.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "m-statistical-claims--distinguishing-correlation-from-causation",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Two things rising together doesn't mean one is pushing the other.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "If nobody was randomly assigned to groups, the study can only show that two things go together.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Some hidden factor, a confounding variable, might be driving both at once.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "Only a randomized experiment can back up a claim that one thing causes another.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.71
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "This is an observational study. Nobody assigned who eats breakfast. The students chose.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "So what else could drive both? A steady family routine, or income, could shape breakfast habits and test scores.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Breakfast directly causing higher scores is exactly the leap an observational study can't make.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Scores causing breakfast doesn't make sense either. And the study did find a relationship, so none at all is wrong.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "A confounding variable most likely explains both. The study shows a link, not a cause.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "An observational study can say two things go together. It can't say one causes the other.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Check the design first. No random assignment means correlation only, and look for the hidden third factor.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-statistical-claims--evaluating-study-design-for-causal-claims",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Before you trust a result, check how the study was built.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "First question: were the subjects randomly assigned to the treatment or the comparison?",
+    "minDur": 6.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Second question: is there a comparison group, under the same conditions, that didn't get the treatment?",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 2,
+    "text": "If either one is missing, the honest conclusion is association only, however good the result looks.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 10.71
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The fertilized field this year gets compared to the same field last year, with no fertilizer.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Is there a comparison group grown at the same time? No. The comparison is a different year.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "And between two years, lots changes. Weather, rain, the soil itself. Any of those could explain the difference.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Using just one field isn't the core flaw. And yield comparisons do work, with a proper control grown alongside.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Random assignment would help, but the more direct problem is the missing same-time comparison.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "The missing same-time control. Year-to-year changes like weather can't be ruled out.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Sample size is the tempting answer. Look for the specific thing the design is missing.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Check for random assignment and a control group tested at the same time. Miss either, and it's association only.",
+    "minDur": 9.7
+   }
+  ]
+ },
+ {
+  "slug": "m-area-volume--scale-factor-effects-on-area-and-volume",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Triple a cube's sides and it doesn't get three times bigger. It gets a lot bigger than that.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Stretch every length by k. Area has two dimensions, so it grows by k squared. Volume has three, so k cubed.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Before you touch the numbers, ask: am I measuring a length, an area, or a volume?",
+    "minDur": 7.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The side length is tripled, so the linear scale factor is three.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The question asks about volume. That's three dimensions, so the factor gets cubed.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Three cubed is three times three times three. Twenty-seven.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Three uses the side's factor as if volume were a length. Nine is the area rule, three squared.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "And six multiplies three by two. The factor gets raised to a power, not multiplied.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Twenty-seven. Each of the three directions gets three times longer, and those multiply.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Finding the scale factor is the easy part. The slip is forgetting to square it or cube it.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Match the power to the dimensions. Two for area, three for volume.",
+    "minDur": 6.9
+   }
+  ]
+ },
+ {
+  "slug": "m-area-volume--composite-figures-and-formula-selection",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A silo is just two shapes stacked up. Find each one's volume, then add.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Figure out exactly which shapes you have, and write each formula down before you plug anything in.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "When shapes are stuck together, add their volumes. When one's cut out of another, subtract.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 10.24
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "It's a cylinder with half a sphere on top. Both have radius four, and the cylinder is ten tall.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The cylinder is pi times four squared times ten. That's one hundred sixty pi.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "The hemisphere is half of four thirds pi r cubed. Four cubed is sixty-four, so it's one hundred twenty-eight thirds pi.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "To add, write one hundred sixty pi as four hundred eighty thirds pi. The total is six hundred eight thirds pi.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "One hundred sixty pi is only the cylinder. One hundred twenty-eight thirds pi is only the hemisphere. You need both.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Two hundred eighty-eight pi uses one hundred twenty-eight pi for the hemisphere. It forgot to divide by three.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Six hundred eight thirds pi. Two shapes, two formulas, one sum.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Cones and spheres carry fractions that cylinders don't. Write the formula out, and the fraction won't slip away.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Name each shape, write its formula, plug in, and add or subtract the pieces.",
+    "minDur": 7.7
+   }
+  ]
+ },
+ {
+  "slug": "m-area-volume--building-an-area-surface-area-or-volume-expression-from-a-description",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "No numbers for two of the sides? Fine. You're building a formula, not a number.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Start with the shape's formula. For a box, volume is length times width times height.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Then turn every worded dimension into an expression. Phrases like three more than tell you which way to go.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "A rectangular prism's volume is length times width times height. The height is eight.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The length is x, and it's three more than the width. So the width is three less than x.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Plug all three in. X, times the quantity x minus three, times eight.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Move the eight to the front, and that's the function.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "X plus three flips the phrase. The length is bigger, so the width is x minus three.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "The last two each drop a dimension. One loses the length x, the other loses the height of eight.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Eight x times the quantity x minus three. All three dimensions, multiplied.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "If the length is three more than the width, the width is three less than the length. Check which one's bigger.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Write the formula, turn each phrase into algebra, and make sure every dimension shows up.",
+    "minDur": 8.1
+   }
+  ]
+ },
+ {
+  "slug": "m-right-tri-trig--soh-cah-toa-setup",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "The formula's never the hard part. Knowing which side is which is.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Sine is opposite over hypotenuse. Cosine is adjacent over hypotenuse. Tangent is opposite over adjacent.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Stand at the angle you're using. The side across from you is opposite, the leg touching you is adjacent.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 7.62
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The angle is forty degrees, down at the ground. The fifteen feet runs along the ground, right next to it.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The pole's height is across from the angle, so it's opposite. Fifteen is adjacent. No hypotenuse needed.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Opposite and adjacent means tangent. So tangent of forty degrees equals h over fifteen.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Multiply both sides by fifteen to get h alone.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Sine and cosine both need the cable, the hypotenuse, which we don't have.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And fifteen over tangent divides when the equation says multiply.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Fifteen times the tangent of forty degrees. Opposite and adjacent, so tangent.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Opposite and adjacent depend on which angle you're standing at. Switch angles, and they switch too.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Find the angle, label the sides from there, and let the two sides you have pick the ratio.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "m-right-tri-trig--special-right-triangles-30-60-90-and-45-45-90",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "See a sixty degree angle in a right triangle? You already know every side.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "In a forty-five forty-five ninety triangle, the legs are equal and the hypotenuse is a leg times root two.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "In a thirty sixty ninety, the short side is x, the side across from sixty is x root three, and the hypotenuse is two x.",
+    "minDur": 10.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.71
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The hypotenuse is sixteen and one angle is sixty. That's a thirty sixty ninety triangle.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The hypotenuse is two x, so two x equals sixteen.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Divide by two. The short side, across from thirty degrees, is eight.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "The side across from sixty is x root three. That's eight root three.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Eight is the short side, across from thirty. Sixteen root three starts from the hypotenuse instead of the short side.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And four root three halves one too many times.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Eight root three. Halve the hypotenuse, then multiply by root three.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Root two belongs to the forty-five triangle, root three to the thirty sixty. Check the angles before you pick.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Recognize the special angles and the sides come straight from the ratio. No Pythagorean theorem needed.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-right-tri-trig--using-the-pythagorean-theorem-before-computing-a-trig-ratio",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Sometimes you're handed two sides, and they're the wrong two. So go get the third.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A trig ratio uses two specific sides. If one of them is missing, you can't skip ahead.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "Use the Pythagorean theorem to find the missing side, then set up the ratio.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 7.38
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "We want the angle that isn't next to the nine, so nine is opposite it. The fifteen is the hypotenuse.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Cosine needs the adjacent side, and that's the one that's missing. So find it. Hypotenuse squared minus the known leg squared.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Fifteen squared is two hundred twenty-five, nine squared is eighty-one. Subtract, and you get one hundred forty-four.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "The square root of one hundred forty-four is twelve. That's the adjacent side.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Cosine is adjacent over hypotenuse. Twelve over fifteen, which simplifies to four fifths.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Three fifths is the sine. Nine fifteenths treats nine as adjacent, and twelve ninths skips the hypotenuse.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Four fifths. Twelve adjacent, fifteen hypotenuse.",
+    "minDur": 3.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "It's tempting to make a ratio from whatever's on the page. Check that they're the sides the ratio actually needs.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Label the sides from the angle, fill in the missing one with Pythagoras, then build the ratio.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-right-tri-trig--radian-measure-and-coterminal-angles",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A big negative angle looks scary. Spin it around until it lands somewhere familiar.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A full turn is two pi. Adding or subtracting full turns lands you in the exact same spot.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "And angles that land in the same spot have the same sine, cosine, and tangent.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Negative eleven pi over three is way outside one turn. Two pi is six thirds pi, so add that.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Still negative. Add another full turn.",
+    "minDur": 3.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Pi over three is sixty degrees, and cosine of that is one half. It's in the first quadrant, so it's positive.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Negative one half comes from stopping after one turn and getting the sign wrong.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Root three over two is sine of pi over three, not cosine. Negative root three over two is the wrong value and the wrong sign.",
+    "minDur": 10.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "One half. Two full turns, and it's just pi over three.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Don't try to picture negative eleven pi over three. Reduce it first, then evaluate.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Add or subtract two pi until the angle's between zero and two pi. Then use the values you know.",
+    "minDur": 9.7
+   }
+  ]
+ },
+ {
+  "slug": "m-right-tri-trig--using-the-pythagorean-theorem-alone-to-find-a-missing-side",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Radical sides look messy, but squaring them cleans them right up.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The two legs squared add up to the hypotenuse squared. The hypotenuse is across from the right angle.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "To square something like four root three, square the four and drop the root. Sixteen times three.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The legs are four root three and four. We want the hypotenuse, so add the squares.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Four root three squared is sixteen times three, which is forty-eight. Four squared is sixteen.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Add them up. Sixty-four.",
+    "minDur": 2.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Take the square root. The hypotenuse is eight.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Sixty-four is c squared, one step early. Four root three plus four just adds the legs.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "And four root seven mashes the legs under one root instead of squaring each one.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Eight. Forty-eight plus sixteen is sixty-four, and its root is eight.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Four root three squared is sixteen times three. Not sixteen plus three, and not four times three.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Square each leg carefully, add, and take the square root. Simplify whatever's left.",
+    "minDur": 7.3
+   }
+  ]
+ },
+ {
+  "slug": "m-right-tri-trig--the-sine-cosine-complementary-angle-relationship",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "When sine of one angle equals cosine of another, the angles are telling you something.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "In a right triangle, the two smaller angles always add up to ninety degrees.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "One angle's opposite side is the other's adjacent side. So sine of one equals cosine of the other.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.2
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Sine of three x equals cosine of two x plus fifteen. So those two angles are complementary.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Complementary means they add to ninety.",
+    "minDur": 3.3
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Combine the x terms. Five x plus fifteen.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Subtract fifteen from both sides.",
+    "minDur": 2.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Divide by five. X is fifteen, so both angles are forty-five degrees.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Twenty-five makes the angles add to one hundred forty, five makes forty, and thirty-seven point five puts three x over ninety alone.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Fifteen. The angles are forty-five and forty-five, which add to ninety.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The shortcut links sine of one angle to cosine of its partner. Sine and cosine of the same angle usually differ.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Whenever sine of one angle equals cosine of another, those two angles add up to ninety degrees.",
+    "minDur": 8.9
+   }
+  ]
+ },
+ {
+  "slug": "m-circles--the-circle-equation-center-radius-form",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A circle's equation is its address and its size, written in one line. You just have to read the signs right.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The center is h comma k, and the radius is r. The template subtracts h and k, and squares r.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "So a negative coordinate shows up with a plus sign. And the right side is the radius squared, not the radius.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 3.33
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "Start from the template, with h and k being subtracted.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The center is negative four comma one, and the radius is six. Drop them in exactly as they are.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Minus negative four becomes plus four. And six squared is thirty-six.",
+    "minDur": 5.3
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "The second choice flips both signs, like the template adds. The fourth flips only the y sign.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "And the third puts six on the right. That's the radius, but the equation needs it squared.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "X plus four, squared, plus y minus one, squared, equals thirty-six.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The equation subtracts the center. So a center at negative four shows up as x plus four.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Write each center coordinate with the opposite sign in the parentheses, and square the radius on the right.",
+    "minDur": 9.3
+   }
+  ]
+ },
+ {
+  "slug": "m-circles--arc-length-and-sector-area-as-fractions-of-the-whole-circle",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "An arc is just a slice of the circle's edge. Figure out how big a slice.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "The central angle over three sixty tells you what fraction of the circle you've got.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "For arc length, take that fraction of the circumference. For sector area, take it of the whole area.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 5.48
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "The central angle is one hundred twenty degrees. Out of three sixty, that's one third.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "It's asking for arc length, so we need the circumference. Two pi times nine is eighteen pi.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Take one third of eighteen pi. Six pi.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Eighteen pi is the whole circumference, and nine pi is half. We only want a third.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Two pi is a slip. A third of eighteen pi is six pi, not two.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Six pi. One third of the way around a circle whose edge is eighteen pi.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Turn the angle into a fraction of three sixty first. Otherwise you're working with the whole circle.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Arc length and sector area are the same move. Find the fraction, then apply it to the circumference or area.",
+    "minDur": 10.1
+   }
+  ]
+ },
+ {
+  "slug": "m-circles--solving-the-circle-equation-for-a-coordinate-s-possible-values",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Draw a vertical line through a circle and it usually hits twice. So expect two answers.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "Put the coordinate you know into its spot in the equation, then solve for the other one.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "When you undo a square, there's a positive root and a negative root. Keep both.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 4.76
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "X is five, so put five in for x.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "Five plus one is six, and six squared is thirty-six.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Subtract thirty-six from both sides.",
+    "minDur": 2.9
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Take the square root. Y minus four could be two or negative two.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Add four to both. Y is six or two.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 5,
+    "text": "Eight or zero doesn't check. Six only drops the negative root. And negative six or negative two is a sign slip.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Y equals six or y equals two. One point above the center, one below.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Something squared equals four has two answers, two and negative two. Dropping one loses a point on the circle.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Plug in what you know, get the squared piece alone, and take both square roots.",
+    "minDur": 8.1
+   }
+  ]
+ },
+ {
+  "slug": "m-circles--circle-theorems-central-angles-arcs-and-tangent-lines",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "A tangent line hides a right angle. Find it, and you've got a right triangle.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A radius drawn to the point where a tangent touches always meets it at ninety degrees.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "That right angle means the Pythagorean theorem works. Just figure out which side is the hypotenuse first.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 7.38
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "P Q touches the circle at Q, and O Q is a radius. So the angle at Q is a right angle.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The side across from that right angle is O P, thirteen. That's the hypotenuse.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "One hundred sixty-nine minus twenty-five is one hundred forty-four.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Take the square root. P Q is twelve.",
+    "minDur": 4.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "Eighteen and eight just add or subtract the lengths. The square root of one hundred ninety-four adds the squares, but O P is the hypotenuse.",
+    "minDur": 10.9
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Twelve. A five, twelve, thirteen right triangle, hiding inside a circle.",
+    "minDur": 5.7
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "Nothing in the question says right angle. The tangent says it for you.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Draw the radius to the point of tangency, mark the right angle, and solve the triangle.",
+    "minDur": 8.5
+   }
+  ]
+ },
+ {
+  "slug": "m-circles--inscribed-figures-and-radii-as-equal-sides",
+  "beats": [
+   {
+    "kind": "hook",
+    "i": 0,
+    "text": "Any segment from the center to the circle is a radius. That gives you free sides.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "idea",
+    "i": 0,
+    "text": "A triangle with one corner at the center and two on the circle has two radii for sides. They're equal.",
+    "minDur": 8.9
+   },
+   {
+    "kind": "idea",
+    "i": 1,
+    "text": "So when a problem gives you one radius, you actually know two sides.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "question",
+    "i": 0,
+    "text": "Here's one. Read it with me.",
+    "minDur": 9.52
+   },
+   {
+    "kind": "step",
+    "i": 0,
+    "text": "O is the center, and P and Q are on the circle. So O P and O Q are both radii, nine each.",
+    "minDur": 10.1
+   },
+   {
+    "kind": "step",
+    "i": 1,
+    "text": "The perimeter adds all three sides. Nine plus nine plus P Q is thirty-four.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Subtract eighteen from both sides. P Q is sixteen.",
+    "minDur": 4.5
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Twenty-five subtracts only one radius. Nine assumes the chord equals the radius, which only happens at sixty degrees.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
+    "i": 4,
+    "text": "And eighteen is the diameter. This chord misses the center, so it's shorter.",
+    "minDur": 6.1
+   },
+   {
+    "kind": "answer",
+    "i": 0,
+    "text": "Sixteen. Thirty-four minus both radii.",
+    "minDur": 3.3
+   },
+   {
+    "kind": "trap",
+    "i": 0,
+    "text": "The problem mentions the radius once, but the triangle uses it twice. Subtract both.",
+    "minDur": 6.5
+   },
+   {
+    "kind": "recap",
+    "i": 0,
+    "text": "Look for sides that run from the center to the circle. They're radii, so they're equal.",
+    "minDur": 8.5
+   }
+  ]
  }
 ]

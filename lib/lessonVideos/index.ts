@@ -9,8 +9,9 @@ import { RHETORICAL_SYNTHESIS } from "./scripts/rhetoricalSynthesis";
 import { TEXT_STRUCTURE } from "./scripts/textStructure";
 import { TRANSITIONS } from "./scripts/transitions";
 import { WORDS_CONTEXT } from "./scripts/wordsContext";
+import { MATH } from "./scripts/math";
 
-// Every lesson video script, one per Reading and Writing question type.
+// Every lesson video script: one per question type, Reading and Writing and Math.
 export const LESSON_VIDEOS: LessonVideoScript[] = [
   ...CENTRAL_IDEAS,
   ...EVIDENCE,
@@ -22,6 +23,7 @@ export const LESSON_VIDEOS: LessonVideoScript[] = [
   ...TRANSITIONS,
   ...BOUNDARIES,
   ...FORM_STRUCTURE,
+  ...MATH,
 ];
 
 export function lessonVideoFor(subskillId: string, pattern: string): LessonVideoScript | undefined {

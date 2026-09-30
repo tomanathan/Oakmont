@@ -6,8 +6,10 @@ import { checkScript } from "../components/lessonVideo/timeline";
 
 const problems: string[] = [];
 let expected = 0;
+const which = process.env.SECTION; // "rw", "math", or both when unset
 for (const section of CURRICULUM) {
-  if (section.section !== "Reading and Writing") continue;
+  const isMath = section.section !== "Reading and Writing";
+  if ((which === "rw" && isMath) || (which === "math" && !isMath)) continue;
   for (const d of section.domains)
     for (const s of d.subskills)
       for (const p of s.patterns) {

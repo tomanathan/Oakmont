@@ -3711,7 +3711,7 @@ const LC_M_LINEAR_EQ_2VAR: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["Perpendicular", "Parallel", "The same line", "Neither parallel nor perpendicular"],
           answer: 0,
           explain:
-            "Convert to slope-intercept form first: 4y = -2x + 16, so y = -0.5x + 4. The given slope is -1/2. For a perpendicular line, take the negative reciprocal: flip the fraction (2/1) and change the sign, giving 2, which matches the described line.",
+            "Convert to slope-intercept form first: 4y = -2x + 16, so y = -0.5x + 4. That line's slope is -1/2. For a perpendicular line, take the negative reciprocal: flip the fraction (2/1) and change the sign, giving 2, which matches the described line.",
           diagram: { kind: "lineGraph", direction: "gentleNeg", slopeLabel: "slope = -1/2", extra: { direction: "steepPos", label: "perpendicular: slope = 2" } },
           difficulty: "medium",
           why: [null, "Parallel would need the same slope. The given line's slope is −1/2, not 2.", "The same line would need the same slope. −1/2 and 2 are different.", "2 is the negative reciprocal of −1/2 (their product is −1), so they're perpendicular."],
@@ -5559,7 +5559,7 @@ const LC_M_NONLINEAR_FUNC: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["Increasing linear", "Decreasing linear", "Decreasing exponential", "Increasing exponential"],
           answer: 2,
           explain:
-            "The graph is a curve, not a straight line, and the marked points confirm it: each time x increases by 1, y is multiplied by 1/2 (8, 4, 2, 1), while the drops (4, 2, 1) keep shrinking instead of staying constant. Reading from left to right, the graph falls, so h is decreasing exponential. Either linear choice would need a straight line with equal drops. The curve does bend upward and flatten out toward the x-axis as x grows, which can tempt 'increasing,' but its y-values keep getting smaller from left to right, never larger.",
+            "The graph is a curve, not a straight line, and the marked points confirm it: each time x increases by 1, y is multiplied by 1/2 (8, 4, 2, 1), while the drops (4, 2, 1) keep shrinking instead of staying constant. Reading from left to right, the graph falls, so h is decreasing exponential. Either linear choice would need a straight line that changes by the same amount at every step. The curve does bend upward and flatten out toward the x-axis as x grows, which can tempt 'increasing,' but its y-values keep getting smaller from left to right, never larger.",
           figure: {"kind": "geometry", "points": {"p0": [0, 8], "p1": [1, 4], "p2": [2, 2], "p3": [3, 1]}, "dots": ["p0", "p1", "p2", "p3"], "paths": [{"points": [[-0.2, 9.1896], [-0.1, 8.5742], [0, 8], [0.1, 7.4643], [0.2, 6.9644], [0.3, 6.498], [0.4, 6.0629], [0.5, 5.6569], [0.6, 5.278], [0.7, 4.9246], [0.8, 4.5948], [0.9, 4.2871], [1, 4], [1.1, 3.7321], [1.2, 3.4822], [1.3, 3.249], [1.4, 3.0314], [1.5, 2.8284], [1.6, 2.639], [1.7, 2.4623], [1.8, 2.2974], [1.9, 2.1435], [2, 2], [2.1, 1.8661], [2.2, 1.7411], [2.3, 1.6245], [2.4, 1.5157], [2.5, 1.4142], [2.6, 1.3195], [2.7, 1.2311], [2.8, 1.1487], [2.9, 1.0718], [3, 1], [3.1, 0.933], [3.2, 0.8706], [3.3, 0.8123], [3.4, 0.7579], [3.5, 0.7071], [3.6, 0.6598], [3.7, 0.6156], [3.8, 0.5743], [3.9, 0.5359], [4, 0.5], [4.1, 0.4665], [4.2, 0.4353], [4.3, 0.4061], [4.4, 0.3789], [4.5, 0.3536], [4.6, 0.3299], [4.7, 0.3078], [4.8, 0.2872], [4.9, 0.2679], [5, 0.25], [5.1, 0.2333], [5.2, 0.2176], [5.3, 0.2031], [5.4, 0.1895], [5.5, 0.1768], [5.6, 0.1649], [5.7, 0.1539], [5.8, 0.1436], [5.9, 0.134], [6, 0.125], [6.1, 0.1166], [6.2, 0.1088], [6.3, 0.1015], [6.4, 0.0947], [6.5, 0.0884], [6.6, 0.0825], [6.7, 0.0769], [6.8, 0.0718], [6.9, 0.067], [7, 0.0625]]}], "axes": {"x": [-1, 7], "y": [-1, 9], "step": 1, "labelEvery": 2}},
           difficulty: "medium",
           why: ["The graph falls from left to right, and it curves rather than following a straight line.", "A line would drop by the same amount each step. The drops here are 4, 2, and 1.", null, "The curve bends upward, but the y-values fall from left to right: 8, 4, 2, 1."],
@@ -6447,12 +6447,12 @@ const LC_M_ONE_VAR_DATA: { patterns: Pattern[]; tipsAndTricks: string[] } = {
         },
         {
           q: "A data set: 12, 15, 15, 18, 20, 95. What is the median of this data set?",
-          choices: ["16.5", "40.83", "95", "18"],
+          choices: ["16.5", "29.17", "95", "18"],
           answer: 0,
           explain:
-            "95 is far from the rest of the data (12-20), a clear outlier that pulls the mean substantially higher; the median, based on the middle values (15 and 18, averaging to 16.5), remains representative of the typical cluster. 40.83 is the actual mean of this data set, distorted upward by the outlier. 95 mistakes the outlier itself for a representative value. 18 picks one of the two middle values without correctly averaging them.",
+            "95 is far from the rest of the data (12-20), a clear outlier that pulls the mean substantially higher; the median, based on the middle values (15 and 18, averaging to 16.5), remains representative of the typical cluster. 29.17 is the actual mean of this data set, distorted upward by the outlier. 95 mistakes the outlier itself for a representative value. 18 picks one of the two middle values without correctly averaging them.",
           difficulty: "easy",
-          why: [null, "40.83 is the mean, pulled up by 95. The median averages the two middle values: (15 + 18) ÷ 2.", "95 is the outlier, not the middle of the data.", "With six values, the median is the average of the 3rd and 4th: (15 + 18) ÷ 2 = 16.5."],
+          why: [null, "29.17 is the mean, pulled up by 95. The median averages the two middle values: (15 + 18) ÷ 2.", "95 is the outlier, not the middle of the data.", "With six values, the median is the average of the 3rd and 4th: (15 + 18) ÷ 2 = 16.5."],
         },
         {
           q: "A data set of quiz scores: 2, 78, 81, 85, 88, 90. What is the median score?",
@@ -7002,7 +7002,7 @@ const LC_M_PROBABILITY: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["3/8", "45/200", "9/40", "45/80"],
           answer: 0,
           explain:
-            "Restricting to the 120 sport-playing students, as specified by 'given that they play a sport,' 45 of those also play an instrument, giving 45/120 = 3/8. 45/200 mistakenly uses the full 200 surveyed students as the denominator instead of the restricted 120. 9/40 comes from an unreduced or miscalculated fraction using the wrong denominator. 45/80 uses an unrelated, incorrect subgroup size.",
+            "Restricting to the 120 sport-playing students, as specified by 'given that they play a sport,' 45 of those also play an instrument, giving 45/120 = 3/8. 45/200 mistakenly uses the full 200 surveyed students as the denominator instead of the restricted 120. 9/40 is 45/200 reduced, which still uses all 200 students instead of the 120 who play a sport. 45/80 divides by the 80 students who don't play a sport.",
           difficulty: "medium",
           why: [null, "45/200 uses everyone surveyed. \"Given they play a sport\" limits it to the 120 who do.", "9/40 is 45/200 reduced, which still uses all 200 students instead of the 120 who play a sport.", "80 is the number who don't play a sport. The condition limits you to the 120 who do."],
         },
@@ -7244,7 +7244,7 @@ const LC_M_INFERENCE: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["18,000", "42,000", "175", "12,000"],
           answer: 0,
           explain:
-            "Finding the sample proportion who support, 175/250=0.7, and since the question asks about those who do NOT support, the complement proportion is 1-0.7=0.3, applied to the full population: 0.3 × 60,000 = 18,000. 42,000 mistakenly scales up the 'support' proportion (0.7) instead of finding the complement first, answering the wrong question. 175 mistakenly reports the raw sample count instead of scaling it up at all. 12,000 comes from an unrelated arithmetic slip in the final multiplication.",
+            "Finding the sample proportion who support, 175/250=0.7, and since the question asks about those who do NOT support, the complement proportion is 1-0.7=0.3, applied to the full population: 0.3 × 60,000 = 18,000. 42,000 mistakenly scales up the 'support' proportion (0.7) instead of finding the complement first, answering the wrong question. 175 mistakenly reports the raw sample count instead of scaling it up at all. 12,000 uses 20% instead of the 30% who don't support it.",
           difficulty: "medium",
           why: [null, "42,000 estimates the supporters. The question asks for those who don't support: 30%.", "175 is the number of supporters in the sample, not an estimate for the district.", "12,000 uses 20%. Non-supporters are 75 of 250, which is 30%."],
         },
@@ -7868,10 +7868,10 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
         },
         {
           q: "Triangle ABC is similar to triangle EFD (note the vertex order). If AB = 10, EF = 15, and CA = 8, what is DE?",
-          choices: ["12", "8", "10", "13.33"],
+          choices: ["12", "8", "10", "5.33"],
           answer: 0,
           explain:
-            "Matching vertices in the order given (A↔E, B↔F, C↔D), the scale factor from the known pair AB and EF is 15/10=1.5; since CA corresponds to DE (because C↔D and A↔E), DE=CA×1.5=8×1.5=12. 8 mistakenly restates CA's own length instead of solving for DE. 10 mistakenly restates AB's length instead of computing DE. 13.33 comes from inverting the scale factor (dividing instead of multiplying).",
+            "Matching vertices in the order given (A↔E, B↔F, C↔D), the scale factor from the known pair AB and EF is 15/10=1.5; since CA corresponds to DE (because C↔D and A↔E), DE=CA×1.5=8×1.5=12. 8 mistakenly restates CA's own length instead of solving for DE. 10 mistakenly restates AB's length instead of computing DE. 5.33 comes from inverting the scale factor (dividing instead of multiplying): 8 ÷ 1.5 ≈ 5.33.",
           diagram: {
             kind: "similarTriangles",
             leftLabels: ["A", "B", "C"],
@@ -7880,7 +7880,7 @@ const LC_M_LINES_ANGLES_TRI: { patterns: Pattern[]; tipsAndTricks: string[] } = 
             rightSides: ["15", "", "?"],
           },
           difficulty: "medium",
-          why: [null, "8 is CA. DE corresponds to CA, so scale it: 8 × 1.5.", "10 is AB, not DE.", "The scale factor is 15/10 = 1.5, so DE = 8 × 1.5 = 12."],
+          why: [null, "8 is CA. DE corresponds to CA, so scale it: 8 × 1.5.", "10 is AB, not DE.", "5.33 divides by the scale factor. DE is on the bigger triangle, so multiply: 8 × 1.5 = 12."],
         },
         {
           q: "Triangle GHI is similar to triangle JKL. GH = 14, HI = 21, JK = 6. What is KL?",
@@ -8326,7 +8326,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["1/2", "-1/2", "√3/2", "-√3/2"],
           answer: 0,
           explain:
-            "This angle is both negative and large in magnitude, needing 2π added twice to reach the standard range: -11π/3+6π/3=-5π/3 (still negative), then -5π/3+6π/3=π/3; cos(π/3)=1/2. -1/2 comes from stopping after adding 2π only once, landing on the wrong (still-negative) angle and misapplying a sign. √3/2 and -√3/2 both mistakenly report sine's reference value instead of cosine's.",
+            "This angle is both negative and large in magnitude, needing 2π added twice to reach the standard range: -11π/3+6π/3=-5π/3 (still negative), then -5π/3+6π/3=π/3; cos(π/3)=1/2. -1/2 is a sign slip: π/3 is in the first quadrant, where cosine is positive, so cos(π/3) = +1/2. √3/2 and -√3/2 both mistakenly report sine's reference value instead of cosine's.",
           diagram: { kind: "unitCircleAngle", rawLabel: "-11π/3", angleDegrees: -660 },
           difficulty: "hard",
           why: [null, "Add 2π twice: −11π/3 + 4π = π/3, where cosine is +1/2.", "√3/2 is sin(π/3). cos(π/3) = 1/2.", "√3/2 is a sine value, and the sign here is positive."],
@@ -8379,7 +8379,7 @@ const LC_M_RIGHT_TRI_TRIG: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["12 feet", "18 feet", "6 feet", "√306 feet"],
           answer: 0,
           explain:
-            "Translating the scenario into a right triangle, the ladder is the hypotenuse (15) and the ground distance is one leg (9); applying the theorem, 9²+b²=15², gives 81+b²=225, so b²=144 and b=12 feet. 18 feet comes from adding the squares instead of subtracting them, treating the hypotenuse as if it were a missing leg. 6 feet comes from an arithmetic slip in the subtraction. √306 feet comes from adding the squares (81+225) instead of subtracting them.",
+            "Translating the scenario into a right triangle, the ladder is the hypotenuse (15) and the ground distance is one leg (9); applying the theorem, 9²+b²=15², gives 81+b²=225, so b²=144 and b=12 feet. 18 feet is longer than the 15-foot ladder itself, which is impossible for a leg. 6 feet subtracts the lengths (15 − 9) instead of their squares. √306 feet comes from adding the squares (81+225) instead of subtracting them.",
           diagram: { kind: "rightTriangle", hypotenuse: "15", base: "9", height: "?", solveFor: "height" },
           difficulty: "medium",
           why: [null, "18 is longer than the 15-foot ladder, which is impossible. Subtract squares: 225 − 81 = 144.", "6 is 15 − 9. Subtract the squares instead: √144 = 12.", "√306 adds the squares. The ladder is the hypotenuse, so subtract."],
@@ -8721,7 +8721,7 @@ const LC_M_CIRCLES: { patterns: Pattern[]; tipsAndTricks: string[] } = {
           choices: ["12", "18", "8", "√194"],
           answer: 0,
           explain:
-            "Since PQ is tangent to the circle at Q, radius OQ is perpendicular to PQ, making triangle OQP a right triangle with OP as the hypotenuse; applying the Pythagorean theorem, 5²+PQ²=13², gives 25+PQ²=169, so PQ²=144 and PQ=12. 18 comes from adding the squares instead of subtracting, treating OP as if it were a leg instead of the hypotenuse. 8 comes from an arithmetic slip in the subtraction. √194 comes from adding the squares (25+169) instead of subtracting them.",
+            "Since PQ is tangent to the circle at Q, radius OQ is perpendicular to PQ, making triangle OQP a right triangle with OP as the hypotenuse; applying the Pythagorean theorem, 5²+PQ²=13², gives 25+PQ²=169, so PQ²=144 and PQ=12. 18 comes from adding the lengths (13 + 5) instead of using the Pythagorean theorem. 8 comes from subtracting the lengths (13 − 5) instead of their squares. √194 comes from adding the squares (25+169) instead of subtracting them.",
           diagram: { kind: "circleBasic", tangent: { radius: "5", tangentSeg: "?", hyp: "13" } },
           difficulty: "medium",
           why: [null, "18 is 13 + 5. OP is the hypotenuse, so subtract squares: 169 − 25 = 144.", "8 is 13 − 5. Subtract the squares, then take the root: 12.", "√194 adds the squares. OP is the hypotenuse, so subtract."],

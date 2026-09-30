@@ -27,6 +27,10 @@ export interface Timeline {
   prompt: string;
   marks: { from: number; to: number; at: number }[];
   strikes: { choice: number; at: number }[];
+  // Math: lines of work written onto the board, in order.
+  work: { line: string; note?: string; at: number }[];
+  spots: { label: string; at: number; until: number }[];
+  math: boolean;
 }
 
 const words = (s: string) => s.trim().split(/\s+/).length;
@@ -77,6 +81,8 @@ export function buildTimeline(script: LessonVideoScript, ex: WorkedExample, voic
   push("question", 0, QUESTION_SAY, Math.max(3.2, words(passage + " " + split.prompt) / 4.2));
   const marks: Timeline["marks"] = [];
   const strikes: Timeline["strikes"] = [];
+  const work: Timeline["work"] = [];
+  const spots: Timeline["spots"] = [];
   script.steps.forEach((s, i) => {
     const at = (voice?.beats[beats.length]?.[0] ?? t) + 0.35;
     for (const h of s.highlight ?? []) {
@@ -84,13 +90,15 @@ export function buildTimeline(script: LessonVideoScript, ex: WorkedExample, voic
       if (from >= 0) marks.push({ from, to: from + h.length, at });
     }
     for (const c of s.strike ?? []) strikes.push({ choice: c, at });
+    if (s.work) work.push({ line: s.work, note: s.note, at: at - 0.1 });
     push("step", i, s.say);
+    for (const label of s.spot ?? []) spots.push({ label, at, until: t });
   });
   push("answer", 0, script.answer, readTime(script.answer) + 0.4);
   push("trap", 0, script.trap.say);
   push("recap", 0, script.recap.say, readTime(script.recap.say) + 1.2);
 
-  return { beats, duration: voice ? Math.max(voice.duration, t) : t, slapAt, walkStart, walkEnd, passage, prompt: split.prompt, marks: marks.sort((a, b) => a.from - b.from), strikes };
+  return { beats, duration: voice ? Math.max(voice.duration, t) : t, slapAt, walkStart, walkEnd, passage, prompt: split.prompt, marks: marks.sort((a, b) => a.from - b.from), strikes, work, spots, math: script.subskillId.startsWith("m-") };
 }
 
 export function beatAt(tl: Timeline, t: number): Beat | null {
@@ -112,21 +120,38 @@ export function checkScript(script: LessonVideoScript, ex: WorkedExample | undef
       if (c < 0 || c >= ex.choices.length) out.push(`${script.pattern}: step ${i + 1} strikes a choice that doesn't exist`);
     }
   });
+  const isMath = script.subskillId.startsWith("m-");
   // It has to fit on Ozho's board.
   const { passage, prompt } = splitQuestion(ex.q);
   const shownWords = words(script.excerpt ?? passage) + words(prompt);
   const longest = Math.max(...ex.choices.map((c) => c.length));
-  const budget = longest > 110 ? 44 : longest > 60 ? 55 : longest > 32 ? 65 : 85;
+  const budget = isMath ? 60 : longest > 110 ? 44 : longest > 60 ? 55 : longest > 32 ? 65 : 85;
   if (shownWords > budget)
     out.push(`${script.pattern}: board text is ${shownWords} words; with these choices it must be ${budget} or fewer (use a shorter example or an excerpt)`);
   if (longest > 200) out.push(`${script.pattern}: a choice is ${longest} characters; pick an example with shorter choices`);
   const struck = new Set(script.steps.flatMap((s) => s.strike ?? []));
   if (struck.size !== ex.choices.length - 1) out.push(`${script.pattern}: should strike all ${ex.choices.length - 1} wrong choices (strikes ${struck.size})`);
   if (script.idea.length < 2 || script.idea.length > 3) out.push(`${script.pattern}: idea needs 2-3 beats`);
-  if (script.steps.length < 2 || script.steps.length > 4) out.push(`${script.pattern}: steps needs 2-4 beats`);
+  const maxSteps = isMath ? 6 : 4;
+  if (script.steps.length < 2 || script.steps.length > maxSteps) out.push(`${script.pattern}: steps needs 2-${maxSteps} beats`);
+  // Spoken lines must be words: symbols and digits read badly aloud.
+  const spoken = [script.hook, script.answer, script.trap.say, script.recap.say, ...script.idea.map((b) => b.say), ...script.steps.map((s) => s.say)];
+  for (const s of spoken) if (/[0-9=+×÷^²³√<>≤≥%π°∠△]/.test(s)) out.push(`${script.pattern}: spoken line has digits or symbols (say them in words): "${s.slice(0, 50)}…"`);
+  const figText = JSON.stringify([ex.diagram ?? null, ex.figure ?? null]);
+  for (const s of script.steps)
+    for (const label of s.spot ?? []) if (!figText.includes(JSON.stringify(label).slice(1, -1))) out.push(`${script.pattern}: spot "${label}" isn't a label in this example's figure`);
+  if (isMath) {
+    const lines = script.steps.filter((s) => s.work);
+    if (lines.length > 6) out.push(`${script.pattern}: more than 6 lines of work`);
+    for (const s of lines) if ((s.work ?? "").length > 42) out.push(`${script.pattern}: work line over 42 characters: "${s.work}"`);
+    for (const s of script.steps) if ((s.note ?? "").length > 22) out.push(`${script.pattern}: margin note over 22 characters: "${s.note}"`);
+  }
   const tooLong = [script.hook, script.answer, script.trap.say, script.recap.say, ...script.idea.map((b) => b.say), ...script.steps.map((s) => s.say)].filter((s) => words(s) > 26);
   for (const s of tooLong) out.push(`${script.pattern}: caption over 26 words: "${s.slice(0, 40)}…"`);
-  const points = [script.trap.point, script.recap.point, ...script.idea.map((b) => b.point)].filter((s) => words(s) > 8);
+  // Board points: count real words only, so a formula's symbols and
+  // single letters ("a² − b² = (a−b)(a+b)") don't count against it.
+  const realWords = (s: string) => s.split(/\s+/).filter((w) => /[A-Za-z]{2,}/.test(w)).length;
+  const points = [script.trap.point, script.recap.point, ...script.idea.map((b) => b.point)].filter((s) => realWords(s) > 8 || s.length > 60);
   for (const s of points) out.push(`${script.pattern}: board point over 8 words: "${s}"`);
   return out;
 }
