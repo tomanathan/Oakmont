@@ -24,7 +24,7 @@ const RE = new RegExp(
     "((?:\\d+(?:\\.\\d+)?π?|π|\\d*[a-zA-Z](?![a-zA-Z]))\\/(?:\\d+(?:\\.\\d+)?|[a-zA-Z](?![a-zA-Z])))", // 1 fraction 3/4, π/3, x/2
     "(\\^\\((?:[^()]|\\([^()]*\\))*\\)|\\^[-−]?[\\w.]+|[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)", // 2 superscript
     "(√\\d+(?:\\.\\d+)?)", // 3 root of a number
-    "([a-zA-Z]{3,}|[a-zA-Z]{2}(?=\\s|$|[:,;]))", // 4 word (checked below)
+    "([a-zA-Z]+(?:-[a-zA-Z]+)+|[a-zA-Z]{3,}|[a-zA-Z]{2}(?=\\s|$|[:,;]))", // 4 word (checked below)
     "((?:(?:\\d{1,3}(?:,\\d{3})+|\\d+)(?:\\.\\d+)?)?(?:[a-zA-Zπ](?![a-zA-Z]{2}))+|(?:\\d{1,3}(?:,\\d{3})+|\\d+)(?:\\.\\d+)?%?|\\.\\d+%?)", // 5 term or number
     "(=|<|>|≤|≥|≠|≈)", // 6 relation
     "([+\\-−×·÷/±→↔:])", // 7 operator
@@ -57,6 +57,7 @@ export function tokenize(line: string): Tok[] {
     } else if (root) {
       t = { text, kind: "num", side, latex: `\\sqrt{${root.slice(1)}}` };
     } else if (word && (word.length >= 3 || WORDS.has(word.toLowerCase()))) {
+      // (hyphenated words like "y-intercept" stay words)
       t = { text, kind: "word", side, latex: `\\text{${word}}` };
     } else if (word || termOrNum) {
       const s = word || termOrNum;

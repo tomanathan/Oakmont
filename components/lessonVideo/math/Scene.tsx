@@ -359,8 +359,11 @@ export function Scene({ script, steps, qAt, t }: { script: LessonVideoScript; st
             <clipPath id={clipId}>
               <rect x={PAD / 2} y={PAD / 2} width={W - PAD} height={H - PAD} />
             </clipPath>
+            <clipPath id={`${clipId}b`}>
+              <rect x={0} y={0} width={W} height={H} />
+            </clipPath>
           </defs>
-          {els}
+          <g clipPath={`url(#${clipId}b)`}>{els}</g>
         </svg>
       )}
     </div>
