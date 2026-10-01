@@ -2661,20 +2661,20 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's the equation. Five times the quantity x plus two equals three x plus eighteen.",
-    "minDur": 6.9
+    "text": "Here's the equation. Five times the quantity x plus two equals three x plus eighteen. Top bar is the left side, bottom bar the right.",
+    "minDur": 10.9
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Distribute the five to both terms. Five x plus ten.",
-    "minDur": 4.9
+    "text": "Distribute the five to both terms. Five x's, and five twos. Slide the twos together and that's five x plus ten.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Get the x terms on one side. Subtract three x from both sides.",
-    "minDur": 6.1
+    "text": "Get the x terms on one side. Take three x off both bars, and they still match.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
@@ -2685,8 +2685,8 @@
    {
     "kind": "step",
     "i": 4,
-    "text": "Last layer: divide both sides by two. X equals four.",
-    "minDur": 4.9
+    "text": "Last layer: divide both sides by two. Each x matches a four. X equals four.",
+    "minDur": 6.9
    },
    {
     "kind": "step",
@@ -2750,8 +2750,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's the equation. Five x minus three times the quantity x plus four equals two x plus three.",
-    "minDur": 8.1
+    "text": "Here's the equation. Five x minus three times the quantity x plus four equals two x plus three. Graph each side as a line.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
@@ -2762,8 +2762,8 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "Combine the x terms on the left. Five x minus three x is two x.",
-    "minDur": 6.9
+    "text": "Combine the x terms on the left. Five x minus three x is two x. Both lines climb at the same slope.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -2774,7 +2774,7 @@
    {
     "kind": "step",
     "i": 4,
-    "text": "That's false for every x. So it isn't exactly one solution, and it can't be infinitely many, since that needs a true statement.",
+    "text": "That's false for every x. The lines are parallel, fifteen apart everywhere, so they never meet. Not one solution, and not infinitely many.",
     "minDur": 10.1
    },
    {
@@ -2845,8 +2845,8 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "That lands right on the target. X minus seven equals negative six. No need to find x first.",
-    "minDur": 8.1
+    "text": "That lands right on the target. One piece is x minus seven, and it reaches negative six. No need to find x first.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
@@ -2928,8 +2928,8 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "The word is becomes the equals sign. N minus twelve equals forty-five.",
-    "minDur": 5.7
+    "text": "The word is becomes the equals sign. What's left is forty-five. N minus twelve equals forty-five.",
+    "minDur": 7.3
    },
    {
     "kind": "step",
@@ -3070,14 +3070,14 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "One angle is sixty-five degrees, and we want its same-side interior partner.",
-    "minDur": 5.7
+    "text": "One angle is sixty-five degrees, and we want its same-side interior partner, up at the other line.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Same-side interior angles are supplementary. So sixty-five plus the unknown makes one hundred eighty.",
-    "minDur": 6.5
+    "text": "Slide the sixty-five up the transversal. It lands right beside x on a straight line, so sixty-five plus x is one eighty.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -3147,14 +3147,14 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Read the letters in order. A goes with E, B with F, C with D.",
-    "minDur": 6.9
+    "text": "Read the letters in order. A goes with E, B with F, C with D. Watch where each corner lands.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "A B matches E F, and those are both given. Fifteen over ten is one and a half.",
-    "minDur": 8.1
+    "text": "Send each corner to its partner. The copy flips and grows. A B to E F is fifteen over ten, one and a half.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
@@ -3230,8 +3230,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "These two angles are vertical, straight across from each other. So their expressions are equal.",
-    "minDur": 6.9
+    "text": "These two angles are vertical. Spin one a half turn about the crossing and it lands exactly on the other. So they're equal.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
@@ -3408,14 +3408,14 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "The rise is eight, and the run is negative four.",
-    "minDur": 4.9
+    "text": "The rise is eight, up the y-axis. The run is negative four, because we walked left.",
+    "minDur": 7.3
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Eight divided by negative four is negative two. And the line falls, so negative makes sense.",
-    "minDur": 7.3
+    "text": "Eight divided by negative four is negative two. Step one right, and the line drops two. Falls, so negative makes sense.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -3485,14 +3485,14 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "On top, negative twelve. On the bottom, subtracting a negative adds, so four plus two is six.",
-    "minDur": 7.7
+    "text": "On top, negative twelve: the output falls twelve. On the bottom, subtracting a negative adds, so four plus two is six.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Negative twelve over six is negative two.",
-    "minDur": 3.7
+    "text": "Negative twelve over six is negative two. That's the line through both points.",
+    "minDur": 6.1
    },
    {
     "kind": "step",
@@ -3550,8 +3550,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Slope of negative three, through the point four comma one. Four isn't zero, so one isn't the intercept.",
-    "minDur": 8.1
+    "text": "Slope of negative three, through the point four comma one. Four isn't zero, so one isn't the intercept. That line misses the point.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
@@ -3562,14 +3562,14 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "Negative three times four is negative twelve.",
-    "minDur": 3.7
+    "text": "Negative three times four is negative twelve. Walking four back to the y-axis climbs twelve.",
+    "minDur": 6.9
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Add twelve to both sides. B is thirteen.",
-    "minDur": 4.1
+    "text": "Add twelve to both sides. B is thirteen, so the line slides up until it hits the point.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
@@ -3633,8 +3633,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The rule is k x minus seven, with k unknown. And f of three is eleven.",
-    "minDur": 7.3
+    "text": "The rule is k x minus seven, with k unknown, so it's a line through zero comma negative seven. And f of three is eleven.",
+    "minDur": 10.9
    },
    {
     "kind": "step",
@@ -3645,14 +3645,14 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "Add seven to both sides. Eighteen equals three k.",
-    "minDur": 4.5
+    "text": "Add seven to both sides. Eighteen equals three k: the line must climb eighteen over three steps.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Divide by three. K is six. Check it: six times three, minus seven, is eleven.",
-    "minDur": 6.9
+    "text": "Divide by three. K is six, and the line swings up right through the point. Six times three, minus seven, is eleven.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -3716,8 +3716,8 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "Subtract six x from both sides. Negative three y equals negative six x plus twelve.",
-    "minDur": 6.9
+    "text": "Subtract six x from both sides. Negative three y equals negative six x plus twelve. Same line, new outfit.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
@@ -3728,6 +3728,12 @@
    {
     "kind": "step",
     "i": 3,
+    "text": "Check it on the graph. From the y-intercept, go over two and up four. Rise over run is two.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
     "text": "Negative two misses that two negatives make a positive. Six is the standard-form coefficient. Negative six forgets to divide by negative three.",
     "minDur": 9.7
    },
@@ -3793,14 +3799,14 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "Divide everything by four. Its slope is negative one half.",
-    "minDur": 4.9
+    "text": "Divide everything by four. Its slope is negative one half: over two, down one.",
+    "minDur": 6.5
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Now compare. Two times negative one half is negative one. Flip negative one half, change the sign, and you get two.",
-    "minDur": 9.3
+    "text": "Now turn that slope triangle a quarter turn. Now it's over one, up two. Flip negative one half, change the sign, and you get two.",
+    "minDur": 10.9
    },
    {
     "kind": "step",
@@ -3864,14 +3870,14 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "The five multiplies x, the guests. So you pay five dollars once for every guest. That's a per-guest cost.",
-    "minDur": 8.5
+    "text": "The two hundred stands alone. You pay it even with zero guests, so it's the flat rental fee.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "The two hundred stands alone. You pay it even with zero guests, so it's the flat rental fee.",
-    "minDur": 8.1
+    "text": "The five multiplies x, the guests. Each extra guest adds five more dollars. That's a per-guest cost.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
@@ -4018,8 +4024,8 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "Put six in for a.",
-    "minDur": 2.9
+    "text": "Put six in for a. Four a is four blocks of six.",
+    "minDur": 5.7
    },
    {
     "kind": "step",
@@ -4030,8 +4036,8 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "Subtract twenty-four from both sides. Negative b equals negative nine.",
-    "minDur": 4.9
+    "text": "Subtract twenty-four from both sides. Negative b equals negative nine. Twenty-four minus b leaves fifteen, so b fills the gap.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
@@ -4184,8 +4190,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Three x plus two y equals sixteen.",
-    "minDur": 3.7
+    "text": "Three x plus two y equals sixteen. That's one line.",
+    "minDur": 4.9
    },
    {
     "kind": "step",
@@ -4202,14 +4208,14 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "Three x minus three x is zero. Two y minus negative five y is seven y. Sixteen minus negative twelve is twenty-eight.",
-    "minDur": 9.7
+    "text": "Three x minus three x is zero, so the tilt is gone. Two y minus negative five y is seven y. Sixteen minus negative twelve: twenty-eight.",
+    "minDur": 11.3
    },
    {
     "kind": "step",
     "i": 4,
-    "text": "Divide by seven. Y is four.",
-    "minDur": 3.3
+    "text": "Divide by seven. Y is four. It's the height where the two lines cross.",
+    "minDur": 6.5
    },
    {
     "kind": "step",
@@ -4279,24 +4285,30 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "First one: subtract two x. Y equals negative two x plus five.",
-    "minDur": 5.7
+    "text": "First one: subtract two x. Y equals negative two x plus five. Here's its line.",
+    "minDur": 6.9
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Second one: subtract four x first. Two y equals negative four x plus ten.",
-    "minDur": 6.5
+    "text": "Now the second one. Four x plus two y equals ten.",
+    "minDur": 5.3
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Divide by two. Y equals negative two x plus five. Same slope, same intercept. It's the first line again.",
-    "minDur": 8.5
+    "text": "Subtract four x first. Two y equals negative four x plus ten.",
+    "minDur": 5.7
    },
    {
     "kind": "step",
     "i": 4,
+    "text": "Divide by two. Y equals negative two x plus five. Same slope, same intercept. It lands right on the first line.",
+    "minDur": 9.3
+   },
+   {
+    "kind": "step",
+    "i": 5,
     "text": "No solution needs different intercepts. Exactly one needs different slopes. And it can be determined: we just did it.",
     "minDur": 8.5
    },
@@ -4368,8 +4380,8 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "And six comma one just glues the two intercept values together. It isn't on the graph at all.",
-    "minDur": 8.1
+    "text": "And six comma one just glues the two intercept values together. It isn't on either line.",
+    "minDur": 7.3
    },
    {
     "kind": "answer",
@@ -4427,8 +4439,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's the inequality. Negative three x plus six is greater than zero.",
-    "minDur": 5.7
+    "text": "Here's the inequality. Negative three x plus six is greater than zero. On the graph: where is this line above zero?",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -4445,8 +4457,8 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "X greater than two is what you get if you forget the flip.",
-    "minDur": 6.1
+    "text": "X greater than two is what you get if you forget the flip. Out there, the line is below zero.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
@@ -4528,8 +4540,8 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "Divide by two. A is at most six.",
-    "minDur": 4.1
+    "text": "Divide by two. Two-dollar hours fill the twelve exactly six times. A is at most six.",
+    "minDur": 7.3
    },
    {
     "kind": "step",
@@ -4599,8 +4611,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's the inequality. Y is greater than two x minus four. The point is three, one.",
-    "minDur": 7.3
+    "text": "Here's the inequality. Y is greater than two x minus four: everything above the dashed line. The point is three, one.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -4611,8 +4623,8 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "Two times three is six, minus four is two. So the question is, is one greater than two?",
-    "minDur": 8.1
+    "text": "Two times three is six, minus four is two. So the question is, is one greater than two? The point sits below the line.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
@@ -4682,26 +4694,26 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's the expression. Six x squared plus fifteen x.",
-    "minDur": 4.5
+    "text": "Here's the expression as two rectangles. Six x squared in blue, fifteen x in yellow.",
+    "minDur": 6.9
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Three divides six and fifteen. X is in both terms, but the second has only one x. So the factor is three x.",
-    "minDur": 10.1
+    "text": "Three divides six and fifteen. X is in both terms, but the second has only one x. So they share a height of three x.",
+    "minDur": 10.9
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Divide each term by three x. Six x squared becomes two x, and fifteen x becomes five.",
-    "minDur": 7.7
+    "text": "Divide each term by three x to get its width. Six x squared gives two x, and fifteen x gives five.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "So it's three x times the quantity two x plus five. Multiply back and you get the original.",
-    "minDur": 8.1
+    "text": "One height, one total width. Three x times the quantity two x plus five. Multiply back and you get the original.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -4777,20 +4789,20 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "Four x squared is two x, squared. Twenty five is five squared. A square minus a square.",
-    "minDur": 7.7
+    "text": "Four x squared is a square with side two x. Twenty five is a square with side five. A square minus a square.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "That's the difference of squares shape, with a as two x and b as five.",
-    "minDur": 6.9
+    "text": "Cut the small square away. Then swing the leftover strip around to the side, and the L shape becomes one rectangle.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Fill them in. Two x minus five, times two x plus five.",
-    "minDur": 5.7
+    "text": "It's two x plus five long and two x minus five tall. So it factors as two x minus five, times two x plus five.",
+    "minDur": 10.9
    },
    {
     "kind": "step",
@@ -4860,26 +4872,26 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's the fraction. X squared minus nine, over x squared plus x minus six.",
-    "minDur": 6.5
+    "text": "Here's the fraction, graphed. X squared minus nine, over x squared plus x minus six.",
+    "minDur": 6.9
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "The top is a difference of squares. X minus three, times x plus three.",
-    "minDur": 6.5
+    "text": "The top is a difference of squares. X minus three, times x plus three. The top is zero at three, so the curve crosses there.",
+    "minDur": 10.9
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "The bottom needs two numbers that multiply to negative six and add to one. Three and negative two.",
-    "minDur": 8.1
+    "text": "The bottom needs two numbers that multiply to negative six and add to one. Three and negative two. The bottom is zero at two, a wall.",
+    "minDur": 11.3
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Now x plus three is a factor on top and bottom. Cancel it.",
-    "minDur": 6.1
+    "text": "Now x plus three is a factor on top and bottom. Cancel it. The curve doesn't change, except for one missing point.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -4949,30 +4961,36 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's the expression. X cubed y squared, all to the fourth, over x squared.",
-    "minDur": 6.5
-   },
-   {
-    "kind": "step",
-    "i": 1,
-    "text": "The fourth power hits each factor inside. Three times four is twelve, two times four is eight.",
-    "minDur": 7.7
-   },
-   {
-    "kind": "step",
-    "i": 2,
-    "text": "Now divide by x squared. Same base, so subtract. Twelve minus two is ten. The y has nothing to cancel with.",
+    "text": "Here's the expression. Count the x's with the blue bar, three of them, and the y's with the yellow bar, two.",
     "minDur": 9.3
    },
    {
     "kind": "step",
+    "i": 1,
+    "text": "The fourth power makes four copies of everything inside. Four threes is twelve x's, four twos is eight y's.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Dividing by x squared cancels two of those x's. Same base, so subtract. Twelve minus two.",
+    "minDur": 7.3
+   },
+   {
+    "kind": "step",
     "i": 3,
+    "text": "That's ten x's. The y has nothing to cancel with, so it stays at eight.",
+    "minDur": 6.9
+   },
+   {
+    "kind": "step",
+    "i": 4,
     "text": "X to the twelfth forgot to divide. X to the sixth divided the exponents instead of subtracting.",
     "minDur": 7.7
    },
    {
     "kind": "step",
-    "i": 4,
+    "i": 5,
     "text": "And y to the sixth added the exponents when the power rule multiplies them.",
     "minDur": 6.5
    },
@@ -5032,26 +5050,26 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's the problem. One polynomial minus another.",
-    "minDur": 3.7
+    "text": "One polynomial minus another. Each term is a bar: blue for the first polynomial, orange for the second, one column per power.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Drop the parentheses. The minus flips all three signs, so minus six x becomes plus six x.",
-    "minDur": 7.7
+    "text": "Drop the parentheses. The minus flips every orange bar, all three. Minus six x becomes plus six x.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Group the matching powers together.",
-    "minDur": 2.9
+    "text": "Now combine matching powers. Each flipped bar lands on its partner and cancels part of it.",
+    "minDur": 7.3
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Combine them. Three x squared, plus three x, plus seven.",
-    "minDur": 4.9
+    "text": "What's left is three x squared, plus three x, plus seven.",
+    "minDur": 5.3
    },
    {
     "kind": "step",
@@ -5121,20 +5139,20 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's the perimeter formula. We want w by itself.",
-    "minDur": 4.5
+    "text": "Here's the perimeter formula. All the way around is two lengths plus two widths. We want w by itself.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "The two l is added on, so undo that first. Subtract two l from both sides.",
-    "minDur": 7.3
+    "text": "The two l is added on, so undo that first. Take both lengths away from the perimeter.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Now divide by two. The whole left side, not just the P.",
-    "minDur": 5.7
+    "text": "Two widths are left. Divide by two to get one, and divide the whole left side, not just the P.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
@@ -5210,8 +5228,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's the equation. X squared minus three x minus ten equals zero. It already equals zero.",
-    "minDur": 7.3
+    "text": "Here's the equation. X squared minus three x minus ten equals zero. Solving it means finding where this parabola hits zero height.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -5222,20 +5240,20 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "Two things multiply to zero, so one of them is zero.",
-    "minDur": 5.3
+    "text": "Two things multiply to zero, so one of them is zero. Either factor can do the job.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "So x is five or negative two. Those are where the graph crosses the x-axis.",
-    "minDur": 6.9
+    "text": "So x is five or negative two. Exactly where the curve crosses the x-axis, balanced around its middle.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
     "i": 4,
-    "text": "Negative five and two is the classic sign flip.",
-    "minDur": 4.5
+    "text": "Negative five and two is the classic sign flip. The curve is nowhere near zero at those.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
@@ -5299,32 +5317,32 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's the equation. Three times the absolute value of x plus two, minus four, equals eleven.",
-    "minDur": 7.3
+    "text": "Here's the equation, graphed. The left side is a blue V, the right side is a yellow line at eleven. Watch where they cross.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Isolate the bars. Add four to both sides.",
-    "minDur": 4.1
+    "text": "Isolate the bars. Add four to both sides. Both graphs rise together, so the crossings don't move sideways.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Divide by three. The absolute value of x plus two is five.",
-    "minDur": 5.7
+    "text": "Divide by three. The absolute value of x plus two is five. Squashed, but the crossings stay put.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Now split. X plus two is five, or x plus two is negative five.",
-    "minDur": 6.5
+    "text": "Now split. The V has two arms. On one, x plus two is five. On the other, it's negative five.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
     "i": 4,
-    "text": "Subtract two in each case. X is three or negative seven.",
-    "minDur": 5.3
+    "text": "Subtract two in each case. X is three or negative seven, the two crossings.",
+    "minDur": 6.5
    },
    {
     "kind": "step",
@@ -5382,8 +5400,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Read off the coefficients. A is negative two, b is three, c is negative five. Keep those signs.",
-    "minDur": 8.1
+    "text": "Read off the coefficients. A is negative two, so the parabola opens down. B is three, c is negative five.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
@@ -5400,8 +5418,8 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "That's negative thirty one. Negative means no real solutions. The parabola never reaches the x-axis.",
-    "minDur": 6.9
+    "text": "That's negative thirty one. Negative means no real solutions. Even the top of the parabola sits below the x-axis.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
@@ -5471,7 +5489,7 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The square root is already alone, so square both sides. X minus two, squared, is x squared minus four x plus four.",
+    "text": "Blue is the square root side, yellow is x minus two. Square both sides, and the root's mirror image sneaks in too.",
     "minDur": 9.7
    },
    {
@@ -5489,20 +5507,20 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "Check one. The root of one is one, but one minus two is negative one. Fake answer.",
-    "minDur": 7.7
+    "text": "Check one. The root of one is one, but one minus two is negative one. The line meets the mirror there, not the root. Fake.",
+    "minDur": 10.9
    },
    {
     "kind": "step",
     "i": 4,
-    "text": "Check five. The root of nine is three, and five minus two is three. It works.",
-    "minDur": 7.3
+    "text": "Check five. The root of nine is three, and five minus two is three. It works, a real crossing.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
     "i": 5,
-    "text": "Negative five would put a negative under the square root. Not a real number.",
-    "minDur": 6.5
+    "text": "Negative five would put a negative under the square root. The blue curve doesn't even exist there.",
+    "minDur": 7.7
    },
    {
     "kind": "answer",
@@ -5560,14 +5578,14 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Solve the line for y. Y equals ten minus x.",
-    "minDur": 4.9
+    "text": "Solve the line for y. Y equals ten minus x, the yellow line falling across the parabola.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Put ten minus x in for y in the quadratic.",
-    "minDur": 4.9
+    "text": "Put ten minus x in for y in the quadratic. Same height on both graphs, which is exactly where they cross.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -5590,8 +5608,8 @@
    {
     "kind": "step",
     "i": 5,
-    "text": "Three doesn't work at all. The line gives seven, the parabola gives three.",
-    "minDur": 6.1
+    "text": "Three doesn't work at all. The line gives seven, the parabola gives three. They don't meet there.",
+    "minDur": 7.7
    },
    {
     "kind": "answer",
@@ -5649,8 +5667,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "F of two is forty five. So five times b squared equals forty five.",
-    "minDur": 6.5
+    "text": "F of two is forty five, so the curve must pass through that yellow point. Five times b squared equals forty five.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -5661,8 +5679,8 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "B is positive, so b is three. That's stage one, not the answer.",
-    "minDur": 6.1
+    "text": "B is positive, so b is three. Turn b up to three and the curve swings right through the point. Stage one, done.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
@@ -5732,32 +5750,32 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here's our function. Negative two times x plus three, squared, minus one.",
-    "minDur": 5.7
+    "text": "Here's our function. Negative two times x plus three, squared, minus one. Start from the plain upside-down parabola, peaked at the origin.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Plus three is really minus negative three. Match it to the template, and h is negative three.",
-    "minDur": 7.7
+    "text": "Plus three is really minus negative three. Match it to the template, so h is negative three, and the peak slides three left.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Outside, it's minus one, and that sign stays put. So k is negative one.",
-    "minDur": 6.5
+    "text": "Outside, it's minus one, and that sign stays put. So k is negative one, and the peak drops one.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Put them together: negative three, negative one. That's the peak on the graph.",
-    "minDur": 6.1
+    "text": "Put them together: negative three, negative one. That's the peak.",
+    "minDur": 4.9
    },
    {
     "kind": "step",
     "i": 4,
-    "text": "Three, negative one is the classic slip: reading plus three as h equals three.",
-    "minDur": 6.5
+    "text": "Three, negative one is the classic slip: reading plus three as h equals three. That's over on the wrong side.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
@@ -5821,8 +5839,8 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "If it loses twelve percent, it keeps eighty-eight percent. That's the base.",
-    "minDur": 5.7
+    "text": "If it loses twelve percent, it keeps eighty-eight percent. So each year, the value shrinks to point eight eight of itself.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -5833,14 +5851,14 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "Point one two is what the car loses, not what it keeps. So that base is wrong.",
-    "minDur": 7.7
+    "text": "Point one two is what the car loses, not what it keeps. That base would crash the value almost to zero.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
     "i": 4,
-    "text": "Subtracting twelve percent of the original twice is linear. And one point one two would mean the value is growing.",
-    "minDur": 8.9
+    "text": "Subtracting twelve percent of the original twice is linear, a straight drop. And one point one two would mean the value is growing.",
+    "minDur": 10.1
    },
    {
     "kind": "answer",
@@ -5892,14 +5910,14 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Find the x equals zero row. The output there is three hundred twenty, so that's a.",
-    "minDur": 7.3
+    "text": "Here's the table as points. The x equals zero point sits at three hundred twenty on the y-axis, so that's a.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Now divide each output by the one before it. Eighty over three twenty is one fourth.",
-    "minDur": 7.3
+    "text": "Now divide each output by the one before it. Eighty over three twenty is one fourth. The height drops to a quarter.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -5910,8 +5928,8 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "Put them together: three twenty times one fourth to the x.",
-    "minDur": 5.3
+    "text": "Put them together: three twenty times one fourth to the x. The curve runs through every point.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
@@ -5975,8 +5993,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "From nineteen eighty to twenty twenty-five is forty-five years.",
-    "minDur": 4.5
+    "text": "From nineteen eighty to twenty twenty-five is forty-five years. Thirty-six thousand is where the curve ends up.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
@@ -5993,8 +6011,8 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "To go back in time, divide. Thirty-six thousand over eight is four thousand five hundred.",
-    "minDur": 6.9
+    "text": "To go back in time, divide. Halve it three times, fifteen years at a step. Thirty-six thousand over eight is four thousand five hundred.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
@@ -6070,8 +6088,8 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "The drops are four, then two, then one. They're not the same, so it isn't a line.",
-    "minDur": 7.7
+    "text": "The drops are four, then two, then one. Watch the orange drops shrink. They're not the same, so it isn't a line.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -6088,8 +6106,8 @@
    {
     "kind": "step",
     "i": 4,
-    "text": "Both linear choices need a straight line, changing by the same amount every step. This one curves.",
-    "minDur": 7.7
+    "text": "Both linear choices need a straight line, changing by the same amount every step. A line through the first two points misses the rest.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
@@ -6147,8 +6165,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The maximum of f is at one, nine.",
-    "minDur": 4.1
+    "text": "The maximum of f is at one, nine. Any hill with that peak will do. Track the peak.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
@@ -6230,26 +6248,26 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The coffee's model is seventy times point nine to the t, plus sixty-eight.",
-    "minDur": 6.1
+    "text": "The coffee's model is seventy times point nine to the t, plus sixty-eight. Here's its curve, cooling.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Point nine is less than one, so every minute that part shrinks. Over time, it heads toward zero.",
-    "minDur": 8.1
+    "text": "Point nine is less than one, so every minute that part shrinks. The orange part on its own heads toward zero.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Seventy times almost nothing is still almost nothing.",
-    "minDur": 4.1
+    "text": "Seventy times almost nothing is still almost nothing. Only the sixty-eight is left over.",
+    "minDur": 6.5
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "What's left is the sixty-eight. That's room temperature, the level it cools toward.",
-    "minDur": 6.1
+    "text": "So it levels off at sixty-eight. That's room temperature, the floor it cools toward and never quite reaches.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
@@ -6313,20 +6331,20 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Here a is one and b is negative six.",
-    "minDur": 4.5
-   },
-   {
-    "kind": "step",
-    "i": 1,
-    "text": "Negative b over two a. The negative of negative six is positive six, over two. That's three.",
+    "text": "Here a is one and b is negative six. The vertex is the bottom of this parabola.",
     "minDur": 7.7
    },
    {
     "kind": "step",
+    "i": 1,
+    "text": "Negative b over two a. The negative of negative six is positive six, over two. That's three, the parabola's line of symmetry.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "step",
     "i": 2,
-    "text": "Plug in three. Nine minus eighteen plus five.",
-    "minDur": 4.1
+    "text": "Plug in three to get the height there. Nine minus eighteen plus five.",
+    "minDur": 6.1
    },
    {
     "kind": "step",
@@ -6337,14 +6355,14 @@
    {
     "kind": "step",
     "i": 4,
-    "text": "Negative three is a sign slip in the formula. Positive four is an arithmetic slip.",
-    "minDur": 6.9
+    "text": "Negative three is a sign slip in the formula. Positive four is an arithmetic slip. Neither is on the bottom.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
     "i": 5,
-    "text": "Six, five just reads b and c off the equation. Those aren't coordinates.",
-    "minDur": 6.1
+    "text": "Six, five just reads b and c off the equation. Those aren't coordinates of the vertex.",
+    "minDur": 7.3
    },
    {
     "kind": "answer",
@@ -6396,14 +6414,14 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The area is x times x plus six, and it equals forty.",
-    "minDur": 5.7
+    "text": "The garden is x wide and x plus six long. Its area is x times x plus six, and it equals forty.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Multiply out and move the forty over, so one side is zero.",
-    "minDur": 5.7
+    "text": "Multiply out: an x by x square plus an x by six strip. Then move the forty over, so one side is zero.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
@@ -6420,8 +6438,8 @@
    {
     "kind": "step",
     "i": 4,
-    "text": "A garden can't be negative ten feet wide. So it's four, and four times ten is forty.",
-    "minDur": 7.7
+    "text": "A garden can't be negative ten feet wide. So it's four, and four times ten is forty. The picture fits exactly.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -6479,14 +6497,14 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The graph crosses the y axis at negative three. That's c.",
-    "minDur": 5.3
+    "text": "The graph crosses the y axis at negative three. At x equals zero only c is left, so c is negative three.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "The vertex is at x equals two. Set negative b over two a equal to two.",
-    "minDur": 7.3
+    "text": "The vertex is at x equals two, on the line of symmetry. Set negative b over two a equal to two.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -6503,8 +6521,8 @@
    {
     "kind": "step",
     "i": 4,
-    "text": "Negative six loses the sign on b. Ten uses negative five, the vertex's height, as c.",
-    "minDur": 7.3
+    "text": "Negative six loses the sign on b. Ten uses negative five, the vertex's height, as c. But c is where it crosses the y axis.",
+    "minDur": 10.9
    },
    {
     "kind": "step",
@@ -6574,8 +6592,8 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "X minus negative two is x plus two.",
-    "minDur": 4.1
+    "text": "X minus negative two is x plus two. The line y equals x plus two hits zero right at negative two, too.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -6586,8 +6604,8 @@
    {
     "kind": "step",
     "i": 4,
-    "text": "X minus two would mean a zero at positive two, and the graph doesn't cross there.",
-    "minDur": 7.3
+    "text": "X minus two would mean a zero at positive two, and the graph doesn't cross there. It's below the axis.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
@@ -6645,32 +6663,38 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Cups over cookies on both sides. Two over twelve equals x over thirty.",
-    "minDur": 6.1
+    "text": "Cups over cookies on both sides. Two over twelve equals x over thirty. Watch both bars stretch to thirty cookies.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Cross-multiply. Twelve x equals two times thirty, which is sixty.",
-    "minDur": 4.9
-   },
-   {
-    "kind": "step",
-    "i": 2,
-    "text": "Divide both sides by twelve. X is five.",
+    "text": "Cross-multiply. Twelve times x equals two times thirty.",
     "minDur": 4.1
    },
    {
     "kind": "step",
+    "i": 2,
+    "text": "Two times thirty is sixty. So twelve x equals sixty.",
+    "minDur": 4.9
+   },
+   {
+    "kind": "step",
     "i": 3,
+    "text": "Divide both sides by twelve. X is five. The picture agrees: every six cookies take one cup, and thirty is five sixes.",
+    "minDur": 9.7
+   },
+   {
+    "kind": "step",
+    "i": 4,
     "text": "Point eight goes the wrong way. More cookies need more than two cups, not less.",
     "minDur": 6.9
    },
    {
     "kind": "step",
-    "i": 4,
-    "text": "One eighty flips one side, putting cookies on top. And twenty fails a quick check: one cup per six cookies means thirty cookies need five.",
-    "minDur": 10.9
+    "i": 5,
+    "text": "One eighty flips one side, putting cookies on top. And twenty fails a quick check: thirty cookies is five sixes, so five cups.",
+    "minDur": 10.1
    },
    {
     "kind": "answer",
@@ -6722,32 +6746,32 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Start with sixty miles per hour. We want feet per minute.",
-    "minDur": 5.3
+    "text": "Start with sixty miles per hour: sixty miles of road for one hour of time. We want feet per minute.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Multiply by five thousand two hundred eighty feet per mile. Miles cancel.",
-    "minDur": 5.7
+    "text": "Multiply by five thousand two hundred eighty feet per mile. Miles on top, miles on the bottom: they cancel.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Multiply by one hour over sixty minutes. Hours cancel, leaving feet per minute.",
-    "minDur": 6.1
+    "text": "That's three hundred sixteen thousand eight hundred feet, but still per hour. That choice stops one step early.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Sixty over sixty is one, so it's five thousand two hundred eighty feet per minute.",
+    "text": "Now swap the hour for sixty minutes. The hour gets chopped into sixty equal slices.",
     "minDur": 6.9
    },
    {
     "kind": "step",
     "i": 4,
-    "text": "Three hundred sixteen thousand eight hundred skips the hours step. That's feet per hour.",
-    "minDur": 6.5
+    "text": "Take one slice. One minute of time covers one sixtieth of the distance: five thousand two hundred eighty feet per minute.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -6805,20 +6829,20 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "One manager for every six engineers, so engineers are six times managers.",
-    "minDur": 5.7
+    "text": "One manager for every six engineers, so engineers are six times managers. The engineer bar is six manager bars long.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Three engineers for every ten interns, so interns are ten thirds of the engineers.",
-    "minDur": 6.5
+    "text": "Three engineers for every ten interns. So each group of three engineers becomes ten interns: ten thirds as many.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Swap in six m for the engineers.",
-    "minDur": 3.7
+    "text": "Swap in six m for the engineers. That's two groups of three, so two groups of ten.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
@@ -6835,8 +6859,8 @@
    {
     "kind": "step",
     "i": 5,
-    "text": "M over twenty flips it. There are more interns than managers, not fewer.",
-    "minDur": 6.1
+    "text": "M over twenty flips it. Look at the bars: there are far more interns than managers, not fewer.",
+    "minDur": 8.1
    },
    {
     "kind": "answer",
@@ -6894,20 +6918,20 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "Twenty percent off means the sale price is eighty percent of the original. So zero point eight times the original is sixty-four.",
-    "minDur": 9.7
+    "text": "Twenty percent off means the sale price is the other eighty percent of the original. So zero point eight times the original is sixty-four.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Undo the multiply by dividing both sides by zero point eight.",
-    "minDur": 5.3
+    "text": "Undo the multiply: divide both sides by zero point eight. In the bar, sixty-four splits into four twenty-percent blocks of sixteen.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Sixty-four divided by zero point eight is eighty. The original was eighty dollars.",
-    "minDur": 6.1
+    "text": "The missing twenty percent is one more block of sixteen. Five blocks make eighty. The original was eighty dollars.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
@@ -6971,32 +6995,32 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The price goes up twenty percent, then down twenty percent.",
-    "minDur": 4.9
+    "text": "The price goes up twenty percent, then down twenty percent. Start with a price of one hundred.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Start at one hundred. Up twenty percent means times one point two. That's one hundred twenty.",
-    "minDur": 7.3
+    "text": "Up twenty percent means times one point two. Twenty percent of one hundred is twenty, so the bar grows to one hundred twenty.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Now down twenty percent, but from one hundred twenty. Times zero point eight gives ninety-six.",
-    "minDur": 6.9
+    "text": "Now down twenty percent, but of one hundred twenty. That's twenty-four, a bigger bite than the twenty we added. Ninety-six is left.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Ninety-six is four less than where we started. On a start of one hundred, that's four percent lower.",
-    "minDur": 8.1
+    "text": "Compare with the start. Ninety-six falls four short of the dashed line at one hundred.",
+    "minDur": 6.9
    },
    {
     "kind": "step",
     "i": 4,
-    "text": "So it's not the same. The drop was taken from a bigger number, so it took away more.",
-    "minDur": 8.1
+    "text": "Four out of the original one hundred is four percent lower. So it's not the same: the drop came from a bigger number.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
@@ -7060,32 +7084,32 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Sixty-three out of one eighty picked option A. But the question asks about option B.",
-    "minDur": 6.9
+    "text": "Sixty-three of the one eighty picked option A. The rest picked B, and that's what the question asks about.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Everyone else picked B. One eighty minus sixty-three is one hundred seventeen.",
-    "minDur": 5.7
+    "text": "One eighty minus sixty-three is one hundred seventeen people for B.",
+    "minDur": 5.3
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Now it's part over whole. B's part is one seventeen, and the whole is all one eighty.",
-    "minDur": 7.7
+    "text": "Now it's part over whole. B's part is one seventeen, and the whole is all one eighty. Lay a percent scale under the bar.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "One seventeen over one eighty is zero point six five. That's sixty-five percent.",
-    "minDur": 6.1
+    "text": "One seventeen over one eighty is zero point six five. B covers sixty-five percent of the bar.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
     "i": 4,
-    "text": "Thirty-five percent is option A's share. Sixty-three is a count of people, not a percent.",
-    "minDur": 6.9
+    "text": "Thirty-five percent is option A's share, the yellow piece. Sixty-three is a count of people, not a percent.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
@@ -7155,8 +7179,8 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "Sort them first. The median is the middle of the sorted list, not the middle of the list as given.",
-    "minDur": 8.9
+    "text": "Sort them first. Watch them shuffle into order. The median is the middle of the sorted list, not the list as given.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -7167,8 +7191,8 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "Compare the mean. Everything adds to seventeen ninety-five, divided by five is three fifty-nine. The outlier pulled it way up.",
-    "minDur": 8.9
+    "text": "Now the mean. Everything adds to seventeen ninety-five, over five is three fifty-nine. On a number line, see how far the outlier drags it.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
@@ -7309,14 +7333,14 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Section A has eighteen students with a mean of eighty-four. That's fifteen hundred twelve points total.",
-    "minDur": 7.3
+    "text": "Section A has eighteen students with a mean of eighty-four. Count times mean: fifteen hundred twelve points. That's the blue block.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Section B has twelve students with a mean of seventy-nine. Nine hundred forty-eight points.",
-    "minDur": 6.5
+    "text": "Section B has twelve students with a mean of seventy-nine. Nine hundred forty-eight points, the orange block.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
@@ -7327,8 +7351,8 @@
    {
     "kind": "step",
     "i": 3,
-    "text": "Divide by all thirty students. The combined mean is eighty-two.",
-    "minDur": 4.9
+    "text": "Divide by all thirty students: eighty-two. Level it off, and A's extra on top exactly fills B's gap, because A is wider.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -7392,8 +7416,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Five scores with a mean of eighty, and a sixth score of ninety-two joins.",
-    "minDur": 6.5
+    "text": "Five scores with a mean of eighty. Picture them leveled off at eighty. A sixth score of ninety-two joins.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
@@ -7404,14 +7428,14 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "Add the new score. Four hundred plus ninety-two is four ninety-two.",
-    "minDur": 5.3
+    "text": "Add the new score. Four hundred plus ninety-two is four ninety-two. It sticks up twelve above the line.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Now there are six scores, so divide by six. The new mean is eighty-two.",
-    "minDur": 6.5
+    "text": "Now divide by six. Share those twelve extra points out, two to each score, and everyone sits at eighty-two.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
@@ -7481,26 +7505,26 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Slow at first, then steeper and steeper. Each step's jump is bigger than the one before.",
-    "minDur": 7.3
+    "text": "Slow at first, then steeper and steeper. Look at the yellow jumps: each one is bigger than the one before.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "The rate itself is changing, so it can't be a straight line. Linear's out.",
-    "minDur": 6.5
+    "text": "The rate itself is changing, so no straight line can follow it. See the points sag away from this one. Linear's out.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "It curves up, which might tempt you toward quadratic. But a quadratic turns around at its vertex, and this never does.",
-    "minDur": 9.3
+    "text": "A quadratic can curve up too, but it turns around at its vertex. Run this one backward and it climbs again. These points never do.",
+    "minDur": 10.9
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Speeding up in one direction forever is exactly what exponential growth looks like. So one of these models definitely fits.",
-    "minDur": 8.9
+    "text": "Speeding up in one direction forever, flattening out to the left, is exactly exponential growth. So one of these models definitely fits.",
+    "minDur": 9.7
    },
    {
     "kind": "answer",
@@ -7558,8 +7582,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Snow melting over the days after a storm. The line falls, so the slope is negative.",
-    "minDur": 7.3
+    "text": "Snow melting over the days after a storm. Work from the line, not the dots. It falls, so the slope is negative.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -7570,8 +7594,8 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "Negative twenty-four over twelve is negative two. It loses about two inches a day.",
-    "minDur": 6.5
+    "text": "It drops twenty-four over a run of twelve. Negative twenty-four over twelve is negative two: about two inches a day.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
@@ -7641,26 +7665,26 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The model predicted twenty-four centimeters. The plant actually measured nineteen.",
-    "minDur": 4.9
+    "text": "The model's line predicted twenty-four centimeters at six weeks. The plant actually measured nineteen, below the line.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Residual is actual minus predicted.",
-    "minDur": 2.9
+    "text": "Residual is actual minus predicted. Always in that order.",
+    "minDur": 4.5
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Nineteen minus twenty-four is negative five.",
+    "text": "Actual is nineteen, predicted is twenty-four.",
     "minDur": 3.3
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Negative means the plant came in under the prediction. It grew less than expected.",
-    "minDur": 6.5
+    "text": "Nineteen minus twenty-four is negative five. The arrow from the line to the real plant points down: it grew less than expected.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -7724,31 +7748,31 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Five red, three blue, and the marble goes back in. We want first red, or second blue.",
-    "minDur": 7.7
+    "text": "Five red, three blue, and the marble goes back in. Across: first draw red, five eighths. Up: second draw blue, three eighths.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Both can happen at once. Since the marble's replaced, the draws are independent, so multiply for the overlap.",
+    "text": "Both can happen at once: that's the yellow corner. The draws are independent, so multiply for the overlap.",
     "minDur": 8.1
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Or means add the two, then take away the overlap.",
-    "minDur": 4.9
+    "text": "Or means add the pink and blue regions. But the yellow corner sits in both, so take it away once.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Put it all over sixty-four. Forty plus twenty-four minus fifteen is forty-nine.",
-    "minDur": 5.7
+    "text": "Put it all over sixty-four. Forty plus twenty-four minus fifteen is forty-nine: the whole outlined region.",
+    "minDur": 7.3
    },
    {
     "kind": "step",
     "i": 4,
-    "text": "One comes from adding without subtracting the overlap. It counts the both case twice.",
+    "text": "One comes from adding without subtracting the overlap. It counts the yellow corner twice.",
     "minDur": 6.5
    },
    {
@@ -7807,20 +7831,20 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Given that they play a sport. So we only look at the one hundred twenty athletes.",
-    "minDur": 7.3
+    "text": "Given that they play a sport. So everyone else drops out, and the one hundred twenty athletes become the whole world.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Of those one twenty, forty-five also play an instrument.",
-    "minDur": 4.5
+    "text": "Of those one twenty, forty-five also play an instrument. Shade them in.",
+    "minDur": 5.7
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Both divide by fifteen. Forty-five over one twenty is three eighths.",
-    "minDur": 5.3
+    "text": "Both divide by fifteen. Cut the athletes into eight blocks of fifteen: the shaded part is three of them. Three eighths.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -7890,20 +7914,20 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The claim is twenty-seven minutes. The interval runs from twenty-four to thirty.",
-    "minDur": 5.7
+    "text": "The claim is twenty-seven minutes. The interval runs from twenty-four to thirty: the blue band of plausible means.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Is twenty-seven between twenty-four and thirty? Yes, so the data doesn't contradict the claim.",
-    "minDur": 6.5
+    "text": "Is twenty-seven between twenty-four and thirty? Yes, it lands inside the band, so the data doesn't contradict the claim.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "It doesn't have to sit in the exact center. Any value inside the interval counts as plausible.",
-    "minDur": 7.7
+    "text": "It doesn't have to sit in the exact center. Slide anywhere along the band, and that value is plausible too.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
@@ -7961,26 +7985,26 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "This study turns both knobs at once: bigger sample, and higher confidence level.",
-    "minDur": 6.1
+    "text": "This study turns both knobs at once: bigger sample, and higher confidence level. Here's the interval before either change.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "The bigger sample pushes the interval narrower.",
-    "minDur": 3.7
+    "text": "The bigger sample on its own pushes the interval narrower. Blue arrows, pushing in.",
+    "minDur": 6.5
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "The higher confidence level pushes it wider.",
-    "minDur": 3.7
+    "text": "The higher confidence level on its own pushes it wider. Orange arrows, pushing out.",
+    "minDur": 6.5
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Two pushes in opposite directions. Without their sizes, you can't tell which wins, so the colleague ignored half the story.",
-    "minDur": 8.9
+    "text": "Both at once means two pushes in opposite directions. Without their sizes, you can't tell which wins. The colleague ignored half the story.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
@@ -8050,8 +8074,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "One seventy-five out of two fifty support the measure. But the question asks who does not.",
-    "minDur": 7.3
+    "text": "One seventy-five out of two fifty support the measure: the green part of the small sample bar. But the question asks who does not.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
@@ -8062,20 +8086,20 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "Everyone else doesn't support it. One minus zero point seven is zero point three.",
-    "minDur": 6.5
+    "text": "Everyone else doesn't support it: the orange slice. One minus zero point seven is zero point three.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Scale up to the district. Zero point three times sixty thousand is eighteen thousand.",
-    "minDur": 6.5
+    "text": "A random sample is a tiny model of the district, so stretch it to sixty thousand. Zero point three of that is eighteen thousand.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
     "i": 4,
-    "text": "Forty-two thousand estimates the supporters instead, and one seventy-five is the raw sample count.",
-    "minDur": 6.5
+    "text": "Forty-two thousand is the green part, the supporters. And one seventy-five is the raw sample count.",
+    "minDur": 7.3
    },
    {
     "kind": "step",
@@ -8139,8 +8163,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "This is an observational study. Nobody assigned who eats breakfast. The students chose.",
-    "minDur": 6.1
+    "text": "This is an observational study. Nobody assigned who eats breakfast; the students chose. So all we see is a dotted link.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -8151,7 +8175,7 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "Breakfast directly causing higher scores is exactly the leap an observational study can't make.",
+    "text": "Breakfast directly causing higher scores is exactly the arrow an observational study can't draw.",
     "minDur": 6.5
    },
    {
@@ -8222,8 +8246,8 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "Is there a comparison group grown at the same time? No. The comparison is a different year.",
-    "minDur": 7.7
+    "text": "Is there a comparison group grown at the same time? No. A whole year sits between the two fields' results.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
@@ -8293,26 +8317,26 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The side length is tripled, so the linear scale factor is three.",
-    "minDur": 5.7
+    "text": "The side length is tripled. Three of the little cube's edges fit along the big one, so the scale factor is three.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "The question asks about volume. That's three dimensions, so the factor gets cubed.",
-    "minDur": 6.1
+    "text": "But volume has three dimensions. The front face alone is three by three, nine little squares. That's only the area.",
+    "minDur": 8.9
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Three cubed is three times three times three. Twenty-seven.",
-    "minDur": 4.5
+    "text": "Now go three layers deep. Three times three times three is twenty-seven little cubes.",
+    "minDur": 6.5
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "Three uses the side's factor as if volume were a length. Nine is the area rule, three squared.",
-    "minDur": 8.1
+    "text": "Three uses the side's factor as if volume were a length. Nine is the area rule, three squared, just the front face.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -8382,14 +8406,14 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "The hemisphere is half of four thirds pi r cubed. Four cubed is sixty-four, so it's one hundred twenty-eight thirds pi.",
-    "minDur": 9.3
+    "text": "Lift off the dome. It's half of four thirds pi r cubed. Four cubed is sixty-four, so it's one hundred twenty-eight thirds pi.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
     "i": 3,
-    "text": "To add, write one hundred sixty pi as four hundred eighty thirds pi. The total is six hundred eight thirds pi.",
-    "minDur": 9.3
+    "text": "Set it back on and add. One hundred sixty pi is four hundred eighty thirds pi, so the total is six hundred eight thirds pi.",
+    "minDur": 10.9
    },
    {
     "kind": "step",
@@ -8459,14 +8483,14 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "The length is x, and it's three more than the width. So the width is three less than x.",
-    "minDur": 8.5
+    "text": "The length is x, and it's three more than the width. So the width is the length with three cut off, x minus three.",
+    "minDur": 10.5
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Plug all three in. X, times the quantity x minus three, times eight.",
-    "minDur": 6.1
+    "text": "Swing the width into place. Now all three edges are named: x, times x minus three, times eight.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
@@ -8625,8 +8649,8 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "The hypotenuse is two x, so two x equals sixteen.",
-    "minDur": 4.9
+    "text": "Why two x? Fold the triangle down. Two copies make an equilateral triangle, so twice the short side equals the hypotenuse, sixteen.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -8785,32 +8809,38 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Negative eleven pi over three is way outside one turn. Two pi is six thirds pi, so add that.",
-    "minDur": 8.5
+    "text": "Negative eleven pi over three means turning clockwise, almost two full times. Watch where it lands.",
+    "minDur": 7.3
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Still negative. Add another full turn.",
-    "minDur": 3.3
+    "text": "Two pi is six thirds pi, so add that. The arrow spins a full turn and stops in the very same spot.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Pi over three is sixty degrees, and cosine of that is one half. It's in the first quadrant, so it's positive.",
-    "minDur": 9.3
+    "text": "Still negative. Add another full turn. Same spot again, and now it's just pi over three.",
+    "minDur": 7.3
    },
    {
     "kind": "step",
     "i": 3,
+    "text": "Cosine is how far right the point sits. Pi over three is sixty degrees, and that's one half. Positive, since it's on the right.",
+    "minDur": 10.5
+   },
+   {
+    "kind": "step",
+    "i": 4,
     "text": "Negative one half comes from stopping after one turn and getting the sign wrong.",
     "minDur": 6.5
    },
    {
     "kind": "step",
-    "i": 4,
-    "text": "Root three over two is sine of pi over three, not cosine. Negative root three over two is the wrong value and the wrong sign.",
-    "minDur": 10.9
+    "i": 5,
+    "text": "Root three over two is the height, the sine, not cosine. Negative root three over two is the wrong value and the wrong sign.",
+    "minDur": 10.5
    },
    {
     "kind": "answer",
@@ -8862,8 +8892,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The legs are four root three and four. We want the hypotenuse, so add the squares.",
-    "minDur": 7.3
+    "text": "The legs are four root three and four. Build a square on each leg. We want the hypotenuse, so add the squares.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
@@ -8874,8 +8904,8 @@
    {
     "kind": "step",
     "i": 2,
-    "text": "Add them up. Sixty-four.",
-    "minDur": 2.5
+    "text": "Add them up. The square on the hypotenuse holds sixty-four.",
+    "minDur": 4.9
    },
    {
     "kind": "step",
@@ -8945,14 +8975,14 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "Sine of three x equals cosine of two x plus fifteen. So those two angles are complementary.",
-    "minDur": 7.7
+    "text": "Sine of three x equals cosine of two x plus fifteen. So those are the two acute angles of one right triangle.",
+    "minDur": 9.7
    },
    {
     "kind": "step",
     "i": 1,
-    "text": "Complementary means they add to ninety.",
-    "minDur": 3.3
+    "text": "Slide both into the right-angle corner. Together they fill it exactly, so they add to ninety.",
+    "minDur": 7.3
    },
    {
     "kind": "step",
@@ -9034,14 +9064,14 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "The center is negative four comma one, and the radius is six. Drop them in exactly as they are.",
-    "minDur": 8.5
+    "text": "The center is negative four comma one, and the radius is six, all the way around. Drop them in exactly as they are.",
+    "minDur": 10.1
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Minus negative four becomes plus four. And six squared is thirty-six.",
-    "minDur": 5.3
+    "text": "Minus negative four becomes plus four. The center sits four to the left of the axis. And six squared is thirty-six.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -9105,8 +9135,8 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "The central angle is one hundred twenty degrees. Out of three sixty, that's one third.",
-    "minDur": 6.9
+    "text": "The central angle is one hundred twenty degrees. Three copies of that slice fill the whole circle, so it's one third.",
+    "minDur": 9.3
    },
    {
     "kind": "step",
@@ -9182,32 +9212,32 @@
    {
     "kind": "step",
     "i": 0,
-    "text": "X is five, so put five in for x.",
-    "minDur": 4.5
-   },
-   {
-    "kind": "step",
-    "i": 1,
-    "text": "Five plus one is six, and six squared is thirty-six.",
-    "minDur": 4.9
-   },
-   {
-    "kind": "step",
-    "i": 2,
-    "text": "Subtract thirty-six from both sides.",
-    "minDur": 2.9
-   },
-   {
-    "kind": "step",
-    "i": 3,
-    "text": "Take the square root. Y minus four could be two or negative two.",
+    "text": "X is five, so put five in for x. That's this vertical line.",
     "minDur": 6.1
    },
    {
     "kind": "step",
+    "i": 1,
+    "text": "Five plus one is six: the line is six to the right of the center. Six squared is thirty-six.",
+    "minDur": 8.5
+   },
+   {
+    "kind": "step",
+    "i": 2,
+    "text": "Subtract thirty-six from both sides. Of the radius squared, forty, four is left for the up-and-down part.",
+    "minDur": 7.7
+   },
+   {
+    "kind": "step",
+    "i": 3,
+    "text": "Take the square root. Y minus four could be two or negative two: up two, or down two.",
+    "minDur": 8.1
+   },
+   {
+    "kind": "step",
     "i": 4,
-    "text": "Add four to both. Y is six or two.",
-    "minDur": 4.5
+    "text": "Add four to both. Y is six or two, one point above the center and one below.",
+    "minDur": 7.7
    },
    {
     "kind": "step",
@@ -9348,14 +9378,14 @@
    {
     "kind": "step",
     "i": 1,
-    "text": "The perimeter adds all three sides. Nine plus nine plus P Q is thirty-four.",
-    "minDur": 6.5
+    "text": "The perimeter adds all three sides. Lay them end to end: nine plus nine plus P Q makes thirty-four.",
+    "minDur": 8.5
    },
    {
     "kind": "step",
     "i": 2,
-    "text": "Subtract eighteen from both sides. P Q is sixteen.",
-    "minDur": 4.5
+    "text": "Subtract eighteen from both sides. The chord fills the rest of the bar exactly: P Q is sixteen.",
+    "minDur": 8.1
    },
    {
     "kind": "step",
