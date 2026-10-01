@@ -42,6 +42,12 @@ const readTime = (s: string) => Math.max(2.4, words(s) / 2.5 + 0.9);
 
 const QUESTION_SAY = "Here's one. Read it with me.";
 
+// Ozho's walk into the photo: from this x (off its left edge) to this one,
+// in stage pixels, between walkStart and walkEnd. His sprite is 128 wide.
+export const OZHO_WALK = { from: -170, to: 70, size: 128 };
+/** When the walking Ozho is exactly at the photo's left edge (x = 0). */
+export const ozhoAtEdge = (tl: Timeline) => tl.walkStart + ((tl.walkEnd - tl.walkStart) * -OZHO_WALK.from) / (OZHO_WALK.to - OZHO_WALK.from);
+
 /** Splits a question into the passage and the prompt at the end. */
 export function splitQuestion(q: string): { passage: string; prompt: string } {
   const para = q.lastIndexOf("\n\n");

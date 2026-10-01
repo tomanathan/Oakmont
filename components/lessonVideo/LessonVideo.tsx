@@ -7,7 +7,7 @@ import { PixelDog } from "@/components/PixelDog";
 import { MathText } from "@/components/MathText";
 import { GeometryDiagram } from "@/components/GeometryDiagram";
 import { QuestionFigure } from "@/components/QuestionFigure";
-import { beatAt, buildTimeline, type Timeline, type VoiceTrack } from "./timeline";
+import { beatAt, buildTimeline, OZHO_WALK, type Timeline, type VoiceTrack } from "./timeline";
 import { sfx } from "./sfx";
 import { EqMorph } from "./math/EqMorph";
 import { Scene } from "./math/Scene";
@@ -36,6 +36,8 @@ export function LessonVideo({
   voice,
   floating = false,
   hold = null,
+  ozhoAway = false,
+  onHold,
 }: {
   script: LessonVideoScript;
   example: WorkedExample;
@@ -50,6 +52,10 @@ export function LessonVideo({
   // Hold the playhead here until released (Ozho is still running over
   // from the page to hop in).
   hold?: number | null;
+  // Ozho isn't in the photo yet (the page's Ozho is still on his way).
+  ozhoAway?: boolean;
+  // Called once the playhead has reached `hold`.
+  onHold?: () => void;
 }) {
   const tl = useMemo(() => buildTimeline(script, example, voice), [script, example, voice]);
   // With a voice track, the audio element is the clock (no drift).
@@ -76,6 +82,8 @@ export function LessonVideo({
   tRef.current = t;
   const holdRef = useRef(hold);
   holdRef.current = hold;
+  const onHoldRef = useRef(onHold);
+  onHoldRef.current = onHold;
 
   // Fit the 800x500 stage to the container width.
   useEffect(() => {
@@ -97,7 +105,10 @@ export function LessonVideo({
         const a = audioRef.current;
         const cap = holdRef.current ?? tl.duration;
         const next = Math.min(cap, tl.duration, a && !a.paused ? a.currentTime : prev + dt);
-        if (a && !a.paused && holdRef.current !== null && next >= holdRef.current) a.pause();
+        if (holdRef.current !== null && next >= holdRef.current) {
+          if (a && !a.paused) a.pause();
+          onHoldRef.current?.();
+        }
         if (sound) sfx.cues(tl, prev, next);
         setT(next);
         if (next >= tl.duration) {
@@ -163,7 +174,7 @@ export function LessonVideo({
     <figure className={`lv ${floating ? "lv--float" : ""}`} aria-label={`Video: ${script.pattern}`}>
       <div className="lv-box" ref={boxRef} style={{ height: H * scale }}>
         <div className="lv-stage" style={{ width: W, height: H, transform: `scale(${scale})` }} aria-hidden>
-          <Stage tl={tl} t={now} script={script} example={example} skillName={skillName} />
+          <Stage tl={tl} t={now} script={script} example={example} skillName={skillName} ozhoAway={ozhoAway} />
         </div>
         {/* What's said, for screen readers (the stage itself is decoration). */}
         <p className="lv-sr" aria-live="polite">
@@ -218,7 +229,7 @@ export function LessonVideo({
   );
 }
 
-function Stage({ tl, t, script, example, skillName }: { tl: Timeline; t: number; script: LessonVideoScript; example: WorkedExample; skillName: string }) {
+function Stage({ tl, t, script, example, skillName, ozhoAway }: { tl: Timeline; t: number; script: LessonVideoScript; example: WorkedExample; skillName: string; ozhoAway?: boolean }) {
   const beat = beatAt(tl, t);
   const kind = beat?.kind;
   const first = (k: string) => tl.beats.find((b) => b.kind === k)!;
@@ -240,7 +251,7 @@ function Stage({ tl, t, script, example, skillName }: { tl: Timeline; t: number;
   // Ozho walks in from the left edge of the page into the photo.
   const walk = prog(t, tl.walkStart, tl.walkEnd);
   const walking = t > tl.walkStart && t < tl.walkEnd;
-  const ozX = -170 + walk * (70 + 170);
+  const ozX = OZHO_WALK.from + walk * (OZHO_WALK.to - OZHO_WALK.from);
   const beatStart = beat?.start ?? 0;
   const hop = t > tl.walkEnd && t - beatStart < 0.3 ? Math.sin(((t - beatStart) / 0.3) * Math.PI) * 10 : 0;
   const happy = t >= ansAt;
@@ -316,8 +327,8 @@ function Stage({ tl, t, script, example, skillName }: { tl: Timeline; t: number;
               </div>
             )}
           </div>
-          <div className="lv-ozho" style={{ transform: `translate(${ozX}px, ${-hop + down * 190}px)` }}>
-            <PixelDog size={128} mood={happy ? "happy" : "neutral"} legFrame={leg} tailFrame={tail} shadow />
+          <div className="lv-ozho" style={{ transform: `translate(${ozX}px, ${-hop + down * 190}px)`, visibility: ozhoAway ? "hidden" : undefined }}>
+            <PixelDog size={OZHO_WALK.size} mood={happy ? "happy" : "neutral"} legFrame={leg} tailFrame={tail} shadow />
           </div>
         </div>
         <div className="lv-watch" style={{ opacity: clamp(down * 2 - 1), transform: `translateY(${(1 - down) * 30}px)` }}>

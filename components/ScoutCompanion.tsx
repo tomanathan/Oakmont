@@ -351,7 +351,9 @@ const SPIN_FLIP_MS = 110;
 // Boarding a lesson video: he sprints to the Polaroid's edge and hops in,
 // so the Ozho in the video is visibly him, not a copy (see onBoard).
 const BOARD_SPEED = 1050; // px/sec
-const BOARD_HOP_MS = 320;
+const BOARD_HOP_MS = 360;
+// He hops in from this far left of the in-video Ozho's spot.
+const BOARD_HOP_DX = 96;
 const BOARD_PHRASES = ["Ooh, a video! Wait for me!", "That's my cue!", "Coming! Save me a spot!"];
 
 // Zoomies: every so often a healthy Ozho tears around in a burst of quick,
@@ -647,7 +649,10 @@ export function ScoutCompanion() {
   const [land, setLand] = useState(false);
   // Off in a lesson video (see onBoard): hidden and frozen until it closes.
   const [inVideo, setInVideo] = useState(false);
-  const [boardHop, setBoardHop] = useState(false);
+  // The hop in (or back out): to/from the in-video Ozho's exact spot and
+  // size, as offsets from where he stands (CSS vars on the sprite).
+  const [boardHop, setBoardHop] = useState<null | { dir: "in" | "out"; dx: number; dy: number; s: number }>(null);
+  const hopRef = useRef<{ dx: number; dy: number; s: number } | null>(null);
   const inVideoRef = useRef(false);
   const boardingRef = useRef<{ x: number; y: number } | null>(null);
   const boardLegAtRef = useRef(0);
@@ -970,7 +975,7 @@ export function ScoutCompanion() {
     // the spot where the video's Ozho walks in) and hop in. Docked on a
     // phone there's nowhere to run, so he boards straight away.
     function onBoard(e: Event) {
-      const to = (e as CustomEvent<{ x: number; y: number }>).detail;
+      const to = (e as CustomEvent<{ x: number; y: number; scale: number }>).detail;
       if (!to) return;
       if (isMobileRef.current) {
         inVideoRef.current = true;
@@ -991,23 +996,41 @@ export function ScoutCompanion() {
       setIdle("none");
       walkingRef.current = true;
       setIsWalking(true);
-      boardingRef.current = to;
+      // Run to just left of the spot, then hop the rest of the way in.
+      // Fully visible on the way, even crossing text (the video's over it).
+      setBehindText(false);
+      boardingRef.current = { x: to.x - BOARD_HOP_DX, y: to.y };
+      hopRef.current = { dx: BOARD_HOP_DX, dy: 0, s: to.scale || 2.5 };
       speak(pick(BOARD_PHRASES), 1600);
+    }
+    // The video's Ozho has taken over (in the very same spot and size).
+    function onSwap() {
+      if (!inVideoRef.current) return;
+      setInVideo(true);
+      setBoardHop(null);
     }
     // The video closed: he hops back out where he went in.
     function onUnboard(e: Event) {
-      const at = (e as CustomEvent<{ x: number; y: number } | undefined>).detail;
+      const at = (e as CustomEvent<{ x: number; y: number; scale: number } | undefined>).detail;
       boardingRef.current = null;
       if (!inVideoRef.current) return;
       inVideoRef.current = false;
       setInVideo(false);
+      setBoardHop(null);
       if (at && !isMobileRef.current) {
-        posRef.current = { x: at.x, y: at.y };
-        targetRef.current = { x: at.x, y: at.y };
+        // Out of the video's Ozho, at its size, shrinking as he hops down
+        // onto the page.
+        const land = { x: at.x - BOARD_HOP_DX, y: at.y + 10 };
+        posRef.current = land;
+        targetRef.current = { ...land };
         if (wrapperRef.current) {
-          wrapperRef.current.style.left = `${at.x}px`;
-          wrapperRef.current.style.top = `${at.y}px`;
+          wrapperRef.current.style.left = `${land.x}px`;
+          wrapperRef.current.style.top = `${land.y}px`;
         }
+        facingRef.current = -1;
+        setFacing(-1);
+        setBoardHop({ dir: "out", dx: at.x - land.x, dy: at.y - land.y, s: at.scale || 2.5 });
+        setTimeout(() => setBoardHop((h) => (h?.dir === "out" ? null : h)), BOARD_HOP_MS);
       }
       walkingRef.current = false;
       setIsWalking(false);
@@ -1019,6 +1042,7 @@ export function ScoutCompanion() {
     }
     window.addEventListener("ozho:board", onBoard);
     window.addEventListener("ozho:unboard", onUnboard);
+    window.addEventListener("ozho:swap", onSwap);
 
     return () => {
       window.removeEventListener("resize", checkMobile);
@@ -1032,6 +1056,7 @@ export function ScoutCompanion() {
       window.removeEventListener("ozho:costume", onCostumeChange);
       window.removeEventListener("ozho:board", onBoard);
       window.removeEventListener("ozho:unboard", onUnboard);
+      window.removeEventListener("ozho:swap", onSwap);
       window.removeEventListener("ozho:fed", loadPetState);
       if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
       if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
@@ -1748,13 +1773,25 @@ export function ScoutCompanion() {
             facingRef.current = 1;
             setFacing(1);
           }
-          setBoardHop(true);
-          setTimeout(() => {
-            setBoardHop(false);
-            inVideoRef.current = true;
-            setInVideo(true);
-            window.dispatchEvent(new CustomEvent("ozho:boarded"));
-          }, BOARD_HOP_MS);
+          // Stand up straight (no running lean) so he matches the video's
+          // Ozho exactly. Hop in and hold that pose (exactly over it) until
+          // the video swaps to its own (ozho:swap).
+          resetBody();
+          const hop = { ...(hopRef.current ?? { dx: BOARD_HOP_DX, dy: 0, s: 2.5 }) };
+          // The hop scales about the button's centre, but the sprite sits a
+          // touch off it (the inline SVG's baseline gap); scaled up, that
+          // would land him a few px off, so aim the sprite's centre instead.
+          const btn = wrapperRef.current?.querySelector("button");
+          const svg = btn?.querySelector("svg");
+          if (btn && svg) {
+            const b = btn.getBoundingClientRect();
+            const g = svg.getBoundingClientRect();
+            hop.dx -= hop.s * (g.left + g.width / 2 - (b.left + b.width / 2));
+            hop.dy -= hop.s * (g.top + g.height / 2 - (b.top + b.height / 2));
+          }
+          setBoardHop({ dir: "in", ...hop });
+          inVideoRef.current = true;
+          setTimeout(() => window.dispatchEvent(new CustomEvent("ozho:boarded")), BOARD_HOP_MS);
         } else {
           pos.x += (dx / d) * step;
           pos.y += (dy / d) * step;
@@ -2894,7 +2931,9 @@ export function ScoutCompanion() {
           dragging
             ? ""
             : boardHop
-            ? "animate-ozho-board"
+            ? boardHop.dir === "in"
+              ? "animate-ozho-board"
+              : "animate-ozho-unboard"
             : sleepAnim === "falling"
             ? "animate-fall-asleep"
             : sleepAnim === "waking"
@@ -2923,7 +2962,10 @@ export function ScoutCompanion() {
             ? "animate-ozho-spin"
             : ""
         }`}
-        style={{ ["--face" as string]: facing }}
+        style={{
+          ["--face" as string]: facing,
+          ...(boardHop ? { ["--hx" as string]: `${boardHop.dx}px`, ["--hy" as string]: `${boardHop.dy}px`, ["--hs" as string]: boardHop.s } : {}),
+        }}
       >
         {/* An invisible, generously-sized hit area centered over him --
             his actual sprite is only 44x27.5 and an odd, non-square shape
