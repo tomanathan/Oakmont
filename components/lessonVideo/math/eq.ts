@@ -17,15 +17,15 @@ export interface Tok {
 
 const RELS = new Set(["=", "<", ">", "≤", "≥", "≠", "≈"]);
 const WORDS = new Set(["or", "so", "if", "of", "on", "to", "is", "no", "at", "in", "by", "as", "and", "both", "not", "yes"]);
-const SUP: Record<string, string> = { "²": "2", "³": "3", "⁴": "4", "⁰": "0", "¹": "1", "⁵": "5", "⁶": "6" };
+const SUP: Record<string, string> = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-" };
 
 const RE = new RegExp(
   [
-    "(\\d+(?:\\.\\d+)?\\/\\d+(?:\\.\\d+)?)", // 1 fraction 3/4
-    "(\\^\\((?:[^()]|\\([^()]*\\))*\\)|\\^[-−]?[\\w.]+|[²³⁴⁰¹⁵⁶]+)", // 2 superscript
+    "((?:\\d+(?:\\.\\d+)?π?|π|\\d*[a-zA-Z](?![a-zA-Z]))\\/(?:\\d+(?:\\.\\d+)?|[a-zA-Z](?![a-zA-Z])))", // 1 fraction 3/4, π/3, x/2
+    "(\\^\\((?:[^()]|\\([^()]*\\))*\\)|\\^[-−]?[\\w.]+|[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)", // 2 superscript
     "(√\\d+(?:\\.\\d+)?)", // 3 root of a number
     "([a-zA-Z]{3,}|[a-zA-Z]{2}(?=\\s|$|[:,;]))", // 4 word (checked below)
-    "((?:\\d[\\d,]*(?:\\.\\d+)?)?(?:[a-zA-Zπ](?![a-zA-Z]{2}))+|\\d[\\d,]*(?:\\.\\d+)?%?|\\.\\d+%?)", // 5 term or number
+    "((?:(?:\\d{1,3}(?:,\\d{3})+|\\d+)(?:\\.\\d+)?)?(?:[a-zA-Zπ](?![a-zA-Z]{2}))+|(?:\\d{1,3}(?:,\\d{3})+|\\d+)(?:\\.\\d+)?%?|\\.\\d+%?)", // 5 term or number
     "(=|<|>|≤|≥|≠|≈)", // 6 relation
     "([+\\-−×·÷/±→↔:])", // 7 operator
     "([(\\[])", // 8
@@ -50,7 +50,7 @@ export function tokenize(line: string): Tok[] {
     let t: Tok;
     if (frac) {
       const [a, b] = frac.split("/");
-      t = { text, kind: "frac", side, latex: `\\tfrac{${a}}{${b}}` };
+      t = { text, kind: "frac", side, latex: `\\tfrac{${texTerm(a)}}{${texTerm(b)}}` };
     } else if (sup) {
       const body = sup.startsWith("^") ? sup.slice(1).replace(/^\((.*)\)$/, "$1").replace(/−/g, "-") : sup.split("").map((c) => SUP[c] ?? c).join("");
       t = { text, kind: "sup", side, latex: `{}^{${body.replace(/\//g, "/")}}` };

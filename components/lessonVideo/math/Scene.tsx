@@ -52,7 +52,11 @@ export function sceneCues(script: LessonVideoScript, steps: StepTime[], qAt: num
       const built = (s.draw ?? []).includes(m.id) && o ? drawAt.get(m.id)! + DRAW[o.kind] + 0.2 : 0;
       moves.push({ m, at: Math.max(at + 0.2 + k * 0.15, built) });
     });
-    (s.set ?? []).forEach((st) => sets.push({ s: st, at: at + 0.2 }));
+    (s.set ?? []).forEach((st) => {
+      const o = scene.objects.find((x) => x.id === st.id);
+      const built = (s.draw ?? []).includes(st.id) && o ? drawAt.get(st.id)! + DRAW[o.kind] + 0.2 : 0;
+      sets.push({ s: st, at: Math.max(at + 0.2, built) });
+    });
   });
   // The givens are built while the question is read.
   let k = 0;
@@ -328,8 +332,8 @@ export function Scene({ script, steps, qAt, t }: { script: LessonVideoScript; st
     const text = o.label;
     const lp = prog(d, 0.55, 1);
     return (
-      <g key={o.id} opacity={dim * (1 - gone)} style={{ filter: glow }} transform={tf || undefined}>
-        {body}
+      <g key={o.id} opacity={dim * (1 - gone)} transform={tf || undefined}>
+        <g style={{ filter: glow }}>{body}</g>
         {text && label && lp > 0 && (
           <text
             className={`lv-sc-label ${/^[a-zA-Z]$/.test(text) ? "is-var" : ""}`}
