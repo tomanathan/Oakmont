@@ -1001,3 +1001,163 @@
   stroke: #6be3a4;
   stroke-width: 2.5;
 }
+
+/* ---------- pinned over the page (opened from a lesson) ---------- */
+.lv--float .lv-box {
+  border: 0;
+  border-radius: 0;
+  background: none;
+  overflow: visible;
+}
+.lv--float .lv-page {
+  background: none;
+}
+.lv--float .lv-pol {
+  box-shadow: 6px 6px 0 var(--ink), 0 26px 60px rgba(23, 25, 63, 0.38);
+}
+.lv--float .lv-bar {
+  margin: 4px auto 0;
+  max-width: 712px;
+  padding: 6px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* the stamp landing: impact marks flicking out from the edges */
+.lv-thud {
+  position: absolute;
+  left: 44px;
+  top: 20px;
+  width: 712px;
+  height: 460px;
+  pointer-events: none;
+}
+.lv-thud-l {
+  position: absolute;
+  width: 4px;
+  height: 18px;
+  border-radius: 3px;
+  background: var(--ink);
+}
+.lv-thud-l--0,
+.lv-thud-l--1,
+.lv-thud-l--2,
+.lv-thud-l--3 {
+  top: -30px;
+  transform: translateY(calc(-1 * var(--d)));
+}
+.lv-thud-l--0 { left: 12%; transform: translateY(calc(-1 * var(--d))) rotate(-24deg); }
+.lv-thud-l--1 { left: 37%; }
+.lv-thud-l--2 { left: 63%; }
+.lv-thud-l--3 { left: 88%; transform: translateY(calc(-1 * var(--d))) rotate(24deg); }
+.lv-thud-l--4,
+.lv-thud-l--5,
+.lv-thud-l--6,
+.lv-thud-l--7 {
+  bottom: -30px;
+  transform: translateY(var(--d));
+}
+.lv-thud-l--4 { left: 12%; transform: translateY(var(--d)) rotate(24deg); }
+.lv-thud-l--5 { left: 37%; }
+.lv-thud-l--6 { left: 63%; }
+.lv-thud-l--7 { left: 88%; transform: translateY(var(--d)) rotate(-24deg); }
+.lv-thud-l--8,
+.lv-thud-l--9 {
+  left: -32px;
+  width: 18px;
+  height: 4px;
+  transform: translateX(calc(-1 * var(--d)));
+}
+.lv-thud-l--8 { top: 30%; }
+.lv-thud-l--9 { top: 70%; }
+.lv-thud-l--10,
+.lv-thud-l--11 {
+  right: -32px;
+  width: 18px;
+  height: 4px;
+  transform: translateX(var(--d));
+}
+.lv-thud-l--10 { top: 30%; }
+.lv-thud-l--11 { top: 70%; }
+
+/* math: once the walkthrough starts, the question and choices step back */
+.lv-board.is-dark .lv-m-q,
+.lv-board.is-dark .lv-m-choices .lv-choice,
+.lv-board.is-dark .lv-m-choices .lv-letter {
+  transition: font-size 0.45s ease, min-height 0.45s ease, padding 0.45s ease, width 0.45s ease, height 0.45s ease, opacity 0.45s ease;
+}
+.lv-board.is-dark .lv-m.is-compact .lv-m-q {
+  font-size: 11.5px;
+  line-height: 1.35;
+  opacity: 0.78;
+}
+.lv-board.is-dark .lv-m.is-compact .lv-m-choices {
+  gap: 5px;
+}
+.lv-board.is-dark .lv-m.is-compact .lv-m-choices .lv-choice {
+  min-height: 24px;
+  padding: 2px 7px;
+  font-size: 11.5px;
+  gap: 6px;
+}
+.lv-board.is-dark .lv-m.is-compact .lv-m-choices .lv-letter {
+  width: 17px;
+  height: 17px;
+  font-size: 9.5px;
+  border-width: 1.5px;
+}
+
+/* the pinned video, over the lesson page */
+.lv-pin {
+  position: fixed;
+  inset: 0;
+  z-index: 39; /* under the page's Ozho (z-40), so he can run onto it */
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.lv-pin-back {
+  position: absolute;
+  inset: 0;
+  background: rgba(23, 25, 63, 0.3);
+  animation: lv-pin-fade 0.25s ease-out;
+}
+@keyframes lv-pin-fade {
+  from {
+    opacity: 0;
+  }
+}
+.lv-pin-card {
+  position: relative;
+  width: min(880px, 100%);
+}
+.lv-pin-close {
+  position: absolute;
+  top: 2%;
+  right: 3%;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--ink, #2a2fe0);
+  border-radius: 50%;
+  background: #fff;
+  color: #2a2fe0;
+  font: 700 20px/1 system-ui, sans-serif;
+  box-shadow: 2px 2px 0 #2a2fe0;
+  cursor: pointer;
+  z-index: 2;
+}
+.lv-pin.is-closing .lv-pin-back {
+  opacity: 0;
+  transition: opacity 0.22s ease-in;
+}
+.lv-pin.is-closing .lv-pin-card {
+  animation: lv-pin-lift 0.22s ease-in forwards;
+}
+@keyframes lv-pin-lift {
+  to {
+    opacity: 0;
+    transform: translateY(-14px) scale(1.04) rotate(1.5deg);
+  }
+}

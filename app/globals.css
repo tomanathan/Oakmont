@@ -228,6 +228,25 @@ body {
   animation: ozho-land 0.26s ease-out;
   transform-origin: 50% 100%;
 }
+/* Hopping into a lesson video's Polaroid: up, over and in, growing toward
+   the size of the Ozho inside the video as he goes. */
+@keyframes ozho-board {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  45% {
+    transform: translate(26px, -34px) scale(1.5);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(54px, 4px) scale(2.1);
+    opacity: 0;
+  }
+}
+.animate-ozho-board {
+  animation: ozho-board 0.32s cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
+}
 
 @keyframes zzz-float {
   0% {

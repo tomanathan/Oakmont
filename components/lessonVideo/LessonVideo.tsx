@@ -34,6 +34,8 @@ export function LessonVideo({
   autoPlay = false,
   frameTime,
   voice,
+  floating = false,
+  hold = null,
 }: {
   script: LessonVideoScript;
   example: WorkedExample;
@@ -43,6 +45,11 @@ export function LessonVideo({
   frameTime?: number;
   // Ozho's recorded voice for this video, when it exists.
   voice?: VoiceTrack;
+  // Pinned over the page: no notebook behind the Polaroid.
+  floating?: boolean;
+  // Hold the playhead here until released (Ozho is still running over
+  // from the page to hop in).
+  hold?: number | null;
 }) {
   const tl = useMemo(() => buildTimeline(script, example, voice), [script, example, voice]);
   // With a voice track, the audio element is the clock (no drift).
@@ -67,6 +74,8 @@ export function LessonVideo({
   const last = useRef<number | null>(null);
   const tRef = useRef(t);
   tRef.current = t;
+  const holdRef = useRef(hold);
+  holdRef.current = hold;
 
   // Fit the 800x500 stage to the container width.
   useEffect(() => {
@@ -86,7 +95,9 @@ export function LessonVideo({
         const dt = ((now - last.current) / 1000) * speed;
         const prev = tRef.current;
         const a = audioRef.current;
-        const next = Math.min(tl.duration, a && !a.paused ? a.currentTime : prev + dt);
+        const cap = holdRef.current ?? tl.duration;
+        const next = Math.min(cap, tl.duration, a && !a.paused ? a.currentTime : prev + dt);
+        if (a && !a.paused && holdRef.current !== null && next >= holdRef.current) a.pause();
         if (sound) sfx.cues(tl, prev, next);
         setT(next);
         if (next >= tl.duration) {
@@ -131,6 +142,14 @@ export function LessonVideo({
   useEffect(() => {
     if (!playing) audioRef.current?.pause();
   }, [playing]);
+  // Released from a hold mid-play: pick the voice back up where we are.
+  useEffect(() => {
+    const a = audioRef.current;
+    if (hold === null && playing && a && a.paused && tRef.current < tl.duration) {
+      a.currentTime = tRef.current;
+      void a.play().catch(() => {});
+    }
+  }, [hold, playing, tl.duration]);
 
   useEffect(() => {
     if (autoPlay) play();
@@ -141,7 +160,7 @@ export function LessonVideo({
   const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
   return (
-    <figure className="lv" aria-label={`Video: ${script.pattern}`}>
+    <figure className={`lv ${floating ? "lv--float" : ""}`} aria-label={`Video: ${script.pattern}`}>
       <div className="lv-box" ref={boxRef} style={{ height: H * scale }}>
         <div className="lv-stage" style={{ width: W, height: H, transform: `scale(${scale})` }} aria-hidden>
           <Stage tl={tl} t={now} script={script} example={example} skillName={skillName} />
@@ -215,6 +234,8 @@ function Stage({ tl, t, script, example, skillName }: { tl: Timeline; t: number;
     transform: `translateY(${(1 - slap) * -30}px) scale(${1.22 - 0.22 * outBack(slap)}) rotate(${-6 + 4.8 * slap}deg)`,
   };
   const tape = prog(t, tl.slapAt, tl.slapAt + 0.2);
+  // The stamp: a burst of impact marks round the edges as it lands.
+  const thud = prog(t, tl.slapAt - 0.04, tl.slapAt + 0.32);
 
   // Ozho walks in from the left edge of the page into the photo.
   const walk = prog(t, tl.walkStart, tl.walkEnd);
@@ -236,6 +257,13 @@ function Stage({ tl, t, script, example, skillName }: { tl: Timeline; t: number;
 
   return (
     <div className="lv-page">
+      {thud > 0 && thud < 1 && (
+        <div className="lv-thud" style={{ opacity: 1 - thud, transform: `scale(${1 + thud * 0.06})` }}>
+          {Array.from({ length: 12 }, (_, i) => (
+            <span key={i} className={`lv-thud-l lv-thud-l--${i}`} style={{ ["--d" as string]: `${thud * 22}px` }} />
+          ))}
+        </div>
+      )}
       <div className="lv-pol" style={pol}>
         <span className="lv-tape lv-tape--a" style={{ opacity: tape }} />
         <span className="lv-tape lv-tape--b" style={{ opacity: tape }} />
@@ -427,10 +455,13 @@ function MathCard({ tl, t, script, example, qAt, ansAt, appear }: { tl: Timeline
   }, [hotKey]);
   const longest = Math.max(...example.choices.map((c) => c.length));
   const tint = useMemo(() => script.tint ?? { x: "blue" as const }, [script.tint]);
+  // Once the walkthrough starts, the question and choices step back so the
+  // scene and the work get the room.
+  const compact = tl.steps.length > 0 && t >= tl.steps[0].at - 0.35;
 
   return (
     <div className="lv-q-fit" style={{ opacity: appear }}>
-      <div className={`lv-m ${hasFig ? "lv-m--fig" : ""} ${tl.work.length ? "" : "lv-m--nowork"}`}>
+      <div className={`lv-m ${hasFig ? "lv-m--fig" : ""} ${tl.work.length ? "" : "lv-m--nowork"} ${compact ? "is-compact" : ""}`}>
         <p className="lv-m-q">
           {parts.map((p, i) =>
             p.mark === undefined ? (

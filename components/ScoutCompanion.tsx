@@ -348,6 +348,11 @@ const IDLE_ACT_MS: Partial<Record<IdleAct, number>> = {
 };
 // Tail-chasing: he flips to face the other way this often during a spin.
 const SPIN_FLIP_MS = 110;
+// Boarding a lesson video: he sprints to the Polaroid's edge and hops in,
+// so the Ozho in the video is visibly him, not a copy (see onBoard).
+const BOARD_SPEED = 1050; // px/sec
+const BOARD_HOP_MS = 320;
+const BOARD_PHRASES = ["Ooh, a video! Wait for me!", "That's my cue!", "Coming! Save me a spot!"];
 
 // Zoomies: every so often a healthy Ozho tears around in a burst of quick,
 // short gallops, then flops down. Mochi (who follows him) gets swept along.
@@ -640,6 +645,12 @@ export function ScoutCompanion() {
   const [idleAct, setIdleAct] = useState<IdleAct>("none");
   // A quick squash when he pulls up from a fast run.
   const [land, setLand] = useState(false);
+  // Off in a lesson video (see onBoard): hidden and frozen until it closes.
+  const [inVideo, setInVideo] = useState(false);
+  const [boardHop, setBoardHop] = useState(false);
+  const inVideoRef = useRef(false);
+  const boardingRef = useRef<{ x: number; y: number } | null>(null);
+  const boardLegAtRef = useRef(0);
   const landTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // The sprite's own wrapper: the render loop writes his gait bob and lean
   // straight to it each tick, underneath whatever CSS animation the button
@@ -955,6 +966,60 @@ export function ScoutCompanion() {
     }
     window.addEventListener("ozho:costume", onCostumeChange);
 
+    // A lesson video is opening: run to its Polaroid (page coordinates of
+    // the spot where the video's Ozho walks in) and hop in. Docked on a
+    // phone there's nowhere to run, so he boards straight away.
+    function onBoard(e: Event) {
+      const to = (e as CustomEvent<{ x: number; y: number }>).detail;
+      if (!to) return;
+      if (isMobileRef.current) {
+        inVideoRef.current = true;
+        setInVideo(true);
+        window.dispatchEvent(new CustomEvent("ozho:boarded"));
+        return;
+      }
+      cancelZoomies();
+      fetchingRef.current = null;
+      setCarryingBall(false);
+      clearSleepAnimTimeout();
+      asleepRef.current = false;
+      setAsleep(false);
+      sleepAnimRef.current = "none";
+      setSleepAnim("none");
+      sittingRef.current = false;
+      setSitting(false);
+      setIdle("none");
+      walkingRef.current = true;
+      setIsWalking(true);
+      boardingRef.current = to;
+      speak(pick(BOARD_PHRASES), 1600);
+    }
+    // The video closed: he hops back out where he went in.
+    function onUnboard(e: Event) {
+      const at = (e as CustomEvent<{ x: number; y: number } | undefined>).detail;
+      boardingRef.current = null;
+      if (!inVideoRef.current) return;
+      inVideoRef.current = false;
+      setInVideo(false);
+      if (at && !isMobileRef.current) {
+        posRef.current = { x: at.x, y: at.y };
+        targetRef.current = { x: at.x, y: at.y };
+        if (wrapperRef.current) {
+          wrapperRef.current.style.left = `${at.x}px`;
+          wrapperRef.current.style.top = `${at.y}px`;
+        }
+      }
+      walkingRef.current = false;
+      setIsWalking(false);
+      lastInteractionAtRef.current = Date.now();
+      behaviorUntilRef.current = Date.now() + 2200;
+      if (landTimeoutRef.current) clearTimeout(landTimeoutRef.current);
+      setLand(true);
+      landTimeoutRef.current = setTimeout(() => setLand(false), 260);
+    }
+    window.addEventListener("ozho:board", onBoard);
+    window.addEventListener("ozho:unboard", onUnboard);
+
     return () => {
       window.removeEventListener("resize", checkMobile);
       window.removeEventListener("pointermove", onMove);
@@ -965,6 +1030,8 @@ export function ScoutCompanion() {
       window.removeEventListener("ozho:celebrate", onCelebrate);
       window.removeEventListener("ozho:say", onSay);
       window.removeEventListener("ozho:costume", onCostumeChange);
+      window.removeEventListener("ozho:board", onBoard);
+      window.removeEventListener("ozho:unboard", onUnboard);
       window.removeEventListener("ozho:fed", loadPetState);
       if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
       if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
@@ -1051,7 +1118,7 @@ export function ScoutCompanion() {
     // replan that leg against the new page rather than letting him arrive
     // somewhere that's only valid on the page he just left. (If he's at
     // rest already, the render loop's own idle-on-text check handles it.)
-    if (walkingRef.current && overlapsText(targetRef.current.x, targetRef.current.y)) {
+    if (walkingRef.current && !boardingRef.current && overlapsText(targetRef.current.x, targetRef.current.y)) {
       beginWalk();
     }
 
@@ -1659,6 +1726,54 @@ export function ScoutCompanion() {
       // loop. Desktop (>= MOBILE_BREAKPOINT) never hits this and behaves
       // exactly as before.
       if (isMobileRef.current) return;
+
+      // In a lesson video: hidden, nothing to do. Boarding one: a straight
+      // sprint to the Polaroid's edge with nothing else allowed to cut in,
+      // then the hop in (see onBoard).
+      if (inVideoRef.current) return;
+      const board = boardingRef.current;
+      if (board) {
+        const pos = posRef.current;
+        const dx = board.x - pos.x;
+        const dy = board.y - pos.y;
+        const d = Math.hypot(dx, dy);
+        const step = (BOARD_SPEED * dt) / 1000;
+        if (d <= step) {
+          pos.x = board.x;
+          pos.y = board.y;
+          boardingRef.current = null;
+          walkingRef.current = false;
+          setIsWalking(false);
+          if (facingRef.current !== 1) {
+            facingRef.current = 1;
+            setFacing(1);
+          }
+          setBoardHop(true);
+          setTimeout(() => {
+            setBoardHop(false);
+            inVideoRef.current = true;
+            setInVideo(true);
+            window.dispatchEvent(new CustomEvent("ozho:boarded"));
+          }, BOARD_HOP_MS);
+        } else {
+          pos.x += (dx / d) * step;
+          pos.y += (dy / d) * step;
+          const f: 1 | -1 = dx >= 0 ? 1 : -1;
+          if (f !== facingRef.current) {
+            facingRef.current = f;
+            setFacing(f);
+          }
+          if (now - boardLegAtRef.current > 60) {
+            boardLegAtRef.current = now;
+            setLegFrame((x) => (x === 0 ? 1 : 0));
+          }
+        }
+        if (wrapperRef.current) {
+          wrapperRef.current.style.left = `${pos.x}px`;
+          wrapperRef.current.style.top = `${pos.y}px`;
+        }
+        return;
+      }
 
       const nowMs = Date.now();
 
@@ -2685,12 +2800,13 @@ export function ScoutCompanion() {
               // closed for real here -- see openMenu, which points posRef at
               // this same corner (in page coordinates) the instant it opens,
               // so the branch below takes over without a visible jump.
-              { position: "fixed", right: MOBILE_DOCK_MARGIN_X, top: MOBILE_DOCK_MARGIN_Y, opacity: 1 }
+              { position: "fixed", right: MOBILE_DOCK_MARGIN_X, top: MOBILE_DOCK_MARGIN_Y, opacity: inVideo ? 0 : 1 }
             : {
                 left: posRef.current.x,
                 top: posRef.current.y,
                 transform: "translate(-50%, -50%)",
-                opacity: behindText ? BEHIND_TEXT_OPACITY : 1,
+                opacity: inVideo ? 0 : behindText ? BEHIND_TEXT_OPACITY : 1,
+                visibility: inVideo ? "hidden" : undefined,
               }
         }
       >
@@ -2777,6 +2893,8 @@ export function ScoutCompanion() {
         } ${
           dragging
             ? ""
+            : boardHop
+            ? "animate-ozho-board"
             : sleepAnim === "falling"
             ? "animate-fall-asleep"
             : sleepAnim === "waking"
