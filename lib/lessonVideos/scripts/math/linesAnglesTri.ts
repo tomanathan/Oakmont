@@ -14,18 +14,24 @@ export const M_LINES_ANGLES_TRI: LessonVideoScript[] = [
       {
         say: "The exterior angle is one hundred ten degrees, and one far angle is forty.",
         highlight: ["exterior angle measures 110°", "40°"],
-        spot: ["110°", "40°"],
+        focus: ["ext", "angB"],
       },
       {
         say: "The exterior angle equals the two far angles together. So forty plus x equals one hundred ten.",
         work: "40 + x = 110",
         note: "exterior = far + far",
-        spot: ["40°", "?", "110°"],
+        draw: ["copyB", "copyA"],
+        move: [
+          { id: "copyB", by: [5, 0] },
+          { id: "copyA", by: [1.17, -3.214], turn: 180 },
+        ],
+        focus: ["ext", "copyA", "copyB"],
       },
       {
         say: "Subtract forty from both sides. X is seventy degrees.",
         work: "x = 70°",
         note: "−40 both sides",
+        focus: ["angA"],
       },
       {
         say: "One hundred ten is the exterior angle itself, and forty is the angle we were given.",
@@ -39,6 +45,21 @@ export const M_LINES_ANGLES_TRI: LessonVideoScript[] = [
     answer: "Seventy degrees. One step, no need to find the angle next to it first.",
     trap: { point: "Trap: adding when you should subtract", say: "The exterior angle is already the total. Take away the angle you know." },
     recap: { point: "Exterior = sum of the two far angles", say: "An exterior angle equals the two far inside angles added together. Use it to skip a step." },
+    tint: { x: "blue", "40": "yellow", "110": "pink" },
+    scene: {
+      x: [-0.6, 8],
+      y: [-0.6, 3.9],
+      pts: { B: [0, 0], C: [5, 0], A: [3.83, 3.214], D: [7.6, 0] },
+      objects: [
+        { id: "tri", kind: "poly", pts: ["A", "B", "C"] },
+        { id: "ext-line", kind: "seg", from: "C", to: "D", dash: true, color: "gray" },
+        { id: "angB", kind: "angle", at: "B", from: "C", to: "A", r: 34, color: "yellow", label: "40°" },
+        { id: "angA", kind: "angle", at: "A", from: "B", to: "C", r: 26, color: "blue", label: "x" },
+        { id: "ext", kind: "angle", at: "C", from: "D", to: "A", r: 48, color: "pink", label: "110°", labelOffset: [8, -4] },
+        { id: "copyB", kind: "angle", at: "B", from: "C", to: "A", r: 34, color: "yellow" },
+        { id: "copyA", kind: "angle", at: "A", from: "B", to: "C", r: 34, color: "blue" },
+      ],
+    },
   },
   {
     subskillId: "m-lines-angles-tri",

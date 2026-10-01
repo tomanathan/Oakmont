@@ -35,10 +35,99 @@ export interface LessonVideoScript {
   // twenty"), never symbols or digits, so the voice reads them cleanly.
   // `spot` lights up labels inside the example's diagram or graph (exact
   // label text as drawn, e.g. "40°", "x", "12"), in step with the words.
-  steps: { say: string; highlight?: string[]; strike?: number[]; work?: string; note?: string; spot?: string[] }[];
+  //
+  // Math videos can also draw a `scene` (below): each step can construct,
+  // emphasise, move or re-shape its objects in step with the words, so the
+  // picture carries the argument the way the algebra does.
+  steps: {
+    say: string;
+    highlight?: string[];
+    strike?: number[];
+    work?: string;
+    note?: string;
+    spot?: string[];
+    draw?: string[];
+    focus?: string[];
+    hide?: string[];
+    move?: SceneMove[];
+    set?: SceneSet[];
+  }[];
   // Said as the right choice gets circled.
   answer: string;
   // The one trap to remember, and the one-line takeaway.
   trap: { point: string; say: string };
   recap: { point: string; say: string };
+  // Math: an animated figure drawn on the board instead of the example's
+  // static one (see SceneSpec). Objects no step `draw`s are built while the
+  // question is read; the rest appear on their step.
+  scene?: SceneSpec;
+  // Math: colours for quantities, used everywhere they appear: equation
+  // tokens whose text equals a key (or, for a single letter, contains it as
+  // the variable) are drawn in that colour, so "x" on the figure and "x" in
+  // the algebra are visibly the same thing.
+  tint?: Record<string, SceneColor>;
+}
+
+// ---------- scenes ----------
+// A scene is a little coordinate world (y points up) drawn in SVG and built
+// up step by step, in the spirit of a 3Blue1Brown animation: lines draw
+// themselves, angles sweep open, points drop onto curves, and pieces slide
+// into place to show *why* a step is true.
+
+export type SceneColor = "blue" | "yellow" | "pink" | "green" | "orange" | "purple" | "white" | "gray";
+
+/** A point: coordinates, or the name of one of the scene's `pts`. */
+export type ScenePt = [number, number] | string;
+
+interface SceneObjBase {
+  id: string;
+  color?: SceneColor;
+  // Text drawn beside the object (point/segment/angle/function labels).
+  label?: string;
+  // Nudge the label, in screen pixels (x right, y down).
+  labelOffset?: [number, number];
+}
+
+export type SceneObj =
+  | (SceneObjBase & { kind: "axes"; xStep?: number; yStep?: number; numbers?: boolean; grid?: boolean })
+  | (SceneObjBase & { kind: "numline"; y?: number; min: number; max: number; step: number; numbers?: boolean })
+  | (SceneObjBase & { kind: "point"; at: ScenePt; open?: boolean })
+  | (SceneObjBase & { kind: "seg"; from: ScenePt; to: ScenePt; dash?: boolean; arrow?: boolean; width?: number })
+  | (SceneObjBase & { kind: "line"; through: [ScenePt, ScenePt]; dash?: boolean })
+  // y as a function of x: numbers, x, + − * / ^, parentheses, sqrt(), abs(),
+  // and any names in `params` (which `set` can tween, e.g. a slope).
+  | (SceneObjBase & { kind: "fn"; y: string; params?: Record<string, number>; domain?: [number, number]; dash?: boolean })
+  | (SceneObjBase & { kind: "poly"; pts: ScenePt[]; fill?: boolean; open?: boolean; dash?: boolean })
+  | (SceneObjBase & { kind: "circle"; c: ScenePt; r: number; fill?: boolean })
+  // The angle at `at` swept from ray at→from to ray at→to (the smaller
+  // side). `right` draws the little square instead of an arc.
+  | (SceneObjBase & { kind: "angle"; at: ScenePt; from: ScenePt; to: ScenePt; r?: number; right?: boolean; fill?: boolean })
+  | (SceneObjBase & { kind: "text"; at: ScenePt; text: string; size?: number });
+
+export interface SceneSpec {
+  // The visible window, in scene units. Geometry keeps equal x/y scale.
+  x: [number, number];
+  y: [number, number];
+  pts?: Record<string, [number, number]>;
+  objects: SceneObj[];
+}
+
+/** Slide (and turn) an object, e.g. a copied angle into place. Persists. */
+export interface SceneMove {
+  id: string;
+  by?: [number, number];
+  // Degrees, counter-clockwise, about `about` (default: the object's anchor:
+  // an angle's vertex, a point, or the centre of anything else).
+  turn?: number;
+  about?: ScenePt;
+}
+
+/** Tween an object's numbers (a function's params, a point's position),
+ *  or the camera: id "view" with x/y windows. Persists. */
+export interface SceneSet {
+  id: string;
+  params?: Record<string, number>;
+  at?: [number, number];
+  x?: [number, number];
+  y?: [number, number];
 }

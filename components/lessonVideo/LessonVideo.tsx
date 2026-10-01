@@ -9,6 +9,8 @@ import { GeometryDiagram } from "@/components/GeometryDiagram";
 import { QuestionFigure } from "@/components/QuestionFigure";
 import { beatAt, buildTimeline, type Timeline, type VoiceTrack } from "./timeline";
 import { sfx } from "./sfx";
+import { EqMorph } from "./math/EqMorph";
+import { Scene } from "./math/Scene";
 import "./lessonVideo.css";
 
 // A lesson video that's drawn, not streamed: a Polaroid slaps onto the
@@ -240,7 +242,7 @@ function Stage({ tl, t, script, example, skillName }: { tl: Timeline; t: number;
         <div className="lv-photo">
           <div className="lv-wall" />
           <div className="lv-floor" />
-          <div className={`lv-board ${wide ? "is-wide" : ""}`}>
+          <div className={`lv-board ${wide ? "is-wide" : ""} ${wide && tl.math ? "is-dark" : ""}`}>
             {card === "title" && (
               <div className="lv-title" style={{ opacity: cardIn(tl.slapAt + 0.3) }}>
                 <span className="lv-kicker">{skillName}</span>
@@ -265,7 +267,7 @@ function Stage({ tl, t, script, example, skillName }: { tl: Timeline; t: number;
             )}
             {card === "question" &&
               (tl.math ? (
-                <MathCard tl={tl} t={t} example={example} ansAt={ansAt} appear={cardIn(qAt)} />
+                <MathCard tl={tl} t={t} script={script} example={example} qAt={qAt} ansAt={ansAt} appear={cardIn(qAt)} />
               ) : (
                 <QuestionCard tl={tl} t={t} example={example} ansAt={ansAt} appear={cardIn(qAt)} />
               ))}
@@ -393,32 +395,10 @@ function QuestionCard({ tl, t, example, ansAt, appear }: { tl: Timeline; t: numb
   );
 }
 
-// Math: the question across the top, the figure (if any) on the left, the
-// work written out line by line on the right, the choices along the bottom.
-// The newest line of work is written in and highlighted; earlier lines step
-// back; the last line gets boxed when the answer lands.
-function MathCard({ tl, t, example, ansAt, appear }: { tl: Timeline; t: number; example: WorkedExample; ansAt: number; appear: number }) {
-  const fitRef = useRef<HTMLDivElement>(null);
-  const [fit, setFit] = useState(1);
-  useLayoutEffect(() => {
-    const outer = fitRef.current;
-    const inner = outer?.firstElementChild as HTMLElement | null;
-    if (!outer || !inner) return;
-    // Measure with every line of work present, so nothing jumps mid-video.
-    inner.classList.add("is-measuring");
-    let f = 1;
-    for (let i = 0; i < 4; i++) {
-      inner.style.width = `${100 / f}%`;
-      inner.style.transform = `scale(${f})`;
-      const natural = inner.scrollHeight;
-      const room = outer.clientHeight;
-      if (natural * f <= room + 1) break;
-      f = Math.max(0.6, (room / natural) * 0.985);
-    }
-    inner.classList.remove("is-measuring");
-    setFit(f);
-  }, [tl]);
-
+// Math, on a dark board: the question across the top, the scene (an
+// animated figure) on the left, the work on the right as one derivation
+// that transforms line to line, the choices along the bottom.
+function MathCard({ tl, t, script, example, qAt, ansAt, appear }: { tl: Timeline; t: number; script: LessonVideoScript; example: WorkedExample; qAt: number; ansAt: number; appear: number }) {
   const parts: { text: string; mark?: number }[] = [];
   let pos = 0;
   const text = `${tl.passage}${tl.prompt ? " " + tl.prompt : ""}`;
@@ -431,28 +411,26 @@ function MathCard({ tl, t, example, ansAt, appear }: { tl: Timeline; t: number; 
   if (pos < text.length) parts.push({ text: text.slice(pos) });
 
   const answered = t >= ansAt;
-  const hasFig = !!(example.diagram || example.figure);
-  // Light up figure labels named by the current step.
+  // Without an animated scene, fall back to the example's own figure.
+  const legacyFig = !script.scene && !!(example.diagram || example.figure);
+  const hasFig = !!script.scene || legacyFig;
   const figRef = useRef<HTMLDivElement>(null);
   const hot = tl.spots.filter((sp) => t >= sp.at && t < sp.until).map((sp) => sp.label);
   const hotKey = hot.join("|");
   useEffect(() => {
     const root = figRef.current;
     if (!root) return;
-    // SVG labels (diagrams, graphs) and HTML table cells (data tables).
     root.querySelectorAll("text, td, th").forEach((el) => {
-      const on = hot.includes((el.textContent ?? "").trim());
-      el.classList.toggle("lv-hot", on);
+      el.classList.toggle("lv-hot", hot.includes((el.textContent ?? "").trim()));
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hotKey]);
-  const shown = tl.work.filter((w) => t >= w.at);
-  const newest = shown.length - 1;
   const longest = Math.max(...example.choices.map((c) => c.length));
+  const tint = useMemo(() => script.tint ?? { x: "blue" as const }, [script.tint]);
 
   return (
-    <div className="lv-q-fit" ref={fitRef} style={{ opacity: appear }}>
-      <div className={`lv-m ${hasFig ? "lv-m--fig" : ""}`} style={{ width: `${100 / fit}%`, transform: `scale(${fit})` }}>
+    <div className="lv-q-fit" style={{ opacity: appear }}>
+      <div className={`lv-m ${hasFig ? "lv-m--fig" : ""} ${tl.work.length ? "" : "lv-m--nowork"}`}>
         <p className="lv-m-q">
           {parts.map((p, i) =>
             p.mark === undefined ? (
@@ -465,34 +443,14 @@ function MathCard({ tl, t, example, ansAt, appear }: { tl: Timeline; t: number; 
           )}
         </p>
         <div className="lv-m-mid">
-          {hasFig && (
+          {script.scene && <Scene script={script} steps={tl.steps} qAt={qAt} t={t} />}
+          {legacyFig && (
             <div className={`lv-m-fig ${hot.length ? "is-hot" : ""}`} ref={figRef}>
               {example.diagram && <GeometryDiagram spec={example.diagram} />}
               {example.figure && <QuestionFigure spec={example.figure} />}
             </div>
           )}
-          <ol className="lv-work">
-            {tl.work.map((w, i) => {
-              const on = t >= w.at;
-              const write = prog(t, w.at, w.at + 0.55);
-              const isNew = i === newest && !answered;
-              const isLast = i === tl.work.length - 1;
-              return (
-                <li key={i} className={`lv-work-row ${on ? "" : "is-hidden"} ${isNew ? "is-new" : on ? "is-old" : ""}`}>
-                  <span className="lv-work-line" style={{ clipPath: `inset(0 ${(1 - write) * 100}% 0 0)` }}>
-                    <span className={`lv-work-ink ${answered && isLast ? "is-boxed" : ""}`}>
-                      <MathText text={w.line} />
-                    </span>
-                  </span>
-                  {w.note && (
-                    <span className="lv-work-note" style={{ opacity: prog(t, w.at + 0.35, w.at + 0.7) }}>
-                      {w.note}
-                    </span>
-                  )}
-                </li>
-              );
-            })}
-          </ol>
+          {tl.work.length > 0 && <EqMorph rows={tl.work} t={t} ansAt={ansAt} tint={tint} />}
         </div>
         <div className={`lv-m-choices ${longest > 18 ? "is-two" : ""}`}>
           {example.choices.map((c, i) => {
