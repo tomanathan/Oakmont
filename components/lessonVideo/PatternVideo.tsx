@@ -8,6 +8,7 @@ import { lessonVideoFor } from "@/lib/lessonVideos";
 import { voiceFor } from "@/lib/lessonVideos/voice";
 import { LessonVideo } from "./LessonVideo";
 import { buildTimeline, ozhoAtEdge } from "./timeline";
+import { sfx } from "./sfx";
 
 // The lesson page's way in: a small "Watch Ozho explain it" card under a
 // question type's name. Opening it stamps the video's Polaroid down over
@@ -19,6 +20,7 @@ import { buildTimeline, ozhoAtEdge } from "./timeline";
 export function PatternVideo({ subskillId, skillName, pattern }: { subskillId: string; skillName: string; pattern: Pattern }) {
   const script = lessonVideoFor(subskillId, pattern.name);
   const [open, setOpen] = useState(false);
+  const primed = useRef<HTMLAudioElement | null>(null);
   const example = script ? pattern.examples[script.example] : undefined;
   const voice = script ? voiceFor(script) : undefined;
   const minutes = useMemo(() => {
@@ -28,9 +30,35 @@ export function PatternVideo({ subskillId, skillName, pattern }: { subskillId: s
   }, [script, example, voice]);
   if (!script || !example) return null;
 
+  // Unlock sound inside the tap itself: phones won't let audio start later
+  // from code, and the video starts once the Polaroid has landed.
+  function openVideo() {
+    sfx.unlock();
+    if (voice) {
+      const a = new Audio(voice.src);
+      a.preload = "auto";
+      a.muted = true;
+      void a
+        .play()
+        .then(() => {
+          // Unless the video has already started it for real.
+          if (!a.dataset.claimed) {
+            a.pause();
+            a.currentTime = 0;
+          }
+          a.muted = false;
+        })
+        .catch(() => {
+          a.muted = false;
+        });
+      primed.current = a;
+    }
+    setOpen(true);
+  }
+
   if (!open)
     return (
-      <button type="button" className="lv-open" onClick={() => setOpen(true)}>
+      <button type="button" className="lv-open" onClick={openVideo}>
         <span className="lv-open-dog" aria-hidden>
           <PixelDog size={46} mood="happy" shadow={false} />
         </span>
@@ -55,6 +83,7 @@ export function PatternVideo({ subskillId, skillName, pattern }: { subskillId: s
       onClose={() => setOpen(false)}
       patternName={pattern.name}
       entryAt={ozhoAtEdge(buildTimeline(script, example, voice))}
+      audio={primed.current}
     />
   );
 }
@@ -92,6 +121,7 @@ function PinnedVideo({
   onClose,
   patternName,
   entryAt,
+  audio,
 }: {
   script: NonNullable<ReturnType<typeof lessonVideoFor>>;
   example: Pattern["examples"][number];
@@ -100,6 +130,7 @@ function PinnedVideo({
   onClose: () => void;
   patternName: string;
   entryAt: number;
+  audio: HTMLAudioElement | null;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
@@ -164,7 +195,7 @@ function PinnedVideo({
     <div className={`lv-pin ${closing ? "is-closing" : ""}`} role="dialog" aria-modal="true" aria-label={`Video: ${script.pattern}`}>
       <div className="lv-pin-back" onClick={close} />
       <div className="lv-pin-card" ref={ref}>
-        <LessonVideo key={patternName} script={script} example={example} skillName={skillName} voice={voice} autoPlay floating hold={hold} ozhoAway={hold !== null} onHold={onHold} />
+        <LessonVideo key={patternName} script={script} example={example} skillName={skillName} voice={voice} autoPlay floating hold={hold} ozhoAway={hold !== null} onHold={onHold} audio={audio} />
         <button type="button" className="lv-pin-close" onClick={close} aria-label="Close video">
           ×
         </button>

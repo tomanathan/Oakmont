@@ -38,6 +38,7 @@ export function LessonVideo({
   hold = null,
   ozhoAway = false,
   onHold,
+  audio,
 }: {
   script: LessonVideoScript;
   example: WorkedExample;
@@ -56,20 +57,24 @@ export function LessonVideo({
   ozhoAway?: boolean;
   // Called once the playhead has reached `hold`.
   onHold?: () => void;
+  // The voice's audio element, already unlocked inside the viewer's tap
+  // (phones only let audio start from a tap, and playback here starts a
+  // moment later, once the Polaroid has landed).
+  audio?: HTMLAudioElement | null;
 }) {
   const tl = useMemo(() => buildTimeline(script, example, voice), [script, example, voice]);
   // With a voice track, the audio element is the clock (no drift).
   const audioRef = useRef<HTMLAudioElement | null>(null);
   useEffect(() => {
     if (!voice) return;
-    const a = new Audio(voice.src);
+    const a = audio ?? new Audio(voice.src);
     a.preload = "auto";
     audioRef.current = a;
     return () => {
       a.pause();
       audioRef.current = null;
     };
-  }, [voice]);
+  }, [voice, audio]);
   const [t, setT] = useState(frameTime ?? 0);
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
@@ -134,6 +139,7 @@ export function LessonVideo({
     sfx.unlock();
     const a = audioRef.current;
     if (a) {
+      a.dataset.claimed = "1";
       a.currentTime = from;
       void a.play().catch(() => {});
     }

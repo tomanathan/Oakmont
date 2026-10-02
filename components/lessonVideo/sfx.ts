@@ -2,7 +2,9 @@ import type { Timeline } from "./timeline";
 
 // Tiny synthesized sound effects (WebAudio, no files): a paper slap when the
 // Polaroid lands, soft steps while Ozho walks in, a pop per beat, a ding on
-// the answer. Quiet on purpose; the captions carry the lesson.
+// the answer. Quiet on purpose; the captions carry the lesson. With Ozho's
+// voice, his lines mark each beat, so the per-beat pop is dropped (it landed
+// on his first syllable) and the rest sit lower, under his voice.
 
 let ctx: AudioContext | null = null;
 
@@ -59,13 +61,14 @@ export const sfx = {
     if (next - prev > 0.5) return; // a seek, not playback
     if (crossed(tl.slapAt, prev, next)) noise(0.16, 0.5, 1800);
     for (let s = tl.walkStart; s < tl.walkEnd; s += 0.25) if (crossed(s, prev, next)) noise(0.04, 0.12, 900);
+    const under = tl.voiced ? 0.55 : 1;
     for (const b of tl.beats) {
       if (!crossed(b.start, prev, next)) continue;
       if (b.kind === "answer") {
-        tone(988, 0.18, 0.12, "triangle");
-        setTimeout(() => tone(1319, 0.3, 0.12, "triangle"), 110);
-      } else tone(620, 0.09, 0.05, "sine", 880);
+        tone(988, 0.18, 0.12 * under, "triangle");
+        setTimeout(() => tone(1319, 0.3, 0.12 * under, "triangle"), 110);
+      } else if (!tl.voiced) tone(620, 0.09, 0.05, "sine", 880);
     }
-    for (const s of tl.strikes) if (crossed(s.at, prev, next)) noise(0.12, 0.08, 3200);
+    for (const s of tl.strikes) if (crossed(s.at, prev, next)) noise(0.12, 0.08 * under, 3200);
   },
 };

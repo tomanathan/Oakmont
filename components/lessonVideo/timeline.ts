@@ -34,6 +34,8 @@ export interface Timeline {
   // Each walkthrough step's cue time and end (scenes key off these).
   steps: { at: number; until: number }[];
   math: boolean;
+  // Ozho's recorded voice drives this timeline.
+  voiced: boolean;
 }
 
 const words = (s: string) => s.trim().split(/\s+/).length;
@@ -109,7 +111,7 @@ export function buildTimeline(script: LessonVideoScript, ex: WorkedExample, voic
   push("trap", 0, script.trap.say);
   push("recap", 0, script.recap.say, readTime(script.recap.say) + 1.2);
 
-  return { beats, duration: voice ? Math.max(voice.duration, t) : t, slapAt, walkStart, walkEnd, passage, prompt: split.prompt, marks: marks.sort((a, b) => a.from - b.from), strikes, work, spots, steps, math: script.subskillId.startsWith("m-") };
+  return { beats, duration: voice ? Math.max(voice.duration, t) : t, slapAt, walkStart, walkEnd, passage, prompt: split.prompt, marks: marks.sort((a, b) => a.from - b.from), strikes, work, spots, steps, voiced: !!voice, math: script.subskillId.startsWith("m-") };
 }
 
 export function beatAt(tl: Timeline, t: number): Beat | null {
