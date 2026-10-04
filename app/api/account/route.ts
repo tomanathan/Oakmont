@@ -23,6 +23,7 @@ export async function PATCH(req: NextRequest) {
     firstName?: string | null;
     dismissChecklist?: boolean;
     parentOptOut?: boolean;
+    encourageEmails?: boolean;
   };
   try {
     body = await req.json();
@@ -97,6 +98,7 @@ export async function PATCH(req: NextRequest) {
       ...(firstName !== undefined ? { firstName } : {}),
       ...(dismissChecklist ? { onboardingChecklistDismissedAt: new Date() } : {}),
       ...(body.parentOptOut ? { parentOptOutAt: new Date() } : {}),
+      ...(typeof body.encourageEmails === "boolean" ? { encourageEmails: body.encourageEmails } : {}),
     },
     select: { baselineScore: true, goalScore: true, targetTestDate: true, equippedCostume: true, firstName: true },
   });

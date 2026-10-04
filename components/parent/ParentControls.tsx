@@ -4,23 +4,26 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 // The parent's own controls above a report: rename the student, the weekly
-// email switch, and (once) saving the browser's time zone so days in the
+// and daily email switches, and (once) saving the browser's time zone so days in the
 // report line up with the parent's clock.
 export function ParentControls({
   linkId,
   nickname,
   weeklyReport,
+  dailyEmails,
   savedTimeZone,
 }: {
   linkId: string;
   nickname: string | null;
   weeklyReport: boolean;
+  dailyEmails: boolean;
   savedTimeZone: string | null;
 }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(nickname ?? "");
   const [weekly, setWeekly] = useState(weeklyReport);
+  const [daily, setDaily] = useState(dailyEmails);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -64,6 +67,17 @@ export function ParentControls({
     if (!res.ok) setWeekly(!next);
   }
 
+  async function toggleDaily() {
+    const next = !daily;
+    setDaily(next);
+    const res = await fetch("/api/parent/settings", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ dailyEmails: next }),
+    });
+    if (!res.ok) setDaily(!next);
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       {editing ? (
@@ -98,6 +112,17 @@ export function ParentControls({
           <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${weekly ? "left-3.5" : "left-0.5"}`} />
         </span>
         Sunday email
+      </button>
+      <button
+        onClick={toggleDaily}
+        role="switch"
+        aria-checked={daily}
+        className="flex items-center gap-2 rounded-lg border border-[#d5c8ae] bg-white px-3 py-1.5 text-[13px] font-medium text-ink hover:bg-[#eef3e9]"
+      >
+        <span className={`relative inline-block h-4 w-7 rounded-full transition-colors ${daily ? "bg-accent" : "bg-stone-300"}`}>
+          <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${daily ? "left-3.5" : "left-0.5"}`} />
+        </span>
+        Daily emails
       </button>
     </div>
   );

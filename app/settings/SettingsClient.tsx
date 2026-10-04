@@ -30,6 +30,7 @@ export function SettingsClient({
   pass,
   subscription,
   trial,
+  encourageEmails,
 }: {
   email: string;
   firstName: string | null;
@@ -55,6 +56,8 @@ export function SettingsClient({
   // Only while in (or just past) the no-card free week without a plan;
   // daysLeft is null once it has ended.
   trial: { daysLeft: number | null; endsOn: string } | null;
+  // The daily encouragement emails (lib/encourage).
+  encourageEmails: boolean;
 }) {
   const router = useRouter();
   const [name, setName] = useState(firstName ?? "");
@@ -611,6 +614,8 @@ export function SettingsClient({
 
       <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Account</div>
 
+      <EmailPrefs initialOn={encourageEmails} />
+
       <div className="bg-white border border-red-100 rounded-xl p-6">
         <div className="text-[15px] font-semibold text-red-700 mb-1">Danger zone</div>
         <div className="text-xs text-stone-500 mb-4">
@@ -687,4 +692,39 @@ function subscriptionSummary(sub: { status: string; currentPeriodEnd: string | n
     default:
       return end ? `Renews on ${end}.` : "Active.";
   }
+}
+
+// The daily emails: the morning one with today's piece of the plan, and the
+// reminder on days without study. One switch for both.
+function EmailPrefs({ initialOn }: { initialOn: boolean }) {
+  const [on, setOn] = useState(initialOn);
+  const [failed, setFailed] = useState(false);
+  async function toggle() {
+    const next = !on;
+    setOn(next);
+    setFailed(false);
+    const res = await fetch("/api/account", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ encourageEmails: next }) }).catch(() => null);
+    if (!res || !res.ok) {
+      setOn(!next);
+      setFailed(true);
+    }
+  }
+  return (
+    <div className="bg-white border border-[#e2d7c1] rounded-xl p-6 mb-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <div className="text-[15px] font-semibold text-ink mb-1">Daily emails</div>
+          <p className="text-[13px] leading-relaxed text-stone-600">
+            A morning email with today&apos;s piece of your plan, and a reminder on days you haven&apos;t studied yet.
+          </p>
+          {failed && <p className="mt-1 text-[13px] text-red-700">That didn&apos;t save. Try again.</p>}
+        </div>
+        <button onClick={toggle} role="switch" aria-checked={on} aria-label="Daily emails" className="mt-1 flex-none">
+          <span className={`relative inline-block h-6 w-11 rounded-full transition-colors ${on ? "bg-forest" : "bg-stone-300"}`}>
+            <span className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${on ? "left-6" : "left-1"}`} />
+          </span>
+        </button>
+      </div>
+    </div>
+  );
 }

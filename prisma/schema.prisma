@@ -152,6 +152,13 @@ model User {
   // request, so a stale link never has a lingering valid token to reuse.
   passwordResetToken   String?   @unique
   passwordResetExpires DateTime?
+
+  // Daily encouragement emails (lib/encourage): on unless the student
+  // turns them off (settings, or the unsubscribe link in every email).
+  // The stamps stop a retried cron run from sending the same email twice.
+  encourageEmails    Boolean   @default(true)
+  lastMorningEmailAt DateTime?
+  lastNudgeEmailAt   DateTime?
 }
 
 // A parent/guardian account -- entirely separate from User (the student),
@@ -184,6 +191,12 @@ model Parent {
   // default: a parent signed up to keep track, and can switch it off.
   weeklyReport     Boolean   @default(true)
   lastReportSentAt DateTime?
+
+  // Daily updates about their students (lib/encourage), separate from the
+  // weekly report: on unless the parent turns them off.
+  dailyEmails        Boolean   @default(true)
+  lastMorningEmailAt DateTime?
+  lastNudgeEmailAt   DateTime?
 }
 
 // One parent linked to one student. A parent can link multiple students

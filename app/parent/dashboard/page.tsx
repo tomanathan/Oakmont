@@ -21,7 +21,7 @@ export default async function ParentDashboardPage({
   if (!session) redirect("/parent/login");
 
   const [account, links] = await Promise.all([
-    prisma.parent.findUnique({ where: { id: session.parentId }, select: { timeZone: true, weeklyReport: true } }),
+    prisma.parent.findUnique({ where: { id: session.parentId }, select: { timeZone: true, weeklyReport: true, dailyEmails: true } }),
     prisma.parentLink.findMany({
       where: { parentId: session.parentId },
       include: {
@@ -73,7 +73,7 @@ export default async function ParentDashboardPage({
       <ParentReportView
         report={report}
         headerExtra={
-          <ParentControls linkId={active.id} nickname={active.nickname} weeklyReport={account.weeklyReport} savedTimeZone={account.timeZone} />
+          <ParentControls linkId={active.id} nickname={active.nickname} weeklyReport={account.weeklyReport} dailyEmails={account.dailyEmails} savedTimeZone={account.timeZone} />
         }
         footer={
           <p className="text-center text-[12px] leading-relaxed text-stone-600">

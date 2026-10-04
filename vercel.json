@@ -8,8 +8,8 @@
       "schedule": "0 13 * * *"
     },
     {
-      "path": "/api/cron/parent-report",
-      "schedule": "0 14 * * 0"
+      "path": "/api/cron/nudge",
+      "schedule": "0 21 * * *"
     }
   ]
 }

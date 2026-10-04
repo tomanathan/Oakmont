@@ -27,6 +27,7 @@ export default async function SettingsPage() {
         parentInviteCode: true,
         parentShareToken: true,
         stripeSubscriptionId: true,
+        encourageEmails: true,
         parentLinks: { select: { id: true, parent: { select: { id: true, email: true, passwordHash: true, googleSub: true } } }, orderBy: { createdAt: "asc" } },
       },
     }),
@@ -90,6 +91,7 @@ export default async function SettingsPage() {
   return (
     <AppShell email={user.email} stats={stats}>
       <SettingsClient
+        encourageEmails={parentAccess?.encourageEmails ?? true}
         email={user.email}
         firstName={stats.firstName ?? null}
         baselineScore={stats.baselineScore}

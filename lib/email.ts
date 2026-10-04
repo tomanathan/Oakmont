@@ -11,10 +11,13 @@ export async function sendEmail({
   to,
   subject,
   html,
+  headers,
 }: {
   to: string;
   subject: string;
   html: string;
+  // Extra mail headers (e.g. List-Unsubscribe on the daily emails).
+  headers?: Record<string, string>;
 }): Promise<{ sent: boolean }> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
@@ -32,7 +35,7 @@ export async function sendEmail({
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ from, to, subject, html, reply_to: SUPPORT_EMAIL }),
+    body: JSON.stringify({ from, to, subject, html, reply_to: SUPPORT_EMAIL, ...(headers ? { headers } : {}) }),
   });
 
   if (!res.ok) {

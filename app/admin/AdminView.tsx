@@ -122,6 +122,7 @@ export function AdminView({ data, now }: { data: AdminData; now: Date }) {
           <nav className="flex gap-4 text-[13px] font-semibold text-forest">
             <a href="#students" className="underline-offset-2 hover:underline">Students</a>
             <a href="#parents" className="underline-offset-2 hover:underline">Parents</a>
+            <Link href="/admin/emails" className="underline-offset-2 hover:underline">Emails</Link>
           </nav>
         </header>
 
