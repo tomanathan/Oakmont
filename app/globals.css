@@ -218,21 +218,30 @@ body {
   transform-origin: 50% 85%;
 }
 
-/* Cold (a few days without study): a hard, fast shiver: a side-to-side
-   shake with a little rocking tilt. Uses the `translate` and `rotate`
-   properties, not `transform`, so it adds to whatever transform the sprite
-   already has (its facing flip) instead of replacing it. Travel is a
-   percent of the sprite's size with a floor in px, so it's just as
-   obvious on the small page dog as on the big dashboard one. */
-@keyframes ozho-shiver {
-  0%, 100% { translate: min(-1.5px, -3.6%) 0; rotate: -2.2deg; }
-  25% { translate: max(1.5px, 3.6%) max(0.5px, 1.2%); rotate: 1.6deg; }
-  50% { translate: min(-1.2px, -2.8%) 0; rotate: -1.4deg; }
-  75% { translate: max(1.5px, 3.6%) min(-0.5px, -1.2%); rotate: 2.2deg; }
+/* Cold Ozho (a few days without study). He holds still; two small things
+   move inside the sprite (see ColdBits in PixelDog.tsx):
+   - his breath: a puff that appears at the snout, drifts up and fades
+   - shiver marks: short dashes behind him that flicker now and then
+   Stepped, so they move like the rest of the pixel art. */
+@keyframes ozho-breath {
+  0%, 28% { opacity: 0; transform: translate(0, 2px); }
+  36% { opacity: 0.95; transform: translate(0, 0); }
+  58% { opacity: 0.7; transform: translate(1px, -3px); }
+  76% { opacity: 0.25; transform: translate(2px, -6px); }
+  86%, 100% { opacity: 0; transform: translate(2px, -8px); }
 }
-.animate-ozho-shiver {
-  animation: ozho-shiver 0.2s steps(1, end) infinite;
-  transform-origin: 50% 90%;
+.ozho-breath {
+  animation: ozho-breath 3.4s steps(1, end) infinite;
+}
+@keyframes ozho-chill {
+  0%, 62% { opacity: 0; }
+  66% { opacity: 1; }
+  72% { opacity: 0; }
+  78% { opacity: 1; }
+  88%, 100% { opacity: 0; }
+}
+.ozho-chill {
+  animation: ozho-chill 2.6s steps(1, end) infinite;
 }
 
 /* Pulling up from a fast run: a quick squash and settle. */

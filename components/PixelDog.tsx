@@ -22,9 +22,11 @@ const PALETTE_DEAD = {
   tag: "#c7c4cc",
 };
 
-// Cold: what a few days without study does to him. The same dog, gone
-// blue, shivering (see .animate-ozho-shiver) until a session warms him up.
-// His collar and tag keep their colours so he's still clearly Ozho.
+// Cold: what a few days without study does to him. The same dog gone blue,
+// left out in it: frost settled on his back and head, tail tucked, a small
+// frown, and his breath showing (see ColdBits). He holds still -- only the
+// breath and a few shiver marks move -- until a session warms him up. His
+// collar and tag keep their colours so he's still clearly Ozho.
 const PALETTE_COLD = {
   body: "#86aedb",
   bodyDark: "#5f86bb",
@@ -180,7 +182,7 @@ export function PixelDog({
   className?: string;
 }) {
   const p = dead ? PALETTE_DEAD : variant === "mochi" ? PALETTE_MOCHI : cold ? PALETTE_COLD : PALETTE;
-  if (cold && !dead) className = `${className} animate-ozho-shiver`;
+  const chilled = cold && !dead;
 
   // Computed up here (not just below, where the standing pose used to be
   // the only thing reading them) since the sitting pose also needs to
@@ -232,6 +234,7 @@ export function PixelDog({
 
         {/* front paws stretched out under his chin */}
         <rect x={44} y={34} width={16} height={2} fill={p.bodyDark} />
+        {chilled && <ColdBits pose="asleep" />}
       </svg>
     );
   }
@@ -292,6 +295,7 @@ export function PixelDog({
         <circle cx={33} cy={17} r={2} fill={p.tag} />
 
         {costume && costume !== "none" && <CostumeOverlay costume={costume} pose="sit" />}
+        {chilled && <ColdBits pose="sitting" />}
       </svg>
     );
   }
@@ -307,12 +311,13 @@ export function PixelDog({
   // merely-hungry Ozho keeps the tail up -- ScoutCompanion just wags it
   // slower. Asleep and sitting have their own separate poses above that
   // don't reach this code at all.
-  const tailUp = !dead && mood !== "sad";
-  const tailTucked = !dead && mood === "sad";
+  // Cold tucks the tail too: he's been left out, not just a bit tired.
+  const tailUp = !dead && mood !== "sad" && !chilled;
+  const tailTucked = !dead && (mood === "sad" || chilled);
   // Carrying a ball takes over whatever the mouth would otherwise be
   // doing -- no tongue hanging out, no frown line -- since both are drawn
   // in the same spot the ball itself sits.
-  const showFrown = !carryingBall && (dead || mood === "sad");
+  const showFrown = !carryingBall && (dead || mood === "sad" || chilled);
 
   const backLegDown = legFrame === 0;
 
@@ -401,7 +406,57 @@ export function PixelDog({
 
       {/* wardrobe costume -- standing pose only, see the costume prop doc */}
       {!dead && costume && costume !== "none" && <CostumeOverlay costume={costume} />}
+      {chilled && <ColdBits pose="standing" />}
     </svg>
+  );
+}
+
+// What "cold" adds to each pose, in the sprite's own coordinates: frost on
+// the top edges of his back and head (he's been out in it a while), his
+// breath puffing from the snout, and two small shiver marks behind him.
+// Only the breath and the marks animate (see .ozho-breath / .ozho-chill in
+// globals.css); the dog himself stays put.
+const FROST = "#f6fbff";
+const BREATH = "#b9d3f0"; // tinted, so it shows on a light page
+const COLD_BITS: Record<"standing" | "sitting" | "asleep", { frost: [number, number, number, number][]; breath: [number, number]; marks: [number, number] }> = {
+  // Frost sits on the top rows of his back and head (on the blue, where it
+  // reads), in uneven clumps like settled snow.
+  standing: {
+    frost: [[10, 16, 9, 2], [12, 18, 4, 1], [21, 16, 6, 2], [29, 16, 5, 2], [34, 6, 7, 2], [36, 8, 3, 1], [43, 6, 7, 2]],
+    breath: [58, 11],
+    marks: [3, 12],
+  },
+  sitting: {
+    frost: [[12, 22, 8, 2], [14, 24, 3, 1], [32, -4, 7, 2], [34, -2, 3, 1], [41, -4, 7, 2]],
+    breath: [56, 1],
+    marks: [4, 17],
+  },
+  asleep: {
+    frost: [[16, 15, 9, 2], [18, 17, 4, 1], [27, 15, 5, 2], [10, 22, 5, 2], [40, 18, 6, 2], [48, 18, 6, 2]],
+    breath: [61, 21],
+    marks: [3, 20],
+  },
+};
+
+function ColdBits({ pose }: { pose: "standing" | "sitting" | "asleep" }) {
+  const b = COLD_BITS[pose];
+  return (
+    <g>
+      {b.frost.map(([x, y, w, h], i) => (
+        <rect key={i} x={x} y={y} width={w} height={h} fill={FROST} />
+      ))}
+      {/* breath: two little clouds, the second trailing the first */}
+      <g className="ozho-breath">
+        <rect x={b.breath[0]} y={b.breath[1]} width={3} height={3} fill={BREATH} />
+        <rect x={b.breath[0] + 3} y={b.breath[1] - 3} width={2} height={2} fill={BREATH} />
+      </g>
+      {/* shiver marks: short dashes that flicker behind him */}
+      <g className="ozho-chill" fill="#7fa3d4">
+        <rect x={b.marks[0]} y={b.marks[1]} width={3} height={1} />
+        <rect x={b.marks[0] - 2} y={b.marks[1] + 3} width={3} height={1} />
+        <rect x={b.marks[0] + 1} y={b.marks[1] + 6} width={3} height={1} />
+      </g>
+    </g>
   );
 }
 
