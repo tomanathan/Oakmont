@@ -218,18 +218,21 @@ body {
   transform-origin: 50% 85%;
 }
 
-/* Cold (a few days without study): a fast, small shiver. Uses the
-   `translate` property, not `transform`, so it adds to whatever transform
-   the sprite already has (its facing flip) instead of replacing it; in
-   percent, so it scales with the sprite's size. */
+/* Cold (a few days without study): a hard, fast shiver: a side-to-side
+   shake with a little rocking tilt. Uses the `translate` and `rotate`
+   properties, not `transform`, so it adds to whatever transform the sprite
+   already has (its facing flip) instead of replacing it. Travel is a
+   percent of the sprite's size with a floor in px, so it's just as
+   obvious on the small page dog as on the big dashboard one. */
 @keyframes ozho-shiver {
-  0%, 100% { translate: -1.3% 0; }
-  25% { translate: 1.3% 0.6%; }
-  50% { translate: -1% 0; }
-  75% { translate: 1.3% -0.6%; }
+  0%, 100% { translate: min(-1.5px, -3.6%) 0; rotate: -2.2deg; }
+  25% { translate: max(1.5px, 3.6%) max(0.5px, 1.2%); rotate: 1.6deg; }
+  50% { translate: min(-1.2px, -2.8%) 0; rotate: -1.4deg; }
+  75% { translate: max(1.5px, 3.6%) min(-0.5px, -1.2%); rotate: 2.2deg; }
 }
 .animate-ozho-shiver {
-  animation: ozho-shiver 0.16s steps(2, jump-none) infinite;
+  animation: ozho-shiver 0.2s steps(1, end) infinite;
+  transform-origin: 50% 90%;
 }
 
 /* Pulling up from a fast run: a quick squash and settle. */
