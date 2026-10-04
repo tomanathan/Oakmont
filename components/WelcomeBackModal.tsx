@@ -14,10 +14,10 @@ const PET_ALERT: Partial<Record<PetStage, { box: string; label: string; labelCla
     label: `${PET_NAME} is getting hungry`,
     labelClass: "text-[#9a6a12]",
   },
-  napping: {
-    box: "bg-[#eef0f7] border-[#d8dcec]",
-    label: `${PET_NAME} is napping`,
-    labelClass: "text-[#4a5275]",
+  cold: {
+    box: "bg-[#e8f1fb] border-[#c9dcf2]",
+    label: `${PET_NAME} is cold`,
+    labelClass: "text-[#33598f]",
   },
 };
 
@@ -116,7 +116,7 @@ export function WelcomeBackModal({
             <PixelDog
               size={40}
               mood={MOOD_BY_STAGE[petStage]}
-              asleep={petStage === "napping"}
+              cold={petStage === "cold"}
               className="flex-shrink-0"
             />
             <div className="min-w-0">

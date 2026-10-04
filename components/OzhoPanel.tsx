@@ -11,7 +11,7 @@ const STAGE_PILL: Record<PetStage, { label: string; cls: string }> = {
   thriving: { label: "Thriving", cls: "bg-[#eaf6ef] text-accent" },
   content: { label: "Doing fine", cls: "bg-[#eaf1e5] text-[#2c4c3b]" },
   hungry: { label: "Hungry", cls: "bg-[#fbf1df] text-[#9a6a12]" },
-  napping: { label: "Napping", cls: "bg-[#eef0f7] text-[#4a5275]" },
+  cold: { label: "Cold", cls: "bg-[#e8f1fb] text-[#33598f]" },
 };
 
 const PANEL_W = 292;
@@ -22,7 +22,7 @@ const PANEL_H_GUESS = 290;
 function statusLine(stage: PetStage | null, fedToday: boolean, streak: number) {
   const s = streak > 0 ? ` · ${streak}-day streak` : "";
   if (fedToday) return `Fed today${s}`;
-  if (stage === "napping") return "Napping. One lesson or quiz wakes him up.";
+  if (stage === "cold") return "Cold and shivering. One lesson or quiz warms him up.";
   if (stage === "hungry") return "Getting hungry. Any lesson or quiz feeds him.";
   return `Not fed yet today${s}`;
 }

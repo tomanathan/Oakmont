@@ -10,7 +10,7 @@ const STAGE_PILL: Record<CompanionSummary["stage"], { label: string; cls: string
   thriving: { label: "Thriving", cls: "bg-[#eaf6ef] text-accent" },
   content: { label: "Doing fine", cls: "bg-[#eaf1e5] text-[#2c4c3b]" },
   hungry: { label: "Hungry", cls: "bg-[#fbf1df] text-[#9a6a12]" },
-  napping: { label: "Napping", cls: "bg-[#eef0f7] text-[#4a5275]" },
+  cold: { label: "Cold", cls: "bg-[#e8f1fb] text-[#33598f]" },
 };
 
 // Where Ozho stands today, in a sentence -- written from what actually
@@ -23,10 +23,10 @@ function statusCopy(c: CompanionSummary): { headline: string; body: string } {
       body: `Finish one more lesson or quiz today and your ${c.repairTo}-day streak is back, gap patched.`,
     };
   switch (c.stage) {
-    case "napping":
+    case "cold":
       return {
-        headline: "Napping till you're back.",
-        body: "He curled up after a few quiet days. One lesson or quiz wakes him up.",
+        headline: "Brrr. He's cold.",
+        body: "A few quiet days and he's gone blue and shivery. One lesson or quiz warms him right up.",
       };
     case "hungry":
       return {
@@ -51,7 +51,7 @@ function statusCopy(c: CompanionSummary): { headline: string; body: string } {
 // Lines he says when called over from the card -- the same voice as the
 // rest of his dialogue (see ScoutCompanion), keyed to how he's doing.
 function callLine(c: CompanionSummary): string {
-  if (c.stage === "napping") return "*yawn* Oh, you're back. Lesson? I'm up. I'm up.";
+  if (c.stage === "cold") return "*shiver* Oh, you're back. A lesson would warm me right up.";
   if (c.stage === "hungry") return "Did someone say quiz? I'm so hungry.";
   if (c.stage === "content") return "Here! Haven't had my quiz yet today. Just saying.";
   if (c.nextDaysCostume && c.nextDaysCostume.days - c.daysStudied === 1)
@@ -110,7 +110,7 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
             <PixelDog
               size={56}
               mood={MOOD_BY_STAGE[c.stage]}
-              asleep={c.stage === "napping"}
+              cold={c.stage === "cold"}
               costume={c.costume}
               sitting={!c.fedToday}
               tailFrame={c.fedToday ? 3 : 0}

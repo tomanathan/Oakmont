@@ -22,6 +22,19 @@ const PALETTE_DEAD = {
   tag: "#c7c4cc",
 };
 
+// Cold: what a few days without study does to him. The same dog, gone
+// blue, shivering (see .animate-ozho-shiver) until a session warms him up.
+// His collar and tag keep their colours so he's still clearly Ozho.
+const PALETTE_COLD = {
+  body: "#86aedb",
+  bodyDark: "#5f86bb",
+  belly: "#e8f2fc",
+  dark: "#22304a",
+  tongue: "#a9c3e4",
+  collar: "#2f6f4f",
+  tag: "#e0b84a",
+};
+
 // Mochi's palette -- the second companion, unlocked at a long streak (see
 // lib/pet.ts's SECOND_PET_UNLOCK_STREAK_DAYS). Same silhouette as Ozho
 // throughout this file; only the colors change, drawn from the app's own
@@ -102,6 +115,7 @@ export function PixelDog({
   facing = 1,
   dead = false,
   asleep = false,
+  cold = false,
   sitting = false,
   costume = null,
   variant = "ozho",
@@ -132,6 +146,9 @@ export function PixelDog({
   facing?: 1 | -1;
   dead?: boolean;
   asleep?: boolean;
+  // Blue and shivering: he's been left without a study session for a few
+  // days (lib/pet.ts's "cold" stage). Any pose; one session warms him up.
+  cold?: boolean;
   // The "Sit" menu action's pose -- haunches down, chest up, tail curled
   // beside him instead of wagging. Checked after asleep (a sleeping dog
   // stays curled up, it doesn't sit) and before the standing pose, same
@@ -162,7 +179,8 @@ export function PixelDog({
   shadow?: boolean;
   className?: string;
 }) {
-  const p = dead ? PALETTE_DEAD : variant === "mochi" ? PALETTE_MOCHI : PALETTE;
+  const p = dead ? PALETTE_DEAD : variant === "mochi" ? PALETTE_MOCHI : cold ? PALETTE_COLD : PALETTE;
+  if (cold && !dead) className = `${className} animate-ozho-shiver`;
 
   // Computed up here (not just below, where the standing pose used to be
   // the only thing reading them) since the sitting pose also needs to

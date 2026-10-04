@@ -723,7 +723,7 @@ function MeetOzho() {
       </div>
       <p className="mt-3 text-xs leading-relaxed text-stone-600">
         He counts on you, but he doesn't hold a grudge. After a couple of days without practice he gets hungry, and after a few more
-        he naps until you're back. One session wakes him up.
+        he gets cold and shivery. One session warms him right up.
       </p>
     </div>
   );

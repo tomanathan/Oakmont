@@ -15,13 +15,13 @@ const STAGE_PILL: Record<PetStage, string> = {
   thriving: "bg-[#eaf6ef] border-[#cde8d9] text-[#2f6f4f]",
   content: "bg-[#eaf1e5] border-[#c9d8c2] text-[#2c4c3b]",
   hungry: "bg-[#fbf1df] border-[#f0ddb8] text-[#9a6a12]",
-  napping: "bg-[#eef0f7] border-[#d8dcec] text-[#4a5275]",
+  cold: "bg-[#e8f1fb] border-[#c9dcf2] text-[#33598f]",
 };
 const STAGE_LABEL: Record<PetStage, string> = {
   thriving: "Thriving",
   content: "Doing well",
   hungry: "Hungry",
-  napping: "Napping",
+  cold: "Cold",
 };
 
 // What the header last showed, kept in the browser across client-side
@@ -174,7 +174,7 @@ export function AppShell({
                 <PixelDog
                   size={22}
                   mood={MOOD_BY_STAGE[pet.stage]}
-                  asleep={pet.stage === "napping"}
+                  cold={pet.stage === "cold"}
                   costume={pet.costume}
                   shadow={false}
                 />

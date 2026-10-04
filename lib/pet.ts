@@ -1,16 +1,16 @@
 // Pure functions for the study-streak pet: a small companion that stays
 // happy as long as the student keeps studying (a finished lesson, quiz, or
 // review each count as that day's study). He never dies: a few days away
-// makes him hungry, a longer break and he naps until the next session wakes
-// him up. Punishing a break backfires with teens (a broken streak lowers
+// makes him hungry, a longer break and he gets cold (blue and shivering)
+// until the next session warms him up. Punishing a break backfires with teens (a broken streak lowers
 // engagement on its own), so the way back is always one session. Kept
 // separate from the UI and the cron route so the rules are easy to see.
 
 import { utcDayDiff } from "./dateOnly";
 
 export const PET_NAME = "Ozho";
-// Days away before Ozho naps instead of just being hungry.
-export const PET_NAP_DAYS = 4;
+// Days away before Ozho is cold instead of just being hungry.
+export const PET_COLD_DAYS = 4;
 // The one gentle "Ozho misses you" email goes out this many days in.
 export const PET_NUDGE_DAYS = 5;
 
@@ -25,7 +25,7 @@ export function isSecondPetUnlocked(daysStudied: number): boolean {
   return daysStudied >= SECOND_PET_UNLOCK_DAYS;
 }
 
-export type PetStage = "thriving" | "content" | "hungry" | "napping";
+export type PetStage = "thriving" | "content" | "hungry" | "cold";
 
 export interface PetState {
   stage: PetStage;
@@ -56,7 +56,7 @@ export function computePetState(lastActiveDate: Date | null, petBornAt: Date, no
   if (daysInactive <= 1) {
     return { stage: "content", daysInactive, message: `${PET_NAME} is doing fine. A lesson or quiz today keeps it that way.` };
   }
-  if (daysInactive < PET_NAP_DAYS) {
+  if (daysInactive < PET_COLD_DAYS) {
     return {
       stage: "hungry",
       daysInactive,
@@ -64,9 +64,9 @@ export function computePetState(lastActiveDate: Date | null, petBornAt: Date, no
     };
   }
   return {
-    stage: "napping",
+    stage: "cold",
     daysInactive,
-    message: `${PET_NAME} is napping until you're back. One session wakes him up.`,
+    message: `${PET_NAME} is cold and shivering. One session warms him right up.`,
   };
 }
 

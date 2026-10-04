@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
     const alreadyToday = user.petWarningEmailSentAt && user.petWarningEmailSentAt.toDateString() === now.toDateString();
     if (alreadyToday || !shouldNudge(user.lastActiveDate, user.petBornAt, now)) continue;
     await prisma.user.update({ where: { id: user.id }, data: { petWarningEmailSentAt: now } });
-    await sendEmail({ to: user.email, subject: `${PET_NAME} is napping till you're back`, html: nudgeEmailHtml() });
+    await sendEmail({ to: user.email, subject: `${PET_NAME} is cold without you`, html: nudgeEmailHtml() });
     nudged++;
   }
 
@@ -49,8 +49,8 @@ const APP_URL = process.env.APP_URL || "https://oakmontsat.com";
 function nudgeEmailHtml(): string {
   return `
     <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
-      <h2 style="color: #1a1a2e;">${PET_NAME} is napping till you're back</h2>
-      <p style="color: #444;">It's been a few days since your last session, so ${PET_NAME} curled up for a nap. One lesson or a quick quiz wakes him up, and your plan picks up right where you left off.</p>
+      <h2 style="color: #1a1a2e;">${PET_NAME} is cold without you</h2>
+      <p style="color: #444;">It's been a few days since your last session, and ${PET_NAME} has gone a bit blue and shivery. One lesson or a quick quiz warms him right up, and your plan picks up right where you left off.</p>
       <p><a href="${APP_URL}/dashboard" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Open Oakmont</a></p>
     </div>
   `;

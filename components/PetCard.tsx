@@ -5,7 +5,7 @@ const STAGE_BG: Record<string, string> = {
   thriving: "bg-[#eaf6ef] border-[#cde8d9]",
   content: "bg-[#eaf1e5] border-[#c9d8c2]",
   hungry: "bg-[#fbf1df] border-[#f0ddb8]",
-  napping: "bg-[#eef0f7] border-[#d8dcec]",
+  cold: "bg-[#e8f1fb] border-[#c9dcf2]",
 };
 
 export function PetCard({
