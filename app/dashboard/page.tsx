@@ -13,6 +13,7 @@ import { getTodayPlanItem } from "@/lib/studyPlan";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
+import { ColdOzhoNotice } from "@/components/ColdOzhoNotice";
 import { type ChecklistItem } from "@/components/GettingStarted";
 import { DashboardClient } from "./DashboardClient";
 import { parentClaimed } from "@/lib/parentAuth";
@@ -183,7 +184,16 @@ export default async function DashboardPage() {
 
   return (
     <AppShell email={user.email} stats={stats} wide>
-      {showWelcomeBack && stats.previousLoginAt && stats.lastLoginAt && (
+      {/* Cold Ozho gets his own explanation on arrival (once per login and
+          per day), in place of the welcome-back note. */}
+      {petState.stage === "cold" && (
+        <ColdOzhoNotice
+          sessionKey={`${stats.lastLoginAt?.toISOString() ?? ""}:${new Date().toISOString().slice(0, 10)}`}
+          daysInactive={petState.daysInactive}
+          href={`/subskill/${todayItem?.day.subskillIds[0] ?? weaknessOrderedIds[0]}`}
+        />
+      )}
+      {petState.stage !== "cold" && showWelcomeBack && stats.previousLoginAt && stats.lastLoginAt && (
         <WelcomeBackModal
           sessionKey={stats.lastLoginAt.toISOString()}
           previousLoginAt={stats.previousLoginAt.toISOString()}
