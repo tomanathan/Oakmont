@@ -1,32 +1,18 @@
 import Link from "next/link";
-import { hasPaidAccess, inFreeTrial, trialDaysLeft, trialEnded } from "@/lib/subscription";
+import { inFreeTrial, trialEnded } from "@/lib/subscription";
 import { BrandMark } from "@/components/BrandMark";
+import type { AdminData, StudentRow } from "./data";
+import { AccountsTable } from "./AccountsTable";
+import { ParentsTable } from "./ParentsTable";
+import { DAY, TZ, dur, fmtDate, isMonthly, isPaying, pct } from "./format";
 
 // The admin dashboard's display, kept apart from app/admin/page.tsx (which
 // loads the data and checks access) so it can be previewed with sample rows.
 
-const DAY = 24 * 60 * 60 * 1000;
-const TZ = "America/Chicago";
-const ACTIVE_SUBSCRIPTION = new Set(["trialing", "active", "past_due"]);
-
-export interface AdminRow {
-  id: string;
-  email: string;
-  firstName: string | null;
-  createdAt: Date;
-  passwordHash: string | null;
-  googleSub: string | null;
-  welcomeSeenAt: Date | null;
-  lastActiveDate: Date | null;
-  lastLoginAt: Date | null;
-  subscriptionStatus: string | null;
-  accessExpiresAt: Date | null;
-  trialEndsAt: Date | null;
-  _count: { itemAttempts: number; progress: number; parentLinks: number };
-  viaStart: boolean; // came in through the /start questions
-  firstStudiedAt: Date | null;
-  firstPaidAt: Date | null;
-  parentsConnectedAt: Date[]; // links to parents who've set up their account
+type AdminRow = StudentRow;
+const parentsConnectedAt = (u: StudentRow) => u.parents.filter((p) => p.setUp).map((p) => p.linkedAt);
+function dayKey(d: Date): string {
+  return d.toLocaleDateString("en-CA", { timeZone: TZ }); // YYYY-MM-DD
 }
 
 // Weekly signup cohorts (Monday start, Central time), newest first: the three
@@ -49,94 +35,58 @@ function cohorts(users: AdminRow[], now: Date) {
     .map(([week, us]) => {
       const within = (d: Date | null, u: AdminRow, hours: number) => !!d && d.getTime() - u.createdAt.getTime() <= hours * 3600000;
       const paid = us.filter((u) => !!u.firstPaidAt);
-      const withParent = us.filter((u) => u.parentsConnectedAt.length > 0);
+      const withParent = us.filter((u) => parentsConnectedAt(u).length > 0);
       return {
         week,
         signups: us.length,
         viaStart: us.filter((u) => u.viaStart).length,
         day0: us.filter((u) => within(u.firstStudiedAt, u, 24)).length,
-        parent3: us.filter((u) => u.parentsConnectedAt.some((d) => within(d, u, 72))).length,
+        parent3: us.filter((u) => parentsConnectedAt(u).some((d) => within(d, u, 72))).length,
         paid: paid.length,
-        paidWithParent: paid.filter((u) => u.parentsConnectedAt.length > 0).length,
+        paidWithParent: paid.filter((u) => parentsConnectedAt(u).length > 0).length,
         withParent: withParent.length,
         open: now.getTime() - Date.parse(`${week}T00:00:00Z`) < 14 * DAY,
       };
     });
 }
-type Row = AdminRow;
-
-function signupMethod(u: Row): "Google" | "Email" | "Both" {
-  if (u.googleSub && u.passwordHash) return "Both";
-  return u.googleSub ? "Google" : "Email";
-}
-
-interface Status {
-  label: string;
-  tone: "paid" | "trial" | "warn" | "off";
-}
-
-function statusOf(u: Row, now: Date): Status {
-  if (u.accessExpiresAt && u.accessExpiresAt > now) return { label: `Pass to ${fmtDate(u.accessExpiresAt)}`, tone: "paid" };
-  if (u.subscriptionStatus === "past_due") return { label: "Monthly, past due", tone: "warn" };
-  if (u.subscriptionStatus && ACTIVE_SUBSCRIPTION.has(u.subscriptionStatus)) {
-    return { label: u.subscriptionStatus === "trialing" ? "Monthly, first charge pending" : "Monthly", tone: "paid" };
-  }
-  const left = trialDaysLeft(u, now);
-  if (left !== null) return { label: `Free trial, ${left}d left`, tone: "trial" };
-  if (u.subscriptionStatus) return { label: "Canceled", tone: "off" };
-  if (trialEnded(u, now)) return { label: "Trial ended", tone: "off" };
-  return { label: "No access", tone: "off" };
-}
-
-function fmtDate(d: Date): string {
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: TZ });
-}
-
-function ago(d: Date | null, now: Date): string {
-  if (!d) return "—";
-  const days = Math.floor((now.getTime() - d.getTime()) / DAY);
-  if (days <= 0) return "Today";
-  if (days === 1) return "Yesterday";
-  if (days < 30) return `${days}d ago`;
-  return fmtDate(d);
-}
-
-function dayKey(d: Date): string {
-  return d.toLocaleDateString("en-CA", { timeZone: TZ }); // YYYY-MM-DD
-}
-
-function pct(n: number, of: number): string {
-  return of > 0 ? `${Math.round((n / of) * 100)}%` : "—";
-}
-
-export function AdminView({
-  users,
-  parentsTotal,
-  parentsClaimed,
-  now,
-}: {
-  users: AdminRow[];
-  parentsTotal: number;
-  parentsClaimed: number;
-  now: Date;
-}) {
-
+export function AdminView({ data, now }: { data: AdminData; now: Date }) {
+  const users = data.students;
   const total = users.length;
   const weekAgo = new Date(now.getTime() - 7 * DAY);
+  const dayAgo = new Date(now.getTime() - DAY);
   const newThisWeek = users.filter((u) => u.createdAt >= weekAgo).length;
-  const paying = users.filter((u) => hasPaidAccess(u, now));
-  const monthly = paying.filter((u) => u.subscriptionStatus && ACTIVE_SUBSCRIPTION.has(u.subscriptionStatus)).length;
+  const paying = users.filter((u) => isPaying(u, now));
+  const monthly = paying.filter((u) => isMonthly(u)).length;
   const passes = paying.length - monthly;
-  const inTrial = users.filter((u) => inFreeTrial(u, now)).length;
+  const pastDue = users.filter((u) => u.subscriptionStatus === "past_due").length;
+  const inTrial = users.filter((u) => inFreeTrial(u, now));
+  const trialEndingSoon = inTrial.filter((u) => u.trialEndsAt && u.trialEndsAt.getTime() - now.getTime() < 2 * DAY).length;
   const ended = users.filter((u) => trialEnded(u, now)).length;
   const active7 = users.filter((u) => u.lastActiveDate && u.lastActiveDate >= weekAgo).length;
-  const viaGoogle = users.filter((u) => u.googleSub).length;
+  const activeToday = users.filter((u) => u.lastActiveDate && u.lastActiveDate >= dayAgo).length;
+  const viaGoogle = users.filter((u) => u.hasGoogle).length;
+  const cold = users.filter((u) => u.petStage === "cold").length;
+  const hungry = users.filter((u) => u.petStage === "hungry").length;
+  const withParent = users.filter((u) => u.parents.some((p) => p.setUp)).length;
+  const parentsSetUp = data.parents.filter((p) => p.setUp !== "Not set up").length;
+  const reportsOn = data.parents.filter((p) => p.setUp !== "Not set up" && p.weeklyReport).length;
+  const tested = users.filter((u) => u.tests > 0);
+  const avgLatest = tested.length ? Math.round(tested.reduce((s, u) => s + (u.latestTest ?? 0), 0) / tested.length) : null;
+  const streaks = users.filter((u) => u.currentStreak > 0);
+  const act7 = data.activity.slice(-7);
+  const q7 = act7.reduce((s, d) => s + d.questions, 0);
+  const l7 = act7.reduce((s, d) => s + d.lessons, 0);
+  const actPeak = Math.max(1, ...data.activity.map((d) => d.questions));
+  const act30 = data.activity.reduce((s, d) => s + d.questions, 0);
 
   const funnel = [
     { label: "Signed up", n: total },
     { label: "Finished onboarding", n: users.filter((u) => u.welcomeSeenAt).length },
-    { label: "Answered a question", n: users.filter((u) => u._count.itemAttempts > 0).length },
-    { label: "Passed a skill quiz", n: users.filter((u) => u._count.progress > 0).length },
+    { label: "Read a lesson", n: users.filter((u) => u.lessons > 0).length },
+    { label: "Answered a question", n: users.filter((u) => u.questions > 0).length },
+    { label: "Passed a skill quiz", n: users.filter((u) => u.skillsPassed > 0).length },
+    { label: "Took a practice test", n: tested.length },
+    { label: "Parent connected", n: withParent },
     { label: "Paying", n: paying.length },
   ];
 
@@ -153,30 +103,78 @@ export function AdminView({
   }
   const peak = Math.max(1, ...days.map((d) => d.n));
   const last30 = days.reduce((a, d) => a + d.n, 0);
+  const label = (key: string) => fmtDate(new Date(`${key}T17:00:00Z`));
 
   return (
     <div className="min-h-screen bg-[#faf6ec] font-sans text-ink">
-      <div className="mx-auto max-w-[1180px] px-4 py-8 sm:px-6">
+      <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6">
         <header className="mb-8 flex flex-wrap items-center gap-3">
           <Link href="/dashboard" aria-label="Back to the app">
             <BrandMark size={36} />
           </Link>
-          <div>
+          <div className="mr-auto">
             <h1 className="font-display text-[26px] font-semibold leading-tight">Admin</h1>
             <p className="text-[13px] text-stone-500">
-              Accounts and subscriptions, live from the database. Updated{" "}
+              Students, parents, study activity and subscriptions, live from the database. Updated{" "}
               {now.toLocaleString("en-US", { timeZone: TZ, hour: "numeric", minute: "2-digit", month: "short", day: "numeric" })} (Central).
             </p>
           </div>
+          <nav className="flex gap-4 text-[13px] font-semibold text-forest">
+            <a href="#students" className="underline-offset-2 hover:underline">Students</a>
+            <a href="#parents" className="underline-offset-2 hover:underline">Parents</a>
+          </nav>
         </header>
 
-        <section className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
-          <Tile label="Accounts" value={total} sub={`+${newThisWeek} this week`} />
-          <Tile label="In free trial" value={inTrial} sub="right now" />
+        <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-500">Accounts and money</h2>
+        <section className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+          <Tile label="Students" value={total} sub={`+${newThisWeek} this week`} />
+          <Tile label="In free trial" value={inTrial.length} sub={`${trialEndingSoon} end within 2 days`} />
           <Tile label="Paying" value={paying.length} sub={`${monthly} monthly · ${passes} pass`} />
           <Tile label="Trial → paid" value={pct(paying.length, paying.length + ended)} sub={`of ${paying.length + ended} whose trial ended`} />
-          <Tile label="Studied this week" value={active7} sub="finished a lesson or quiz" />
+          <Tile label="Past due" value={pastDue} sub="monthly, card failing" />
           <Tile label="Google sign-in" value={pct(viaGoogle, total)} sub={`${viaGoogle} accounts`} />
+        </section>
+
+        <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-500">Studying</h2>
+        <section className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+          <Tile label="Studied today" value={activeToday} sub={`${active7} in the last 7 days`} />
+          <Tile label="Questions, 7 days" value={q7.toLocaleString()} sub={`${data.totals.questions.toLocaleString()} all time`} />
+          <Tile label="Accuracy" value={pct(data.totals.correct, data.totals.questions)} sub="all questions, all time" />
+          <Tile label="Lessons, 7 days" value={l7.toLocaleString()} sub={`${data.totals.lessons.toLocaleString()} all time`} />
+          <Tile label="Time studying" value={dur(data.totals.studyMs)} sub="questions + lessons, all time" />
+          <Tile label="Practice tests" value={data.totals.tests} sub={avgLatest ? `latest scores average ${avgLatest}` : "none taken yet"} />
+        </section>
+
+        <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-500">Habits and parents</h2>
+        <section className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+          <Tile label="On a streak" value={streaks.length} sub={streaks.length ? `longest now ${Math.max(...streaks.map((u) => u.currentStreak))} days` : "nobody right now"} />
+          <Tile label="Ozho is cold" value={cold} sub="4+ days without study" />
+          <Tile label="Ozho is hungry" value={hungry} sub="2–3 days without study" />
+          <Tile label="Students with a parent" value={withParent} sub={`${pct(withParent, total)} of students`} />
+          <Tile label="Parent accounts" value={data.parents.length} sub={`${parentsSetUp} set up`} />
+          <Tile label="Weekly reports on" value={reportsOn} sub={`of ${parentsSetUp} set-up parents`} />
+        </section>
+
+        <section className="mb-4 rounded-xl border border-[#e2d7c1] bg-white p-5">
+          <div className="mb-1 flex items-baseline justify-between gap-3">
+            <h2 className="text-[15px] font-semibold">Questions answered per day</h2>
+            <span className="text-[13px] tabular-nums text-stone-500">{act30.toLocaleString()} in the last 30 days</span>
+          </div>
+          <p className="mb-4 text-[12px] text-stone-500">Hover a bar for that day&apos;s questions, accuracy, lessons read and students studying.</p>
+          <div className="flex h-[140px] items-end gap-[2px] border-b border-[#e2d7c1]" role="img" aria-label={`Questions answered per day, last 30 days: ${data.activity.map((d) => `${label(d.key)} ${d.questions}`).join(", ")}`}>
+            {data.activity.map((d) => (
+              <div key={d.key} className="group relative flex h-full flex-1 items-end">
+                <div className="w-full rounded-t-[4px] bg-forest transition-opacity group-hover:opacity-80" style={{ height: d.questions ? `${Math.max(4, (d.questions / actPeak) * 100)}%` : "0%" }} />
+                <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-[11px] text-white group-hover:block">
+                  {label(d.key)}: {d.questions} questions ({pct(d.correct, d.questions)} right) · {d.lessons} lessons · {d.students} students
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-1.5 flex justify-between text-[11px] tabular-nums text-stone-500">
+            <span>{label(data.activity[0].key)}</span>
+            <span>{label(data.activity[data.activity.length - 1].key)}</span>
+          </div>
         </section>
 
         <div className="mb-8 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
@@ -222,9 +220,6 @@ export function AdminView({
                 </li>
               ))}
             </ol>
-            <p className="mt-4 text-[12px] text-stone-500">
-              Parents: {parentsTotal} accounts, {parentsClaimed} set up.
-            </p>
           </section>
         </div>
 
@@ -276,59 +271,16 @@ export function AdminView({
           </div>
         </section>
 
-        <section className="rounded-xl border border-[#e2d7c1] bg-white">
-          <div className="flex items-baseline justify-between gap-3 px-5 pb-3 pt-5">
-            <h2 className="text-[15px] font-semibold">Accounts</h2>
-            <span className="text-[13px] text-stone-500">Newest first</span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[920px] text-left text-[13px]">
-              <thead>
-                <tr className="border-y border-[#efe7d6] bg-[#faf6ec] text-[11px] uppercase tracking-[0.06em] text-stone-500">
-                  <th className="px-5 py-2 font-semibold">Student</th>
-                  <th className="px-3 py-2 font-semibold">Signed up</th>
-                  <th className="px-3 py-2 font-semibold">Via</th>
-                  <th className="px-3 py-2 font-semibold">Status</th>
-                  <th className="px-3 py-2 font-semibold">Last studied</th>
-                  <th className="px-3 py-2 text-right font-semibold">Questions</th>
-                  <th className="px-3 py-2 text-right font-semibold">Skills passed</th>
-                  <th className="px-5 py-2 font-semibold">Parent</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((u) => {
-                  const st = statusOf(u, now);
-                  return (
-                    <tr key={u.id} className="border-b border-[#f3eee2] last:border-0">
-                      <td className="px-5 py-2.5">
-                        <div className="font-medium">{u.firstName || "—"}</div>
-                        <div className="text-[12px] text-stone-500">{u.email}</div>
-                      </td>
-                      <td className="px-3 py-2.5 tabular-nums text-stone-600">{fmtDate(u.createdAt)}</td>
-                      <td className="px-3 py-2.5 text-stone-600">{signupMethod(u)}</td>
-                      <td className="px-3 py-2.5">
-                        <Pill tone={st.tone}>{st.label}</Pill>
-                        {!u.welcomeSeenAt && <div className="mt-1 text-[11px] text-stone-500">Onboarding not finished</div>}
-                      </td>
-                      <td className="px-3 py-2.5 text-stone-600">{ago(u.lastActiveDate, now)}</td>
-                      <td className="px-3 py-2.5 text-right tabular-nums">{u._count.itemAttempts}</td>
-                      <td className="px-3 py-2.5 text-right tabular-nums">{u._count.progress}</td>
-                      <td className="px-5 py-2.5 text-stone-600">{u._count.parentLinks > 0 ? "Linked" : "—"}</td>
-                    </tr>
-                  );
-                })}
-                {users.length === 0 && (
-                  <tr>
-                    <td colSpan={8} className="px-5 py-8 text-center text-stone-500">No accounts yet.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </section>
+        <div id="students" className="mb-8 scroll-mt-4">
+          <AccountsTable students={users} now={now} />
+        </div>
+
+        <div id="parents" className="scroll-mt-4">
+          <ParentsTable parents={data.parents} now={now} />
+        </div>
 
         <p className="mt-6 text-[12px] text-stone-500">
-          Visitors, pages, and where traffic comes from: Vercel dashboard → the oakmont project → Analytics.
+          Visitors, pages, and where traffic comes from: Vercel dashboard → the oakmont project → Analytics. Payments and refunds: the Stripe dashboard.
         </p>
       </div>
     </div>
@@ -345,13 +297,3 @@ function Tile({ label, value, sub }: { label: string; value: number | string; su
   );
 }
 
-const PILL: Record<Status["tone"], string> = {
-  paid: "bg-[#eaf6ef] text-[#2f6f4f] ring-[#cde8d9]",
-  trial: "bg-[#e6eef5] text-[#2b5673] ring-[#cfdde9]",
-  warn: "bg-[#fbf1df] text-[#8a5d0f] ring-[#f0ddb8]",
-  off: "bg-[#f1ece2] text-stone-600 ring-[#e2dccf]",
-};
-
-function Pill({ tone, children }: { tone: Status["tone"]; children: React.ReactNode }) {
-  return <span className={`inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-[12px] font-medium ring-1 ${PILL[tone]}`}>{children}</span>;
-}
