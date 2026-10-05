@@ -1,10 +1,10 @@
 // The daily encouragement emails (students and parents).
 //
-// OFF until the owner says go: with this false, the cron jobs send nothing
-// from lib/encourage (everything else they do is unchanged). The admin
-// preview page and "send the samples to me" still work, so the emails can
-// be read in a real inbox first.
-export const ENCOURAGE_EMAILS_ON = false;
+// ON since 2026-10-05 (the owner's go-ahead). Set this to false to stop
+// every email from lib/encourage at once: the cron jobs then send nothing
+// from here (everything else they do is unchanged), and the admin preview
+// page and "send the samples to me" keep working.
+export const ENCOURAGE_EMAILS_ON = true;
 
 // Who gets them, and how often:
 //   - studied within the last DAILY_UNTIL_DAYS days: every day
