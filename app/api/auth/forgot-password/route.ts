@@ -55,10 +55,10 @@ export async function POST(req: NextRequest) {
 function resetEmailHtml(resetUrl: string): string {
   return `
     <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
-      <h2 style="color: #1a1a2e;">Reset your password</h2>
-      <p style="color: #444;">We got a request to reset your Oakmont Study Center password. This link works for 1 hour.</p>
-      <p><a href="${resetUrl}" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Reset password</a></p>
-      <p style="color: #999; font-size: 13px;">If you didn't request this, you can safely ignore this email — your password won't change.</p>
+      <h2 style="color: #1f2f5a;">Reset your password</h2>
+      <p style="color: #3b4763;">We got a request to reset your Oakmont Study Center password. This link works for 1 hour.</p>
+      <p><a href="${resetUrl}" style="display: inline-block; background:#3461c1; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Reset password</a></p>
+      <p style="color: #7f8aa6; font-size: 13px;">If you didn't request this, you can safely ignore this email — your password won't change.</p>
     </div>
   `;
 }

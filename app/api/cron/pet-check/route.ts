@@ -67,10 +67,10 @@ const APP_URL = process.env.APP_URL || "https://oakmontsat.com";
 function nudgeEmailHtml(unsubscribeUrl: string): string {
   return `
     <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
-      <h2 style="color: #1a1a2e;">${PET_NAME} is cold without you</h2>
-      <p style="color: #444;">It's been a few days since your last session, and ${PET_NAME} has gone a bit blue and shivery. One lesson or a quick quiz warms him right up, and your plan picks up right where you left off.</p>
-      <p><a href="${APP_URL}/dashboard" style="display: inline-block; background: #1a1a2e; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Open Oakmont</a></p>
-      <p style="color: #8a8577; font-size: 12px;"><a href="${unsubscribeUrl}" style="color: #8a8577;">Turn these emails off</a>.</p>
+      <h2 style="color: #1f2f5a;">${PET_NAME} is cold without you</h2>
+      <p style="color: #3b4763;">It's been a few days since your last session, and ${PET_NAME} has gone a bit blue and shivery. One lesson or a quick quiz warms him right up, and your plan picks up right where you left off.</p>
+      <p><a href="${APP_URL}/dashboard" style="display: inline-block; background:#3461c1; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Open Oakmont</a></p>
+      <p style="color: #7f8aa6; font-size: 12px;"><a href="${unsubscribeUrl}" style="color: #7f8aa6;">Turn these emails off</a>.</p>
     </div>
   `;
 }

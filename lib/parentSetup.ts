@@ -47,15 +47,15 @@ const WHAT_YOU_SEE = [
 ];
 
 function shell(inner: string): string {
-  return `<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0;background:#faf8f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1a1a2e;">
+  return `<!doctype html><html><head><meta charset="utf-8"></head><body style="margin:0;background:#eef3fb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#1f2f5a;">
 <div style="max-width:560px;margin:0 auto;padding:32px 20px;">
-  <div style="font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6d7fd6;">Oakmont for Parents</div>
+  <div style="font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#3461c1;">Oakmont for Parents</div>
   ${inner}
 </div></body></html>`;
 }
 
 function button(href: string, label: string): string {
-  return `<a href="${esc(href)}" style="display:inline-block;background:#1a1a2e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-size:15px;font-weight:600;">${esc(label)}</a>`;
+  return `<a href="${esc(href)}" style="display:inline-block;background:#3461c1;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-size:15px;font-weight:600;">${esc(label)}</a>`;
 }
 
 // The email a parent gets when a student adds them at signup (or later).
@@ -69,15 +69,15 @@ export function parentAddedEmail({
   token: string | null;
 }): { subject: string; html: string } {
   const who = esc(studentName);
-  const list = `<ul style="font-size:14px;line-height:1.7;color:#4b4b63;padding-left:20px;margin:0 0 20px;">${WHAT_YOU_SEE.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>`;
+  const list = `<ul style="font-size:14px;line-height:1.7;color:#3b4763;padding-left:20px;margin:0 0 20px;">${WHAT_YOU_SEE.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>`;
   if (claimed || !token) {
     return {
       subject: `${studentName} connected their Oakmont account to yours`,
       html: shell(`
   <h1 style="font-size:24px;line-height:1.25;margin:10px 0 12px;">${who} is now on your parent dashboard</h1>
-  <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 20px;">${who} signed up for Oakmont SAT prep and listed you as their parent, so their report is now in your account next to any other students you follow.</p>
+  <p style="font-size:15px;line-height:1.6;color:#3b4763;margin:0 0 20px;">${who} signed up for Oakmont SAT prep and listed you as their parent, so their report is now in your account next to any other students you follow.</p>
   ${button(`${APP_URL}/parent/dashboard`, "Open your dashboard")}
-  <p style="font-size:12px;line-height:1.6;color:#8a8aa0;margin:28px 0 0;">Don't recognize this student? Remove them from your dashboard, or reply and we'll help.</p>`),
+  <p style="font-size:12px;line-height:1.6;color:#7f8aa6;margin:28px 0 0;">Don't recognize this student? Remove them from your dashboard, or reply and we'll help.</p>`),
     };
   }
   const url = setupUrl(token);
@@ -85,11 +85,11 @@ export function parentAddedEmail({
     subject: `${studentName} added you as their parent on Oakmont`,
     html: shell(`
   <h1 style="font-size:24px;line-height:1.25;margin:10px 0 12px;">${who} is studying for the SAT and added you as their parent</h1>
-  <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 16px;">Your free parent account is ready. Set a password to see a live report of ${who}'s studying:</p>
+  <p style="font-size:15px;line-height:1.6;color:#3b4763;margin:0 0 16px;">Your free parent account is ready. Set a password to see a live report of ${who}'s studying:</p>
   ${list}
   ${button(url, "Set your password")}
-  <p style="font-size:13px;line-height:1.6;color:#4b4b63;margin:18px 0 0;">The link works for 30 days. Parent accounts are free.</p>
-  <p style="font-size:12px;line-height:1.6;color:#8a8aa0;margin:28px 0 0;">Not ${who}'s parent? <a href="${esc(url)}&amp;decline=1" style="color:#4a5bb0;">Remove this account</a> and you won't hear from us again.</p>`),
+  <p style="font-size:13px;line-height:1.6;color:#3b4763;margin:18px 0 0;">The link works for 30 days. Parent accounts are free.</p>
+  <p style="font-size:12px;line-height:1.6;color:#7f8aa6;margin:28px 0 0;">Not ${who}'s parent? <a href="${esc(url)}&amp;decline=1" style="color:#3461c1;">Remove this account</a> and you won't hear from us again.</p>`),
   };
 }
 
@@ -98,9 +98,9 @@ export function parentResetEmail(token: string, claimed: boolean): { subject: st
     subject: claimed ? "Reset your Oakmont parent password" : "Set up your Oakmont parent account",
     html: shell(`
   <h1 style="font-size:24px;line-height:1.25;margin:10px 0 12px;">${claimed ? "Reset your password" : "Set your password"}</h1>
-  <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 20px;">Use this link to ${claimed ? "choose a new password" : "finish setting up your parent account"}. It works for ${claimed ? "1 hour" : "30 days"}.</p>
+  <p style="font-size:15px;line-height:1.6;color:#3b4763;margin:0 0 20px;">Use this link to ${claimed ? "choose a new password" : "finish setting up your parent account"}. It works for ${claimed ? "1 hour" : "30 days"}.</p>
   ${button(setupUrl(token), claimed ? "Choose a new password" : "Set your password")}
-  <p style="font-size:12px;line-height:1.6;color:#8a8aa0;margin:28px 0 0;">If you didn't ask for this, you can ignore it.</p>`),
+  <p style="font-size:12px;line-height:1.6;color:#7f8aa6;margin:28px 0 0;">If you didn't ask for this, you can ignore it.</p>`),
   };
 }
 
@@ -199,8 +199,8 @@ export async function emailParentsAboutPlan(
       to: l.parent.email,
       subject,
       html: shell(`
-  <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 16px;">${lead}</p>
-  <p style="font-size:15px;line-height:1.6;color:#4b4b63;margin:0 0 20px;">Monthly is $14.99 and cancels anytime. The 6-month pass is one payment of $69.99 and covers a retake. Receipts come to you.</p>
+  <p style="font-size:15px;line-height:1.6;color:#3b4763;margin:0 0 16px;">${lead}</p>
+  <p style="font-size:15px;line-height:1.6;color:#3b4763;margin:0 0 20px;">Monthly is $14.99 and cancels anytime. The 6-month pass is one payment of $69.99 and covers a retake. Receipts come to you.</p>
   ${button(href, claimed ? `Choose ${name}'s plan` : "Set up your account to choose a plan")}`),
     });
     if (res.sent) sent++;

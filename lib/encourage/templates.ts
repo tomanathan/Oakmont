@@ -46,45 +46,45 @@ function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 const days = (n: number) => `${n} day${n === 1 ? "" : "s"}`;
-const FOREST = "#1f3b2d";
+const FOREST = "#3461c1"; // the brand blue; the name is from the old green theme
 
 function button(label: string, href: string): string {
   return `<p style="margin:22px 0 4px;"><a href="${APP_URL}${href}" style="display:inline-block;background:${FOREST};color:#ffffff;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;">${esc(label)}</a></p>`;
 }
 
 function box(label: string, title: string, extra = ""): string {
-  return `<div style="margin:18px 0 0;padding:14px 16px;border-radius:12px;background:#eef3e9;border:1px solid #d5e2cd;">
-    <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4b6b57;">${esc(label)}</div>
-    <div style="font-size:17px;font-weight:700;color:#1d2621;margin-top:3px;font-family:Georgia,serif;">${esc(title)}</div>${extra}
+  return `<div style="margin:18px 0 0;padding:14px 16px;border-radius:12px;background:#e9effb;border:1px solid #c2d1ee;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4a67a6;">${esc(label)}</div>
+    <div style="font-size:17px;font-weight:700;color:#1f2f5a;margin-top:3px;font-family:Georgia,serif;">${esc(title)}</div>${extra}
   </div>`;
 }
 
 function shell(heading: string, body: string, unsubscribeUrl: string, footNote: string): string {
-  return `<div style="background:#faf6ec;padding:24px 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+  return `<div style="background:#eef3fb;padding:24px 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
   <div style="max-width:520px;margin:0 auto;">
     <div style="font-size:13px;font-weight:700;letter-spacing:.06em;color:${FOREST};margin:0 4px 10px;">OAKMONT SAT PREP</div>
-    <div style="background:#ffffff;border:1px solid #e2d7c1;border-radius:16px;padding:26px 24px;">
-      <h1 style="margin:0 0 12px;font-family:Georgia,serif;font-size:23px;line-height:1.25;color:#1d2621;">${esc(heading)}</h1>
+    <div style="background:#ffffff;border:1px solid #c9d6ee;border-radius:16px;padding:26px 24px;">
+      <h1 style="margin:0 0 12px;font-family:Georgia,serif;font-size:23px;line-height:1.25;color:#1f2f5a;">${esc(heading)}</h1>
       ${body}
     </div>
-    <p style="margin:14px 6px 0;font-size:12px;line-height:1.5;color:#8a8577;">
-      ${esc(footNote)} <a href="${unsubscribeUrl}" style="color:#8a8577;text-decoration:underline;">Turn these emails off</a>.${MAILING_ADDRESS ? `<br>${esc(MAILING_ADDRESS)}` : ""}
+    <p style="margin:14px 6px 0;font-size:12px;line-height:1.5;color:#7f8aa6;">
+      ${esc(footNote)} <a href="${unsubscribeUrl}" style="color:#7f8aa6;text-decoration:underline;">Turn these emails off</a>.${MAILING_ADDRESS ? `<br>${esc(MAILING_ADDRESS)}` : ""}
     </p>
   </div>
 </div>`;
 }
 
-const p = (html: string) => `<p style="margin:0 0 10px;font-size:15px;line-height:1.55;color:#3a3f3b;">${html}</p>`;
+const p = (html: string) => `<p style="margin:0 0 10px;font-size:15px;line-height:1.55;color:#3b4763;">${html}</p>`;
 
 function planBox(plan: TodayPlan): string {
-  const tip = plan.tip ? `<div style="font-size:13.5px;line-height:1.5;color:#3a3f3b;margin-top:8px;"><b>One thing to remember:</b> ${esc(plan.tip)}</div>` : "";
+  const tip = plan.tip ? `<div style="font-size:13.5px;line-height:1.5;color:#3b4763;margin-top:8px;"><b>One thing to remember:</b> ${esc(plan.tip)}</div>` : "";
   const sub =
     plan.kind === "review"
-      ? `<div style="font-size:13.5px;color:#3a3f3b;margin-top:6px;">A short set from everything you&#39;ve covered so far.</div>`
+      ? `<div style="font-size:13.5px;color:#3b4763;margin-top:6px;">A short set from everything you&#39;ve covered so far.</div>`
       : plan.kind === "test"
-        ? `<div style="font-size:13.5px;color:#3a3f3b;margin-top:6px;">A full-length test. Set aside the time and treat it like the real thing.</div>`
+        ? `<div style="font-size:13.5px;color:#3b4763;margin-top:6px;">A full-length test. Set aside the time and treat it like the real thing.</div>`
         : plan.kind === "rest"
-          ? `<div style="font-size:13.5px;color:#3a3f3b;margin-top:6px;">Nothing new today. A few review questions still count if you want them.</div>`
+          ? `<div style="font-size:13.5px;color:#3b4763;margin-top:6px;">Nothing new today. A few review questions still count if you want them.</div>`
           : tip;
   return box("Today in your plan", plan.title, sub);
 }
@@ -174,10 +174,10 @@ function kidCard(k: KidCtx, studentId: string): string {
   }
   const next = k.plan.kind === "rest" ? "A rest day in the plan." : `Next in the plan: <b>${esc(k.plan.title)}</b>.`;
   const test = k.daysToTest !== null && k.daysToTest > 0 && k.daysToTest <= 120 ? ` ${days(k.daysToTest)} until the SAT.` : "";
-  return `<div style="margin:14px 0 0;padding:14px 16px;border-radius:12px;border:1px solid #e2d7c1;">
-    <div style="font-size:17px;font-weight:700;color:#1d2621;font-family:Georgia,serif;">${esc(k.name)}</div>
-    <div style="font-size:14.5px;line-height:1.55;color:#3a3f3b;margin-top:4px;">${did}</div>
-    <div style="font-size:14.5px;line-height:1.55;color:#3a3f3b;margin-top:2px;">${next}${test}</div>
+  return `<div style="margin:14px 0 0;padding:14px 16px;border-radius:12px;border:1px solid #c9d6ee;">
+    <div style="font-size:17px;font-weight:700;color:#1f2f5a;font-family:Georgia,serif;">${esc(k.name)}</div>
+    <div style="font-size:14.5px;line-height:1.55;color:#3b4763;margin-top:4px;">${did}</div>
+    <div style="font-size:14.5px;line-height:1.55;color:#3b4763;margin-top:2px;">${next}${test}</div>
     <div style="margin-top:8px;"><a href="${APP_URL}/parent/dashboard?student=${encodeURIComponent(studentId)}" style="font-size:13.5px;font-weight:600;color:${FOREST};">See ${esc(k.name)}&#39;s progress</a></div>
   </div>`;
 }
@@ -199,9 +199,9 @@ export function parentMorning(kids: { id: string; ctx: KidCtx }[], promptIndex: 
   }
   const prompt = PARENT_PROMPTS[((promptIndex % PARENT_PROMPTS.length) + PARENT_PROMPTS.length) % PARENT_PROMPTS.length];
   const body = `${kids.map((k) => kidCard(k.ctx, k.id)).join("")}
-    <div style="margin:16px 0 0;padding:14px 16px;border-radius:12px;background:#eef3e9;border:1px solid #d5e2cd;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4b6b57;">One way to help today</div>
-      <div style="font-size:14.5px;line-height:1.55;color:#1d2621;margin-top:4px;">${esc(prompt)}</div>
+    <div style="margin:16px 0 0;padding:14px 16px;border-radius:12px;background:#e9effb;border:1px solid #c2d1ee;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4a67a6;">One way to help today</div>
+      <div style="font-size:14.5px;line-height:1.55;color:#1f2f5a;margin-top:4px;">${esc(prompt)}</div>
     </div>`;
   return { subject, html: shell(kids.length === 1 ? `${first.name}'s SAT prep, today` : "Today's SAT prep", body, unsubscribeUrl, "You get this each morning because you're connected to a student on Oakmont. The weekly report is separate.") };
 }
