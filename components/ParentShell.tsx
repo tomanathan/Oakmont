@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { BrandMark } from "./BrandMark";
+import { FeedbackTab } from "./FeedbackTab";
 
 // A lightweight sibling of AppShell.tsx for parent-facing pages -- same
 // header chrome (BrandMark, white rounded card, fonts/colors) so the two
@@ -65,6 +66,7 @@ export function ParentShell({
         </div>
       </header>
       {children}
+      <FeedbackTab audience="parent" />
     </div>
   );
 }

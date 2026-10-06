@@ -183,6 +183,7 @@ model Parent {
   createdAt    DateTime     @default(now())
   links        ParentLink[]
   invites      ParentInvite[]
+  feedback     Feedback[]
 
   // IANA zone from the parent's own browser (saved on their first dashboard
   // visit), so "today", the activity calendar and the weekly report's days
@@ -323,13 +324,16 @@ model PracticeTest {
   @@index([userId, takenAt])
 }
 
-// What students tell us about the app, from the Feedback tab on every page
-// (components/FeedbackTab.tsx). Read in /admin/feedback. Kept if the
-// account is later deleted (the note is still useful), just unlinked.
+// What students and parents tell us about the app, from the Feedback tab on
+// every page (components/FeedbackTab.tsx). Read in /admin/feedback. Kept if
+// the account is later deleted (the note is still useful), just unlinked.
+// From a student (userId) or a parent (parentId), never both.
 model Feedback {
   id        String   @id @default(cuid())
   userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  parentId  String?
+  parent    Parent?  @relation(fields: [parentId], references: [id], onDelete: SetNull)
   // "bug" | "confusing" | "idea" | "praise" | "other"
   kind      String
   rating    Int? // 1-5, optional

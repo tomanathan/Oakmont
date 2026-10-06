@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
 import { FeedbackList, type FeedbackRow } from "./FeedbackList";
 
-// What students have told us through the Feedback tab, newest first.
+// What students and parents have told us through the Feedback tab, newest first.
 
 export const metadata: Metadata = { title: "Feedback · Admin · Oakmont", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -14,7 +14,7 @@ export default async function AdminFeedbackPage() {
   const rows = await prisma.feedback.findMany({
     orderBy: { createdAt: "desc" },
     take: 500,
-    select: { id: true, kind: true, rating: true, message: true, path: true, userAgent: true, createdAt: true, handledAt: true, user: { select: { id: true, firstName: true, email: true } } },
+    select: { id: true, kind: true, rating: true, message: true, path: true, userAgent: true, createdAt: true, handledAt: true, user: { select: { id: true, firstName: true, email: true } }, parent: { select: { email: true } } },
   });
   const items: FeedbackRow[] = rows.map((r) => ({ ...r, handled: !!r.handledAt }));
   return (

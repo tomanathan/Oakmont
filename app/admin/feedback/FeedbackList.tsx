@@ -18,6 +18,7 @@ export interface FeedbackRow {
   createdAt: Date;
   handled: boolean;
   user: { id: string; firstName: string | null; email: string } | null;
+  parent: { email: string } | null;
 }
 
 const KIND_TONE: Record<string, string> = {
@@ -51,7 +52,7 @@ export function FeedbackList({ items, now }: { items: FeedbackRow[]; now: Date }
         <div className="mr-auto">
           <h1 className="font-display text-[26px] font-semibold leading-tight">Feedback</h1>
           <p className="text-[13px] text-stone-500">
-            {rows.length} note{rows.length === 1 ? "" : "s"} from students · {open} not handled yet{avg ? ` · average rating ${avg}/5 (${rated.length} rated)` : ""}
+            {rows.length} note{rows.length === 1 ? "" : "s"} from students and parents · {open} not handled yet{avg ? ` · average rating ${avg}/5 (${rated.length} rated)` : ""}
           </p>
         </div>
         <select value={kind} onChange={(e) => setKind(e.target.value)} aria-label="Filter by kind" className="h-9 rounded-lg border border-[#b4c5e6] bg-white px-2 text-[13px]">
@@ -79,12 +80,14 @@ export function FeedbackList({ items, now }: { items: FeedbackRow[]; now: Date }
                 <Link href={`/admin/student/${r.user.id}`} className="font-semibold text-forest underline-offset-2 hover:underline">
                   {r.user.firstName || r.user.email}
                 </Link>
+              ) : r.parent ? (
+                <span className="rounded-full bg-[#f1f5fc] px-2 py-0.5 font-semibold text-stone-600 ring-1 ring-[#d3ddf1]">Parent</span>
               ) : (
                 <span className="text-stone-500">Deleted account</span>
               )}
-              {r.user && (
-                <a href={`mailto:${r.user.email}?subject=${encodeURIComponent("Your Oakmont feedback")}`} className="text-stone-500 underline-offset-2 hover:underline">
-                  {r.user.email}
+              {(r.user ?? r.parent) && (
+                <a href={`mailto:${(r.user ?? r.parent)!.email}?subject=${encodeURIComponent("Your Oakmont feedback")}`} className="text-stone-500 underline-offset-2 hover:underline">
+                  {(r.user ?? r.parent)!.email}
                 </a>
               )}
               <span className="ml-auto text-stone-500" title={fmtDateTime(r.createdAt)}>
@@ -101,7 +104,7 @@ export function FeedbackList({ items, now }: { items: FeedbackRow[]; now: Date }
             </div>
           </li>
         ))}
-        {shown.length === 0 && <li className="rounded-xl border border-[#c9d6ee] bg-white p-8 text-center text-[13px] text-stone-500">{rows.length === 0 ? "No feedback yet. It shows up here as soon as a student sends some." : "Nothing matches."}</li>}
+        {shown.length === 0 && <li className="rounded-xl border border-[#c9d6ee] bg-white p-8 text-center text-[13px] text-stone-500">{rows.length === 0 ? "No feedback yet. It shows up here as soon as a student or parent sends some." : "Nothing matches."}</li>}
       </ul>
     </>
   );

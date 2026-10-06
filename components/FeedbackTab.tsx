@@ -5,12 +5,13 @@ import { usePathname } from "next/navigation";
 import { FEEDBACK_KINDS, FEEDBACK_MAX, type FeedbackKind } from "@/lib/feedback";
 import { PixelDog } from "./PixelDog";
 
-// The way to tell us anything about the app, on every signed-in page: a
+// The way to tell us anything about the app, on every signed-in page
+// (students' via AppShell, parents' via ParentShell): a
 // sticky-note tab on the right edge of the screen that opens a short form.
 // Also opens on a window "oakmont:feedback" event (the account menu's
 // "Give feedback" uses it), so there's one form however it's reached.
 
-export function FeedbackTab() {
+export function FeedbackTab({ audience = "student" }: { audience?: "student" | "parent" }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [kind, setKind] = useState<FeedbackKind | null>(null);
@@ -57,7 +58,7 @@ export function FeedbackTab() {
       const res = await fetch("/api/feedback", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kind: kind ?? "other", rating, message, path: pathname }),
+        body: JSON.stringify({ kind: kind ?? "other", rating, message, path: pathname, as: audience }),
       });
       if (!res.ok) {
         const data = (await res.json().catch(() => ({}))) as { error?: string };
@@ -105,7 +106,7 @@ export function FeedbackTab() {
                 </h2>
                 <p className="mx-auto mt-1.5 max-w-[320px] text-sm leading-relaxed text-stone-600">A real person reads every one of these. If it needs a reply, we&apos;ll email you.</p>
                 <button type="button" onClick={close} className="mt-5 rounded-lg bg-forest px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90">
-                  Back to studying
+                  {audience === "parent" ? "Back to the report" : "Back to studying"}
                 </button>
               </div>
             ) : (
