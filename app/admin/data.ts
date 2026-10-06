@@ -86,6 +86,8 @@ export interface AdminData {
   parents: ParentRow[];
   activity: { key: string; questions: number; correct: number; lessons: number; students: number }[];
   totals: { questions: number; correct: number; lessons: number; tests: number; studyMs: number };
+  // Feedback notes not yet marked handled (/admin/feedback).
+  openFeedback: number;
 }
 
 const TZ = "America/Chicago";
@@ -93,7 +95,7 @@ export const dayKey = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: TZ 
 
 export async function loadAdminData(now: Date = new Date()): Promise<AdminData> {
   const since = new Date(now.getTime() - 30 * DAY);
-  const [users, attemptGroups, lessonGroups, tests, parents, recentAttempts, recentLessons] = await Promise.all([
+  const [users, attemptGroups, lessonGroups, tests, parents, recentAttempts, recentLessons, openFeedback] = await Promise.all([
     prisma.user.findMany({
       orderBy: { createdAt: "desc" },
       select: {
@@ -147,6 +149,7 @@ export async function loadAdminData(now: Date = new Date()): Promise<AdminData> 
     }),
     prisma.itemAttempt.findMany({ where: { createdAt: { gte: since } }, select: { userId: true, correct: true, createdAt: true }, take: 100000 }),
     prisma.lessonView.findMany({ where: { createdAt: { gte: since } }, select: { userId: true, createdAt: true }, take: 100000 }),
+    prisma.feedback.count({ where: { handledAt: null } }),
   ]);
 
   const att = new Map<string, { n: number; correct: number; ms: number }>();
@@ -246,6 +249,7 @@ export async function loadAdminData(now: Date = new Date()): Promise<AdminData> 
   return {
     students,
     parents: parentRows,
+    openFeedback,
     activity: [...days.entries()].map(([key, d]) => ({ key, questions: d.questions, correct: d.correct, lessons: d.lessons, students: d.who.size })),
     totals: {
       questions: students.reduce((s, u) => s + u.questions, 0),

@@ -1,5 +1,6 @@
 "use client";
 
+import { FeedbackTab } from "./FeedbackTab";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
@@ -214,6 +215,7 @@ export function AppShell({
         </div>
         <LegalFooter className="mt-8" />
       </div>
+      <FeedbackTab />
     </>
   );
 }
@@ -301,6 +303,16 @@ function AccountMenu({ email, onLogout }: { email: string; onLogout: () => void 
           <Link role="menuitem" href="/settings#wardrobe" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-stone-700 hover:bg-[#f1f5fc]">
             {PET_NAME}&apos;s wardrobe
           </Link>
+          <button
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              window.dispatchEvent(new CustomEvent("oakmont:feedback"));
+            }}
+            className="block w-full px-3.5 py-2 text-left text-sm text-stone-700 hover:bg-[#f1f5fc]"
+          >
+            Give feedback
+          </button>
           <button
             role="menuitem"
             onClick={onLogout}

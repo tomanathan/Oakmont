@@ -33,6 +33,7 @@ model User {
   practiceTests PracticeTest[]
   itemAttempts ItemAttempt[]
   lessonViews  LessonView[]
+  feedback     Feedback[]
 
   // Daily practice streak (consecutive UTC days with a finished lesson,
   // quiz or review). Computed in lib/gamification.ts on each finished activity.
@@ -320,4 +321,25 @@ model PracticeTest {
   createdAt      DateTime @default(now())
 
   @@index([userId, takenAt])
+}
+
+// What students tell us about the app, from the Feedback tab on every page
+// (components/FeedbackTab.tsx). Read in /admin/feedback. Kept if the
+// account is later deleted (the note is still useful), just unlinked.
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  // "bug" | "confusing" | "idea" | "praise" | "other"
+  kind      String
+  rating    Int? // 1-5, optional
+  message   String
+  // Where they were when they wrote it, and on what.
+  path      String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  // Set from /admin/feedback once it's been dealt with.
+  handledAt DateTime?
+
+  @@index([createdAt])
 }

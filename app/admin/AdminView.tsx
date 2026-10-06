@@ -123,6 +123,9 @@ export function AdminView({ data, now }: { data: AdminData; now: Date }) {
             <a href="#students" className="underline-offset-2 hover:underline">Students</a>
             <a href="#parents" className="underline-offset-2 hover:underline">Parents</a>
             <Link href="/admin/emails" className="underline-offset-2 hover:underline">Emails</Link>
+            <Link href="/admin/feedback" className="underline-offset-2 hover:underline">
+              Feedback{data.openFeedback ? ` (${data.openFeedback})` : ""}
+            </Link>
           </nav>
         </header>
 
