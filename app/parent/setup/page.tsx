@@ -28,7 +28,8 @@ export default async function ParentSetupPage({ searchParams }: { searchParams: 
   const names = parent ? parent.links.map((l) => displayName(l.nickname || l.student.firstName, l.student.email)) : [];
 
   return (
-    <div className="mx-auto max-w-[460px] px-6 py-12 font-sans">
+    <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] font-sans sm:my-8 md:w-[calc(100%-80px)] max-w-[550px]">
+      <span className="nbk-spiral" aria-hidden />
       <BrandMark size={48} className="mb-4" />
       <div className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#26427e]">Oakmont for Parents</div>
       {!valid || !parent ? (

@@ -26,7 +26,8 @@ export default async function LinkInvitePage({ params }: { params: { token: stri
   const back = encodeURIComponent(`/link/${params.token}`);
 
   return (
-    <div className="mx-auto max-w-[520px] px-6 py-12 font-sans">
+    <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] font-sans sm:my-8 md:w-[calc(100%-80px)] max-w-[610px]">
+      <span className="nbk-spiral" aria-hidden />
       <BrandMark size={48} className="mx-auto mb-4" />
       {!valid ? (
         <div className="text-center">

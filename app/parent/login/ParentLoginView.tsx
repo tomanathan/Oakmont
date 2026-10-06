@@ -95,7 +95,8 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
   const input = "w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] text-sm focus:outline-none focus:border-[#4a67a6]";
 
   return (
-    <div className="mx-auto max-w-[980px] px-6 py-8 font-sans">
+    <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] font-sans sm:my-8 md:w-[calc(100%-80px)] max-w-[1070px]">
+      <span className="nbk-spiral" aria-hidden />
       <Link href="/" className="inline-block text-sm text-stone-500 transition-colors hover:text-ink">
         &larr; Back to home
       </Link>

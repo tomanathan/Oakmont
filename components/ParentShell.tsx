@@ -29,7 +29,7 @@ export function ParentShell({
   }
 
   return (
-    <div className="mx-auto max-w-[1180px] px-4 pb-16 pt-2 font-sans">
+    <div className="mx-auto max-w-[1270px] px-3 pb-16 pt-2 font-sans sm:px-6 md:pl-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-stone-200 bg-white px-4 py-2 shadow-[3px_3px_0_rgba(52,97,193,0.13)]">
         <div className="flex min-w-0 items-center gap-2.5">
           <BrandMark size={28} />
@@ -65,7 +65,12 @@ export function ParentShell({
           </button>
         </div>
       </header>
-      {children}
+      {/* The same notebook page the student app is written on (see .nbk-page
+          in globals.css). */}
+      <div className="nbk-page">
+        <span className="nbk-spiral" aria-hidden />
+        {children}
+      </div>
       <FeedbackTab audience="parent" />
     </div>
   );

@@ -17,7 +17,8 @@ export default async function SharePage({ params }: { params: { token: string } 
 
   if (!student) {
     return (
-      <div className="mx-auto max-w-[480px] px-6 py-16 text-center font-sans">
+      <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] font-sans sm:my-8 md:w-[calc(100%-80px)] max-w-[570px] text-center">
+        <span className="nbk-spiral" aria-hidden />
         <BrandMark size={48} className="mx-auto mb-4" />
         <div className="mb-2 text-lg font-semibold text-ink">This link isn&apos;t valid</div>
         <div className="text-sm text-stone-500">It may have been turned off, or the link might be mistyped. Ask your student for a fresh one.</div>
@@ -28,12 +29,14 @@ export default async function SharePage({ params }: { params: { token: string } 
   const report = await loadParentReport(student.id, { name: displayName(student.firstName, student.email) });
 
   return (
-    <div className="mx-auto max-w-[1180px] px-4 pb-16 pt-2 font-sans">
+    <div className="mx-auto max-w-[1270px] px-3 pb-16 pt-2 font-sans sm:px-6 md:pl-10">
       <header className="mb-4 flex items-center gap-2.5 px-4 py-3">
         <BrandMark size={26} />
         <div className="font-display text-[14px] font-semibold text-ink">Oakmont Study Center</div>
         <span className="text-xs text-stone-500">&middot; shared study report</span>
       </header>
+      <div className="nbk-page">
+        <span className="nbk-spiral" aria-hidden />
       <ParentReportView
         report={report}
         footer={
@@ -42,6 +45,7 @@ export default async function SharePage({ params }: { params: { token: string } 
           </p>
         }
       />
+      </div>
     </div>
   );
 }
