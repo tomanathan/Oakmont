@@ -146,8 +146,8 @@ export function DashboardClient({
               aria-pressed={active}
               className={`relative overflow-hidden rounded-2xl border-2 p-5 text-left transition-all duration-200 ${
                 active
-                  ? `${theme.cardBg} ${theme.cardBorder.split(" ")[0]} shadow-[0_4px_18px_rgba(38,34,24,0.1)] scale-[1.02]`
-                  : "bg-white border-[#e2d7c1] hover:border-[#d5c8ae] hover:shadow-[0_2px_10px_rgba(38,34,24,0.06)]"
+                  ? `${theme.cardBg} ${theme.cardBorder.split(" ")[0]} shadow-[0_4px_18px_rgba(31,47,90,0.1)] scale-[1.02]`
+                  : "bg-white border-[#c9d6ee] hover:border-[#b4c5e6] hover:shadow-[3px_3px_0_rgba(52,97,193,0.13)]"
               }`}
             >
               <div className="flex items-start justify-between gap-2 mb-2">
@@ -192,12 +192,12 @@ export function DashboardClient({
             return (
               <div
                 key={d.domain}
-                className={`overflow-hidden rounded-2xl border border-[#e2d7c1] border-l-[3px] ${theme.accentBorder} bg-white transition-colors`}
+                className={`overflow-hidden rounded-2xl border border-[#c9d6ee] border-l-[3px] ${theme.accentBorder} bg-white transition-colors`}
               >
                 <button
                   onClick={() => toggleDomain(d.domain)}
                   className={`w-full flex items-center gap-3 pl-5 pr-4 py-4 text-left transition-colors ${
-                    isOpen ? theme.cardBg : "hover:bg-[#f8f4eb]"
+                    isOpen ? theme.cardBg : "hover:bg-[#f1f5fc]"
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-shrink-0">
@@ -211,7 +211,7 @@ export function DashboardClient({
                       mastered (that's what the stars are for). Only drawn
                       where there's room for it. */}
                   <div className="flex-1 mx-3">
-                    <div className="hidden md:block h-1.5 rounded-full bg-[#e6dcc8] overflow-hidden">
+                    <div className="hidden md:block h-1.5 rounded-full bg-[#d3ddf1] overflow-hidden">
                       <div
                         className={`h-full rounded-full ${theme.bar}`}
                         style={{ width: `${(domainDone / d.subskills.length) * 100}%` }}
@@ -233,7 +233,7 @@ export function DashboardClient({
                 </button>
 
                 {isOpen && (
-                  <div className="px-4 pb-4 pt-3 border-t border-[#eef3e9] bg-white">
+                  <div className="px-4 pb-4 pt-3 border-t border-[#e9effb] bg-white">
                     {/* lg:grid-cols-4 -- the dashboard now renders at the
                         same 1180px width as the lesson page (see AppShell's
                         wide prop), so a fourth column here puts that extra
@@ -335,7 +335,7 @@ function PlanCard({
       : [];
 
   return (
-    <div className="flex flex-col bg-white border border-[#e2d7c1] rounded-2xl p-4 shadow-[0_1px_3px_rgba(38,34,24,0.03)]">
+    <div className="nbk-taped flex flex-col bg-white border border-[#c9d6ee] rounded-2xl p-4 shadow-[3px_3px_0_rgba(52,97,193,0.13)]">
       {(today || recommended || daysUntilTest !== null) && (
         <div className="flex items-center justify-between gap-3 mb-2.5 flex-wrap">
           <div className="flex items-baseline gap-2">
@@ -370,7 +370,7 @@ function PlanCard({
       {recommended && (
         <button
           onClick={() => router.push(recommended.href)}
-          className="group w-full flex items-center gap-3 bg-forest text-white rounded-xl px-4 py-3 text-left hover:bg-[#1f2a23] transition-colors"
+          className="group w-full flex items-center gap-3 bg-forest text-white rounded-xl px-4 py-3 text-left hover:bg-[#1f2f5a] transition-colors"
         >
           <div className="flex-1 min-w-0">
             <div className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-white/45">
@@ -398,7 +398,7 @@ function PlanCard({
               <div
                 key={s.id}
                 onClick={() => router.push(`/subskill/${s.id}`)}
-                className="flex items-center justify-between gap-3 px-3 py-1.5 -mx-1 rounded-lg cursor-pointer text-sm hover:bg-[#f8f4eb] transition-colors"
+                className="flex items-center justify-between gap-3 px-3 py-1.5 -mx-1 rounded-lg cursor-pointer text-sm hover:bg-[#f1f5fc] transition-colors"
               >
                 <span className="text-ink truncate">{s.name}</span>
                 {p ? (
@@ -419,7 +419,7 @@ function PlanCard({
       {review.ready && recommended?.kind !== "review" && review.toConfirm + review.refreshers > 0 && (
         <button
           onClick={() => router.push("/review")}
-          className="mt-2 flex w-full items-center justify-between gap-3 rounded-xl border border-[#d5c8ae] px-4 py-2.5 text-left transition-colors hover:border-[#c9d8c2] hover:bg-[#f8f4eb]"
+          className="mt-2 flex w-full items-center justify-between gap-3 rounded-xl border border-[#b4c5e6] px-4 py-2.5 text-left transition-colors hover:border-[#c2d1ee] hover:bg-[#f1f5fc]"
         >
           <div className="min-w-0">
             <div className="text-[13.5px] font-semibold text-ink">Mixed review</div>

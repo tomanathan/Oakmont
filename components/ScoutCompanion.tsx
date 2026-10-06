@@ -2870,11 +2870,11 @@ export function ScoutCompanion() {
               : "left-1/2 -translate-x-1/2 animate-pop-in"
           }`}
         >
-          <div className="bg-white border border-[#e2d7c1] shadow-[0_6px_20px_rgba(38,34,24,0.12)] rounded-xl px-3 py-2 text-xs text-ink leading-snug text-center">
+          <div className="bg-white border border-[#c9d6ee] shadow-[0_6px_20px_rgba(31,47,90,0.12)] rounded-xl px-3 py-2 text-xs text-ink leading-snug text-center">
             {bubble}
           </div>
           <div
-            className={`w-2.5 h-2.5 bg-white border-r border-b border-[#e2d7c1] rotate-45 -mt-[7px] ${
+            className={`w-2.5 h-2.5 bg-white border-r border-b border-[#c9d6ee] rotate-45 -mt-[7px] ${
               bubbleAlign === "left" ? "ml-6" : bubbleAlign === "right" ? "ml-auto mr-6" : "mx-auto"
             }`}
           />
@@ -2889,13 +2889,13 @@ export function ScoutCompanion() {
         // muted, and looping instead of a one-shot pop-in.
         <div className="absolute bottom-full left-1/2 mb-1 pointer-events-none" style={{ transform: "translateX(-50%)" }}>
           <div className="relative w-9 h-7">
-            <span className="absolute bottom-0 left-0 text-[10px] font-bold text-[#9a9384] animate-zzz" style={{ animationDelay: "0s" }}>
+            <span className="absolute bottom-0 left-0 text-[10px] font-bold text-[#8791ab] animate-zzz" style={{ animationDelay: "0s" }}>
               z
             </span>
-            <span className="absolute bottom-0 left-2.5 text-xs font-bold text-[#9a9384] animate-zzz" style={{ animationDelay: "0.55s" }}>
+            <span className="absolute bottom-0 left-2.5 text-xs font-bold text-[#8791ab] animate-zzz" style={{ animationDelay: "0.55s" }}>
               Z
             </span>
-            <span className="absolute bottom-0 left-5 text-sm font-bold text-[#9a9384] animate-zzz" style={{ animationDelay: "1.1s" }}>
+            <span className="absolute bottom-0 left-5 text-sm font-bold text-[#8791ab] animate-zzz" style={{ animationDelay: "1.1s" }}>
               Z
             </span>
           </div>
@@ -2909,7 +2909,7 @@ export function ScoutCompanion() {
         // sprite ambiguously sitting mid-sentence, which is exactly what
         // made the old free-roaming version look glitchy rather than cute.
         <div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_2px_8px_rgba(38,34,24,0.18)]"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_2px_8px_rgba(31,47,90,0.18)]"
           style={{ width: MOBILE_DOCK_BADGE_SIZE, height: MOBILE_DOCK_BADGE_SIZE }}
           aria-hidden
         />

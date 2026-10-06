@@ -24,7 +24,7 @@ export function ParentsTable({ parents, now }: { parents: ParentRow[]; now: Date
   }, [parents, q, only]);
 
   return (
-    <section className="rounded-xl border border-[#e2d7c1] bg-white">
+    <section className="rounded-xl border border-[#c9d6ee] bg-white">
       <div className="flex flex-wrap items-center gap-3 px-5 pb-3 pt-5">
         <h2 className="mr-auto text-[15px] font-semibold">
           Parents <span className="font-normal text-stone-500">· {rows.length} of {parents.length}</span>
@@ -35,9 +35,9 @@ export function ParentsTable({ parents, now }: { parents: ParentRow[]; now: Date
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search parent or student"
           aria-label="Search parents"
-          className="h-9 w-[240px] rounded-lg border border-[#d9cfba] bg-white px-3 text-[13px] outline-none focus:border-forest"
+          className="h-9 w-[240px] rounded-lg border border-[#bfcde9] bg-white px-3 text-[13px] outline-none focus:border-forest"
         />
-        <select value={only} onChange={(e) => setOnly(e.target.value as typeof only)} aria-label="Filter parents" className="h-9 rounded-lg border border-[#d9cfba] bg-white px-2 text-[13px] outline-none focus:border-forest">
+        <select value={only} onChange={(e) => setOnly(e.target.value as typeof only)} aria-label="Filter parents" className="h-9 rounded-lg border border-[#bfcde9] bg-white px-2 text-[13px] outline-none focus:border-forest">
           <option value="all">Everyone</option>
           <option value="setup">Account set up</option>
           <option value="notsetup">Not set up yet</option>
@@ -48,7 +48,7 @@ export function ParentsTable({ parents, now }: { parents: ParentRow[]; now: Date
       <div className="overflow-x-auto">
         <table className="w-full min-w-[1040px] text-left text-[13px]">
           <thead>
-            <tr className="border-y border-[#efe7d6] bg-[#faf6ec] text-[11px] uppercase tracking-[0.06em] text-stone-500">
+            <tr className="border-y border-[#e1e9f7] bg-[#f3f6fc] text-[11px] uppercase tracking-[0.06em] text-stone-500">
               <th className="px-5 py-2 font-semibold">Parent</th>
               <th className="px-3 py-2 font-semibold">Added</th>
               <th className="px-3 py-2 font-semibold">Account</th>
@@ -61,7 +61,7 @@ export function ParentsTable({ parents, now }: { parents: ParentRow[]; now: Date
           </thead>
           <tbody>
             {rows.map((p) => (
-              <tr key={p.id} className="border-b border-[#f3eee2] align-top last:border-0">
+              <tr key={p.id} className="border-b border-[#e8eef9] align-top last:border-0">
                 <td className="px-5 py-2.5 font-medium">{p.email}</td>
                 <td className="whitespace-nowrap px-3 py-2.5 tabular-nums text-stone-600">{fmtDate(p.createdAt)}</td>
                 <td className="px-3 py-2.5">

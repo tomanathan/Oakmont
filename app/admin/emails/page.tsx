@@ -16,7 +16,7 @@ export default async function AdminEmailsPage() {
   const now = new Date();
   const [morning, nudge] = await Promise.all([runEncourage("morning", now, { dryRun: true }), runEncourage("nudge", now, { dryRun: true })]);
   return (
-    <div className="min-h-screen bg-[#faf6ec] font-sans text-ink">
+    <div className="min-h-screen bg-[#f3f6fc] font-sans text-ink">
       <div className="mx-auto max-w-[1180px] px-4 py-8 sm:px-6">
         <Link href="/admin" className="text-[13px] font-semibold text-forest underline-offset-2 hover:underline">
           ← Admin

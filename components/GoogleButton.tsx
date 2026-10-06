@@ -6,7 +6,7 @@ export function GoogleButton({ href, onClick }: { href: string; onClick?: () => 
     <a
       href={href}
       onClick={onClick}
-      className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-[#d5c8ae] bg-white py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-[#faf6ec]"
+      className="flex w-full items-center justify-center gap-2.5 rounded-lg border border-[#b4c5e6] bg-white py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-[#f3f6fc]"
     >
       <GoogleG />
       Continue with Google
@@ -17,9 +17,9 @@ export function GoogleButton({ href, onClick }: { href: string; onClick?: () => 
 export function OrWithEmail({ className = "" }: { className?: string }) {
   return (
     <div className={`flex items-center gap-3 text-xs text-stone-500 ${className}`} aria-hidden>
-      <span className="h-px flex-1 bg-[#e2d7c1]" />
+      <span className="h-px flex-1 bg-[#c9d6ee]" />
       or with email
-      <span className="h-px flex-1 bg-[#e2d7c1]" />
+      <span className="h-px flex-1 bg-[#c9d6ee]" />
     </div>
   );
 }

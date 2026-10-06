@@ -25,10 +25,10 @@ export interface StarterQuestion {
 type Step = "q" | "result" | "date" | "plan" | "save";
 const ALL_RIGHT_FIRST_SKILL = "m-ratios-rates"; // mirrors lib/starter.ts
 
-const CARD = "rounded-2xl border border-[#e2d7c1] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)] sm:p-6";
+const CARD = "rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)] sm:p-6";
 const PRIMARY = "w-full rounded-xl bg-forest px-5 py-3.5 text-[15px] font-semibold text-white disabled:opacity-60";
 const H1 = "font-display text-[26px] font-semibold leading-tight text-ink";
-const INPUT = "w-full rounded-lg border border-[#d5c8ae] px-3 py-3 text-[15px] focus:border-[#587356] focus:outline-none";
+const INPUT = "w-full rounded-lg border border-[#b4c5e6] px-3 py-3 text-[15px] focus:border-[#4a67a6] focus:outline-none";
 
 function save(body: object) {
   return fetch("/api/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).catch(() => null);
@@ -104,7 +104,7 @@ export function StartClient(props: {
             {questions.map((q, i) => (
               <span
                 key={q.id}
-                className={`h-2 w-7 rounded-full ${i < index || (i === index && revealed) ? "bg-forest" : i === index ? "bg-[#9fb59a]" : "bg-[#e5dccb]"}`}
+                className={`h-2 w-7 rounded-full ${i < index || (i === index && revealed) ? "bg-forest" : i === index ? "bg-[#9db3e0]" : "bg-[#d3ddf1]"}`}
               />
             ))}
           </div>
@@ -128,7 +128,7 @@ export function StartClient(props: {
             </div>
             <ExamChoices choices={current.choices} correctIndex={current.answer} selected={picked ?? null} revealed={revealed} onSelect={pick} />
             {revealed && (
-              <div className={`mt-4 rounded-xl p-4 text-[14px] leading-relaxed ${picked === current.answer ? "bg-[#eaf6ef] text-[#23553a]" : "bg-[#f6f1e6] text-stone-700"}`}>
+              <div className={`mt-4 rounded-xl p-4 text-[14px] leading-relaxed ${picked === current.answer ? "bg-[#eaf6ef] text-[#23553a]" : "bg-[#eef3fb] text-stone-700"}`}>
                 <div className="mb-1 font-semibold">{picked === current.answer ? "Nice." : "Here's the move:"}</div>
                 <MathText text={picked !== current.answer && current.why?.[picked!] ? `${current.why[picked!]} ${current.explain}` : current.explain} />
               </div>
@@ -185,7 +185,7 @@ export function StartClient(props: {
                   save({ date: d.date });
                   setStep("plan");
                 }}
-                className="rounded-xl border border-[#d5c8ae] bg-white px-3 py-3.5 text-left hover:border-forest"
+                className="rounded-xl border border-[#b4c5e6] bg-white px-3 py-3.5 text-left hover:border-forest"
               >
                 <div className="text-[15px] font-semibold text-ink">{d.label}</div>
                 <div className="text-[13px] text-stone-500">{d.weeks <= 0 ? "this week" : `in ${d.weeks} ${d.weeks === 1 ? "week" : "weeks"}`}</div>
@@ -197,7 +197,7 @@ export function StartClient(props: {
                 save({ date: null });
                 setStep("plan");
               }}
-              className="rounded-xl border border-[#d5c8ae] bg-white px-3 py-3.5 text-left hover:border-forest"
+              className="rounded-xl border border-[#b4c5e6] bg-white px-3 py-3.5 text-left hover:border-forest"
             >
               <div className="text-[15px] font-semibold text-ink">Not sure yet</div>
               <div className="text-[13px] text-stone-500">Plan for 6 months</div>
@@ -228,7 +228,7 @@ export function StartClient(props: {
               {plan.week1.length > 4 && <li className="pl-4 text-[14px] text-stone-500">and {plan.week1.length - 4} more</li>}
             </ul>
           </div>
-          <div className="mt-4 flex items-center gap-3 rounded-2xl bg-[#fef8f2] p-3.5 ring-1 ring-[#f0d0b3]">
+          <div className="mt-4 flex items-center gap-3 rounded-2xl bg-[#f7f9fe] p-3.5 ring-1 ring-[#f0d0b3]">
             <PetAvatar stage="thriving" size={44} />
             <p className="text-[14px] leading-snug text-stone-700">
               I&apos;m Ozho. Study a little each day and I stay fed. Saving your plan counts as today.
@@ -300,7 +300,7 @@ function SaveSheet({
       <h1 className={H1}>Save your plan</h1>
       <p className="mt-2 text-[15px] text-stone-600">Your answers and plan come with you. 7 days free, no card.</p>
       {invite && (
-        <div className="mt-4 rounded-xl bg-[#eef3e9] p-3.5 text-[14px] leading-snug text-[#2c4c3b]">
+        <div className="mt-4 rounded-xl bg-[#e9effb] p-3.5 text-[14px] leading-snug text-[#26427e]">
           You&apos;ll be connected with <span className="font-semibold">{invite.parentEmail}</span>, who gets a weekly highlight of your wins.
         </div>
       )}

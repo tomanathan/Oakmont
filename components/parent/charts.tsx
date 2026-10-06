@@ -6,10 +6,10 @@ import type { DayCell, WeekPoint } from "@/lib/parentInsights";
 // Small SVG charts for the parent report. Drawn from the report's own
 // numbers, no chart library.
 
-const INK = "#1d2621";
-const GRID = "#e2d7c1";
-const MUTED = "#8f887a";
-const GREEN = "#2f6f4f";
+const INK = "#1f2f5a";
+const GRID = "#c9d6ee";
+const MUTED = "#7f8aa6";
+const GREEN = "#3461c1"; // the chart colour; the name is from the old green theme
 
 function fmtDay(key: string, opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" }) {
   const [y, m, d] = key.split("-").map(Number);
@@ -18,7 +18,7 @@ function fmtDay(key: string, opts: Intl.DateTimeFormatOptions = { month: "short"
 
 // ---- 12-week activity calendar ------------------------------------------------
 
-const CAL_LEVELS = ["#eef3e9", "#cfe3d7", "#9cc8ae", "#5f9f7b", GREEN];
+const CAL_LEVELS = ["#e9effb", "#c6d6f3", "#98b5ea", "#5f87d6", GREEN];
 
 function level(minutes: number): number {
   if (minutes <= 0) return 0;
@@ -248,7 +248,7 @@ export function ScoreTrend({
 
 // ---- a 0-100 bar ------------------------------------------------------------------
 
-export function PctBar({ value, color = GREEN, track = "#eef3e9" }: { value: number | null; color?: string; track?: string }) {
+export function PctBar({ value, color = GREEN, track = "#e9effb" }: { value: number | null; color?: string; track?: string }) {
   return (
     <div className="h-1.5 w-full overflow-hidden rounded-full" style={{ background: track }}>
       <div className="h-full rounded-full transition-all duration-500" style={{ width: `${value ?? 0}%`, background: color }} />

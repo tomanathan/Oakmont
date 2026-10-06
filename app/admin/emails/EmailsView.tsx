@@ -45,14 +45,14 @@ export function EmailsView({
       </header>
 
       <section className="mb-6 grid gap-3 md:grid-cols-2">
-        <div className="rounded-xl border border-[#e2d7c1] bg-white p-5">
+        <div className="rounded-xl border border-[#c9d6ee] bg-white p-5">
           <h2 className="text-[15px] font-semibold">Morning, 8am Central</h2>
           <p className="mt-1 text-[13px] leading-relaxed text-stone-600">Students get today&apos;s piece of their plan. Parents get what their student did in the last day, what&apos;s next, and one way to help.</p>
           <p className="mt-3 text-[13px] tabular-nums">
             If sent right now: <b>{counts.morning.students}</b> students, <b>{counts.morning.parents}</b> parents.
           </p>
         </div>
-        <div className="rounded-xl border border-[#e2d7c1] bg-white p-5">
+        <div className="rounded-xl border border-[#c9d6ee] bg-white p-5">
           <h2 className="text-[15px] font-semibold">Afternoon, 4pm Central</h2>
           <p className="mt-1 text-[13px] leading-relaxed text-stone-600">Only where the student hasn&apos;t studied yet that day. Skipped entirely for anyone who already has.</p>
           <p className="mt-3 text-[13px] tabular-nums">
@@ -61,7 +61,7 @@ export function EmailsView({
         </div>
       </section>
 
-      <section className="mb-6 rounded-xl border border-[#e2d7c1] bg-white p-5 text-[13px] leading-relaxed text-stone-600">
+      <section className="mb-6 rounded-xl border border-[#c9d6ee] bg-white p-5 text-[13px] leading-relaxed text-stone-600">
         <h2 className="mb-2 text-[15px] font-semibold text-ink">Who gets them</h2>
         <ul className="list-disc space-y-1 pl-5">
           <li>Students with access (free trial or paying). Parents who have set up their account and are connected to one of those students.</li>
@@ -71,7 +71,7 @@ export function EmailsView({
         </ul>
       </section>
 
-      <section className="rounded-xl border border-[#e2d7c1] bg-white">
+      <section className="rounded-xl border border-[#c9d6ee] bg-white">
         <div className="flex flex-wrap items-center gap-3 px-5 pb-3 pt-5">
           <h2 className="mr-auto text-[15px] font-semibold">What they say</h2>
           <span className="text-[13px] text-stone-500" role="status">
@@ -81,11 +81,11 @@ export function EmailsView({
             {sending === "busy" ? "Sending…" : "Send these samples to me"}
           </button>
         </div>
-        <div className="grid border-t border-[#efe7d6] md:grid-cols-[280px_1fr]">
-          <ul className="border-b border-[#efe7d6] md:border-b-0 md:border-r">
+        <div className="grid border-t border-[#e1e9f7] md:grid-cols-[280px_1fr]">
+          <ul className="border-b border-[#e1e9f7] md:border-b-0 md:border-r">
             {samples.map((s) => (
               <li key={s.id}>
-                <button type="button" onClick={() => setActive(s.id)} aria-current={s.id === active} className={`block w-full border-b border-[#f3eee2] px-5 py-3 text-left text-[13px] last:border-0 ${s.id === active ? "bg-[#eef3e9]" : "hover:bg-[#fcfaf4]"}`}>
+                <button type="button" onClick={() => setActive(s.id)} aria-current={s.id === active} className={`block w-full border-b border-[#e8eef9] px-5 py-3 text-left text-[13px] last:border-0 ${s.id === active ? "bg-[#e9effb]" : "hover:bg-[#f8fafe]"}`}>
                   <div className="text-[11px] font-semibold uppercase tracking-[0.06em] text-stone-500">
                     {s.to} · {s.when}
                   </div>
@@ -99,7 +99,7 @@ export function EmailsView({
               <span className="text-stone-500">Subject: </span>
               <span className="font-semibold">{current.email.subject}</span>
             </div>
-            <iframe title={`${current.to} email: ${current.label}`} srcDoc={current.email.html} sandbox="" className="h-[620px] w-full rounded-lg border border-[#e2d7c1] bg-[#faf6ec]" />
+            <iframe title={`${current.to} email: ${current.label}`} srcDoc={current.email.html} sandbox="" className="h-[620px] w-full rounded-lg border border-[#c9d6ee] bg-[#f3f6fc]" />
           </div>
         </div>
       </section>

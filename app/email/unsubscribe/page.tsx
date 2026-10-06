@@ -18,8 +18,8 @@ export default async function UnsubscribePage({ searchParams }: { searchParams: 
   if (who?.who === "parent") on = (await prisma.parent.findUnique({ where: { id: who.id }, select: { dailyEmails: true } }))?.dailyEmails ?? null;
 
   return (
-    <div className="min-h-screen bg-[#faf6ec] px-4 py-16 font-sans text-ink">
-      <div className="mx-auto max-w-[440px] rounded-2xl border border-[#e2d7c1] bg-white p-7 text-center">
+    <div className="min-h-screen bg-[#f3f6fc] px-4 py-16 font-sans text-ink">
+      <div className="mx-auto max-w-[440px] rounded-2xl border border-[#c9d6ee] bg-white p-7 text-center">
         <BrandMark size={44} className="mx-auto mb-4" />
         {who && on !== null ? (
           <>

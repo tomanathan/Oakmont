@@ -68,7 +68,7 @@ export function ParentPlanCard({
             : "";
 
   return (
-    <div className="mb-6 rounded-xl border border-[#e2d7c1] bg-white p-5">
+    <div className="mb-6 rounded-xl border border-[#c9d6ee] bg-white p-5">
       <div className="text-[15px] font-semibold text-ink">{headline}</div>
       {sub && <p className="mt-0.5 text-[13px] leading-relaxed text-stone-600">{sub}</p>}
       <div className="mt-3 flex flex-wrap gap-2">
@@ -84,7 +84,7 @@ export function ParentPlanCard({
             <button
               onClick={() => go("/api/parent/checkout", { studentId, plan: "monthly" }, "monthly")}
               disabled={busy !== null}
-              className="rounded-lg border border-[#d5c8ae] px-4 py-2.5 text-sm font-semibold text-ink disabled:opacity-60"
+              className="rounded-lg border border-[#b4c5e6] px-4 py-2.5 text-sm font-semibold text-ink disabled:opacity-60"
             >
               {busy === "monthly" ? "Opening..." : `Monthly, $${prices.monthly}/month`}
             </button>
@@ -94,7 +94,7 @@ export function ParentPlanCard({
             <button
               onClick={() => go("/api/parent/billing", { studentId }, "billing")}
               disabled={busy !== null}
-              className="rounded-lg border border-[#d5c8ae] px-4 py-2.5 text-sm font-semibold text-ink disabled:opacity-60"
+              className="rounded-lg border border-[#b4c5e6] px-4 py-2.5 text-sm font-semibold text-ink disabled:opacity-60"
             >
               {busy === "billing" ? "Opening..." : "Manage billing"}
             </button>

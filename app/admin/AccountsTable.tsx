@@ -155,7 +155,7 @@ export function AccountsTable({ students, now }: { students: StudentRow[]; now: 
   );
 
   return (
-    <section className="rounded-xl border border-[#e2d7c1] bg-white">
+    <section className="rounded-xl border border-[#c9d6ee] bg-white">
       <div className="flex flex-wrap items-center gap-3 px-5 pb-3 pt-5">
         <h2 className="mr-auto text-[15px] font-semibold">
           Students <span className="font-normal text-stone-500">· {rows.length} of {students.length}</span>
@@ -166,24 +166,24 @@ export function AccountsTable({ students, now }: { students: StudentRow[]; now: 
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search name, email or parent"
           aria-label="Search students"
-          className="h-9 w-[240px] rounded-lg border border-[#d9cfba] bg-white px-3 text-[13px] outline-none focus:border-forest"
+          className="h-9 w-[240px] rounded-lg border border-[#bfcde9] bg-white px-3 text-[13px] outline-none focus:border-forest"
         />
-        <select value={filter} onChange={(e) => setFilter(e.target.value as typeof filter)} aria-label="Filter students" className="h-9 rounded-lg border border-[#d9cfba] bg-white px-2 text-[13px] outline-none focus:border-forest">
+        <select value={filter} onChange={(e) => setFilter(e.target.value as typeof filter)} aria-label="Filter students" className="h-9 rounded-lg border border-[#bfcde9] bg-white px-2 text-[13px] outline-none focus:border-forest">
           {FILTERS.map(([v, label]) => (
             <option key={v} value={v}>
               {label}
             </option>
           ))}
         </select>
-        <button type="button" onClick={exportCsv} className="h-9 rounded-lg border border-forest px-3 text-[13px] font-semibold text-forest hover:bg-[#eef3e9]">
+        <button type="button" onClick={exportCsv} className="h-9 rounded-lg border border-forest px-3 text-[13px] font-semibold text-forest hover:bg-[#e9effb]">
           Download CSV
         </button>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[1720px] text-left text-[13px] [&_td]:whitespace-nowrap">
           <thead>
-            <tr className="border-y border-[#efe7d6] bg-[#faf6ec] text-[11px] uppercase tracking-[0.06em] text-stone-500">
-              <th className="sticky left-0 z-10 bg-[#faf6ec] px-5 py-2 font-semibold">
+            <tr className="border-y border-[#e1e9f7] bg-[#f3f6fc] text-[11px] uppercase tracking-[0.06em] text-stone-500">
+              <th className="sticky left-0 z-10 bg-[#f3f6fc] px-5 py-2 font-semibold">
                 <button type="button" className="uppercase tracking-[0.06em] hover:text-ink" onClick={() => setSort((s) => ({ key: "name", dir: s.key === "name" && s.dir === 1 ? -1 : 1 }))}>
                   Student
                 </button>
@@ -210,8 +210,8 @@ export function AccountsTable({ students, now }: { students: StudentRow[]; now: 
             {rows.map((u) => {
               const st = statusOf(u, now);
               return (
-                <tr key={u.id} className="group border-b border-[#f3eee2] last:border-0 hover:bg-[#fcfaf4]">
-                  <td className="sticky left-0 z-10 bg-white px-5 py-2.5 group-hover:bg-[#fcfaf4]">
+                <tr key={u.id} className="group border-b border-[#e8eef9] last:border-0 hover:bg-[#f8fafe]">
+                  <td className="sticky left-0 z-10 bg-white px-5 py-2.5 group-hover:bg-[#f8fafe]">
                     <Link href={`/admin/student/${u.id}`} className="block">
                       <div className="font-medium text-forest underline-offset-2 group-hover:underline">{u.firstName || "(no name)"}</div>
                       <div className="text-[12px] text-stone-500">{u.email}</div>

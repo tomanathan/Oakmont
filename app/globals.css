@@ -7,9 +7,123 @@ html, body {
 }
 
 body {
-  /* Ivory, the same ground as the homepage, so the app and the front page
-     read as one place. */
-  background: #faf6ec;
+  /* The desk: the same pale blue wash as the homepage, so the app and the
+     front page read as one place. The notebook page sits on it. */
+  background: linear-gradient(160deg, #dde7f7 0%, #e9f0fb 40%, #fbf3d8 100%) fixed;
+}
+
+/* ---------- the notebook, app-wide ----------
+   The homepage's notebook (components/landing/notebook) carried into the
+   app: every signed-in page is a spiral-bound, ruled sheet on the desk
+   (AppShell wraps its content in .nbk-page), cards sit on it like stuck-on
+   paper, and a few get tape or a Polaroid frame. Calm on purpose: thin
+   lines, pale rules, soft shadows, so dense pages stay easy to read. */
+.nbk-page {
+  position: relative;
+  padding: 26px 26px 34px 62px;
+  background-color: #fffdf7;
+  /* a margin line, then pale ruled lines */
+  background-image: linear-gradient(90deg, transparent 42px, rgba(241, 178, 135, 0.6) 42px, rgba(241, 178, 135, 0.6) 44px, transparent 44px),
+    repeating-linear-gradient(180deg, transparent 0 31px, rgba(52, 97, 193, 0.07) 31px 32px);
+  background-position: 0 0, 0 22px;
+  border: 2px solid #3461c1;
+  border-radius: 10px;
+  box-shadow: 5px 5px 0 #3461c1;
+}
+.nbk-spiral {
+  position: absolute;
+  left: -24px;
+  top: 16px;
+  bottom: 16px;
+  width: 48px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='36'%3E%3Cellipse cx='33' cy='19' rx='6' ry='5.5' fill='%23dde7f7' stroke='%233461C1' stroke-width='2'/%3E%3Cpath d='M5 15 C 12 3, 38 3, 33 19' fill='none' stroke='%233461C1' stroke-width='4.5' stroke-linecap='round'/%3E%3Cpath d='M9 12 C 16 6, 30 6, 31 14' fill='none' stroke='%23ffffff' stroke-width='1.4' stroke-linecap='round' opacity='.8'/%3E%3C/svg%3E")
+    repeat-y 0 0 / 48px 36px;
+  pointer-events: none;
+}
+@media (max-width: 767px) {
+  /* Phones: no room for a binding. A plain sheet, full width. */
+  .nbk-page {
+    padding: 16px 14px 24px;
+    background-image: repeating-linear-gradient(180deg, transparent 0 31px, rgba(52, 97, 193, 0.06) 31px 32px);
+    border-width: 1.5px;
+    box-shadow: 3px 3px 0 #3461c1;
+  }
+  .nbk-spiral {
+    display: none;
+  }
+}
+
+/* Cards (white, bordered, rounded) sit on the page like stuck-on paper: a
+   soft offset shadow. :where() keeps this at zero specificity, so any card
+   with its own shadow class keeps it. */
+:where(.bg-white.border.rounded-xl, .bg-white.border.rounded-2xl) {
+  box-shadow: 3px 3px 0 rgba(52, 97, 193, 0.13);
+}
+
+/* A strip of washi tape across a card's top edge. */
+.nbk-taped {
+  position: relative;
+}
+.nbk-taped::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 26px;
+  width: 96px;
+  height: 22px;
+  background: #b9dff3 radial-gradient(rgba(255, 255, 255, 0.75) 2.2px, transparent 2.6px) 0 0 / 11px 11px;
+  opacity: 0.92;
+  transform: rotate(-4deg);
+  pointer-events: none;
+  z-index: 1;
+}
+.nbk-taped--butter::before {
+  left: auto;
+  right: 30px;
+  background: #fbe7a3 repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 0 7px, transparent 7px 14px);
+  transform: rotate(4deg);
+}
+.nbk-taped--apricot::before {
+  background: #f1b287 repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.5) 0 7px, transparent 7px 14px);
+}
+
+/* A Polaroid: for pictures of Ozho. White frame, deeper bottom edge, a
+   slight tilt, tape on top. */
+.nbk-polaroid {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  padding: 8px 8px 20px;
+  background: #fff;
+  border: 2px solid #3461c1;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 #3461c1;
+  transform: rotate(-2.5deg);
+}
+.nbk-polaroid::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 64px;
+  height: 18px;
+  margin-left: -32px;
+  background: #f1b287 repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.5) 0 6px, transparent 6px 12px);
+  opacity: 0.92;
+  transform: rotate(3deg);
+}
+.nbk-polaroid > .nbk-photo {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #fdf6dc 0%, #fbeab8 62%, #d9e1f7 62%, #cdd7f3 100%);
+  border: 1.5px solid #3461c1;
+  border-radius: 2px;
+}
+
+/* Titles in the notebook's display face, set the way the homepage sets them. */
+.font-display {
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  letter-spacing: -0.015em;
 }
 
 .katex-inline .katex {

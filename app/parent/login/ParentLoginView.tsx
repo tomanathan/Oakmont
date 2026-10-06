@@ -92,7 +92,7 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
     }
   }
 
-  const input = "w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] text-sm focus:outline-none focus:border-[#587356]";
+  const input = "w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] text-sm focus:outline-none focus:border-[#4a67a6]";
 
   return (
     <div className="mx-auto max-w-[980px] px-6 py-8 font-sans">
@@ -102,7 +102,7 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
       <div className="mt-6 grid items-start gap-10 md:grid-cols-[1fr_420px]">
         <div className="pt-2">
           <BrandMark size={48} className="mb-4" />
-          <div className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#2c4c3b]">Oakmont for Parents</div>
+          <div className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#26427e]">Oakmont for Parents</div>
           <h1 className="text-balance font-display text-[32px] font-semibold leading-[1.1] text-ink sm:text-[38px]">
             Know exactly how SAT prep is going, without asking.
           </h1>
@@ -122,13 +122,13 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
           </p>
         </div>
 
-        <div className="rounded-xl border border-[#e2d7c1] bg-white p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
+        <div className="rounded-xl border border-[#c9d6ee] bg-white p-7 shadow-[3px_3px_0_rgba(52,97,193,0.13)]">
           <div className="mb-6 flex gap-2">
             {(["signup", "login"] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => setMode(m)}
-                className={`flex-1 rounded-lg border py-2 text-sm font-medium ${mode === m ? "border-ink bg-forest text-white" : "border-[#d5c8ae] bg-[#eef3e9] text-ink"}`}
+                className={`flex-1 rounded-lg border py-2 text-sm font-medium ${mode === m ? "border-ink bg-forest text-white" : "border-[#b4c5e6] bg-[#e9effb] text-ink"}`}
               >
                 {m === "signup" ? "Create account" : "Log in"}
               </button>

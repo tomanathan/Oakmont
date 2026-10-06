@@ -33,7 +33,7 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
   }
 
   return (
-    <section className="mb-4 rounded-2xl border border-[#e2d7c1] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_6px_20px_rgba(38,34,24,0.05)]">
+    <section className="mb-4 rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-display text-[18px] font-semibold text-ink">Getting started</h2>
@@ -45,7 +45,7 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
           Hide this
         </button>
       </div>
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#e6dcc8]">
+      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#d3ddf1]">
         <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${(done / items.length) * 100}%` }} />
       </div>
       <ul className="mt-4 grid gap-2 sm:grid-cols-2">
@@ -57,13 +57,13 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
                 item.done
                   ? "bg-[#f7faf8] ring-[#e3efe8]"
                   : item === nextUp
-                  ? "bg-[#f6f1e6] ring-[#c9d8c2] hover:ring-[#b7cbb0]"
-                  : "bg-white ring-[#e2d7c1] hover:ring-[#c9d8c2]"
+                  ? "bg-[#eef3fb] ring-[#c2d1ee] hover:ring-[#a8bde6]"
+                  : "bg-white ring-[#c9d6ee] hover:ring-[#c2d1ee]"
               }`}
             >
               <span
                 className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
-                  item.done ? "bg-accent text-white" : "ring-1 ring-[#c9d8c2]"
+                  item.done ? "bg-accent text-white" : "ring-1 ring-[#c2d1ee]"
                 }`}
                 aria-hidden
               >

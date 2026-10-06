@@ -103,7 +103,7 @@ export function AnalysisClient({
 
   if (!expanded) {
     return (
-      <div className="flex items-center justify-between gap-3 bg-white border border-[#e2d7c1] rounded-xl px-5 py-4 flex-wrap">
+      <div className="flex items-center justify-between gap-3 bg-white border border-[#c9d6ee] rounded-xl px-5 py-4 flex-wrap">
         <div className="min-w-0">
           <div className="text-sm font-semibold text-ink mb-0.5">Practice exam analysis</div>
           <div className="text-xs text-stone-500">
@@ -115,7 +115,7 @@ export function AnalysisClient({
         <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={openToLog}
-            className="px-3.5 py-2 rounded-lg border border-[#d5c8ae] bg-[#eef3e9] text-stone-700 text-sm font-medium hover:border-[#c9d8c2]"
+            className="px-3.5 py-2 rounded-lg border border-[#b4c5e6] bg-[#e9effb] text-stone-700 text-sm font-medium hover:border-[#c2d1ee]"
           >
             + Log a practice test
           </button>
@@ -140,7 +140,7 @@ export function AnalysisClient({
           {tests.length > 0 && (
             <button
               onClick={() => (formOpen ? closeForm() : setFormOpen(true))}
-              className="px-3.5 py-2 rounded-lg border border-[#d5c8ae] bg-[#eef3e9] text-stone-700 text-sm font-medium hover:border-[#c9d8c2]"
+              className="px-3.5 py-2 rounded-lg border border-[#b4c5e6] bg-[#e9effb] text-stone-700 text-sm font-medium hover:border-[#c2d1ee]"
             >
               {formOpen ? "Cancel" : "+ Log a practice test"}
             </button>
@@ -188,7 +188,7 @@ export function AnalysisClient({
               label="Reading & Writing"
               value={latest.rwScore}
               delta={previous ? latest.rwScore - previous.rwScore : null}
-              accent="text-[#587356]"
+              accent="text-[#4a67a6]"
             />
             <ScoreCard
               label="Math"
@@ -249,7 +249,7 @@ export function AnalysisClient({
                 {tests.map((t) => (
                   <div
                     key={t.id}
-                    className="flex items-center justify-between gap-3 px-3.5 py-2.5 border border-[#e2d7c1] bg-white rounded-[10px] text-sm"
+                    className="flex items-center justify-between gap-3 px-3.5 py-2.5 border border-[#c9d6ee] bg-white rounded-[10px] text-sm"
                   >
                     <span className="text-stone-500 whitespace-nowrap">
                       {formatUTCDate(t.takenAt, { year: "numeric", month: "short", day: "numeric" })}
@@ -320,7 +320,7 @@ function ScoreCard({
   accent: string;
 }) {
   return (
-    <div className="border border-[#e2d7c1] bg-white rounded-xl p-4">
+    <div className="border border-[#c9d6ee] bg-white rounded-xl p-4">
       <div className="text-xs text-stone-500 mb-1">{label}</div>
       <div className={`text-2xl font-bold ${accent}`}>
         {value}
@@ -496,7 +496,7 @@ function SubmitTestForm({
   }
 
   return (
-    <form onSubmit={submit} className="bg-white border border-[#e2d7c1] rounded-xl p-6 mb-8">
+    <form onSubmit={submit} className="bg-white border border-[#c9d6ee] rounded-xl p-6 mb-8">
       <div className="text-[15px] font-semibold text-ink mb-4">
         {editing ? "Edit practice test" : "Log a practice test"}
       </div>
@@ -509,7 +509,7 @@ function SubmitTestForm({
             value={takenAt}
             onChange={(e) => setTakenAt(e.target.value)}
             required
-            className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] text-sm focus:outline-none focus:border-[#587356]"
+            className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] text-sm focus:outline-none focus:border-[#4a67a6]"
           />
         </div>
         <div>
@@ -522,7 +522,7 @@ function SubmitTestForm({
             value={composite}
             onChange={(e) => setComposite(e.target.value)}
             required
-            className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] text-sm focus:outline-none focus:border-[#587356]"
+            className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] text-sm focus:outline-none focus:border-[#4a67a6]"
           />
         </div>
         <div>
@@ -535,7 +535,7 @@ function SubmitTestForm({
             value={rw}
             onChange={(e) => setRw(e.target.value)}
             required
-            className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] text-sm focus:outline-none focus:border-[#587356]"
+            className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] text-sm focus:outline-none focus:border-[#4a67a6]"
           />
         </div>
         <div>
@@ -548,7 +548,7 @@ function SubmitTestForm({
             value={math}
             onChange={(e) => setMath(e.target.value)}
             required
-            className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] text-sm focus:outline-none focus:border-[#587356]"
+            className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] text-sm focus:outline-none focus:border-[#4a67a6]"
           />
         </div>
       </div>
@@ -576,7 +576,7 @@ function SubmitTestForm({
               aria-label={`${d.domain} correct`}
               value={correct[d.domain] ?? ""}
               onChange={(e) => setCorrect((prev) => ({ ...prev, [d.domain]: e.target.value }))}
-              className="w-16 px-2 py-1.5 rounded-lg border border-[#d5c8ae] text-sm text-center focus:outline-none focus:border-[#587356]"
+              className="w-16 px-2 py-1.5 rounded-lg border border-[#b4c5e6] text-sm text-center focus:outline-none focus:border-[#4a67a6]"
             />
             <span className="text-stone-500 text-sm">/</span>
             <input
@@ -587,7 +587,7 @@ function SubmitTestForm({
               aria-label={`${d.domain} total`}
               value={total[d.domain] ?? ""}
               onChange={(e) => setTotal((prev) => ({ ...prev, [d.domain]: e.target.value }))}
-              className="w-16 px-2 py-1.5 rounded-lg border border-[#d5c8ae] text-sm text-center focus:outline-none focus:border-[#587356]"
+              className="w-16 px-2 py-1.5 rounded-lg border border-[#b4c5e6] text-sm text-center focus:outline-none focus:border-[#4a67a6]"
             />
           </div>
         ))}
@@ -607,7 +607,7 @@ function SubmitTestForm({
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2.5 rounded-lg border border-[#d5c8ae] text-stone-600 font-medium text-sm hover:border-[#c9d8c2]"
+            className="px-4 py-2.5 rounded-lg border border-[#b4c5e6] text-stone-600 font-medium text-sm hover:border-[#c2d1ee]"
           >
             Cancel
           </button>

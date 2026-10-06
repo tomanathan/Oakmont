@@ -75,14 +75,14 @@ export function ExamChoices({
           ? "border-[#c0524f] bg-[#fcefee] ring-1 ring-[#c0524f]"
           : isSelected
           ? "border-forest bg-[#f2f5ee] ring-1 ring-forest"
-          : `border-[#d9ceb7] bg-white ${disabled ? "" : "hover:border-[#587356] hover:bg-[#fbf8f1]"}`;
+          : `border-[#d9ceb7] bg-white ${disabled ? "" : "hover:border-[#4a67a6] hover:bg-[#fbf8f1]"}`;
         const badge = isCorrect
           ? "bg-accent text-white"
           : isWrongSelected
           ? "bg-[#b23b3b] text-white"
           : isSelected
           ? "bg-forest text-white"
-          : "bg-[#eef3e9] text-[#2c4c3b]";
+          : "bg-[#e9effb] text-[#26427e]";
         return (
           <div
             key={ci}
@@ -92,7 +92,7 @@ export function ExamChoices({
             tabIndex={tabIndex}
             onClick={() => !disabled && onSelect(ci)}
             onKeyDown={(e) => handleKeyDown(e, ci)}
-            className={`flex items-center gap-3 rounded-xl border px-3.5 py-3 text-[14.5px] leading-snug text-ink shadow-[0_1px_2px_rgba(38,34,24,0.05)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#587356] focus-visible:ring-offset-2 ${
+            className={`flex items-center gap-3 rounded-xl border px-3.5 py-3 text-[14.5px] leading-snug text-ink shadow-[3px_3px_0_rgba(52,97,193,0.13)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4a67a6] focus-visible:ring-offset-2 ${
               disabled ? "cursor-default" : "cursor-pointer"
             } ${row}`}
           >

@@ -1,34 +1,34 @@
 // Soft, section-specific color identity — a light wayfinding cue (which half
-// of the test is this?) rather than decoration. Drawn from the homepage's
-// reserved pastels: powder blue for Reading and Writing, blush for Math,
-// so neither competes with the green used for progress and mastery.
+// of the test is this?) rather than decoration. From the notebook palette:
+// a lighter blue for Reading and Writing, apricot for Math, so the two are
+// told apart at a glance and Math doesn't blend into the brand blue.
 export function sectionTheme(section: string) {
   if (section === "Math") {
     return {
-      dot: "bg-[#c9826a]",
+      dot: "bg-[#e39a68]",
       // Same colors as `dot`/`bar` below, as raw hex -- needed anywhere a
       // Tailwind arbitrary-value class won't work, like an SVG `stroke`
       // (the dashboard's per-subject mastery ring).
-      dotHex: "#c9826a",
+      dotHex: "#e39a68",
       text: "text-[#9c4f35]",
-      bar: "bg-[#d38f76]",
-      barHex: "#d38f76",
-      cardBg: "bg-[#f7e7e1]",
-      cardBorder: "border-[#ecd2c7] hover:border-[#dfb8a8]",
+      bar: "bg-[#eaa878]",
+      barHex: "#eaa878",
+      cardBg: "bg-[#fdeee2]",
+      cardBorder: "border-[#f3d6bf] hover:border-[#e9bf9f]",
       // A single strong hue for a thin accent strip -- the same color as
       // `dot`, exposed on its own so it can drive a left border without a
       // wrapper element.
-      accentBorder: "border-l-[#c9826a]",
+      accentBorder: "border-l-[#e39a68]",
     };
   }
   return {
-    dot: "bg-[#6f93b5]",
-    dotHex: "#6f93b5",
-    text: "text-[#35607f]",
-    bar: "bg-[#6f98bd]",
-    barHex: "#6f98bd",
-    cardBg: "bg-[#e6eef5]",
-    cardBorder: "border-[#cfdde9] hover:border-[#b3c8dc]",
-    accentBorder: "border-l-[#6f93b5]",
+    dot: "bg-[#5f87d6]",
+    dotHex: "#5f87d6",
+    text: "text-[#2a4f9f]",
+    bar: "bg-[#6f95dc]",
+    barHex: "#6f95dc",
+    cardBg: "bg-[#e6edfa]",
+    cardBorder: "border-[#c9d6ee] hover:border-[#a8bde6]",
+    accentBorder: "border-l-[#5f87d6]",
   };
 }

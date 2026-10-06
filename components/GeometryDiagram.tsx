@@ -3,10 +3,10 @@ import type {
   TransversalPosition,
 } from "@/lib/diagramTypes";
 
-const STROKE = "#383a30";
-const MUTED = "#ab9c88";
+const STROKE = "#1f2f5a";
+const MUTED = "#8b97b5";
 const HILITE = "#b5602f";
-const FILL = "#fef8f2";
+const FILL = "#f4f7fd";
 
 function Label({
   x,
@@ -398,7 +398,7 @@ function TriangleAngles({
       <>
         <line x1={B[0]} y1={B[1]} x2={D[0]} y2={D[1]} stroke={STROKE} strokeWidth={2} />
         <polygon points={`${A.join(",")} ${B.join(",")} ${C.join(",")}`} fill={FILL} stroke={STROKE} strokeWidth={2} />
-        <polygon points={`${A.join(",")} ${C.join(",")} ${D.join(",")}`} fill="#f6e8db" stroke={STROKE} strokeWidth={2} />
+        <polygon points={`${A.join(",")} ${C.join(",")} ${D.join(",")}`} fill="#e3ebf9" stroke={STROKE} strokeWidth={2} />
         <line x1={C[0]} y1={C[1] - 5} x2={C[0]} y2={C[1] + 5} stroke={STROKE} strokeWidth={1.5} />
         <Label x={B[0] + 22} y={B[1] - 14} text={chained.angleB} />
         <Label x={A[0] + 34 * Math.cos(bis1)} y={A[1] + 34 * Math.sin(bis1)} text={chained.angleBAC} size={13} />
@@ -698,7 +698,7 @@ function CircleBasic({
               <line x1={O[0]} y1={O[1]} x2={endPt[0]} y2={endPt[1]} stroke={STROKE} strokeWidth={2} />
               <path
                 d={`M ${O[0]} ${O[1] - r} A ${r} ${r} 0 ${largeArc} 0 ${endPt[0]} ${endPt[1]}`}
-                fill="#f6e0c9"
+                fill="#dbe6f8"
                 opacity={0.7}
               />
               <Label x={labelPt[0]} y={labelPt[1]} text={centralAngleLabel} size={13} />
@@ -811,7 +811,7 @@ function Sector({
       <circle cx={O[0]} cy={O[1]} r={r} fill="none" stroke={MUTED} strokeWidth={1.5} strokeDasharray="3 3" />
       <path
         d={`M ${O[0]} ${O[1]} L ${p1[0]} ${p1[1]} A ${r} ${r} 0 ${largeArc} 1 ${p2[0]} ${p2[1]} Z`}
-        fill={askFor === "arcLength" ? "none" : "#f6e0c9"}
+        fill={askFor === "arcLength" ? "none" : "#dbe6f8"}
         stroke={STROKE}
         strokeWidth={askFor === "arcLength" ? 1.5 : 2}
       />
@@ -913,8 +913,8 @@ function Solid({ shape, labels }: { shape: string; labels: Record<string, string
   return (
     <>
       <polygon points="60,80 180,80 180,180 60,180" fill={FILL} stroke={STROKE} strokeWidth={2} />
-      <polygon points="60,80 100,50 220,50 180,80" fill="#f6e8db" stroke={STROKE} strokeWidth={2} />
-      <polygon points="180,80 220,50 220,150 180,180" fill="#f0ddc4" stroke={STROKE} strokeWidth={2} />
+      <polygon points="60,80 100,50 220,50 180,80" fill="#e3ebf9" stroke={STROKE} strokeWidth={2} />
+      <polygon points="180,80 220,50 220,150 180,180" fill="#d3dff5" stroke={STROKE} strokeWidth={2} />
       <Label x={120} y={198} text={labels.l ?? ""} size={13} />
       <Label x={228} y={100} text={labels.w ?? ""} size={12} anchor="start" />
       <Label x={45} y={135} text={labels.h ?? ""} size={13} anchor="end" />
@@ -980,11 +980,11 @@ function ScaleCompare({ shape, factorLabel }: { shape: "square" | "cube" | "circ
   return (
     <>
       <polygon points={smallFront} fill={FILL} stroke={STROKE} strokeWidth={2} />
-      <polygon points={smallTop} fill="#f6e8db" stroke={STROKE} strokeWidth={2} />
-      <polygon points={smallSide} fill="#f0ddc4" stroke={STROKE} strokeWidth={2} />
+      <polygon points={smallTop} fill="#e3ebf9" stroke={STROKE} strokeWidth={2} />
+      <polygon points={smallSide} fill="#d3dff5" stroke={STROKE} strokeWidth={2} />
       <polygon points={bigFront} fill={FILL} stroke={STROKE} strokeWidth={2} />
-      <polygon points={bigTop} fill="#f6e8db" stroke={STROKE} strokeWidth={2} />
-      <polygon points={bigSide} fill="#f0ddc4" stroke={STROKE} strokeWidth={2} />
+      <polygon points={bigTop} fill="#e3ebf9" stroke={STROKE} strokeWidth={2} />
+      <polygon points={bigSide} fill="#d3dff5" stroke={STROKE} strokeWidth={2} />
       <path d="M 65 165 L 130 165" stroke={HILITE} strokeWidth={2} markerEnd="url(#arrow)" />
       <Label x={98} y={155} text={`× ${factorLabel}`} hilite size={14} />
       <defs>
@@ -1445,7 +1445,7 @@ function ScatterGraph({ trend }: { trend: string }) {
 
 export function GeometryDiagram({ spec }: { spec: DiagramSpec }) {
   return (
-    <div className="my-3 rounded-lg border border-[#f0d0b3] bg-[#fef8f2] p-3 flex flex-col items-center">
+    <div className="my-3 rounded-lg border border-[#f0d0b3] bg-[#f7f9fe] p-3 flex flex-col items-center">
       <svg viewBox="0 0 280 210" className="w-full max-w-[280px] h-auto">
         {spec.kind === "rightTriangle" && <RightTriangle {...spec} />}
         {spec.kind === "isoscelesAltitude" && <IsoscelesAltitude {...spec} />}

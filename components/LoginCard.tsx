@@ -102,7 +102,7 @@ export function LoginCard({
   }
 
   return (
-    <div className="bg-white border border-[#e2d7c1] rounded-xl p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
+    <div className="bg-white border border-[#c9d6ee] rounded-xl p-7 shadow-[3px_3px_0_rgba(52,97,193,0.13)]">
       {mode === "forgot" ? (
         <>
           <div className="text-[15px] font-semibold text-ink mb-1">Reset your password</div>
@@ -123,7 +123,7 @@ export function LoginCard({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+                  className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
                   required
                 />
                 {error && <div className="text-red-700 text-sm mb-3">{error}</div>}
@@ -150,7 +150,7 @@ export function LoginCard({
             <button
               onClick={() => setMode("login")}
               className={`flex-1 py-2 rounded-lg border text-sm font-medium ${
-                mode === "login" ? "bg-forest text-white border-ink" : "bg-[#eef3e9] text-ink border-[#d5c8ae]"
+                mode === "login" ? "bg-forest text-white border-ink" : "bg-[#e9effb] text-ink border-[#b4c5e6]"
               }`}
             >
               Log in
@@ -158,7 +158,7 @@ export function LoginCard({
             <button
               onClick={() => setMode("signup")}
               className={`flex-1 py-2 rounded-lg border text-sm font-medium ${
-                mode === "signup" ? "bg-forest text-white border-ink" : "bg-[#eef3e9] text-ink border-[#d5c8ae]"
+                mode === "signup" ? "bg-forest text-white border-ink" : "bg-[#e9effb] text-ink border-[#b4c5e6]"
               }`}
             >
               Sign up
@@ -183,7 +183,7 @@ export function LoginCard({
                   placeholder="What should we call you?"
                   autoComplete="given-name"
                   maxLength={40}
-                  className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+                  className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
                   required
                 />
               </>
@@ -194,7 +194,7 @@ export function LoginCard({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
-              className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+              className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
               required
             />
             <div className="flex items-center justify-between mb-1">
@@ -217,7 +217,7 @@ export function LoginCard({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="At least 6 characters"
-              className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+              className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
               required
               minLength={6}
             />

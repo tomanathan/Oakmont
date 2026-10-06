@@ -13,7 +13,7 @@ import { trialDaysLeft, type AccessFields } from "@/lib/subscription";
 
 const STAGE_PILL: Record<PetStage, string> = {
   thriving: "bg-[#eaf6ef] border-[#cde8d9] text-[#2f6f4f]",
-  content: "bg-[#eaf1e5] border-[#c9d8c2] text-[#2c4c3b]",
+  content: "bg-[#e4ecfa] border-[#c2d1ee] text-[#26427e]",
   hungry: "bg-[#fbf1df] border-[#f0ddb8] text-[#9a6a12]",
   cold: "bg-[#e8f1fb] border-[#c9dcf2] text-[#33598f]",
 };
@@ -131,7 +131,9 @@ export function AppShell({
     router.refresh();
   }
 
-  const width = wide ? "max-w-[1180px]" : "max-w-[900px]";
+  // A little wider than the content needs: the notebook page spends some
+  // of it on its binding and margin.
+  const width = wide ? "max-w-[1270px]" : "max-w-[990px]";
 
   return (
     <>
@@ -140,7 +142,7 @@ export function AppShell({
           same product. On phones the right edge is left clear: that's
           where Ozho (and Mochi, once earned) dock as fixed badges -- see
           ScoutCompanion's MOBILE_DOCK_* and SecondCompanion's DOCK_*. */}
-      <header className="sticky top-0 z-30 border-b border-[#e2d7c1] bg-[#faf6ec]/90 backdrop-blur-md font-sans">
+      <header className="sticky top-0 z-30 border-b border-[#c9d6ee] bg-[#f3f6fc]/90 backdrop-blur-md font-sans">
         <div className={`${width} mx-auto flex items-center gap-2 pl-4 pr-[100px] py-2.5 sm:gap-3 sm:pr-4`}>
           <Link href="/dashboard" className="flex flex-shrink-0 items-center gap-2" aria-label="Oakmont Study Center, dashboard">
             <BrandMark size={26} />
@@ -203,9 +205,14 @@ export function AppShell({
         </div>
       </header>
       {trialLeft !== null && <TrialBar daysLeft={trialLeft} width={width} />}
-      <div className={`${width} mx-auto px-4 pb-12 pt-5 font-sans`}>
-        {children}
-        <LegalFooter className="mt-10" />
+      {/* The notebook page every app screen is written on (see .nbk-page in
+          globals.css): spiral binding, margin line, ruled paper. */}
+      <div className={`${width} mx-auto px-3 pb-12 pt-6 font-sans sm:px-6 md:pl-10`}>
+        <div className="nbk-page">
+          <span className="nbk-spiral" aria-hidden />
+          {children}
+        </div>
+        <LegalFooter className="mt-8" />
       </div>
     </>
   );
@@ -216,9 +223,9 @@ export function AppShell({
 function TrialBar({ daysLeft, width }: { daysLeft: number; width: string }) {
   const urgent = daysLeft <= 2;
   return (
-    <div className={`border-b font-sans ${urgent ? "border-[#f0ddb8] bg-[#fbf1df]" : "border-[#e2d7c1] bg-[#eef3e9]"}`}>
+    <div className={`border-b font-sans ${urgent ? "border-[#f0ddb8] bg-[#fbf1df]" : "border-[#c9d6ee] bg-[#e9effb]"}`}>
       <div className={`${width} mx-auto flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 py-2 text-[13px]`}>
-        <span className={urgent ? "text-[#8a5d0f]" : "text-[#2c4c3b]"}>
+        <span className={urgent ? "text-[#8a5d0f]" : "text-[#26427e]"}>
           {daysLeft === 1 ? "Last day of your free trial." : `Free trial: ${daysLeft} days left.`}
         </span>
         <Link
@@ -238,7 +245,7 @@ function Tab({ href, active, children }: { href: string; active: boolean; childr
       href={href}
       aria-current={active ? "page" : undefined}
       className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
-        active ? "bg-[#eef3e9] font-semibold text-ink" : "text-stone-500 hover:text-ink"
+        active ? "bg-[#e9effb] font-semibold text-ink" : "text-stone-500 hover:text-ink"
       }`}
     >
       {children}
@@ -282,22 +289,22 @@ function AccountMenu({ email, onLogout }: { email: string; onLogout: () => void 
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-xl border border-[#e2d7c1] bg-white py-1 shadow-[0_12px_32px_-8px_rgba(38,34,24,0.2)]"
+          className="absolute right-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-xl border border-[#c9d6ee] bg-white py-1 shadow-[0_12px_32px_-8px_rgba(31,47,90,0.2)]"
         >
-          <div className="border-b border-[#eef3e9] px-3.5 py-2.5">
+          <div className="border-b border-[#e9effb] px-3.5 py-2.5">
             <div className="text-[11px] text-stone-500">Signed in as</div>
             <div className="truncate text-[13px] font-medium text-ink">{email}</div>
           </div>
-          <Link role="menuitem" href="/settings" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-stone-700 hover:bg-[#f8f4eb]">
+          <Link role="menuitem" href="/settings" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-stone-700 hover:bg-[#f1f5fc]">
             Settings
           </Link>
-          <Link role="menuitem" href="/settings#wardrobe" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-stone-700 hover:bg-[#f8f4eb]">
+          <Link role="menuitem" href="/settings#wardrobe" onClick={() => setOpen(false)} className="block px-3.5 py-2 text-sm text-stone-700 hover:bg-[#f1f5fc]">
             {PET_NAME}&apos;s wardrobe
           </Link>
           <button
             role="menuitem"
             onClick={onLogout}
-            className="block w-full px-3.5 py-2 text-left text-sm text-stone-700 hover:bg-[#f8f4eb]"
+            className="block w-full px-3.5 py-2 text-left text-sm text-stone-700 hover:bg-[#f1f5fc]"
           >
             Log out
           </button>

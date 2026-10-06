@@ -10,7 +10,7 @@ import { ActivityCalendar, WeeklyTrend, ScoreTrend, PctBar } from "./charts";
 // numbers, then Overview / Activity / Skills / Habits / Scores. Shared by
 // the parent dashboard and the student's own share link.
 
-const RW = "#587356";
+const RW = "#4a67a6";
 const MATH = "#d97a4d";
 const GREEN = "#2f6f4f";
 
@@ -23,12 +23,12 @@ const TONE: Record<Tone, { bg: string; border: string; dot: string; label: strin
 const STATUS: Record<SubskillStatus, { label: string; cls: string }> = {
   mastered: { label: "Mastered", cls: "bg-[#eaf6ef] text-accent" },
   due: { label: "Refresher due", cls: "bg-[#fbf1df] text-[#9a6a12]" },
-  passed: { label: "Passed quiz", cls: "bg-[#eaf1e5] text-[#2c4c3b]" },
-  attempted: { label: "In progress", cls: "bg-[#f3eee4] text-stone-600" },
-  new: { label: "Not started", cls: "bg-white text-stone-500 ring-1 ring-[#e2d7c1]" },
+  passed: { label: "Passed quiz", cls: "bg-[#e4ecfa] text-[#26427e]" },
+  attempted: { label: "In progress", cls: "bg-[#e8eef9] text-stone-600" },
+  new: { label: "Not started", cls: "bg-white text-stone-500 ring-1 ring-[#c9d6ee]" },
 };
 
-const card = "rounded-2xl border border-[#e2d7c1] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.03)] sm:p-6";
+const card = "rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)] sm:p-6";
 const eyebrow = "text-[10.5px] font-bold uppercase tracking-[0.12em] text-stone-500";
 const h2 = "font-display text-[22px] font-semibold text-ink";
 
@@ -145,7 +145,7 @@ export function ParentReportView({
       {/* ---- the week in numbers ---- */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
         <Kpi label="Study time, last 7 days" value={r.week.minutes >= 60 ? `${Math.floor(r.week.minutes / 60)}h ${r.week.minutes % 60}m` : `${r.week.minutes} min`} sub={<Delta now={r.week.minutes} prev={r.week.minutesPrev} unit=" min" />} />
-        <div className="col-span-2 rounded-2xl border border-[#e2d7c1] bg-white p-4 lg:col-span-2">
+        <div className="col-span-2 rounded-2xl border border-[#c9d6ee] bg-white p-4 lg:col-span-2">
           <div className="text-[11.5px] text-stone-500">Study days, last 7 days</div>
           <div className="mt-1 flex items-baseline gap-2">
             <span className="font-display text-[26px] font-semibold text-ink">{r.week.activeDays}/7</span>
@@ -154,7 +154,7 @@ export function ParentReportView({
           <div className="mt-2 flex gap-1.5">
             {r.week.dayFlags.map((d) => (
               <div key={d.day} className="flex flex-1 flex-col items-center gap-1" title={`${d.label}: ${d.minutes ? `${d.minutes} min` : "no study"}`}>
-                <div className={`h-6 w-full rounded-md ${d.active ? "bg-accent" : "bg-[#eef3e9]"}`} style={d.active ? { opacity: 0.45 + Math.min(1, d.minutes / 45) * 0.55 } : undefined} />
+                <div className={`h-6 w-full rounded-md ${d.active ? "bg-accent" : "bg-[#e9effb]"}`} style={d.active ? { opacity: 0.45 + Math.min(1, d.minutes / 45) * 0.55 } : undefined} />
                 <span className="text-[10px] text-stone-500">{d.label.slice(0, 2)}</span>
               </div>
             ))}
@@ -171,9 +171,9 @@ export function ParentReportView({
       </div>
 
       {/* ---- section nav ---- */}
-      <nav className="sticky top-2 z-20 mt-6 flex gap-1 overflow-x-auto rounded-xl border border-[#e2d7c1] bg-white/90 p-1 backdrop-blur" aria-label="Report sections">
+      <nav className="sticky top-2 z-20 mt-6 flex gap-1 overflow-x-auto rounded-xl border border-[#c9d6ee] bg-white/90 p-1 backdrop-blur" aria-label="Report sections">
         {NAV.map(([id, label]) => (
-          <a key={id} href={`#${id}`} className="whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[13px] font-medium text-stone-600 transition-colors hover:bg-[#eef3e9] hover:text-ink">
+          <a key={id} href={`#${id}`} className="whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[13px] font-medium text-stone-600 transition-colors hover:bg-[#e9effb] hover:text-ink">
             {label}
           </a>
         ))}
@@ -202,7 +202,7 @@ export function ParentReportView({
                   <li key={i} className="flex gap-3">
                     <span
                       className={`mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[12px] ${
-                        t.kind === "celebrate" ? "bg-[#eaf6ef] text-accent" : t.kind === "nudge" ? "bg-[#fdf1f1] text-[#b23b3b]" : t.kind === "plan" ? "bg-[#fbf1df] text-[#9a6a12]" : "bg-[#eaf1e5] text-[#2c4c3b]"
+                        t.kind === "celebrate" ? "bg-[#eaf6ef] text-accent" : t.kind === "nudge" ? "bg-[#fdf1f1] text-[#b23b3b]" : t.kind === "plan" ? "bg-[#fbf1df] text-[#9a6a12]" : "bg-[#e4ecfa] text-[#26427e]"
                       }`}
                       aria-hidden
                     >
@@ -229,7 +229,7 @@ export function ParentReportView({
                 {r.plan.pacing.completedUnits}/{r.plan.pacing.totalUnits} skills done
               </span>
             </div>
-            <div className="mt-4 border-t border-[#eef3e9] pt-4">
+            <div className="mt-4 border-t border-[#e9effb] pt-4">
               <div className={eyebrow}>Score goal</div>
               <ScoreGoal scores={r.scores} />
             </div>
@@ -341,9 +341,9 @@ export function ParentReportView({
             ) : (
               <ul className="mt-3 flex flex-col gap-3">
                 {r.traps.map((t, i) => (
-                  <li key={i} className="rounded-xl bg-[#faf6ec] p-3">
+                  <li key={i} className="rounded-xl bg-[#f3f6fc] p-3">
                     <div className="flex items-baseline justify-between gap-2">
-                      <span className="text-[11px] font-semibold uppercase tracking-wide text-[#2c4c3b]">{t.skill}</span>
+                      <span className="text-[11px] font-semibold uppercase tracking-wide text-[#26427e]">{t.skill}</span>
                       <span className="whitespace-nowrap text-[11.5px] font-semibold text-[#b23b3b]">{t.count}×</span>
                     </div>
                     <p className="mt-1 text-[13px] leading-snug text-stone-700">{t.trap}</p>
@@ -377,7 +377,7 @@ export function ParentReportView({
                 {[...r.scores.tests].reverse().map((t, i, arr) => {
                   const prev = arr[i + 1];
                   return (
-                    <div key={t.id} className="flex items-center justify-between gap-3 rounded-xl border border-[#e2d7c1] px-3.5 py-2.5 text-sm">
+                    <div key={t.id} className="flex items-center justify-between gap-3 rounded-xl border border-[#c9d6ee] px-3.5 py-2.5 text-sm">
                       <span className="text-stone-500">{new Date(t.takenAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
                       <span className="text-right">
                         <span className="font-semibold text-ink">{t.composite}</span>
@@ -409,7 +409,7 @@ export function ParentReportView({
 
 function Kpi({ label, value, sub, className = "" }: { label: string; value: string; sub?: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-[#e2d7c1] bg-white p-4 ${className}`}>
+    <div className={`rounded-2xl border border-[#c9d6ee] bg-white p-4 ${className}`}>
       <div className="text-[11.5px] text-stone-500">{label}</div>
       <div className="mt-1 font-display text-[26px] font-semibold leading-tight text-ink">{value}</div>
       <div className="mt-0.5 min-h-[16px]">{sub}</div>
@@ -437,7 +437,7 @@ function ScoreGoal({ scores }: { scores: ParentReport["scores"] }) {
   const pos = (v: number) => `${((v - lo) / (hi - lo)) * 100}%`;
   return (
     <div className="mt-3">
-      <div className="relative h-2 rounded-full bg-[#e6dcc8]">
+      <div className="relative h-2 rounded-full bg-[#d3ddf1]">
         {scores.baseline && <div className="absolute top-1/2 h-3 w-0.5 -translate-y-1/2 bg-stone-400" style={{ left: pos(scores.baseline) }} title={`Starting point ${scores.baseline}`} />}
         {latest && <div className="absolute inset-y-0 left-0 rounded-full bg-forest" style={{ width: pos(latest) }} />}
         {scores.goal && <div className="absolute top-1/2 h-4 w-1 -translate-y-1/2 rounded bg-accent" style={{ left: pos(scores.goal) }} title={`Goal ${scores.goal}`} />}
@@ -491,8 +491,8 @@ function MasteryBar({ mastery }: { mastery: ParentReport["mastery"] }) {
     { n: mastery.mastered - mastery.due, color: GREEN, label: "Mastered" },
     { n: mastery.due, color: "#c9971b", label: "Refresher due" },
     { n: mastery.passed, color: RW, label: "Passed quiz" },
-    { n: mastery.started - mastery.mastered - mastery.passed, color: "#c9d8c2", label: "In progress" },
-    { n: mastery.total - mastery.started, color: "#eef3e9", label: "Not started" },
+    { n: mastery.started - mastery.mastered - mastery.passed, color: "#c2d1ee", label: "In progress" },
+    { n: mastery.total - mastery.started, color: "#e9effb", label: "Not started" },
   ];
   return (
     <div className={card}>
@@ -528,7 +528,7 @@ function SkillTable({ skills, now }: { skills: SkillRow[]; now: number }) {
   const color = section === "Math" ? MATH : RW;
   return (
     <div className={card}>
-      <div className="mb-3 flex gap-1 rounded-xl bg-[#eef3e9] p-1">
+      <div className="mb-3 flex gap-1 rounded-xl bg-[#e9effb] p-1">
         {(["Reading and Writing", "Math"] as const).map((s) => (
           <button
             key={s}
@@ -544,7 +544,7 @@ function SkillTable({ skills, now }: { skills: SkillRow[]; now: number }) {
         {byDomain.map(([domain, rows]) => (
           <div key={domain}>
             <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-stone-500">{domain}</div>
-            <div className="flex flex-col divide-y divide-[#eef3e9]">
+            <div className="flex flex-col divide-y divide-[#e9effb]">
               {rows.map((s) => (
                 <div key={s.id} className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1 py-2.5 sm:grid-cols-[minmax(0,1fr)_104px_150px_118px]">
                   <span className="min-w-0 truncate text-[13.5px] font-medium text-ink" title={s.name}>
@@ -580,7 +580,7 @@ function PaceBlock({ p }: { p: ParentReport["pace"][number] }) {
           {p.avgSeconds === null ? "no timed answers yet" : `${p.avgSeconds}s avg vs ${p.targetSeconds}s on the SAT`}
         </span>
       </div>
-      <div className="relative mt-2 h-2 rounded-full bg-[#e6dcc8]">
+      <div className="relative mt-2 h-2 rounded-full bg-[#d3ddf1]">
         {ratio !== null && <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${Math.min(100, (ratio / 2) * 100)}%`, background: color }} />}
         <div className="absolute top-1/2 h-4 w-0.5 -translate-y-1/2 bg-forest" style={{ left: "50%" }} title="SAT pace" />
       </div>
@@ -600,7 +600,7 @@ function SessionTable({ sessions }: { sessions: Session[] }) {
   const shown = all ? sessions : sessions.slice(0, 6);
   return (
     <div className="mt-3">
-      <div className="flex flex-col divide-y divide-[#eef3e9]">
+      <div className="flex flex-col divide-y divide-[#e9effb]">
         {shown.map((s, i) => {
           const d = new Date(s.start);
           return (
@@ -631,7 +631,7 @@ function SessionTable({ sessions }: { sessions: Session[] }) {
         })}
       </div>
       {sessions.length > 6 && (
-        <button onClick={() => setAll((v) => !v)} className="mt-2 text-[12.5px] font-semibold text-[#2c4c3b] hover:underline">
+        <button onClick={() => setAll((v) => !v)} className="mt-2 text-[12.5px] font-semibold text-[#26427e] hover:underline">
           {all ? "Show fewer" : `Show all ${sessions.length}`}
         </button>
       )}
@@ -641,11 +641,11 @@ function SessionTable({ sessions }: { sessions: Session[] }) {
 
 const FEED_ICON: Record<FeedEvent["kind"], { icon: string; cls: string }> = {
   mastered: { icon: "★", cls: "bg-[#eaf6ef] text-accent" },
-  passed: { icon: "✓", cls: "bg-[#eaf1e5] text-[#2c4c3b]" },
-  quiz: { icon: "Q", cls: "bg-[#f3eee4] text-stone-600" },
-  review: { icon: "↻", cls: "bg-[#f3eee4] text-stone-600" },
+  passed: { icon: "✓", cls: "bg-[#e4ecfa] text-[#26427e]" },
+  quiz: { icon: "Q", cls: "bg-[#e8eef9] text-stone-600" },
+  review: { icon: "↻", cls: "bg-[#e8eef9] text-stone-600" },
   test: { icon: "◎", cls: "bg-[#fbe9dd] text-[#b5602f]" },
-  lesson: { icon: "¶", cls: "bg-[#f3eee4] text-stone-600" },
+  lesson: { icon: "¶", cls: "bg-[#e8eef9] text-stone-600" },
 };
 
 function Feed({ events, now }: { events: FeedEvent[]; now: number }) {
@@ -670,7 +670,7 @@ function Feed({ events, now }: { events: FeedEvent[]; now: number }) {
         ))}
       </ol>
       {events.length > 8 && (
-        <button onClick={() => setAll((v) => !v)} className="mt-3 text-[12.5px] font-semibold text-[#2c4c3b] hover:underline">
+        <button onClick={() => setAll((v) => !v)} className="mt-3 text-[12.5px] font-semibold text-[#26427e] hover:underline">
           {all ? "Show less" : `Show all ${events.length}`}
         </button>
       )}

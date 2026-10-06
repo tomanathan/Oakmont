@@ -60,7 +60,7 @@ export function SubscribeClient({
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {monthly && (
-          <div className="bg-white border border-[#e2d7c1] rounded-2xl p-6 flex flex-col">
+          <div className="bg-white border border-[#c9d6ee] rounded-2xl p-6 flex flex-col">
             <div className="mb-1 flex items-baseline gap-1.5">
               <span className="text-[36px] leading-none font-display font-semibold text-ink">
                 {formatPrice(monthly.amountCents, monthly.currency)}
@@ -74,7 +74,7 @@ export function SubscribeClient({
             <button
               onClick={() => startCheckout("monthly")}
               disabled={loadingPlan !== null}
-              className="mt-auto w-full py-3 rounded-lg border border-[#d5c8ae] text-ink font-semibold text-sm disabled:opacity-60"
+              className="mt-auto w-full py-3 rounded-lg border border-[#b4c5e6] text-ink font-semibold text-sm disabled:opacity-60"
             >
               {loadingPlan === "monthly" ? "Redirecting..." : "Choose monthly"}
             </button>
@@ -114,7 +114,7 @@ export function SubscribeClient({
       {error && <div className="text-red-700 text-sm mt-4 text-center">{error}</div>}
 
       {/* Parents usually pay: one tap sends them straight to it. */}
-      <div className="mt-6 rounded-2xl border border-[#e2d7c1] bg-[#faf6ec] p-5 text-center">
+      <div className="mt-6 rounded-2xl border border-[#c9d6ee] bg-[#f3f6fc] p-5 text-center">
         {parentConnected ? (
           asked === "sent" ? (
             <div className="text-sm font-semibold text-[#2f6f4f]">Sent. We emailed your parent a link to choose your plan.</div>
@@ -124,7 +124,7 @@ export function SubscribeClient({
               <button
                 onClick={askParent}
                 disabled={asked === "sending"}
-                className="mt-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-ink ring-1 ring-[#d5c8ae] disabled:opacity-60"
+                className="mt-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-ink ring-1 ring-[#b4c5e6] disabled:opacity-60"
               >
                 {asked === "sending" ? "Sending..." : "Ask my parent to choose my plan"}
               </button>

@@ -118,17 +118,17 @@ export function PlanClient({
         </div>
       )}
 
-      <div className="bg-[#eaf1e5] border border-[#c9d8c2] rounded-xl p-5 mb-6">
+      <div className="bg-[#e4ecfa] border border-[#c2d1ee] rounded-xl p-5 mb-6">
         <div className="flex justify-between items-baseline mb-2">
           <span className="text-sm font-semibold text-ink">Overall progress</span>
-          <span className="text-sm text-[#7a7565]">
+          <span className="text-sm text-[#66728f]">
             {doneSubskills} / {allSubskills.length} passed &middot; {masteredSubskills} mastered &middot;{" "}
             <span className="text-accent font-semibold">{weekPct}%</span>
           </span>
         </div>
-        <div className="h-2.5 bg-white rounded-md overflow-hidden ring-1 ring-[#c9d8c2]">
+        <div className="h-2.5 bg-white rounded-md overflow-hidden ring-1 ring-[#c2d1ee]">
           <div
-            className="h-full bg-[#3d7a56] transition-all duration-700 ease-out"
+            className="h-full bg-[#3461c1] transition-all duration-700 ease-out"
             style={{ width: `${weekPct}%` }}
           />
         </div>
@@ -148,12 +148,12 @@ export function PlanClient({
             <div
               key={w.week}
               className={`border rounded-[10px] overflow-hidden ${
-                isCurrentWeek ? "border-[#c9d8c2]" : "border-[#e2d7c1]"
+                isCurrentWeek ? "border-[#c2d1ee]" : "border-[#c9d6ee]"
               } bg-white`}
             >
               <button
                 onClick={() => toggleWeek(w.week)}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 text-left hover:bg-[#f8f4eb]"
+                className="w-full flex items-center gap-3 px-3.5 py-2.5 text-left hover:bg-[#f1f5fc]"
               >
                 <div className="text-xs font-bold text-stone-500 w-14 flex-shrink-0">
                   Week {w.week}
@@ -163,7 +163,7 @@ export function PlanClient({
                 </div>
                 <div className="flex-1 flex items-center gap-2 flex-wrap min-w-0">
                   {isCurrentWeek && (
-                    <span className="text-[10px] font-bold uppercase tracking-wide text-[#587356] bg-[#eaf1e5] px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-[#4a67a6] bg-[#e4ecfa] px-1.5 py-0.5 rounded">
                       This week
                     </span>
                   )}
@@ -194,7 +194,7 @@ export function PlanClient({
               </button>
 
               {isOpen && (
-                <div className="border-t border-[#eef3e9] divide-y divide-[#f6f1e6]">
+                <div className="border-t border-[#e9effb] divide-y divide-[#eef3fb]">
                   {w.days.map((d) => {
                     const dayDate = addUTCDays(weekStart, d.day - 1);
                     const isToday = isCurrentWeek && d.day - 1 === currentDayOfWeek;
@@ -204,7 +204,7 @@ export function PlanClient({
                       <div
                         key={d.day}
                         className={`flex items-start gap-3 px-3.5 py-2.5 ${
-                          isExamDay ? "bg-[#fffaf0]" : isToday ? "bg-[#f8f4eb]" : ""
+                          isExamDay ? "bg-[#fffaf0]" : isToday ? "bg-[#f1f5fc]" : ""
                         }`}
                       >
                         <div className="w-14 flex-shrink-0 pt-0.5">
@@ -218,7 +218,7 @@ export function PlanClient({
                           {isExamDay ? (
                             <div className="text-[9px] font-bold uppercase text-[#9a6a12]">SAT day</div>
                           ) : isToday ? (
-                            <div className="text-[9px] font-bold uppercase text-[#587356]">Today</div>
+                            <div className="text-[9px] font-bold uppercase text-[#4a67a6]">Today</div>
                           ) : null}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -277,7 +277,7 @@ function DayContent({
     return (
       <button
         onClick={() => onNavigate("/review")}
-        className="flex w-full items-center gap-3 rounded-lg border border-[#d3e0cc] bg-[#eef4ea] px-2.5 py-1.5 text-left transition-colors hover:border-[#9fbb97] hover:bg-[#e4eedf]"
+        className="flex w-full items-center gap-3 rounded-lg border border-[#d3e0cc] bg-[#ecf1fb] px-2.5 py-1.5 text-left transition-colors hover:border-[#9fbb97] hover:bg-[#e4eedf]"
       >
         <div className="min-w-0 flex-1">
           <div className="text-sm font-medium text-ink">Mixed review</div>

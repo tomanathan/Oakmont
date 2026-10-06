@@ -1,13 +1,13 @@
 /* Lesson video: every class is lv- and scoped under .lv. Notebook tokens. */
 .lv {
-  --ink: #2a2fe0;
-  --ink-deep: #1d22a8;
-  --paper: #fffcf1;
-  --pink: #ff5fb4;
-  --butter: #ffee7c;
-  --cyan: #4fe6f2;
-  --lilac: #c8b4ff;
-  --tang: #ff9a4d;
+  --ink: #3461c1;
+  --ink-deep: #1f2f5a;
+  --paper: #fffdf7;
+  --pink: #f1b287;
+  --butter: #fbe7a3;
+  --cyan: #b9dff3;
+  --lilac: #d4dcf6;
+  --tang: #f1b287;
   --right: #1fa971;
   margin: 0;
   color: var(--ink);
@@ -22,7 +22,7 @@
   overflow: hidden;
   border: 2px solid var(--ink);
   border-radius: 14px;
-  background: linear-gradient(160deg, #e4daff 0%, #efe8ff 45%, #fff3c4 100%);
+  background: linear-gradient(160deg, #dde7f7 0%, #e9f0fb 45%, #fbf3d8 100%);
 }
 .lv-stage {
   position: absolute;
@@ -43,8 +43,8 @@
   position: absolute;
   inset: 0;
   background-color: var(--paper);
-  background-image: linear-gradient(90deg, transparent 54px, rgba(255, 154, 77, 0.5) 54px, rgba(255, 154, 77, 0.5) 56px, transparent 56px),
-    repeating-linear-gradient(180deg, transparent 0 31px, rgba(42, 47, 224, 0.08) 31px 32px);
+  background-image: linear-gradient(90deg, transparent 54px, rgba(241, 178, 135, 0.5) 54px, rgba(241, 178, 135, 0.5) 56px, transparent 56px),
+    repeating-linear-gradient(180deg, transparent 0 31px, rgba(52, 97, 193, 0.08) 31px 32px);
 }
 
 /* the Polaroid */
@@ -95,7 +95,7 @@
 .lv-wall {
   position: absolute;
   inset: 0;
-  background: radial-gradient(rgba(200, 180, 255, 0.85) 1.6px, transparent 2.2px) 0 0 / 22px 22px, linear-gradient(180deg, #fff6c6, #ffee9c);
+  background: radial-gradient(rgba(190, 203, 240, 0.85) 1.6px, transparent 2.2px) 0 0 / 22px 22px, linear-gradient(180deg, #fdf6dc, #fbeab8);
 }
 .lv-floor {
   position: absolute;
@@ -104,7 +104,7 @@
   bottom: 0;
   height: 70px;
   border-top: 2px solid var(--ink);
-  background: repeating-linear-gradient(180deg, #dccbff 0 22px, #d2beff 22px 24px);
+  background: repeating-linear-gradient(180deg, #d9e1f7 0 22px, #cdd7f3 22px 24px);
 }
 .lv-floor::before {
   content: "";
@@ -529,11 +529,11 @@
   width: 100%;
   margin: 0 0 16px;
   padding: 10px 14px 10px 10px;
-  border: 2px solid #2a2fe0;
+  border: 2px solid #3461c1;
   border-radius: 14px;
-  background: #fffcf1;
-  box-shadow: 3px 3px 0 #2a2fe0;
-  color: #2a2fe0;
+  background: #fffdf7;
+  box-shadow: 3px 3px 0 #3461c1;
+  color: #3461c1;
   font-family: var(--font-ui), system-ui, sans-serif;
   text-align: left;
   cursor: pointer;
@@ -541,14 +541,14 @@
 }
 .lv-open:hover {
   transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0 #2a2fe0;
+  box-shadow: 4px 4px 0 #3461c1;
 }
 .lv-open:active {
   transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0 #2a2fe0;
+  box-shadow: 1px 1px 0 #3461c1;
 }
 .lv-open:focus-visible {
-  outline: 3px solid #2a2fe0;
+  outline: 3px solid #3461c1;
   outline-offset: 3px;
 }
 .lv-open-dog {
@@ -558,8 +558,8 @@
   width: 56px;
   height: 44px;
   border-radius: 10px;
-  background: #ffee7c;
-  border: 2px solid #2a2fe0;
+  background: #fbe7a3;
+  border: 2px solid #3461c1;
 }
 .lv-open-t {
   display: flex;
@@ -574,7 +574,7 @@
 .lv-open-t small {
   font-size: 12.5px;
   font-weight: 500;
-  color: #1d22a8;
+  color: #1f2f5a;
 }
 .lv-open-play {
   flex: none;
@@ -584,8 +584,8 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: 2px solid #2a2fe0;
-  background: #ff5fb4;
+  border: 2px solid #3461c1;
+  background: #f1b287;
   font-size: 13px;
   padding-left: 3px;
 }
@@ -598,7 +598,7 @@
   padding: 0 8px;
   border: 0;
   background: none;
-  color: #1d22a8;
+  color: #1f2f5a;
   font: 600 13px var(--font-ui), system-ui, sans-serif;
   text-decoration: underline;
   cursor: pointer;
@@ -1139,12 +1139,12 @@
   right: 3%;
   width: 34px;
   height: 34px;
-  border: 2px solid var(--ink, #2a2fe0);
+  border: 2px solid var(--ink, #3461c1);
   border-radius: 50%;
   background: #fff;
-  color: #2a2fe0;
+  color: #3461c1;
   font: 700 20px/1 system-ui, sans-serif;
-  box-shadow: 2px 2px 0 #2a2fe0;
+  box-shadow: 2px 2px 0 #3461c1;
   cursor: pointer;
   z-index: 2;
 }

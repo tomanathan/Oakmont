@@ -61,7 +61,7 @@ export function SubjectRing({
             key={i}
             d={arcPath(startDeg, endDeg)}
             fill="none"
-            stroke={state === "mastered" ? color : state === "attempted" ? lightColor : "#e5dccb"}
+            stroke={state === "mastered" ? color : state === "attempted" ? lightColor : "#d3ddf1"}
             strokeWidth={strokeWidth}
             strokeLinecap="round"
           />

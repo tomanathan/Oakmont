@@ -3,7 +3,7 @@ import type { PetState } from "@/lib/pet";
 
 const STAGE_BG: Record<string, string> = {
   thriving: "bg-[#eaf6ef] border-[#cde8d9]",
-  content: "bg-[#eaf1e5] border-[#c9d8c2]",
+  content: "bg-[#e4ecfa] border-[#c2d1ee]",
   hungry: "bg-[#fbf1df] border-[#f0ddb8]",
   cold: "bg-[#e8f1fb] border-[#c9dcf2]",
 };

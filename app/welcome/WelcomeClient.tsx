@@ -242,7 +242,7 @@ export function WelcomeClient(props: Props) {
           <div className="flex gap-1.5">
             {STEPS.map((s, i) => (
               <div key={s} className="flex-1">
-                <div className={`h-1.5 rounded-full transition-colors ${i <= stepIndex ? "bg-forest" : "bg-[#e5dccb]"}`} />
+                <div className={`h-1.5 rounded-full transition-colors ${i <= stepIndex ? "bg-forest" : "bg-[#d3ddf1]"}`} />
                 <div className={`mt-1.5 hidden text-[11px] sm:block ${i === stepIndex ? "font-semibold text-ink" : "text-stone-500"}`}>
                   {STEP_LABELS[s]}
                 </div>
@@ -254,10 +254,10 @@ export function WelcomeClient(props: Props) {
 
       {/* Ozho, talking. */}
       <div className="mb-6 flex items-end gap-3">
-        <div className="flex h-[72px] w-[72px] flex-shrink-0 items-end justify-center rounded-2xl bg-[#fef8f2] pb-1.5 ring-1 ring-[#f0d0b3]">
+        <div className="flex h-[72px] w-[72px] flex-shrink-0 items-end justify-center rounded-2xl bg-[#f7f9fe] pb-1.5 ring-1 ring-[#f0d0b3]">
           <PetAvatar stage="thriving" size={58} />
         </div>
-        <div key={step} className="animate-fade-up relative mb-2 rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[15px] leading-snug text-ink shadow-[0_1px_2px_rgba(38,34,24,0.05),0_6px_18px_rgba(38,34,24,0.06)] ring-1 ring-[#e2d7c1]">
+        <div key={step} className="animate-fade-up relative mb-2 rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[15px] leading-snug text-ink shadow-[3px_3px_0_rgba(52,97,193,0.13)] ring-1 ring-[#c9d6ee]">
           {ozhoLine[step]}
         </div>
       </div>
@@ -324,7 +324,7 @@ export function WelcomeClient(props: Props) {
               />
             )}
 
-            <div className="mt-5 rounded-xl bg-[#f6f1e6] p-4" aria-live="polite">
+            <div className="mt-5 rounded-xl bg-[#eef3fb] p-4" aria-live="polite">
               <div className="font-display text-[26px] font-semibold leading-none text-ink">
                 {planWeeks} <span className="text-[15px] font-normal text-stone-500">{planWeeks === 1 ? "week" : "weeks"} of study</span>
               </div>
@@ -363,7 +363,7 @@ export function WelcomeClient(props: Props) {
                 className={`${INPUT} w-40 disabled:bg-stone-50`}
               />
               <label className="flex items-center gap-2 text-sm text-stone-600">
-                <input type="checkbox" checked={noScore} onChange={(e) => setNoScore(e.target.checked)} className="h-4 w-4 accent-[#1d2621]" />
+                <input type="checkbox" checked={noScore} onChange={(e) => setNoScore(e.target.checked)} className="h-4 w-4 accent-[#1f2f5a]" />
                 I don&apos;t have one yet
               </label>
             </div>
@@ -385,7 +385,7 @@ export function WelcomeClient(props: Props) {
                 setGoal(Number(e.target.value));
                 setGoalTouched(true);
               }}
-              className="mt-3 w-full accent-[#1d2621]"
+              className="mt-3 w-full accent-[#1f2f5a]"
             />
             <div className="mt-2 flex flex-wrap gap-2">
               {GOAL_PRESETS.map((g) => (
@@ -396,7 +396,7 @@ export function WelcomeClient(props: Props) {
                     setGoalTouched(true);
                   }}
                   className={`rounded-full px-3 py-1 text-[13px] font-medium ring-1 transition-colors ${
-                    goal === g ? "bg-forest text-white ring-ink" : "bg-white text-stone-600 ring-[#d5c8ae] hover:text-ink"
+                    goal === g ? "bg-forest text-white ring-ink" : "bg-white text-stone-600 ring-[#b4c5e6] hover:text-ink"
                   }`}
                 >
                   {g}
@@ -404,7 +404,7 @@ export function WelcomeClient(props: Props) {
               ))}
             </div>
             {!noScore && validBaseline !== null && (
-              <p className="mt-4 rounded-xl bg-[#f6f1e6] p-3.5 text-[13px] leading-relaxed text-stone-600">
+              <p className="mt-4 rounded-xl bg-[#eef3fb] p-3.5 text-[13px] leading-relaxed text-stone-600">
                 {goal > validBaseline ? (
                   <>
                     <span className="font-semibold text-ink">+{goal - validBaseline} points</span> from {validBaseline}. Your practice test scores
@@ -468,7 +468,7 @@ export function WelcomeClient(props: Props) {
                     </div>
                   )}
                 </div>
-                <div className="rounded-xl bg-[#f6f1e6] p-4 text-[13px] leading-relaxed text-stone-600">
+                <div className="rounded-xl bg-[#eef3fb] p-4 text-[13px] leading-relaxed text-stone-600">
                   <div className="mb-1.5 font-semibold text-ink">What your parent gets</div>
                   <ul className="space-y-1">
                     <li>When you study and for how long</li>
@@ -551,7 +551,7 @@ export function WelcomeClient(props: Props) {
               />
             </dl>
 
-            <div className="mt-5 rounded-xl border border-[#e2d7c1] p-4">
+            <div className="mt-5 rounded-xl border border-[#c9d6ee] p-4">
               <div className="text-[12px] font-semibold uppercase tracking-[0.08em] text-stone-500">Week 1</div>
               <ul className="mt-2 space-y-1.5">
                 {firstWeek.map((s, i) => (
@@ -592,19 +592,19 @@ export function WelcomeClient(props: Props) {
 }
 
 const CARD =
-  "rounded-2xl border border-[#e2d7c1] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)] sm:p-7";
+  "rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)] sm:p-7";
 const H1 = "font-display text-[24px] font-semibold leading-tight text-ink sm:text-[28px]";
 const SUB = "mt-1.5 text-[14px] leading-relaxed text-stone-500";
-const INPUT = "w-full rounded-lg border border-[#d5c8ae] px-3 py-2.5 text-sm focus:border-[#587356] focus:outline-none";
-const PRIMARY = "rounded-xl bg-forest px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:bg-[#e6dece] disabled:text-stone-500 disabled:hover:opacity-100";
+const INPUT = "w-full rounded-lg border border-[#b4c5e6] px-3 py-2.5 text-sm focus:border-[#4a67a6] focus:outline-none";
+const PRIMARY = "rounded-xl bg-forest px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:bg-[#d6dff2] disabled:text-stone-500 disabled:hover:opacity-100";
 
 function choiceCard(on: boolean) {
-  return `rounded-xl p-4 text-left ring-1 transition-colors ${on ? "bg-forest text-white ring-ink" : "bg-white text-ink ring-[#d5c8ae] hover:ring-[#b7cbb0]"}`;
+  return `rounded-xl p-4 text-left ring-1 transition-colors ${on ? "bg-forest text-white ring-ink" : "bg-white text-ink ring-[#b4c5e6] hover:ring-[#a8bde6]"}`;
 }
 
 function chip(on: boolean) {
   return `rounded-xl px-3.5 py-3 text-left ring-1 transition-colors ${
-    on ? "bg-forest text-white ring-ink" : "bg-white text-ink ring-[#d5c8ae] hover:ring-[#b7cbb0]"
+    on ? "bg-forest text-white ring-ink" : "bg-white text-ink ring-[#b4c5e6] hover:ring-[#a8bde6]"
   }`;
 }
 
@@ -628,7 +628,7 @@ function Footer({ error, onBack, children }: { error: string; onBack?: () => voi
 
 function Summary({ label, value, note }: { label: string; value: string; note: string }) {
   return (
-    <div className="rounded-xl bg-[#f6f1e6] p-3.5">
+    <div className="rounded-xl bg-[#eef3fb] p-3.5">
       <dt className="text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-500">{label}</dt>
       <dd className="mt-1 font-display text-[18px] font-semibold leading-tight text-ink">{value}</dd>
       <dd className="mt-0.5 truncate text-[12px] text-stone-500">{note}</dd>
@@ -639,7 +639,7 @@ function Summary({ label, value, note }: { label: string; value: string; note: s
 const TOUR = [
   {
     title: "A plan for every day",
-    color: "#587356",
+    color: "#4a67a6",
     body: "Your dashboard shows today's lesson or review. The Plan page lays out every week until test day.",
   },
   {
@@ -659,7 +659,7 @@ const TOUR = [
   },
   {
     title: "Official practice tests",
-    color: "#2c4c3b",
+    color: "#26427e",
     body: "Take the practice tests in Bluebook when your plan schedules them, then log the scores. Your plan shifts toward your weakest areas.",
   },
   {
@@ -695,7 +695,7 @@ function MeetOzho() {
     { title: "Make a friend", body: `Keep a 30-day streak and ${SECOND_PET_NAME} comes to stay.` },
   ];
   return (
-    <div ref={ref} className="mt-5 rounded-xl border border-[#f0d0b3] bg-[#fef8f2] p-5">
+    <div ref={ref} className="mt-5 rounded-xl border border-[#f0d0b3] bg-[#f7f9fe] p-5">
       <div className="flex items-center gap-4">
         <div className="flex h-[76px] w-[76px] flex-shrink-0 items-end justify-center rounded-2xl bg-white/70 pb-1.5">
           <PetAvatar stage="thriving" size={62} />

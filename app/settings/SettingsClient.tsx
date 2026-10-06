@@ -269,7 +269,7 @@ export function SettingsClient({
 
       <PetCard petName={petName} state={petState} costume={costume !== "none" ? costume : null} />
 
-      <div id="wardrobe" className="scroll-mt-[72px] bg-white border border-[#e2d7c1] rounded-xl p-6 mb-6">
+      <div id="wardrobe" className="scroll-mt-[72px] bg-white border border-[#c9d6ee] rounded-xl p-6 mb-6">
         <div className="flex items-center justify-between gap-2 mb-1">
           <div className="text-[15px] font-semibold text-ink">Ozho&apos;s wardrobe</div>
           <div className="flex items-center gap-1" aria-label={`${sectionsCompleted} of ${totalSections} sections completed`}>
@@ -300,10 +300,10 @@ export function SettingsClient({
                 disabled={!unlocked || equipping !== null}
                 className={`flex flex-col items-center gap-2 rounded-lg border p-3 text-center transition-colors ${
                   selected
-                    ? "border-ink bg-[#f6f1e6]"
+                    ? "border-ink bg-[#eef3fb]"
                     : unlocked
-                    ? "border-[#e2d7c1] hover:border-[#c9d8c2]"
-                    : "border-[#e2d7c1] opacity-50 cursor-default"
+                    ? "border-[#c9d6ee] hover:border-[#c2d1ee]"
+                    : "border-[#c9d6ee] opacity-50 cursor-default"
                 }`}
               >
                 <PixelDog size={40} costume={unlocked ? c.id : null} />
@@ -333,7 +333,7 @@ export function SettingsClient({
           a costume. Shown here in the Ozho section (not its own top-level
           section) since it's still fundamentally about Ozho's world, just
           a rarer unlock than anything in the wardrobe above. */}
-      <div className="bg-white border border-[#e2d7c1] rounded-xl p-6 mb-6 flex items-center gap-4">
+      <div className="bg-white border border-[#c9d6ee] rounded-xl p-6 mb-6 flex items-center gap-4">
         <PixelDog size={56} variant="mochi" costume={null} className={daysStudied < secondPetUnlockDays ? "opacity-40 grayscale" : ""} />
         <div className="flex-1 min-w-0">
           <div className="text-[15px] font-semibold text-ink mb-1">{secondPetName}</div>
@@ -357,7 +357,7 @@ export function SettingsClient({
 
       <form
         onSubmit={saveGoals}
-        className="bg-white border border-[#e2d7c1] rounded-xl p-6 mb-6"
+        className="bg-white border border-[#c9d6ee] rounded-xl p-6 mb-6"
       >
         <div className="text-[15px] font-semibold text-ink mb-1">You and your goals</div>
         <div className="text-xs text-stone-500 mb-4">
@@ -372,7 +372,7 @@ export function SettingsClient({
           maxLength={40}
           autoComplete="given-name"
           placeholder="What should we call you?"
-          className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+          className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
         />
 
         <label className="block text-sm text-stone-700 mb-1">Baseline score (400-1600)</label>
@@ -383,7 +383,7 @@ export function SettingsClient({
           value={baseline}
           onChange={(e) => setBaseline(e.target.value)}
           placeholder="e.g. 1180"
-          className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+          className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
         />
 
         <label className="block text-sm text-stone-700 mb-1">Goal score (400-1600)</label>
@@ -394,7 +394,7 @@ export function SettingsClient({
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
           placeholder="e.g. 1450"
-          className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-3.5 text-sm focus:outline-none focus:border-[#587356]"
+          className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
         />
 
         <label className="block text-sm text-stone-700 mb-1">Target SAT test date</label>
@@ -402,7 +402,7 @@ export function SettingsClient({
           type="date"
           value={testDate}
           onChange={(e) => setTestDate(e.target.value)}
-          className="w-full px-3 py-2.5 rounded-lg border border-[#d5c8ae] mb-4 text-sm focus:outline-none focus:border-[#587356]"
+          className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-4 text-sm focus:outline-none focus:border-[#4a67a6]"
         />
 
         {saveError && <div className="text-red-700 text-sm mb-3">{saveError}</div>}
@@ -420,8 +420,8 @@ export function SettingsClient({
       {/* Parent access: parents on this account (with setup status), adding
           another by email, the invite code, and the no-login share link. */}
       <div id="parents" className="scroll-mt-[72px] text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Parent access</div>
-      <div className="bg-white border border-[#e2d7c1] rounded-xl p-6 mb-6">
-        <div className="mb-5 rounded-lg bg-[#f6f1e6] p-3.5 text-xs leading-relaxed text-stone-600">
+      <div className="bg-white border border-[#c9d6ee] rounded-xl p-6 mb-6">
+        <div className="mb-5 rounded-lg bg-[#eef3fb] p-3.5 text-xs leading-relaxed text-stone-600">
           <span className="font-semibold text-ink">Your parent&apos;s dashboard</span> follows your prep as you go: study sessions, lessons,
           quizzes and reviews, accuracy on every skill, the mistakes that repeat, and your practice test scores against your goal. They
           also get a summary email every Sunday.
@@ -451,7 +451,7 @@ export function SettingsClient({
           }
         />
 
-        <div className="border-t border-[#eef3e9] my-5" />
+        <div className="border-t border-[#e9effb] my-5" />
 
         <div className="text-[15px] font-semibold text-ink mb-1">Or share an invite code</div>
         <div className="text-xs text-stone-500 mb-3">
@@ -460,7 +460,7 @@ export function SettingsClient({
         </div>
         {inviteCode ? (
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <span className="font-mono text-lg font-semibold text-ink tracking-wide bg-[#f6f1e6] border border-[#d5c8ae] rounded-lg px-3 py-1.5">
+            <span className="font-mono text-lg font-semibold text-ink tracking-wide bg-[#eef3fb] border border-[#b4c5e6] rounded-lg px-3 py-1.5">
               {inviteCode}
             </span>
             <button
@@ -477,7 +477,7 @@ export function SettingsClient({
           <button
             onClick={generateInviteCode}
             disabled={generatingCode}
-            className="px-3.5 py-2 rounded-lg border border-[#d5c8ae] text-ink font-semibold text-xs disabled:opacity-60"
+            className="px-3.5 py-2 rounded-lg border border-[#b4c5e6] text-ink font-semibold text-xs disabled:opacity-60"
           >
             {generatingCode ? "Working..." : inviteCode ? "Generate a new code" : "Generate a code"}
           </button>
@@ -492,7 +492,7 @@ export function SettingsClient({
           )}
         </div>
 
-        <div className="border-t border-[#eef3e9] my-5" />
+        <div className="border-t border-[#e9effb] my-5" />
 
         <div className="text-[15px] font-semibold text-ink mb-1">Shareable link</div>
         <div className="text-xs text-stone-500 mb-3">
@@ -500,7 +500,7 @@ export function SettingsClient({
         </div>
         {shareToken ? (
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <span className="font-mono text-xs text-ink bg-[#f6f1e6] border border-[#d5c8ae] rounded-lg px-3 py-1.5 truncate max-w-[280px]">
+            <span className="font-mono text-xs text-ink bg-[#eef3fb] border border-[#b4c5e6] rounded-lg px-3 py-1.5 truncate max-w-[280px]">
               {typeof window !== "undefined" ? `${window.location.origin}/share/${shareToken}` : `/share/${shareToken}`}
             </span>
             <button
@@ -522,7 +522,7 @@ export function SettingsClient({
           <button
             onClick={generateShareLink}
             disabled={generatingLink}
-            className="px-3.5 py-2 rounded-lg border border-[#d5c8ae] text-ink font-semibold text-xs disabled:opacity-60"
+            className="px-3.5 py-2 rounded-lg border border-[#b4c5e6] text-ink font-semibold text-xs disabled:opacity-60"
           >
             {generatingLink ? "Working..." : shareToken ? "Create a new link" : "Create a link"}
           </button>
@@ -545,7 +545,7 @@ export function SettingsClient({
       {trial && (
         <>
           <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Your free trial</div>
-          <div className="mb-8 rounded-xl border border-[#e2d7c1] bg-white p-6">
+          <div className="mb-8 rounded-xl border border-[#c9d6ee] bg-white p-6">
             <div className="text-[15px] font-semibold text-ink">
               {trial.daysLeft === null
                 ? `Ended ${trial.endsOn}`
@@ -566,7 +566,7 @@ export function SettingsClient({
       {pass && (
         <>
           <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Your pass</div>
-          <div className="mb-8 rounded-xl border border-[#e2d7c1] bg-white p-6">
+          <div className="mb-8 rounded-xl border border-[#c9d6ee] bg-white p-6">
             <div className="text-[15px] font-semibold text-ink">6-month pass</div>
             {pass.accessExpiresAt && !pass.claimedAt && (
               <div className="mb-4 mt-0.5 text-[13px] text-stone-600">
@@ -584,7 +584,7 @@ export function SettingsClient({
       {subscription && (
         <>
           <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Your subscription</div>
-          <div className="mb-8 rounded-xl border border-[#e2d7c1] bg-white p-6">
+          <div className="mb-8 rounded-xl border border-[#c9d6ee] bg-white p-6">
             <div className="text-[15px] font-semibold text-ink">Monthly plan</div>
             <div className="mb-4 mt-0.5 text-[13px] text-stone-600">{subscriptionSummary(subscription)}</div>
             <div className="flex flex-wrap items-center gap-2">
@@ -598,7 +598,7 @@ export function SettingsClient({
               {ENDED_STATUSES.has(subscription.status) && (
                 <Link
                   href="/subscribe"
-                  className="px-4 py-2.5 rounded-lg border border-[#d5c8ae] text-stone-600 font-semibold text-sm"
+                  className="px-4 py-2.5 rounded-lg border border-[#b4c5e6] text-stone-600 font-semibold text-sm"
                 >
                   Subscribe again
                 </Link>
@@ -656,7 +656,7 @@ export function SettingsClient({
                   setDeleteConfirmText("");
                   setDeleteError("");
                 }}
-                className="px-4 py-2.5 rounded-lg border border-[#d5c8ae] text-stone-600 font-semibold text-sm"
+                className="px-4 py-2.5 rounded-lg border border-[#b4c5e6] text-stone-600 font-semibold text-sm"
               >
                 Cancel
               </button>
@@ -710,7 +710,7 @@ function EmailPrefs({ initialOn }: { initialOn: boolean }) {
     }
   }
   return (
-    <div className="bg-white border border-[#e2d7c1] rounded-xl p-6 mb-6">
+    <div className="bg-white border border-[#c9d6ee] rounded-xl p-6 mb-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="text-[15px] font-semibold text-ink mb-1">Daily emails</div>

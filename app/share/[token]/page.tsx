@@ -38,7 +38,7 @@ export default async function SharePage({ params }: { params: { token: string } 
         report={report}
         footer={
           <p className="text-center text-[12px] leading-relaxed text-stone-600">
-            For the Sunday email and times in your own time zone, <a href="/parent/login?mode=signup" className="text-[#2c4c3b] underline">create a free parent account</a>.
+            For the Sunday email and times in your own time zone, <a href="/parent/login?mode=signup" className="text-[#26427e] underline">create a free parent account</a>.
           </p>
         }
       />

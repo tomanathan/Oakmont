@@ -81,7 +81,7 @@ export function PassageText({
             const label = m[1];
             const body = para.slice(m[0].length);
             return (
-              <div key={i} className="bg-[#f8f5ee] border border-[#e2d7c1] rounded-lg px-3.5 py-3">
+              <div key={i} className="bg-[#f3f6fc] border border-[#c9d6ee] rounded-lg px-3.5 py-3">
                 <div className="text-[10px] font-bold uppercase tracking-wide text-stone-500 mb-1.5">
                   {label}
                 </div>

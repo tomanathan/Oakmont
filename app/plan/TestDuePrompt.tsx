@@ -19,7 +19,7 @@ export function TestDuePrompt({ testNumber }: { testNumber: number }) {
           window.dispatchEvent(new CustomEvent("plan:log-test"));
           document.getElementById("practice-tests")?.scrollIntoView({ behavior: "smooth" });
         }}
-        className="px-3.5 py-2 rounded-lg bg-forest text-white text-xs font-semibold hover:bg-[#22302a] transition-colors flex-shrink-0"
+        className="px-3.5 py-2 rounded-lg bg-forest text-white text-xs font-semibold hover:bg-[#1f2f5a] transition-colors flex-shrink-0"
       >
         Log your results &darr;
       </button>

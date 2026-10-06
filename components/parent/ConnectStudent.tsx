@@ -75,7 +75,7 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
       // Cancelled, or no share sheet: the Text/Email buttons are right there.
     }
   }
-  const input = "w-full rounded-lg border border-[#d5c8ae] px-3 py-2.5 text-sm focus:border-[#587356] focus:outline-none";
+  const input = "w-full rounded-lg border border-[#b4c5e6] px-3 py-2.5 text-sm focus:border-[#4a67a6] focus:outline-none";
 
   return (
     <div className={compact ? "" : "mx-auto max-w-[860px]"}>
@@ -93,7 +93,7 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Maya" maxLength={40} className={`${input} max-w-[320px]`} />
       </div>
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-[#e2d7c1] bg-white p-6">
+        <div className="rounded-2xl border border-[#c9d6ee] bg-white p-6">
           <div className="font-display text-[18px] font-semibold text-ink">Send them a link</div>
           <p className="mt-1 text-[13px] leading-relaxed text-stone-600">
             They answer 5 quick SAT questions, save their plan, and you&apos;re connected. Already on Oakmont? The same link connects you.
@@ -113,7 +113,7 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
             <div className="mt-4">
               <div className="flex gap-2">
                 <input readOnly value={inviteUrl} onFocus={(e) => e.currentTarget.select()} className={`${input} font-mono text-[12px]`} />
-                <button onClick={copy} className="whitespace-nowrap rounded-lg border border-[#d5c8ae] px-3 text-sm font-medium text-ink hover:bg-[#eef3e9]">
+                <button onClick={copy} className="whitespace-nowrap rounded-lg border border-[#b4c5e6] px-3 text-sm font-medium text-ink hover:bg-[#e9effb]">
                   {copied ? "Copied" : "Copy"}
                 </button>
               </div>
@@ -123,12 +123,12 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
                     Share
                   </button>
                 )}
-                <a href={`sms:?&body=${encodeURIComponent(message)}`} className="rounded-lg border border-[#d5c8ae] px-3 py-1.5 font-medium text-ink hover:bg-[#eef3e9]">
+                <a href={`sms:?&body=${encodeURIComponent(message)}`} className="rounded-lg border border-[#b4c5e6] px-3 py-1.5 font-medium text-ink hover:bg-[#e9effb]">
                   Text it
                 </a>
                 <a
                   href={`mailto:?subject=${encodeURIComponent("Your SAT study plan")}&body=${encodeURIComponent(message)}`}
-                  className="rounded-lg border border-[#d5c8ae] px-3 py-1.5 font-medium text-ink hover:bg-[#eef3e9]"
+                  className="rounded-lg border border-[#b4c5e6] px-3 py-1.5 font-medium text-ink hover:bg-[#e9effb]"
                 >
                   Email it
                 </a>
@@ -137,7 +137,7 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
             </div>
           )}
         </div>
-        <form onSubmit={linkWithCode} className="rounded-2xl border border-[#e2d7c1] bg-white p-6">
+        <form onSubmit={linkWithCode} className="rounded-2xl border border-[#c9d6ee] bg-white p-6">
           <div className="font-display text-[18px] font-semibold text-ink">Use their code</div>
           <p className="mt-1 text-[13px] leading-relaxed text-stone-600">
             If they already use Oakmont: Settings &rarr; Parent access &rarr; Generate code.

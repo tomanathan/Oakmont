@@ -22,7 +22,7 @@ export interface PracticeQuestion {
   example: { pattern: string; q: string; choices: string[]; answer: number; explain: string };
 }
 
-const CARD = "rounded-2xl border border-[#e2d7c1] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)] sm:p-6";
+const CARD = "rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)] sm:p-6";
 const PRIMARY = "w-full rounded-xl bg-forest px-5 py-3.5 text-[15px] font-semibold text-white disabled:opacity-60";
 const H1 = "font-display text-[26px] font-semibold leading-tight text-ink";
 
@@ -110,7 +110,7 @@ export function PracticeClient({
 
           {!connected ? (
             <div className={`${CARD} mt-6`}>
-              <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#2c4c3b]">Let your parents connect</div>
+              <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#26427e]">Let your parents connect</div>
               <h2 className="mt-1 text-[19px] font-semibold text-ink">Connect with your parents</h2>
               <p className="mt-1 text-[14px] leading-relaxed text-stone-600">
                 They get a weekly highlight of your wins, so fewer &ldquo;did you study?&rdquo; texts.
@@ -126,7 +126,7 @@ export function PracticeClient({
               </div>
             </div>
           ) : (
-            <div className="mt-6 rounded-xl bg-[#eef3e9] p-4 text-[14px] text-[#2c4c3b]">You&apos;re connected with your parent. They&apos;ll see this week&apos;s wins.</div>
+            <div className="mt-6 rounded-xl bg-[#e9effb] p-4 text-[14px] text-[#26427e]">You&apos;re connected with your parent. They&apos;ll see this week&apos;s wins.</div>
           )}
 
           <Link
@@ -134,7 +134,7 @@ export function PracticeClient({
             className={
               connected
                 ? `${PRIMARY} mt-6 block text-center`
-                : "mt-5 block w-full rounded-xl px-5 py-3.5 text-center text-[15px] font-semibold text-ink ring-1 ring-[#d5c8ae]"
+                : "mt-5 block w-full rounded-xl px-5 py-3.5 text-center text-[15px] font-semibold text-ink ring-1 ring-[#b4c5e6]"
             }
           >
             {connected ? "Go to my dashboard" : "Skip for now"}
@@ -154,7 +154,7 @@ export function PracticeClient({
         <BrandMark size={32} />
         <div className="flex items-center gap-1.5" aria-label={`Question ${index + 1} of ${questions.length}`}>
           {questions.map((q, i) => (
-            <span key={q.id} className={`h-2 w-7 rounded-full ${i < index || (i === index && revealed) ? "bg-forest" : i === index ? "bg-[#9fb59a]" : "bg-[#e5dccb]"}`} />
+            <span key={q.id} className={`h-2 w-7 rounded-full ${i < index || (i === index && revealed) ? "bg-forest" : i === index ? "bg-[#9db3e0]" : "bg-[#d3ddf1]"}`} />
           ))}
         </div>
       </div>
@@ -166,7 +166,7 @@ export function PracticeClient({
           </div>
           <ExamChoices choices={current.choices} correctIndex={current.answer} selected={picked ?? null} revealed={revealed} onSelect={pick} />
           {revealed && (
-            <div className={`mt-4 rounded-xl p-4 text-[14px] leading-relaxed ${right ? "bg-[#eaf6ef] text-[#23553a]" : "bg-[#f6f1e6] text-stone-700"}`}>
+            <div className={`mt-4 rounded-xl p-4 text-[14px] leading-relaxed ${right ? "bg-[#eaf6ef] text-[#23553a]" : "bg-[#eef3fb] text-stone-700"}`}>
               <div className="mb-1 font-semibold">{right ? "Nice." : "Here's the move:"}</div>
               <MathText text={!right && current.why?.[picked!] ? `${current.why[picked!]} ${current.explain}` : current.explain} />
             </div>
@@ -178,7 +178,7 @@ export function PracticeClient({
                   See how this type works
                 </button>
               ) : (
-                <div className="rounded-xl border border-[#e2d7c1] p-4">
+                <div className="rounded-xl border border-[#c9d6ee] p-4">
                   <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-500">Worked example: {current.example.pattern}</div>
                   <div className="mt-2 text-[14px] leading-relaxed text-ink">
                     <PassageText text={current.example.q} />

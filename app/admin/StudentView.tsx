@@ -21,14 +21,14 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
   const sure = d.confidence.find((c) => c.label === "sure");
 
   return (
-    <div className="min-h-screen bg-[#faf6ec] font-sans text-ink">
+    <div className="min-h-screen bg-[#f3f6fc] font-sans text-ink">
       <div className="mx-auto max-w-[1180px] px-4 py-8 sm:px-6">
         <Link href="/admin#students" className="text-[13px] font-semibold text-forest underline-offset-2 hover:underline">
           ← All students
         </Link>
 
         <header className="mb-6 mt-3 flex flex-wrap items-center gap-4">
-          <div className="grid h-[64px] w-[88px] place-items-center rounded-xl border border-[#e2d7c1] bg-white">
+          <div className="grid h-[64px] w-[88px] place-items-center rounded-xl border border-[#c9d6ee] bg-white">
             <PixelDog size={64} mood={MOOD_BY_STAGE[u.petStage]} cold={u.petStage === "cold"} costume={x.equippedCostume} />
           </div>
           <div className="mr-auto min-w-0">
@@ -72,7 +72,7 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
             <Row k="Test date" v={u.targetTestDate ? `${fmtDateYear(u.targetTestDate)}${daysToTest !== null ? ` (${daysToTest >= 0 ? `in ${daysToTest} days` : `${-daysToTest} days ago`})` : ""}` : "Not set"} />
             <Row k="Latest practice test" v={u.latestTest ?? "—"} />
             <Row k="Gap to goal" v={u.goalScore && u.latestTest ? `${u.goalScore - u.latestTest > 0 ? `${u.goalScore - u.latestTest} points to go` : "At or above goal"}` : "—"} />
-            <div className="mt-3 border-t border-[#f3eee2] pt-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-stone-500">Ozho</div>
+            <div className="mt-3 border-t border-[#e8eef9] pt-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-stone-500">Ozho</div>
             <Row k="Right now" v={`${PET_LABEL[u.petStage]}${x.daysInactive > 0 ? `, ${x.daysInactive} days since study` : ""}`} />
             <Row k="Streak freezes saved" v={x.streakFreezes} />
             <Row k="Costume" v={x.equippedCostume && x.equippedCostume !== "none" ? x.equippedCostume : "None"} />
@@ -126,7 +126,7 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
                 </thead>
                 <tbody>
                   {d.parents.map((p) => (
-                    <tr key={p.id} className="border-t border-[#f3eee2]">
+                    <tr key={p.id} className="border-t border-[#e8eef9]">
                       <td className="py-2 pr-3 font-medium">
                         <a href={`mailto:${p.email}`} className="underline-offset-2 hover:underline">
                           {p.email}
@@ -146,7 +146,7 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
         </Card>
 
         <Card title="Study activity, last 60 days" className="mb-6" aside={`${activeDays} days with study`}>
-          <div className="flex h-[120px] items-end gap-[2px] border-b border-[#e2d7c1]" role="img" aria-label={`Study per day: ${d.days.filter((day) => day.questions + day.lessons > 0).map((day) => `${label(day.key)} ${day.questions} questions`).join(", ") || "none"}`}>
+          <div className="flex h-[120px] items-end gap-[2px] border-b border-[#c9d6ee]" role="img" aria-label={`Study per day: ${d.days.filter((day) => day.questions + day.lessons > 0).map((day) => `${label(day.key)} ${day.questions} questions`).join(", ") || "none"}`}>
             {d.days.map((day) => {
               const n = day.questions + day.lessons;
               return (
@@ -177,7 +177,7 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
                       {pct(dm.correct, dm.questions)} <span className="text-stone-400">· {dm.questions} q</span>
                     </span>
                   </div>
-                  <div className="h-2 rounded-full bg-[#eef3e9]">
+                  <div className="h-2 rounded-full bg-[#e9effb]">
                     <div className="h-2 rounded-full bg-forest" style={{ width: dm.questions ? `${(dm.correct / dm.questions) * 100}%` : "0%" }} />
                   </div>
                 </li>
@@ -190,7 +190,7 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
             {d.sources.map((s) => (
               <Row key={s.label} k={s.label === "review" ? "Review questions" : "Quiz questions"} v={`${s.n} · ${pct(s.correct, s.n)} right`} />
             ))}
-            <div className="mt-3 border-t border-[#f3eee2] pt-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-stone-500">By confidence</div>
+            <div className="mt-3 border-t border-[#e8eef9] pt-3 text-[11px] font-semibold uppercase tracking-[0.06em] text-stone-500">By confidence</div>
             {d.confidence.length === 0 && <p className="mt-2 text-[13px] text-stone-500">Nothing yet.</p>}
             {d.confidence.map((c) => (
               <Row key={c.label} k={c.label[0].toUpperCase() + c.label.slice(1)} v={`${c.n} · ${pct(c.correct, c.n)} right`} />
@@ -213,7 +213,7 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
                 </thead>
                 <tbody>
                   {[...d.tests].reverse().map((t, i) => (
-                    <tr key={i} className="border-t border-[#f3eee2]">
+                    <tr key={i} className="border-t border-[#e8eef9]">
                       <td className="py-1.5 text-stone-600">{fmtDateYear(t.takenAt)}</td>
                       <td className="px-2 py-1.5 text-right font-semibold">{t.composite}</td>
                       <td className="px-2 py-1.5 text-right">{t.rw}</td>
@@ -226,7 +226,7 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
           </Card>
         </div>
 
-        <section className="mb-6 rounded-xl border border-[#e2d7c1] bg-white">
+        <section className="mb-6 rounded-xl border border-[#c9d6ee] bg-white">
           <div className="px-5 pb-3 pt-5">
             <h2 className="text-[15px] font-semibold">
               Skills <span className="font-normal text-stone-500">· {d.skills.length} touched</span>
@@ -235,7 +235,7 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[1060px] text-left text-[13px]">
               <thead>
-                <tr className="border-y border-[#efe7d6] bg-[#faf6ec] text-[11px] uppercase tracking-[0.06em] text-stone-500">
+                <tr className="border-y border-[#e1e9f7] bg-[#f3f6fc] text-[11px] uppercase tracking-[0.06em] text-stone-500">
                   <th className="px-5 py-2 font-semibold">Skill</th>
                   <th className="px-3 py-2 font-semibold">Area</th>
                   <th className="px-3 py-2 text-right font-semibold">Lessons</th>
@@ -250,7 +250,7 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
               </thead>
               <tbody>
                 {d.skills.map((s) => (
-                  <tr key={s.id} className="border-b border-[#f3eee2] last:border-0">
+                  <tr key={s.id} className="border-b border-[#e8eef9] last:border-0">
                     <td className="px-5 py-2 font-medium">{s.name}</td>
                     <td className="px-3 py-2 text-[12px] text-stone-500">{s.domain}</td>
                     <td className="px-3 py-2 text-right tabular-nums">{s.lessons || "—"}</td>
@@ -278,13 +278,13 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
           </div>
         </section>
 
-        <section className="rounded-xl border border-[#e2d7c1] bg-white">
+        <section className="rounded-xl border border-[#c9d6ee] bg-white">
           <div className="px-5 pb-3 pt-5">
             <h2 className="text-[15px] font-semibold">
               Recent activity <span className="font-normal text-stone-500">· latest {d.recent.length}</span>
             </h2>
           </div>
-          <ul className="divide-y divide-[#f3eee2] border-t border-[#efe7d6]">
+          <ul className="divide-y divide-[#e8eef9] border-t border-[#e1e9f7]">
             {d.recent.map((r, i) => (
               <li key={i} className="flex flex-wrap items-baseline gap-x-3 px-5 py-2 text-[13px]">
                 <span className="w-[130px] flex-none tabular-nums text-stone-500">{fmtDateTime(r.at)}</span>
@@ -305,7 +305,7 @@ export function StudentView({ d, now }: { d: StudentDetail; now: Date }) {
 
 function Stat({ label, value, sub }: { label: string; value: number | string; sub?: string }) {
   return (
-    <div className="rounded-xl border border-[#e2d7c1] bg-white p-3.5">
+    <div className="rounded-xl border border-[#c9d6ee] bg-white p-3.5">
       <div className="text-[10.5px] font-semibold uppercase tracking-[0.06em] text-stone-500">{label}</div>
       <div className="mt-1 font-display text-[21px] font-semibold leading-none tabular-nums">{value}</div>
       {sub && <div className="mt-1 text-[11.5px] text-stone-500">{sub}</div>}
@@ -315,7 +315,7 @@ function Stat({ label, value, sub }: { label: string; value: number | string; su
 
 function Card({ title, aside, className = "", children }: { title: string; aside?: string; className?: string; children: React.ReactNode }) {
   return (
-    <section className={`rounded-xl border border-[#e2d7c1] bg-white p-5 ${className}`}>
+    <section className={`rounded-xl border border-[#c9d6ee] bg-white p-5 ${className}`}>
       <div className="mb-3 flex items-baseline justify-between gap-3">
         <h2 className="text-[15px] font-semibold">{title}</h2>
         {aside && <span className="text-[13px] tabular-nums text-stone-500">{aside}</span>}

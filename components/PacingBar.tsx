@@ -28,7 +28,7 @@ export function PacingBar({ pacing }: { pacing: Pacing }) {
   return (
     <div className="relative mt-5 mb-1">
       <div
-        className="absolute -top-4 -translate-x-1/2 text-[9px] font-semibold text-[#7a7565] uppercase tracking-wide whitespace-nowrap"
+        className="absolute -top-4 -translate-x-1/2 text-[9px] font-semibold text-[#66728f] uppercase tracking-wide whitespace-nowrap"
         style={{ left: `${todayMarker}%` }}
       >
         Today
@@ -36,9 +36,9 @@ export function PacingBar({ pacing }: { pacing: Pacing }) {
       {/* Neutral ink fill, not a subject color -- this bar is the whole
           course's trajectory, not Math's or Reading's, and it sits right
           under the two subject cards, which are each strongly hued. */}
-      <div className="relative h-2.5 bg-[#e6dcc8] rounded-full overflow-hidden">
+      <div className="relative h-2.5 bg-[#d3ddf1] rounded-full overflow-hidden">
         <div
-          className="h-full bg-[#2c4c3b] rounded-full transition-all duration-700 ease-out"
+          className="h-full bg-[#26427e] rounded-full transition-all duration-700 ease-out"
           style={{ width: `${pacing.pctComplete}%` }}
         />
       </div>

@@ -36,8 +36,8 @@ export default async function LinkInvitePage({ params }: { params: { token: stri
           </p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-[#e2d7c1] bg-white p-7 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
-          <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#2c4c3b]">Connect your parent</div>
+        <div className="rounded-2xl border border-[#c9d6ee] bg-white p-7 shadow-[3px_3px_0_rgba(52,97,193,0.13)]">
+          <div className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#26427e]">Connect your parent</div>
           <h1 className="mt-1 font-display text-[24px] font-semibold leading-snug text-ink">
             {invite.parent.email} wants to follow your SAT prep
           </h1>
@@ -60,7 +60,7 @@ export default async function LinkInvitePage({ params }: { params: { token: stri
                 </Link>
                 <Link
                   href={`/start?invite=${params.token}`}
-                  className="flex-1 rounded-lg border border-[#d5c8ae] py-2.5 text-center text-sm font-semibold text-ink hover:bg-[#eef3e9]"
+                  className="flex-1 rounded-lg border border-[#b4c5e6] py-2.5 text-center text-sm font-semibold text-ink hover:bg-[#e9effb]"
                 >
                   I&apos;m new: sign up
                 </Link>

@@ -46,10 +46,15 @@ export function ColdOzhoNotice({ sessionKey, daysInactive, href }: { sessionKey:
         aria-modal="true"
         aria-labelledby="cold-ozho-title"
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl shadow-[0_20px_60px_rgba(38,34,24,0.25)] max-w-[440px] w-full p-7 text-center"
+        className="bg-white border-2 border-[#3461c1] rounded-2xl shadow-[6px_6px_0_#3461c1] max-w-[440px] w-full p-7 text-center"
       >
-        <div className="mx-auto mb-4 grid h-[120px] w-[168px] place-items-center rounded-2xl border border-[#b4cdea] bg-[#cfe1f5]">
-          <PixelDog size={120} mood="tired" cold />
+        {/* A Polaroid of him, cold. */}
+        <div className="mb-5">
+          <div className="nbk-polaroid">
+            <div className="nbk-photo h-[104px] w-[164px] items-end pb-2">
+              <PixelDog size={116} mood="tired" cold />
+            </div>
+          </div>
         </div>
         <div id="cold-ozho-title" className="font-display font-semibold text-xl text-ink mb-2">
           {PET_NAME} got cold while you were away
@@ -57,7 +62,7 @@ export function ColdOzhoNotice({ sessionKey, daysInactive, href }: { sessionKey:
         <p className="text-sm text-stone-600 leading-relaxed mb-4">
           It&apos;s been {daysInactive} days since your last lesson or quiz. When that happens, {PET_NAME} turns blue and starts to shiver.
         </p>
-        <div className="bg-[#eaf1e5] border border-[#c9d8c2] rounded-xl p-4 mb-6 text-sm text-[#2c4c3b] leading-relaxed">
+        <div className="bg-[#e4ecfa] border border-[#c2d1ee] rounded-xl p-4 mb-6 text-sm text-[#26427e] leading-relaxed">
           He&apos;s okay. One lesson or a quick quiz warms him right back up, and your plan picks up where you left off.
         </div>
         <Link href={href} onClick={dismiss} className="block w-full py-3 rounded-lg bg-forest text-white font-semibold text-sm hover:opacity-90">

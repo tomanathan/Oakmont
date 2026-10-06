@@ -30,7 +30,7 @@ export default async function ParentSetupPage({ searchParams }: { searchParams: 
   return (
     <div className="mx-auto max-w-[460px] px-6 py-12 font-sans">
       <BrandMark size={48} className="mb-4" />
-      <div className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#2c4c3b]">Oakmont for Parents</div>
+      <div className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#26427e]">Oakmont for Parents</div>
       {!valid || !parent ? (
         <>
           <h1 className="font-display text-[28px] font-semibold leading-tight text-ink">This link has expired</h1>

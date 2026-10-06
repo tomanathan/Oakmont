@@ -8,7 +8,7 @@ import type { CompanionSummary } from "@/lib/companionSummary";
 
 const STAGE_PILL: Record<CompanionSummary["stage"], { label: string; cls: string }> = {
   thriving: { label: "Thriving", cls: "bg-[#eaf6ef] text-accent" },
-  content: { label: "Doing fine", cls: "bg-[#eaf1e5] text-[#2c4c3b]" },
+  content: { label: "Doing fine", cls: "bg-[#e4ecfa] text-[#26427e]" },
   hungry: { label: "Hungry", cls: "bg-[#fbf1df] text-[#9a6a12]" },
   cold: { label: "Cold", cls: "bg-[#e8f1fb] text-[#33598f]" },
 };
@@ -62,7 +62,7 @@ function callLine(c: CompanionSummary): string {
 function Meter({ value, max, color }: { value: number; max: number; color: string }) {
   const pct = Math.min(100, Math.round((value / Math.max(1, max)) * 100));
   return (
-    <div className="h-1.5 overflow-hidden rounded-full bg-[#e6dcc8]">
+    <div className="h-1.5 overflow-hidden rounded-full bg-[#d3ddf1]">
       <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${pct}%`, background: color }} />
     </div>
   );
@@ -97,24 +97,27 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
   return (
     <div
       ref={cardRef}
-      className="flex flex-col rounded-2xl border border-[#e2d7c1] bg-white p-4 shadow-[0_1px_3px_rgba(38,34,24,0.03)]"
+      className="flex flex-col rounded-2xl border border-[#c9d6ee] bg-white p-4 shadow-[3px_3px_0_rgba(52,97,193,0.13)]"
     >
       <div className="flex items-start gap-3.5">
         <button
           onClick={callOzho}
           aria-label={`Call ${PET_NAME} over`}
           title={`Call ${PET_NAME} over`}
-          className="relative flex h-[76px] w-[76px] flex-shrink-0 items-end justify-center rounded-2xl bg-[#f6f1e6] pb-2 transition-colors hover:bg-[#eef3e9]"
+          className="nbk-polaroid mt-1 flex-shrink-0 transition-transform hover:rotate-0"
         >
-          <span className={hop ? "animate-ozho-hop" : ""}>
-            <PixelDog
-              size={56}
-              mood={MOOD_BY_STAGE[c.stage]}
-              cold={c.stage === "cold"}
-              costume={c.costume}
-              sitting={!c.fedToday}
-              tailFrame={c.fedToday ? 3 : 0}
-            />
+          {/* A Polaroid of him, taped to the card. */}
+          <span className="nbk-photo h-[58px] w-[72px] items-end pb-1">
+            <span className={hop ? "animate-ozho-hop" : ""}>
+              <PixelDog
+                size={56}
+                mood={MOOD_BY_STAGE[c.stage]}
+                cold={c.stage === "cold"}
+                costume={c.costume}
+                sitting={!c.fedToday}
+                tailFrame={c.fedToday ? 3 : 0}
+              />
+            </span>
           </span>
         </button>
         <div className="min-w-0 flex-1">
@@ -179,7 +182,7 @@ export function CompanionCard({ companion: c }: { companion: CompanionSummary })
             <button onClick={callOzho} className="font-semibold text-stone-500 transition-colors hover:text-ink">
               Call {PET_NAME} over
             </button>
-            <a href="/settings#wardrobe" className="font-semibold text-[#2c4c3b] hover:underline">
+            <a href="/settings#wardrobe" className="font-semibold text-[#26427e] hover:underline">
               Wardrobe →
             </a>
           </div>

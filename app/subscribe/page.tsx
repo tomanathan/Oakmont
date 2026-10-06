@@ -68,7 +68,7 @@ export default async function SubscribePage() {
       {retake.options.length > 0 && (
         // A lapsed 6-month pass with its retake cover unused: offer that
         // first -- they shouldn't have to pay again to keep going.
-        <div className="mb-8 rounded-2xl border border-[#c9d8c2] bg-[#eef4ea] p-6">
+        <div className="mb-8 rounded-2xl border border-[#c2d1ee] bg-[#ecf1fb] p-6">
           <RetakeCover claimedAt={null} accessExpiresAt={null} options={retake.options} after="dashboard" />
         </div>
       )}

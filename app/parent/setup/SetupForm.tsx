@@ -89,7 +89,7 @@ export function SetupForm({
           <button onClick={decline} disabled={busy} className="rounded-lg bg-[#b23b3b] px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">
             {busy ? "Removing..." : "Remove this account"}
           </button>
-          <button onClick={() => setDeclining(false)} className="rounded-lg px-5 py-2.5 text-sm font-semibold text-ink ring-1 ring-[#d5c8ae]">
+          <button onClick={() => setDeclining(false)} className="rounded-lg px-5 py-2.5 text-sm font-semibold text-ink ring-1 ring-[#b4c5e6]">
             Actually, I&apos;m their parent
           </button>
         </div>
@@ -108,7 +108,7 @@ export function SetupForm({
           every practice test score. It&apos;s free.
         </p>
       )}
-      <form onSubmit={submit} className="mt-6 rounded-xl border border-[#e2d7c1] bg-white p-6 shadow-[0_1px_2px_rgba(38,34,24,0.04),0_8px_24px_rgba(38,34,24,0.06)]">
+      <form onSubmit={submit} className="mt-6 rounded-xl border border-[#c9d6ee] bg-white p-6 shadow-[3px_3px_0_rgba(52,97,193,0.13)]">
         {!claimed && googleEnabled && (
           <>
             {/* The emailed link proves the address is theirs, so any Google
@@ -118,7 +118,7 @@ export function SetupForm({
           </>
         )}
         <label className="mb-1 block text-sm text-stone-700">Email</label>
-        <div className="mb-4 rounded-lg bg-[#f6f1e6] px-3 py-2.5 text-sm text-ink">{email}</div>
+        <div className="mb-4 rounded-lg bg-[#eef3fb] px-3 py-2.5 text-sm text-ink">{email}</div>
         <label className="mb-1 block text-sm text-stone-700" htmlFor="pw">
           {claimed ? "New password" : "Password"}
         </label>
@@ -132,7 +132,7 @@ export function SetupForm({
           minLength={6}
           required
           autoComplete="new-password"
-          className="w-full rounded-lg border border-[#d5c8ae] px-3 py-2.5 text-sm focus:border-[#587356] focus:outline-none"
+          className="w-full rounded-lg border border-[#b4c5e6] px-3 py-2.5 text-sm focus:border-[#4a67a6] focus:outline-none"
         />
         {error && <div className="mt-3 text-sm text-red-700">{error}</div>}
         <button type="submit" disabled={busy} className="mt-4 w-full rounded-lg bg-forest py-2.5 text-sm font-semibold text-white disabled:opacity-60">

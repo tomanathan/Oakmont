@@ -99,12 +99,12 @@ export function WelcomeBackModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl shadow-[0_20px_60px_rgba(38,34,24,0.25)] max-w-[440px] w-full p-7 text-center"
+        className="nbk-taped nbk-taped--butter bg-white border-2 border-[#3461c1] rounded-2xl shadow-[6px_6px_0_#3461c1] max-w-[440px] w-full p-7 text-center"
       >
         <BrandMark size={48} className="mx-auto mb-4" />
         <div className="font-display font-semibold text-xl text-ink mb-1.5">Welcome back!</div>
         <div className="text-sm text-stone-500 mb-5">Last time you were here was {lastDate}.</div>
-        <div className="bg-[#eaf1e5] border border-[#c9d8c2] rounded-xl p-4 mb-4 text-sm text-[#2c4c3b] leading-relaxed">
+        <div className="bg-[#e4ecfa] border border-[#c2d1ee] rounded-xl p-4 mb-4 text-sm text-[#26427e] leading-relaxed">
           {summary}
           {currentStreak > 0 && ` You're on a ${currentStreak}-day streak — keep it going.`}
         </div>

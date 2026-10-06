@@ -70,7 +70,7 @@ export function RetakeCover({ claimedAt, accessExpiresAt, options, after = "refr
             aria-checked={picked === o.date}
             onClick={() => setPicked(o.date)}
             className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-colors ${
-              picked === o.date ? "bg-forest text-white" : "bg-white text-ink ring-1 ring-[#d5c8ae] hover:ring-[#587356]"
+              picked === o.date ? "bg-forest text-white" : "bg-white text-ink ring-1 ring-[#b4c5e6] hover:ring-[#4a67a6]"
             }`}
           >
             {o.label}

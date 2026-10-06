@@ -304,8 +304,8 @@ export function ReviewClient() {
   if (phase === "loading") {
     return (
       <div className="flex flex-col gap-3">
-        <div className="h-8 w-56 animate-pulse rounded-lg bg-[#f3eee4]" />
-        <div className="h-48 animate-pulse rounded-2xl bg-[#f6f1e6]" />
+        <div className="h-8 w-56 animate-pulse rounded-lg bg-[#e8eef9]" />
+        <div className="h-48 animate-pulse rounded-2xl bg-[#eef3fb]" />
       </div>
     );
   }
@@ -346,7 +346,7 @@ export function ReviewClient() {
         </div>
 
         {(meta.toConfirm.length > 0 || meta.refreshers.length > 0) && (
-          <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-[#e2d7c1] bg-white p-4 text-[13.5px] text-stone-600">
+          <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-[#c9d6ee] bg-white p-4 text-[13.5px] text-stone-600">
             {meta.toConfirm.length > 0 && (
               <div className="flex items-start gap-2.5">
                 <span className="mt-0.5 flex-shrink-0 whitespace-nowrap rounded-full bg-[#fbf3dc] px-2 py-0.5 text-[11px] font-semibold text-[#8a5f0c]">
@@ -418,7 +418,7 @@ export function ReviewClient() {
                 <span
                   key={i}
                   className={`h-1.5 flex-1 rounded-full ${
-                    i < idx || conf[i] ? "bg-[#3d7a56]" : i === idx ? "bg-forest" : "bg-[#e6dcc8]"
+                    i < idx || conf[i] ? "bg-[#3d7a56]" : i === idx ? "bg-forest" : "bg-[#d3ddf1]"
                   }`}
                 />
               ))}
@@ -427,7 +427,7 @@ export function ReviewClient() {
           <PaceClock elapsed={elapsed} target={it.pace} label="this question" />
         </div>
 
-        <div className="rounded-2xl border border-[#e2d7c1] bg-white p-5 shadow-[0_1px_2px_rgba(38,34,24,0.03),0_4px_14px_rgba(38,34,24,0.04)] sm:p-6">
+        <div className="rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)] sm:p-6">
           <div className="mb-4 text-[15px] text-ink">
             <PassageText text={it.q} highlight={it.underline ?? undefined} figure={it.figure} />
           </div>
@@ -440,7 +440,7 @@ export function ReviewClient() {
             onSelect={(n) => setAnswers((a) => ({ ...a, [idx]: n }))}
           />
 
-          <div className="mt-5 border-t border-[#eef3e9] pt-4">
+          <div className="mt-5 border-t border-[#e9effb] pt-4">
             <div className="mb-2 text-[12px] text-stone-500">
               {picked === null ? "Pick an answer, then lock it in:" : "Lock it in. How sure are you?"}
             </div>
@@ -452,8 +452,8 @@ export function ReviewClient() {
                   onClick={() => lockIn(o.value)}
                   className={`rounded-xl px-3 py-2.5 text-sm font-semibold transition-all disabled:cursor-not-allowed ${
                     i === 0
-                      ? "bg-forest text-white shadow-[0_6px_16px_-10px_rgba(31,59,45,0.8)] hover:opacity-90 disabled:bg-[#e6dece] disabled:text-stone-500 disabled:shadow-none"
-                      : "border border-[#d5c8ae] bg-white text-ink hover:border-[#587356] disabled:opacity-50"
+                      ? "bg-forest text-white shadow-[0_6px_16px_-10px_rgba(31,47,90,0.8)] hover:opacity-90 disabled:bg-[#d6dff2] disabled:text-stone-500 disabled:shadow-none"
+                      : "border border-[#b4c5e6] bg-white text-ink hover:border-[#4a67a6] disabled:opacity-50"
                   }`}
                 >
                   {o.label}
@@ -562,7 +562,7 @@ function ReviewResults({
     <div>
       <div
         ref={cardRef}
-        className="mb-6 overflow-hidden rounded-2xl border border-[#e2d7c1] bg-white shadow-[0_1px_2px_rgba(38,34,24,0.04),0_12px_32px_-12px_rgba(38,34,24,0.14)]"
+        className="mb-6 overflow-hidden rounded-2xl border border-[#c9d6ee] bg-white shadow-[3px_3px_0_rgba(52,97,193,0.13)]"
       >
         <div className="flex flex-wrap items-center gap-5 p-5 sm:p-6">
           <ScoreRing score={right} total={total} />
@@ -573,7 +573,7 @@ function ReviewResults({
           </div>
         </div>
 
-        <div className="grid gap-px border-t border-[#eef3e9] bg-[#eef3e9] sm:grid-cols-2">
+        <div className="grid gap-px border-t border-[#e9effb] bg-[#e9effb] sm:grid-cols-2">
           <div className="bg-white px-5 py-3.5 sm:px-6">
             <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-500">Your pace</div>
             <div className="mt-1 text-[14px] text-ink">
@@ -605,7 +605,7 @@ function ReviewResults({
         {repeatedTrap && <TrapToWatch trap={repeatedTrap.trap} count={repeatedTrap.count} />}
 
         {(res.mastered.length > 0 || res.refreshed.length > 0 || res.flagged.length > 0 || res.newCostume || res.currentStreak > 0) && (
-          <div className="flex flex-wrap gap-2 border-t border-[#eef3e9] px-5 py-3 sm:px-6">
+          <div className="flex flex-wrap gap-2 border-t border-[#e9effb] px-5 py-3 sm:px-6">
             {res.mastered.map((m) => (
               <span key={m.id} className="inline-flex items-center gap-1 rounded-full bg-[#fbf3dc] px-3 py-1 text-[12.5px] font-semibold text-[#8a5f0c]">
                 ★ Mastered: {m.name}
@@ -640,7 +640,7 @@ function ReviewResults({
           </div>
         )}
 
-        <div className="flex flex-wrap gap-2 border-t border-[#eef3e9] bg-[#faf7f0] px-5 py-3.5 sm:px-6">
+        <div className="flex flex-wrap gap-2 border-t border-[#e9effb] bg-[#f5f8fd] px-5 py-3.5 sm:px-6">
           {firstMiss >= 0 && (
             <button
               onClick={() => listRef.current[firstMiss]?.scrollIntoView({ behavior: "smooth", block: "start" })}
@@ -652,14 +652,14 @@ function ReviewResults({
           <Link
             href="/dashboard"
             className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
-              firstMiss < 0 ? "bg-forest text-white hover:opacity-90" : "border border-[#d5c8ae] bg-white text-ink hover:border-[#c9d8c2]"
+              firstMiss < 0 ? "bg-forest text-white hover:opacity-90" : "border border-[#b4c5e6] bg-white text-ink hover:border-[#c2d1ee]"
             }`}
           >
             Back to dashboard
           </Link>
           <button
             onClick={onAnother}
-            className="rounded-lg border border-[#d5c8ae] bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:border-[#c9d8c2] hover:text-ink"
+            className="rounded-lg border border-[#b4c5e6] bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:border-[#c2d1ee] hover:text-ink"
           >
             Another set
           </button>
@@ -678,7 +678,7 @@ function ReviewResults({
               ref={(el) => {
                 listRef.current[i] = el;
               }}
-              className={`scroll-mt-[72px] rounded-xl border p-5 shadow-[0_1px_2px_rgba(38,34,24,0.03),0_4px_14px_rgba(38,34,24,0.04)] ${
+              className={`scroll-mt-[72px] rounded-xl border p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)] ${
                 r.correct ? "border-[#cde8d9] bg-[#fbfefc]" : "border-[#f0d0d0] bg-[#fefbfb]"
               }`}
             >
@@ -742,16 +742,16 @@ function ReviewResults({
 }
 
 function Eyebrow() {
-  return <div className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#2c4c3b]">Mixed review</div>;
+  return <div className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#26427e]">Mixed review</div>;
 }
 
 function Panel({ children }: { children: React.ReactNode }) {
-  return <div className="rounded-2xl border border-[#e2d7c1] bg-white p-6 sm:p-8">{children}</div>;
+  return <div className="rounded-2xl border border-[#c9d6ee] bg-white p-6 sm:p-8">{children}</div>;
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-[#e2d7c1] bg-white px-4 py-3.5">
+    <div className="rounded-2xl border border-[#c9d6ee] bg-white px-4 py-3.5">
       <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-stone-500">{label}</div>
       <div className="mt-1 font-display text-[22px] font-semibold text-ink">{value}</div>
     </div>
@@ -761,7 +761,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 function HowStep({ n, children }: { n: string; children: React.ReactNode }) {
   return (
     <li className="flex gap-3">
-      <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#eaf1e5] text-[11px] font-bold text-[#2c4c3b]">
+      <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#e4ecfa] text-[11px] font-bold text-[#26427e]">
         {n}
       </span>
       <span>{children}</span>
