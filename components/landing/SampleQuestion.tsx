@@ -190,9 +190,9 @@ export function SampleQuestion({
 // B. After: the dashed parallel through B, the split pieces colour-matched
 // to the angles they equal, and the 85° total.
 
-const INK = "#1D22A8";
-const WEDGE_A = "#4FE6F2";
-const WEDGE_B = "#FF9A4D";
+const INK = "#1F2F5A";
+const WEDGE_A = "#8CC6EC";
+const WEDGE_B = "#F1B287";
 
 const A: [number, number] = [70, 44];
 const B: [number, number] = [184, 124];

@@ -3,18 +3,18 @@
 // on top in the true position. Ported from the approved "Ozho's Notebook"
 // prototype; only the pieces the homepage uses.
 //
-// Colour rule: hot pink is the primary-action colour, so no art uses it.
+// Colours match notebook.css's calm palette: soft royal blue line, pastels.
 
 import type { CSSProperties } from "react";
 
 export const C = {
-  ink: "#2A2FE0",
-  inkDeep: "#1D22A8",
-  paper: "#FFFCF1",
-  butter: "#FFEE7C",
-  cyan: "#4FE6F2",
-  lilac: "#C8B4FF",
-  tangerine: "#FF9A4D",
+  ink: "#3461C1",
+  inkDeep: "#1F2F5A",
+  paper: "#FFFDF7",
+  butter: "#FBE7A3",
+  cyan: "#B9DFF3",
+  lilac: "#D4DCF6",
+  tangerine: "#F1B287",
 };
 
 const SANS = "var(--font-ui), system-ui, sans-serif";
@@ -78,7 +78,7 @@ export function Bowl() {
 export function DoorView() {
   return (
     <svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMax slice" width="100%" height="100%" aria-hidden>
-      <rect width={200} height={300} fill="#A9F1F7" />
+      <rect width={200} height={300} fill="#B9DFF3" />
       <circle cx={150} cy={70} r={22} fill={C.butter} stroke={C.ink} strokeWidth={3} />
       <path d="M20 60 q10 -14 24 -6 q12 -10 22 4 q10 2 6 10 h-56 q-6 -6 4 -8 z" fill={C.paper} stroke={C.ink} strokeWidth={2.5} strokeLinejoin="round" />
       <path d="M-10 210 Q60 170 120 196 T220 190 V300 H-10 Z" fill={C.lilac} stroke={C.ink} strokeWidth={3} />

@@ -12,7 +12,7 @@ export function Logo({ size = "lg" }: { size?: "lg" | "sm" }) {
   );
 }
 
-// Sticky top bar. The hero's pink button is the page's one loud thing, so
+// Sticky top bar. The hero's solid blue button is the page's one loud thing, so
 // both account actions here are paper pills.
 export function Nav() {
   return (

@@ -4,7 +4,10 @@
  *
  * Layers: world = the desk wash and Ozho's room (the only textured things);
  * content = plain paper, Instrument Sans, no texture behind text; reward =
- * riso stickers (the costume closet). Pink is the primary action only.
+ * riso stickers (the costume closet). The palette is a calm one: a soft
+ * royal blue for lines and headings, navy for reading text, and pastel
+ * accents. The one solid block of colour is the primary action, in that
+ * same blue.
  * Motion: entrances play once on load, taps take 100ms, and only transform
  * and opacity animate (plus the headline highlight's background-size).
  * Breakpoints: >1100 two columns; 761-1100 one column; <=760 phone;
@@ -12,16 +15,18 @@
  */
 
 .nb-root {
-  --ink: #2a2fe0;
-  --ink-deep: #1d22a8;
-  /* small text on hot pink: ink-deep is only 4.1:1 there, this is 5.3:1 */
-  --ink-night: #13167a;
-  --paper: #fffcf1;
-  --pink: #ff5fb4;
-  --butter: #ffee7c;
-  --cyan: #4fe6f2;
-  --lilac: #c8b4ff;
-  --tang: #ff9a4d;
+  /* lines, headings, links: 5.6:1 on paper */
+  --ink: #3461c1;
+  /* reading text and hard shadows: navy */
+  --ink-deep: #1f2f5a;
+  --ink-night: #17233f;
+  --paper: #fffdf7;
+  /* the primary action: a solid block of the blue, white text (5.9:1) */
+  --action: #3461c1;
+  --butter: #fbe7a3;
+  --cyan: #b9dff3;
+  --lilac: #d4dcf6;
+  --tang: #f1b287;
   --right: #1fa971;
   --wrong: #e0453a;
   --serif: var(--font-display), Georgia, serif;
@@ -34,14 +39,14 @@
   --pl: 90px;
   --pr: 44px;
   --mx: 66px;
-  --margin-line: linear-gradient(90deg, transparent var(--mx), rgba(255, 154, 77, 0.55) var(--mx), rgba(255, 154, 77, 0.55) calc(var(--mx) + 2px), transparent calc(var(--mx) + 2px));
+  --margin-line: linear-gradient(90deg, transparent var(--mx), rgba(241, 178, 135, 0.6) var(--mx), rgba(241, 178, 135, 0.6) calc(var(--mx) + 2px), transparent calc(var(--mx) + 2px));
   --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .16 0 0 0 0 .18 0 0 0 0 .88 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
   position: relative;
   min-height: 100vh;
   overflow-x: clip;
   padding: 40px 28px 0 52px;
-  background: var(--noise), linear-gradient(160deg, #e4daff 0%, #efe8ff 40%, #fff3c4 100%);
+  background: var(--noise), linear-gradient(160deg, #dde7f7 0%, #e9f0fb 40%, #fbf3d8 100%);
   background-size: 220px 220px, auto;
   color: var(--ink-deep);
   font-family: var(--sans);
@@ -93,7 +98,7 @@
   margin: 0 auto;
   padding: 0 var(--pr) 64px var(--pl);
   background-color: var(--paper);
-  background-image: var(--margin-line), repeating-linear-gradient(180deg, transparent 0 35px, rgba(42, 47, 224, 0.08) 35px 36px);
+  background-image: var(--margin-line), repeating-linear-gradient(180deg, transparent 0 35px, rgba(52, 97, 193, 0.08) 35px 36px);
   background-position: 0 0, 0 100px;
   border: 2px solid var(--ink);
   border-radius: 10px;
@@ -222,7 +227,7 @@
   font-size: 17px;
 }
 
-/* the one loud thing: the pink primary action */
+/* the primary action: the one solid block of blue on the page */
 .nb-cta {
   position: relative;
   display: inline-flex;
@@ -230,21 +235,21 @@
   gap: 22px;
   min-height: 74px;
   padding: 10px 11px 10px 30px;
-  background: var(--pink);
-  border: 2.5px solid var(--ink);
+  background: var(--action);
+  border: 2.5px solid var(--ink-deep);
   border-radius: 999px;
-  box-shadow: 5px 5px 0 var(--ink);
-  color: var(--ink-deep);
+  box-shadow: 5px 5px 0 var(--ink-deep);
+  color: #fff;
   text-decoration: none;
   transition: transform var(--tap), box-shadow var(--tap);
 }
 .nb-cta:hover {
   transform: translate(-1px, -1px);
-  box-shadow: 6px 6px 0 var(--ink);
+  box-shadow: 6px 6px 0 var(--ink-deep);
 }
 .nb-cta:active {
   transform: translate(3px, 3px) scale(0.99, 0.97);
-  box-shadow: 2px 2px 0 var(--ink);
+  box-shadow: 2px 2px 0 var(--ink-deep);
 }
 .nb-cta-in {
   display: flex;
@@ -264,7 +269,7 @@
   font-size: 14px;
   font-weight: 600;
   margin-top: 3px;
-  color: var(--ink-night);
+  color: #e6eefc;
 }
 .nb-cta-arrow {
   display: grid;
@@ -273,10 +278,10 @@
   height: 50px;
   border-radius: 50%;
   background: var(--paper);
-  border: 2px solid var(--ink);
+  border: 2px solid var(--ink-deep);
   font-size: 22px;
   font-weight: 700;
-  color: var(--ink);
+  color: var(--ink-deep);
   flex: none;
 }
 .nb-cta--sm {
@@ -385,7 +390,7 @@
   margin: 0 calc(var(--pr) * -1) 0 calc(var(--pl) * -1);
   padding: 14px var(--pr) 14px var(--pl);
   background: var(--margin-line), var(--paper);
-  border-bottom: 2px solid rgba(42, 47, 224, 0.12);
+  border-bottom: 2px solid rgba(52, 97, 193, 0.12);
   border-radius: 8px 8px 0 0;
 }
 .nb-logo-link {
@@ -588,12 +593,12 @@
   border: 2px solid var(--ink);
   border-radius: 3px;
   aspect-ratio: 1.25 / 1;
-  background: #fff3b8;
+  background: #fdf2cc;
 }
 .nb-wall {
   position: absolute;
   inset: 0;
-  background: var(--noise), radial-gradient(rgba(200, 180, 255, 0.85) 1.6px, transparent 2.2px) 0 0 / 22px 22px, linear-gradient(180deg, #fff6c6 0%, #ffee9c 100%);
+  background: var(--noise), radial-gradient(rgba(190, 203, 240, 0.85) 1.6px, transparent 2.2px) 0 0 / 22px 22px, linear-gradient(180deg, #fdf6dc 0%, #fbeab8 100%);
 }
 .nb-floor {
   position: absolute;
@@ -602,7 +607,7 @@
   top: var(--horizon);
   bottom: 0;
   border-top: 2px solid var(--ink);
-  background: repeating-linear-gradient(90deg, transparent 0 90px, rgba(42, 47, 224, 0.16) 90px 92px), repeating-linear-gradient(180deg, #dccbff 0 30px, #d2beff 30px 32px);
+  background: repeating-linear-gradient(90deg, transparent 0 90px, rgba(52, 97, 193, 0.16) 90px 92px), repeating-linear-gradient(180deg, #d9e1f7 0 30px, #cdd7f3 30px 32px);
 }
 .nb-floor::before {
   content: "";
@@ -632,7 +637,7 @@
   border: 2px solid var(--ink);
   background: var(--paper);
   padding: 3.2%;
-  box-shadow: 3px 3px 0 rgba(42, 47, 224, 0.25);
+  box-shadow: 3px 3px 0 rgba(52, 97, 193, 0.25);
 }
 .nb-window-glass {
   position: relative;
@@ -641,7 +646,7 @@
   border-radius: 50%;
   border: 2px solid var(--ink);
   overflow: hidden;
-  background: linear-gradient(180deg, #8eeaf3, #c9f7fa);
+  background: linear-gradient(180deg, #a9d5ef, #dbeefa);
 }
 .nb-window-glass::before,
 .nb-window-glass::after {
@@ -789,7 +794,7 @@
   min-height: 8px;
   transform: translateX(-50%);
   border-radius: 50%;
-  background: rgba(29, 34, 168, 0.2);
+  background: rgba(31, 47, 90, 0.2);
   z-index: -1;
 }
 .nb-say {
@@ -1008,7 +1013,7 @@
   margin: 0;
   padding: 14px;
   background: #fff;
-  border: 2px solid rgba(42, 47, 224, 0.2);
+  border: 2px solid rgba(52, 97, 193, 0.2);
   border-radius: 12px;
 }
 .nb-fig svg {
@@ -1076,7 +1081,7 @@
   transition: transform var(--tap);
 }
 .nb-choice:not(:disabled):hover {
-  background: #f3efff;
+  background: #eef2fc;
 }
 .nb-choice:not(:disabled):active {
   transform: scale(0.985);
@@ -1124,7 +1129,7 @@
 .nb-q-teach {
   margin-top: 26px;
   padding-top: 24px;
-  border-top: 2px dashed rgba(42, 47, 224, 0.25);
+  border-top: 2px dashed rgba(52, 97, 193, 0.25);
   animation: nb-rise 0.3s ease-out both;
 }
 .nb-fb {
@@ -1180,10 +1185,10 @@
   border-radius: 4px;
 }
 .nb-mark-a {
-  background: rgba(79, 230, 242, 0.5);
+  background: rgba(150, 205, 236, 0.5);
 }
 .nb-mark-b {
-  background: rgba(255, 154, 77, 0.45);
+  background: rgba(241, 178, 135, 0.5);
 }
 .nb-remember {
   margin: 20px 0 0;
@@ -1318,7 +1323,7 @@
 .nb-week {
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 2px dashed rgba(42, 47, 224, 0.2);
+  border-top: 2px dashed rgba(52, 97, 193, 0.2);
 }
 .nb-week-h {
   display: flex;
@@ -1349,7 +1354,7 @@
 }
 .nb-bar-fill.is-empty {
   border: 0;
-  background: rgba(42, 47, 224, 0.15);
+  background: rgba(52, 97, 193, 0.15);
 }
 .nb-bar span {
   font-size: 12px;
@@ -1771,7 +1776,7 @@
   .nb-page {
     padding-bottom: 36px;
     box-shadow: 4px 4px 0 var(--ink);
-    background-image: var(--margin-line), repeating-linear-gradient(180deg, transparent 0 31px, rgba(42, 47, 224, 0.08) 31px 32px);
+    background-image: var(--margin-line), repeating-linear-gradient(180deg, transparent 0 31px, rgba(52, 97, 193, 0.08) 31px 32px);
   }
   .nb-nav {
     gap: 8px;
@@ -1993,7 +1998,7 @@
     background-size: 18px 14px;
   }
   .nb-page {
-    background-image: repeating-linear-gradient(180deg, transparent 0 31px, rgba(42, 47, 224, 0.08) 31px 32px);
+    background-image: repeating-linear-gradient(180deg, transparent 0 31px, rgba(52, 97, 193, 0.08) 31px 32px);
   }
   .nb-nav {
     background: var(--paper);
