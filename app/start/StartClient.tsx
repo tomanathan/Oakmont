@@ -96,7 +96,9 @@ export function StartClient(props: {
   }, [date, firstSkill, props.order, props.today]);
 
   return (
-    <div className="mx-auto max-w-[560px] px-4 pb-16 pt-5 font-sans">
+    <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] font-sans sm:my-8 md:w-[calc(100%-80px)] max-w-[650px]">
+      {/* The notebook page (see .nbk-page in globals.css). */}
+      <span className="nbk-spiral" aria-hidden />
       <div className="mb-5 flex items-center justify-between">
         <BrandMark size={32} />
         {step === "q" ? (

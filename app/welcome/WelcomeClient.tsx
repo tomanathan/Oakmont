@@ -218,7 +218,9 @@ export function WelcomeClient(props: Props) {
   };
 
   return (
-    <div className="mx-auto max-w-[680px] px-4 pb-16 pt-6 font-sans sm:px-6">
+    <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] font-sans sm:my-8 md:w-[calc(100%-80px)] max-w-[770px]">
+      {/* The notebook page (see .nbk-page in globals.css). */}
+      <span className="nbk-spiral" aria-hidden />
       {/* Header: brand, progress, a way out. */}
       <div className="mb-8 flex items-center justify-between gap-3">
         <BrandMark size={36} />

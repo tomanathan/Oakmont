@@ -15,7 +15,9 @@ function LoginPageContent({ googleEnabled }: { googleEnabled: boolean }) {
   const initialMode = searchParams.get("mode") === "signup" ? "signup" : "login";
 
   return (
-    <div className="max-w-[420px] mx-auto px-6 py-8 font-sans">
+    <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] font-sans sm:my-8 md:w-[calc(100%-80px)] max-w-[510px]">
+      {/* The notebook page (see .nbk-page in globals.css). */}
+      <span className="nbk-spiral" aria-hidden />
       <Link href="/" className="inline-block text-sm text-stone-500 transition-colors hover:text-ink">
         &larr; Back to home
       </Link>

@@ -45,7 +45,9 @@ export default async function SubscribePage() {
     : null;
 
   return (
-    <div className="max-w-[760px] mx-auto px-6 py-12 font-sans">
+    <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] font-sans sm:my-8 md:w-[calc(100%-80px)] max-w-[850px]">
+      {/* The notebook page (see .nbk-page in globals.css). */}
+      <span className="nbk-spiral" aria-hidden />
       <div className="text-center mb-10">
         <BrandMark size={56} className="mx-auto mb-3" />
         {planLine && (

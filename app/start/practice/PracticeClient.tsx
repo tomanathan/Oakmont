@@ -95,7 +95,8 @@ export function PracticeClient({
 
   if (done) {
     return (
-      <div className="mx-auto max-w-[560px] px-4 pb-16 pt-5 font-sans">
+      <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] max-w-[650px] font-sans sm:my-8 md:w-[calc(100%-80px)]">
+        <span className="nbk-spiral" aria-hidden />
         <BrandMark size={32} className="mb-5" />
         <div className="animate-fade-up">
           <div className="flex items-center gap-3">
@@ -149,7 +150,8 @@ export function PracticeClient({
 
   if (!current) return null;
   return (
-    <div className="mx-auto max-w-[560px] px-4 pb-16 pt-5 font-sans">
+    <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] max-w-[650px] font-sans sm:my-8 md:w-[calc(100%-80px)]">
+        <span className="nbk-spiral" aria-hidden />
       <div className="mb-5 flex items-center justify-between">
         <BrandMark size={32} />
         <div className="flex items-center gap-1.5" aria-label={`Question ${index + 1} of ${questions.length}`}>
