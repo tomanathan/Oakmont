@@ -1,12 +1,10 @@
-import { PixelDog } from "@/components/PixelDog";
 import { TrackedLink } from "../TrackedLink";
 
 export function Logo({ size = "lg" }: { size?: "lg" | "sm" }) {
   return (
     <span className={`nb-logo nb-logo--${size}`}>
-      <span className="nb-logo-face" aria-hidden>
-        <PixelDog size={46} mood="happy" costume="sunglasses" shadow={false} />
-      </span>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/oakmont-mark.png" alt="" aria-hidden className="nb-logo-mark" />
       <span className="nb-logo-word">Oakmont Study Center</span>
     </span>
   );

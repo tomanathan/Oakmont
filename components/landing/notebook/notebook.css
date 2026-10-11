@@ -425,6 +425,17 @@
   left: -4px;
   top: 4px;
 }
+/* The original Oakmont tree mark, as drawn. */
+.nb-logo-mark {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  flex: none;
+}
+.nb-logo--sm .nb-logo-mark {
+  width: 36px;
+  height: 36px;
+}
 .nb-logo--sm .nb-logo-word {
   font-size: 22px;
 }
@@ -1785,6 +1796,10 @@
   }
   .nb-logo-word {
     font-size: 22px;
+  }
+  .nb-logo-mark {
+    width: 36px;
+    height: 36px;
   }
   .nb-logo-face {
     width: 34px;
