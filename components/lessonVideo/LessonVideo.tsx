@@ -39,6 +39,7 @@ export function LessonVideo({
   ozhoAway = false,
   onHold,
   audio,
+  costume = null,
 }: {
   script: LessonVideoScript;
   example: WorkedExample;
@@ -61,6 +62,8 @@ export function LessonVideo({
   // (phones only let audio start from a tap, and playback here starts a
   // moment later, once the Polaroid has landed).
   audio?: HTMLAudioElement | null;
+  // The wardrobe costume the page's Ozho brought in with him.
+  costume?: string | null;
 }) {
   const tl = useMemo(() => buildTimeline(script, example, voice), [script, example, voice]);
   // With a voice track, the audio element is the clock (no drift).
@@ -180,7 +183,7 @@ export function LessonVideo({
     <figure className={`lv ${floating ? "lv--float" : ""}`} aria-label={`Video: ${script.pattern}`}>
       <div className="lv-box" ref={boxRef} style={{ height: H * scale }}>
         <div className="lv-stage" style={{ width: W, height: H, transform: `scale(${scale})` }} aria-hidden>
-          <Stage tl={tl} t={now} script={script} example={example} skillName={skillName} ozhoAway={ozhoAway} />
+          <Stage tl={tl} t={now} script={script} example={example} skillName={skillName} ozhoAway={ozhoAway} costume={costume} />
         </div>
         {/* What's said, for screen readers (the stage itself is decoration). */}
         <p className="lv-sr" aria-live="polite">
@@ -235,7 +238,7 @@ export function LessonVideo({
   );
 }
 
-function Stage({ tl, t, script, example, skillName, ozhoAway }: { tl: Timeline; t: number; script: LessonVideoScript; example: WorkedExample; skillName: string; ozhoAway?: boolean }) {
+function Stage({ tl, t, script, example, skillName, ozhoAway, costume }: { tl: Timeline; t: number; script: LessonVideoScript; example: WorkedExample; skillName: string; ozhoAway?: boolean; costume?: string | null }) {
   const beat = beatAt(tl, t);
   const kind = beat?.kind;
   const first = (k: string) => tl.beats.find((b) => b.kind === k)!;
@@ -334,11 +337,11 @@ function Stage({ tl, t, script, example, skillName, ozhoAway }: { tl: Timeline; 
             )}
           </div>
           <div className="lv-ozho" style={{ transform: `translate(${ozX}px, ${-hop + down * 190}px)`, visibility: ozhoAway ? "hidden" : undefined }}>
-            <PixelDog size={OZHO_WALK.size} mood={happy ? "happy" : "neutral"} legFrame={leg} tailFrame={tail} shadow />
+            <PixelDog size={OZHO_WALK.size} mood={happy ? "happy" : "neutral"} legFrame={leg} tailFrame={tail} costume={costume} shadow />
           </div>
         </div>
         <div className="lv-watch" style={{ opacity: clamp(down * 2 - 1), transform: `translateY(${(1 - down) * 30}px)` }}>
-          <PixelDog size={74} mood={happy ? "happy" : "neutral"} tailFrame={tail} sitting shadow={false} />
+          <PixelDog size={74} mood={happy ? "happy" : "neutral"} tailFrame={tail} costume={costume} sitting shadow={false} />
         </div>
         <div className={`lv-cap ${down > 0.5 ? "is-narrow" : ""}`}>
           {beat && (

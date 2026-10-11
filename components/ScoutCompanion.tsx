@@ -631,6 +631,9 @@ export function ScoutCompanion() {
   // already burned this component on once.
   const [perk, setPerk] = useState(false);
   const [costume, setCostume] = useState<string | null>(null);
+  // Read by the video hop (ozho:boarded), which runs inside long-lived handlers.
+  const costumeRef = useRef<string | null>(null);
+  costumeRef.current = costume;
   // The "Pet" menu action's own animation -- a contented wiggle, distinct
   // from both the tiny ambient `perk` hop and the bigger `trick` jump-spin,
   // so being petted actually reads as its own thing (see the className
@@ -978,7 +981,7 @@ export function ScoutCompanion() {
       if (isMobileRef.current) {
         inVideoRef.current = true;
         setInVideo(true);
-        window.dispatchEvent(new CustomEvent("ozho:boarded"));
+        window.dispatchEvent(new CustomEvent("ozho:boarded", { detail: { costume: costumeRef.current } }));
         return;
       }
       cancelZoomies();
@@ -1789,7 +1792,7 @@ export function ScoutCompanion() {
           }
           setBoardHop({ dir: "in", ...hop });
           inVideoRef.current = true;
-          setTimeout(() => window.dispatchEvent(new CustomEvent("ozho:boarded")), BOARD_HOP_MS);
+          setTimeout(() => window.dispatchEvent(new CustomEvent("ozho:boarded", { detail: { costume: costumeRef.current } })), BOARD_HOP_MS);
         } else {
           pos.x += (dx / d) * step;
           pos.y += (dy / d) * step;

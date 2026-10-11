@@ -142,6 +142,8 @@ function PinnedVideo({
   // Swap once both are true: he's hopped into place, and the video has
   // reached that moment.
   const boarded = useRef(false);
+  // Whatever the page's Ozho is wearing comes into the video with him.
+  const [costume, setCostume] = useState<string | null>(null);
   const atEntry = useRef(false);
   const swapped = useRef(false);
   const swap = useCallback(() => {
@@ -156,8 +158,9 @@ function PinnedVideo({
   }, [swap]);
   useEffect(() => {
     if (!mounted) return;
-    const onBoarded = () => {
+    const onBoarded = (e: Event) => {
       boarded.current = true;
+      setCostume((e as CustomEvent<{ costume?: string | null } | undefined>).detail?.costume ?? null);
       if (atEntry.current) swap();
     };
     window.addEventListener("ozho:boarded", onBoarded);
@@ -195,7 +198,7 @@ function PinnedVideo({
     <div className={`lv-pin ${closing ? "is-closing" : ""}`} role="dialog" aria-modal="true" aria-label={`Video: ${script.pattern}`}>
       <div className="lv-pin-back" onClick={close} />
       <div className="lv-pin-card" ref={ref}>
-        <LessonVideo key={patternName} script={script} example={example} skillName={skillName} voice={voice} autoPlay floating hold={hold} ozhoAway={hold !== null} onHold={onHold} audio={audio} />
+        <LessonVideo key={patternName} script={script} example={example} skillName={skillName} voice={voice} autoPlay floating hold={hold} ozhoAway={hold !== null} onHold={onHold} audio={audio} costume={costume} />
         <button type="button" className="lv-pin-close" onClick={close} aria-label="Close video">
           ×
         </button>
