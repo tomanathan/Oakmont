@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { Caveat, Fraunces, Instrument_Sans } from "next/font/google";
 import "./globals.css";
+import "./paper.css";
 import "katex/dist/katex.min.css";
 import { Analytics } from "@vercel/analytics/next";
 import { CompanionGate } from "@/components/CompanionGate";
 import { GlobalConfetti } from "@/components/GlobalConfetti";
+import { PaperMotion } from "@/components/paper/PaperMotion";
+import { Suspense } from "react";
 
 // A characterful serif reserved for the brand wordmark and page titles
 // (top bar, login/welcome/settle-back-in screens) -- everything else stays
@@ -58,6 +61,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div id="app-content">{children}</div>
         <CompanionGate />
         <GlobalConfetti />
+        <Suspense fallback={null}>
+          <PaperMotion />
+        </Suspense>
         <Analytics />
       </body>
     </html>

@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { turnTo } from "@/components/paper/turn";
 
 export function ApproveInvite({ token, studentEmail }: { token: string; studentEmail: string }) {
-  const router = useRouter();
   const [state, setState] = useState<"idle" | "saving" | "done">("idle");
   const [error, setError] = useState("");
 
@@ -29,7 +28,7 @@ export function ApproveInvite({ token, studentEmail }: { token: string; studentE
     return (
       <div className="rounded-xl bg-[#eaf6ef] p-4 text-[14px] text-accent">
         Connected. Your parent's dashboard is live.{" "}
-        <button onClick={() => router.push("/dashboard")} className="font-semibold underline">
+        <button onClick={() => turnTo("/dashboard")} className="font-semibold underline">
           Go to your dashboard
         </button>
       </div>
@@ -44,7 +43,7 @@ export function ApproveInvite({ token, studentEmail }: { token: string; studentE
         <button onClick={approve} disabled={state === "saving"} className="flex-1 rounded-lg bg-forest py-2.5 text-sm font-semibold text-white disabled:opacity-60">
           {state === "saving" ? "Connecting..." : "Connect"}
         </button>
-        <button onClick={() => router.push("/dashboard")} className="flex-1 rounded-lg border border-[#b4c5e6] py-2.5 text-sm font-semibold text-ink hover:bg-[#e9effb]">
+        <button onClick={() => turnTo("/dashboard")} className="flex-1 rounded-lg border border-[#b4c5e6] py-2.5 text-sm font-semibold text-ink hover:bg-[#e9effb]">
           Not now
         </button>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { turnTo } from "@/components/paper/turn";
 import { useRouter } from "next/navigation";
 import { sectionTheme } from "@/lib/sectionTheme";
 import { StarRating } from "@/components/StarRating";
@@ -202,7 +203,7 @@ export function AnalysisClient({
             <div className="text-sm font-semibold text-ink">Subject breakdown</div>
             <div className="text-xs text-stone-500">
               Stars track quiz mastery &mdash; the same rating shown on the{" "}
-              <button onClick={() => router.push("/dashboard")} className="underline hover:text-ink">
+              <button onClick={() => turnTo("/dashboard")} className="underline hover:text-ink">
                 dashboard
               </button>
               . Your practice test score is shown separately below.

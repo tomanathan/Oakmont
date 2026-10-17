@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { turnTo } from "@/components/paper/turn";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BrandMark } from "@/components/BrandMark";
 import { LegalFooter } from "@/components/LegalFooter";
@@ -48,7 +49,7 @@ function ResetPasswordForm() {
       }
       // The route already logged us in (see its own comment) -- straight to
       // the dashboard rather than making someone re-type what they just set.
-      router.push("/dashboard");
+      turnTo("/dashboard");
       router.refresh();
     } catch {
       setError("Couldn't reach the server. Please try again.");

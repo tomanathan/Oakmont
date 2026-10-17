@@ -1,6 +1,7 @@
 "use client";
 
 import type { Confidence } from "@/lib/items";
+import { PenLoop } from "./paper/Pencil";
 
 export const CONFIDENCE_OPTIONS: { value: Confidence; label: string }[] = [
   { value: "sure", label: "Sure" },
@@ -33,11 +34,13 @@ export function ConfidencePicker({
             role="radio"
             aria-checked={value === o.value}
             onClick={() => onChange(o.value)}
-            className={`rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors ${
-              value === o.value ? "bg-forest text-white shadow-[0_1px_2px_rgba(31,47,90,0.2)]" : "text-stone-600 hover:bg-white/70 hover:text-ink"
+            className={`relative rounded-md px-2.5 py-1 text-[12px] transition-colors ${
+              value === o.value ? "bg-white font-semibold text-ink" : "font-medium text-stone-600 hover:bg-white/70 hover:text-ink"
             }`}
           >
             {o.label}
+            {/* circled in pen, like the answer itself */}
+            <PenLoop show={value === o.value} seed={o.label.length * 7 + 3} className="-inset-x-1.5 -inset-y-1.5" />
           </button>
         ))}
       </div>

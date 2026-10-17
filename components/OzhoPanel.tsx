@@ -127,7 +127,7 @@ export function OzhoPanel({
       role="dialog"
       aria-label={`${PET_NAME}`}
       className={`pointer-events-auto fixed z-[60] rounded-2xl border border-[#c9d6ee] bg-white p-3.5 font-sans shadow-[0_18px_48px_-12px_rgba(31,47,90,0.28)] ${
-        sheet ? "inset-x-3 bottom-3 animate-ozho-sheet" : "animate-ozho-panel"
+        sheet ? "inset-x-3 bottom-3 paper-slip" : "paper-drop paper-index"
       }`}
       style={
         sheet

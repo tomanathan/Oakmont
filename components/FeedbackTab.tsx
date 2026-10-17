@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useLeave } from "./paper/usePresence";
+import { PaperPlane } from "./paper/PaperPlane";
+import { PenLoop } from "./paper/Pencil";
 import { usePathname } from "next/navigation";
 import { FEEDBACK_KINDS, FEEDBACK_MAX, type FeedbackKind } from "@/lib/feedback";
 import { PixelDog } from "./PixelDog";
@@ -34,15 +37,19 @@ export function FeedbackTab({ audience = "student" }: { audience?: "student" | "
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
+  // Picked up and slid off the desk, then gone.
+  const [leaving, leave] = useLeave(360);
   function close() {
-    setOpen(false);
-    // A sent note clears the form; a half-written one is kept for next time.
-    if (state === "sent") {
-      setKind(null);
-      setRating(null);
-      setMessage("");
-      setState("idle");
-    }
+    leave(() => {
+      setOpen(false);
+      // A sent note clears the form; a half-written one is kept for next time.
+      if (state === "sent") {
+        setKind(null);
+        setRating(null);
+        setMessage("");
+        setState("idle");
+      }
+    });
   }
 
   async function send(e: React.FormEvent) {
@@ -88,16 +95,18 @@ export function FeedbackTab({ audience = "student" }: { audience?: "student" | "
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#1f2f5a]/35 p-3 backdrop-blur-[2px] sm:items-center sm:p-4" onClick={close}>
+        <div className={`paper-desk fixed inset-0 z-50 flex items-end justify-center bg-[#1f2f5a]/35 p-3 backdrop-blur-[2px] sm:items-center sm:p-4 ${leaving ? "is-leaving" : ""}`} onClick={close}>
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="feedback-title"
             onClick={(e) => e.stopPropagation()}
-            className="nbk-taped nbk-taped--butter w-full max-w-[460px] rounded-2xl border-2 border-[#3461c1] bg-white p-6 shadow-[6px_6px_0_#3461c1]"
+            className={`paper-slip ${leaving ? "is-leaving" : ""} nbk-taped nbk-taped--butter relative w-full max-w-[460px] rounded-2xl border-2 border-[#3461c1] bg-white p-6 shadow-[6px_6px_0_#3461c1]`}
           >
             {state === "sent" ? (
               <div className="py-4 text-center">
+                {/* The note, folded up and thrown. */}
+                <PaperPlane />
                 <div className="mb-3 inline-block">
                   <PixelDog size={84} mood="happy" tailFrame={3} />
                 </div>
@@ -132,9 +141,10 @@ export function FeedbackTab({ audience = "student" }: { audience?: "student" | "
                         type="button"
                         aria-pressed={kind === k.id}
                         onClick={() => setKind(kind === k.id ? null : k.id)}
-                        className={`rounded-full border px-3 py-1.5 text-[13px] font-semibold transition-colors ${kind === k.id ? "border-[#3461c1] bg-forest text-white" : "border-[#b4c5e6] bg-white text-ink hover:bg-[#e9effb]"}`}
+                        className={`relative rounded-full border px-3 py-1.5 text-[13px] font-semibold transition-colors ${kind === k.id ? "border-[#3461c1] bg-forest text-white" : "border-[#b4c5e6] bg-white text-ink hover:bg-[#e9effb]"}`}
                       >
                         {k.label}
+                        <PenLoop show={kind === k.id} seed={k.label.length * 17} className="-inset-x-2.5 -inset-y-2" />
                       </button>
                     ))}
                   </div>
@@ -169,9 +179,10 @@ export function FeedbackTab({ audience = "student" }: { audience?: "student" | "
                         aria-pressed={rating === n}
                         aria-label={`${n} out of 5`}
                         onClick={() => setRating(rating === n ? null : n)}
-                        className={`h-9 w-9 rounded-lg border text-[14px] font-bold transition-colors ${rating === n ? "border-[#3461c1] bg-forest text-white" : "border-[#b4c5e6] bg-white text-ink hover:bg-[#e9effb]"}`}
+                        className={`relative h-9 w-9 rounded-lg border text-[14px] font-bold transition-colors ${rating === n ? "border-[#3461c1] bg-forest text-white" : "border-[#b4c5e6] bg-white text-ink hover:bg-[#e9effb]"}`}
                       >
                         {n}
+                        <PenLoop show={rating === n} seed={n * 31} className="-inset-2" />
                       </button>
                     ))}
                     <span className="ml-1 self-center text-[12px] text-stone-500">1 = rough, 5 = great</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PaperCheck } from "@/components/paper/Pencil";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PixelDog } from "@/components/PixelDog";
@@ -298,7 +299,7 @@ export function SettingsClient({
                 key={c.id}
                 onClick={() => unlocked && !selected && equip(c.id)}
                 disabled={!unlocked || equipping !== null}
-                className={`flex flex-col items-center gap-2 rounded-lg border p-3 text-center transition-colors ${
+                className={`relative flex flex-col items-center gap-2 rounded-lg border p-3 text-center transition-colors ${
                   selected
                     ? "border-ink bg-[#eef3fb]"
                     : unlocked
@@ -306,6 +307,9 @@ export function SettingsClient({
                     : "border-[#c9d6ee] opacity-50 cursor-default"
                 }`}
               >
+                {/* The outfit he's wearing gets taped down, like a photo
+                    pinned in the notebook. */}
+                {selected && <span key={c.id} className="paper-tape-strip" aria-hidden />}
                 <PixelDog size={40} costume={unlocked ? c.id : null} />
                 <div className="text-xs font-semibold text-ink">{c.name}</div>
                 <div className="text-[10px] text-stone-500 leading-snug">
@@ -720,9 +724,7 @@ function EmailPrefs({ initialOn }: { initialOn: boolean }) {
           {failed && <p className="mt-1 text-[13px] text-red-700">That didn&apos;t save. Try again.</p>}
         </div>
         <button onClick={toggle} role="switch" aria-checked={on} aria-label="Daily emails" className="mt-1 flex-none">
-          <span className={`relative inline-block h-6 w-11 rounded-full transition-colors ${on ? "bg-forest" : "bg-stone-300"}`}>
-            <span className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${on ? "left-6" : "left-1"}`} />
-          </span>
+          <PaperCheck on={on} size={24} seed={21} />
         </button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { turnTo } from "@/components/paper/turn";
 import { useRouter } from "next/navigation";
 import type { SatDate } from "@/lib/satDates";
 
@@ -49,7 +50,7 @@ export function RetakeCover({ claimedAt, accessExpiresAt, options, after = "refr
         setBusy(false);
         return;
       }
-      if (after === "dashboard") router.push("/dashboard");
+      if (after === "dashboard") turnTo("/dashboard");
       else router.refresh();
     } catch {
       setError("Couldn't reach the server. Try again.");

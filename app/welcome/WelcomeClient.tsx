@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { PenLoop } from "@/components/paper/Pencil";
+import { PaperCheck } from "@/components/paper/Pencil";
+import { turn, turnTo } from "@/components/paper/turn";
 import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
 import { PET_NAME, SECOND_PET_NAME } from "@/lib/pet";
@@ -142,23 +145,29 @@ export function WelcomeClient(props: Props) {
     setError("");
     // Reopened from the dashboard to set goals: date, then score.
     if (single === "date" && step === "date") {
-      setStep("score");
+      goStep("score");
       return;
     }
     if (single) {
-      router.push("/dashboard");
+      turnTo("/dashboard");
       router.refresh();
       return;
     }
     const i = STEPS.indexOf(step);
-    setStep(STEPS[Math.min(STEPS.length - 1, i + 1)]);
+    goStep(STEPS[Math.min(STEPS.length - 1, i + 1)]);
     window.scrollTo({ top: 0 });
   }
 
   function back() {
     setError("");
     const i = STEPS.indexOf(step);
-    if (i > 0) setStep(STEPS[i - 1]);
+    if (i > 0) goStep(STEPS[i - 1], "back");
+  }
+
+  // Each step is the next page of the notebook, turned over (back a page
+  // with Back).
+  function goStep(s: WelcomeStep, dir: "fwd" | "back" = "fwd") {
+    void turn(document.querySelector<HTMLElement>(".nbk-page"), () => setStep(s), { kind: "page", dir });
   }
 
   async function saveName(e: React.FormEvent) {
@@ -201,7 +210,7 @@ export function WelcomeClient(props: Props) {
     } catch {
       // Not worth blocking on: worst case they see this page once more.
     }
-    router.push(to);
+    turnTo(to);
     router.refresh();
   }
 
@@ -226,14 +235,14 @@ export function WelcomeClient(props: Props) {
         <BrandMark size={36} />
         {!single && step !== "ready" && (
           <button
-            onClick={() => setStep(parentChoice ? "ready" : "parent")}
+            onClick={() => goStep(parentChoice ? "ready" : "parent")}
             className="text-xs text-stone-500 underline underline-offset-2 hover:text-stone-600"
           >
             Skip setup
           </button>
         )}
         {single && (
-          <button onClick={() => router.push("/dashboard")} className="text-xs text-stone-500 underline underline-offset-2 hover:text-stone-600">
+          <button onClick={() => turnTo("/dashboard")} className="text-xs text-stone-500 underline underline-offset-2 hover:text-stone-600">
             Back to dashboard
           </button>
         )}
@@ -259,12 +268,12 @@ export function WelcomeClient(props: Props) {
         <div className="flex h-[72px] w-[72px] flex-shrink-0 items-end justify-center rounded-2xl bg-[#f7f9fe] pb-1.5 ring-1 ring-[#f0d0b3]">
           <PetAvatar stage="thriving" size={58} />
         </div>
-        <div key={step} className="animate-fade-up relative mb-2 rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[15px] leading-snug text-ink shadow-[3px_3px_0_rgba(52,97,193,0.13)] ring-1 ring-[#c9d6ee]">
+        <div key={step} className="paper-sticky relative mb-2 rounded-2xl rounded-bl-md bg-white px-4 py-3 text-[15px] leading-snug text-ink shadow-[3px_3px_0_rgba(52,97,193,0.13)] ring-1 ring-[#c9d6ee]">
           {ozhoLine[step]}
         </div>
       </div>
 
-      <div key={`card-${step}`} className="animate-fade-up">
+      <div key={`card-${step}`}>
         {step === "name" && (
           <form onSubmit={saveName} className={CARD}>
             <h1 className={H1}>What&apos;s your first name?</h1>
@@ -299,6 +308,7 @@ export function WelcomeClient(props: Props) {
                     <div className={`text-[12px] ${on ? "text-white/70" : "text-stone-500"}`}>
                       in {d.weeks} {d.weeks === 1 ? "week" : "weeks"}
                     </div>
+                    <PenLoop show={on} seed={40} className="-inset-1.5" />
                   </button>
                 );
               })}
@@ -309,10 +319,12 @@ export function WelcomeClient(props: Props) {
               >
                 <div className="text-[14px] font-semibold">Another date</div>
                 <div className={`text-[12px] ${dateChoice.kind === "other" ? "text-white/70" : "text-stone-500"}`}>School day, retake...</div>
+                <PenLoop show={dateChoice.kind === "other"} seed={49} className="-inset-1.5" />
               </button>
               <button onClick={() => setDateChoice({ kind: "unsure" })} className={chip(dateChoice.kind === "unsure")} aria-pressed={dateChoice.kind === "unsure"}>
                 <div className="text-[14px] font-semibold">Not sure yet</div>
                 <div className={`text-[12px] ${dateChoice.kind === "unsure" ? "text-white/70" : "text-stone-500"}`}>Use the recommended 6 months</div>
+                <PenLoop show={dateChoice.kind === "unsure"} seed={58} className="-inset-1.5" />
               </button>
             </div>
             {dateChoice.kind === "other" && (
@@ -365,7 +377,8 @@ export function WelcomeClient(props: Props) {
                 className={`${INPUT} w-40 disabled:bg-stone-50`}
               />
               <label className="flex items-center gap-2 text-sm text-stone-600">
-                <input type="checkbox" checked={noScore} onChange={(e) => setNoScore(e.target.checked)} className="h-4 w-4 accent-[#1f2f5a]" />
+                <input type="checkbox" checked={noScore} onChange={(e) => setNoScore(e.target.checked)} className="peer sr-only" />
+                <PaperCheck on={noScore} size={17} seed={13} className="peer-focus-visible:ring-2 peer-focus-visible:ring-[#4a67a6] peer-focus-visible:ring-offset-2" />
                 I don&apos;t have one yet
               </label>
             </div>
@@ -444,12 +457,14 @@ export function WelcomeClient(props: Props) {
                 <div className={`mt-1 text-[13px] leading-snug ${parentChoice === "yes" ? "text-white/75" : "text-stone-500"}`}>
                   Their free dashboard connects to your account right away.
                 </div>
+                <PenLoop show={parentChoice === "yes"} seed={67} className="-inset-1.5" />
               </button>
               <button role="radio" aria-checked={parentChoice === "solo"} onClick={() => setParentChoice("solo")} className={choiceCard(parentChoice === "solo")}>
                 <span className="text-[15px] font-semibold">Skip for now</span>
                 <div className={`mt-1 text-[13px] leading-snug ${parentChoice === "solo" ? "text-white/75" : "text-stone-500"}`}>
                   You can add a parent from Settings later.
                 </div>
+                <PenLoop show={parentChoice === "solo"} seed={76} className="-inset-1.5" />
               </button>
             </div>
 
@@ -601,11 +616,11 @@ const INPUT = "w-full rounded-lg border border-[#b4c5e6] px-3 py-2.5 text-sm foc
 const PRIMARY = "rounded-xl bg-forest px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:bg-[#d6dff2] disabled:text-stone-500 disabled:hover:opacity-100";
 
 function choiceCard(on: boolean) {
-  return `rounded-xl p-4 text-left ring-1 transition-colors ${on ? "bg-forest text-white ring-ink" : "bg-white text-ink ring-[#b4c5e6] hover:ring-[#a8bde6]"}`;
+  return `relative rounded-xl p-4 text-left ring-1 transition-colors ${on ? "bg-forest text-white ring-ink" : "bg-white text-ink ring-[#b4c5e6] hover:ring-[#a8bde6]"}`;
 }
 
 function chip(on: boolean) {
-  return `rounded-xl px-3.5 py-3 text-left ring-1 transition-colors ${
+  return `relative rounded-xl px-3.5 py-3 text-left ring-1 transition-colors ${
     on ? "bg-forest text-white ring-ink" : "bg-white text-ink ring-[#b4c5e6] hover:ring-[#a8bde6]"
   }`;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLeave } from "./paper/usePresence";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -18,12 +19,14 @@ export interface ChecklistItem {
 export function GettingStarted({ items }: { items: ChecklistItem[] }) {
   const router = useRouter();
   const [hidden, setHidden] = useState(false);
+  const [leaving, leave] = useLeave(520);
   const done = items.filter((i) => i.done).length;
   if (hidden || done === items.length) return null;
   const nextUp = items.find((i) => !i.done);
 
   async function dismiss() {
-    setHidden(true);
+    // Screwed up and tossed over the shoulder.
+    leave(() => setHidden(true));
     await fetch("/api/account", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -33,7 +36,7 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
   }
 
   return (
-    <section className="mb-4 rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)]">
+    <section className={`${leaving ? "paper-toss" : ""} mb-4 rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)]`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-display text-[18px] font-semibold text-ink">Getting started</h2>

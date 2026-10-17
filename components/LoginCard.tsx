@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { turnTo } from "@/components/paper/turn";
 import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
 import { GoogleButton, OrWithEmail } from "@/components/GoogleButton";
@@ -60,7 +61,7 @@ export function LoginCard({
         return;
       }
       if (mode === "signup") track("signup_completed");
-      router.push(safeNext ?? (mode === "signup" ? "/welcome" : "/dashboard"));
+      turnTo(safeNext ?? (mode === "signup" ? "/welcome" : "/dashboard"));
       router.refresh();
     } catch {
       setError("Couldn't reach the server. Please try again.");

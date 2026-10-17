@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PaperCheck } from "@/components/paper/Pencil";
 import { useRouter } from "next/navigation";
 
 // The parent's own controls above a report: rename the student, the weekly
@@ -108,9 +109,7 @@ export function ParentControls({
         aria-checked={weekly}
         className="flex items-center gap-2 rounded-lg border border-[#b4c5e6] bg-white px-3 py-1.5 text-[13px] font-medium text-ink hover:bg-[#e9effb]"
       >
-        <span className={`relative inline-block h-4 w-7 rounded-full transition-colors ${weekly ? "bg-accent" : "bg-stone-300"}`}>
-          <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${weekly ? "left-3.5" : "left-0.5"}`} />
-        </span>
+        <PaperCheck on={weekly} size={16} seed={5} />
         Sunday email
       </button>
       <button
@@ -119,9 +118,7 @@ export function ParentControls({
         aria-checked={daily}
         className="flex items-center gap-2 rounded-lg border border-[#b4c5e6] bg-white px-3 py-1.5 text-[13px] font-medium text-ink hover:bg-[#e9effb]"
       >
-        <span className={`relative inline-block h-4 w-7 rounded-full transition-colors ${daily ? "bg-accent" : "bg-stone-300"}`}>
-          <span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-all ${daily ? "left-3.5" : "left-0.5"}`} />
-        </span>
+        <PaperCheck on={daily} size={16} seed={8} />
         Daily emails
       </button>
     </div>

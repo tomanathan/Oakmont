@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Fold } from "@/components/paper/Fold";
+import { turnTo } from "@/components/paper/turn";
 import { sectionTheme } from "@/lib/sectionTheme";
 import { addUTCDays, formatUTCDate, utcDayDiff } from "@/lib/dateOnly";
 import { TIGHT_TIMELINE_DAYS } from "@/lib/pacing";
@@ -48,7 +49,6 @@ export function PlanClient({
   targetTestDate: string | null;
   daysUntilTest: number | null;
 }) {
-  const router = useRouter();
   const allSubskills = weeks.flatMap((w) => w.subskills);
   const doneSubskills = allSubskills.filter((s) => isPassed(progress[s.id])).length;
   const masteredSubskills = allSubskills.filter((s) => isMastered(progress[s.id])).length;
@@ -83,7 +83,7 @@ export function PlanClient({
         {weeks.length} weeks, day by day. All {totalTests} practice tests are spread across it, and the
         schedule leans toward whichever domains your scores say need the most work.{" "}
         {targetTestDate ? "Change your test date" : "Set a test date"} in{" "}
-        <button onClick={() => router.push("/settings")} className="underline hover:text-ink">
+        <button onClick={() => turnTo("/settings")} className="underline hover:text-ink">
           Settings
         </button>{" "}
         {targetTestDate ? "and it resizes to fit." : "to fit it to your timeline."}
@@ -106,7 +106,7 @@ export function PlanClient({
           </div>
           <div className="text-xs text-[#9a6a12]">
             {daysUntilTest < 0 ? (
-              <button onClick={() => router.push("/settings")} className="underline hover:text-[#7a5410]">
+              <button onClick={() => turnTo("/settings")} className="underline hover:text-[#7a5410]">
                 Update your test date in Settings
               </button>
             ) : daysUntilTest < TIGHT_TIMELINE_DAYS ? (
@@ -193,8 +193,7 @@ export function PlanClient({
                 </svg>
               </button>
 
-              {isOpen && (
-                <div className="border-t border-[#e9effb] divide-y divide-[#eef3fb]">
+              <Fold open={isOpen} className="border-t border-[#e9effb] divide-y divide-[#eef3fb]">
                   {w.days.map((d) => {
                     const dayDate = addUTCDays(weekStart, d.day - 1);
                     const isToday = isCurrentWeek && d.day - 1 === currentDayOfWeek;
@@ -222,13 +221,12 @@ export function PlanClient({
                           ) : null}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <DayContent day={d} progress={progress} onNavigate={router.push} />
+                          <DayContent day={d} progress={progress} onNavigate={(href) => turnTo(href)} />
                         </div>
                       </div>
                     );
                   })}
-                </div>
-              )}
+              </Fold>
             </div>
           );
         })}

@@ -4,6 +4,8 @@ import { FeedbackTab } from "./FeedbackTab";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { Highlight } from "./paper/Pencil";
+import { usePresence } from "./paper/usePresence";
 import { BrandMark } from "./BrandMark";
 import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
@@ -246,11 +248,14 @@ function Tab({ href, active, children }: { href: string; active: boolean; childr
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
-        active ? "bg-[#e9effb] font-semibold text-ink" : "text-stone-500 hover:text-ink"
-      }`}
+      className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${active ? "font-semibold text-ink" : "text-stone-500 hover:text-ink"}`}
     >
-      {children}
+      {/* The current page is highlighted the way you'd mark it in a
+          notebook: a swipe of highlighter, drawn on as you arrive. */}
+      <span className="relative inline-block">
+        <Highlight show={active} seed={href.length * 13} rise={1.5} className="-inset-x-1.5 inset-y-[1px]" />
+        <span className="relative">{children}</span>
+      </span>
     </Link>
   );
 }
@@ -260,6 +265,7 @@ function Tab({ href, active, children }: { href: string; active: boolean; childr
 // loose across the header as small grey text.
 function AccountMenu({ email, onLogout }: { email: string; onLogout: () => void }) {
   const [open, setOpen] = useState(false);
+  const card = usePresence(open, 220);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
@@ -288,12 +294,14 @@ function AccountMenu({ email, onLogout }: { email: string; onLogout: () => void 
       >
         {email.trim()[0] ?? ""}
       </button>
-      {open && (
+      {/* An index card, dropped onto the desk below the button and picked
+          back up when it closes. */}
+      {card.mounted && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-xl border border-[#c9d6ee] bg-white py-1 shadow-[0_12px_32px_-8px_rgba(31,47,90,0.2)]"
+          className={`paper-drop paper-index absolute right-0 top-full z-40 mt-2 w-60 overflow-hidden rounded-md border border-[#c9d6ee] bg-white py-1 ${card.leaving ? "is-lifting pointer-events-none" : ""}`}
         >
-          <div className="border-b border-[#e9effb] px-3.5 py-2.5">
+          <div className="border-b-2 border-[#f1b287]/70 px-3.5 py-2.5">
             <div className="text-[11px] text-stone-500">Signed in as</div>
             <div className="truncate text-[13px] font-medium text-ink">{email}</div>
           </div>

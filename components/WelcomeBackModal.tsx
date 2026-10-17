@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLeave } from "./paper/usePresence";
 import { BrandMark } from "./BrandMark";
 import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
@@ -64,8 +65,10 @@ export function WelcomeBackModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
+  // Picked up and slid off the desk, then gone.
+  const [leaving, leave] = useLeave(360);
   function dismiss() {
-    setOpen(false);
+    leave(() => setOpen(false));
     try {
       window.localStorage.setItem("welcome-back-seen", sessionKey);
     } catch {
@@ -94,12 +97,12 @@ export function WelcomeBackModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-forest/40 backdrop-blur-[2px] p-4"
+      className={`paper-desk fixed inset-0 z-50 flex items-center justify-center bg-forest/40 backdrop-blur-[2px] p-4 ${leaving ? "is-leaving" : ""}`}
       onClick={dismiss}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="nbk-taped nbk-taped--butter bg-white border-2 border-[#3461c1] rounded-2xl shadow-[6px_6px_0_#3461c1] max-w-[440px] w-full p-7 text-center"
+        className={`paper-slip ${leaving ? "is-leaving" : ""} nbk-taped nbk-taped--butter bg-white border-2 border-[#3461c1] rounded-2xl shadow-[6px_6px_0_#3461c1] max-w-[440px] w-full p-7 text-center`}
       >
         <BrandMark size={48} className="mx-auto mb-4" />
         <div className="font-display font-semibold text-xl text-ink mb-1.5">Welcome back!</div>

@@ -19,6 +19,8 @@ import { WhyWrong, FullExplanation } from "@/components/WhyWrong";
 import { PixelDog } from "@/components/PixelDog";
 import { PatternVideo } from "@/components/lessonVideo/PatternVideo";
 import { sectionTheme } from "@/lib/sectionTheme";
+import { turn, turnTo } from "@/components/paper/turn";
+import { Stamp } from "@/components/paper/Stamp";
 
 // Time on a lesson before finishing it counts as the day's study (see below).
 const MIN_LESSON_MS = 2 * 60 * 1000;
@@ -346,9 +348,40 @@ export function SubskillClient({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [mode]);
 
+  // Moving through the lesson is turning paper: the next worked example
+  // flips up like a sheet on a legal pad, a new question type turns over
+  // the whole column, and Lesson <-> Practice turns the notebook page.
+  const exampleBoxRef = useRef<HTMLDivElement>(null);
+  const patternColRef = useRef<HTMLDivElement>(null);
+  function goExample(j: number) {
+    if (j === activeExample) return;
+    void turn(exampleBoxRef.current, () => setActiveExample(j), { kind: "leaf", dir: j > activeExample ? "fwd" : "back" });
+  }
+  function goPattern(i: number, j = 0) {
+    if (i === activePattern) return goExample(j);
+    void turn(
+      patternColRef.current,
+      () => {
+        setActivePattern(i);
+        setActiveExample(j);
+      },
+      { kind: "leaf", dir: i > activePattern ? "fwd" : "back" },
+    );
+  }
+  function switchMode(m: "lesson" | "practice", also?: () => void) {
+    if (m === mode && !also) return;
+    void turn(
+      document.querySelector<HTMLElement>(".nbk-page"),
+      () => {
+        also?.();
+        setMode(m);
+      },
+      { kind: "page", dir: m === "practice" ? "fwd" : "back" },
+    );
+  }
+
   function selectPattern(i: number) {
-    setActivePattern(i);
-    setActiveExample(0);
+    goPattern(i, 0);
   }
 
   // Whether a student has actually looked at this pattern -- every label
@@ -417,11 +450,11 @@ export function SubskillClient({
   function goToNext() {
     if (!pattern) return;
     if (!isLastExampleInPattern) {
-      setActiveExample((i) => i + 1);
+      goExample(activeExample + 1);
     } else if (!isLastPattern) {
       selectPattern(activePattern + 1);
     } else {
-      setMode("practice");
+      switchMode("practice");
     }
   }
 
@@ -471,9 +504,10 @@ export function SubskillClient({
   function reviewPattern(patternName: string) {
     const i = subskill.patterns.findIndex((p) => p.name === patternName);
     if (i === -1) return;
-    setActivePattern(i);
-    setActiveExample(0);
-    setMode("lesson");
+    switchMode("lesson", () => {
+      setActivePattern(i);
+      setActiveExample(0);
+    });
   }
 
   // The trap a wrong answer fell into, from the question's trap tags and
@@ -649,7 +683,7 @@ export function SubskillClient({
   return (
     <div>
       <button
-        onClick={() => router.push("/dashboard")}
+        onClick={() => turnTo("/dashboard")}
         className="bg-transparent border-none text-stone-500 text-sm mb-4 p-0 cursor-pointer hover:text-ink"
       >
         &larr; Back to dashboard
@@ -674,7 +708,7 @@ export function SubskillClient({
             key={m}
             role="tab"
             aria-selected={mode === m}
-            onClick={() => setMode(m)}
+            onClick={() => switchMode(m)}
             className={`rounded-lg px-4 py-2 text-sm transition-all ${
               mode === m
                 ? "bg-white font-semibold text-ink shadow-[0_1px_3px_rgba(31,47,90,0.12)]"
@@ -704,10 +738,7 @@ export function SubskillClient({
               activeExample={activeExample}
               viewedExamples={viewedExamples}
               onSelectPattern={selectPattern}
-              onSelectExample={(i, j) => {
-                setActivePattern(i);
-                setActiveExample(j);
-              }}
+              onSelectExample={(i, j) => goPattern(i, j)}
             />
           )}
 
@@ -777,7 +808,7 @@ export function SubskillClient({
             )}
 
             {pattern && (
-              <div>
+              <div ref={patternColRef}>
                 <div className="text-[17px] font-bold text-ink mb-2.5">{pattern.name}</div>
                 {/* Reading & Writing question types have a short video: Ozho
                     explains the idea, then walks through a worked example.
@@ -807,10 +838,12 @@ export function SubskillClient({
                     </button>
                   </div>
                 ) : (
-                  <ProseText text={pattern.explanation} className="text-sm text-stone-700 mb-5" />
+                  <div className={activeExample >= FADE_FROM_EXAMPLE ? "paper-unfold" : ""}>
+                    <ProseText text={pattern.explanation} className="text-sm text-stone-700 mb-5" />
+                  </div>
                 )}
 
-                <div className="bg-[#f3f6fc] rounded-lg p-4 mb-4">
+                <div ref={exampleBoxRef} className="bg-[#f3f6fc] rounded-lg p-4 mb-4">
                   <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
                     <div className="text-[11px] font-semibold text-stone-500 uppercase tracking-wide">
                       Worked example
@@ -820,8 +853,8 @@ export function SubskillClient({
                       {example && <DifficultyPill difficulty={example.difficulty} />}
                       {pattern.examples.length > 1 && (
                         <StepArrows
-                          onPrev={() => setActiveExample((i) => i - 1)}
-                          onNext={() => setActiveExample((i) => i + 1)}
+                          onPrev={() => goExample(activeExample - 1)}
+                          onNext={() => goExample(activeExample + 1)}
                           prevDisabled={activeExample === 0}
                           nextDisabled={activeExample === pattern.examples.length - 1}
                           label="example"
@@ -838,7 +871,7 @@ export function SubskillClient({
                         return (
                           <button
                             key={i}
-                            onClick={() => setActiveExample(i)}
+                            onClick={() => goExample(i)}
                             aria-label={`Go to example ${i + 1}`}
                             aria-current={isCurrent}
                             className="flex-1 py-2 -my-2 group"
@@ -906,11 +939,10 @@ export function SubskillClient({
               <button
                 onClick={() => {
                   if (activeExample > 0) {
-                    setActiveExample((i) => i - 1);
+                    goExample(activeExample - 1);
                   } else if (activePattern > 0) {
                     const prevIdx = activePattern - 1;
-                    setActivePattern(prevIdx);
-                    setActiveExample(subskill.patterns[prevIdx].examples.length - 1);
+                    goPattern(prevIdx, subskill.patterns[prevIdx].examples.length - 1);
                   }
                 }}
                 disabled={activeExample === 0 && activePattern === 0}
@@ -942,7 +974,7 @@ export function SubskillClient({
 
             <div className="mt-3 flex items-center justify-between gap-3 flex-wrap">
               <button
-                onClick={() => setMode("practice")}
+                onClick={() => switchMode("practice")}
                 className="bg-transparent border-none p-0 cursor-pointer text-[13px] font-medium text-stone-500 hover:text-stone-700"
               >
                 Skip ahead to the practice quiz &rarr;
@@ -958,7 +990,7 @@ export function SubskillClient({
 
             {/* Mobile collapsible tips panel, inline below the lesson */}
             {tipsOpenMobile && (
-              <div className="lg:hidden mt-4">
+              <div className="paper-unfold lg:hidden mt-4">
                 <TipsPanel tips={subskill.tipsAndTricks} traps={pattern?.traps} />
               </div>
             )}
@@ -1292,12 +1324,22 @@ function ResultsCard({
   return (
     <div
       ref={cardRef}
-      className={`scroll-mt-[72px] mb-5 overflow-hidden rounded-2xl border bg-white shadow-[3px_3px_0_rgba(52,97,193,0.13)] ${
+      className={`relative scroll-mt-[72px] mb-5 overflow-hidden rounded-2xl border bg-white shadow-[3px_3px_0_rgba(52,97,193,0.13)] ${
         perfect ? "border-[#f0e0b0]" : "border-[#c9d6ee]"
-      }`}
+      } ${saving ? "" : "paper-jolt"}`}
       aria-live="polite"
     >
-      <div className={`flex flex-wrap items-center gap-5 p-5 sm:p-6 ${perfect ? "bg-[#fbfcff]" : ""}`}>
+      {/* Graded: the score stamped on, the way a teacher would. */}
+      {!saving && (
+        <Stamp
+          big={`${score}/${total}`}
+          small={perfect ? "Perfect" : result?.justPassed ? "Passed" : result?.alreadyMastered ? "Mastered" : "Graded"}
+          tone={perfect || result?.justPassed ? "green" : "blue"}
+          className="absolute right-4 top-4 hidden sm:inline-block"
+          delay={250}
+        />
+      )}
+      <div className={`flex flex-wrap items-center gap-5 p-5 sm:p-6 sm:pr-36 ${perfect ? "bg-[#fbfcff]" : ""}`}>
         <ScoreRing score={score} total={total} />
         <div className="min-w-[200px] flex-1">
           <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-500">Quiz results</div>
@@ -1668,7 +1710,9 @@ function ExampleChoices({
         struck={picks.filter((p) => p !== example.answer)}
         onSelect={onPick}
       />
+      {/* Why that one's wrong: a note stuck on, a fresh one for each miss. */}
       {last !== null && last !== example.answer && (
+        <div key={last} className="paper-sticky">
         <WhyWrong letter={letter(last)} note={example.why?.[last]}>
           {!solved && (
             <div className="mt-2 text-[12.5px] text-stone-500">
@@ -1680,9 +1724,10 @@ function ExampleChoices({
             </div>
           )}
         </WhyWrong>
+        </div>
       )}
       {solved && (last === example.answer || shown) && (
-        <div className="mt-3 pt-3 border-t border-stone-200">
+        <div className="paper-unfold mt-3 pt-3 border-t border-stone-200">
           <div className="text-[11px] font-semibold text-accent uppercase tracking-wide mb-1.5">
             {letter(example.answer)} is right
           </div>

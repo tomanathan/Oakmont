@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { turnTo } from "@/components/paper/turn";
 import { useRouter } from "next/navigation";
 import { GoogleButton, OrWithEmail } from "@/components/GoogleButton";
 
@@ -48,7 +49,7 @@ export function SetupForm({
         setBusy(false);
         return;
       }
-      router.push("/parent/dashboard");
+      turnTo("/parent/dashboard");
       router.refresh();
     } catch {
       setError("Couldn't reach the server. Please try again.");

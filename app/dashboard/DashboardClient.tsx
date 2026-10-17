@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { turn, turnTo } from "@/components/paper/turn";
+import { Fold } from "@/components/paper/Fold";
 import { useRouter } from "next/navigation";
 import type { Section } from "@/data/curriculum";
 import type { Pacing } from "@/lib/pacing";
@@ -66,6 +68,13 @@ export function DashboardClient({
 
   const [subject, setSubject] = useState(curriculum[0]?.section ?? "");
   const activeSection = curriculum.find((s) => s.section === subject) ?? curriculum[0];
+  // Switching subject turns the list below over to the other one.
+  const listRef = useRef<HTMLDivElement>(null);
+  function switchSubject(next: string) {
+    if (next === subject) return;
+    const at = (name: string) => curriculum.findIndex((c) => c.section === name);
+    void turn(listRef.current, () => setSubject(next), { kind: "leaf", dir: at(next) > at(subject) ? "fwd" : "back" });
+  }
 
   const recommended = findRecommended(curriculum, progress, today, { order: planOrder, reviewReady: review.ready });
 
@@ -142,7 +151,7 @@ export function DashboardClient({
           return (
             <button
               key={sec.section}
-              onClick={() => setSubject(sec.section)}
+              onClick={() => switchSubject(sec.section)}
               aria-pressed={active}
               className={`relative overflow-hidden rounded-2xl border-2 p-5 text-left transition-all duration-200 ${
                 active
@@ -184,7 +193,7 @@ export function DashboardClient({
       </div>
 
       {activeSection && (
-        <div className="flex flex-col gap-2.5">
+        <div ref={listRef} className="flex flex-col gap-2.5">
           {activeSection.domains.map((d) => {
             const theme = sectionTheme(activeSection.section);
             const isOpen = openDomains.has(d.domain);
@@ -232,7 +241,7 @@ export function DashboardClient({
                   </div>
                 </button>
 
-                {isOpen && (
+                <Fold open={isOpen}>
                   <div className="px-4 pb-4 pt-3 border-t border-[#e9effb] bg-white">
                     {/* lg:grid-cols-4 -- the dashboard now renders at the
                         same 1180px width as the lesson page (see AppShell's
@@ -246,7 +255,7 @@ export function DashboardClient({
                         return (
                           <div
                             key={s.id}
-                            onClick={() => router.push(`/subskill/${s.id}`)}
+                            onClick={() => turnTo(`/subskill/${s.id}`)}
                             className={`border rounded-xl p-3.5 cursor-pointer transition-colors ${
                               status === "new" ? `${theme.cardBg} ${theme.cardBorder}` : STATUS_CARD[status]
                             }`}
@@ -261,7 +270,7 @@ export function DashboardClient({
                       })}
                     </div>
                   </div>
-                )}
+                </Fold>
               </div>
             );
           })}
@@ -369,7 +378,7 @@ function PlanCard({
           old standalone bar did, in a fraction of the height. */}
       {recommended && (
         <button
-          onClick={() => router.push(recommended.href)}
+          onClick={() => turnTo(recommended.href)}
           className="group w-full flex items-center gap-3 bg-forest text-white rounded-xl px-4 py-3 text-left hover:bg-[#1f2f5a] transition-colors"
         >
           <div className="flex-1 min-w-0">
@@ -397,7 +406,7 @@ function PlanCard({
             return (
               <div
                 key={s.id}
-                onClick={() => router.push(`/subskill/${s.id}`)}
+                onClick={() => turnTo(`/subskill/${s.id}`)}
                 className="flex items-center justify-between gap-3 px-3 py-1.5 -mx-1 rounded-lg cursor-pointer text-sm hover:bg-[#f1f5fc] transition-colors"
               >
                 <span className="text-ink truncate">{s.name}</span>
@@ -418,7 +427,7 @@ function PlanCard({
           something waiting: skills to master, or refreshers due. */}
       {review.ready && recommended?.kind !== "review" && review.toConfirm + review.refreshers > 0 && (
         <button
-          onClick={() => router.push("/review")}
+          onClick={() => turnTo("/review")}
           className="mt-2 flex w-full items-center justify-between gap-3 rounded-xl border border-[#b4c5e6] px-4 py-2.5 text-left transition-colors hover:border-[#c2d1ee] hover:bg-[#f1f5fc]"
         >
           <div className="min-w-0">

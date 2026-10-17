@@ -6,6 +6,7 @@ import { track } from "@vercel/analytics";
 import { BrandMark } from "@/components/BrandMark";
 import { PassageText } from "@/components/PassageText";
 import { ExamChoices } from "@/components/ExamChoices";
+import { turn } from "@/components/paper/turn";
 import { MathText } from "@/components/MathText";
 import { PetAvatar } from "@/components/PetAvatar";
 import { AddParentForm } from "@/components/AddParentForm";
@@ -73,14 +74,29 @@ export function PracticeClient({
   }
 
   async function next() {
-    setShowExample(false);
     window.scrollTo({ top: 0 });
+    // Each question, and the end, is the next page of the notebook.
+    const page = document.querySelector<HTMLElement>(".nbk-page");
     if (index < questions.length - 1) {
-      setIndex(index + 1);
-      setShownAt(Date.now());
+      void turn(
+        page,
+        () => {
+          setShowExample(false);
+          setIndex(index + 1);
+          setShownAt(Date.now());
+        },
+        { kind: "page" },
+      );
       return;
     }
-    setDone(true);
+    void turn(
+      page,
+      () => {
+        setShowExample(false);
+        setDone(true);
+      },
+      { kind: "page" },
+    );
     const correct = questions.filter((q) => picks[q.id] === q.answer).length;
     track("start_practice_done", { correct });
     await fetch("/api/start/practice", {
@@ -98,7 +114,7 @@ export function PracticeClient({
       <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] max-w-[650px] font-sans sm:my-8 md:w-[calc(100%-80px)]">
         <span className="nbk-spiral" aria-hidden />
         <BrandMark size={32} className="mb-5" />
-        <div className="animate-fade-up">
+        <div>
           <div className="flex items-center gap-3">
             <PetAvatar stage="thriving" size={56} />
             <div>
@@ -160,7 +176,7 @@ export function PracticeClient({
           ))}
         </div>
       </div>
-      <div key={current.id} className="animate-fade-up">
+      <div key={current.id}>
         {index === 0 && !revealed && <p className="mb-3 text-[14px] text-stone-600">First up: {skillName}. Five quick ones.</p>}
         <div className={CARD}>
           <div className="mb-4 text-[15.5px] leading-relaxed text-ink">

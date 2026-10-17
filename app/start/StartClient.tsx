@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { turn, turnTo } from "@/components/paper/turn";
 import { track } from "@vercel/analytics";
 import { BrandMark } from "@/components/BrandMark";
 import { PassageText } from "@/components/PassageText";
@@ -48,7 +48,6 @@ export function StartClient(props: {
   googleError: boolean;
 }) {
   const { questions, skillNames, invite } = props;
-  const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, number>>(props.savedAnswers);
   const firstOpen = questions.findIndex((q) => answers[q.id] === undefined);
   const [index, setIndex] = useState(firstOpen === -1 ? questions.length - 1 : firstOpen);
@@ -74,12 +73,22 @@ export function StartClient(props: {
     if (index === 0) track("start_first_answer");
   }
 
+  // Every step is a new page of the notebook, turned over.
+  function turnPage(update: () => void) {
+    void turn(document.querySelector<HTMLElement>(".nbk-page"), update, { kind: "page" });
+  }
+  function goStep(s: Step) {
+    turnPage(() => setStep(s));
+  }
+
   function next() {
-    if (index < questions.length - 1) setIndex(index + 1);
-    else {
-      track("start_questions_done");
-      setStep("result");
-    }
+    turnPage(() => {
+      if (index < questions.length - 1) setIndex(index + 1);
+      else {
+        track("start_questions_done");
+        setStep("result");
+      }
+    });
     window.scrollTo({ top: 0 });
   }
 
@@ -118,7 +127,7 @@ export function StartClient(props: {
       </div>
 
       {step === "q" && current && (
-        <div key={current.id} className="animate-fade-up">
+        <div key={current.id}>
           {index === 0 && !revealed && (
             <p className="mb-3 text-[14px] text-stone-600">
               {invite ? "Five quick SAT questions to start your plan." : "Five quick SAT questions. No account needed."}
@@ -145,7 +154,7 @@ export function StartClient(props: {
       )}
 
       {step === "result" && (
-        <div className="animate-fade-up">
+        <div>
           <h1 className={H1}>Here&apos;s where you&apos;ll start</h1>
           <p className="mt-2 text-[15px] leading-relaxed text-stone-600">
             {rightCount === questions.length
@@ -168,14 +177,14 @@ export function StartClient(props: {
               </li>
             ))}
           </ul>
-          <button onClick={() => setStep("date")} className={`${PRIMARY} mt-5`}>
+          <button onClick={() => goStep("date")} className={`${PRIMARY} mt-5`}>
             Build my plan
           </button>
         </div>
       )}
 
       {step === "date" && (
-        <div className="animate-fade-up">
+        <div>
           <h1 className={H1}>When&apos;s your SAT?</h1>
           <p className="mt-2 text-[15px] text-stone-600">Your plan finishes right before test day.</p>
           <div className="mt-5 grid grid-cols-2 gap-2.5">
@@ -185,7 +194,7 @@ export function StartClient(props: {
                 onClick={() => {
                   setDate(d.date);
                   save({ date: d.date });
-                  setStep("plan");
+                  goStep("plan");
                 }}
                 className="rounded-xl border border-[#b4c5e6] bg-white px-3 py-3.5 text-left hover:border-forest"
               >
@@ -197,7 +206,7 @@ export function StartClient(props: {
               onClick={() => {
                 setDate(null);
                 save({ date: null });
-                setStep("plan");
+                goStep("plan");
               }}
               className="rounded-xl border border-[#b4c5e6] bg-white px-3 py-3.5 text-left hover:border-forest"
             >
@@ -209,7 +218,7 @@ export function StartClient(props: {
       )}
 
       {step === "plan" && (
-        <div className="animate-fade-up">
+        <div>
           <h1 className={H1}>Your plan is ready</h1>
           <p className="mt-2 text-[15px] text-stone-600">
             {plan.weeks <= 3 ? "A focused plan to test day" : `${plan.weeks} weeks`}, every SAT skill, a little each day{date ? ", done right before test day" : ""}.
@@ -239,7 +248,7 @@ export function StartClient(props: {
           <button
             onClick={() => {
               track("start_plan_save_clicked");
-              setStep("save");
+              goStep("save");
             }}
             className={`${PRIMARY} mt-5`}
           >
@@ -249,7 +258,7 @@ export function StartClient(props: {
         </div>
       )}
 
-      {step === "save" && <SaveSheet {...props} onDone={() => router.push("/start/practice")} />}
+      {step === "save" && <SaveSheet {...props} onDone={() => turnTo("/start/practice")} />}
     </div>
   );
 }
@@ -298,7 +307,7 @@ function SaveSheet({
   }
 
   return (
-    <div className="animate-fade-up">
+    <div>
       <h1 className={H1}>Save your plan</h1>
       <p className="mt-2 text-[15px] text-stone-600">Your answers and plan come with you. 7 days free, no card.</p>
       {invite && (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLeave } from "./paper/usePresence";
 import Link from "next/link";
 import { PET_NAME } from "@/lib/pet";
 import { PixelDog } from "./PixelDog";
@@ -20,8 +21,10 @@ export function ColdOzhoNotice({ sessionKey, daysInactive, href }: { sessionKey:
     }
   }, [sessionKey]);
 
+  // Picked up and slid off the desk, then gone.
+  const [leaving, leave] = useLeave(360);
   function dismiss() {
-    setOpen(false);
+    leave(() => setOpen(false));
     try {
       window.localStorage.setItem("ozho-cold-seen", sessionKey);
     } catch {
@@ -40,13 +43,13 @@ export function ColdOzhoNotice({ sessionKey, daysInactive, href }: { sessionKey:
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-forest/40 backdrop-blur-[2px] p-4" onClick={dismiss}>
+    <div className={`paper-desk fixed inset-0 z-50 flex items-center justify-center bg-forest/40 backdrop-blur-[2px] p-4 ${leaving ? "is-leaving" : ""}`} onClick={dismiss}>
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="cold-ozho-title"
         onClick={(e) => e.stopPropagation()}
-        className="bg-white border-2 border-[#3461c1] rounded-2xl shadow-[6px_6px_0_#3461c1] max-w-[440px] w-full p-7 text-center"
+        className={`paper-slip ${leaving ? "is-leaving" : ""} bg-white border-2 border-[#3461c1] rounded-2xl shadow-[6px_6px_0_#3461c1] max-w-[440px] w-full p-7 text-center`}
       >
         {/* A Polaroid of him, cold. */}
         <div className="mb-5">

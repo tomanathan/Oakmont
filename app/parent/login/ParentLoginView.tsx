@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { turnTo } from "@/components/paper/turn";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BrandMark } from "@/components/BrandMark";
@@ -84,7 +85,7 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
       }
       const next = new URLSearchParams();
       if (mode === "signup" && !inviteCode.trim() && studentName.trim()) next.set("name", studentName.trim());
-      router.push(`/parent/dashboard${next.toString() ? `?${next}` : ""}`);
+      turnTo(`/parent/dashboard${next.toString() ? `?${next}` : ""}`);
       router.refresh();
     } catch {
       setError("Couldn't reach the server. Please try again.");

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode, useRef } from "react";
+import { turn } from "@/components/paper/turn";
 import type { ParentReport, SkillRow, Tone, FeedEvent, Session } from "@/lib/parentInsights";
 import type { SubskillStatus } from "@/lib/progressState";
 import { PacingBar, PACE_STATUS_STYLES, paceStatusCopy } from "@/components/PacingBar";
@@ -517,6 +518,12 @@ function MasteryBar({ mastery }: { mastery: ParentReport["mastery"] }) {
 
 function SkillTable({ skills, now }: { skills: SkillRow[]; now: number }) {
   const [section, setSection] = useState<"Reading and Writing" | "Math">("Reading and Writing");
+  // Switching subject flips the list over to the other one.
+  const listRef = useRef<HTMLDivElement>(null);
+  function switchSection(next: "Reading and Writing" | "Math") {
+    if (next === section) return;
+    void turn(listRef.current, () => setSection(next), { kind: "leaf", dir: next === "Math" ? "fwd" : "back" });
+  }
   const byDomain = useMemo(() => {
     const m = new Map<string, SkillRow[]>();
     for (const s of skills.filter((x) => x.section === section)) {
@@ -532,7 +539,7 @@ function SkillTable({ skills, now }: { skills: SkillRow[]; now: number }) {
         {(["Reading and Writing", "Math"] as const).map((s) => (
           <button
             key={s}
-            onClick={() => setSection(s)}
+            onClick={() => switchSection(s)}
             aria-pressed={section === s}
             className={`flex-1 rounded-lg px-3 py-1.5 text-[13px] font-medium transition-colors ${section === s ? "bg-white text-ink shadow-sm" : "text-stone-500 hover:text-ink"}`}
           >
@@ -540,7 +547,7 @@ function SkillTable({ skills, now }: { skills: SkillRow[]; now: number }) {
           </button>
         ))}
       </div>
-      <div className="flex flex-col gap-5">
+      <div ref={listRef} className="flex flex-col gap-5">
         {byDomain.map(([domain, rows]) => (
           <div key={domain}>
             <div className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-stone-500">{domain}</div>

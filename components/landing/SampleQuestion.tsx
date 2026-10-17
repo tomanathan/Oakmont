@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PenCross, PenLoop, PenTick } from "@/components/paper/Pencil";
 import { track } from "@vercel/analytics";
 import type { LandingShowcase } from "@/lib/landingShowcase";
 import { TrackedLink } from "./TrackedLink";
@@ -106,11 +107,17 @@ export function SampleQuestion({
                     onPointerEnter={() => window.dispatchEvent(new CustomEvent("landing:hover-choice", { detail: i % 2 === 0 ? -1 : 1 }))}
                     disabled={answered}
                     className={`nb-choice ${state}`}
+                    style={{ position: "relative" }}
                   >
-                    <span className="nb-choice-l" aria-hidden>
-                      {answered && isAnswer ? "✓" : answered && isPicked ? "✕" : LETTERS[i]}
+                    <span style={{ position: "relative", display: "inline-flex" }}>
+                      <span className="nb-choice-l" aria-hidden>
+                        {answered && isAnswer ? "✓" : answered && isPicked ? "✕" : LETTERS[i]}
+                      </span>
+                      <PenLoop show={isPicked} seed={i * 13 + 5} className="-left-[9px] -top-[8px] h-[calc(100%+16px)] w-[calc(100%+18px)]" />
                     </span>
                     <span>{choice}</span>
+                    <PenTick show={answered && isAnswer} seed={i * 7 + 2} delay={isPicked ? 380 : 520} className="-right-2.5 -top-5 h-[40px] w-[46px]" />
+                    <PenCross show={answered && isPicked && !isAnswer} seed={i * 11 + 4} delay={380} className="-right-2 -top-4 h-[30px] w-[30px]" />
                     {answered && isAnswer && <span className="nb-sr">(correct answer)</span>}
                     {answered && isPicked && !isAnswer && <span className="nb-sr">(your answer, incorrect)</span>}
                   </button>
@@ -121,7 +128,7 @@ export function SampleQuestion({
         </div>
 
         {answered && (
-          <div className="nb-q-teach" role="status">
+          <div className="nb-q-teach paper-unfold" role="status">
             {correct ? (
               <p className="nb-fb nb-fb--right">Right: {item.choices[item.answer]}. Here&apos;s why it works.</p>
             ) : (

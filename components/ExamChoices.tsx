@@ -1,4 +1,5 @@
 import { MathText } from "./MathText";
+import { PenCross, PenLoop, PenTick, seedOf } from "./paper/Pencil";
 
 /**
  * Renders a set of exam-style A/B/C/D answer choices with click-to-select
@@ -54,6 +55,7 @@ export function ExamChoices({
     (group?.children[next] as HTMLElement | undefined)?.focus();
   }
 
+  const seed = seedOf(choices.join("|"));
   return (
     <div className="flex flex-col gap-2" role="radiogroup" aria-label="Answer choices">
       {choices.map((choice, ci) => {
@@ -92,20 +94,29 @@ export function ExamChoices({
             tabIndex={tabIndex}
             onClick={() => !disabled && onSelect(ci)}
             onKeyDown={(e) => handleKeyDown(e, ci)}
-            className={`flex items-center gap-3 rounded-xl border px-3.5 py-3 text-[14.5px] leading-snug text-ink shadow-[3px_3px_0_rgba(52,97,193,0.13)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4a67a6] focus-visible:ring-offset-2 ${
+            className={`relative flex items-center gap-3 rounded-xl border px-3.5 py-3 text-[14.5px] leading-snug text-ink shadow-[3px_3px_0_rgba(52,97,193,0.13)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4a67a6] focus-visible:ring-offset-2 ${
               disabled ? "cursor-default" : "cursor-pointer"
             } ${row}`}
           >
-            <span
-              className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-[12.5px] font-bold transition-colors ${badge}`}
-              aria-hidden
-            >
-              {isCorrect ? "✓" : isWrongSelected ? "✕" : String.fromCharCode(65 + ci)}
+            <span className="relative flex-shrink-0">
+              <span
+                className={`flex h-7 w-7 items-center justify-center rounded-lg text-[12.5px] font-bold transition-colors ${badge}`}
+                aria-hidden
+              >
+                {isCorrect ? "✓" : isWrongSelected ? "✕" : String.fromCharCode(65 + ci)}
+              </span>
+              {/* The student's own pen loop round the letter they picked;
+                  picking another rubs this one out. */}
+              <PenLoop show={isSelected} seed={seed + ci} className="-left-[9px] -top-[8px] h-[44px] w-[46px]" />
             </span>
             <span className="min-w-0 flex-1">
               <span className="sr-only">{String.fromCharCode(65 + ci)}. </span>
               <MathText text={choice} />
             </span>
+            {/* Marked like a teacher would: a tick on the right one, a
+                cross on a wrong pick, in the corner. */}
+            <PenTick show={isCorrect} seed={seed + ci * 7} delay={isSelected ? 0 : 160} className="-right-2.5 -top-5 h-[38px] w-[44px]" />
+            <PenCross show={isWrongSelected} seed={seed + ci * 11} className="-right-2 -top-3.5 h-[28px] w-[28px]" />
           </div>
         );
       })}

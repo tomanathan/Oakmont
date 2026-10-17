@@ -1,0 +1,614 @@
+/* ---------- paper motion ----------
+   Everything that moves in the app moves like paper on a desk: pages turn
+   over the spiral, sheets flip up like a legal pad, cards are dropped onto
+   the desk and picked back up, slips slide in and get taped down, and pen
+   and pencil marks draw themselves on. See components/paper/. */
+
+/* ----- turning pages and leaves (components/paper/turn.ts) ----- */
+.paper-stage {
+  /* under the sticky top bar (z-30): the page turns beneath it */
+  z-index: 28;
+  pointer-events: none;
+  perspective: 5200px;
+}
+.paper-stage--leaf {
+  z-index: 25;
+  perspective: 2400px;
+}
+/* The copy is a still photo of the sheet: nothing in it animates (an
+   entrance animation would replay from its start), and marks already drawn
+   on stay drawn. */
+.paper-stage .paper-face *,
+.paper-stage .paper-face *::before,
+.paper-stage .paper-face *::after {
+  animation: none !important;
+  transition: none !important;
+}
+.paper-stage .pen-mark.is-in path {
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+.paper-stage .pen-mark.is-out,
+.paper-stage .paper-crumb,
+.paper-stage .paper-flight {
+  display: none;
+}
+.paper-sheet {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: 0 50%;
+  will-change: transform;
+}
+.paper-stage--leaf .paper-sheet {
+  transform-origin: 50% 0;
+}
+.paper-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.paper-front {
+  /* the copy's own page edge shows; this just keeps its corners */
+  background: transparent;
+}
+/* The other side of the sheet: plain paper, the ruling faintly through it. */
+.paper-back {
+  transform: rotateY(180deg);
+  background-color: #f8f4ea;
+  background-image: repeating-linear-gradient(180deg, transparent 0 31px, rgba(52, 97, 193, 0.05) 31px 32px);
+  border: 2px solid #3461c1;
+}
+.paper-stage--leaf .paper-back {
+  transform: rotateX(180deg);
+  border-width: 1.5px;
+  border-color: #b4c5e6;
+}
+/* Light falls from the upper right: a turning sheet goes darker toward the
+   edge that's lifting away. */
+.paper-shade {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: linear-gradient(90deg, rgba(31, 47, 90, 0) 0%, rgba(31, 47, 90, 0.08) 45%, rgba(31, 47, 90, 0.34) 100%);
+  pointer-events: none;
+}
+.paper-shade--back {
+  background: linear-gradient(270deg, rgba(31, 47, 90, 0) 0%, rgba(31, 47, 90, 0.1) 50%, rgba(31, 47, 90, 0.3) 100%);
+}
+.paper-stage--leaf .paper-shade {
+  background: linear-gradient(180deg, rgba(31, 47, 90, 0) 0%, rgba(31, 47, 90, 0.08) 45%, rgba(31, 47, 90, 0.3) 100%);
+}
+.paper-stage--leaf .paper-shade--back {
+  background: linear-gradient(0deg, rgba(31, 47, 90, 0) 0%, rgba(31, 47, 90, 0.1) 50%, rgba(31, 47, 90, 0.26) 100%);
+}
+/* The turning sheet's shadow on the sheet beneath it. */
+.paper-cast {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, rgba(31, 47, 90, 0.26) 0%, rgba(31, 47, 90, 0.1) 35%, rgba(31, 47, 90, 0) 75%);
+  border-radius: 10px;
+}
+.paper-stage--leaf .paper-cast {
+  transform-origin: 50% 0;
+  background: linear-gradient(180deg, rgba(31, 47, 90, 0.2) 0%, rgba(31, 47, 90, 0.07) 40%, rgba(31, 47, 90, 0) 80%);
+}
+
+/* ----- pen and pencil marks (components/paper/Pencil.tsx) ----- */
+.pen-mark {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  z-index: 2;
+}
+.pen-mark svg {
+  display: block;
+  overflow: visible;
+}
+.pen-mark path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1.02;
+  stroke-dashoffset: 1;
+  opacity: 0;
+}
+.pen-mark.is-in path {
+  animation: pen-draw var(--pen-ms, 420ms) cubic-bezier(0.55, 0.1, 0.3, 1) forwards;
+  animation-delay: calc(var(--pen-delay, 0ms) + var(--pen-i, 0) * var(--pen-ms, 420ms) * 0.7);
+}
+.pen-mark.is-out path {
+  opacity: 1;
+  stroke-dashoffset: 0;
+  animation: pen-erase 300ms cubic-bezier(0.35, 0, 0.65, 1) forwards;
+}
+@keyframes pen-draw {
+  0% {
+    opacity: 1;
+    stroke-dashoffset: 1;
+  }
+  100% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+/* Rubbed out from where it started, the way an eraser follows the line. */
+@keyframes pen-erase {
+  0% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -1;
+    opacity: 0.4;
+  }
+}
+.pen-pen path {
+  stroke: #3461c1;
+  filter: url(#paper-ink);
+}
+.pen-green path {
+  stroke: #2e8b57;
+  filter: url(#paper-ink);
+}
+.pen-red path {
+  stroke: #c0392b;
+  filter: url(#paper-ink);
+}
+.pen-pencil path {
+  stroke: #4b5263;
+  filter: url(#paper-graphite);
+}
+.pen-highlight path {
+  stroke: #fbe7a3;
+  stroke-linecap: butt;
+  opacity: 0;
+  mix-blend-mode: multiply;
+}
+.pen-highlight {
+  z-index: 0;
+}
+.pen-highlight.is-in path {
+  animation-duration: var(--pen-ms, 340ms);
+}
+
+/* Eraser crumbs: little rolls of rubber, brushed off the page. */
+.paper-crumb {
+  position: absolute;
+  border-radius: 40% 60% 55% 45%;
+  background: #d9a3a8;
+  box-shadow: inset -0.5px -0.5px 0 rgba(120, 60, 70, 0.35);
+  pointer-events: none;
+  animation: paper-crumb 520ms cubic-bezier(0.3, 0.1, 0.6, 1) both;
+}
+@keyframes paper-crumb {
+  0% {
+    transform: translate(0, 0) rotate(0);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) rotate(var(--rot));
+    opacity: 0;
+  }
+}
+
+/* ----- cards dropped onto the desk (menus) -----
+   Held above the desk (bigger, a soft high shadow), then let go: it drops,
+   lands with a tiny skid, and the shadow tightens to sitting on paper.
+   Picked back up the same way in reverse. */
+.paper-drop {
+  transform-origin: 80% 0;
+  animation: paper-drop 380ms cubic-bezier(0.25, 0.8, 0.3, 1) both;
+}
+.paper-drop.is-lifting {
+  animation: paper-lift 220ms cubic-bezier(0.5, 0, 0.8, 0.4) both;
+}
+@keyframes paper-drop {
+  0% {
+    opacity: 0;
+    transform: translate(10px, -6px) rotate(-5deg) scale(1.07);
+    box-shadow: 14px 22px 34px -8px rgba(31, 47, 90, 0.28);
+  }
+  18% {
+    opacity: 1;
+  }
+  72% {
+    transform: translate(-1px, 1px) rotate(0.8deg) scale(0.995);
+    box-shadow: 3px 4px 6px -2px rgba(31, 47, 90, 0.2);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    box-shadow: 4px 4px 0 rgba(52, 97, 193, 0.18);
+  }
+}
+@keyframes paper-lift {
+  0% {
+    transform: none;
+    box-shadow: 4px 4px 0 rgba(52, 97, 193, 0.18);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(8px, -8px) rotate(-4deg) scale(1.06);
+    box-shadow: 14px 22px 34px -8px rgba(31, 47, 90, 0.25);
+  }
+}
+
+/* ----- slips slid across the desk and taped down (dialogs) ----- */
+.paper-desk {
+  animation: paper-desk 360ms ease-out both;
+}
+.paper-desk.is-leaving {
+  animation: paper-desk-out 340ms ease-in both;
+}
+@keyframes paper-desk-out {
+  to {
+    background-color: rgba(31, 47, 90, 0);
+    backdrop-filter: blur(0);
+  }
+}
+@keyframes paper-desk {
+  from {
+    background-color: rgba(31, 47, 90, 0);
+    backdrop-filter: blur(0);
+  }
+}
+.paper-slip {
+  animation: paper-slip 620ms cubic-bezier(0.2, 0.9, 0.25, 1) both;
+}
+@keyframes paper-slip {
+  0% {
+    transform: translate(-40px, 70vh) rotate(-14deg);
+  }
+  62% {
+    transform: translate(3px, -6px) rotate(1.4deg);
+  }
+  82% {
+    transform: translate(0, 1px) rotate(-0.4deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+/* The tape is pressed on once the slip has stopped: it comes down from
+   above the desk and smooths flat. */
+.paper-slip.nbk-taped::before,
+.paper-slip .nbk-taped::before,
+.paper-slip.nbk-polaroid::before,
+.paper-slip .nbk-polaroid::before {
+  animation: paper-tape 340ms cubic-bezier(0.3, 0.9, 0.35, 1.2) 470ms both;
+}
+@keyframes paper-tape {
+  0% {
+    opacity: 0;
+    transform: translate(6px, -16px) rotate(-12deg) scale(1.35);
+  }
+  45% {
+    opacity: 0.92;
+  }
+  100% {
+    opacity: 0.92;
+  }
+}
+/* Picked up and slid away, off the desk. */
+.paper-slip.is-leaving {
+  animation: paper-slip-out 380ms cubic-bezier(0.5, 0, 0.8, 0.5) both;
+}
+@keyframes paper-slip-out {
+  0% {
+    transform: none;
+  }
+  25% {
+    transform: translate(0, -8px) rotate(-1deg) scale(1.02);
+  }
+  100% {
+    transform: translate(60px, -90vh) rotate(10deg) scale(1.02);
+  }
+}
+
+/* ----- a sheet slid out from under the page (side panels) ----- */
+.paper-tuck {
+  animation: paper-tuck 520ms cubic-bezier(0.2, 0.85, 0.25, 1.05) both;
+}
+.paper-tuck.is-leaving {
+  animation: paper-tuck-out 300ms cubic-bezier(0.5, 0, 0.8, 0.4) both;
+}
+@keyframes paper-tuck {
+  0% {
+    transform: translateX(105%) rotate(4deg);
+  }
+  70% {
+    transform: translateX(-6px) rotate(-0.6deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes paper-tuck-out {
+  to {
+    transform: translateX(110%) rotate(5deg);
+  }
+}
+
+/* ----- a rubber stamp coming down (results, grades) ----- */
+.paper-stamp {
+  animation: paper-stamp 520ms cubic-bezier(0.3, 0, 0.3, 1) both;
+}
+@keyframes paper-stamp {
+  0% {
+    opacity: 0;
+    transform: translate(10px, -12px) scale(1.9) rotate(var(--stamp-rot, -8deg));
+    filter: blur(1.5px);
+  }
+  40% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  55% {
+    transform: scale(0.94) rotate(var(--stamp-rot, -8deg));
+  }
+  72% {
+    transform: scale(1.03) rotate(var(--stamp-rot, -8deg));
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(var(--stamp-rot, -8deg));
+  }
+}
+/* the page jolts a touch when the stamp lands */
+.paper-jolt {
+  animation: paper-jolt 260ms ease-out 530ms both;
+}
+@keyframes paper-jolt {
+  30% {
+    transform: translateY(2px);
+  }
+  60% {
+    transform: translateY(-1px);
+  }
+}
+
+/* ----- a fold of paper opening out (expanding sections) ----- */
+.paper-unfold {
+  transform-origin: 50% 0;
+  animation: paper-unfold 460ms cubic-bezier(0.25, 0.8, 0.3, 1) both;
+}
+@keyframes paper-unfold {
+  0% {
+    transform: perspective(900px) rotateX(-82deg);
+    filter: brightness(0.82);
+    opacity: 0.4;
+  }
+  55% {
+    transform: perspective(900px) rotateX(9deg);
+    filter: brightness(1.03);
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+
+/* ----- a sticky note pressed on ----- */
+.paper-sticky {
+  transform-origin: 50% 0;
+  animation: paper-sticky 480ms cubic-bezier(0.25, 0.85, 0.3, 1.15) both;
+}
+@keyframes paper-sticky {
+  0% {
+    opacity: 0;
+    transform: perspective(700px) rotateX(-55deg) rotate(-6deg) translateY(-10px);
+    box-shadow: 0 18px 24px -10px rgba(31, 47, 90, 0.3);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: none;
+  }
+}
+
+/* An index card: a touch warmer than the page, the header ruled off in the
+   margin colour. */
+.paper-index {
+  background-color: #fffefa;
+}
+
+/* ----- a paper airplane, thrown (components/paper/PaperPlane.tsx) ----- */
+.paper-flight {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  pointer-events: none;
+  z-index: 5;
+}
+.paper-flight-trail {
+  position: absolute;
+  inset: 0;
+}
+.paper-flight-line {
+  fill: none;
+  stroke: #6b7385;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 5 7;
+  filter: url(#paper-graphite);
+  animation: paper-trail-fade 700ms ease-in 1700ms both;
+}
+.paper-flight-reveal {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 8;
+  stroke-dasharray: 1 1.02;
+  stroke-dashoffset: 1;
+  animation: paper-trail 1500ms cubic-bezier(0.4, 0.05, 0.45, 1) 80ms forwards;
+}
+@keyframes paper-trail {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+/* The line's rubbed away once the plane's gone. */
+@keyframes paper-trail-fade {
+  to {
+    opacity: 0;
+    stroke-dashoffset: -60;
+  }
+}
+.paper-plane {
+  position: absolute;
+  left: 0;
+  top: 0;
+  offset-rotate: auto;
+  offset-anchor: 50% 50%;
+  offset-distance: 0%;
+  animation: paper-plane 1500ms cubic-bezier(0.4, 0.05, 0.45, 1) 80ms forwards;
+}
+.paper-plane svg {
+  display: block;
+  /* the drawing points right; offset-rotate turns it along the path */
+  filter: drop-shadow(2px 4px 2px rgba(31, 47, 90, 0.18));
+}
+@keyframes paper-plane {
+  0% {
+    offset-distance: 0%;
+    transform: scale(0.6);
+  }
+  10% {
+    transform: scale(1);
+  }
+  62% {
+    transform: scale(1.08);
+  }
+  /* off into the distance */
+  100% {
+    offset-distance: 100%;
+    transform: scale(0.22);
+    opacity: 0;
+  }
+}
+
+/* The stamp's impression (components/paper/Stamp.tsx). */
+.paper-stamp {
+  display: inline-block;
+  transform: rotate(var(--stamp-rot, -8deg));
+}
+.paper-stamp-ink {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  padding: 5px 12px 6px;
+  border: 3px double;
+  border-radius: 8px;
+  font-family: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
+  text-transform: uppercase;
+  line-height: 1;
+  mix-blend-mode: multiply;
+  opacity: 0.86;
+  filter: url(#paper-stamp);
+}
+.paper-stamp-small {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+}
+.paper-stamp-big {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A strip of tape pressed on to pin something (the outfit he's wearing). */
+.paper-tape-strip {
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  width: 54px;
+  height: 17px;
+  margin-left: -27px;
+  background: #fbe7a3 repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.6) 0 6px, transparent 6px 12px);
+  opacity: 0.92;
+  transform: rotate(-3deg);
+  pointer-events: none;
+  z-index: 1;
+  animation: paper-tape 340ms cubic-bezier(0.3, 0.9, 0.35, 1.2) both;
+}
+
+/* ----- fan-folded paper (components/paper/Fold.tsx) -----
+   Each row is a fold: it swings down from the crease above it, catching
+   the light as it flattens out. */
+.paper-fan {
+  perspective: 1100px;
+}
+.paper-fan > * {
+  transform-origin: 50% 0;
+  animation: paper-fan-open 380ms cubic-bezier(0.25, 0.85, 0.35, 1.08) both;
+  backface-visibility: hidden;
+}
+@keyframes paper-fan-open {
+  0% {
+    transform: rotateX(-92deg);
+    filter: brightness(0.78);
+  }
+  60% {
+    filter: brightness(1.04);
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+.paper-fan.is-folding > * {
+  animation: paper-fan-close 200ms cubic-bezier(0.5, 0, 0.9, 0.5) both;
+}
+@keyframes paper-fan-close {
+  to {
+    transform: rotateX(-92deg);
+    filter: brightness(0.75);
+  }
+}
+
+/* ----- a sheet screwed up and tossed away ----- */
+.paper-toss {
+  pointer-events: none;
+  transform-origin: 70% 40%;
+  animation: paper-toss 520ms cubic-bezier(0.45, 0, 0.7, 0.4) both;
+}
+@keyframes paper-toss {
+  0% {
+    transform: none;
+    filter: none;
+  }
+  /* grabbed and crushed: it buckles and darkens in the creases */
+  28% {
+    transform: perspective(800px) rotateX(10deg) rotateY(-14deg) scale(0.86, 0.7) skewX(-6deg);
+    filter: brightness(0.92) contrast(1.05);
+    border-radius: 40px;
+  }
+  45% {
+    transform: perspective(800px) rotateX(-8deg) rotateY(18deg) scale(0.5, 0.42) rotate(-12deg);
+    filter: brightness(0.85);
+    border-radius: 50%;
+  }
+  /* and over the shoulder */
+  100% {
+    transform: translate(46vw, -30vh) scale(0.08) rotate(280deg);
+    filter: brightness(0.85);
+    border-radius: 50%;
+    opacity: 0.9;
+  }
+}
+
+/* (the homepage's drawn-on underlines, which rest undrawn until animated) */
+.paper-stage .nb-draw {
+  stroke-dashoffset: 0 !important;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { turnTo } from "@/components/paper/turn";
 import { useRouter } from "next/navigation";
 
 // Two ways to connect a student: their code (if they already use Oakmont),
@@ -31,7 +32,7 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
       setCodeError(data.error || "Something went wrong.");
       return;
     }
-    router.push(`/parent/dashboard?student=${data.studentId}`);
+    turnTo(`/parent/dashboard?student=${data.studentId}`);
     router.refresh();
   }
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { turnTo } from "@/components/paper/turn";
+import { usePathname } from "next/navigation";
 import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
 import { PET_NAME, type PetStage } from "@/lib/pet";
@@ -719,8 +720,6 @@ export function ScoutCompanion() {
   // Edge mode -- see EDGE_ON_PHRASES. Reset on every route change.
   const edgeModeRef = useRef(false);
   const [bubbleAlign, setBubbleAlign] = useState<"center" | "left" | "right">("center");
-
-  const router = useRouter();
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const posRef = useRef({ x: 80, y: 400 });
@@ -2666,7 +2665,7 @@ export function ScoutCompanion() {
     beginWakeUp();
     lastInteractionAtRef.current = Date.now();
     speak(pick(NEXT_INTRO), 1800);
-    router.push(href);
+    turnTo(href);
   }
 
   function toggleFollow() {
@@ -2734,7 +2733,7 @@ export function ScoutCompanion() {
         break;
       case "wardrobe":
         speak("Wardrobe! I'll try not to take forever.", 2000);
-        setTimeout(() => router.push("/settings#wardrobe"), 700);
+        setTimeout(() => turnTo("/settings#wardrobe"), 700);
         break;
     }
   }

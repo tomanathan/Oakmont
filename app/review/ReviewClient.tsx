@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ExamChoices } from "@/components/ExamChoices";
+import { turn } from "@/components/paper/turn";
+import { Stamp } from "@/components/paper/Stamp";
 import { WhyWrong, FullExplanation } from "@/components/WhyWrong";
 import { MathText } from "@/components/MathText";
 import { PassageText } from "@/components/PassageText";
@@ -176,16 +178,31 @@ export function ReviewClient() {
     return next;
   }
 
+  // Starting turns the notebook page; each question after that flips over
+  // like the next sheet on a pad (back a sheet with Previous).
+  const cardRef = useRef<HTMLDivElement>(null);
+  function flipTo(to: number, update: () => void) {
+    void turn(cardRef.current, update, { kind: "leaf", dir: to > idx ? "fwd" : "back" });
+  }
+
   function begin() {
-    setStartedAt(Date.now());
-    setPhase("run");
+    void turn(
+      document.querySelector<HTMLElement>(".nbk-page"),
+      () => {
+        setStartedAt(Date.now());
+        setPhase("run");
+      },
+      { kind: "page" },
+    );
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function go(to: number) {
-    bankTime();
-    setIdx(to);
-    setStartedAt(Date.now());
+    flipTo(to, () => {
+      bankTime();
+      setIdx(to);
+      setStartedAt(Date.now());
+    });
   }
 
   function lockIn(c: Confidence) {
@@ -194,8 +211,10 @@ export function ReviewClient() {
     setConf(nextConf);
     const nextTimes = bankTime();
     if (idx < items.length - 1) {
-      setIdx(idx + 1);
-      setStartedAt(Date.now());
+      flipTo(idx + 1, () => {
+        setIdx(idx + 1);
+        setStartedAt(Date.now());
+      });
     } else {
       submit(nextConf, nextTimes);
     }
@@ -427,7 +446,7 @@ export function ReviewClient() {
           <PaceClock elapsed={elapsed} target={it.pace} label="this question" />
         </div>
 
-        <div className="rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)] sm:p-6">
+        <div ref={cardRef} className="rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)] sm:p-6">
           <div className="mb-4 text-[15px] text-ink">
             <PassageText text={it.q} highlight={it.underline ?? undefined} figure={it.figure} />
           </div>
@@ -562,9 +581,17 @@ function ReviewResults({
     <div>
       <div
         ref={cardRef}
-        className="mb-6 overflow-hidden rounded-2xl border border-[#c9d6ee] bg-white shadow-[3px_3px_0_rgba(52,97,193,0.13)]"
+        className="paper-jolt relative mb-6 overflow-hidden rounded-2xl border border-[#c9d6ee] bg-white shadow-[3px_3px_0_rgba(52,97,193,0.13)]"
       >
-        <div className="flex flex-wrap items-center gap-5 p-5 sm:p-6">
+        <Stamp
+          big={`${right}/${total}`}
+          small={right === total ? "Clean sweep" : "Graded"}
+          tone={right === total ? "green" : "blue"}
+          tilt={7}
+          className="absolute right-4 top-4 hidden sm:inline-block"
+          delay={250}
+        />
+        <div className="flex flex-wrap items-center gap-5 p-5 sm:p-6 sm:pr-40">
           <ScoreRing score={right} total={total} />
           <div className="min-w-[200px] flex-1">
             <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-500">Mixed review</div>
