@@ -147,27 +147,26 @@
     opacity: 0.4;
   }
 }
+/* Plain strokes, no SVG filters: a filter would be re-run on every frame
+   while the line draws. The hand-drawn paths carry the character. */
 .pen-pen path {
   stroke: #3461c1;
-  filter: url(#paper-ink);
 }
 .pen-green path {
   stroke: #2e8b57;
-  filter: url(#paper-ink);
 }
 .pen-red path {
   stroke: #c0392b;
-  filter: url(#paper-ink);
 }
 .pen-pencil path {
-  stroke: #4b5263;
-  filter: url(#paper-graphite);
+  stroke: #5b6273;
+  stroke-opacity: 0.85;
 }
+/* sits under the text, so it needs no blending */
 .pen-highlight path {
   stroke: #fbe7a3;
   stroke-linecap: butt;
   opacity: 0;
-  mix-blend-mode: multiply;
 }
 .pen-highlight {
   z-index: 0;
@@ -214,50 +213,57 @@
   0% {
     opacity: 0;
     transform: translate(10px, -6px) rotate(-5deg) scale(1.07);
-    box-shadow: 14px 22px 34px -8px rgba(31, 47, 90, 0.28);
   }
   18% {
     opacity: 1;
   }
   72% {
     transform: translate(-1px, 1px) rotate(0.8deg) scale(0.995);
-    box-shadow: 3px 4px 6px -2px rgba(31, 47, 90, 0.2);
   }
   100% {
     opacity: 1;
     transform: none;
-    box-shadow: 4px 4px 0 rgba(52, 97, 193, 0.18);
   }
 }
 @keyframes paper-lift {
-  0% {
-    transform: none;
-    box-shadow: 4px 4px 0 rgba(52, 97, 193, 0.18);
-  }
   100% {
     opacity: 0;
     transform: translate(8px, -8px) rotate(-4deg) scale(1.06);
-    box-shadow: 14px 22px 34px -8px rgba(31, 47, 90, 0.25);
   }
+}
+/* (only transform and opacity move, so the compositor does all of it;
+   the card's shadow is fixed) */
+.paper-drop {
+  box-shadow: 4px 4px 0 rgba(52, 97, 193, 0.18);
 }
 
 /* ----- slips slid across the desk and taped down (dialogs) ----- */
+/* The desk dims behind a slip: a tint layer whose opacity animates (cheap),
+   in place of the dialog's own backdrop colour and blur, which would be
+   repainted across the whole screen every frame. */
 .paper-desk {
-  animation: paper-desk 360ms ease-out both;
+  background: transparent !important;
+  backdrop-filter: none !important;
 }
-.paper-desk.is-leaving {
-  animation: paper-desk-out 340ms ease-in both;
+.paper-desk::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 47, 90, 0.38);
+  animation: paper-desk 340ms ease-out both;
+  pointer-events: none;
 }
-@keyframes paper-desk-out {
-  to {
-    background-color: rgba(31, 47, 90, 0);
-    backdrop-filter: blur(0);
-  }
+.paper-desk.is-leaving::before {
+  animation: paper-desk-out 320ms ease-in both;
 }
 @keyframes paper-desk {
   from {
-    background-color: rgba(31, 47, 90, 0);
-    backdrop-filter: blur(0);
+    opacity: 0;
+  }
+}
+@keyframes paper-desk-out {
+  to {
+    opacity: 0;
   }
 }
 .paper-slip {
@@ -345,11 +351,9 @@
   0% {
     opacity: 0;
     transform: translate(10px, -12px) scale(1.9) rotate(var(--stamp-rot, -8deg));
-    filter: blur(1.5px);
   }
   40% {
     opacity: 1;
-    filter: blur(0);
   }
   55% {
     transform: scale(0.94) rotate(var(--stamp-rot, -8deg));
@@ -383,17 +387,14 @@
 @keyframes paper-unfold {
   0% {
     transform: perspective(900px) rotateX(-82deg);
-    filter: brightness(0.82);
     opacity: 0.4;
   }
   55% {
     transform: perspective(900px) rotateX(9deg);
-    filter: brightness(1.03);
     opacity: 1;
   }
   100% {
     transform: none;
-    filter: none;
   }
 }
 
@@ -406,7 +407,6 @@
   0% {
     opacity: 0;
     transform: perspective(700px) rotateX(-55deg) rotate(-6deg) translateY(-10px);
-    box-shadow: 0 18px 24px -10px rgba(31, 47, 90, 0.3);
   }
   30% {
     opacity: 1;
@@ -414,12 +414,6 @@
   100% {
     transform: none;
   }
-}
-
-/* An index card: a touch warmer than the page, the header ruled off in the
-   margin colour. */
-.paper-index {
-  background-color: #fffefa;
 }
 
 /* ----- a paper airplane, thrown (components/paper/PaperPlane.tsx) ----- */
@@ -440,7 +434,6 @@
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-dasharray: 5 7;
-  filter: url(#paper-graphite);
   animation: paper-trail-fade 700ms ease-in 1700ms both;
 }
 .paper-flight-reveal {
@@ -475,7 +468,6 @@
 .paper-plane svg {
   display: block;
   /* the drawing points right; offset-rotate turns it along the path */
-  filter: drop-shadow(2px 4px 2px rgba(31, 47, 90, 0.18));
 }
 @keyframes paper-plane {
   0% {
@@ -499,6 +491,8 @@
 /* The stamp's impression (components/paper/Stamp.tsx). */
 .paper-stamp {
   display: inline-block;
+  /* own layer: the filtered ink is rasterised once, then just moved */
+  will-change: transform, opacity;
   transform: rotate(var(--stamp-rot, -8deg));
 }
 .paper-stamp-ink {
@@ -511,7 +505,6 @@
   font-family: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
   text-transform: uppercase;
   line-height: 1;
-  mix-blend-mode: multiply;
   opacity: 0.86;
   filter: url(#paper-stamp);
 }
@@ -557,14 +550,9 @@
 @keyframes paper-fan-open {
   0% {
     transform: rotateX(-92deg);
-    filter: brightness(0.78);
-  }
-  60% {
-    filter: brightness(1.04);
   }
   100% {
     transform: none;
-    filter: none;
   }
 }
 .paper-fan.is-folding > * {
@@ -573,7 +561,6 @@
 @keyframes paper-fan-close {
   to {
     transform: rotateX(-92deg);
-    filter: brightness(0.75);
   }
 }
 
@@ -586,24 +573,17 @@
 @keyframes paper-toss {
   0% {
     transform: none;
-    filter: none;
   }
-  /* grabbed and crushed: it buckles and darkens in the creases */
+  /* grabbed and crushed: it buckles in on itself */
   28% {
     transform: perspective(800px) rotateX(10deg) rotateY(-14deg) scale(0.86, 0.7) skewX(-6deg);
-    filter: brightness(0.92) contrast(1.05);
-    border-radius: 40px;
   }
   45% {
     transform: perspective(800px) rotateX(-8deg) rotateY(18deg) scale(0.5, 0.42) rotate(-12deg);
-    filter: brightness(0.85);
-    border-radius: 50%;
   }
   /* and over the shoulder */
   100% {
     transform: translate(46vw, -30vh) scale(0.08) rotate(280deg);
-    filter: brightness(0.85);
-    border-radius: 50%;
     opacity: 0.9;
   }
 }

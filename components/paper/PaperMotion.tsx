@@ -9,7 +9,7 @@ import { PAGE, routeChanged, setNavigator, turnTo } from "./turn";
 //   - links between notebook screens turn the page (see turn.ts);
 //   - anything you click presses down into the desk, its shadow
 //     tucking under it, and springs back up;
-//   - the SVG filters that give pencil marks their graphite grain.
+//   - the SVG filter that gives a rubber stamp its worn ink.
 
 const PRESSABLE = 'button, a[href], [role="radio"], [role="tab"], [role="menuitem"], [role="checkbox"], [role="switch"], summary, label[for], label:has(input)';
 
@@ -42,15 +42,18 @@ function usePress() {
       const cs = getComputedStyle(el);
       if (cs.display === "inline") return;
       const r = el.getBoundingClientRect();
+      const area = r.width * r.height;
       // Whole-screen panels aren't buttons you press.
-      if (r.width * r.height > window.innerWidth * window.innerHeight * 0.35) return;
+      if (area > window.innerWidth * window.innerHeight * 0.35) return;
       const shadow = cs.boxShadow;
       // Offset (paper) shadows: press it the full way onto its shadow.
       // Everything else just gives a little.
       const m = /(-?[\d.]+)px (-?[\d.]+)px/.exec(shadow === "none" ? "" : shadow);
       const off = m ? Math.min(parseFloat(m[1]), parseFloat(m[2])) : 0;
       const d = off > 0 ? Math.min(off, 3) : 1;
-      const pressed = off > 0 ? pressedShadow(shadow, d) : null;
+      // Moving a shadow repaints the element each frame: fine for a button,
+      // not for a big card, which just moves (still on the compositor).
+      const pressed = off > 0 && area < 60000 ? pressedShadow(shadow, d) : null;
       const down: Keyframe = { translate: `${d}px ${d}px`, ...(pressed ? { boxShadow: pressed } : {}) };
       const up: Keyframe = { translate: "0px 0px", ...(pressed ? { boxShadow: shadow } : {}) };
       const press = el.animate([up, down], { duration: 70, easing: "cubic-bezier(.3,.7,.4,1)", fill: "forwards" });
@@ -106,16 +109,6 @@ export function PaperMotion() {
   return (
     <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden focusable="false">
       <defs>
-        {/* Graphite: a slightly rough edge, and grain where the lead
-            skipped over the paper's tooth. */}
-        <filter id="paper-graphite" x="-20%" y="-20%" width="140%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="2" seed="4" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.4" xChannelSelector="R" yChannelSelector="G" result="rough" />
-          <feComponentTransfer in="noise" result="tooth">
-            <feFuncA type="table" tableValues="0.35 0.9 1 1" />
-          </feComponentTransfer>
-          <feComposite in="rough" in2="tooth" operator="in" />
-        </filter>
         {/* A rubber stamp's impression: ink that didn't quite take in
             places, and a soft, uneven edge. */}
         <filter id="paper-stamp" x="-10%" y="-10%" width="120%" height="120%">
@@ -123,11 +116,6 @@ export function PaperMotion() {
           <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.7 1.65" result="holes" />
           <feComposite in="SourceGraphic" in2="holes" operator="in" result="worn" />
           <feDisplacementMap in="worn" in2="noise" scale="1.6" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-        {/* Ink: a pen line's slightly uneven edge. */}
-        <filter id="paper-ink" x="-20%" y="-20%" width="140%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="9" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.9" xChannelSelector="R" yChannelSelector="G" />
         </filter>
       </defs>
     </svg>

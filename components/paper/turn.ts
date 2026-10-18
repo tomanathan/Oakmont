@@ -58,6 +58,31 @@ function scoped(el: HTMLElement, clone: HTMLElement): HTMLElement {
   return inner;
 }
 
+/**
+ * Walks the original and its copy side by side; any child wholly outside
+ * [lo, hi] (screen y) is collapsed in the copy to an empty box of the same
+ * size. Children that straddle the edge are walked into, a few levels deep.
+ */
+function skipOffscreen(src: Element, copy: Element, lo: number, hi: number, depth: number) {
+  const a = src.children;
+  const b = copy.children;
+  if (a.length !== b.length) return;
+  for (let i = 0; i < a.length; i++) {
+    const r = a[i].getBoundingClientRect();
+    if (r.height === 0 && r.width === 0) continue;
+    const c = b[i] as HTMLElement;
+    if (r.bottom < lo || r.top > hi) {
+      if (!c.style) continue;
+      c.style.contentVisibility = "hidden";
+      c.style.height = `${r.height}px`;
+      c.style.minHeight = "0";
+      c.style.boxSizing = "border-box";
+    } else if (depth < 6 && r.height > hi - lo) {
+      skipOffscreen(a[i], c, lo, hi, depth + 1);
+    }
+  }
+}
+
 /** The first solid background colour at or behind `el`. */
 function groundOf(el: HTMLElement): string {
   for (let n: HTMLElement | null = el; n; n = n.parentElement) {
@@ -95,6 +120,10 @@ function lift(el: HTMLElement, kind: TurnKind): Sheet | null {
   const sheet = div("paper-sheet");
   const front = div("paper-face paper-front");
   const clone = el.cloneNode(true) as HTMLElement;
+  // Everything off screen in the copy is skipped (kept at its size, its
+  // insides never styled, laid out or painted): on a long page that's most
+  // of it, and it's what makes lifting the copy cheap.
+  skipOffscreen(el, clone, top - 120, bottom + 120, 0);
   clone.removeAttribute("id");
   clone.querySelectorAll("[id]").forEach((n) => n.removeAttribute("id"));
   clone.querySelectorAll(".nbk-spiral").forEach((n) => n.remove());
