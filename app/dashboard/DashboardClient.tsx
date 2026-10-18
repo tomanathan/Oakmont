@@ -256,7 +256,7 @@ export function DashboardClient({
                           <div
                             key={s.id}
                             onClick={() => turnTo(`/subskill/${s.id}`)}
-                            className={`border rounded-xl p-3.5 cursor-pointer transition-colors ${
+                            className={`dog-ear [--ear-bg:#fff] border rounded-xl p-3.5 cursor-pointer transition-colors ${
                               status === "new" ? `${theme.cardBg} ${theme.cardBorder}` : STATUS_CARD[status]
                             }`}
                           >
@@ -379,7 +379,7 @@ function PlanCard({
       {recommended && (
         <button
           onClick={() => turnTo(recommended.href)}
-          className="group w-full flex items-center gap-3 bg-forest text-white rounded-xl px-4 py-3 text-left hover:bg-[#1f2f5a] transition-colors"
+          className="dog-ear group w-full flex items-center gap-3 bg-forest text-white rounded-xl px-4 py-3 text-left hover:bg-[#1f2f5a] transition-colors"
         >
           <div className="flex-1 min-w-0">
             <div className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-white/45">

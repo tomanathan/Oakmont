@@ -310,7 +310,9 @@ export function SettingsClient({
                 {/* The outfit he's wearing gets taped down, like a photo
                     pinned in the notebook. */}
                 {selected && <span key={c.id} className="paper-tape-strip" aria-hidden />}
-                <PixelDog size={40} costume={unlocked ? c.id : null} />
+                <span key={`${c.id}-${selected}`} className={selected ? "dog-twirl" : "inline-block"}>
+                  <PixelDog size={40} costume={unlocked ? c.id : null} />
+                </span>
                 <div className="text-xs font-semibold text-ink">{c.name}</div>
                 <div className="text-[10px] text-stone-500 leading-snug">
                   {selected

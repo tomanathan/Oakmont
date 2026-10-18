@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { DogRunner } from "@/components/paper/dog";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ExamChoices } from "@/components/ExamChoices";
@@ -424,7 +425,7 @@ export function ReviewClient() {
       <div>
         <div className="mb-4 flex items-center justify-between gap-4">
           <div className="min-w-0 flex-1">
-            <div className="mb-2 flex items-baseline gap-2">
+            <div className="mb-1 flex items-baseline gap-2">
               <span className="text-[13px] font-semibold text-ink">
                 Question {idx + 1} <span className="font-normal text-stone-500">of {items.length}</span>
               </span>
@@ -432,7 +433,8 @@ export function ReviewClient() {
                 {it.section === "Math" ? "Math" : "Reading & Writing"}
               </span>
             </div>
-            <div className="flex gap-1">
+            <div className="relative mt-6 flex gap-1">
+              <DogRunner value={(idx + 0.5) / items.length} size={30} />
               {items.map((_, i) => (
                 <span
                   key={i}

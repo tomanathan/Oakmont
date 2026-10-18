@@ -13,6 +13,30 @@ import { PAGE, routeChanged, setNavigator, turnTo } from "./turn";
 
 const PRESSABLE = 'button, a[href], [role="radio"], [role="tab"], [role="menuitem"], [role="checkbox"], [role="switch"], summary, label[for], label:has(input)';
 
+// Ozho's paw, as markup (stamped straight onto the page, outside React).
+const PAW =
+  '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><ellipse cx="12" cy="16.2" rx="5.6" ry="4.6"/><ellipse cx="5.2" cy="10.4" rx="2.2" ry="2.8" transform="rotate(-18 5.2 10.4)"/><ellipse cx="9.4" cy="6.2" rx="2.3" ry="3" transform="rotate(-6 9.4 6.2)"/><ellipse cx="14.6" cy="6.2" rx="2.3" ry="3" transform="rotate(6 14.6 6.2)"/><ellipse cx="18.8" cy="10.4" rx="2.2" ry="2.8" transform="rotate(18 18.8 10.4)"/></svg>';
+
+/** A dark, inky button (the blue and navy ones): worth a paw print. */
+function isInky(bg: string): boolean {
+  const m = /rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?/.exec(bg);
+  if (!m) return false;
+  const [r, g, b, a] = [+m[1], +m[2], +m[3], m[4] === undefined ? 1 : +m[4]];
+  return a > 0.6 && b > r + 40 && 0.2126 * r + 0.7152 * g + 0.0722 * b < 130;
+}
+
+/** Press Ozho's paw onto the page at (x, y); it dries away on its own. */
+function inkPaw(x: number, y: number) {
+  const s = document.createElement("span");
+  s.className = "paw-ink";
+  s.style.setProperty("--x", `${x}px`);
+  s.style.setProperty("--y", `${y}px`);
+  s.style.setProperty("--r", `${Math.round(Math.random() * 50 - 25)}deg`);
+  s.innerHTML = PAW;
+  document.body.append(s);
+  window.setTimeout(() => s.remove(), 800);
+}
+
 /** The same shadow, pressed `d` px closer to the desk. */
 function pressedShadow(shadow: string, d: number): string | null {
   if (!shadow || shadow === "none") return null;
@@ -45,6 +69,10 @@ function usePress() {
       const area = r.width * r.height;
       // Whole-screen panels aren't buttons you press.
       if (area > window.innerWidth * window.innerHeight * 0.35) return;
+      // The big blue buttons get a paw print where you pressed.
+      if (el.tagName !== "A" || el.className.includes("rounded")) {
+        if (isInky(cs.backgroundColor)) inkPaw(e.clientX, e.clientY);
+      }
       const shadow = cs.boxShadow;
       // Offset (paper) shadows: press it the full way onto its shadow.
       // Everything else just gives a little.

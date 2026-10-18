@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Bone, PawPrint } from "./paper/dog";
 
 // Same idea as ScoutCompanion: mounted once at the root layout so it can
 // react to a celebration fired from *any* page (a subskill quiz, logging a
@@ -62,7 +63,7 @@ export function GlobalConfetti() {
           {burst.pieces.map((p, i) => (
             <span
               key={i}
-              className={burst.big ? "confetti-piece-viewport confetti-piece-viewport-big" : "confetti-piece-viewport"}
+              className={`${burst.big ? "confetti-piece-viewport confetti-piece-viewport-big" : "confetti-piece-viewport"} ${i % 5 === 0 ? "is-shape" : ""}`}
               style={{
                 left: `${p.left}%`,
                 backgroundColor: p.color,
@@ -70,8 +71,12 @@ export function GlobalConfetti() {
                 // @ts-expect-error -- custom properties read by the confetti-fall-viewport keyframes
                 "--confetti-rotate": `${p.rotate}deg`,
                 "--confetti-drift": `${p.drift}px`,
+                color: p.color,
               }}
-            />
+            >
+              {/* every fifth piece is one of Ozho's: a paw print or a bone */}
+              {i % 5 === 0 && (i % 10 === 0 ? <PawPrint size={burst.big ? 15 : 12} /> : <Bone size={burst.big ? 18 : 14} />)}
+            </span>
           ))}
         </div>
       ))}

@@ -107,7 +107,7 @@ export function FeedbackTab({ audience = "student" }: { audience?: "student" | "
               <div className="py-4 text-center">
                 {/* The note, folded up and thrown. */}
                 <PaperPlane />
-                <div className="mb-3 inline-block">
+                <div className="dog-leap mb-3">
                   <PixelDog size={84} mood="happy" tailFrame={3} />
                 </div>
                 <h2 id="feedback-title" className="font-display text-xl font-semibold text-ink">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { DogRunner } from "@/components/paper/dog";
 import { useRouter } from "next/navigation";
 import type { Subskill, Pattern } from "@/data/curriculum";
 import type { Question } from "@/data/questions";
@@ -1197,14 +1198,18 @@ function QuizProgress({
   return (
     <div className="sticky top-[62px] z-10 mb-3.5 flex items-center gap-4 rounded-lg border border-[#c9d6ee] bg-white/95 px-3.5 py-2 shadow-[3px_3px_0_rgba(52,97,193,0.13)] backdrop-blur-sm">
       <div className="min-w-0 flex-1">
-        <div className="mb-1 flex items-baseline justify-between">
+        <div className="mb-5 flex items-baseline justify-between">
           <span className="text-xs font-semibold text-ink">
             {answeredCount} of {total} answered
           </span>
           <span className="text-xs text-stone-500">{pct}%</span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-md bg-[#d3ddf1]">
-          <div className="h-full bg-[#3461c1] transition-all duration-300 ease-out" style={{ width: `${pct}%` }} />
+        {/* Ozho runs along the bar to each new answer. */}
+        <div className="relative">
+          <div className="h-1.5 overflow-hidden rounded-md bg-[#d3ddf1]">
+            <div className="h-full bg-[#3461c1] transition-all duration-300 ease-out" style={{ width: `${pct}%` }} />
+          </div>
+          <DogRunner value={total ? answeredCount / total : 0} size={30} />
         </div>
       </div>
       {startedAt !== null && <PaceClock elapsed={elapsed} target={paceTotal} label="whole quiz" />}

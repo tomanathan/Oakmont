@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { DogRunner } from "./paper/dog";
 import { useLeave } from "./paper/usePresence";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -48,15 +49,19 @@ export function GettingStarted({ items }: { items: ChecklistItem[] }) {
           Hide this
         </button>
       </div>
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#d3ddf1]">
-        <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${(done / items.length) * 100}%` }} />
+      {/* Ozho, as far along the list as you are */}
+      <div className="relative mt-7">
+        <div className="h-1.5 overflow-hidden rounded-full bg-[#d3ddf1]">
+          <div className="h-full rounded-full bg-accent transition-all" style={{ width: `${(done / items.length) * 100}%` }} />
+        </div>
+        <DogRunner value={done / items.length} size={30} />
       </div>
       <ul className="mt-4 grid gap-2 sm:grid-cols-2">
         {items.map((item) => (
           <li key={item.id}>
             <Link
               href={item.href}
-              className={`flex h-full items-start gap-3 rounded-xl px-3.5 py-3 ring-1 transition-colors ${
+              className={`dog-ear [--ear-bg:#fff] flex h-full items-start gap-3 rounded-xl px-3.5 py-3 ring-1 transition-colors ${
                 item.done
                   ? "bg-[#f7faf8] ring-[#e3efe8]"
                   : item === nextUp

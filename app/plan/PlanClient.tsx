@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { DogRunner } from "@/components/paper/dog";
 import { Fold } from "@/components/paper/Fold";
 import { turnTo } from "@/components/paper/turn";
 import { sectionTheme } from "@/lib/sectionTheme";
@@ -119,18 +120,22 @@ export function PlanClient({
       )}
 
       <div className="bg-[#e4ecfa] border border-[#c2d1ee] rounded-xl p-5 mb-6">
-        <div className="flex justify-between items-baseline mb-2">
+        <div className="flex justify-between items-baseline mb-7">
           <span className="text-sm font-semibold text-ink">Overall progress</span>
           <span className="text-sm text-[#66728f]">
             {doneSubskills} / {allSubskills.length} passed &middot; {masteredSubskills} mastered &middot;{" "}
             <span className="text-accent font-semibold">{weekPct}%</span>
           </span>
         </div>
-        <div className="h-2.5 bg-white rounded-md overflow-hidden ring-1 ring-[#c2d1ee]">
-          <div
-            className="h-full bg-[#3461c1] transition-all duration-700 ease-out"
-            style={{ width: `${weekPct}%` }}
-          />
+        <div className="relative">
+          <div className="h-2.5 bg-white rounded-md overflow-hidden ring-1 ring-[#c2d1ee]">
+            <div
+              className="h-full bg-[#3461c1] transition-all duration-700 ease-out"
+              style={{ width: `${weekPct}%` }}
+            />
+          </div>
+          {/* Ozho, as far along as you are */}
+          <DogRunner value={weekPct / 100} size={40} />
         </div>
       </div>
       <div className="flex flex-col gap-2">
@@ -275,7 +280,7 @@ function DayContent({
     return (
       <button
         onClick={() => onNavigate("/review")}
-        className="flex w-full items-center gap-3 rounded-lg border border-[#d3e0cc] bg-[#ecf1fb] px-2.5 py-1.5 text-left transition-colors hover:border-[#9fbb97] hover:bg-[#e4eedf]"
+        className="dog-ear [--ear-bg:#fff] flex w-full items-center gap-3 rounded-lg border border-[#d3e0cc] bg-[#ecf1fb] px-2.5 py-1.5 text-left transition-colors hover:border-[#9fbb97] hover:bg-[#e4eedf]"
       >
         <div className="min-w-0 flex-1">
           <div className="text-sm font-medium text-ink">Mixed review</div>
@@ -295,7 +300,7 @@ function DayContent({
           <div
             key={s.id}
             onClick={() => onNavigate(`/subskill/${s.id}`)}
-            className={`flex items-center gap-3 px-2.5 py-1.5 rounded-lg border cursor-pointer transition-colors ${
+            className={`dog-ear [--ear-bg:#fff] flex items-center gap-3 px-2.5 py-1.5 rounded-lg border cursor-pointer transition-colors ${
               status === "new" ? `${theme.cardBg} border-transparent hover:opacity-80` : STATUS_CARD[status]
             }`}
           >
