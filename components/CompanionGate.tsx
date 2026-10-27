@@ -12,11 +12,12 @@ import { SecondCompanion } from "./SecondCompanion";
 // visitors has its own purely decorative, CSS-animated pet cast (see
 // components/landing/HeroPets.tsx), and the live, session-backed
 // companions would have nothing real to wander/chatter about there anyway.
-// Kept as its own small client component, rather than making the whole
+// The legal pages wear the landing page's top bar and are read on the way
+// in, so they're left out too. Kept as its own small client component, rather than making the whole
 // root layout a client component, just to read the current route.
 export function CompanionGate() {
   const pathname = usePathname();
-  if (pathname === "/" || pathname?.startsWith("/parent") || pathname?.startsWith("/share") || pathname?.startsWith("/link")) return null;
+  if (pathname === "/" || pathname?.startsWith("/parent") || pathname?.startsWith("/share") || pathname?.startsWith("/link") || pathname === "/privacy" || pathname === "/terms") return null;
   return (
     <>
       <ScoutCompanion />

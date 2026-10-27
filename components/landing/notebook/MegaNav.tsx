@@ -11,7 +11,8 @@ import { C, Tape, Tick } from "./art";
 // same card glides across and reshapes to fit, its contents swapping in
 // from the side you moved toward. In "The course", each item you point at
 // shuffles its own little Polaroid onto the pile beside the list.
-// Styles: .nb-mega* in notebook.css.
+// Styles: .nb-mega* in notebook.css. Off the homepage (`home={false}`)
+// the section links point back to it.
 
 type MenuId = "course" | "parents";
 
@@ -106,7 +107,7 @@ function EmailArt() {
 
 // ---------- the menus ----------
 
-function CourseMenu({ onGo }: { onGo: () => void }) {
+function CourseMenu({ onGo, at }: { onGo: () => void; at: string }) {
   const [shown, setShown] = useState<CourseId>("lessons");
   const [under, setUnder] = useState<CourseId | null>(null);
   const show = (id: CourseId) => {
@@ -121,10 +122,10 @@ function CourseMenu({ onGo }: { onGo: () => void }) {
       <ul className="nb-mega-list">
         {COURSE.map((it) => (
           <li key={it.id}>
-            <a href={it.href} onClick={onGo} onMouseEnter={() => show(it.id)} onFocus={() => show(it.id)} className={`nb-mega-item ${it.id === shown ? "is-on" : ""}`}>
+            <Link href={at + it.href} onClick={onGo} onMouseEnter={() => show(it.id)} onFocus={() => show(it.id)} className={`nb-mega-item ${it.id === shown ? "is-on" : ""}`}>
               <span className="nb-mega-item-t">{it.title}</span>
               <span className="nb-mega-item-b">{it.blurb}</span>
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -143,7 +144,7 @@ function CourseMenu({ onGo }: { onGo: () => void }) {
   );
 }
 
-function ParentsMenu({ onGo }: { onGo: () => void }) {
+function ParentsMenu({ onGo, at }: { onGo: () => void; at: string }) {
   return (
     <div className="nb-mega-parents">
       <div className="nb-mega-cards">
@@ -152,11 +153,11 @@ function ParentsMenu({ onGo }: { onGo: () => void }) {
           <span className="nb-mega-item-t">The parent dashboard</span>
           <span className="nb-mega-item-b">Every session, score and skill, on a free account of your own.</span>
         </Link>
-        <a href="#parents" onClick={onGo} className="nb-mega-tile">
+        <Link href={`${at}#parents`} onClick={onGo} className="nb-mega-tile">
           <EmailArt />
           <span className="nb-mega-item-t">The Sunday email</span>
           <span className="nb-mega-item-b">A short summary of the week, in your inbox every Sunday.</span>
-        </a>
+        </Link>
       </div>
       <Link href="/parent/login?mode=signup" onClick={onGo} className="nb-mega-foot">
         Create a free parent account <span aria-hidden>→</span>
@@ -170,7 +171,9 @@ const MENUS: { id: MenuId; label: string }[] = [
   { id: "parents", label: "For parents" },
 ];
 
-export function MegaNav() {
+export function MegaNav({ home = true }: { home?: boolean }) {
+  // Where the homepage's sections are, from here.
+  const at = home ? "" : "/";
   const [open, setOpen] = useState<MenuId | null>(null);
   const [prev, setPrev] = useState<MenuId | null>(null);
   const [dir, setDir] = useState<1 | -1>(1);
@@ -282,12 +285,12 @@ export function MegaNav() {
           </svg>
         </button>
       ))}
-      <a href="#pricing" className="nb-navlink" onMouseEnter={() => hide()}>
+      <Link href={`${at}#pricing`} className="nb-navlink" onMouseEnter={() => hide()}>
         Pricing
-      </a>
-      <a href="#faq" className="nb-navlink" onMouseEnter={() => hide()}>
+      </Link>
+      <Link href={`${at}#faq`} className="nb-navlink" onMouseEnter={() => hide()}>
         FAQ
-      </a>
+      </Link>
 
       {/* One card for every menu: it glides to the menu you're on and
           takes that menu's shape. */}
@@ -313,7 +316,7 @@ export function MegaNav() {
                 {...(m.id !== open ? { inert: "" as unknown as boolean } : {})}
                 aria-hidden={m.id !== open}
               >
-                {m.id === "course" ? <CourseMenu onGo={go} /> : <ParentsMenu onGo={go} />}
+                {m.id === "course" ? <CourseMenu onGo={go} at={at} /> : <ParentsMenu onGo={go} at={at} />}
               </div>
             );
           })}

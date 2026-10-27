@@ -12,14 +12,15 @@ export function Logo({ size = "lg" }: { size?: "lg" | "sm" }) {
 }
 
 // Sticky top bar. The hero's solid blue button is the page's one loud thing, so
-// both account actions here are paper pills.
-export function Nav() {
+// both account actions here are paper pills. The public pages off the
+// homepage wear the same bar (see SiteHeader), with `home={false}`.
+export function Nav({ home = true }: { home?: boolean }) {
   return (
     <nav className="nb-nav" aria-label="Main">
-      <a href="#top" className="nb-logo-link" aria-label="Oakmont Study Center, back to top">
+      <a href={home ? "#top" : "/"} className="nb-logo-link" aria-label={home ? "Oakmont Study Center, back to top" : "Oakmont Study Center home"}>
         <Logo />
       </a>
-      <MegaNav />
+      <MegaNav home={home} />
       <div className="nb-nav-actions">
         <a href="/login" className="nb-btn">
           Log in

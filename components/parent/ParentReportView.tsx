@@ -70,7 +70,7 @@ function Delta({ now, prev, unit = "", invert = false }: { now: number | null; p
 
 function Section({ id, title, kicker, children }: { id: string; title: string; kicker: string; children: ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-28 pt-10">
+    <section id={id} className="scroll-mt-[calc(var(--site-bar,0px)+7rem)] pt-10">
       <div className="mb-4">
         <div className={eyebrow}>{kicker}</div>
         <h2 className={h2}>{title}</h2>
@@ -172,7 +172,7 @@ export function ParentReportView({
       </div>
 
       {/* ---- section nav ---- */}
-      <nav className="sticky top-2 z-20 mt-6 flex gap-1 overflow-x-auto rounded-xl border border-[#c9d6ee] bg-white/90 p-1 backdrop-blur" aria-label="Report sections">
+      <nav className="sticky top-[calc(var(--site-bar,0px)+8px)] z-20 mt-6 flex gap-1 overflow-x-auto rounded-xl border border-[#c9d6ee] bg-white/90 p-1 backdrop-blur" aria-label="Report sections">
         {NAV.map(([id, label]) => (
           <a key={id} href={`#${id}`} className="whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[13px] font-medium text-stone-600 transition-colors hover:bg-[#e9effb] hover:text-ink">
             {label}
