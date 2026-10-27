@@ -2111,3 +2111,483 @@
 .nb-root .nb-hero .nb-cta-row .nb-btn--lg {
   min-height: 56px;
 }
+
+/* ---------- the top bar's menus (MegaNav.tsx) ----------
+   One index card for every menu. It drops in the first time, then glides
+   (transform) between menus and takes each one's size; contents slide in
+   from the side you moved toward. */
+.nb-mega-wrap {
+  position: relative;
+}
+.nb-mega-wrap .nb-navlink {
+  white-space: nowrap;
+}
+.nb-navtrig {
+  gap: 5px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+.nb-navtrig-chev {
+  transition: transform 0.25s var(--spring);
+}
+.nb-navtrig.is-open .nb-navtrig-chev {
+  transform: rotate(180deg);
+}
+.nb-navtrig.is-open::after {
+  transform: scaleX(1);
+}
+.nb-mega {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 12px);
+  z-index: 30;
+  pointer-events: none;
+  transition: transform 340ms cubic-bezier(0.3, 0.85, 0.3, 1);
+  will-change: transform;
+}
+.nb-mega.is-open {
+  pointer-events: auto;
+}
+.nb-mega.is-fresh {
+  transition: none;
+}
+.nb-mega-card {
+  position: relative;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 5px 5px 0 var(--ink);
+  opacity: 0;
+  transform: translate(6px, -8px) rotate(-1.5deg) scale(0.97);
+  transform-origin: 50% 0;
+  transition:
+    opacity 160ms ease-in,
+    transform 200ms ease-in,
+    width 340ms cubic-bezier(0.3, 0.85, 0.3, 1),
+    height 340ms cubic-bezier(0.3, 0.85, 0.3, 1);
+  contain: layout style;
+}
+.nb-mega.is-open .nb-mega-card {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 120ms ease-out,
+    transform 380ms var(--spring),
+    width 340ms cubic-bezier(0.3, 0.85, 0.3, 1),
+    height 340ms cubic-bezier(0.3, 0.85, 0.3, 1);
+}
+/* the first menu since it closed drops in at its own size, no reshaping */
+.nb-mega.is-fresh .nb-mega-card {
+  transition:
+    opacity 120ms ease-out,
+    transform 380ms var(--spring);
+}
+.nb-mega-tape {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 78px;
+  height: 20px;
+  margin-left: -39px;
+  transform: rotate(-3deg);
+  z-index: 2;
+}
+.nb-mega-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.nb-mega-pane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: max-content;
+  padding: 18px;
+}
+.nb-mega-pane.is-off {
+  visibility: hidden;
+  opacity: 0;
+}
+.nb-mega-pane.is-in {
+  animation: nb-pane-in 300ms cubic-bezier(0.3, 0.8, 0.3, 1) both;
+}
+.nb-mega.is-fresh .nb-mega-pane.is-in {
+  animation: none;
+}
+.nb-mega-pane.is-out {
+  animation: nb-pane-out 220ms ease-in both;
+}
+@keyframes nb-pane-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--d) * 36px));
+  }
+}
+@keyframes nb-pane-out {
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--d) * -36px));
+  }
+}
+
+/* "The course": a list, and a pile of Polaroids beside it */
+.nb-mega-course {
+  display: grid;
+  grid-template-columns: 290px 210px;
+  gap: 18px;
+  align-items: center;
+}
+.nb-mega-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+.nb-mega-item {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding: 9px 12px 9px 16px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background-color 0.15s;
+}
+.nb-mega-item::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 12px;
+  bottom: 12px;
+  width: 4px;
+  border-radius: 2px;
+  background: var(--butter);
+  transform: scaleY(0);
+  transition: transform 0.2s var(--spring);
+}
+.nb-mega-item.is-on {
+  background: rgba(212, 220, 246, 0.45);
+}
+.nb-mega-item.is-on::before {
+  transform: scaleY(1);
+}
+.nb-mega-item-t {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-deep);
+}
+.nb-mega-item-b {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #5b6684;
+}
+.nb-mega-pile {
+  position: relative;
+  height: 178px;
+}
+.nb-mega-polaroid {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 186px;
+  height: 160px;
+  padding: 8px 8px 24px;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.nb-mega-polaroid.is-under {
+  transform: rotate(-6deg) translate(-8px, 5px);
+}
+.nb-mega-polaroid.is-top {
+  transform: rotate(2.5deg);
+  animation: nb-polaroid-in 460ms var(--spring) both;
+}
+@keyframes nb-polaroid-in {
+  from {
+    opacity: 0;
+    transform: translate(54px, -14px) rotate(14deg);
+  }
+  30% {
+    opacity: 1;
+  }
+}
+.nb-mega-art {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.nb-mega-art--lesson {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #fdf6dc 0%, #fbeab8 62%, #d9e1f7 62%, #cdd7f3 100%);
+}
+.nb-mega-play {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding-left: 2px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+}
+.nb-mega-art--quiz {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  padding: 10px;
+  background: var(--paper);
+}
+.nb-mega-q {
+  height: 6px;
+  border-radius: 3px;
+  background: #c9d3ea;
+}
+.nb-mega-q--short {
+  width: 62%;
+  margin-bottom: 3px;
+}
+.nb-mega-choice {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 18px;
+  padding: 0 6px;
+  border: 1.5px solid #c9d3ea;
+  border-radius: 5px;
+  background: #fff;
+}
+.nb-mega-choice b {
+  display: grid;
+  place-items: center;
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: #e9effb;
+  color: var(--ink-deep);
+  font-size: 7.5px;
+}
+.nb-mega-choice i {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: #e1e7f4;
+}
+.nb-mega-choice.is-picked {
+  border-color: var(--ink);
+}
+.nb-mega-choice.is-picked b {
+  background: var(--ink);
+  color: #fff;
+  box-shadow: 0 0 0 2.5px #fff, 0 0 0 4px var(--ink);
+}
+.nb-mega-art--review {
+  display: grid;
+  place-items: center;
+  background: #eef3fb;
+}
+.nb-mega-cardlet {
+  grid-area: 1 / 1;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  width: 74px;
+  height: 52px;
+  padding: 0 10px;
+  border: 1.5px solid var(--ink);
+  border-radius: 5px;
+}
+.nb-mega-cardlet i {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(31, 47, 90, 0.35);
+}
+.nb-mega-cardlet i + i {
+  width: 60%;
+}
+.nb-mega-art--plan {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-content: center;
+  gap: 4px;
+  padding: 10px;
+  background: var(--paper);
+}
+.nb-mega-day {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 40px;
+  border: 1.5px solid #c9d3ea;
+  border-radius: 5px;
+  background: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  color: #7a85a3;
+  align-content: start;
+  padding-top: 4px;
+}
+.nb-mega-day svg {
+  width: 12px;
+  height: 12px;
+}
+.nb-mega-day.is-done {
+  border-color: #b9dcc8;
+  background: #f1faf4;
+}
+.nb-mega-day.is-today {
+  border-color: var(--ink);
+  background: #fef7dd;
+  color: var(--ink-deep);
+}
+
+/* "For parents": two picture tiles */
+.nb-mega-parents {
+  display: grid;
+  gap: 12px;
+}
+.nb-mega-cards {
+  display: grid;
+  grid-template-columns: 220px 220px;
+  gap: 12px;
+}
+.nb-mega-tile {
+  display: grid;
+  gap: 3px;
+  padding: 8px 8px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background-color 0.15s, transform 0.2s var(--spring);
+}
+.nb-mega-tile:hover,
+.nb-mega-tile:focus-visible {
+  background: rgba(212, 220, 246, 0.45);
+  transform: translateY(-2px);
+}
+.nb-mega-tile .nb-mega-item-t {
+  margin-top: 6px;
+}
+.nb-mega-photo {
+  position: relative;
+  height: 112px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.nb-mega-photo--dash {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 0 70px 0 14px;
+  background: #fff;
+}
+.nb-mega-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: #e1e7f4;
+  overflow: hidden;
+}
+.nb-mega-bar i {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+  transform-origin: 0 50%;
+  transition: transform 0.6s var(--spring);
+}
+.nb-mega-tile:hover .nb-mega-bar i {
+  transform: scaleX(1) !important;
+}
+.nb-mega-dash-dog {
+  position: absolute;
+  right: 10px;
+  bottom: 6px;
+}
+.nb-mega-photo--mail {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #e6eefc, #d4dcf6);
+}
+.nb-mega-envelope {
+  position: relative;
+  width: 108px;
+  height: 68px;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  transform: rotate(-4deg);
+  transition: transform 0.3s var(--spring);
+}
+.nb-mega-tile:hover .nb-mega-envelope {
+  transform: rotate(2deg) translateY(-3px);
+}
+.nb-mega-flap {
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  width: 76px;
+  height: 76px;
+  margin-left: -38px;
+  border-right: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  transform: translateY(-56%) scaleY(0.62) rotate(45deg);
+}
+.nb-mega-stampette {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 26px;
+  background: var(--butter);
+  border: 1.5px dashed var(--ink);
+  color: var(--ink);
+}
+.nb-mega-foot {
+  justify-self: start;
+  padding: 2px 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+.nb-mega-foot:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+/* Mid widths: the menus need the room, so the wordmark sets smaller and
+   stays on one line. */
+@media (min-width: 961px) and (max-width: 1140px) {
+  .nb-logo-word {
+    font-size: 21px;
+    white-space: nowrap;
+  }
+  .nb-nav {
+    gap: 10px;
+  }
+  .nb-mega-wrap {
+    gap: 2px;
+  }
+  .nb-mega-wrap .nb-navlink {
+    padding: 0 6px;
+    font-size: 14.5px;
+  }
+  .nb-nav-actions {
+    gap: 6px;
+  }
+  .nb-nav-actions .nb-btn {
+    padding: 0 12px;
+    font-size: 14.5px;
+  }
+}

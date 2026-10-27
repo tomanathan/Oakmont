@@ -1,4 +1,5 @@
 import { TrackedLink } from "../TrackedLink";
+import { MegaNav } from "./MegaNav";
 
 export function Logo({ size = "lg" }: { size?: "lg" | "sm" }) {
   return (
@@ -18,17 +19,7 @@ export function Nav() {
       <a href="#top" className="nb-logo-link" aria-label="Oakmont Study Center, back to top">
         <Logo />
       </a>
-      <div className="nb-navlinks">
-        <a href="#parents" className="nb-navlink">
-          For parents
-        </a>
-        <a href="#pricing" className="nb-navlink">
-          Pricing
-        </a>
-        <a href="#faq" className="nb-navlink">
-          FAQ
-        </a>
-      </div>
+      <MegaNav />
       <div className="nb-nav-actions">
         <a href="/login" className="nb-btn">
           Log in
