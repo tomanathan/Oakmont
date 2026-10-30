@@ -9,7 +9,9 @@ import { computeDomainMastery, completedDomainCount, orderSubskillsByWeakness } 
 import { progressMapFromRows, isPassed } from "@/lib/progressState";
 import { reviewCounts } from "@/lib/reviewSet";
 import { companionSummary } from "@/lib/companionSummary";
-import { getTodayPlanItem } from "@/lib/studyPlan";
+import { buildDayPlan, getTodayPlanItem } from "@/lib/studyPlan";
+import { weeksInARow } from "@/lib/weeklyReview";
+import { addUTCDays, formatUTCDate } from "@/lib/dateOnly";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
@@ -23,21 +25,16 @@ import { leadWith } from "@/lib/planOrder";
 // last login -- logging in again a few minutes later (a dropped session,
 // a refresh-triggered re-auth) isn't a new study session.
 const WELCOME_BACK_GAP_MS = 2 * 60 * 60 * 1000;
-// Any review or warm-up this recently counts as today's recall, so the
-// next lesson doesn't ask for another warm-up.
-const WARMED_UP_MS = 12 * 60 * 60 * 1000;
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const [rows, stats, latestTest, recentRecall] = await Promise.all([
+  const [rows, stats, latestTest, weeklyRows] = await Promise.all([
     prisma.progress.findMany({ where: { userId: user.userId } }),
     getUserStats(user.userId),
     prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
-    prisma.itemAttempt.count({
-      where: { userId: user.userId, source: "review", createdAt: { gte: new Date(Date.now() - WARMED_UP_MS) } },
-    }),
+    prisma.weeklyReview.findMany({ where: { userId: user.userId }, select: { week: true } }),
   ]);
   // Onboarding comes before choosing a plan, so check it first.
   if (!stats.welcomeSeenAt) redirect("/welcome");
@@ -99,6 +96,31 @@ export default async function DashboardPage() {
         subskills: todayItem.day.subskillIds.map(nameSubskill),
       }
     : null;
+
+  // This week's weekly review: which day the plan puts it on, whether it's
+  // done, and how many weeks in a row have been.
+  let weekly: { week: number; done: boolean; due: boolean; today: boolean; day: string; inARow: number } | null = null;
+  if (todayItem) {
+    const wi = todayItem.week - 1;
+    const days = buildDayPlan(
+      studyPlan[wi],
+      studyPlan.slice(0, wi).flatMap((w) => w.subskillIds),
+      wi === studyPlan.length - 1 ? courseLengthDays - wi * 7 : 7
+    );
+    const at = days.findIndex((d) => d.weekly);
+    if (at >= 0) {
+      const reviewed = weeklyRows.map((r) => r.week);
+      const todayAt = todayItem.day.day - 1;
+      weekly = {
+        week: todayItem.week,
+        done: reviewed.includes(todayItem.week),
+        due: todayAt >= at,
+        today: todayAt === at,
+        day: formatUTCDate(addUTCDays(createdAt, wi * 7 + at), { weekday: "long" }),
+        inARow: weeksInARow(reviewed, todayItem.week),
+      };
+    }
+  }
 
   // This week's slice of the plan, for the dashboard's own "this week"
   // progress cut (see PlanClient for the plan page's overall-progress bar,
@@ -221,7 +243,8 @@ export default async function DashboardPage() {
         daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
         thisWeek={{ done: weekDone, total: weekTotal }}
         planOrder={weaknessOrderedIds}
-        review={{ ...reviewCounts(progress), warmedUp: recentRecall > 0 }}
+        review={reviewCounts(progress)}
+        weekly={weekly}
         companion={companionSummary({
           lastActiveDate: stats.lastActiveDate ?? null,
           petBornAt: stats.petBornAt,

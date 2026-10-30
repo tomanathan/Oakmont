@@ -32,6 +32,7 @@ model User {
   progress  Progress[]
   practiceTests PracticeTest[]
   itemAttempts ItemAttempt[]
+  weeklyReviews WeeklyReview[]
   lessonViews  LessonView[]
   feedback     Feedback[]
 
@@ -346,4 +347,19 @@ model Feedback {
   handledAt DateTime?
 
   @@index([createdAt])
+}
+
+// One finished weekly review per week of the study plan (week 1 starts the
+// day the account was made), so the plan and dashboard can show which
+// weeks were reviewed and how many in a row.
+model WeeklyReview {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  week      Int
+  correct   Int
+  total     Int
+  createdAt DateTime @default(now())
+
+  @@unique([userId, week])
 }

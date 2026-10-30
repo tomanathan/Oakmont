@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { DogRunner } from "@/components/paper/dog";
 import { Fold } from "@/components/paper/Fold";
 import { turnTo } from "@/components/paper/turn";
+import { WEEKLY_REVIEW_SIZE } from "@/lib/weeklyReview";
 import { sectionTheme } from "@/lib/sectionTheme";
 import { addUTCDays, formatUTCDate, utcDayDiff } from "@/lib/dateOnly";
 import { TIGHT_TIMELINE_DAYS } from "@/lib/pacing";
@@ -24,7 +25,7 @@ interface DayItem {
   type: DayType;
   testNumber?: number;
   subskills: WeekSubskill[];
-  warmup?: boolean;
+  weekly?: boolean;
 }
 
 interface WeekItem {
@@ -44,7 +45,9 @@ export function PlanClient({
   courseStartDate,
   targetTestDate,
   daysUntilTest,
+  reviewedWeeks,
 }: {
+  reviewedWeeks: number[];
   weeks: WeekItem[];
   progress: ProgressMap;
   courseStartDate: string;
@@ -227,7 +230,20 @@ export function PlanClient({
                           ) : null}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <DayContent day={d} progress={progress} onNavigate={(href) => turnTo(href)} />
+                          <DayContent
+                            day={d}
+                            progress={progress}
+                            onNavigate={(href) => turnTo(href)}
+                            weekly={
+                              d.weekly
+                                ? {
+                                    week: w.week,
+                                    done: reviewedWeeks.includes(w.week),
+                                    when: w.week < currentWeekNumber ? "past" : w.week === currentWeekNumber ? "now" : "later",
+                                  }
+                                : null
+                            }
+                          />
                         </div>
                       </div>
                     );
@@ -245,10 +261,12 @@ function DayContent({
   day,
   progress,
   onNavigate,
+  weekly,
 }: {
   day: DayItem;
   progress: ProgressMap;
   onNavigate: (path: string) => void;
+  weekly: { week: number; done: boolean; when: "past" | "now" | "later" } | null;
 }) {
   if (day.type === "rest") {
     return <div className="text-[13px] italic text-stone-500">Rest &amp; catch up</div>;
@@ -277,6 +295,31 @@ function DayContent({
       </button>
     );
   }
+  if (day.type === "review" && weekly) {
+    const open = weekly.when === "now" && !weekly.done;
+    return (
+      <button
+        onClick={() => onNavigate(open ? "/review?weekly=1" : "/review")}
+        className={`dog-ear [--ear-bg:#fff] flex w-full items-center gap-3 rounded-lg border px-2.5 py-1.5 text-left transition-colors ${
+          open ? "border-[#3461c1] bg-[#eef3fc] hover:bg-[#e4ecfa]" : "border-[#c9d6ee] bg-[#f5f8fd] hover:bg-[#eef3fc]"
+        }`}
+      >
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold text-ink">Week {weekly.week} review</div>
+          <div className="text-xs text-stone-500">
+            {WEEKLY_REVIEW_SIZE} questions on everything you&apos;ve learned so far, leaning toward what you haven&apos;t seen in a while
+          </div>
+        </div>
+        {weekly.done ? (
+          <span className="flex-shrink-0 rounded-full bg-[#eaf6ef] px-2 py-0.5 text-[11px] font-semibold text-accent">&#10003; Done</span>
+        ) : weekly.when === "past" ? (
+          <span className="flex-shrink-0 text-[11px] text-stone-400">Missed</span>
+        ) : (
+          <span className="text-stone-500">&rarr;</span>
+        )}
+      </button>
+    );
+  }
   if (day.type === "review") {
     return (
       <button
@@ -291,21 +334,8 @@ function DayContent({
       </button>
     );
   }
-  // Before something new, a few questions on what came before.
-  const firstNew = day.subskills.find((s) => !progress[s.id]);
   return (
     <div className="flex flex-col gap-1">
-      {day.warmup && firstNew && (
-        <button
-          onClick={() => onNavigate(`/review?warmup=${firstNew.id}`)}
-          className="flex items-center gap-2 px-2.5 py-1 text-left text-xs text-stone-500 hover:text-ink"
-        >
-          <span className="rounded-full bg-[#e4ecfa] px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide text-[#26427e]">
-            Warm-up
-          </span>
-          3 questions from earlier skills first
-        </button>
-      )}
       {day.subskills.map((s) => {
         const p = progress[s.id];
         const status = statusOf(p);

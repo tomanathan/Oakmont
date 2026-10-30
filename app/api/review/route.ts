@@ -6,7 +6,8 @@ import { hasActiveAccess } from "@/lib/subscription";
 import { getSubskill } from "@/data/curriculum";
 import { gradeItems, paceFor, trapFor } from "@/lib/items";
 import { progressMapFromRows, nextReviewInterval, addDays, FIRST_REVIEW_INTERVAL_DAYS } from "@/lib/progressState";
-import { buildReviewSet, REVIEW_SET_SIZE, WARMUP_SIZE } from "@/lib/reviewSet";
+import { buildReviewSet, REVIEW_SET_SIZE } from "@/lib/reviewSet";
+import { planWeekOf, weeksInARow, WEEKLY_REVIEW_SIZE } from "@/lib/weeklyReview";
 import { finishActivity, logItemAttempts } from "@/lib/activity";
 
 const HISTORY_DAYS = 120;
@@ -18,13 +19,12 @@ async function guard() {
   if (!hasActiveAccess(stats)) {
     return { error: NextResponse.json({ error: "Your access has expired." }, { status: 402 }) };
   }
-  return { user };
+  return { user, stats };
 }
 
 // Today's mixed review set (see lib/reviewSet.ts). Answers and
 // explanations stay on the server until the set is submitted. With
-// ?warmup=<subskill>, the short warm-up before that lesson instead: the
-// same draw, three questions, nothing from the lesson itself.
+// ?weekly=1, this week's weekly review instead: the same draw, longer.
 export async function GET(req: NextRequest) {
   const g = await guard();
   if (g.error) return g.error;
@@ -38,11 +38,14 @@ export async function GET(req: NextRequest) {
       select: { itemId: true, subskillId: true, correct: true, confidence: true, createdAt: true },
     }),
   ]);
-  const warmup = req.nextUrl.searchParams.get("warmup");
-  const lesson = warmup ? getSubskill(warmup) : null;
-  const plan = lesson
-    ? buildReviewSet(progressMapFromRows(rows), attempts, new Date(), Math.random, WARMUP_SIZE, [lesson.id])
-    : buildReviewSet(progressMapFromRows(rows), attempts, new Date(), Math.random, REVIEW_SET_SIZE);
+  const weekly = req.nextUrl.searchParams.get("weekly") === "1";
+  const plan = buildReviewSet(
+    progressMapFromRows(rows),
+    attempts,
+    new Date(),
+    Math.random,
+    weekly ? WEEKLY_REVIEW_SIZE : REVIEW_SET_SIZE
+  );
   const name = (id: string) => getSubskill(id)?.name ?? id;
 
   return NextResponse.json({
@@ -64,12 +67,13 @@ export async function GET(req: NextRequest) {
 //   - passed, answered correctly (and not a guess): now mastered
 //   - mastered and due, all correct: refreshed; next refresher further out
 //   - mastered, any miss: flagged due again right away (still mastered)
+// A weekly review (body.weekly) also marks this plan week as reviewed.
 export async function POST(req: NextRequest) {
   const g = await guard();
   if (g.error) return g.error;
   const userId = g.user.userId;
 
-  let body: { items?: unknown };
+  let body: { items?: unknown; weekly?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -126,6 +130,19 @@ export async function POST(req: NextRequest) {
 
   await logItemAttempts(userId, "review", graded);
   const outcome = await finishActivity(userId, rowsBefore);
+
+  let weekly: { week: number; inARow: number } | null = null;
+  if (body.weekly === true) {
+    const week = planWeekOf(g.stats.createdAt ?? now, now);
+    const correct = graded.filter((i) => i.correct).length;
+    await prisma.weeklyReview.upsert({
+      where: { userId_week: { userId, week } },
+      create: { userId, week, correct, total: graded.length },
+      update: { correct, total: graded.length },
+    });
+    const done = await prisma.weeklyReview.findMany({ where: { userId }, select: { week: true } });
+    weekly = { week, inARow: weeksInARow(done.map((d) => d.week), week) };
+  }
   const named = (id: string) => ({ id, name: getSubskill(id)?.name ?? id });
 
   return NextResponse.json({
@@ -150,6 +167,7 @@ export async function POST(req: NextRequest) {
     mastered: mastered.map(named),
     refreshed: refreshed.map(named),
     flagged: flagged.map(named),
+    weekly,
     ...outcome,
   });
 }

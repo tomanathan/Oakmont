@@ -19,6 +19,7 @@ import type { CompanionSummary } from "@/lib/companionSummary";
 import { statusOf, type ProgressMap } from "@/lib/progressState";
 import { SubskillStatusBadge, STATUS_CARD } from "@/components/SubskillStatusBadge";
 import type { Recommendation } from "@/lib/recommend";
+import { WEEKLY_REVIEW_SIZE } from "@/lib/weeklyReview";
 
 
 interface TodaySubskill {
@@ -26,6 +27,15 @@ interface TodaySubskill {
   name: string;
   section: string;
   domain: string;
+}
+
+export interface WeeklyStatus {
+  week: number;
+  done: boolean;
+  due: boolean; // the plan's weekly review day has come (or passed)
+  today: boolean; // ...and it's today
+  day: string; // its weekday
+  inARow: number;
 }
 
 interface TodayPlan {
@@ -49,6 +59,7 @@ export function DashboardClient({
   companion,
   planOrder,
   review,
+  weekly,
 }: {
   firstName: string | null;
   checklist: ChecklistItem[] | null;
@@ -61,7 +72,8 @@ export function DashboardClient({
   thisWeek: { done: number; total: number };
   companion: CompanionSummary;
   planOrder: string[];
-  review: { ready: boolean; toConfirm: number; refreshers: number; warmedUp: boolean };
+  review: { ready: boolean; toConfirm: number; refreshers: number };
+  weekly: WeeklyStatus | null;
 }) {
   const router = useRouter();
   const completedCount = Object.keys(progress).length;
@@ -76,7 +88,10 @@ export function DashboardClient({
     void turn(listRef.current, () => setSubject(next), { kind: "leaf", dir: at(next) > at(subject) ? "fwd" : "back" });
   }
 
-  const recommended = findRecommended(curriculum, progress, today, { order: planOrder, reviewReady: review.ready });
+  const found = findRecommended(curriculum, progress, today, { order: planOrder, reviewReady: review.ready });
+  // On the weekly review's day, a plain review day's set becomes it.
+  const weeklyFirst = !!weekly && weekly.today && !weekly.done && found?.kind === "review";
+  const recommended = weeklyFirst && found ? { ...found, label: `Week ${weekly!.week} review`, href: "/review?weekly=1" } : found;
 
   const [openDomains, setOpenDomains] = useState<Set<string>>(() => {
     // Start with whichever domain holds today's recommended module already
@@ -121,6 +136,7 @@ export function DashboardClient({
             pacing={pacing}
             recommended={recommended}
             review={review}
+            weekly={weeklyFirst ? null : weekly}
             hasStarted={completedCount > 0}
           />
         )}
@@ -301,6 +317,42 @@ function Greeting({ name }: { name: string | null }) {
   );
 }
 
+// This week's weekly review, under today's plan: a quiet note of which day
+// it's on, a nudge once that day comes, and a tick once it's done.
+function WeeklyRow({ weekly }: { weekly: WeeklyStatus }) {
+  const run = weekly.inARow;
+  if (weekly.done) {
+    return (
+      <div className="mt-2 flex items-center justify-between gap-3 rounded-xl bg-[#eaf6ef] px-4 py-2.5 text-[13px]">
+        <span className="font-semibold text-accent">&#10003; Week {weekly.week} reviewed</span>
+        {run > 1 && <span className="text-[12px] text-stone-600">{run} weeks in a row</span>}
+      </div>
+    );
+  }
+  return (
+    <button
+      onClick={() => turnTo("/review?weekly=1")}
+      className={`dog-ear [--ear-bg:#fff] mt-2 flex w-full items-center justify-between gap-3 rounded-xl border px-4 py-2.5 text-left transition-colors ${
+        weekly.due ? "border-[#3461c1] bg-[#eef3fc] hover:bg-[#e4ecfa]" : "border-[#c9d6ee] hover:bg-[#f1f5fc]"
+      }`}
+    >
+      <div className="min-w-0">
+        <div className="text-[13.5px] font-semibold text-ink">
+          Week {weekly.week} review
+          <span className="ml-2 text-[11px] font-semibold uppercase tracking-wide text-[#3461c1]">
+            {weekly.due ? (weekly.today ? "Today" : "Ready") : weekly.day}
+          </span>
+        </div>
+        <div className="text-[12px] text-stone-500">
+          {WEEKLY_REVIEW_SIZE} questions on everything you&apos;ve learned so far
+          {run > 0 ? ` · keep your ${run}-week run going` : ""}
+        </div>
+      </div>
+      <span className="flex-shrink-0 text-stone-500">&rarr;</span>
+    </button>
+  );
+}
+
 const DAY_TYPE_COPY: Record<TodayPlan["type"], string> = {
   lesson: "Today's plan",
   review: "Today's review",
@@ -316,6 +368,7 @@ function PlanCard({
   pacing,
   recommended,
   review,
+  weekly,
   hasStarted,
 }: {
   today: TodayPlan | null;
@@ -324,7 +377,8 @@ function PlanCard({
   thisWeek: { done: number; total: number };
   pacing: Pacing;
   recommended: Recommendation | null;
-  review: { ready: boolean; toConfirm: number; refreshers: number; warmedUp: boolean };
+  review: { ready: boolean; toConfirm: number; refreshers: number };
+  weekly: WeeklyStatus | null;
   hasStarted: boolean;
 }) {
   const router = useRouter();
@@ -342,16 +396,6 @@ function PlanCard({
     today && today.type !== "test" && today.type !== "rest"
       ? today.subskills.filter((s) => s.id !== recommendedSubskillId)
       : [];
-  // A brand-new lesson opens with a three-question warm-up from earlier
-  // skills (unless she's already reviewed in the last few hours), so what
-  // she learned weeks ago keeps coming back while new skills go in.
-  const warmup =
-    recommendedSubskillId &&
-    !progress[recommendedSubskillId] &&
-    !review.warmedUp &&
-    Object.keys(progress).filter((id) => id !== recommendedSubskillId).length >= 2
-      ? recommendedSubskillId
-      : null;
 
   return (
     <div className="nbk-taped flex flex-col bg-white border border-[#c9d6ee] rounded-2xl p-4 shadow-[3px_3px_0_rgba(52,97,193,0.13)]">
@@ -388,13 +432,13 @@ function PlanCard({
           old standalone bar did, in a fraction of the height. */}
       {recommended && (
         <button
-          onClick={() => turnTo(warmup ? `/review?warmup=${warmup}` : recommended.href)}
+          onClick={() => turnTo(recommended.href)}
           className="dog-ear group w-full flex items-center gap-3 bg-forest text-white rounded-xl px-4 py-3 text-left hover:bg-[#1f2f5a] transition-colors"
         >
           <div className="flex-1 min-w-0">
             <div className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-white/45">
-              {warmup
-                ? "3-question warm-up, then"
+              {recommended.href === "/review?weekly=1"
+                ? "Weekly review · everything so far"
                 : recommended.kind === "review"
                 ? "Mixed · every skill so far"
                 : today?.type === "test"
@@ -408,15 +452,6 @@ function PlanCard({
           <span className="flex-shrink-0 w-7 h-7 rounded-full bg-white/10 group-hover:bg-white/20 flex items-center justify-center transition-colors">
             &rarr;
           </span>
-        </button>
-      )}
-
-      {warmup && recommended && (
-        <button
-          onClick={() => turnTo(recommended.href)}
-          className="mt-1.5 self-start px-1 text-[12px] font-medium text-stone-500 hover:text-ink"
-        >
-          Skip the warm-up
         </button>
       )}
 
@@ -443,6 +478,8 @@ function PlanCard({
           })}
         </div>
       )}
+
+      {weekly && <WeeklyRow weekly={weekly} />}
 
       {/* Mixed review, when it isn't already the main action but has
           something waiting: skills to master, or refreshers due. */}

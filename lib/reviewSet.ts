@@ -20,13 +20,7 @@ import { subskillWeight } from "@/lib/testWeights";
 // sure about, then the least recently seen -- and nothing from the last
 // few days if it can be helped, so she's answering from skill, not memory.
 
-// A warm-up is the same kind of set, just three questions, taken right
-// before a new lesson and drawn from everything else she's learned: a
-// little recall every lesson day, so earlier skills don't fade while new
-// ones go in.
-
 export const REVIEW_SET_SIZE = 12;
-export const WARMUP_SIZE = 3;
 export const MIN_SUBSKILLS_FOR_REVIEW = 2;
 const MAX_PER_SUBSKILL = 3;
 const RECENT_DAYS = 3;
@@ -77,10 +71,9 @@ export function buildReviewSet(
   attempts: AttemptLite[],
   now: Date = new Date(),
   rng: () => number = Math.random,
-  size: number = REVIEW_SET_SIZE,
-  exclude: string[] = []
+  size: number = REVIEW_SET_SIZE
 ): ReviewPlan {
-  const ids = introducedSubskills(progress).filter((id) => !exclude.includes(id));
+  const ids = introducedSubskills(progress);
   if (ids.length < MIN_SUBSKILLS_FOR_REVIEW) return { items: [], toConfirm: [], refreshers: [] };
 
   const bySub = new Map<string, AttemptLite[]>();

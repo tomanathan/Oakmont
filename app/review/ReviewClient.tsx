@@ -5,7 +5,7 @@ import { DogRunner } from "@/components/paper/dog";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ExamChoices } from "@/components/ExamChoices";
-import { turn, turnTo } from "@/components/paper/turn";
+import { turn } from "@/components/paper/turn";
 import { Stamp } from "@/components/paper/Stamp";
 import { WhyWrong, FullExplanation } from "@/components/WhyWrong";
 import { MathText } from "@/components/MathText";
@@ -62,6 +62,7 @@ interface SubmitResponse {
   justCompletedCurriculum: boolean;
   newCostume: { id: string; name: string } | null;
   secondPetJustUnlocked: boolean;
+  weekly: Weekly | null;
 }
 
 type Phase = "loading" | "empty" | "error" | "intro" | "run" | "submitting" | "results";
@@ -69,8 +70,8 @@ type Phase = "loading" | "empty" | "error" | "intro" | "run" | "submitting" | "r
 // A set in progress survives a refresh or a trip to another page -- same
 // day only, since tomorrow deserves a freshly chosen set.
 const DRAFT_KEY = "oakmont:review-draft";
-// A warm-up keeps its own draft, so it never swallows a full review.
-const draftKey = (warmup: Lesson | null) => (warmup ? `${DRAFT_KEY}:warmup:${warmup.id}` : DRAFT_KEY);
+// The weekly review keeps its own draft, so it never swallows a daily one.
+const draftKey = (weekly: Weekly | null) => (weekly ? `${DRAFT_KEY}:weekly` : DRAFT_KEY);
 interface Draft {
   day: string;
   items: ReviewItem[];
@@ -104,16 +105,15 @@ function clearDraft(key: string) {
   }
 }
 
-/** The lesson a warm-up comes before. */
-interface Lesson {
-  id: string;
-  name: string;
+/** This week of the plan, and the weekly reviews done back to back before it. */
+interface Weekly {
+  week: number;
+  inARow: number;
 }
 
-export function ReviewClient({ warmup = null }: { warmup?: Lesson | null }) {
+export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
   const router = useRouter();
-  const key = draftKey(warmup);
-  const lessonHref = warmup ? `/subskill/${warmup.id}` : "";
+  const key = draftKey(weekly);
   const [phase, setPhase] = useState<Phase>("loading");
   const [items, setItems] = useState<ReviewItem[]>([]);
   const [meta, setMeta] = useState<{ toConfirm: string[]; refreshers: string[] }>({ toConfirm: [], refreshers: [] });
@@ -143,7 +143,7 @@ export function ReviewClient({ warmup = null }: { warmup?: Lesson | null }) {
       return;
     }
     try {
-      const res = await fetch(warmup ? `/api/review?warmup=${encodeURIComponent(warmup.id)}` : "/api/review");
+      const res = await fetch(weekly ? "/api/review?weekly=1" : "/api/review");
       if (!res.ok) throw new Error();
       const data = (await res.json()) as {
         items: Omit<ReviewItem, "shown">[];
@@ -151,11 +151,6 @@ export function ReviewClient({ warmup = null }: { warmup?: Lesson | null }) {
         refreshers: string[];
       };
       if (!data.items.length) {
-        // Not enough learned yet to warm up from: straight to the lesson.
-        if (warmup) {
-          turnTo(lessonHref);
-          return;
-        }
         setPhase("empty");
         return;
       }
@@ -246,6 +241,7 @@ export function ReviewClient({ warmup = null }: { warmup?: Lesson | null }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          weekly: !!weekly,
           items: items.map((it, i) => ({
             itemId: it.id,
             choiceText: it.shown[answers[i]],
@@ -365,14 +361,19 @@ export function ReviewClient({ warmup = null }: { warmup?: Lesson | null }) {
     const answered = Object.keys(conf).length;
     return (
       <div>
-        <Eyebrow warmup={!!warmup} />
-        {warmup ? (
+        <Eyebrow weekly={!!weekly} />
+        {weekly ? (
           <>
-            <h1 className="font-display text-[28px] font-semibold leading-tight text-ink">Warm up before {warmup.name}</h1>
+            <h1 className="font-display text-[28px] font-semibold leading-tight text-ink">Week {weekly.week} review</h1>
             <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-stone-600">
-              {items.length} quick questions from skills you&apos;ve already learned. A little recall before each new lesson
-              keeps the earlier ones from fading while you learn the next.
+              {items.length} questions from everything you&apos;ve learned so far, leaning toward what you haven&apos;t seen in
+              a while. One of these a week keeps your first lessons as sharp on test day as your latest ones.
             </p>
+            {weekly.inARow > 0 && (
+              <p className="mt-2 text-[13.5px] font-semibold text-[#b4541a]">
+                {weekly.inARow} {weekly.inARow === 1 ? "week" : "weeks"} reviewed in a row. Keep it going.
+              </p>
+            )}
           </>
         ) : (
           <>
@@ -430,7 +431,7 @@ export function ReviewClient({ warmup = null }: { warmup?: Lesson | null }) {
           >
             {resumed && answered > 0 ? `Resume at question ${idx + 1}` : "Start"}
           </button>
-          {resumed && answered > 0 && !warmup && (
+          {resumed && answered > 0 && (
             <button
               onClick={() => {
                 clearDraft(key);
@@ -441,11 +442,7 @@ export function ReviewClient({ warmup = null }: { warmup?: Lesson | null }) {
               Start a fresh set instead
             </button>
           )}
-          {warmup && (
-            <Link href={lessonHref} className="text-sm font-medium text-stone-500 hover:text-ink">
-              Skip to the lesson
-            </Link>
-          )}
+
         </div>
       </div>
     );
@@ -547,7 +544,7 @@ export function ReviewClient({ warmup = null }: { warmup?: Lesson | null }) {
       conf={conf}
       times={times}
       res={res}
-      warmup={warmup}
+      weekly={!!weekly}
       onAnother={() => load(false)}
     />
   );
@@ -592,7 +589,7 @@ function ReviewResults({
   conf,
   times,
   res,
-  warmup,
+  weekly,
   onAnother,
 }: {
   cardRef: React.Ref<HTMLDivElement>;
@@ -601,7 +598,7 @@ function ReviewResults({
   conf: Record<number, Confidence>;
   times: Record<number, number>;
   res: SubmitResponse;
-  warmup: Lesson | null;
+  weekly: boolean;
   onAnother: () => void;
 }) {
   const byId = new Map(res.results.map((r) => [r.itemId, r]));
@@ -623,7 +620,7 @@ function ReviewResults({
       >
         <Stamp
           big={`${right}/${total}`}
-          small={right === total ? "Clean sweep" : "Graded"}
+          small={res.weekly ? `Week ${res.weekly.week} reviewed` : right === total ? "Clean sweep" : "Graded"}
           tone={right === total ? "green" : "blue"}
           tilt={7}
           className="absolute right-4 top-4 hidden sm:inline-block"
@@ -632,7 +629,7 @@ function ReviewResults({
         <div className="flex flex-wrap items-center gap-5 p-5 sm:p-6 sm:pr-40">
           <ScoreRing score={right} total={total} />
           <div className="min-w-[200px] flex-1">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-500">{warmup ? "Warm-up" : "Mixed review"}</div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-500">{weekly ? "Weekly review" : "Mixed review"}</div>
             <div className="mt-1 font-display text-[26px] font-semibold leading-tight text-ink">{copy.headline}</div>
             <p className="mt-1 max-w-[46ch] text-sm leading-relaxed text-stone-600">{copy.body}</p>
           </div>
@@ -669,7 +666,7 @@ function ReviewResults({
 
         {repeatedTrap && <TrapToWatch trap={repeatedTrap.trap} count={repeatedTrap.count} />}
 
-        {(res.mastered.length > 0 || res.refreshed.length > 0 || res.flagged.length > 0 || res.newCostume || res.currentStreak > 0) && (
+        {(res.mastered.length > 0 || res.refreshed.length > 0 || res.flagged.length > 0 || res.newCostume || res.currentStreak > 0 || res.weekly) && (
           <div className="flex flex-wrap gap-2 border-t border-[#e9effb] px-5 py-3 sm:px-6">
             {res.mastered.map((m) => (
               <span key={m.id} className="inline-flex items-center gap-1 rounded-full bg-[#fbf3dc] px-3 py-1 text-[12.5px] font-semibold text-[#8a5f0c]">
@@ -686,6 +683,12 @@ function ReviewResults({
                 Needs a refresher: {m.name}
               </span>
             ))}
+            {res.weekly && (
+              <span className="rounded-full bg-[#e4ecfa] px-3 py-1 text-[12.5px] font-semibold text-[#26427e]">
+                Week {res.weekly.week} reviewed
+                {res.weekly.inARow > 1 ? ` · ${res.weekly.inARow} weeks in a row` : ""}
+              </span>
+            )}
             {res.currentStreak > 0 && (
               <span className="rounded-full bg-[#fff4e6] px-3 py-1 text-[12.5px] font-semibold text-[#b4541a]">
                 {res.currentStreak}-day streak
@@ -715,14 +718,14 @@ function ReviewResults({
             </button>
           )}
           <Link
-            href={warmup ? `/subskill/${warmup.id}` : "/dashboard"}
+            href="/dashboard"
             className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
               firstMiss < 0 ? "bg-forest text-white hover:opacity-90" : "border border-[#b4c5e6] bg-white text-ink hover:border-[#c2d1ee]"
             }`}
           >
-            {warmup ? `On to ${warmup.name} →` : "Back to dashboard"}
+            Back to dashboard
           </Link>
-          {!warmup && (
+          {!weekly && (
             <button
               onClick={onAnother}
               className="rounded-lg border border-[#b4c5e6] bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:border-[#c2d1ee] hover:text-ink"
@@ -808,10 +811,10 @@ function ReviewResults({
   );
 }
 
-function Eyebrow({ warmup = false }: { warmup?: boolean }) {
+function Eyebrow({ weekly = false }: { weekly?: boolean }) {
   return (
     <div className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#26427e]">
-      {warmup ? "Warm-up" : "Mixed review"}
+      {weekly ? "Weekly review" : "Mixed review"}
     </div>
   );
 }

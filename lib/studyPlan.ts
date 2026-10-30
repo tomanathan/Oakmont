@@ -9,9 +9,9 @@ export interface PlanDay {
   type: DayType;
   subskillIds: string[]; // the day's new subskills ("lesson"); empty for mixed "review" days
   testNumber?: number; // for "test" days
-  // A lesson day with earlier skills to recall: it opens with a short
-  // warm-up from them (see WARMUP_SIZE in lib/reviewSet.ts).
-  warmup?: boolean;
+  // The week's one weekly review (a "review" day): a longer set across
+  // everything so far (see lib/weeklyReview.ts).
+  weekly?: boolean;
 }
 
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -27,10 +27,10 @@ const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
  * Once those run out, leftover days are mixed review days (see the loop
  * below) instead of sitting empty -- a week with only one new subskill
  * still gets real practice on every day. Even a packed week (a short
- * timeline) keeps one review day for what came before, so nothing learned
- * early goes untouched until the end. At most one day per week is held
- * back as an actual rest day, and only when there's enough room to spare
- * one.
+ * timeline) keeps one review day, and the week's last review day is its
+ * weekly review, so nothing learned early goes untouched until the end.
+ * At most one day per week is held back as an actual rest day, and only
+ * when there's enough room to spare one.
  */
 export function buildDayPlan(week: PlanWeek, priorSubskillIds: string[] = [], dayCount: number = 7): PlanDay[] {
   // Only the plan's very last week is ever shorter than 7 days (truncated
@@ -64,12 +64,7 @@ export function buildDayPlan(week: PlanWeek, priorSubskillIds: string[] = [], da
     const remainingDays = newDayCount - d;
     const remainingSubs = n - assigned;
     const count = Math.max(1, Math.ceil(remainingSubs / remainingDays));
-    days[d] = {
-      ...days[d],
-      type: "lesson",
-      subskillIds: week.subskillIds.slice(assigned, assigned + count),
-      warmup: priorSubskillIds.length + assigned >= 2,
-    };
+    days[d] = { ...days[d], type: "lesson", subskillIds: week.subskillIds.slice(assigned, assigned + count) };
     assigned += count;
   }
 
@@ -85,6 +80,9 @@ export function buildDayPlan(week: PlanWeek, priorSubskillIds: string[] = [], da
       days[d] = { ...days[d], type: "review", subskillIds: [] };
     }
   }
+
+  const lastReview = days.map((x) => x.type).lastIndexOf("review");
+  if (lastReview >= 0) days[lastReview] = { ...days[lastReview], weekly: true };
 
   return days;
 }

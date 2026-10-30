@@ -24,10 +24,11 @@ export default async function PlanPage() {
   // section (history, latest-vs-previous deltas), and stats for the target
   // test date and course start. Practice tests weren't fetched here before
   // this page absorbed what used to be the separate /analysis route.
-  const [rows, stats, tests] = await Promise.all([
+  const [rows, stats, tests, weeklyRows] = await Promise.all([
     prisma.progress.findMany({ where: { userId: user.userId } }),
     getUserStats(user.userId),
     prisma.practiceTest.findMany({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
+    prisma.weeklyReview.findMany({ where: { userId: user.userId }, select: { week: true } }),
   ]);
   if (!hasActiveAccess(stats)) redirect("/subscribe");
 
@@ -109,6 +110,7 @@ export default async function PlanPage() {
         courseStartDate={courseStartDate.toISOString()}
         targetTestDate={stats.targetTestDate ? stats.targetTestDate.toISOString() : null}
         daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
+        reviewedWeeks={weeklyRows.map((r) => r.week)}
       />
 
       <div className="mt-10 scroll-mt-[72px]" id="practice-tests">
