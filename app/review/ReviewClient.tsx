@@ -5,7 +5,7 @@ import { DogRunner } from "@/components/paper/dog";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ExamChoices } from "@/components/ExamChoices";
-import { turn } from "@/components/paper/turn";
+import { turn, turnTo } from "@/components/paper/turn";
 import { Stamp } from "@/components/paper/Stamp";
 import { WhyWrong, FullExplanation } from "@/components/WhyWrong";
 import { MathText } from "@/components/MathText";
@@ -69,6 +69,8 @@ type Phase = "loading" | "empty" | "error" | "intro" | "run" | "submitting" | "r
 // A set in progress survives a refresh or a trip to another page -- same
 // day only, since tomorrow deserves a freshly chosen set.
 const DRAFT_KEY = "oakmont:review-draft";
+// A warm-up keeps its own draft, so it never swallows a full review.
+const draftKey = (warmup: Lesson | null) => (warmup ? `${DRAFT_KEY}:warmup:${warmup.id}` : DRAFT_KEY);
 interface Draft {
   day: string;
   items: ReviewItem[];
@@ -79,31 +81,39 @@ interface Draft {
   idx: number;
 }
 const today = () => new Date().toDateString();
-function loadDraft(): Draft | null {
+function loadDraft(key: string): Draft | null {
   try {
-    const d = JSON.parse(window.localStorage.getItem(DRAFT_KEY) || "null") as Draft | null;
+    const d = JSON.parse(window.localStorage.getItem(key) || "null") as Draft | null;
     return d && d.day === today() && Array.isArray(d.items) && d.items.length ? d : null;
   } catch {
     return null;
   }
 }
-function saveDraft(d: Draft) {
+function saveDraft(key: string, d: Draft) {
   try {
-    window.localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+    window.localStorage.setItem(key, JSON.stringify(d));
   } catch {
     // storage unavailable: the set still works, it just won't survive a reload
   }
 }
-function clearDraft() {
+function clearDraft(key: string) {
   try {
-    window.localStorage.removeItem(DRAFT_KEY);
+    window.localStorage.removeItem(key);
   } catch {
     // ignore
   }
 }
 
-export function ReviewClient() {
+/** The lesson a warm-up comes before. */
+interface Lesson {
+  id: string;
+  name: string;
+}
+
+export function ReviewClient({ warmup = null }: { warmup?: Lesson | null }) {
   const router = useRouter();
+  const key = draftKey(warmup);
+  const lessonHref = warmup ? `/subskill/${warmup.id}` : "";
   const [phase, setPhase] = useState<Phase>("loading");
   const [items, setItems] = useState<ReviewItem[]>([]);
   const [meta, setMeta] = useState<{ toConfirm: string[]; refreshers: string[] }>({ toConfirm: [], refreshers: [] });
@@ -120,7 +130,7 @@ export function ReviewClient() {
   const load = useCallback(async (useDraft: boolean) => {
     setPhase("loading");
     setResult(null);
-    const draft = useDraft ? loadDraft() : null;
+    const draft = useDraft ? loadDraft(key) : null;
     if (draft) {
       setItems(draft.items);
       setMeta(draft.meta);
@@ -133,7 +143,7 @@ export function ReviewClient() {
       return;
     }
     try {
-      const res = await fetch("/api/review");
+      const res = await fetch(warmup ? `/api/review?warmup=${encodeURIComponent(warmup.id)}` : "/api/review");
       if (!res.ok) throw new Error();
       const data = (await res.json()) as {
         items: Omit<ReviewItem, "shown">[];
@@ -141,6 +151,11 @@ export function ReviewClient() {
         refreshers: string[];
       };
       if (!data.items.length) {
+        // Not enough learned yet to warm up from: straight to the lesson.
+        if (warmup) {
+          turnTo(lessonHref);
+          return;
+        }
         setPhase("empty");
         return;
       }
@@ -155,7 +170,8 @@ export function ReviewClient() {
     } catch {
       setPhase("error");
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
 
   useEffect(() => {
     load(true);
@@ -164,8 +180,8 @@ export function ReviewClient() {
   useEffect(() => {
     if (phase !== "run" && phase !== "intro") return;
     if (!items.length) return;
-    saveDraft({ day: today(), items, meta, answers, conf, times, idx });
-  }, [phase, items, meta, answers, conf, times, idx]);
+    saveDraft(key, { day: today(), items, meta, answers, conf, times, idx });
+  }, [key, phase, items, meta, answers, conf, times, idx]);
 
   const running = phase === "run";
   const onThis = useElapsed(startedAt, running);
@@ -240,7 +256,7 @@ export function ReviewClient() {
       });
       if (!res.ok) throw new Error();
       const data = (await res.json()) as SubmitResponse;
-      clearDraft();
+      clearDraft(key);
       setResult(data);
       // The review counts as today's study: every mounted Ozho re-reads his mood.
       window.dispatchEvent(new CustomEvent("ozho:fed"));
@@ -349,12 +365,24 @@ export function ReviewClient() {
     const answered = Object.keys(conf).length;
     return (
       <div>
-        <Eyebrow />
-        <h1 className="font-display text-[28px] font-semibold leading-tight text-ink">Today&apos;s mixed review</h1>
-        <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-stone-600">
-          {items.length} questions from everything you&apos;ve studied, in no particular order. Nothing tells you which
-          skill each one tests. Spotting that is half of what the real SAT asks.
-        </p>
+        <Eyebrow warmup={!!warmup} />
+        {warmup ? (
+          <>
+            <h1 className="font-display text-[28px] font-semibold leading-tight text-ink">Warm up before {warmup.name}</h1>
+            <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-stone-600">
+              {items.length} quick questions from skills you&apos;ve already learned. A little recall before each new lesson
+              keeps the earlier ones from fading while you learn the next.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="font-display text-[28px] font-semibold leading-tight text-ink">Today&apos;s mixed review</h1>
+            <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-stone-600">
+              {items.length} questions from everything you&apos;ve studied, in no particular order. Nothing tells you which
+              skill each one tests. Spotting that is half of what the real SAT asks.
+            </p>
+          </>
+        )}
 
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
           <Stat label="Questions" value={String(items.length)} />
@@ -402,16 +430,21 @@ export function ReviewClient() {
           >
             {resumed && answered > 0 ? `Resume at question ${idx + 1}` : "Start"}
           </button>
-          {resumed && answered > 0 && (
+          {resumed && answered > 0 && !warmup && (
             <button
               onClick={() => {
-                clearDraft();
+                clearDraft(key);
                 load(false);
               }}
               className="text-sm font-medium text-stone-500 hover:text-ink"
             >
               Start a fresh set instead
             </button>
+          )}
+          {warmup && (
+            <Link href={lessonHref} className="text-sm font-medium text-stone-500 hover:text-ink">
+              Skip to the lesson
+            </Link>
           )}
         </div>
       </div>
@@ -514,6 +547,7 @@ export function ReviewClient() {
       conf={conf}
       times={times}
       res={res}
+      warmup={warmup}
       onAnother={() => load(false)}
     />
   );
@@ -558,6 +592,7 @@ function ReviewResults({
   conf,
   times,
   res,
+  warmup,
   onAnother,
 }: {
   cardRef: React.Ref<HTMLDivElement>;
@@ -566,6 +601,7 @@ function ReviewResults({
   conf: Record<number, Confidence>;
   times: Record<number, number>;
   res: SubmitResponse;
+  warmup: Lesson | null;
   onAnother: () => void;
 }) {
   const byId = new Map(res.results.map((r) => [r.itemId, r]));
@@ -596,7 +632,7 @@ function ReviewResults({
         <div className="flex flex-wrap items-center gap-5 p-5 sm:p-6 sm:pr-40">
           <ScoreRing score={right} total={total} />
           <div className="min-w-[200px] flex-1">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-500">Mixed review</div>
+            <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-500">{warmup ? "Warm-up" : "Mixed review"}</div>
             <div className="mt-1 font-display text-[26px] font-semibold leading-tight text-ink">{copy.headline}</div>
             <p className="mt-1 max-w-[46ch] text-sm leading-relaxed text-stone-600">{copy.body}</p>
           </div>
@@ -679,19 +715,21 @@ function ReviewResults({
             </button>
           )}
           <Link
-            href="/dashboard"
+            href={warmup ? `/subskill/${warmup.id}` : "/dashboard"}
             className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
               firstMiss < 0 ? "bg-forest text-white hover:opacity-90" : "border border-[#b4c5e6] bg-white text-ink hover:border-[#c2d1ee]"
             }`}
           >
-            Back to dashboard
+            {warmup ? `On to ${warmup.name} →` : "Back to dashboard"}
           </Link>
-          <button
-            onClick={onAnother}
-            className="rounded-lg border border-[#b4c5e6] bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:border-[#c2d1ee] hover:text-ink"
-          >
-            Another set
-          </button>
+          {!warmup && (
+            <button
+              onClick={onAnother}
+              className="rounded-lg border border-[#b4c5e6] bg-white px-4 py-2.5 text-sm font-medium text-stone-600 transition-colors hover:border-[#c2d1ee] hover:text-ink"
+            >
+              Another set
+            </button>
+          )}
         </div>
       </div>
 
@@ -770,8 +808,12 @@ function ReviewResults({
   );
 }
 
-function Eyebrow() {
-  return <div className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#26427e]">Mixed review</div>;
+function Eyebrow({ warmup = false }: { warmup?: boolean }) {
+  return (
+    <div className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#26427e]">
+      {warmup ? "Warm-up" : "Mixed review"}
+    </div>
+  );
 }
 
 function Panel({ children }: { children: React.ReactNode }) {

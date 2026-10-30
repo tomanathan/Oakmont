@@ -23,15 +23,21 @@ import { leadWith } from "@/lib/planOrder";
 // last login -- logging in again a few minutes later (a dropped session,
 // a refresh-triggered re-auth) isn't a new study session.
 const WELCOME_BACK_GAP_MS = 2 * 60 * 60 * 1000;
+// Any review or warm-up this recently counts as today's recall, so the
+// next lesson doesn't ask for another warm-up.
+const WARMED_UP_MS = 12 * 60 * 60 * 1000;
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const [rows, stats, latestTest] = await Promise.all([
+  const [rows, stats, latestTest, recentRecall] = await Promise.all([
     prisma.progress.findMany({ where: { userId: user.userId } }),
     getUserStats(user.userId),
     prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
+    prisma.itemAttempt.count({
+      where: { userId: user.userId, source: "review", createdAt: { gte: new Date(Date.now() - WARMED_UP_MS) } },
+    }),
   ]);
   // Onboarding comes before choosing a plan, so check it first.
   if (!stats.welcomeSeenAt) redirect("/welcome");
@@ -215,7 +221,7 @@ export default async function DashboardPage() {
         daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
         thisWeek={{ done: weekDone, total: weekTotal }}
         planOrder={weaknessOrderedIds}
-        review={reviewCounts(progress)}
+        review={{ ...reviewCounts(progress), warmedUp: recentRecall > 0 }}
         companion={companionSummary({
           lastActiveDate: stats.lastActiveDate ?? null,
           petBornAt: stats.petBornAt,

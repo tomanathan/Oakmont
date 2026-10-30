@@ -60,11 +60,12 @@ export function statusOf(p: SubskillProgress | undefined): SubskillStatus {
 export const isPassed = (p: SubskillProgress | undefined) => !!p && p.passed;
 export const isMastered = (p: SubskillProgress | undefined) => !!p && p.mastered;
 
-// Refreshers come due on a widening interval: three weeks after mastery,
-// then doubling with each correct refresher, capped at three months. A
-// miss in review brings it due again right away.
-export const FIRST_REVIEW_INTERVAL_DAYS = 21;
-export const MAX_REVIEW_INTERVAL_DAYS = 90;
+// Refreshers come due on a widening interval: ten days after mastery,
+// then doubling with each correct refresher, capped at two months (so
+// even on a six-month plan nothing goes untouched for long). A miss in
+// review brings it due again right away.
+export const FIRST_REVIEW_INTERVAL_DAYS = 10;
+export const MAX_REVIEW_INTERVAL_DAYS = 60;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export function nextReviewInterval(current: number): number {

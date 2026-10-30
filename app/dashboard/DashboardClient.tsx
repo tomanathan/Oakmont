@@ -61,7 +61,7 @@ export function DashboardClient({
   thisWeek: { done: number; total: number };
   companion: CompanionSummary;
   planOrder: string[];
-  review: { ready: boolean; toConfirm: number; refreshers: number };
+  review: { ready: boolean; toConfirm: number; refreshers: number; warmedUp: boolean };
 }) {
   const router = useRouter();
   const completedCount = Object.keys(progress).length;
@@ -324,7 +324,7 @@ function PlanCard({
   thisWeek: { done: number; total: number };
   pacing: Pacing;
   recommended: Recommendation | null;
-  review: { ready: boolean; toConfirm: number; refreshers: number };
+  review: { ready: boolean; toConfirm: number; refreshers: number; warmedUp: boolean };
   hasStarted: boolean;
 }) {
   const router = useRouter();
@@ -342,6 +342,16 @@ function PlanCard({
     today && today.type !== "test" && today.type !== "rest"
       ? today.subskills.filter((s) => s.id !== recommendedSubskillId)
       : [];
+  // A brand-new lesson opens with a three-question warm-up from earlier
+  // skills (unless she's already reviewed in the last few hours), so what
+  // she learned weeks ago keeps coming back while new skills go in.
+  const warmup =
+    recommendedSubskillId &&
+    !progress[recommendedSubskillId] &&
+    !review.warmedUp &&
+    Object.keys(progress).filter((id) => id !== recommendedSubskillId).length >= 2
+      ? recommendedSubskillId
+      : null;
 
   return (
     <div className="nbk-taped flex flex-col bg-white border border-[#c9d6ee] rounded-2xl p-4 shadow-[3px_3px_0_rgba(52,97,193,0.13)]">
@@ -378,12 +388,14 @@ function PlanCard({
           old standalone bar did, in a fraction of the height. */}
       {recommended && (
         <button
-          onClick={() => turnTo(recommended.href)}
+          onClick={() => turnTo(warmup ? `/review?warmup=${warmup}` : recommended.href)}
           className="dog-ear group w-full flex items-center gap-3 bg-forest text-white rounded-xl px-4 py-3 text-left hover:bg-[#1f2f5a] transition-colors"
         >
           <div className="flex-1 min-w-0">
             <div className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-white/45">
-              {recommended.kind === "review"
+              {warmup
+                ? "3-question warm-up, then"
+                : recommended.kind === "review"
                 ? "Mixed · every skill so far"
                 : today?.type === "test"
                 ? "Today"
@@ -396,6 +408,15 @@ function PlanCard({
           <span className="flex-shrink-0 w-7 h-7 rounded-full bg-white/10 group-hover:bg-white/20 flex items-center justify-center transition-colors">
             &rarr;
           </span>
+        </button>
+      )}
+
+      {warmup && recommended && (
+        <button
+          onClick={() => turnTo(recommended.href)}
+          className="mt-1.5 self-start px-1 text-[12px] font-medium text-stone-500 hover:text-ink"
+        >
+          Skip the warm-up
         </button>
       )}
 

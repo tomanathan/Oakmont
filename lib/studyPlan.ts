@@ -9,6 +9,9 @@ export interface PlanDay {
   type: DayType;
   subskillIds: string[]; // the day's new subskills ("lesson"); empty for mixed "review" days
   testNumber?: number; // for "test" days
+  // A lesson day with earlier skills to recall: it opens with a short
+  // warm-up from them (see WARMUP_SIZE in lib/reviewSet.ts).
+  warmup?: boolean;
 }
 
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -23,7 +26,9 @@ const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
  * The remaining days get that week's new subskills first, spread evenly.
  * Once those run out, leftover days are mixed review days (see the loop
  * below) instead of sitting empty -- a week with only one new subskill
- * still gets real practice on every day. At most one day per week is held
+ * still gets real practice on every day. Even a packed week (a short
+ * timeline) keeps one review day for what came before, so nothing learned
+ * early goes untouched until the end. At most one day per week is held
  * back as an actual rest day, and only when there's enough room to spare
  * one.
  */
@@ -50,14 +55,21 @@ export function buildDayPlan(week: PlanWeek, priorSubskillIds: string[] = [], da
   const n = week.subskillIds.length;
   const restBudget = lessonDayCount >= 2 ? 1 : 0;
   const activeDayCount = lessonDayCount - restBudget;
+  const reviewBudget = (priorSubskillIds.length > 0 || n > 1) && activeDayCount >= 3 ? 1 : 0;
+  const newDayCount = activeDayCount - reviewBudget;
 
   let assigned = 0;
   let d = 0;
-  for (; d < activeDayCount && assigned < n; d++) {
-    const remainingDays = activeDayCount - d;
+  for (; d < newDayCount && assigned < n; d++) {
+    const remainingDays = newDayCount - d;
     const remainingSubs = n - assigned;
     const count = Math.max(1, Math.ceil(remainingSubs / remainingDays));
-    days[d] = { ...days[d], type: "lesson", subskillIds: week.subskillIds.slice(assigned, assigned + count) };
+    days[d] = {
+      ...days[d],
+      type: "lesson",
+      subskillIds: week.subskillIds.slice(assigned, assigned + count),
+      warmup: priorSubskillIds.length + assigned >= 2,
+    };
     assigned += count;
   }
 

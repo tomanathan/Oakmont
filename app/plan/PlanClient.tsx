@@ -24,6 +24,7 @@ interface DayItem {
   type: DayType;
   testNumber?: number;
   subskills: WeekSubskill[];
+  warmup?: boolean;
 }
 
 interface WeekItem {
@@ -284,14 +285,27 @@ function DayContent({
       >
         <div className="min-w-0 flex-1">
           <div className="text-sm font-medium text-ink">Mixed review</div>
-          <div className="text-xs text-stone-500">A short set across everything you&apos;ve studied, no labels</div>
+          <div className="text-xs text-stone-500">Everything you&apos;ve learned so far, mixed, with nothing saying which skill is which</div>
         </div>
         <span className="text-stone-500">&rarr;</span>
       </button>
     );
   }
+  // Before something new, a few questions on what came before.
+  const firstNew = day.subskills.find((s) => !progress[s.id]);
   return (
     <div className="flex flex-col gap-1">
+      {day.warmup && firstNew && (
+        <button
+          onClick={() => onNavigate(`/review?warmup=${firstNew.id}`)}
+          className="flex items-center gap-2 px-2.5 py-1 text-left text-xs text-stone-500 hover:text-ink"
+        >
+          <span className="rounded-full bg-[#e4ecfa] px-2 py-0.5 text-[10.5px] font-semibold uppercase tracking-wide text-[#26427e]">
+            Warm-up
+          </span>
+          3 questions from earlier skills first
+        </button>
+      )}
       {day.subskills.map((s) => {
         const p = progress[s.id];
         const status = statusOf(p);

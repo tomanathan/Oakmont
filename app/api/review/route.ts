@@ -6,7 +6,7 @@ import { hasActiveAccess } from "@/lib/subscription";
 import { getSubskill } from "@/data/curriculum";
 import { gradeItems, paceFor, trapFor } from "@/lib/items";
 import { progressMapFromRows, nextReviewInterval, addDays, FIRST_REVIEW_INTERVAL_DAYS } from "@/lib/progressState";
-import { buildReviewSet } from "@/lib/reviewSet";
+import { buildReviewSet, REVIEW_SET_SIZE, WARMUP_SIZE } from "@/lib/reviewSet";
 import { finishActivity, logItemAttempts } from "@/lib/activity";
 
 const HISTORY_DAYS = 120;
@@ -22,8 +22,10 @@ async function guard() {
 }
 
 // Today's mixed review set (see lib/reviewSet.ts). Answers and
-// explanations stay on the server until the set is submitted.
-export async function GET() {
+// explanations stay on the server until the set is submitted. With
+// ?warmup=<subskill>, the short warm-up before that lesson instead: the
+// same draw, three questions, nothing from the lesson itself.
+export async function GET(req: NextRequest) {
   const g = await guard();
   if (g.error) return g.error;
   const userId = g.user.userId;
@@ -36,7 +38,11 @@ export async function GET() {
       select: { itemId: true, subskillId: true, correct: true, confidence: true, createdAt: true },
     }),
   ]);
-  const plan = buildReviewSet(progressMapFromRows(rows), attempts);
+  const warmup = req.nextUrl.searchParams.get("warmup");
+  const lesson = warmup ? getSubskill(warmup) : null;
+  const plan = lesson
+    ? buildReviewSet(progressMapFromRows(rows), attempts, new Date(), Math.random, WARMUP_SIZE, [lesson.id])
+    : buildReviewSet(progressMapFromRows(rows), attempts, new Date(), Math.random, REVIEW_SET_SIZE);
   const name = (id: string) => getSubskill(id)?.name ?? id;
 
   return NextResponse.json({
