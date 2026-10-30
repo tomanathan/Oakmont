@@ -14,6 +14,9 @@ export function sectionTheme(section: string) {
       bar: "bg-[#eaa878]",
       barHex: "#eaa878",
       cardBg: "bg-[#fdeee2]",
+      // `text` and `cardBg` as raw hex, for the dashboard's skill trail.
+      textHex: "#9c4f35",
+      tintHex: "#fdeee2",
       cardBorder: "border-[#f3d6bf] hover:border-[#e9bf9f]",
       // A single strong hue for a thin accent strip -- the same color as
       // `dot`, exposed on its own so it can drive a left border without a
@@ -28,6 +31,8 @@ export function sectionTheme(section: string) {
     bar: "bg-[#6f95dc]",
     barHex: "#6f95dc",
     cardBg: "bg-[#e6edfa]",
+    textHex: "#2a4f9f",
+    tintHex: "#e6edfa",
     cardBorder: "border-[#c9d6ee] hover:border-[#a8bde6]",
     accentBorder: "border-l-[#5f87d6]",
   };

@@ -2,13 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { turn, turnTo } from "@/components/paper/turn";
-import { Fold } from "@/components/paper/Fold";
 import { useRouter } from "next/navigation";
 import type { Section } from "@/data/curriculum";
 import type { Pacing } from "@/lib/pacing";
 import type { DomainMastery } from "@/lib/mastery";
 import { PacingBar, PACE_STATUS_STYLES, paceStatusCopy } from "@/components/PacingBar";
-import { StarRating } from "@/components/StarRating";
+import { SkillTrail } from "@/components/SkillTrail";
 import { SubjectRing } from "@/components/SubjectRing";
 import { sectionTheme } from "@/lib/sectionTheme";
 import { findRecommended } from "@/lib/recommend";
@@ -17,7 +16,7 @@ import { CompanionCard } from "@/components/CompanionCard";
 import { GettingStarted, type ChecklistItem } from "@/components/GettingStarted";
 import type { CompanionSummary } from "@/lib/companionSummary";
 import { statusOf, type ProgressMap } from "@/lib/progressState";
-import { SubskillStatusBadge, STATUS_CARD } from "@/components/SubskillStatusBadge";
+import { SubskillStatusBadge } from "@/components/SubskillStatusBadge";
 import type { Recommendation } from "@/lib/recommend";
 import { WEEKLY_REVIEW_SIZE } from "@/lib/weeklyReview";
 
@@ -93,22 +92,15 @@ export function DashboardClient({
   const weeklyFirst = !!weekly && weekly.today && !weekly.done && found?.kind === "review";
   const recommended = weeklyFirst && found ? { ...found, label: `Week ${weekly!.week} review`, href: "/review?weekly=1" } : found;
 
-  const [openDomains, setOpenDomains] = useState<Set<string>>(() => {
-    // Start with whichever domain holds today's recommended module already
-    // expanded -- everything else stays tidy and collapsed so a student
-    // sees only what they're working on, not the entire syllabus at once.
-    if (recommended?.domain) return new Set([recommended.domain]);
-    return new Set();
-  });
-
-  function toggleDomain(domain: string) {
-    setOpenDomains((prev) => {
-      const next = new Set(prev);
-      if (next.has(domain)) next.delete(domain);
-      else next.add(domain);
-      return next;
-    });
-  }
+  // Ozho stands on the skill that's up next in this subject: the
+  // recommended one if it's here, else the first one not passed yet, in
+  // plan order.
+  const sectionIds = new Set(activeSection?.domains.flatMap((d) => d.subskills.map((s) => s.id)) ?? []);
+  const recId = recommended?.href.startsWith("/subskill/") ? recommended.href.slice("/subskill/".length) : null;
+  const here =
+    recId && sectionIds.has(recId)
+      ? recId
+      : [...planOrder, ...sectionIds].find((id) => sectionIds.has(id) && ["new", "attempted"].includes(statusOf(progress[id]))) ?? null;
 
   function starsFor(domain: string): number {
     return domainMastery.find((d) => d.domain === domain)?.stars ?? 0;
@@ -209,85 +201,23 @@ export function DashboardClient({
       </div>
 
       {activeSection && (
-        <div ref={listRef} className="flex flex-col gap-2.5">
-          {activeSection.domains.map((d) => {
+        <div ref={listRef} className="flex flex-col gap-3">
+          {activeSection.domains.map((d, i) => {
             const theme = sectionTheme(activeSection.section);
-            const isOpen = openDomains.has(d.domain);
-            const domainDone = d.subskills.filter((s) => progress[s.id]).length;
             return (
-              <div
+              <SkillTrail
                 key={d.domain}
-                className={`overflow-hidden rounded-2xl border border-[#c9d6ee] border-l-[3px] ${theme.accentBorder} bg-white transition-colors`}
-              >
-                <button
-                  onClick={() => toggleDomain(d.domain)}
-                  className={`w-full flex items-center gap-3 pl-5 pr-4 py-4 text-left transition-colors ${
-                    isOpen ? theme.cardBg : "hover:bg-[#f1f5fc]"
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 min-w-0 flex-shrink-0">
-                    <span className="text-[15px] font-semibold text-ink truncate">{d.domain}</span>
-                    <span className="text-[11px] font-semibold text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded-full whitespace-nowrap">
-                      {domainDone}/{d.subskills.length}
-                    </span>
-                  </div>
-                  {/* Fills the gap in the header and echoes the progress
-                      bars on the subject cards above -- attempted, not
-                      mastered (that's what the stars are for). Only drawn
-                      where there's room for it. */}
-                  <div className="flex-1 mx-3">
-                    <div className="hidden md:block h-1.5 rounded-full bg-[#d3ddf1] overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${theme.bar}`}
-                        style={{ width: `${(domainDone / d.subskills.length) * 100}%` }}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 flex-shrink-0">
-                    <StarRating stars={starsFor(d.domain)} />
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      aria-hidden="true"
-                      className={`text-stone-500 transition-transform duration-200 ${isOpen ? "rotate-90" : ""}`}
-                    >
-                      <path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                </button>
-
-                <Fold open={isOpen}>
-                  <div className="px-4 pb-4 pt-3 border-t border-[#e9effb] bg-white">
-                    {/* lg:grid-cols-4 -- the dashboard now renders at the
-                        same 1180px width as the lesson page (see AppShell's
-                        wide prop), so a fourth column here puts that extra
-                        room toward showing more subskill cards at once
-                        instead of just stretching three columns wider. */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
-                      {d.subskills.map((s) => {
-                        const p = progress[s.id];
-                        const status = statusOf(p);
-                        return (
-                          <div
-                            key={s.id}
-                            onClick={() => turnTo(`/subskill/${s.id}`)}
-                            className={`dog-ear [--ear-bg:#fff] border rounded-xl p-3.5 cursor-pointer transition-colors ${
-                              status === "new" ? `${theme.cardBg} ${theme.cardBorder}` : STATUS_CARD[status]
-                            }`}
-                          >
-                            <div className="flex justify-between items-start gap-2">
-                              <span className="text-sm font-medium text-ink">{s.name}</span>
-                              <SubskillStatusBadge progress={p} />
-                            </div>
-                            <div className="text-xs text-stone-500 mt-1">{s.blurb}</div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </Fold>
-              </div>
+                domain={d.domain}
+                skills={d.subskills}
+                progress={progress}
+                stars={starsFor(d.domain)}
+                ink={theme.dotHex}
+                darkInk={theme.textHex}
+                tint={theme.tintHex}
+                here={here}
+                costume={companion.costume}
+                seed={i + 1}
+              />
             );
           })}
         </div>

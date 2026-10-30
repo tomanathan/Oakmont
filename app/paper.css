@@ -792,3 +792,130 @@
   height: auto;
   line-height: 0;
 }
+
+/* ----- the skill trail on the dashboard (components/SkillTrail.tsx) ----- */
+.trail-card {
+  background-color: #fff;
+  background-image: radial-gradient(#dfe7f6 1px, transparent 1.2px);
+  background-size: 18px 18px;
+  background-position: 9px 9px;
+}
+.trail-scroll {
+  scrollbar-width: thin;
+}
+.trail-ink {
+  stroke-dasharray: 1 1.02;
+  stroke-dashoffset: 1;
+  animation: pen-draw 900ms cubic-bezier(0.55, 0.1, 0.3, 1) 150ms forwards;
+}
+.trail-paw {
+  opacity: 0;
+  transform: translate(-50%, 0) rotate(var(--r)) scale(1.5);
+  animation: trail-paw 380ms cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
+}
+@keyframes trail-paw {
+  to {
+    opacity: 0.42;
+    transform: translate(-50%, 0) rotate(var(--r)) scale(1);
+  }
+}
+.trail-stop {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #c9d6ee;
+  background: #fff;
+  box-shadow: 0 2px 0 rgba(31, 47, 90, 0.08);
+  transform: rotate(var(--tilt));
+  animation: trail-stop-in 420ms cubic-bezier(0.3, 1.4, 0.5, 1) both;
+  transition: transform 180ms cubic-bezier(0.3, 1.4, 0.5, 1), box-shadow 180ms;
+}
+.trail-stop:hover,
+.trail-stop:focus-visible {
+  transform: translateY(-4px) rotate(calc(var(--tilt) * -1)) scale(1.07);
+  box-shadow: 0 6px 0 rgba(31, 47, 90, 0.1);
+}
+.trail-stop:active {
+  transform: translateY(1px) scale(0.95);
+}
+.trail-stop:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+@keyframes trail-stop-in {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--tilt)) scale(1.35);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(var(--tilt)) scale(1);
+  }
+}
+.trail-new {
+  border-style: dashed;
+}
+.trail-attempted {
+  border-color: var(--tint);
+}
+.trail-passed {
+  background: var(--tint);
+  border-color: var(--ink);
+  color: var(--dark);
+}
+/* a gold sticker, white-edged, stuck on a little crooked */
+.trail-mastered {
+  background: radial-gradient(circle at 35% 30%, #f8d66d, #e0a92e 70%);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 1.5px #e3c172, 0 3px 0 rgba(140, 95, 0, 0.18);
+}
+.trail-due {
+  background: #fff3e6;
+  border-color: #e9a06a;
+  color: #b4541a;
+}
+.trail-due > * {
+  animation: trail-spin 2.6s cubic-bezier(0.5, 0, 0.3, 1) infinite;
+}
+@keyframes trail-spin {
+  0%,
+  60% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.trail-stop.is-here {
+  box-shadow: 0 0 0 5px rgba(52, 97, 193, 0.14), 0 2px 0 rgba(31, 47, 90, 0.08);
+}
+.trail-dog {
+  animation: trail-dog 1.6s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+@keyframes trail-dog {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+.trail-flag {
+  transform-origin: 8px 48px;
+}
+.trail-flag.is-won {
+  animation: trail-flag 2.4s ease-in-out infinite;
+}
+@keyframes trail-flag {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(-4deg);
+  }
+}
