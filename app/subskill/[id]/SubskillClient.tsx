@@ -1713,6 +1713,7 @@ function ExampleChoices({
         selected={last}
         revealed={solved}
         struck={picks.filter((p) => p !== example.answer)}
+        crossOut={false}
         onSelect={onPick}
       />
       {/* Why that one's wrong: a note stuck on, a fresh one for each miss. */}
