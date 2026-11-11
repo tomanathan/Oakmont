@@ -25,7 +25,7 @@ const fraunces = Fraunces({
 });
 // The notebook design's UI and body face, and its hand-lettered
 // annotation face (short margin doodles only, never information).
-const instrumentSans = Instrument_Sans({ subsets: ["latin"], variable: "--font-ui", display: "swap" });
+const instrumentSans = Instrument_Sans({ subsets: ["latin"], weight: "variable", variable: "--font-ui", display: "swap" });
 const caveat = Caveat({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-hand", display: "swap" });
 
 export const metadata: Metadata = {
