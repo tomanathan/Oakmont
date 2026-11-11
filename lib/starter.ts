@@ -22,7 +22,7 @@ const START_MAX_AGE = 30 * 24 * 60 * 60;
 const STARTERS: { skill: string; startsWith: string }[] = [
   { skill: "m-linear-eq-1var", startsWith: "Solve for x: 6x - 9 = 2x + 15" },
   { skill: "rw-transitions", startsWith: "Most substances expand as they warm." },
-  { skill: "m-percentages", startsWith: "A shirt originally $40 is discounted 25%." },
+  { skill: "m-percentages", startsWith: "A hardware store sells a ladder for $84." },
   { skill: "rw-words-context", startsWith: "The negotiator's tone was ______" },
   { skill: "m-linear-func", startsWith: "If h(x) = -2x + 5, what is the value of h(-4)?" },
 ];
@@ -32,9 +32,18 @@ const ALL_RIGHT_FIRST_SKILL = "m-ratios-rates";
 
 export function starterItems(): BankItem[] {
   return STARTERS.map(({ skill, startsWith }) => {
-    const item = itemsForSubskill(skill).find((q) => q.q.startsWith(startsWith));
-    if (!item) throw new Error(`Starter question not found: ${skill} / ${startsWith}`);
-    return item;
+    const bank = itemsForSubskill(skill);
+    const item = bank.find((q) => q.q.startsWith(startsWith));
+    if (item) return item;
+    // The named question was reworded or replaced in the bank. /start is the
+    // front door and signup grades against this list, so neither may fail
+    // over it: stand in the skill's shortest easy question with no figure.
+    console.error(`Starter question not found: ${skill} / ${startsWith}`);
+    const plain = bank.filter((q) => !q.figure);
+    const easy = plain.filter((q) => q.difficulty === "easy");
+    const standIn = [...(easy.length ? easy : plain.length ? plain : bank)].sort((a, b) => a.q.length - b.q.length)[0];
+    if (!standIn) throw new Error(`No questions at all for starter skill ${skill}`);
+    return standIn;
   });
 }
 
