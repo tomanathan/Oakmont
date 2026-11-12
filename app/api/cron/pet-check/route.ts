@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
 
   const now = new Date();
   const users = await prisma.user.findMany({
-    select: { id: true, email: true, lastActiveDate: true, petBornAt: true, petWarningEmailSentAt: true, encourageEmails: true },
+    select: { id: true, email: true, lastActiveDate: true, petBornAt: true, petWarningEmailSentAt: true, encourageEmails: true, timeZone: true },
   });
 
   let nudged = 0;
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
     // Not for anyone who turned encouragement emails off, and not once the
     // daily emails are on (the morning one covers it).
     if (ENCOURAGE_EMAILS_ON || !user.encourageEmails) continue;
-    if (alreadyToday || !shouldNudge(user.lastActiveDate, user.petBornAt, now)) continue;
+    if (alreadyToday || !shouldNudge(user.lastActiveDate, user.petBornAt, now, user.timeZone)) continue;
     await prisma.user.update({ where: { id: user.id }, data: { petWarningEmailSentAt: now } });
     const links = await unsubscribeLinks({ who: "student", id: user.id });
     await sendEmail({ to: user.email, subject: `${PET_NAME} is cold without you`, html: nudgeEmailHtml(links.url), headers: links.headers });

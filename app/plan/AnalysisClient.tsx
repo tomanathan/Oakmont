@@ -5,7 +5,7 @@ import { turnTo } from "@/components/paper/turn";
 import { useRouter } from "next/navigation";
 import { sectionTheme } from "@/lib/sectionTheme";
 import { StarRating } from "@/components/StarRating";
-import { formatUTCDate } from "@/lib/dateOnly";
+import { formatUTCDate, localDayKey } from "@/lib/dateOnly";
 import type { DomainMastery } from "@/lib/mastery";
 
 interface DomainCount {
@@ -34,6 +34,7 @@ export function AnalysisClient({
   tests,
   dueTestNumber,
   dueThisWeek = true,
+  timeZone,
 }: {
   domains: DomainInfo[];
   domainMastery: DomainMastery[];
@@ -48,6 +49,8 @@ export function AnalysisClient({
   dueTestNumber: number | null;
   // False when that test's own week has already gone by.
   dueThisWeek?: boolean;
+  // The student's zone, for the date field's "today".
+  timeZone: string | null;
 }) {
   const router = useRouter();
   const [expanded, setExpanded] = useState(dueTestNumber !== null);
@@ -176,6 +179,7 @@ export function AnalysisClient({
           key={editingTest?.id ?? "new"}
           domains={domains}
           editing={editingTest}
+          timeZone={timeZone}
           bestComposite={tests.length > 0 ? Math.max(...tests.map((t) => t.compositeScore)) : null}
           onSaved={() => {
             closeForm();
@@ -392,21 +396,10 @@ function DomainBar({
   );
 }
 
-// Today as the student's own calendar shows it, for the date field. The UTC
-// date is already tomorrow on a US evening. Where the local date runs ahead
-// of UTC instead, the UTC one is used: the server won't take a date that
-// hasn't started there yet.
-function todayForInput(): string {
-  const now = new Date();
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const local = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-  const utc = now.toISOString().slice(0, 10);
-  return local < utc ? local : utc;
-}
-
 function SubmitTestForm({
   domains,
   editing,
+  timeZone,
   bestComposite,
   onSaved,
   onCancel,
@@ -414,6 +407,7 @@ function SubmitTestForm({
   domains: DomainInfo[];
   // The test being edited, or null when logging a brand-new one.
   editing: Test | null;
+  timeZone: string | null;
   // The highest composite logged so far (null if this is the first test) --
   // used only to decide how big a deal to make of a new save via Ozho's
   // "ozho:celebrate" event. Not consulted when editing an existing test --
@@ -422,16 +416,11 @@ function SubmitTestForm({
   onSaved: () => void;
   onCancel: () => void;
 }) {
+  // A new test defaults to today on the student's own calendar, worked out
+  // from their stored zone so the server's HTML and the browser agree.
   const [takenAt, setTakenAt] = useState(
-    editing ? editing.takenAt.slice(0, 10) : new Date().toISOString().slice(0, 10)
+    editing ? editing.takenAt.slice(0, 10) : localDayKey(new Date(), timeZone)
   );
-  // A new test defaults to today on the student's own calendar. Set after
-  // mount: the form can be open in the server's HTML, and the server only
-  // knows the UTC date.
-  useEffect(() => {
-    if (!editing) setTakenAt(todayForInput());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   const [composite, setComposite] = useState(editing ? String(editing.compositeScore) : "");
   const [rw, setRw] = useState(editing ? String(editing.rwScore) : "");
   const [math, setMath] = useState(editing ? String(editing.mathScore) : "");

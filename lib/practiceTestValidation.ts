@@ -1,5 +1,5 @@
 import { ALL_DOMAINS } from "@/data/curriculum";
-import { parseDateOnly, utcDayDiff } from "./dateOnly";
+import { localDay, parseDateOnly, utcDayDiff } from "./dateOnly";
 
 const VALID_DOMAINS = new Set(ALL_DOMAINS.map((d) => d.domain));
 // No real SAT domain has come close to this many questions on one test
@@ -41,9 +41,10 @@ export type ValidationResult =
 /**
  * Shared validation for logging or editing a practice test -- used by both
  * POST (create) and PATCH (edit) so the two can't drift apart and quietly
- * accept different things.
+ * accept different things. `timeZone` is the student's own (null: UTC):
+ * "today" for the test date is their calendar day, not the server's.
  */
-export function validatePracticeTestInput(body: PracticeTestInput): ValidationResult {
+export function validatePracticeTestInput(body: PracticeTestInput, timeZone: string | null): ValidationResult {
   const { takenAt, compositeScore, rwScore, mathScore, domainCounts } = body;
 
   // Real SAT section scores are always multiples of 10, from 200 to 800 --
@@ -67,15 +68,16 @@ export function validatePracticeTestInput(body: PracticeTestInput): ValidationRe
     return { ok: false, error: "Reading & Writing + Math must add up to the composite score." };
   }
 
-  let parsedDate = new Date();
+  const today = localDay(new Date(), timeZone);
+  let parsedDate = today;
   if (takenAt) {
     const d = parseDateOnly(takenAt);
     if (!d) {
       return { ok: false, error: "Invalid test date." };
     }
     // A test can be logged the day it was taken, but not a day that hasn't
-    // happened yet.
-    if (utcDayDiff(new Date(), d) > 0) {
+    // happened yet where the student is.
+    if (utcDayDiff(today, d) > 0) {
       return { ok: false, error: "Test date can't be in the future." };
     }
     parsedDate = d;

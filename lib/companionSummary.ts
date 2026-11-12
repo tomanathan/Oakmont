@@ -1,6 +1,7 @@
 import { computePetState, isSecondPetUnlocked, SECOND_PET_UNLOCK_DAYS, type PetStage } from "./pet";
 import { COSTUMES, isCostumeUnlocked, bestUnlockedCostume } from "./costumes";
 import { liveStreak } from "./gamification";
+import { localDayKey } from "./dateOnly";
 
 // Everything the dashboard's Ozho card shows, worked out server-side from
 // the same stats the rest of the app already uses (lib/pet.ts for his
@@ -38,12 +39,15 @@ export function companionSummary(input: {
   streakRepairDay: Date | null;
   equippedCostume: string | null;
   domainsCompleted: number;
+  // The student's IANA zone (null: UTC days), for which day "today" is.
+  timeZone: string | null;
 }, now: Date = new Date()): CompanionSummary {
-  const state = computePetState(input.lastActiveDate, input.petBornAt);
+  const tz = input.timeZone;
+  const state = computePetState(input.lastActiveDate, input.petBornAt, now, tz);
   const repairOpen =
     input.streakRepairTo !== null &&
     !!input.streakRepairDay &&
-    input.streakRepairDay.toISOString().slice(0, 10) === now.toISOString().slice(0, 10);
+    localDayKey(input.streakRepairDay, tz) === localDayKey(now, tz);
   const unlock = { domainsCompleted: input.domainsCompleted, daysStudied: input.daysStudied };
   const costume =
     input.equippedCostume && isCostumeUnlocked(input.equippedCostume, unlock)
@@ -67,7 +71,7 @@ export function companionSummary(input: {
     hasEverStudied: !!input.lastActiveDate,
     costume: costume === "none" ? null : costume,
     // The live streak: a chain that has already lapsed reads as none.
-    currentStreak: liveStreak(input.currentStreak, input.lastActiveDate, now, input.streakFreezes),
+    currentStreak: liveStreak(input.currentStreak, input.lastActiveDate, now, tz, input.streakFreezes),
     longestStreak: input.longestStreak,
     daysStudied: input.daysStudied,
     streakFreezes: input.streakFreezes,

@@ -106,9 +106,9 @@ export function sampleParentReport(now: Date = new Date(), mode?: "idle") {
     lessonViews: lessons,
     progressRows,
     tests,
-    pacing: computePacing(createdAt, now, ALL_SUBSKILLS.length, passed, courseLengthDaysForUser(createdAt, targetTestDate)),
+    pacing: computePacing(createdAt, now, TIME_ZONE, ALL_SUBSKILLS.length, passed, courseLengthDaysForUser(createdAt, targetTestDate, TIME_ZONE)),
     thisWeekPlan: { done: 1, total: 2 },
-    daysUntilTest: daysUntilTest(targetTestDate, now),
+    daysUntilTest: daysUntilTest(targetTestDate, now, TIME_ZONE),
   });
   return report;
 }

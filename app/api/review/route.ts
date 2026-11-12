@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
 
   let weekly: { week: number; inARow: number } | null = null;
   if (body.weekly === true) {
-    const current = planWeekOf(g.stats.createdAt ?? now, now);
+    const current = planWeekOf(g.stats.createdAt ?? now, now, g.stats.timeZone);
     const week = current > 1 && body.week === current - 1 ? current - 1 : current;
     const correct = graded.filter((i) => i.correct).length;
     // A second go at a week already recorded keeps the better result (as a

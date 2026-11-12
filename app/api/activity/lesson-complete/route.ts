@@ -5,6 +5,7 @@ import { getUserStats } from "@/lib/user";
 import { hasActiveAccess } from "@/lib/subscription";
 import { getSubskill } from "@/data/curriculum";
 import { finishActivity } from "@/lib/activity";
+import { localDayKey } from "@/lib/dateOnly";
 
 // A finished lesson (every question type in it opened -- see SubskillClient)
 // counts as a day of study, the same as a finished quiz: it feeds Ozho
@@ -23,9 +24,10 @@ export async function POST(req: NextRequest) {
   const subskillId = typeof body.subskillId === "string" ? body.subskillId : "";
   if (!getSubskill(subskillId)) return NextResponse.json({ error: "Unknown subskill." }, { status: 400 });
 
-  // Whether today already counted, so the page only thanks them the first time.
-  const today = new Date().toISOString().slice(0, 10);
-  const firstToday = !stats.lastActiveDate || stats.lastActiveDate.toISOString().slice(0, 10) !== today;
+  // Whether today (the student's own day) already counted, so the page only
+  // thanks them the first time.
+  const today = localDayKey(new Date(), stats.timeZone);
+  const firstToday = !stats.lastActiveDate || localDayKey(stats.lastActiveDate, stats.timeZone) !== today;
 
   const rows = await prisma.progress.findMany({ where: { userId: user.userId } });
   const outcome = await finishActivity(user.userId, rows);

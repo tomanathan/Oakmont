@@ -2,11 +2,7 @@
 // daily practice streak. Kept separate from the API route so the rules are
 // easy to see and test in one place.
 
-import { utcDayDiff } from "./dateOnly";
-
-function dateKey(d: Date): string {
-  return d.toISOString().slice(0, 10); // UTC calendar day, e.g. "2026-08-23"
-}
+import { localDayDiff, localDayKey } from "./dateOnly";
 
 // The forgiving streak. A missed day is covered by a banked freeze when there
 // is one; if a day or two are still uncovered, finishing two things on the
@@ -44,8 +40,13 @@ function freezesEarned(from: number, to: number): number {
   return Math.max(0, Math.floor(to / FREEZE_EVERY_DAYS) - Math.floor(from / FREEZE_EVERY_DAYS));
 }
 
-/** Applies one finished activity (lesson, quiz or review) at `now` (UTC days). */
-export function advanceStreak(s: StreakFields, now: Date = new Date()): StreakResult {
+/**
+ * Applies one finished activity (lesson, quiz or review) at `now`. Days are
+ * the student's own calendar days in `timeZone` (null: UTC days), so two
+ * things done the same afternoon count once wherever the student lives.
+ */
+export function advanceStreak(s: StreakFields, now: Date, timeZone: string | null): StreakResult {
+  const dateKey = (d: Date) => localDayKey(d, timeZone);
   const today = dateKey(now);
   let freezes = s.streakFreezes;
   let freezesUsed = 0;
@@ -77,7 +78,7 @@ export function advanceStreak(s: StreakFields, now: Date = new Date()): StreakRe
     // First activity of a new day.
     activitiesToday = 1;
     daysStudied += 1;
-    const missed = s.lastActiveDate ? utcDayDiff(s.lastActiveDate, now) - 1 : -1;
+    const missed = s.lastActiveDate ? localDayDiff(s.lastActiveDate, now, timeZone) - 1 : -1;
     if (missed < 0) {
       base = 0;
       current = 1;
@@ -132,7 +133,8 @@ export function advanceStreak(s: StreakFields, now: Date = new Date()): StreakRe
 /**
  * The streak as of `now`. The stored number only moves on the next finished
  * activity, so on its own it still reads "9 days" two weeks into a break; a
- * streak only counts while it's alive (studied today or yesterday, UTC).
+ * streak only counts while it's alive (studied today or yesterday, in the
+ * student's `timeZone`; null: UTC days).
  *
  * Pass the banked `freezes` where the student sees the number: missed days a
  * freeze will cover on the next activity (see advanceStreak) haven't broken
@@ -141,10 +143,11 @@ export function advanceStreak(s: StreakFields, now: Date = new Date()): StreakRe
 export function liveStreak(
   currentStreak: number,
   lastActiveDate: Date | null,
-  now: Date = new Date(),
+  now: Date,
+  timeZone: string | null,
   freezes: number = 0
 ): number {
-  return lastActiveDate && utcDayDiff(lastActiveDate, now) - 1 <= Math.max(0, freezes) ? currentStreak : 0;
+  return lastActiveDate && localDayDiff(lastActiveDate, now, timeZone) - 1 <= Math.max(0, freezes) ? currentStreak : 0;
 }
 
 // Round, memorable numbers worth a bigger celebration than the streak

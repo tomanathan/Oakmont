@@ -1,4 +1,4 @@
-import { utcDayDiff } from "./dateOnly";
+import { localDay, localDayDiff, utcDayDiff } from "./dateOnly";
 
 /** Default study plan length (26 weeks) when a student hasn't set a target SAT date. */
 export const DEFAULT_COURSE_LENGTH_DAYS = 26 * 7;
@@ -36,24 +36,25 @@ export function clampCourseLengthDays(days: number): number {
 }
 
 /**
- * The plan's total length: a custom span from account creation to the
- * student's target SAT date if they've set one, otherwise the default
- * 26-week plan.
+ * The plan's total length: a custom span from the day the account was made
+ * (in the student's `timeZone`) to their target SAT date if they've set one,
+ * otherwise the default 26-week plan.
  */
 export function courseLengthDaysForUser(
   createdAt: Date,
   targetTestDate: Date | null,
-  now: Date = new Date()
+  timeZone: string | null
 ): number {
   if (!targetTestDate) return DEFAULT_COURSE_LENGTH_DAYS;
-  const daysUntilTest = utcDayDiff(createdAt, targetTestDate);
+  // The target date is already a calendar day; only the signup instant needs a zone.
+  const daysUntilTest = utcDayDiff(localDay(createdAt, timeZone), targetTestDate);
   return clampCourseLengthDays(daysUntilTest);
 }
 
-/** Whole calendar days remaining until the target SAT date, or null if none is set. */
-export function daysUntilTest(targetTestDate: Date | null, now: Date = new Date()): number | null {
+/** Whole calendar days from the student's today (in `timeZone`) to the target SAT date, or null if none is set. */
+export function daysUntilTest(targetTestDate: Date | null, now: Date, timeZone: string | null): number | null {
   if (!targetTestDate) return null;
-  return utcDayDiff(now, targetTestDate);
+  return utcDayDiff(localDay(now, timeZone), targetTestDate);
 }
 
 /**
@@ -65,11 +66,12 @@ export function daysUntilTest(targetTestDate: Date | null, now: Date = new Date(
 export function computePacing(
   startDate: Date,
   now: Date,
+  timeZone: string | null,
   totalUnits: number,
   completedUnits: number,
   courseLengthDays: number = DEFAULT_COURSE_LENGTH_DAYS
 ): Pacing {
-  const daysElapsed = utcDayDiff(startDate, now);
+  const daysElapsed = localDayDiff(startDate, now, timeZone);
   const dayOfCourse = Math.min(courseLengthDays, Math.max(1, daysElapsed + 1));
   const expectedUnits = (dayOfCourse / courseLengthDays) * totalUnits;
   const pctExpected = (dayOfCourse / courseLengthDays) * 100;

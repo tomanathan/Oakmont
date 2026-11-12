@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { computePetState } from "@/lib/pet";
 import { hasActiveAccess } from "@/lib/subscription";
-import { utcDayDiff } from "@/lib/dateOnly";
+import { localDay, utcDayDiff } from "@/lib/dateOnly";
 import { liveStreak } from "@/lib/gamification";
 import { displayName } from "@/lib/parentReportData";
 import { parentClaimed } from "@/lib/parentAuth";
@@ -29,6 +29,8 @@ export interface EncourageResult {
   cutShort: boolean;
 }
 
+// For the send stamps only, which follow the cron's UTC schedule. A
+// student's own days (studied today, days away) use their zone below.
 const sameUtcDay = (a: Date | null, b: Date) => !!a && utcDayDiff(a, b) === 0;
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -66,6 +68,7 @@ export async function runEncourage(slot: Slot, now: Date = new Date(), opts: { d
       encourageEmails: true,
       lastMorningEmailAt: true,
       lastNudgeEmailAt: true,
+      timeZone: true,
     },
   });
   // Only students who can actually open the lesson the email points to.
@@ -101,14 +104,14 @@ export async function runEncourage(slot: Slot, now: Date = new Date(), opts: { d
   // Everything the templates need about each student, worked out once.
   const facts = new Map<string, { plan: TodayPlan; daysInactive: number; everStudied: boolean; daysToTest: number | null; streak: number }>();
   for (const u of students) {
-    const pet = computePetState(u.lastActiveDate, u.petBornAt, now);
+    const pet = computePetState(u.lastActiveDate, u.petBornAt, now, u.timeZone);
     facts.set(u.id, {
       plan: todayPlanFor(u, progressBy.get(u.id) ?? [], scoresBy.get(u.id) ?? null, now),
       daysInactive: pet.daysInactive,
       everStudied: !!u.lastActiveDate,
-      daysToTest: u.targetTestDate ? utcDayDiff(now, u.targetTestDate) : null,
+      daysToTest: u.targetTestDate ? utcDayDiff(localDay(now, u.timeZone), u.targetTestDate) : null,
       // A streak only counts if it's still alive (studied today or yesterday).
-      streak: liveStreak(u.currentStreak, u.lastActiveDate, now),
+      streak: liveStreak(u.currentStreak, u.lastActiveDate, now, u.timeZone),
     });
   }
   const wantsNudge = (f: { daysInactive: number; everStudied: boolean }) => f.everStudied && f.daysInactive >= 1 && f.daysInactive <= NUDGE_WITHIN_DAYS;

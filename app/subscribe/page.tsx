@@ -48,7 +48,7 @@ export default async function SubscribePage() {
   const retake = retakeState(stats.accessExpiresAt ?? null, stats.passRetakeClaimedAt ?? null);
 
   // Fresh from onboarding: remind them what they just set up.
-  const planWeeks = Math.ceil(courseLengthDaysForUser(stats.createdAt ?? new Date(), stats.targetTestDate ?? null) / 7);
+  const planWeeks = Math.ceil(courseLengthDaysForUser(stats.createdAt ?? new Date(), stats.targetTestDate ?? null, stats.timeZone) / 7);
   const planLine = stats.welcomeSeenAt
     ? `${stats.firstName ? `${stats.firstName}, your` : "Your"} ${planWeeks}-week plan${
         stats.goalScore ? ` to ${stats.goalScore}` : ""

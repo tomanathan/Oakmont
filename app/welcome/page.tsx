@@ -10,6 +10,7 @@ import { progressMapFromRows } from "@/lib/progressState";
 import { leadWith } from "@/lib/planOrder";
 import { WelcomeClient, type WelcomeStep } from "./WelcomeClient";
 import { parentClaimed } from "@/lib/parentAuth";
+import { localDayKey } from "@/lib/dateOnly";
 
 const REVISIT_STEPS: WelcomeStep[] = ["name", "date", "score", "parent", "tour"];
 
@@ -68,7 +69,8 @@ export default async function WelcomePage({ searchParams }: { searchParams: { st
       parents={(parent?.parentLinks ?? []).map((l) => ({ id: l.parent.id, email: l.parent.email, pending: !parentClaimed(l.parent) }))}
       optedOut={!!parent?.parentOptOutAt}
       satDates={upcomingSatDates(now).map((d) => ({ ...d, weeks: weeksUntil(d.date, now) }))}
-      today={now.toISOString().slice(0, 10)}
+      // The student's own today, the same day /api/account checks the test date against.
+      today={localDayKey(now, stats.timeZone)}
       skills={planOrder.flatMap((id) => {
         const s = getSubskill(id);
         return s ? [{ id: s.id, name: s.name, section: s.section }] : [];

@@ -3,9 +3,9 @@ import { runEncourage } from "@/lib/encourage/send";
 import { clearOldRateLimits } from "@/lib/rateLimit";
 
 // The afternoon job, once a day (see vercel.json): a short reminder to
-// students who haven't studied yet today, and to their parents. It runs a
-// few hours before the streak day rolls over (midnight UTC), so there's
-// still time to act on it. Sends nothing while the daily emails are off
+// students who haven't studied yet today, and to their parents. It runs in
+// the US afternoon, hours before the streak day rolls over at each
+// student's own midnight, so there's still time to act on it. Sends nothing while the daily emails are off
 // (lib/encourage/config.ts). Protected by CRON_SECRET like the morning job.
 export const maxDuration = 300;
 

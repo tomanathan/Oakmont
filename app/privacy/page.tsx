@@ -30,6 +30,10 @@ export default function PrivacyPage() {
           practice question you answer, we also store how long you took and how confident you said you were.
         </li>
         <li>
+          Your time zone, as your browser reports it, so that your study days, streak and plan turn over at your
+          own midnight.
+        </li>
+        <li>
           If a student connects a parent, the parent&apos;s email address. A parent account also stores the
           parent&apos;s time zone, so the days in their reports match their own clock.
         </li>

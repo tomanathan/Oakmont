@@ -4,7 +4,7 @@ import { courseLengthDaysForUser } from "@/lib/pacing";
 import { leadWith } from "@/lib/planOrder";
 import { progressMapFromRows } from "@/lib/progressState";
 import { getTodayPlanItem } from "@/lib/studyPlan";
-import { utcDayDiff } from "@/lib/dateOnly";
+import { localDayDiff } from "@/lib/dateOnly";
 
 // What a student's plan says to do today, worked out the same way the
 // dashboard does (their own plan order, weakest areas first), for places
@@ -26,7 +26,7 @@ const SUBSKILLS_BY_DOMAIN: Record<string, string[]> = {};
 for (const s of ALL_SUBSKILLS) (SUBSKILLS_BY_DOMAIN[s.domain] ??= []).push(s.id);
 
 export function todayPlanFor(
-  student: { createdAt: Date; targetTestDate: Date | null; firstSkillId: string | null },
+  student: { createdAt: Date; targetTestDate: Date | null; firstSkillId: string | null; timeZone: string | null },
   progressRows: ProgressRows,
   latestDomainScores: Record<string, number> | null,
   now: Date = new Date(),
@@ -34,9 +34,9 @@ export function todayPlanFor(
   const progress = progressMapFromRows(progressRows, now);
   const mastery = computeDomainMastery(ALL_DOMAINS, SUBSKILLS_BY_DOMAIN, progress, latestDomainScores);
   const order = leadWith(orderSubskillsByWeakness(ALL_SUBSKILLS, mastery), student.firstSkillId);
-  const days = courseLengthDaysForUser(student.createdAt, student.targetTestDate);
+  const days = courseLengthDaysForUser(student.createdAt, student.targetTestDate, student.timeZone);
   const plan = buildStudyPlan(Math.ceil(days / 7), order);
-  const item = getTodayPlanItem(plan, student.createdAt, now, days);
+  const item = getTodayPlanItem(plan, student.createdAt, now, student.timeZone, days);
   if (!item) return { kind: "done", title: "Mixed review", href: "/dashboard", tip: null };
   const { day } = item;
   if (day.type === "lesson" && day.subskillIds.length) {
@@ -44,7 +44,7 @@ export function todayPlanFor(
     const first = skills[0];
     // A different tip each day, from the skill's own list.
     const tips = first?.tipsAndTricks ?? [];
-    const tip = tips.length ? tips[Math.abs(utcDayDiff(student.createdAt, now)) % tips.length] : null;
+    const tip = tips.length ? tips[Math.abs(localDayDiff(student.createdAt, now, student.timeZone)) % tips.length] : null;
     return {
       kind: "lesson",
       title: skills.length > 1 ? `${first.name} and ${skills.length - 1} more` : first?.name ?? "Today's lesson",

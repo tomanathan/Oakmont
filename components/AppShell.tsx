@@ -34,6 +34,10 @@ const STAGE_LABEL: Record<PetStage, string> = {
 // the server, where one module is shared by every visitor.
 type ShellMemo = { email: string; streak: number; trialLeft: number | null; pet: { stage: PetStage; costume: string | null } | null };
 let lastShell: ShellMemo | null = null;
+// Whether this page load has already reported the browser's time zone (see
+// the effect in AppShell). Module-level, so client-side navigations, which
+// remount AppShell, don't report it again.
+let zoneReported = false;
 
 export function AppShell({
   email,
@@ -49,7 +53,9 @@ export function AppShell({
   // drive the free-trial bar. Pages build it with shellStats (lib/user.ts)
   // rather than passing the whole stats row, which would serialise all of
   // it into the page.
-  stats?: { currentStreak: number } & Partial<AccessFields>;
+  // timeZone: the zone stored for the student (null if none yet), to compare
+  // with the browser's. Left out (as on preview pages), nothing is reported.
+  stats?: { currentStreak: number; timeZone?: string | null } & Partial<AccessFields>;
   children: React.ReactNode;
   // The lesson page's own content column was measuring ~42 characters per
   // line at desktop widths -- narrower than the same page on a phone --
@@ -87,6 +93,33 @@ export function AppShell({
   useEffect(() => {
     if (!loading) lastShell = { email, streak, trialLeft, pet };
   }, [loading, email, streak, trialLeft, pet]);
+
+  // The student's days (streak, Ozho, today's plan) are counted in their
+  // stored zone. When the browser's differs -- no zone stored yet, or they've
+  // travelled -- report it once, and re-render with the right day if the
+  // server took it. A failure just leaves things as they were.
+  const storedZone = stats?.timeZone;
+  useEffect(() => {
+    if (loading || storedZone === undefined || zoneReported) return;
+    let zone: string | undefined;
+    try {
+      zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch {
+      return;
+    }
+    if (!zone || zone === storedZone) return;
+    zoneReported = true;
+    fetch("/api/account/timezone", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ timeZone: zone }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { changed?: boolean } | null) => {
+        if (data?.changed) router.refresh();
+      })
+      .catch(() => {});
+  }, [loading, storedZone, router]);
 
   // Read on every mount rather than shared with ScoutCompanion's own
   // state -- AppShell lives inside each page, not the root layout, so it

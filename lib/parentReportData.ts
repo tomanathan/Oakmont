@@ -8,23 +8,15 @@ import { ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan } from "@/data/curriculum";
 import { buildParentReport, type ParentReport } from "@/lib/parentInsights";
 import { leadWith } from "@/lib/planOrder";
 import { liveStreak } from "@/lib/gamification";
+import { safeTimeZone } from "@/lib/timeZone";
 
 // Loads everything a parent report needs for one student and builds it.
 // Pace and "this week" are computed exactly as the student's own dashboard
 // computes them, so the two never disagree.
 
 const HISTORY_DAYS = 120;
-export const DEFAULT_TIME_ZONE = "America/New_York";
-
-export function safeTimeZone(tz: string | null | undefined): string {
-  if (!tz) return DEFAULT_TIME_ZONE;
-  try {
-    new Intl.DateTimeFormat("en-US", { timeZone: tz });
-    return tz;
-  } catch {
-    return DEFAULT_TIME_ZONE;
-  }
-}
+// Re-exported for the routes that have always imported them from here.
+export { DEFAULT_TIME_ZONE, safeTimeZone } from "@/lib/timeZone";
 
 export function displayName(nickname: string | null | undefined, email: string): string {
   if (nickname && nickname.trim()) return nickname.trim();
@@ -66,12 +58,15 @@ export async function loadParentReport(
   );
 
   const createdAt = stats.createdAt ?? now;
-  const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null);
+  // The student's own days (their zone, not the parent's) for the streak,
+  // pace and days to the test, so these match their dashboard.
+  const studentTz = stats.timeZone;
+  const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null, studentTz);
   const studyPlan = buildStudyPlan(Math.ceil(courseLengthDays / 7), leadWith(orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery), stats.firstSkillId));
   const planSubskillIds = new Set(studyPlan.flatMap((w) => w.subskillIds));
   const completedInPlan = Object.entries(progress).filter(([id, p]) => planSubskillIds.has(id) && isPassed(p)).length;
-  const pacing = computePacing(createdAt, now, planSubskillIds.size, completedInPlan, courseLengthDays);
-  const todayItem = getTodayPlanItem(studyPlan, createdAt, now, courseLengthDays);
+  const pacing = computePacing(createdAt, now, studentTz, planSubskillIds.size, completedInPlan, courseLengthDays);
+  const todayItem = getTodayPlanItem(studyPlan, createdAt, now, studentTz, courseLengthDays);
   const thisWeek = todayItem ? studyPlan.find((w) => w.week === todayItem.week) : null;
 
   return buildParentReport({
@@ -82,7 +77,7 @@ export async function loadParentReport(
       createdAt,
       // Zero once the streak is no longer alive, so a break never shows
       // next to the streak that ended with it.
-      currentStreak: liveStreak(stats.currentStreak ?? 0, stats.lastActiveDate ?? null, now),
+      currentStreak: liveStreak(stats.currentStreak ?? 0, stats.lastActiveDate ?? null, now, studentTz),
       longestStreak: stats.longestStreak ?? 0,
       lastActiveDate: stats.lastActiveDate ?? null,
       baselineScore: stats.baselineScore ?? null,
@@ -97,6 +92,6 @@ export async function loadParentReport(
     thisWeekPlan: thisWeek
       ? { done: thisWeek.subskillIds.filter((id) => progress[id]).length, total: thisWeek.subskillIds.length }
       : { done: 0, total: 0 },
-    daysUntilTest: daysUntilTest(stats.targetTestDate ?? null, now),
+    daysUntilTest: daysUntilTest(stats.targetTestDate ?? null, now, studentTz),
   }, { completeDays: opts.completeDays });
 }

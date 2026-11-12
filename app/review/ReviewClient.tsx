@@ -15,6 +15,7 @@ import { PaceClock, formatSeconds, useElapsed } from "@/components/PaceClock";
 import { CONFIDENCE_OPTIONS } from "@/components/ConfidencePicker";
 import { PixelDog } from "@/components/PixelDog";
 import { shuffled } from "@/lib/shuffle";
+import { localDayKey } from "@/lib/dateOnly";
 import { TrapNote, TrapToWatch, topRepeatedTrap } from "@/components/TrapNote";
 import type { Confidence } from "@/lib/pace";
 import type { FigureSpec } from "@/lib/figureTypes";
@@ -87,11 +88,12 @@ interface Draft {
   times: Record<number, number>;
   idx: number;
 }
-const today = () => new Date().toDateString();
-function loadDraft(key: string): Draft | null {
+// The student's own calendar day, the same one the server counts in.
+const today = (tz: string | null) => localDayKey(new Date(), tz);
+function loadDraft(key: string, tz: string | null): Draft | null {
   try {
     const d = JSON.parse(window.localStorage.getItem(key) || "null") as Draft | null;
-    return d && d.day === today() && Array.isArray(d.items) && d.items.length ? d : null;
+    return d && d.day === today(tz) && Array.isArray(d.items) && d.items.length ? d : null;
   } catch {
     return null;
   }
@@ -117,7 +119,16 @@ interface Weekly {
   inARow: number;
 }
 
-export function ReviewClient({ weekly = null, userId }: { weekly?: Weekly | null; userId?: string }) {
+export function ReviewClient({
+  weekly = null,
+  userId,
+  timeZone = null,
+}: {
+  weekly?: Weekly | null;
+  userId?: string;
+  // The student's zone: a draft only carries over within their own day.
+  timeZone?: string | null;
+}) {
   const router = useRouter();
   const key = draftKey(weekly, userId);
   const [phase, setPhase] = useState<Phase>("loading");
@@ -139,7 +150,7 @@ export function ReviewClient({ weekly = null, userId }: { weekly?: Weekly | null
   const load = useCallback(async (useDraft: boolean) => {
     setPhase("loading");
     setResult(null);
-    const draft = useDraft ? loadDraft(key) : null;
+    const draft = useDraft ? loadDraft(key, timeZone) : null;
     if (draft) {
       setItems(draft.items);
       setMeta(draft.meta);
@@ -186,8 +197,8 @@ export function ReviewClient({ weekly = null, userId }: { weekly?: Weekly | null
   useEffect(() => {
     if (phase !== "run" && phase !== "intro") return;
     if (!items.length) return;
-    saveDraft(key, { day: today(), week: setWeek ?? undefined, items, meta, answers, conf, times, idx });
-  }, [key, phase, items, meta, answers, conf, times, idx, setWeek]);
+    saveDraft(key, { day: today(timeZone), week: setWeek ?? undefined, items, meta, answers, conf, times, idx });
+  }, [key, phase, items, meta, answers, conf, times, idx, setWeek, timeZone]);
 
   const running = phase === "run";
 

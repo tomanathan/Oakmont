@@ -27,6 +27,7 @@ export async function GET() {
         daysStudied: true,
         equippedCostume: true,
         targetTestDate: true,
+        timeZone: true,
       },
     }),
     prisma.progress.findMany({ where: { userId: user.userId } }),
@@ -36,7 +37,8 @@ export async function GET() {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }
 
-  const state = computePetState(stats.lastActiveDate, stats.petBornAt);
+  const now = new Date();
+  const state = computePetState(stats.lastActiveDate, stats.petBornAt, now, stats.timeZone);
 
   const progress = progressMapFromRows(progressRows);
   const subskillsByDomain: Record<string, string[]> = {};
@@ -89,12 +91,12 @@ export async function GET() {
   return NextResponse.json({
     stage: state.stage,
     // The live streak, so Ozho never talks up a chain that has lapsed.
-    currentStreak: liveStreak(stats.currentStreak, stats.lastActiveDate, new Date(), stats.streakFreezes),
+    currentStreak: liveStreak(stats.currentStreak, stats.lastActiveDate, now, stats.timeZone, stats.streakFreezes),
     costume,
     sectionsCompleted,
     subskillsMastered,
     totalSubskills: ALL_SUBSKILLS.length,
-    daysUntilTest: daysUntilTest(stats.targetTestDate ?? null),
+    daysUntilTest: daysUntilTest(stats.targetTestDate ?? null, now, stats.timeZone),
     weakestDomain,
     // Mochi (the second companion) reads this to decide whether to render
     // at all -- see components/SecondCompanion.tsx.

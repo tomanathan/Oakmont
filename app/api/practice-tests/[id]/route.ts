@@ -16,7 +16,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return NextResponse.json({ error: "Not logged in." }, { status: 401 });
   }
 
-  const existing = await prisma.practiceTest.findUnique({ where: { id: params.id } });
+  const [existing, owner] = await Promise.all([
+    prisma.practiceTest.findUnique({ where: { id: params.id } }),
+    prisma.user.findUnique({ where: { id: user.userId }, select: { timeZone: true } }),
+  ]);
   // Same 404 whether the row doesn't exist or belongs to someone else --
   // doesn't leak which one to a student probing other ids.
   if (!existing || existing.userId !== user.userId) {
@@ -30,7 +33,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const result = validatePracticeTestInput(body);
+  const result = validatePracticeTestInput(body, owner?.timeZone ?? null);
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }

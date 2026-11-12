@@ -57,7 +57,7 @@ export default async function SettingsPage() {
       ? stats.equippedCostume
       : bestUnlockedCostume(unlockProgress).id;
 
-  const petState = computePetState(stats.lastActiveDate ?? null, stats.petBornAt);
+  const petState = computePetState(stats.lastActiveDate ?? null, stats.petBornAt, new Date(), stats.timeZone);
   const retake = retakeState(stats.accessExpiresAt ?? null, stats.passRetakeClaimedAt ?? null);
   const pass = retake.hasPass
     ? {

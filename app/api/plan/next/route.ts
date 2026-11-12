@@ -35,7 +35,8 @@ export async function GET() {
   const progress = progressMapFromRows(rows);
 
   const createdAt = stats.createdAt ?? new Date();
-  const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null);
+  const tz = stats.timeZone;
+  const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null, tz);
 
   const subskillsByDomain: Record<string, string[]> = {};
   for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
@@ -48,7 +49,7 @@ export async function GET() {
   const weaknessOrderedIds = leadWith(orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery), stats.firstSkillId);
   const studyPlan = buildStudyPlan(Math.ceil(courseLengthDays / 7), weaknessOrderedIds);
 
-  const todayItem = getTodayPlanItem(studyPlan, createdAt, new Date(), courseLengthDays);
+  const todayItem = getTodayPlanItem(studyPlan, createdAt, new Date(), tz, courseLengthDays);
   const today = todayItem
     ? {
         type: todayItem.day.type,
@@ -64,8 +65,8 @@ export async function GET() {
     recommendation: findRecommended(CURRICULUM, progress, today, {
       order: weaknessOrderedIds,
       reviewReady: reviewReady(progress),
-      weekly: weeklyStatusFor(studyPlan, todayItem, createdAt, courseLengthDays, weeklyRows.map((r) => r.week)),
-      testLogged: todaysTestLogged(studyPlan, todayItem, createdAt, tests),
+      weekly: weeklyStatusFor(studyPlan, todayItem, createdAt, tz, courseLengthDays, weeklyRows.map((r) => r.week)),
+      testLogged: todaysTestLogged(studyPlan, todayItem, createdAt, tz, tests),
     }),
   });
 }

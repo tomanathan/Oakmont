@@ -308,7 +308,7 @@ function SaveSheet({
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName, email, password }),
+        body: JSON.stringify({ firstName, email, password, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {

@@ -22,7 +22,7 @@ export default async function ReviewPage({ searchParams }: { searchParams: { wee
 
   let weekly: { week: number; inARow: number } | null = null;
   if (done) {
-    const week = planWeekOf(stats.createdAt ?? new Date());
+    const week = planWeekOf(stats.createdAt ?? new Date(), new Date(), stats.timeZone);
     // One weekly review per plan week: once it's done, the link is plain
     // mixed review again. (The results screen never comes back through
     // here; see ReviewClient's submit.)
@@ -32,7 +32,7 @@ export default async function ReviewPage({ searchParams }: { searchParams: { wee
 
   return (
     <AppShell email={user.email} stats={shellStats(stats)}>
-      <ReviewClient weekly={weekly} userId={user.userId} />
+      <ReviewClient weekly={weekly} userId={user.userId} timeZone={stats.timeZone} />
     </AppShell>
   );
 }

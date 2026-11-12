@@ -213,7 +213,7 @@ export async function loadAdminData(now: Date = new Date()): Promise<AdminData> 
       currentStreak: u.currentStreak,
       longestStreak: u.longestStreak,
       daysStudied: u.daysStudied,
-      petStage: computePetState(u.lastActiveDate, u.petBornAt, now).stage,
+      petStage: computePetState(u.lastActiveDate, u.petBornAt, now, null).stage,
       questions: a.n,
       correct: a.correct,
       questionMs: a.ms,
@@ -513,7 +513,7 @@ export async function loadStudentDetail(id: string, now: Date = new Date()): Pro
     .sort((a, b) => b.at.getTime() - a.at.getTime())
     .slice(0, 80);
 
-  const pet = computePetState(u.lastActiveDate, u.petBornAt, now);
+  const pet = computePetState(u.lastActiveDate, u.petBornAt, now, null);
   const starter = u.starterResult as { items?: { correct: boolean }[] } | null;
   const scores = u.practiceTests.map((t) => t.compositeScore);
   const parents = u.parentLinks.map((pl) => ({

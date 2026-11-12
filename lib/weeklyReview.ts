@@ -1,4 +1,4 @@
-import { utcDayDiff } from "./dateOnly";
+import { localDayDiff } from "./dateOnly";
 
 // The weekly review: once each week of the plan, a longer mixed set across
 // everything learned so far (the same draw as mixed review, see
@@ -9,9 +9,12 @@ import { utcDayDiff } from "./dateOnly";
 
 export const WEEKLY_REVIEW_SIZE = 15;
 
-/** Which week of the plan `now` falls in (week 1 starts the day the account was made). */
-export function planWeekOf(courseStart: Date | string, now: Date = new Date()): number {
-  return Math.max(1, Math.floor(utcDayDiff(courseStart, now) / 7) + 1);
+/**
+ * Which week of the plan `now` falls in (week 1 starts the day the account
+ * was made), counting days in the student's `timeZone`.
+ */
+export function planWeekOf(courseStart: Date | string, now: Date, timeZone: string | null): number {
+  return Math.max(1, Math.floor(localDayDiff(courseStart, now, timeZone) / 7) + 1);
 }
 
 /**

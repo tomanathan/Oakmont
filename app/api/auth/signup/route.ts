@@ -7,12 +7,13 @@ import { clientIp, isJsonRequest, rateLimit } from "@/lib/rateLimit";
 import { readSignupSource, signupSourceFields } from "@/lib/signupSource";
 import { SIGNUP_SOURCE_COOKIE } from "@/lib/signupSource.shared";
 import { applyReferralOnSignup } from "@/lib/referral";
+import { studentTimeZone } from "@/lib/timeZone";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
   if (!isJsonRequest(req)) return NextResponse.json({ error: "Invalid request." }, { status: 400 });
-  let body: { email?: string; password?: string; firstName?: string };
+  let body: { email?: string; password?: string; firstName?: string; timeZone?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -24,6 +25,9 @@ export async function POST(req: NextRequest) {
   // Parent supervision is chosen in onboarding, right after this; the first
   // name is asked here so every greeting and parent email can use it.
   const firstName = (body.firstName || "").trim().replace(/\s+/g, " ").slice(0, 40) || null;
+  // The browser's zone, so the student's days are their own from day one.
+  // Anything Intl doesn't recognise is dropped, never an error.
+  const timeZone = typeof body.timeZone === "string" ? studentTimeZone(body.timeZone) : null;
 
   if (!firstName) {
     return NextResponse.json({ error: "Enter your first name." }, { status: 400 });
@@ -55,7 +59,7 @@ export async function POST(req: NextRequest) {
   // Where they found us, from their first visit (lib/signupSource.ts).
   const source = readSignupSource(req.cookies.get(SIGNUP_SOURCE_COOKIE)?.value);
   const user = await prisma.user.create({
-    data: { email, passwordHash, firstName, lastLoginAt: now, trialEndsAt: trialEndFrom(now), ...signupSourceFields(source) },
+    data: { email, passwordHash, firstName, timeZone, lastLoginAt: now, trialEndsAt: trialEndFrom(now), ...signupSourceFields(source) },
   });
   // Through a friend's invite: a free month on top of the free week.
   // The account exists by now, so a hiccup here mustn't fail the signup.

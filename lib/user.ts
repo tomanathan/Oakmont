@@ -31,6 +31,7 @@ export async function getUserStats(userId: string) {
       passRetakeClaimedAt: true,
       firstSkillId: true,
       trialEndsAt: true,
+      timeZone: true,
     },
   });
   return (
@@ -61,6 +62,7 @@ export async function getUserStats(userId: string) {
       passRetakeClaimedAt: null,
       firstSkillId: null,
       trialEndsAt: null,
+      timeZone: null,
     }
   );
 }
@@ -75,9 +77,11 @@ export async function getUserStats(userId: string) {
  */
 export function shellStats(stats: Awaited<ReturnType<typeof getUserStats>>) {
   return {
-    currentStreak: liveStreak(stats.currentStreak, stats.lastActiveDate, new Date(), stats.streakFreezes),
+    currentStreak: liveStreak(stats.currentStreak, stats.lastActiveDate, new Date(), stats.timeZone, stats.streakFreezes),
     subscriptionStatus: stats.subscriptionStatus,
     accessExpiresAt: stats.accessExpiresAt,
     trialEndsAt: stats.trialEndsAt,
+    // So the shell can tell when the browser's zone differs and report it.
+    timeZone: stats.timeZone,
   };
 }

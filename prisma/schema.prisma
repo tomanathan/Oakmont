@@ -85,6 +85,14 @@ model User {
   // on a parent's report. The dashboard's "Getting started" checklist
   // stays until every item is done or the student dismisses it.
   firstName                      String?
+  // IANA zone from the student's own browser (sent at signup and kept
+  // current by the app shell), so "today" -- the streak's day, the plan's
+  // day, the weekly review's week -- turns over at their midnight, not at
+  // midnight UTC (which is mid-afternoon in the Americas). Null until
+  // their browser has reported one; days are UTC days until then. Stored
+  // times stay real instants: only the bucketing into days uses the zone
+  // (lib/dateOnly.ts).
+  timeZone                       String?
   onboardingChecklistDismissedAt DateTime?
   // Set when the student chooses to study without parent supervision in
   // onboarding (the alternative is adding a parent there).

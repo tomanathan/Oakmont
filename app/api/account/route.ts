@@ -7,7 +7,7 @@ import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { computeDomainMastery, completedDomainCount } from "@/lib/mastery";
 import { progressMapFromRows } from "@/lib/progressState";
 import { isCostumeUnlocked } from "@/lib/costumes";
-import { parseDateOnly, startOfUTCDay } from "@/lib/dateOnly";
+import { localDay, parseDateOnly } from "@/lib/dateOnly";
 
 export async function PATCH(req: NextRequest) {
   const user = await getCurrentUser();
@@ -82,7 +82,9 @@ export async function PATCH(req: NextRequest) {
     if (!d) {
       return NextResponse.json({ error: "Invalid test date." }, { status: 400 });
     }
-    if (d.getTime() < startOfUTCDay(new Date()).getTime()) {
+    // "The past" is before the student's own today, not the UTC one.
+    const zone = await prisma.user.findUnique({ where: { id: user.userId }, select: { timeZone: true } });
+    if (d.getTime() < localDay(new Date(), zone?.timeZone ?? null).getTime()) {
       return NextResponse.json({ error: "Test date can't be in the past." }, { status: 400 });
     }
     parsedDate = d;

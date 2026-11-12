@@ -1,12 +1,14 @@
 import type { PlanWeek } from "@/data/curriculum";
 import { buildDayPlan, type TodayPlanItem } from "./studyPlan";
 import { weeksInARow } from "./weeklyReview";
-import { addUTCDays, formatUTCDate, utcDayDiff } from "./dateOnly";
+import { addUTCDays, formatUTCDate, localDay, utcDayDiff } from "./dateOnly";
 
 // Where today sits against two things the plan schedules once a week: the
 // weekly review and the practice test. Worked out in one place so the
 // dashboard and /api/plan/next (Ozho's "what next", the quiz's "Up next")
-// hand findRecommended the same answer.
+// hand findRecommended the same answer. `courseStart` is the account's
+// creation instant; the plan's days start on its calendar day in the
+// student's `timeZone`.
 
 export interface WeeklyStatus {
   week: number;
@@ -24,6 +26,7 @@ export function weeklyStatusFor(
   studyPlan: PlanWeek[],
   todayItem: TodayPlanItem | null,
   courseStart: Date,
+  timeZone: string | null,
   courseLengthDays: number,
   reviewedWeeks: number[]
 ): WeeklyStatus | null {
@@ -42,7 +45,7 @@ export function weeklyStatusFor(
     done: reviewedWeeks.includes(todayItem.week),
     due: todayAt >= at,
     today: todayAt === at,
-    day: formatUTCDate(addUTCDays(courseStart, wi * 7 + at), { weekday: "long" }),
+    day: formatUTCDate(addUTCDays(localDay(courseStart, timeZone), wi * 7 + at), { weekday: "long" }),
     inARow: weeksInARow(reviewedWeeks, todayItem.week),
   };
 }
@@ -57,14 +60,17 @@ export function todaysTestLogged(
   studyPlan: PlanWeek[],
   todayItem: TodayPlanItem | null,
   courseStart: Date,
+  timeZone: string | null,
   tests: { takenAt: Date; createdAt: Date }[]
 ): boolean {
   if (!todayItem || todayItem.day.type !== "test" || todayItem.day.testNumber === undefined) return false;
-  const weekStart = addUTCDays(courseStart, (todayItem.week - 1) * 7);
+  const weekStart = addUTCDays(localDay(courseStart, timeZone), (todayItem.week - 1) * 7);
+  // Both arguments are calendar days: takenAt is date-only, while the
+  // logged-at instant is put on the student's own day first.
   const inWeek = (d: Date) => {
     const n = utcDayDiff(weekStart, d);
     return n >= 0 && n < 7;
   };
   const nth = (studyPlan[todayItem.week - 1]?.testNumbers.indexOf(todayItem.day.testNumber) ?? 0) + 1;
-  return tests.filter((t) => inWeek(t.takenAt) || inWeek(t.createdAt)).length >= Math.max(1, nth);
+  return tests.filter((t) => inWeek(t.takenAt) || inWeek(localDay(t.createdAt, timeZone))).length >= Math.max(1, nth);
 }

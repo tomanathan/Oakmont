@@ -5,7 +5,7 @@ import { getUserStats, shellStats } from "@/lib/user";
 import { hasActiveAccess } from "@/lib/subscription";
 import { courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { buildDayPlan } from "@/lib/studyPlan";
-import { addUTCDays, utcDayDiff } from "@/lib/dateOnly";
+import { addUTCDays, localDay, utcDayDiff } from "@/lib/dateOnly";
 import { computeDomainMastery, orderSubskillsByWeakness } from "@/lib/mastery";
 import { progressMapFromRows } from "@/lib/progressState";
 import { reviewSetSize } from "@/lib/reviewSet";
@@ -51,7 +51,11 @@ export default async function PlanPage() {
   const weaknessOrderedIds = leadWith(orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery), stats.firstSkillId);
 
   const courseStartDate = stats.createdAt ?? new Date();
-  const courseLengthDays = courseLengthDaysForUser(courseStartDate, stats.targetTestDate ?? null);
+  const tz = stats.timeZone;
+  // The plan's first day: the day the account was made, in the student's
+  // own zone, on the same calendar grid as the target date.
+  const courseStartDay = localDay(courseStartDate, tz);
+  const courseLengthDays = courseLengthDaysForUser(courseStartDate, stats.targetTestDate ?? null, tz);
   // Enough whole weeks to cover the exact day count -- the final week is
   // then truncated below so nothing is ever scheduled past the real
   // target date, and nothing before it is left unaccounted for either.
@@ -93,8 +97,8 @@ export default async function PlanPage() {
   let scheduledAndArrivedCount = 0;
   for (const w of studyPlan) {
     if (w.testNumbers.length === 0) continue;
-    const weekStart = addUTCDays(courseStartDate, (w.week - 1) * 7);
-    if (utcDayDiff(weekStart, new Date()) >= 0) scheduledAndArrivedCount += w.testNumbers.length;
+    const weekStart = addUTCDays(courseStartDay, (w.week - 1) * 7);
+    if (utcDayDiff(weekStart, localDay(new Date(), tz)) >= 0) scheduledAndArrivedCount += w.testNumbers.length;
   }
   // The next unlogged test, not the latest scheduled one: with none logged
   // and three weeks' worth arrived, the one to ask about is test 1. "This
@@ -102,7 +106,7 @@ export default async function PlanPage() {
   const dueTestNumber = tests.length < scheduledAndArrivedCount ? tests.length + 1 : null;
   const dueThisWeek =
     dueTestNumber !== null &&
-    studyPlan.find((w) => w.testNumbers.includes(dueTestNumber))?.week === planWeekOf(courseStartDate);
+    studyPlan.find((w) => w.testNumbers.includes(dueTestNumber))?.week === planWeekOf(courseStartDate, new Date(), tz);
 
   return (
     <AppShell email={user.email} stats={shellStats(stats)} wide>
@@ -115,9 +119,10 @@ export default async function PlanPage() {
       <PlanClient
         weeks={weeksWithNames}
         progress={progress}
-        courseStartDate={courseStartDate.toISOString()}
+        courseStartDate={courseStartDay.toISOString()}
+        timeZone={tz}
         targetTestDate={stats.targetTestDate ? stats.targetTestDate.toISOString() : null}
-        daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
+        daysUntilTest={daysUntilTest(stats.targetTestDate ?? null, new Date(), tz)}
         reviewedWeeks={weeklyRows.map((r) => r.week)}
         weeklyQuestions={reviewSetSize(progress, WEEKLY_REVIEW_SIZE)}
       />
@@ -128,6 +133,7 @@ export default async function PlanPage() {
           domainMastery={domainMastery}
           dueTestNumber={dueTestNumber}
           dueThisWeek={dueThisWeek}
+          timeZone={tz}
           tests={tests.map((t) => ({
             id: t.id,
             takenAt: t.takenAt.toISOString(),

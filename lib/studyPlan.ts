@@ -1,5 +1,5 @@
 import type { PlanWeek } from "@/data/curriculum";
-import { utcDayDiff } from "./dateOnly";
+import { localDayDiff } from "./dateOnly";
 
 export type DayType = "lesson" | "test" | "review" | "rest";
 
@@ -106,16 +106,20 @@ export interface TodayPlanItem {
  * fall after the real exam date. Omit it for the default fixed-length
  * plan, where every week is a full 7 days.
  *
+ * `courseStartDate` and `now` are instants (the account's creation, the
+ * current time); both are put on the student's own calendar in `timeZone`.
+ *
  * Returns null once the plan has run out (today falls after the last real
  * day, e.g. test day itself has arrived, or an expired custom timeline).
  */
 export function getTodayPlanItem(
   studyPlan: PlanWeek[],
   courseStartDate: Date | string,
-  now: Date = new Date(),
+  now: Date,
+  timeZone: string | null,
   totalDays?: number
 ): TodayPlanItem | null {
-  const daysElapsed = utcDayDiff(courseStartDate, now);
+  const daysElapsed = localDayDiff(courseStartDate, now, timeZone);
   if (daysElapsed < 0) return null;
   if (totalDays !== undefined && daysElapsed >= totalDays) return null;
 

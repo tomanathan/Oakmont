@@ -60,7 +60,12 @@ export function LoginCard({
       const res = await fetch(`/api/auth/${mode === "login" ? "login" : "signup"}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(mode === "signup" ? { email, password, firstName } : { email, password }),
+        // The browser's zone comes along on signup, so "today" is the student's own day.
+        body: JSON.stringify(
+          mode === "signup"
+            ? { email, password, firstName, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }
+            : { email, password }
+        ),
       });
       const data = await res.json();
       if (!res.ok) {

@@ -6,7 +6,7 @@
 // engagement on its own), so the way back is always one session. Kept
 // separate from the UI and the cron route so the rules are easy to see.
 
-import { utcDayDiff } from "./dateOnly";
+import { localDayDiff } from "./dateOnly";
 
 export const PET_NAME = "Ozho";
 // Days away before Ozho is cold instead of just being hungry.
@@ -39,9 +39,9 @@ function referenceDate(lastActiveDate: Date | null, petBornAt: Date): Date {
   return lastActiveDate && lastActiveDate > petBornAt ? lastActiveDate : petBornAt;
 }
 
-/** Ozho's current stage from the student's last day of study. */
-export function computePetState(lastActiveDate: Date | null, petBornAt: Date, now: Date = new Date()): PetState {
-  const daysInactive = utcDayDiff(referenceDate(lastActiveDate, petBornAt), now);
+/** Ozho's current stage from the student's last day of study, counted in their own `timeZone` (null: UTC days). */
+export function computePetState(lastActiveDate: Date | null, petBornAt: Date, now: Date, timeZone: string | null): PetState {
+  const daysInactive = localDayDiff(referenceDate(lastActiveDate, petBornAt), now, timeZone);
   const hasEverStudied = !!lastActiveDate;
 
   if (daysInactive <= 0) {
@@ -71,6 +71,6 @@ export function computePetState(lastActiveDate: Date | null, petBornAt: Date, no
 }
 
 /** Whether today is the day for the one gentle "Ozho misses you" email. */
-export function shouldNudge(lastActiveDate: Date | null, petBornAt: Date, now: Date = new Date()): boolean {
-  return utcDayDiff(referenceDate(lastActiveDate, petBornAt), now) === PET_NUDGE_DAYS;
+export function shouldNudge(lastActiveDate: Date | null, petBornAt: Date, now: Date, timeZone: string | null): boolean {
+  return localDayDiff(referenceDate(lastActiveDate, petBornAt), now, timeZone) === PET_NUDGE_DAYS;
 }

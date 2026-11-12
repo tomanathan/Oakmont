@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { getUserStats, shellStats } from "@/lib/user";
+import { localDayKey } from "@/lib/dateOnly";
 import { hasActiveAccess } from "@/lib/subscription";
 import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { computePetState } from "@/lib/pet";
@@ -72,7 +73,9 @@ export default async function DashboardPage() {
 
   const progress = progressMapFromRows(rows);
   const createdAt = stats.createdAt ?? new Date();
-  const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null);
+  // The student's own zone: every "today" below is their calendar day.
+  const tz = stats.timeZone;
+  const courseLengthDays = courseLengthDaysForUser(createdAt, stats.targetTestDate ?? null, tz);
 
   // Computed here, before the plan is built, so the plan itself can be
   // ordered by it (see orderSubskillsByWeakness below) -- the same
@@ -107,12 +110,13 @@ export default async function DashboardPage() {
   const pacing = computePacing(
     createdAt,
     new Date(),
+    tz,
     planSubskillIds.size,
     completedInPlan,
     courseLengthDays
   );
 
-  const todayItem = getTodayPlanItem(studyPlan, createdAt, new Date(), courseLengthDays);
+  const todayItem = getTodayPlanItem(studyPlan, createdAt, new Date(), tz, courseLengthDays);
   const nameSubskill = (id: string) => {
     const s = getSubskill(id);
     return { id, name: s?.name ?? id, section: s?.section ?? "", domain: s?.domain ?? "" };
@@ -131,10 +135,10 @@ export default async function DashboardPage() {
   // done, how many weeks in a row have been, and how long the set will be
   // (shorter than the full size while only a few skills are in play). See
   // lib/planStatus.ts, shared with /api/plan/next.
-  const weeklyStatus = weeklyStatusFor(studyPlan, todayItem, createdAt, courseLengthDays, weeklyRows.map((r) => r.week));
+  const weeklyStatus = weeklyStatusFor(studyPlan, todayItem, createdAt, tz, courseLengthDays, weeklyRows.map((r) => r.week));
   const weekly = weeklyStatus ? { ...weeklyStatus, questions: reviewSetSize(progress, WEEKLY_REVIEW_SIZE) } : null;
   // On a practice-test day, whether the test is already logged.
-  const testLogged = todaysTestLogged(studyPlan, todayItem, createdAt, tests);
+  const testLogged = todaysTestLogged(studyPlan, todayItem, createdAt, tz, tests);
   const review = reviewCounts(progress);
 
   // This week's slice of the plan, for the dashboard's own "this week"
@@ -166,7 +170,7 @@ export default async function DashboardPage() {
   // hungry or cold -- so the welcome-back modal is
   // where that lands hardest. Same computation the settings card and the
   // header pill use.
-  const petState = computePetState(stats.lastActiveDate ?? null, stats.petBornAt);
+  const petState = computePetState(stats.lastActiveDate ?? null, stats.petBornAt, new Date(), tz);
   // Where "Warm him up" goes: the dashboard's own next step, so it never
   // lands on a skill that's already passed. A practice test doesn't feed
   // him, so on a test day it's the next lesson or review instead.
@@ -237,7 +241,7 @@ export default async function DashboardPage() {
           per day), in place of the welcome-back note. */}
       {petState.stage === "cold" && (
         <ColdOzhoNotice
-          sessionKey={`${stats.lastLoginAt?.toISOString() ?? ""}:${new Date().toISOString().slice(0, 10)}`}
+          sessionKey={`${stats.lastLoginAt?.toISOString() ?? ""}:${localDayKey(new Date(), tz)}`}
           daysInactive={petState.daysInactive}
           href={warmUpHref}
         />
@@ -248,7 +252,7 @@ export default async function DashboardPage() {
           previousLoginAt={stats.previousLoginAt.toISOString()}
           quizzesLastSession={quizzesLastSession}
           masteredLastSession={masteredLastSession}
-          currentStreak={liveStreak(stats.currentStreak, stats.lastActiveDate ?? null, new Date(), stats.streakFreezes)}
+          currentStreak={liveStreak(stats.currentStreak, stats.lastActiveDate ?? null, new Date(), tz, stats.streakFreezes)}
           petStage={petState.stage}
           petMessage={petState.message}
         />
@@ -261,7 +265,7 @@ export default async function DashboardPage() {
         pacing={pacing}
         domainMastery={domainMastery}
         today={today}
-        daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
+        daysUntilTest={daysUntilTest(stats.targetTestDate ?? null, new Date(), tz)}
         thisWeek={{ done: weekDone, total: weekTotal }}
         planOrder={weaknessOrderedIds}
         review={review}
@@ -279,6 +283,7 @@ export default async function DashboardPage() {
           streakRepairDay: stats.streakRepairDay ?? null,
           equippedCostume: stats.equippedCostume ?? null,
           domainsCompleted: completedDomainCount(domainMastery),
+          timeZone: tz,
         })}
       />
     </AppShell>

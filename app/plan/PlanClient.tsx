@@ -6,7 +6,7 @@ import { Fold } from "@/components/paper/Fold";
 import { turnTo } from "@/components/paper/turn";
 import { WEEKLY_REVIEW_SIZE } from "@/lib/weeklyReview";
 import { sectionTheme } from "@/lib/sectionTheme";
-import { addUTCDays, formatUTCDate, utcDayDiff } from "@/lib/dateOnly";
+import { addUTCDays, formatUTCDate, localDay, utcDayDiff } from "@/lib/dateOnly";
 import { TIGHT_TIMELINE_DAYS } from "@/lib/pacing";
 import type { DayType } from "@/lib/studyPlan";
 import { isMastered, isPassed, statusOf, type ProgressMap } from "@/lib/progressState";
@@ -43,6 +43,7 @@ export function PlanClient({
   weeks,
   progress,
   courseStartDate,
+  timeZone,
   targetTestDate,
   daysUntilTest,
   reviewedWeeks,
@@ -54,7 +55,10 @@ export function PlanClient({
   weeklyQuestions?: number;
   weeks: WeekItem[];
   progress: ProgressMap;
+  // The plan's first calendar day (UTC midnight of the student's local day).
   courseStartDate: string;
+  // The student's zone, so "today" here is the same day the server used.
+  timeZone: string | null;
   targetTestDate: string | null;
   daysUntilTest: number | null;
 }) {
@@ -72,11 +76,14 @@ export function PlanClient({
     !!lastWeek &&
     utcDayDiff(addUTCDays(courseStartDate, (lastWeek.week - 1) * 7 + lastWeek.days.length - 1), targetTestDate) > 0;
 
-  // UTC calendar-day difference, not raw elapsed milliseconds -- keeps
-  // "today"/"this week" lined up with the server's own day-of-course math
-  // (lib/studyPlan.ts, lib/pacing.ts) instead of drifting near midnight or
-  // in timezones behind UTC.
-  const daysElapsed = useMemo(() => utcDayDiff(courseStartDate, new Date()), [courseStartDate]);
+  // Calendar days in the student's own zone, not raw elapsed milliseconds
+  // or the browser's local clock -- keeps "today"/"this week" lined up with
+  // the server's own day-of-course math (lib/studyPlan.ts, lib/pacing.ts),
+  // and the server render with this one.
+  const daysElapsed = useMemo(
+    () => utcDayDiff(courseStartDate, localDay(new Date(), timeZone)),
+    [courseStartDate, timeZone]
+  );
   const currentWeekNumber = Math.max(1, Math.floor(daysElapsed / 7) + 1);
   const currentDayOfWeek = ((daysElapsed % 7) + 7) % 7; // 0-6
 

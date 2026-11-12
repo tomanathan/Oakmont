@@ -75,7 +75,7 @@ export async function finishActivity(userId: string, rowsBefore: Progress[]): Pr
     activitiesToday: dbUser?.activitiesToday ?? 0,
     streakRepairTo: dbUser?.streakRepairTo ?? null,
     streakRepairDay: dbUser?.streakRepairDay ?? null,
-  });
+  }, new Date(), dbUser?.timeZone ?? null);
 
   // Costumes and Mochi unlock on days studied, which never resets.
   const costumeBefore = bestUnlockedCostume({

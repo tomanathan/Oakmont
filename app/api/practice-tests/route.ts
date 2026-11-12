@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
-  const result = validatePracticeTestInput(body);
+  const result = validatePracticeTestInput(body, stats.timeZone);
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
