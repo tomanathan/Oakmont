@@ -6,7 +6,7 @@ import { addUTCDays, localDayKey, utcDayDiff } from "@/lib/dateOnly";
 // that a new day has started while the page is open).
 
 export const DAILY_ZONE = "America/New_York";
-export const DAILY_FIRST_DAY = "2026-11-13";
+export const DAILY_FIRST_DAY = "2026-11-12";
 
 /** Today's number at `now`. Below 1 before launch day. */
 export function dailyNumberAt(now: Date): number {

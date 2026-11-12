@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { SeoShell, Breadcrumbs, StartFree } from "@/components/seo/SeoShell";
 import { JsonLd, breadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { OG_IMAGES } from "@/components/seo/meta";
@@ -21,6 +21,7 @@ import {
   showablePlan,
   upcomingDatePlans,
   weeksAndDays,
+  type DatePlanSpec,
   type PublicPlanDay,
   type PublicPlanWeek,
 } from "@/lib/publicPlan";
@@ -42,8 +43,20 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const spec = planSpecForSlug(params.slug);
-  const plan = spec ? showablePlan(spec) : null;
-  if (!spec || !plan) return {};
+  if (!spec) return {};
+  const plan = showablePlan(spec);
+  if (!plan) {
+    // A date that has passed or is too close for a plan: a thin page that
+    // stays out of search results but whose links are still followed.
+    if (spec.kind !== "date") return {};
+    const url = `${SITE}/sat-study-plan/${spec.slug}`;
+    const title = `${formatDay(spec.date, { month: "long", year: "numeric" })} SAT Study Plan | Oakmont`;
+    const description =
+      daysFromToday(spec.date) > 0
+        ? `The ${longDate(spec.date)} SAT is too close for a week-by-week plan, so Oakmont sizes a plan to the time you have when you start.`
+        : `The ${longDate(spec.date)} SAT has already happened. See study plans for later test dates.`;
+    return { title, description, alternates: { canonical: url }, robots: { index: false, follow: true } };
+  }
   const title = planSeoTitle(spec);
   const description = planSeoDescription(plan);
   const url = `${SITE}/sat-study-plan/${spec.slug}`;
@@ -95,8 +108,13 @@ export default function StudyPlanPage({ params }: { params: { slug: string } }) 
   const spec = planSpecForSlug(params.slug);
   if (!spec) notFound();
   const plan = showablePlan(spec);
-  // A date that has passed, or too close for a plan this page can show.
-  if (!plan) redirect("/sat-study-plan");
+  // A date that has passed, or too close for a plan this page can show: a
+  // small real page (not a redirect, which a prerendered page can't send
+  // as a proper Location header).
+  if (!plan) {
+    if (spec.kind !== "date") notFound();
+    return <NoPlanPage spec={spec} />;
+  }
 
   const s = plan.stats;
   const name = planName(spec);
@@ -104,11 +122,6 @@ export default function StudyPlanPage({ params }: { params: { slug: string } }) 
   const ctaText = `This is the plan a new student gets. Yours adapts as you go: your practice-test scores move your weakest skills earlier, and it resizes if your test date changes. ${TRIAL_DAYS} days free, no card needed.`;
   const lastWeek = plan.weeks[plan.weeks.length - 1];
   const shortLastWeek = lastWeek.days.length < 7 ? lastWeek.days.length : 0;
-
-  const otherLengths = LENGTH_PLANS.filter((p) => p.slug !== spec.slug)
-    .map((p) => ({ spec: p, plan: showablePlan(p) }))
-    .filter((p) => p.plan);
-  const otherDates = upcomingDatePlans().filter((d) => d.plan && d.slug !== spec.slug);
 
   return (
     <SeoShell>
@@ -200,62 +213,104 @@ export default function StudyPlanPage({ params }: { params: { slug: string } }) 
       <div className="plan-print-hide">
         <StartFree text={ctaText} />
 
-        {otherLengths.length > 0 && (
-          <section className={SECTION} aria-labelledby="other-lengths">
-            <h2 id="other-lengths" className={H2}>
-              Other plan lengths
-            </h2>
-            <ul className="mt-4 flex flex-col gap-2">
-              {otherLengths.map(({ spec: p, plan: op }) => (
-                <li key={p.slug}>
-                  <Link href={`/sat-study-plan/${p.slug}`} className={LINK_ROW}>
-                    <span>
-                      {p.months}-month plan
-                      <span className="block text-[14px] font-normal text-stone-600">
-                        {count(op!.stats.weeks, "week")} · {lessonsPerWeekText(op!.stats)} lessons a week
-                      </span>
-                    </span>
-                    <span aria-hidden>→</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {otherDates.length > 0 && (
-          <section className={SECTION} aria-labelledby="by-date">
-            <h2 id="by-date" className={H2}>
-              Plans by test date
-            </h2>
-            <ul className="mt-4 flex flex-col gap-2">
-              {otherDates.map((d) => (
-                <li key={d.slug}>
-                  <Link href={`/sat-study-plan/${d.slug}`} className={LINK_ROW}>
-                    <span>
-                      {longDate(d.date)} SAT
-                      <span className="block text-[14px] font-normal text-stone-600">{weeksAndDays(d.daysAway)} away</span>
-                    </span>
-                    <span aria-hidden>→</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        <nav aria-label="More" className="mt-8 flex flex-col gap-1 border-t border-[#c9d6ee] pt-5 sm:flex-row sm:flex-wrap sm:gap-x-6">
-          <Link href="/sat-study-plan" className="inline-flex min-h-[44px] items-center text-[16px] font-semibold text-[#26427e] underline-offset-4 hover:underline">
-            All SAT study plans
-          </Link>
-          <Link href="/sat-test-dates" className="inline-flex min-h-[44px] items-center text-[16px] font-semibold text-[#26427e] underline-offset-4 hover:underline">
-            SAT test dates
-          </Link>
-          <Link href="/sat" className="inline-flex min-h-[44px] items-center text-[16px] font-semibold text-[#26427e] underline-offset-4 hover:underline">
-            All {plan.skillCount} SAT skills
-          </Link>
-        </nav>
+        <PlanLinks slug={spec.slug} skillCount={plan.skillCount} />
       </div>
+    </SeoShell>
+  );
+}
+
+/** "Other plan lengths", "Plans by test date" and the footer links, shared by shown plans and the no-plan page. */
+function PlanLinks({ slug, skillCount }: { slug: string; skillCount?: number }) {
+  const otherLengths = LENGTH_PLANS.filter((p) => p.slug !== slug)
+    .map((p) => ({ spec: p, plan: showablePlan(p) }))
+    .filter((p) => p.plan);
+  const otherDates = upcomingDatePlans().filter((d) => d.plan && d.slug !== slug);
+
+  return (
+    <>
+    {otherLengths.length > 0 && (
+      <section className={SECTION} aria-labelledby="other-lengths">
+        <h2 id="other-lengths" className={H2}>
+          Other plan lengths
+        </h2>
+        <ul className="mt-4 flex flex-col gap-2">
+          {otherLengths.map(({ spec: p, plan: op }) => (
+            <li key={p.slug}>
+              <Link href={`/sat-study-plan/${p.slug}`} className={LINK_ROW}>
+                <span>
+                  {p.months}-month plan
+                  <span className="block text-[14px] font-normal text-stone-600">
+                    {count(op!.stats.weeks, "week")} · {lessonsPerWeekText(op!.stats)} lessons a week
+                  </span>
+                </span>
+                <span aria-hidden>→</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {otherDates.length > 0 && (
+      <section className={SECTION} aria-labelledby="by-date">
+        <h2 id="by-date" className={H2}>
+          Plans by test date
+        </h2>
+        <ul className="mt-4 flex flex-col gap-2">
+          {otherDates.map((d) => (
+            <li key={d.slug}>
+              <Link href={`/sat-study-plan/${d.slug}`} className={LINK_ROW}>
+                <span>
+                  {longDate(d.date)} SAT
+                  <span className="block text-[14px] font-normal text-stone-600">{weeksAndDays(d.daysAway)} away</span>
+                </span>
+                <span aria-hidden>→</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <nav aria-label="More" className="mt-8 flex flex-col gap-1 border-t border-[#c9d6ee] pt-5 sm:flex-row sm:flex-wrap sm:gap-x-6">
+      <Link href="/sat-study-plan" className="inline-flex min-h-[44px] items-center text-[16px] font-semibold text-[#26427e] underline-offset-4 hover:underline">
+        All SAT study plans
+      </Link>
+      <Link href="/sat-test-dates" className="inline-flex min-h-[44px] items-center text-[16px] font-semibold text-[#26427e] underline-offset-4 hover:underline">
+        SAT test dates
+      </Link>
+      <Link href="/sat" className="inline-flex min-h-[44px] items-center text-[16px] font-semibold text-[#26427e] underline-offset-4 hover:underline">
+        {skillCount ? `All ${skillCount} SAT skills` : "All SAT skills"}
+      </Link>
+    </nav>
+    </>
+  );
+}
+
+/** A date plan that can't be shown: the date has passed, or it's too close. A plain 200 page, no structured data. */
+function NoPlanPage({ spec }: { spec: DatePlanSpec }) {
+  const name = planName(spec);
+  const days = daysFromToday(spec.date);
+  return (
+    <SeoShell>
+      <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "SAT study plans", href: "/sat-study-plan" }, { name }]} />
+
+      <h1 className="font-display text-[30px] font-semibold leading-tight text-ink sm:text-[36px]">{name}</h1>
+
+      {days > 0 ? (
+        <p className="mt-3 text-[18px] leading-relaxed text-ink">
+          The {longDate(spec.date)} SAT is {weeksAndDays(days)} away. That is too close for one of these week-by-week plans, so Oakmont sizes
+          a plan to the time you have when you start.
+        </p>
+      ) : days === 0 ? (
+        <p className="mt-3 text-[18px] leading-relaxed text-ink">The {longDate(spec.date)} SAT is today. Good luck! Pick a later date to see its plan.</p>
+      ) : (
+        <p className="mt-3 text-[18px] leading-relaxed text-ink">The {longDate(spec.date)} SAT has already happened. Pick a later date to see its plan.</p>
+      )}
+
+      {days > 0 && <StartFree text={`Answer 5 quick questions and get a plan sized to your test date. ${TRIAL_DAYS} days free, no card needed.`} />}
+
+      <PlanLinks slug={spec.slug} />
     </SeoShell>
   );
 }
