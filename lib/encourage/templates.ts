@@ -190,7 +190,7 @@ export function parentMorning(kids: { id: string; ctx: KidCtx }[], promptIndex: 
   let subject: string;
   if (kids.length === 1) {
     subject = first.last24
-      ? `${first.name} studied${first.last24.questions ? `: ${first.last24.questions} questions in the last day` : " in the last day"}`
+      ? `${first.name} studied${first.last24.questions ? `: ${first.last24.questions} question${first.last24.questions === 1 ? "" : "s"} in the last day` : " in the last day"}`
       : first.plan.kind === "rest"
         ? `${first.name}'s SAT prep today`
         : `${first.name}'s plan for today: ${first.plan.title}`;

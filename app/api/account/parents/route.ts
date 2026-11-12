@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { addParentForStudent } from "@/lib/parentSetup";
 import { safeTimeZone } from "@/lib/parentReportData";
+import { keyPart, rateLimitAll } from "@/lib/rateLimit";
 
 const COOLDOWN_MS = 60 * 1000;
 const DAILY_LIMIT = 5;
@@ -43,6 +44,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Just sent one. Give it a minute before adding another." }, { status: 429 });
   }
   if (countToday >= DAILY_LIMIT) {
+    return NextResponse.json({ error: "That's the most for today. Try again tomorrow." }, { status: 429 });
+  }
+
+  // The checks above read a count and write it back later, so a burst of
+  // requests could all pass them. These are counted in one step each: per
+  // student, and per address being written to (whoever is adding it).
+  const allowed = await rateLimitAll([
+    [`addparent:${user.userId}`, DAILY_LIMIT, 24 * 60 * 60],
+    [`parentmail:${keyPart(parentEmail)}`, 3, 24 * 60 * 60],
+  ]);
+  if (!allowed) {
     return NextResponse.json({ error: "That's the most for today. Try again tomorrow." }, { status: 429 });
   }
 

@@ -15,3 +15,7 @@ dev.db-journal
 access-backup.json
 __pycache__/
 scripts/voice/out/
+
+# Local-only preview pages on fixture data (no login, no database). Never
+# deployed: one of them serves the whole question bank with its answers.
+app/dev-preview/

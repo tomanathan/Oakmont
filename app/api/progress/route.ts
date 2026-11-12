@@ -8,6 +8,8 @@ import { QUESTIONS } from "@/data/questions";
 import { gradeItems } from "@/lib/items";
 import { quizSizeFor } from "@/lib/quizSet";
 import { finishActivity, logItemAttempts } from "@/lib/activity";
+import { progressMapFromRows } from "@/lib/progressState";
+import { reviewReady } from "@/lib/reviewSet";
 
 export async function GET() {
   const user = await getCurrentUser();
@@ -45,7 +47,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Your access has expired." }, { status: 402 });
   }
 
-  let body: { subskillId?: string; score?: number; items?: unknown };
+  let body: { subskillId?: string; items?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -63,24 +65,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "This subskill has no quiz yet." }, { status: 400 });
   }
 
-  // Current clients send every answer of their quiz (a draw from the bank,
-  // see lib/quizSet.ts); the bare `score` path only exists for a page loaded
-  // before this version deployed.
+  // Every answer of the quiz (a draw from the bank, see lib/quizSet.ts) is
+  // graded here. A score reported by the client is never accepted.
   const graded = gradeItems(body.items, subskillId);
-  let score: number;
-  let total = realTotal;
-  if (graded.length > 0) {
-    if (graded.length !== quizSizeFor(realTotal)) {
-      return NextResponse.json({ error: "Answer every question before submitting." }, { status: 400 });
+  const expected = quizSizeFor(realTotal);
+  if (graded.length !== expected) {
+    // All the answers arrived but some no longer match a question in the
+    // bank: its wording changed after this quiz was drawn (an item's id
+    // comes from its text). The page offers a fresh quiz for this.
+    if (Array.isArray(body.items) && body.items.length >= expected) {
+      return NextResponse.json(
+        { error: "This quiz was updated after you started it. Start a fresh one to save your score.", stale: true },
+        { status: 409 }
+      );
     }
-    score = graded.filter((g) => g.correct).length;
-    total = graded.length;
-  } else {
-    score = body.score as number;
-    if (typeof score !== "number" || !Number.isInteger(score) || score < 0 || score > realTotal) {
-      return NextResponse.json({ error: "Invalid score data." }, { status: 400 });
-    }
+    return NextResponse.json({ error: "Answer every question before submitting." }, { status: 400 });
   }
+  const score = graded.filter((g) => g.correct).length;
+  const total = graded.length;
 
   const rowsBefore = await prisma.progress.findMany({ where: { userId: user.userId } });
   const existing = rowsBefore.find((r) => r.subskillId === subskillId);
@@ -125,6 +127,11 @@ export async function POST(req: NextRequest) {
     total,
     justPassed,
     alreadyMastered: !!existing?.masteredAt,
+    // Whether a mixed review can be built yet (it needs two skills), so the
+    // results card only points there once it can.
+    reviewReady: reviewReady(
+      progressMapFromRows([...rowsBefore.filter((r) => r.subskillId !== subskillId), progressResult])
+    ),
     ...outcome,
   });
 }

@@ -1,5 +1,6 @@
 import { computePetState, isSecondPetUnlocked, SECOND_PET_UNLOCK_DAYS, type PetStage } from "./pet";
 import { COSTUMES, isCostumeUnlocked, bestUnlockedCostume } from "./costumes";
+import { liveStreak } from "./gamification";
 
 // Everything the dashboard's Ozho card shows, worked out server-side from
 // the same stats the rest of the app already uses (lib/pet.ts for his
@@ -65,7 +66,8 @@ export function companionSummary(input: {
     fedToday: !!input.lastActiveDate && state.daysInactive <= 0,
     hasEverStudied: !!input.lastActiveDate,
     costume: costume === "none" ? null : costume,
-    currentStreak: input.currentStreak,
+    // The live streak: a chain that has already lapsed reads as none.
+    currentStreak: liveStreak(input.currentStreak, input.lastActiveDate, now, input.streakFreezes),
     longestStreak: input.longestStreak,
     daysStudied: input.daysStudied,
     streakFreezes: input.streakFreezes,

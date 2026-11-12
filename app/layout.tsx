@@ -3,7 +3,7 @@ import { Caveat, Fraunces, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 import "./paper.css";
 import "katex/dist/katex.min.css";
-import { Analytics } from "@vercel/analytics/next";
+import { SiteAnalytics } from "@/components/SiteAnalytics";
 import { CompanionGate } from "@/components/CompanionGate";
 import { GlobalConfetti } from "@/components/GlobalConfetti";
 import { PaperMotion } from "@/components/paper/PaperMotion";
@@ -26,7 +26,9 @@ const fraunces = Fraunces({
 // The notebook design's UI and body face, and its hand-lettered
 // annotation face (short margin doodles only, never information).
 const instrumentSans = Instrument_Sans({ subsets: ["latin"], weight: "variable", variable: "--font-ui", display: "swap" });
-const caveat = Caveat({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-hand", display: "swap" });
+// Not preloaded: it only appears inside lesson videos, so it is fetched
+// when one is opened instead of on every page.
+const caveat = Caveat({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-hand", display: "swap", preload: false });
 
 export const metadata: Metadata = {
   // Resolves relative OG/Twitter image URLs (e.g. app/opengraph-image.tsx)
@@ -64,7 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Suspense fallback={null}>
           <PaperMotion />
         </Suspense>
-        <Analytics />
+        <SiteAnalytics />
       </body>
     </html>
   );

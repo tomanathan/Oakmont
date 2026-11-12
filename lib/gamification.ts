@@ -129,6 +129,24 @@ export function advanceStreak(s: StreakFields, now: Date = new Date()): StreakRe
   };
 }
 
+/**
+ * The streak as of `now`. The stored number only moves on the next finished
+ * activity, so on its own it still reads "9 days" two weeks into a break; a
+ * streak only counts while it's alive (studied today or yesterday, UTC).
+ *
+ * Pass the banked `freezes` where the student sees the number: missed days a
+ * freeze will cover on the next activity (see advanceStreak) haven't broken
+ * the chain, so it isn't shown as gone. For display only, never stored.
+ */
+export function liveStreak(
+  currentStreak: number,
+  lastActiveDate: Date | null,
+  now: Date = new Date(),
+  freezes: number = 0
+): number {
+  return lastActiveDate && utcDayDiff(lastActiveDate, now) - 1 <= Math.max(0, freezes) ? currentStreak : 0;
+}
+
 // Round, memorable numbers worth a bigger celebration than the streak
 // badge's usual quiet tick-up -- spaced closer together early on (when
 // sticking with it is hardest to prove to yourself) and further apart

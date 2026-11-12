@@ -1,9 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { BrandMark } from "@/components/BrandMark";
 import { ApproveInvite } from "./ApproveInvite";
 
+export const metadata: Metadata = { title: "Connect your parent · Oakmont", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 // A parent's invite link, opened by the student while signed in, which

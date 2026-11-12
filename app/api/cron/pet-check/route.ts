@@ -50,7 +50,8 @@ export async function GET(req: NextRequest) {
     nudged++;
   }
 
-  const trialReminders = await sendTrialReminders(now);
+  // Each step catches its own failure, so one never cancels the ones after it.
+  const trialReminders = await sendTrialReminders(now).catch((e) => ({ error: String(e) }));
   // Sunday: the weekly parent report. Before the daily emails, so a slow
   // day never squeezes it out.
   const parentReports = now.getUTCDay() === 0 ? await sendParentReports(now).catch((e) => ({ error: String(e) })) : null;

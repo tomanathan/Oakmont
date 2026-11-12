@@ -7,6 +7,7 @@ import { getTodayPlanItem } from "@/lib/studyPlan";
 import { ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan } from "@/data/curriculum";
 import { buildParentReport, type ParentReport } from "@/lib/parentInsights";
 import { leadWith } from "@/lib/planOrder";
+import { liveStreak } from "@/lib/gamification";
 
 // Loads everything a parent report needs for one student and builds it.
 // Pace and "this week" are computed exactly as the student's own dashboard
@@ -34,7 +35,8 @@ export function displayName(nickname: string | null | undefined, email: string):
 
 export async function loadParentReport(
   studentId: string,
-  opts: { name: string; timeZone?: string | null; now?: Date }
+  // completeDays: the Sunday email's week (see ReportOptions in lib/parentInsights.ts).
+  opts: { name: string; timeZone?: string | null; now?: Date; completeDays?: boolean }
 ): Promise<ParentReport> {
   const now = opts.now ?? new Date();
   const since = new Date(now.getTime() - HISTORY_DAYS * 86400000);
@@ -78,7 +80,9 @@ export async function loadParentReport(
     name: opts.name,
     student: {
       createdAt,
-      currentStreak: stats.currentStreak ?? 0,
+      // Zero once the streak is no longer alive, so a break never shows
+      // next to the streak that ended with it.
+      currentStreak: liveStreak(stats.currentStreak ?? 0, stats.lastActiveDate ?? null, now),
       longestStreak: stats.longestStreak ?? 0,
       lastActiveDate: stats.lastActiveDate ?? null,
       baselineScore: stats.baselineScore ?? null,
@@ -94,5 +98,5 @@ export async function loadParentReport(
       ? { done: thisWeek.subskillIds.filter((id) => progress[id]).length, total: thisWeek.subskillIds.length }
       : { done: 0, total: 0 },
     daysUntilTest: daysUntilTest(stats.targetTestDate ?? null, now),
-  });
+  }, { completeDays: opts.completeDays });
 }

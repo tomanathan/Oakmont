@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/session";
 import { type PlanId } from "@/lib/stripe";
-import { APP_URL, createCheckoutUrl } from "@/lib/checkout";
+import { ALREADY_SUBSCRIBED, APP_URL, createCheckoutUrl } from "@/lib/checkout";
 
 const PLAN_IDS: PlanId[] = ["monthly", "sixmonth"];
 
@@ -30,6 +30,9 @@ export async function POST(req: NextRequest) {
     successUrl: `${APP_URL}/dashboard?checkout=success`,
     cancelUrl: `${APP_URL}/subscribe?checkout=cancelled`,
   });
+  if (url === ALREADY_SUBSCRIBED) {
+    return NextResponse.json({ error: "You're already on the monthly plan. You can manage it in Settings." }, { status: 409 });
+  }
   if (!url) {
     return NextResponse.json({ error: "Couldn't start checkout. Please try again." }, { status: 502 });
   }

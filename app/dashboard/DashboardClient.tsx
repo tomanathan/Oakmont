@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { turn, turnTo } from "@/components/paper/turn";
 import { useRouter } from "next/navigation";
-import type { Section } from "@/data/curriculum";
+import type { OutlineSection } from "@/lib/curriculumOutline";
 import type { Pacing } from "@/lib/pacing";
 import type { DomainMastery } from "@/lib/mastery";
 import { PacingBar, PACE_STATUS_STYLES, paceStatusCopy } from "@/components/PacingBar";
 import { SkillTrail } from "@/components/SkillTrail";
 import { SubjectRing } from "@/components/SubjectRing";
 import { sectionTheme } from "@/lib/sectionTheme";
-import { findRecommended } from "@/lib/recommend";
+import { findRecommended, WEEKLY_REVIEW_HREF } from "@/lib/recommend";
 import { sectionProgress } from "@/lib/subjectProgress";
 import { CompanionCard } from "@/components/CompanionCard";
 import { GettingStarted, type ChecklistItem } from "@/components/GettingStarted";
@@ -19,7 +19,9 @@ import { statusOf, type ProgressMap } from "@/lib/progressState";
 import { SubskillStatusBadge } from "@/components/SubskillStatusBadge";
 import type { Recommendation } from "@/lib/recommend";
 import { WEEKLY_REVIEW_SIZE } from "@/lib/weeklyReview";
+import type { WeeklyStatus } from "@/lib/planStatus";
 
+export type { WeeklyStatus };
 
 interface TodaySubskill {
   id: string;
@@ -28,14 +30,6 @@ interface TodaySubskill {
   domain: string;
 }
 
-export interface WeeklyStatus {
-  week: number;
-  done: boolean;
-  due: boolean; // the plan's weekly review day has come (or passed)
-  today: boolean; // ...and it's today
-  day: string; // its weekday
-  inARow: number;
-}
 
 interface TodayPlan {
   week: number;
@@ -59,10 +53,11 @@ export function DashboardClient({
   planOrder,
   review,
   weekly,
+  testLogged = false,
 }: {
   firstName: string | null;
   checklist: ChecklistItem[] | null;
-  curriculum: Section[];
+  curriculum: OutlineSection[];
   progress: ProgressMap;
   pacing: Pacing;
   domainMastery: DomainMastery[];
@@ -73,6 +68,8 @@ export function DashboardClient({
   planOrder: string[];
   review: { ready: boolean; toConfirm: number; refreshers: number };
   weekly: WeeklyStatus | null;
+  // On a practice-test day: the test is already logged (lib/planStatus.ts).
+  testLogged?: boolean;
 }) {
   const router = useRouter();
   const completedCount = Object.keys(progress).length;
@@ -87,10 +84,22 @@ export function DashboardClient({
     void turn(listRef.current, () => setSubject(next), { kind: "leaf", dir: at(next) > at(subject) ? "fwd" : "back" });
   }
 
-  const found = findRecommended(curriculum, progress, today, { order: planOrder, reviewReady: review.ready });
-  // On the weekly review's day, a plain review day's set becomes it.
-  const weeklyFirst = !!weekly && weekly.today && !weekly.done && found?.kind === "review";
-  const recommended = weeklyFirst && found ? { ...found, label: `Week ${weekly!.week} review`, href: "/review?weekly=1" } : found;
+  // On the weekly review's day, a plain review day's set becomes it (the
+  // rule lives in findRecommended, shared with Ozho's "what next").
+  const recommended = findRecommended(curriculum, progress, today, {
+    order: planOrder,
+    reviewReady: review.ready,
+    weekly,
+    testLogged,
+  });
+  const weeklyFirst = recommended?.href === WEEKLY_REVIEW_HREF;
+
+  // The big button is where most visits to this page go next, so its page
+  // is fetched ahead of the click.
+  const nextHref = recommended?.href;
+  useEffect(() => {
+    if (nextHref) router.prefetch(nextHref);
+  }, [router, nextHref]);
 
   // Ozho stands on the skill that's up next in this subject: the
   // recommended one if it's here, else the first one not passed yet, in
@@ -261,7 +270,7 @@ function WeeklyRow({ weekly }: { weekly: WeeklyStatus }) {
   }
   return (
     <button
-      onClick={() => turnTo("/review?weekly=1")}
+      onClick={() => turnTo(WEEKLY_REVIEW_HREF)}
       className={`dog-ear [--ear-bg:#fff] mt-2 flex w-full items-center justify-between gap-3 rounded-xl border px-4 py-2.5 text-left transition-colors ${
         weekly.due ? "border-[#3461c1] bg-[#eef3fc] hover:bg-[#e4ecfa]" : "border-[#c9d6ee] hover:bg-[#f1f5fc]"
       }`}
@@ -274,7 +283,7 @@ function WeeklyRow({ weekly }: { weekly: WeeklyStatus }) {
           </span>
         </div>
         <div className="text-[12px] text-stone-500">
-          {WEEKLY_REVIEW_SIZE} questions on everything you&apos;ve learned so far
+          {weekly.questions || WEEKLY_REVIEW_SIZE} questions on everything you&apos;ve learned so far
           {run > 0 ? ` · keep your ${run}-week run going` : ""}
         </div>
       </div>
@@ -367,11 +376,11 @@ function PlanCard({
         >
           <div className="flex-1 min-w-0">
             <div className="text-[9.5px] font-bold uppercase tracking-[0.14em] text-white/45">
-              {recommended.href === "/review?weekly=1"
+              {recommended.href === WEEKLY_REVIEW_HREF
                 ? "Weekly review · everything so far"
                 : recommended.kind === "review"
                 ? "Mixed · every skill so far"
-                : today?.type === "test"
+                : recommended.kind === "test"
                 ? "Today"
                 : hasStarted
                 ? "Jump back in"
@@ -409,7 +418,9 @@ function PlanCard({
         </div>
       )}
 
-      {weekly && <WeeklyRow weekly={weekly} />}
+      {/* Not until there are two skills to mix: before that the row would
+          lead to a review that can't be built yet. */}
+      {weekly && (weekly.done || review.ready) && <WeeklyRow weekly={weekly} />}
 
       {/* Mixed review, when it isn't already the main action but has
           something waiting: skills to master, or refreshers due. */}

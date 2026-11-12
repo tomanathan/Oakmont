@@ -1,13 +1,15 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { getUserStats } from "@/lib/user";
+import { getUserStats, shellStats } from "@/lib/user";
 import { hasActiveAccess } from "@/lib/subscription";
 import { courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { buildDayPlan } from "@/lib/studyPlan";
 import { addUTCDays, utcDayDiff } from "@/lib/dateOnly";
 import { computeDomainMastery, orderSubskillsByWeakness } from "@/lib/mastery";
 import { progressMapFromRows } from "@/lib/progressState";
+import { reviewSetSize } from "@/lib/reviewSet";
+import { planWeekOf, WEEKLY_REVIEW_SIZE } from "@/lib/weeklyReview";
 import { buildStudyPlan, getSubskill, ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
 import { PlanClient } from "./PlanClient";
@@ -27,7 +29,7 @@ export default async function PlanPage() {
   const [rows, stats, tests, weeklyRows] = await Promise.all([
     prisma.progress.findMany({ where: { userId: user.userId } }),
     getUserStats(user.userId),
-    prisma.practiceTest.findMany({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
+    prisma.practiceTest.findMany({ where: { userId: user.userId }, orderBy: [{ takenAt: "desc" }, { createdAt: "desc" }] }),
     prisma.weeklyReview.findMany({ where: { userId: user.userId }, select: { week: true } }),
   ]);
   if (!hasActiveAccess(stats)) redirect("/subscribe");
@@ -94,15 +96,21 @@ export default async function PlanPage() {
     const weekStart = addUTCDays(courseStartDate, (w.week - 1) * 7);
     if (utcDayDiff(weekStart, new Date()) >= 0) scheduledAndArrivedCount += w.testNumbers.length;
   }
-  const dueTestNumber = tests.length < scheduledAndArrivedCount ? scheduledAndArrivedCount : null;
+  // The next unlogged test, not the latest scheduled one: with none logged
+  // and three weeks' worth arrived, the one to ask about is test 1. "This
+  // week" only when that test's own week is the current one.
+  const dueTestNumber = tests.length < scheduledAndArrivedCount ? tests.length + 1 : null;
+  const dueThisWeek =
+    dueTestNumber !== null &&
+    studyPlan.find((w) => w.testNumbers.includes(dueTestNumber))?.week === planWeekOf(courseStartDate);
 
   return (
-    <AppShell email={user.email} stats={stats} wide>
+    <AppShell email={user.email} stats={shellStats(stats)} wide>
       {/* PlanClient owns the page's one heading now -- this used to also
           render its own "Study plan" title and description right above
           PlanClient's near-identical "Your study roadmap" one, which was
           two headers explaining the same schedule back to back. */}
-      {dueTestNumber !== null && <TestDuePrompt testNumber={dueTestNumber} />}
+      {dueTestNumber !== null && <TestDuePrompt testNumber={dueTestNumber} thisWeek={dueThisWeek} />}
 
       <PlanClient
         weeks={weeksWithNames}
@@ -111,6 +119,7 @@ export default async function PlanPage() {
         targetTestDate={stats.targetTestDate ? stats.targetTestDate.toISOString() : null}
         daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
         reviewedWeeks={weeklyRows.map((r) => r.week)}
+        weeklyQuestions={reviewSetSize(progress, WEEKLY_REVIEW_SIZE)}
       />
 
       <div className="mt-10 scroll-mt-[72px]" id="practice-tests">
@@ -118,6 +127,7 @@ export default async function PlanPage() {
           domains={ALL_DOMAINS}
           domainMastery={domainMastery}
           dueTestNumber={dueTestNumber}
+          dueThisWeek={dueThisWeek}
           tests={tests.map((t) => ({
             id: t.id,
             takenAt: t.takenAt.toISOString(),

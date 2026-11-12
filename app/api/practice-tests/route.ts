@@ -14,7 +14,7 @@ export async function GET() {
 
   const tests = await prisma.practiceTest.findMany({
     where: { userId: user.userId },
-    orderBy: { takenAt: "desc" },
+    orderBy: [{ takenAt: "desc" }, { createdAt: "desc" }],
   });
 
   return NextResponse.json({ tests });

@@ -4,7 +4,10 @@ import { getUserStats } from "@/lib/user";
 import { prisma } from "@/lib/prisma";
 import { hasActiveAccess } from "@/lib/subscription";
 import { upcomingSatDates, weeksUntil } from "@/lib/satDates";
-import { ALL_SUBSKILLS, NUM_FULL_LENGTH_TESTS } from "@/data/curriculum";
+import { ALL_DOMAINS, ALL_SUBSKILLS, NUM_FULL_LENGTH_TESTS, getSubskill } from "@/data/curriculum";
+import { computeDomainMastery, orderSubskillsByWeakness } from "@/lib/mastery";
+import { progressMapFromRows } from "@/lib/progressState";
+import { leadWith } from "@/lib/planOrder";
 import { WelcomeClient, type WelcomeStep } from "./WelcomeClient";
 import { parentClaimed } from "@/lib/parentAuth";
 
@@ -17,7 +20,7 @@ export default async function WelcomePage({ searchParams }: { searchParams: { st
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const [stats, parent] = await Promise.all([
+  const [stats, parent, rows, latestTest] = await Promise.all([
     getUserStats(user.userId),
     prisma.user.findUnique({
       where: { id: user.userId },
@@ -26,10 +29,29 @@ export default async function WelcomePage({ searchParams }: { searchParams: { st
         parentLinks: { select: { parent: { select: { id: true, email: true, passwordHash: true, googleSub: true } } }, orderBy: { createdAt: "asc" } },
       },
     }),
+    prisma.progress.findMany({ where: { userId: user.userId } }),
+    prisma.practiceTest.findFirst({
+      where: { userId: user.userId },
+      orderBy: [{ takenAt: "desc" }, { createdAt: "desc" }],
+      select: { domainScores: true },
+    }),
   ]);
   const hasAccess = hasActiveAccess(stats);
   const single = REVISIT_STEPS.find((s) => s === searchParams.step) ?? null;
   if (stats.welcomeSeenAt && !single) redirect(hasAccess ? "/dashboard" : "/subscribe");
+
+  // The plan's own skill order (weakest areas first, led by the skill the
+  // starter questions picked out), built the way the dashboard and plan
+  // pages build it, so the "Week 1" preview is the week 1 they land on.
+  const subskillsByDomain: Record<string, string[]> = {};
+  for (const s of ALL_SUBSKILLS) (subskillsByDomain[s.domain] ??= []).push(s.id);
+  const domainMastery = computeDomainMastery(
+    ALL_DOMAINS,
+    subskillsByDomain,
+    progressMapFromRows(rows),
+    (latestTest?.domainScores as Record<string, number> | null) ?? null
+  );
+  const planOrder = leadWith(orderSubskillsByWeakness(ALL_SUBSKILLS, domainMastery), stats.firstSkillId);
 
   const now = new Date();
   return (
@@ -47,7 +69,10 @@ export default async function WelcomePage({ searchParams }: { searchParams: { st
       optedOut={!!parent?.parentOptOutAt}
       satDates={upcomingSatDates(now).map((d) => ({ ...d, weeks: weeksUntil(d.date, now) }))}
       today={now.toISOString().slice(0, 10)}
-      skills={ALL_SUBSKILLS.map((s) => ({ id: s.id, name: s.name, section: s.section }))}
+      skills={planOrder.flatMap((id) => {
+        const s = getSubskill(id);
+        return s ? [{ id: s.id, name: s.name, section: s.section }] : [];
+      })}
       practiceTests={NUM_FULL_LENGTH_TESTS}
     />
   );

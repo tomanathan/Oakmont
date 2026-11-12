@@ -17,21 +17,29 @@ import { GoogleButton, OrWithEmail } from "@/components/GoogleButton";
 // be used to bounce someone to an arbitrary address.
 // `googleEnabled`: show "Continue with Google" (hidden until its keys are
 // configured). `initialError`: the reason code the Google callback sends
-// back when sign-in didn't work.
+// back when sign-in didn't work. `inApp`: opened inside another app's
+// browser (see lib/inAppBrowser.ts), where the Google button is hidden, so
+// say how to get it back.
 const GOOGLE_ERRORS: Record<string, string> = {
   google: "Google sign-in didn't work. Please try again, or use your email and password.",
   google_other_account: "This email is already linked to a different Google account. Sign in with that one, or use your password.",
+  parent_account: "This Google account has a parent account. Log in from the parent page.",
 };
+
+// 16px on phones: iOS zooms the page when a smaller input takes focus.
+const INPUT = "w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-[16px] sm:text-sm focus:outline-none focus:border-[#4a67a6]";
 
 export function LoginCard({
   initialMode = "login",
   next,
   googleEnabled = false,
+  inApp = false,
   initialError = null,
 }: {
   initialMode?: "login" | "signup" | "forgot";
   next?: string | null;
   googleEnabled?: boolean;
+  inApp?: boolean;
   initialError?: string | null;
 }) {
   const safeNext = next && /^\/link\/[A-Za-z0-9_-]+$/.test(next) ? next : null;
@@ -118,16 +126,18 @@ export function LoginCard({
                 Enter your email and we&apos;ll send you a link to set a new password.
               </div>
               <form onSubmit={submitForgotPassword}>
-                <label className="block text-sm text-stone-700 mb-1">Email</label>
+                <label htmlFor="login-forgot-email" className="block text-sm text-stone-700 mb-1">Email</label>
                 <input
+                  id="login-forgot-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
+                  autoComplete="email"
+                  className={INPUT}
                   required
                 />
-                {error && <div className="text-red-700 text-sm mb-3">{error}</div>}
+                {error && <div role="alert" className="text-red-700 text-sm mb-3">{error}</div>}
                 <button
                   type="submit"
                   disabled={submitting}
@@ -149,7 +159,10 @@ export function LoginCard({
         <>
           <div className="flex gap-2 mb-6">
             <button
-              onClick={() => setMode("login")}
+              onClick={() => {
+                setMode("login");
+                setError("");
+              }}
               className={`flex-1 py-2 rounded-lg border text-sm font-medium ${
                 mode === "login" ? "bg-forest text-white border-ink" : "bg-[#e9effb] text-ink border-[#b4c5e6]"
               }`}
@@ -157,7 +170,10 @@ export function LoginCard({
               Log in
             </button>
             <button
-              onClick={() => setMode("signup")}
+              onClick={() => {
+                setMode("signup");
+                setError("");
+              }}
               className={`flex-1 py-2 rounded-lg border text-sm font-medium ${
                 mode === "signup" ? "bg-forest text-white border-ink" : "bg-[#e9effb] text-ink border-[#b4c5e6]"
               }`}
@@ -177,29 +193,32 @@ export function LoginCard({
           <form onSubmit={submit}>
             {mode === "signup" && (
               <>
-                <label className="block text-sm text-stone-700 mb-1">First name</label>
+                <label htmlFor="login-first-name" className="block text-sm text-stone-700 mb-1">First name</label>
                 <input
+                  id="login-first-name"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder="What should we call you?"
                   autoComplete="given-name"
                   maxLength={40}
-                  className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
+                  className={INPUT}
                   required
                 />
               </>
             )}
-            <label className="block text-sm text-stone-700 mb-1">Email</label>
+            <label htmlFor="login-email" className="block text-sm text-stone-700 mb-1">Email</label>
             <input
+              id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
-              className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
+              autoComplete="email"
+              className={INPUT}
               required
             />
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm text-stone-700">Password</label>
+              <label htmlFor="login-password" className="block text-sm text-stone-700">Password</label>
               {mode === "login" && (
                 <button
                   type="button"
@@ -207,22 +226,24 @@ export function LoginCard({
                     setMode("forgot");
                     setError("");
                   }}
-                  className="text-xs text-stone-500 hover:text-ink transition-colors"
+                  className="-my-3 inline-flex min-h-[44px] items-center text-xs text-stone-500 hover:text-ink transition-colors"
                 >
                   Forgot password?
                 </button>
               )}
             </div>
             <input
+              id="login-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="At least 6 characters"
-              className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
+              autoComplete={mode === "login" ? "current-password" : "new-password"}
+              className={INPUT}
               required
               minLength={6}
             />
-            {error && <div className="text-red-700 text-sm mb-3">{error}</div>}
+            {error && <div role="alert" className="text-red-700 text-sm mb-3">{error}</div>}
             <button
               type="submit"
               disabled={submitting}
@@ -231,6 +252,7 @@ export function LoginCard({
               {submitting ? "Please wait..." : mode === "login" ? "Log in" : "Create account"}
             </button>
           </form>
+          {inApp && <p className="mt-3 text-center text-[12.5px] text-stone-600">Want to use Google? Open this page in Safari or Chrome.</p>}
         </>
       )}
     </div>

@@ -7,6 +7,8 @@ export interface AddedParent {
   linkId?: string;
   email: string;
   pending: boolean;
+  // They're connected, but the email telling them so didn't go out.
+  sendFailed?: boolean;
 }
 
 // Add a parent by email: creates their free account (or connects an
@@ -31,7 +33,7 @@ export function AddParentForm({ onAdded, cta = "Connect" }: { onAdded: (p: Added
         setError(data.error || "Couldn't add them. Please try again.");
         return;
       }
-      onAdded(data.parent);
+      onAdded({ ...data.parent, sendFailed: data.sent === false });
       setEmail("");
     } catch {
       setError("Couldn't reach the server. Please try again.");
@@ -64,6 +66,8 @@ export function AddParentForm({ onAdded, cta = "Connect" }: { onAdded: (p: Added
 // One added parent, with their setup status and a resend button.
 export function ParentRow({ parent, onUnlink }: { parent: AddedParent; onUnlink?: () => void }) {
   const [state, setState] = useState<"idle" | "sending" | "sent" | string>("idle");
+  // Until a resend goes through, don't claim an invite that never left.
+  const unsent = !!parent.sendFailed && state !== "sent";
   async function resend() {
     setState("sending");
     const res = await fetch("/api/account/parents/resend", {
@@ -78,8 +82,12 @@ export function ParentRow({ parent, onUnlink }: { parent: AddedParent; onUnlink?
     <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-[#eef3fb] px-3.5 py-2.5">
       <div className="min-w-0">
         <div className="truncate text-sm font-medium text-ink">{parent.email}</div>
-        <div className={`text-[12px] ${parent.pending ? "text-[#9a6a12]" : "text-accent"}`}>
-          {parent.pending ? "Invite sent. Waiting for them to set a password." : "Connected. They can see your report."}
+        <div className={`text-[12px] ${!parent.pending ? "text-accent" : unsent ? "text-red-700" : "text-[#9a6a12]"}`}>
+          {!parent.pending
+            ? "Connected. They can see your report."
+            : unsent
+              ? "The invite email didn't go through. Wait a minute, then press Resend email."
+              : "Invite sent. Waiting for them to set a password."}
         </div>
       </div>
       <div className="flex items-center gap-3">

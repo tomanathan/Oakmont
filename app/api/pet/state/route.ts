@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { computePetState, isSecondPetUnlocked } from "@/lib/pet";
+import { liveStreak } from "@/lib/gamification";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { computeDomainMastery, completedDomainCount, domainWeaknessScore } from "@/lib/mastery";
 import { progressMapFromRows, isMastered } from "@/lib/progressState";
@@ -21,6 +22,7 @@ export async function GET() {
         lastActiveDate: true,
         petBornAt: true,
         currentStreak: true,
+        streakFreezes: true,
         longestStreak: true,
         daysStudied: true,
         equippedCostume: true,
@@ -28,7 +30,7 @@ export async function GET() {
       },
     }),
     prisma.progress.findMany({ where: { userId: user.userId } }),
-    prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
+    prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: [{ takenAt: "desc" }, { createdAt: "desc" }] }),
   ]);
   if (!stats) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
@@ -86,7 +88,8 @@ export async function GET() {
 
   return NextResponse.json({
     stage: state.stage,
-    currentStreak: stats.currentStreak,
+    // The live streak, so Ozho never talks up a chain that has lapsed.
+    currentStreak: liveStreak(stats.currentStreak, stats.lastActiveDate, new Date(), stats.streakFreezes),
     costume,
     sectionsCompleted,
     subskillsMastered,

@@ -28,7 +28,9 @@ const ALL_RIGHT_FIRST_SKILL = "m-ratios-rates"; // mirrors lib/starter.ts
 const CARD = "rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)] sm:p-6";
 const PRIMARY = "w-full rounded-xl bg-forest px-5 py-3.5 text-[15px] font-semibold text-white disabled:opacity-60";
 const H1 = "font-display text-[26px] font-semibold leading-tight text-ink";
-const INPUT = "w-full rounded-lg border border-[#b4c5e6] px-3 py-3 text-[15px] focus:border-[#4a67a6] focus:outline-none";
+// 16px so iOS doesn't zoom the page on focus; the placeholder is the only
+// visible label here, so it's dark enough to read.
+const INPUT = "w-full rounded-lg border border-[#b4c5e6] px-3 py-3 text-[16px] placeholder:text-stone-500 focus:border-[#4a67a6] focus:outline-none";
 
 function save(body: object) {
   return fetch("/api/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).catch(() => null);
@@ -45,7 +47,7 @@ export function StartClient(props: {
   invite: { token: string; parentEmail: string } | null;
   google: boolean;
   inApp: boolean;
-  googleError: boolean;
+  googleError: "google" | "google_other_account" | null;
 }) {
   const { questions, skillNames, invite } = props;
   const [answers, setAnswers] = useState<Record<string, number>>(props.savedAnswers);
@@ -120,7 +122,7 @@ export function StartClient(props: {
             ))}
           </div>
         ) : (
-          <a href="/login" className="text-[13px] text-stone-500 underline underline-offset-2">
+          <a href="/login" className="-my-1.5 inline-flex min-h-[44px] items-center text-[13px] text-stone-500 underline underline-offset-2">
             Log in
           </a>
         )}
@@ -128,16 +130,17 @@ export function StartClient(props: {
 
       {step === "q" && current && (
         <div key={current.id}>
-          {index === 0 && !revealed && (
-            <p className="mb-3 text-[14px] text-stone-600">
-              {invite ? "Five quick SAT questions to start your plan." : "Five quick SAT questions. No account needed."}
-            </p>
-          )}
+          {/* The page's heading: shown on the first question, kept for
+              screen readers on the rest. */}
+          <h1 className={index === 0 && !revealed ? "mb-3 text-[14px] text-stone-600" : "sr-only"}>
+            {invite ? "Five quick SAT questions to start your plan." : "Five quick SAT questions. No account needed."}
+          </h1>
           <div className={CARD}>
             <div className="mb-4 text-[15.5px] leading-relaxed text-ink">
               <PassageText text={current.q} />
             </div>
-            <ExamChoices choices={current.choices} correctIndex={current.answer} selected={picked ?? null} revealed={revealed} onSelect={pick} />
+            {/* A pick is final here, so arrow keys only move between choices. */}
+            <ExamChoices choices={current.choices} correctIndex={current.answer} selected={picked ?? null} revealed={revealed} onSelect={pick} arrowSelects={false} />
             {revealed && (
               <div className={`mt-4 rounded-xl p-4 text-[14px] leading-relaxed ${picked === current.answer ? "bg-[#eaf6ef] text-[#23553a]" : "bg-[#eef3fb] text-stone-700"}`}>
                 <div className="mb-1 font-semibold">{picked === current.answer ? "Nice." : "Here's the move:"}</div>
@@ -273,18 +276,22 @@ function SaveSheet({
   invite: { token: string; parentEmail: string } | null;
   google: boolean;
   inApp: boolean;
-  googleError: boolean;
+  googleError: "google" | "google_other_account" | null;
   onDone: () => void;
 }) {
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(googleError ? "Google sign-in didn't work. You can save with your email instead." : "");
+  const [error, setError] = useState(googleError === "google" ? "Google sign-in didn't work. You can save with your email instead." : "");
+  // That email already has an account, so signing up with it here would
+  // fail too: point them at logging in.
+  const [otherAccount, setOtherAccount] = useState(googleError === "google_other_account");
   const [busy, setBusy] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setOtherAccount(false);
     setBusy(true);
     try {
       const res = await fetch("/api/auth/signup", {
@@ -323,10 +330,32 @@ function SaveSheet({
           </>
         )}
         <form onSubmit={submit} className="flex flex-col gap-3">
-          <input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" autoComplete="given-name" maxLength={40} className={INPUT} required />
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" autoComplete="email" className={INPUT} required />
           <input
+            id="start-first-name"
+            aria-label="First name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="First name"
+            autoComplete="given-name"
+            maxLength={40}
+            className={INPUT}
+            required
+          />
+          <input
+            id="start-email"
+            type="email"
+            aria-label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            autoComplete="email"
+            className={INPUT}
+            required
+          />
+          <input
+            id="start-password"
             type="password"
+            aria-label="Password, 6 or more characters"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password (6+ characters)"
@@ -335,10 +364,30 @@ function SaveSheet({
             className={INPUT}
             required
           />
-          {error && <div className="text-[14px] text-red-700">{error}</div>}
+          {error && <div role="alert" className="text-[14px] text-red-700">{error}</div>}
+          {otherAccount && (
+            <div role="alert" className="text-[14px] text-red-700">
+              That email already has an Oakmont account, linked to a different Google account.{" "}
+              <a href="/login" className="font-semibold underline underline-offset-2">
+                Log in
+              </a>{" "}
+              to keep going.
+            </div>
+          )}
           <button type="submit" disabled={busy} className={PRIMARY}>
             {busy ? "Saving..." : "Save my plan"}
           </button>
+          <p className="text-center text-[12.5px] leading-relaxed text-stone-600">
+            By continuing you agree to the{" "}
+            <a href="/terms" className="underline underline-offset-2 hover:text-ink">
+              Terms
+            </a>{" "}
+            and{" "}
+            <a href="/privacy" className="underline underline-offset-2 hover:text-ink">
+              Privacy Policy
+            </a>
+            .
+          </p>
         </form>
         {inApp && (
           <p className="mt-3 text-center text-[12.5px] text-stone-500">Want to use Google? Open this page in Safari or Chrome.</p>

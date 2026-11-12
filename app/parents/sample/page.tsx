@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "What parents see | Oakmont",
   description:
     "The full parent view: every study session, every skill and every score, as it happens.",
+  alternates: { canonical: "https://oakmontsat.com/parents/sample" },
 };
 
 // The whole parent report with sample data, linked from the homepage's
@@ -33,7 +34,7 @@ export default function SampleParentReportPage() {
           report={report}
           frozen
           footer={
-            <p className="text-center text-[13px] text-stone-500">
+            <p className="text-center text-[13px] text-stone-600">
               This is the view you&apos;ll have of your child&apos;s prep,
               updated every time they practice.
             </p>

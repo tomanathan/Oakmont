@@ -23,7 +23,21 @@ const GOOGLE_ERRORS: Record<string, string> = {
   parent_code: "That student code doesn't match any student account. Double-check it and try again.",
 };
 
-function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
+// The plan a pricing button on the homepage was for (?plan=). Nothing is
+// charged here: the plan itself is chosen later, from the dashboard.
+const PLAN_PICKED: Record<"monthly" | "sixmonth", string> = {
+  monthly: "You picked the monthly plan. Create your free account first; nothing is charged during your student's 7 free days.",
+  sixmonth: "You picked the 6-month pass. Create your free account first; you choose the plan from your dashboard, and your student's first 7 days are free with no card.",
+};
+
+interface ViewProps {
+  googleEnabled: boolean;
+  // Inside another app's browser, where Google sign-in is hidden.
+  inApp?: boolean;
+  plan?: "monthly" | "sixmonth" | null;
+}
+
+function ParentLoginContent({ googleEnabled, inApp = false, plan = null }: ViewProps) {
   const router = useRouter();
   const params = useSearchParams();
   const [mode, setMode] = useState<"login" | "signup">(params.get("mode") === "signup" ? "signup" : "login");
@@ -93,7 +107,8 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
     }
   }
 
-  const input = "w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] text-sm focus:outline-none focus:border-[#4a67a6]";
+  // 16px on phones: iOS zooms the page when a smaller input takes focus.
+  const input = "w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] text-[16px] sm:text-sm focus:outline-none focus:border-[#4a67a6]";
 
   return (
     <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] font-sans sm:my-8 md:w-[calc(100%-80px)] max-w-[1070px]">
@@ -129,7 +144,12 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
             {(["signup", "login"] as const).map((m) => (
               <button
                 key={m}
-                onClick={() => setMode(m)}
+                onClick={() => {
+                  setMode(m);
+                  setError("");
+                  setForgot(false);
+                  setForgotSent(false);
+                }}
                 className={`flex-1 rounded-lg border py-2 text-sm font-medium ${mode === m ? "border-ink bg-forest text-white" : "border-[#b4c5e6] bg-[#e9effb] text-ink"}`}
               >
                 {m === "signup" ? "Create account" : "Log in"}
@@ -148,8 +168,18 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
                   <p className="text-sm leading-relaxed text-stone-600">
                     We&apos;ll email you a link. This also works if your student created your account for you.
                   </p>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" className={input} required />
-                  {error && <div className="text-sm text-red-700">{error}</div>}
+                  <input
+                    id="parent-forgot-email"
+                    type="email"
+                    aria-label="Your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@example.com"
+                    autoComplete="email"
+                    className={input}
+                    required
+                  />
+                  {error && <div role="alert" className="text-sm text-red-700">{error}</div>}
                   <button type="submit" disabled={submitting} className="w-full rounded-lg bg-forest py-2.5 text-sm font-semibold text-white disabled:opacity-60">
                     {submitting ? "Sending..." : "Email me a link"}
                   </button>
@@ -169,18 +199,32 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
             </form>
           ) : (
           <form onSubmit={submit} className="flex flex-col gap-3.5">
+            {mode === "signup" && plan && (
+              <p className="rounded-lg bg-[#e9effb] px-3 py-2.5 text-[13px] leading-snug text-[#26427e]">{PLAN_PICKED[plan]}</p>
+            )}
             {mode === "signup" && (
               <>
                 <div>
-                  <label className="mb-1 block text-sm text-stone-700">Your student&apos;s first name</label>
-                  <input type="text" value={studentName} onChange={(e) => setStudentName(e.target.value)} placeholder="e.g. Maya" className={input} maxLength={40} />
+                  <label htmlFor="parent-student-name" className="mb-1 block text-sm text-stone-700">Your student&apos;s first name</label>
+                  <input
+                    id="parent-student-name"
+                    type="text"
+                    value={studentName}
+                    onChange={(e) => setStudentName(e.target.value)}
+                    placeholder="e.g. Maya"
+                    autoComplete="off"
+                    className={input}
+                    maxLength={40}
+                  />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm text-stone-700">
+                  <label htmlFor="parent-student-code" className="mb-1 block text-sm text-stone-700">
                     Student code <span className="text-stone-500">(optional)</span>
                   </label>
                   <input
+                    id="parent-student-code"
                     type="text"
+                    autoComplete="off"
                     value={inviteCode}
                     onChange={(e) => setInviteCode(e.target.value)}
                     placeholder="e.g. 7K9QXFRT"
@@ -200,12 +244,21 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
               </>
             )}
             <div>
-              <label className="mb-1 block text-sm text-stone-700">Your email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" className={input} required />
+              <label htmlFor="parent-email" className="mb-1 block text-sm text-stone-700">Your email</label>
+              <input
+                id="parent-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@example.com"
+                autoComplete="email"
+                className={input}
+                required
+              />
             </div>
             <div>
               <div className="mb-1 flex items-center justify-between">
-                <label className="block text-sm text-stone-700">Password</label>
+                <label htmlFor="parent-password" className="block text-sm text-stone-700">Password</label>
                 {mode === "login" && (
                   <button
                     type="button"
@@ -213,18 +266,42 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
                       setForgot(true);
                       setError("");
                     }}
-                    className="text-xs text-stone-500 hover:text-ink"
+                    className="-my-3 inline-flex min-h-[44px] items-center text-xs text-stone-500 hover:text-ink"
                   >
                     Forgot password?
                   </button>
                 )}
               </div>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" className={input} required minLength={6} />
+              <input
+                id="parent-password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="At least 6 characters"
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                className={input}
+                required
+                minLength={6}
+              />
             </div>
-            {error && <div className="text-sm text-red-700">{error}</div>}
+            {error && <div role="alert" className="text-sm text-red-700">{error}</div>}
             <button type="submit" disabled={submitting} className="w-full rounded-lg bg-forest py-2.5 text-sm font-semibold text-white disabled:opacity-60">
               {submitting ? "Please wait..." : mode === "login" ? "Log in" : "Create parent account"}
             </button>
+            {mode === "signup" && (
+              <p className="text-center text-xs leading-relaxed text-stone-600">
+                By continuing you agree to the{" "}
+                <Link href="/terms" className="underline underline-offset-2 hover:text-ink">
+                  Terms
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" className="underline underline-offset-2 hover:text-ink">
+                  Privacy Policy
+                </Link>
+                .
+              </p>
+            )}
+            {inApp && <p className="text-center text-[12.5px] text-stone-600">Want to use Google? Open this page in Safari or Chrome.</p>}
           </form>
           )}
         </div>
@@ -233,10 +310,10 @@ function ParentLoginContent({ googleEnabled }: { googleEnabled: boolean }) {
   );
 }
 
-export function ParentLoginView({ googleEnabled }: { googleEnabled: boolean }) {
+export function ParentLoginView(props: ViewProps) {
   return (
     <Suspense>
-      <ParentLoginContent googleEnabled={googleEnabled} />
+      <ParentLoginContent {...props} />
     </Suspense>
   );
 }

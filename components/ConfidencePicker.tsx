@@ -1,6 +1,6 @@
 "use client";
 
-import type { Confidence } from "@/lib/items";
+import type { Confidence } from "@/lib/pace";
 import { PenLoop } from "./paper/Pencil";
 
 export const CONFIDENCE_OPTIONS: { value: Confidence; label: string }[] = [

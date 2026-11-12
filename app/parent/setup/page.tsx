@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { displayName } from "@/lib/parentReportData";
@@ -7,6 +8,7 @@ import { parentClaimed } from "@/lib/parentAuth";
 import { googleEnabled } from "@/lib/googleAuth";
 import { isInAppBrowser } from "@/lib/inAppBrowser";
 
+export const metadata: Metadata = { title: "Set up your parent account · Oakmont", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 // Where the "set your password" link in a parent's email lands.

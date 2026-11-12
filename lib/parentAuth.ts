@@ -25,11 +25,11 @@ export async function createParentSessionToken(payload: ParentSessionPayload): P
     .sign(getSecretKey());
 }
 
-export async function verifyParentSessionToken(token: string): Promise<ParentSessionPayload | null> {
+export async function verifyParentSessionToken(token: string): Promise<(ParentSessionPayload & { iat: number }) | null> {
   try {
     const { payload } = await jwtVerify(token, getSecretKey());
     if (typeof payload.parentId === "string" && typeof payload.email === "string") {
-      return { parentId: payload.parentId, email: payload.email };
+      return { parentId: payload.parentId, email: payload.email, iat: typeof payload.iat === "number" ? payload.iat : 0 };
     }
     return null;
   } catch {
@@ -44,4 +44,13 @@ export const PARENT_SESSION_MAX_AGE = PARENT_SESSION_DURATION_SECONDS;
 // in with Google. Until then (a student added them by email) it's pending.
 export function parentClaimed(p: { passwordHash: string | null; googleSub?: string | null }): boolean {
   return !!p.passwordHash || !!p.googleSub;
+}
+
+// Whether the parent has proven the address is theirs: Google vouches for
+// it, or they set their password through a link we emailed. A password
+// typed into the signup form proves nothing -- anyone can sign up with
+// someone else's address -- so a student's report is only attached
+// straight to an account that has passed this.
+export function parentVerified(p: { googleSub?: string | null; emailVerifiedAt?: Date | null }): boolean {
+  return !!p.googleSub || !!p.emailVerifiedAt;
 }

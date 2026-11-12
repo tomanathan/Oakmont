@@ -42,16 +42,33 @@ export async function createSessionToken(payload: SessionPayload): Promise<strin
     .sign(getSecretKey());
 }
 
-export async function verifySessionToken(token: string): Promise<SessionPayload | null> {
+/** A verified session, with when it was issued (seconds), for the revocation check in lib/session.ts. */
+export type VerifiedSession = SessionPayload & { iat: number };
+
+export async function verifySessionToken(token: string): Promise<VerifiedSession | null> {
   try {
     const { payload } = await jwtVerify(token, getSecretKey());
     if (typeof payload.userId === "string" && typeof payload.email === "string") {
-      return { userId: payload.userId, email: payload.email, ...(payload.method === "google" ? { method: "google" as const } : {}) };
+      return {
+        userId: payload.userId,
+        email: payload.email,
+        iat: typeof payload.iat === "number" ? payload.iat : 0,
+        ...(payload.method === "google" ? { method: "google" as const } : {}),
+      };
     }
     return null;
   } catch {
     return null;
   }
+}
+
+/**
+ * "Now", rounded down to the second, for a sessionsValidAfter column: a
+ * session token's issue time is in whole seconds, so the token issued right
+ * after this is stored is never older than the cutoff it has to beat.
+ */
+export function sessionCutoff(): Date {
+  return new Date(Math.floor(Date.now() / 1000) * 1000);
 }
 
 export const SESSION_COOKIE_NAME = SESSION_COOKIE;

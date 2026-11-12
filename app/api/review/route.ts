@@ -67,13 +67,15 @@ export async function GET(req: NextRequest) {
 //   - passed, answered correctly (and not a guess): now mastered
 //   - mastered and due, all correct: refreshed; next refresher further out
 //   - mastered, any miss: flagged due again right away (still mastered)
-// A weekly review (body.weekly) also marks this plan week as reviewed.
+// A weekly review (body.weekly) also marks its plan week as reviewed: the
+// week it was started in (body.week) when that's this week or the one just
+// before, so a set begun on a week's last evening still counts for it.
 export async function POST(req: NextRequest) {
   const g = await guard();
   if (g.error) return g.error;
   const userId = g.user.userId;
 
-  let body: { items?: unknown; weekly?: unknown };
+  let body: { items?: unknown; weekly?: unknown; week?: unknown };
   try {
     body = await req.json();
   } catch {
@@ -81,6 +83,16 @@ export async function POST(req: NextRequest) {
   }
   const graded = gradeItems(body.items);
   if (graded.length === 0) {
+    // Answers arrived but none match a question in the bank any more: the
+    // wording changed after this set was drawn (an item's id comes from its
+    // text). The page offers a fresh set for this. A set with only some
+    // questions changed is graded on the ones that still match.
+    if (Array.isArray(body.items) && body.items.length > 0) {
+      return NextResponse.json(
+        { error: "This review was updated after you started it. Start a fresh set.", stale: true },
+        { status: 409 }
+      );
+    }
     return NextResponse.json({ error: "Nothing to submit." }, { status: 400 });
   }
 
@@ -133,12 +145,17 @@ export async function POST(req: NextRequest) {
 
   let weekly: { week: number; inARow: number } | null = null;
   if (body.weekly === true) {
-    const week = planWeekOf(g.stats.createdAt ?? now, now);
+    const current = planWeekOf(g.stats.createdAt ?? now, now);
+    const week = current > 1 && body.week === current - 1 ? current - 1 : current;
     const correct = graded.filter((i) => i.correct).length;
+    // A second go at a week already recorded keeps the better result (as a
+    // ratio: the two sets can differ in length) rather than replacing it.
+    const earlier = await prisma.weeklyReview.findUnique({ where: { userId_week: { userId, week } } });
+    const better = !earlier || earlier.total <= 0 || correct / graded.length > earlier.correct / earlier.total;
     await prisma.weeklyReview.upsert({
       where: { userId_week: { userId, week } },
       create: { userId, week, correct, total: graded.length },
-      update: { correct, total: graded.length },
+      update: better ? { correct, total: graded.length } : {},
     });
     const done = await prisma.weeklyReview.findMany({ where: { userId }, select: { week: true } });
     weekly = { week, inARow: weeksInARow(done.map((d) => d.week), week) };

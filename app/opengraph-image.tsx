@@ -21,7 +21,7 @@ export default async function Image() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#faf8f4",
+          background: "#dde7f7",
           fontFamily: "sans-serif",
         }}
       >
@@ -30,8 +30,8 @@ export default async function Image() {
             width: 96,
             height: 96,
             borderRadius: "50%",
-            background: "#1a1a2e",
-            color: "#faf8f4",
+            background: "#3461c1",
+            color: "#fffdf7",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -42,10 +42,10 @@ export default async function Image() {
         >
           O
         </div>
-        <div style={{ fontSize: 56, fontWeight: 700, color: "#1a1a2e", marginBottom: 16 }}>
+        <div style={{ fontSize: 56, fontWeight: 700, color: "#1f2f5a", marginBottom: 16 }}>
           Every SAT skill. One week at a time.
         </div>
-        <div style={{ fontSize: 28, color: "#6b7280" }}>Oakmont Study Center</div>
+        <div style={{ fontSize: 28, color: "#3461c1" }}>Oakmont Study Center</div>
       </div>
     ),
     { ...size }

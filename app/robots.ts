@@ -8,7 +8,26 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: ["/", "/terms", "/privacy"],
-      disallow: ["/dashboard", "/plan", "/subskill", "/settings", "/subscribe", "/welcome", "/parent", "/share", "/api", "/reset-password"],
+      // "/parent/" with its slash: a bare "/parent" is a prefix match that
+      // would also block the public /parents/sample.
+      disallow: [
+        "/dashboard",
+        "/plan",
+        "/subskill",
+        "/settings",
+        "/subscribe",
+        "/welcome",
+        "/parent/",
+        "/share",
+        "/link",
+        "/login",
+        "/admin",
+        "/review",
+        "/analysis",
+        "/email",
+        "/api",
+        "/reset-password",
+      ],
     },
     sitemap: "https://oakmontsat.com/sitemap.xml",
   };

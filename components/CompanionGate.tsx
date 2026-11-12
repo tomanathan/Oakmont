@@ -1,8 +1,15 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import { ScoutCompanion } from "./ScoutCompanion";
-import { SecondCompanion } from "./SecondCompanion";
+
+// Loaded on demand rather than imported: this gate sits in the root layout,
+// so a plain import put both companions' code (a couple of hundred KB of
+// source) on every route, including the ones below where they never
+// appear. Neither draws anything until it has mounted in the browser, so
+// skipping the server render changes nothing on the page.
+const ScoutCompanion = dynamic(() => import("./ScoutCompanion").then((m) => m.ScoutCompanion), { ssr: false });
+const SecondCompanion = dynamic(() => import("./SecondCompanion").then((m) => m.SecondCompanion), { ssr: false });
 
 // Ozho (and Mochi) are the student's own study companions -- they don't
 // make sense on parent-facing pages (a parent's own dashboard, or the

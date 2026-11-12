@@ -3,6 +3,13 @@ import { stripe, getPriceId, type PlanId } from "./stripe";
 
 export const APP_URL = process.env.APP_URL || "https://oakmontsat.com";
 
+// Returned instead of a URL when the student already has a monthly
+// subscription running. Only the pages hide the buy buttons, and a stale
+// tab -- or a student and parent each acting on the same reminder email --
+// would otherwise start a second subscription billing alongside the first.
+export const ALREADY_SUBSCRIBED = "already-subscribed" as const;
+const LIVE_SUBSCRIPTION = new Set(["trialing", "active", "past_due"]);
+
 /**
  * Creates a Stripe Checkout session for a student's plan and returns its
  * URL. Used by the student (/api/stripe/checkout) and by a connected parent
@@ -24,12 +31,13 @@ export async function createCheckoutUrl({
   paidByParentId?: string;
   successUrl: string;
   cancelUrl: string;
-}): Promise<string | null> {
+}): Promise<string | null | typeof ALREADY_SUBSCRIBED> {
   const student = await prisma.user.findUnique({
     where: { id: studentId },
-    select: { email: true, stripeCustomerId: true, trialEndsAt: true },
+    select: { email: true, stripeCustomerId: true, trialEndsAt: true, subscriptionStatus: true },
   });
   if (!student) return null;
+  if (student.subscriptionStatus && LIVE_SUBSCRIPTION.has(student.subscriptionStatus)) return ALREADY_SUBSCRIBED;
 
   // A saved customer can be stale -- e.g. one created in test mode, before
   // the switch to live keys, which the live API reports as missing. Check

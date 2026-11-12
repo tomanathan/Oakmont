@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentParent } from "@/lib/parentSession";
+import { rateLimit } from "@/lib/rateLimit";
 
 // A signed-in parent linking another student with the code from that
 // student's Settings (the code itself is the student's consent).
@@ -11,6 +12,9 @@ export async function POST(req: NextRequest) {
   const code = typeof body.code === "string" ? body.code.trim().toUpperCase() : "";
   const nickname = typeof body.nickname === "string" ? body.nickname.trim().slice(0, 40) : "";
   if (!code) return NextResponse.json({ error: "Enter the code from your student's Settings page." }, { status: 400 });
+  if (!(await rateLimit(`code:parent:${parent.parentId}`, 10, 60 * 60))) {
+    return NextResponse.json({ error: "Too many tries with a code. Wait an hour and try again." }, { status: 429 });
+  }
   const student = await prisma.user.findUnique({ where: { parentInviteCode: code } });
   if (!student) return NextResponse.json({ error: "That code doesn't match a student account. Double-check it and try again." }, { status: 400 });
   const link = await prisma.parentLink.upsert({

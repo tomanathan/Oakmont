@@ -122,7 +122,7 @@ export function ParentReportView({
             </span>
             {r.scores.daysUntilTest !== null && r.scores.daysUntilTest >= 0 && (
               <span>
-                <span className="font-medium text-ink">{r.scores.daysUntilTest}</span> days until the SAT
+                <span className="font-medium text-ink">{r.scores.daysUntilTest}</span> {r.scores.daysUntilTest === 1 ? "day" : "days"} until the SAT
               </span>
             )}
             {r.typicalTime && <span>Usually studies {r.typicalTime}</span>}
@@ -379,7 +379,8 @@ export function ParentReportView({
                   const prev = arr[i + 1];
                   return (
                     <div key={t.id} className="flex items-center justify-between gap-3 rounded-xl border border-[#c9d6ee] px-3.5 py-2.5 text-sm">
-                      <span className="text-stone-500">{new Date(t.takenAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
+                      {/* A test date is a calendar day stored as UTC midnight: shown in UTC, or it lands a day early. */}
+                      <span className="text-stone-500">{new Date(t.takenAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })}</span>
                       <span className="text-right">
                         <span className="font-semibold text-ink">{t.composite}</span>
                         {prev && (

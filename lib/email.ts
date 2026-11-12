@@ -29,14 +29,22 @@ export async function sendEmail({
     return { sent: false };
   }
 
-  const res = await fetch(RESEND_API_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ from, to, subject, html, reply_to: SUPPORT_EMAIL, ...(headers ? { headers } : {}) }),
-  });
+  // A network failure counts as "not sent", the same as a refusal: callers
+  // send in loops, and one unreachable request must not end the whole run.
+  let res: Response;
+  try {
+    res = await fetch(RESEND_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ from, to, subject, html, reply_to: SUPPORT_EMAIL, ...(headers ? { headers } : {}) }),
+    });
+  } catch (err) {
+    console.error("[email] Resend request failed (network):", err);
+    return { sent: false };
+  }
 
   if (!res.ok) {
     const body = await res.text().catch(() => "");

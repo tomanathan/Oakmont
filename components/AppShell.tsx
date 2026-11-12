@@ -10,7 +10,7 @@ import { BrandMark } from "./BrandMark";
 import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
 import { PET_NAME, type PetStage } from "@/lib/pet";
-import { dedupedFetchJson } from "@/lib/dedupeFetch";
+import { dedupedFetchJson, forgetFetched, PET_STATE_MAX_AGE_MS } from "@/lib/dedupeFetch";
 import { LegalFooter } from "./LegalFooter";
 import { trialDaysLeft, type AccessFields } from "@/lib/subscription";
 
@@ -45,7 +45,10 @@ export function AppShell({
   // loading: the route's loading screen -- header from memory, no fetches.
   loading?: boolean;
   email: string;
-  // Pages pass the whole stats row; the access fields drive the free-trial bar.
+  // Exactly what the header reads: the streak, and the access fields that
+  // drive the free-trial bar. Pages build it with shellStats (lib/user.ts)
+  // rather than passing the whole stats row, which would serialise all of
+  // it into the page.
   stats?: { currentStreak: number } & Partial<AccessFields>;
   children: React.ReactNode;
   // The lesson page's own content column was measuring ~42 characters per
@@ -85,30 +88,34 @@ export function AppShell({
     if (!loading) lastShell = { email, streak, trialLeft, pet };
   }, [loading, email, streak, trialLeft, pet]);
 
-  // Fetched fresh on every mount rather than shared with ScoutCompanion's
-  // own fetch -- AppShell lives inside each page, not the root layout, so
-  // it naturally remounts on every navigation anyway (see ScoutCompanion's
-  // comments on the same distinction). This gives the *starting* costume;
-  // see the "ozho:costume" listener below for how it stays current after
-  // that without depending on a remount or a Next.js router refresh ever
-  // actually re-running this effect (it doesn't, reliably).
+  // Read on every mount rather than shared with ScoutCompanion's own
+  // state -- AppShell lives inside each page, not the root layout, so it
+  // naturally remounts on every navigation anyway (see ScoutCompanion's
+  // comments on the same distinction). A mount soon after the last read
+  // (PET_STATE_MAX_AGE_MS, see lib/dedupeFetch.ts) reuses its answer
+  // instead of asking again on every page. This gives the *starting*
+  // costume; see the "ozho:costume" listener below for how it stays
+  // current after that without depending on a remount or a Next.js router
+  // refresh ever actually re-running this effect (it doesn't, reliably).
   useEffect(() => {
     if (loading) return;
     let cancelled = false;
-    const load = () =>
-      dedupedFetchJson<{ stage: PetStage; costume: string | null }>("/api/pet/state")
+    const load = (force: boolean) =>
+      dedupedFetchJson<{ stage: PetStage; costume: string | null }>("/api/pet/state", { maxAgeMs: PET_STATE_MAX_AGE_MS, force })
         .then((data) => {
           if (!cancelled && data?.stage) {
             setPet({ stage: data.stage, costume: data.costume && data.costume !== "none" ? data.costume : null });
           }
         })
         .catch(() => {});
-    load();
-    // A finished lesson, quiz, or review just fed him: re-read his mood.
-    window.addEventListener("ozho:fed", load);
+    load(false);
+    // A finished lesson, quiz, or review just fed him: re-read his mood,
+    // from the server this time, whatever was read a moment ago.
+    const onFed = () => load(true);
+    window.addEventListener("ozho:fed", onFed);
     return () => {
       cancelled = true;
-      window.removeEventListener("ozho:fed", load);
+      window.removeEventListener("ozho:fed", onFed);
     };
   }, [loading]);
 
@@ -122,6 +129,9 @@ export function AppShell({
     function onCostumeChange(e: Event) {
       const detail = (e as CustomEvent<{ costume: string | null }>).detail;
       if (!detail) return;
+      // The remembered pet state still names the old costume; without this
+      // the next page's header would put it back on him.
+      forgetFetched("/api/pet/state");
       setPet((prev) => (prev ? { ...prev, costume: detail.costume } : prev));
     }
     window.addEventListener("ozho:costume", onCostumeChange);
@@ -130,6 +140,18 @@ export function AppShell({
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
+    // Whoever signs in next in this tab shouldn't meet this student's pet.
+    forgetFetched();
+    // Nor their half-finished quizzes and reviews, which are saved on this
+    // device (the "oakmont:...draft..." keys in SubskillClient and
+    // ReviewClient).
+    try {
+      for (const k of Object.keys(window.localStorage)) {
+        if (k.startsWith("oakmont:") && k.includes("draft")) window.localStorage.removeItem(k);
+      }
+    } catch {
+      // Storage unavailable: there was nothing saved to clear.
+    }
     router.push("/login");
     router.refresh();
   }

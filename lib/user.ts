@@ -1,4 +1,5 @@
 import { prisma } from "./prisma";
+import { liveStreak } from "./gamification";
 
 export async function getUserStats(userId: string) {
   const user = await prisma.user.findUnique({
@@ -62,4 +63,21 @@ export async function getUserStats(userId: string) {
       trialEndsAt: null,
     }
   );
+}
+
+/**
+ * The part of the stats row AppShell reads: the streak for the header and
+ * the access fields behind the free-trial bar. AppShell is a client
+ * component, so whatever a page hands it is serialised into the HTML --
+ * pages pass this instead of the whole row (Stripe customer id and all).
+ * The streak is the live one: a chain that has already lapsed shows as
+ * nothing rather than as the last number stored.
+ */
+export function shellStats(stats: Awaited<ReturnType<typeof getUserStats>>) {
+  return {
+    currentStreak: liveStreak(stats.currentStreak, stats.lastActiveDate, new Date(), stats.streakFreezes),
+    subscriptionStatus: stats.subscriptionStatus,
+    accessExpiresAt: stats.accessExpiresAt,
+    trialEndsAt: stats.trialEndsAt,
+  };
 }

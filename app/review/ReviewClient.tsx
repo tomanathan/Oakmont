@@ -16,7 +16,7 @@ import { CONFIDENCE_OPTIONS } from "@/components/ConfidencePicker";
 import { PixelDog } from "@/components/PixelDog";
 import { shuffled } from "@/lib/shuffle";
 import { TrapNote, TrapToWatch, topRepeatedTrap } from "@/components/TrapNote";
-import type { Confidence } from "@/lib/items";
+import type { Confidence } from "@/lib/pace";
 import type { FigureSpec } from "@/lib/figureTypes";
 
 interface ReviewItem {
@@ -70,10 +70,16 @@ type Phase = "loading" | "empty" | "error" | "intro" | "run" | "submitting" | "r
 // A set in progress survives a refresh or a trip to another page -- same
 // day only, since tomorrow deserves a freshly chosen set.
 const DRAFT_KEY = "oakmont:review-draft";
-// The weekly review keeps its own draft, so it never swallows a daily one.
-const draftKey = (weekly: Weekly | null) => (weekly ? `${DRAFT_KEY}:weekly` : DRAFT_KEY);
+// Kept per student, so on a shared computer nobody picks up (or submits)
+// someone else's half-finished set. The weekly review keeps its own draft,
+// so it never swallows a daily one.
+const draftKey = (weekly: Weekly | null, userId: string | undefined) =>
+  `${DRAFT_KEY}:${userId ?? "preview"}${weekly ? ":weekly" : ""}`;
 interface Draft {
   day: string;
+  // Weekly review only: the plan week the set was started in, which is the
+  // week it counts for even if it's finished just after the week turns.
+  week?: number;
   items: ReviewItem[];
   meta: { toConfirm: string[]; refreshers: string[] };
   answers: Record<number, number>;
@@ -111,9 +117,9 @@ interface Weekly {
   inARow: number;
 }
 
-export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
+export function ReviewClient({ weekly = null, userId }: { weekly?: Weekly | null; userId?: string }) {
   const router = useRouter();
-  const key = draftKey(weekly);
+  const key = draftKey(weekly, userId);
   const [phase, setPhase] = useState<Phase>("loading");
   const [items, setItems] = useState<ReviewItem[]>([]);
   const [meta, setMeta] = useState<{ toConfirm: string[]; refreshers: string[] }>({ toConfirm: [], refreshers: [] });
@@ -124,7 +130,10 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [result, setResult] = useState<SubmitResponse | null>(null);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [resumed, setResumed] = useState(false);
+  // The plan week this weekly set belongs to (see Draft.week).
+  const [setWeek, setSetWeek] = useState<number | null>(weekly?.week ?? null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async (useDraft: boolean) => {
@@ -138,6 +147,7 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
       setConf(draft.conf);
       setTimes(draft.times);
       setIdx(draft.idx);
+      setSetWeek(weekly ? draft.week ?? weekly.week : null);
       setResumed(true);
       setPhase("intro");
       return;
@@ -160,6 +170,7 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
       setConf({});
       setTimes({});
       setIdx(0);
+      setSetWeek(weekly?.week ?? null);
       setResumed(false);
       setPhase("intro");
     } catch {
@@ -175,12 +186,10 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
   useEffect(() => {
     if (phase !== "run" && phase !== "intro") return;
     if (!items.length) return;
-    saveDraft(key, { day: today(), items, meta, answers, conf, times, idx });
-  }, [key, phase, items, meta, answers, conf, times, idx]);
+    saveDraft(key, { day: today(), week: setWeek ?? undefined, items, meta, answers, conf, times, idx });
+  }, [key, phase, items, meta, answers, conf, times, idx, setWeek]);
 
   const running = phase === "run";
-  const onThis = useElapsed(startedAt, running);
-  const elapsed = (times[idx] ?? 0) / 1000 + (running ? onThis : 0);
 
   // Banks the time spent on the current question before moving anywhere.
   function bankTime(): Record<number, number> {
@@ -198,6 +207,7 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
   }
 
   function begin() {
+    setNotice("");
     void turn(
       document.querySelector<HTMLElement>(".nbk-page"),
       () => {
@@ -242,6 +252,7 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           weekly: !!weekly,
+          week: weekly ? setWeek ?? weekly.week : undefined,
           items: items.map((it, i) => ({
             itemId: it.id,
             choiceText: it.shown[answers[i]],
@@ -250,6 +261,20 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
           })),
         }),
       });
+      // Signed out, or the trial ended, since the set began. The draft stays
+      // put for when they're back.
+      if (res.status === 401 || res.status === 402) {
+        window.location.assign(res.status === 401 ? "/login" : "/subscribe");
+        return;
+      }
+      // Every question in the set was reworded after it was drawn, so none
+      // of it can be graded: start over with a fresh set and say why.
+      if (res.status === 409) {
+        clearDraft(key);
+        await load(false);
+        setNotice("This review was updated after you started it. Here's a fresh set.");
+        return;
+      }
       if (!res.ok) throw new Error();
       const data = (await res.json()) as SubmitResponse;
       clearDraft(key);
@@ -257,7 +282,9 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
       // The review counts as today's study: every mounted Ozho re-reads his mood.
       window.dispatchEvent(new CustomEvent("ozho:fed"));
       setPhase("results");
-      router.refresh();
+      // Not after a weekly review: the page sends a finished week on to
+      // plain mixed review, which would take these results off the screen.
+      if (!weekly) router.refresh();
       requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
     } catch {
       setError("Couldn't save your answers. Check your connection and try again.");
@@ -313,17 +340,31 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
   }
 
   // Keyboard: A-D (or 1-4) pick an answer; Enter locks it in as "Sure".
+  // Only for keys aimed at the question: not while a dialog or menu is open
+  // (Feedback, the account menu, Ozho's panel), and not when focus is on a
+  // control elsewhere on the page, whose keys are its own. Inside the
+  // question card the keys keep working wherever focus sits (a click on a
+  // choice leaves it there for the rest of the set), except that Enter on
+  // one of its buttons presses that button and nothing else.
   useEffect(() => {
     if (phase !== "run") return;
     function onKey(e: KeyboardEvent) {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      const t = e.target as HTMLElement | null;
-      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;
+      if (document.querySelector('[role="dialog"], [role="menu"]')) return;
+      const el = e.target instanceof Element ? e.target : null;
+      const control = el?.closest('input, textarea, select, button, a, [role="radio"], [contenteditable]') ?? null;
+      const inCard = !!control && !!cardRef.current?.contains(control);
+      const onChoice = inCard && !!control?.matches('[role="radio"]');
+      if (control && !inCard) return;
+      // A choice handles its own Enter (it picks itself); anything else
+      // that has already dealt with the key keeps it.
+      if (e.defaultPrevented && !onChoice) return;
       const k = e.key.toLowerCase();
       const n = "abcd".indexOf(k) >= 0 ? "abcd".indexOf(k) : "1234".indexOf(k);
       if (n >= 0 && n < (items[idx]?.shown.length ?? 0)) {
         setAnswers((a) => ({ ...a, [idx]: n }));
       } else if (e.key === "Enter" && answers[idx] !== undefined) {
+        if (control && !onChoice) return;
         e.preventDefault();
         lockIn("sure");
       }
@@ -364,7 +405,7 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
         <Eyebrow weekly={!!weekly} />
         {weekly ? (
           <>
-            <h1 className="font-display text-[28px] font-semibold leading-tight text-ink">Week {weekly.week} review</h1>
+            <h1 className="font-display text-[28px] font-semibold leading-tight text-ink">Week {setWeek ?? weekly.week} review</h1>
             <p className="mt-2 max-w-[62ch] text-[15px] leading-relaxed text-stone-600">
               {items.length} questions from everything you&apos;ve learned so far, leaning toward what you haven&apos;t seen in
               a while. One of these a week keeps your first lessons as sharp on test day as your latest ones.
@@ -383,6 +424,10 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
               skill each one tests. Spotting that is half of what the real SAT asks.
             </p>
           </>
+        )}
+
+        {notice && (
+          <p className="mt-3 rounded-xl border border-[#f0e0b0] bg-[#fffaf0] px-4 py-2.5 text-[13.5px] text-ink">{notice}</p>
         )}
 
         <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -475,7 +520,7 @@ export function ReviewClient({ weekly = null }: { weekly?: Weekly | null }) {
               ))}
             </div>
           </div>
-          <PaceClock elapsed={elapsed} target={it.pace} label="this question" />
+          <QuestionClock banked={times[idx] ?? 0} startedAt={startedAt} running={running} target={it.pace} />
         </div>
 
         <div ref={cardRef} className="rounded-2xl border border-[#c9d6ee] bg-white p-5 shadow-[3px_3px_0_rgba(52,97,193,0.13)] sm:p-6">
@@ -608,7 +653,10 @@ function ReviewResults({
   const spent = items.reduce((acc, _, i) => acc + (times[i] ?? 0), 0) / 1000;
   const target = items.reduce((acc, it) => acc + it.pace, 0);
   const shaky = items.filter((it, i) => byId.get(it.id)?.correct && conf[i] && conf[i] !== "sure");
-  const firstMiss = items.findIndex((it) => !byId.get(it.id)?.correct);
+  // A question reworded while the set was open isn't graded (the server
+  // drops it), so it has no result: it is neither a miss nor listed below.
+  const firstMiss = items.findIndex((it) => byId.get(it.id)?.correct === false);
+  const dropped = items.filter((it) => !byId.has(it.id)).length;
   const repeatedTrap = topRepeatedTrap(res.results.map((r) => r.trap));
   const listRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -632,6 +680,12 @@ function ReviewResults({
             <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-stone-500">{weekly ? "Weekly review" : "Mixed review"}</div>
             <div className="mt-1 font-display text-[26px] font-semibold leading-tight text-ink">{copy.headline}</div>
             <p className="mt-1 max-w-[46ch] text-sm leading-relaxed text-stone-600">{copy.body}</p>
+            {dropped > 0 && (
+              <p className="mt-1 max-w-[46ch] text-[12.5px] leading-relaxed text-stone-500">
+                {dropped === 1 ? "1 question was" : `${dropped} questions were`} updated while you worked, so{" "}
+                {dropped === 1 ? "it isn't" : "they aren't"} counted here.
+              </p>
+            )}
           </div>
         </div>
 
@@ -809,6 +863,25 @@ function ReviewResults({
       </div>
     </div>
   );
+}
+
+// The clock on the current question: time already banked on it (ms) plus
+// the stretch since she came back to it. On its own so the once-a-second
+// tick re-renders only this, not the whole question card around it (the
+// same split as SubskillClient's QuizProgress).
+function QuestionClock({
+  banked,
+  startedAt,
+  running,
+  target,
+}: {
+  banked: number;
+  startedAt: number | null;
+  running: boolean;
+  target: number;
+}) {
+  const onThis = useElapsed(startedAt, running);
+  return <PaceClock elapsed={banked / 1000 + (running ? onThis : 0)} target={target} label="this question" />;
 }
 
 function Eyebrow({ weekly = false }: { weekly?: boolean }) {

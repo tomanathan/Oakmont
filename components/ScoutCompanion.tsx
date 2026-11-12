@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { PixelDog } from "./PixelDog";
 import { MOOD_BY_STAGE } from "./PetAvatar";
 import { PET_NAME, type PetStage } from "@/lib/pet";
-import { dedupedFetchJson } from "@/lib/dedupeFetch";
+import { dedupedFetchJson, forgetFetched, PET_STATE_MAX_AGE_MS } from "@/lib/dedupeFetch";
 import { companionBus } from "@/lib/companionBus";
 import { OzhoPanel, type OzhoAction } from "./OzhoPanel";
 import { PixelBall, planToss, stepBall, ballGround, setBallTurn, type BallSim } from "./ozhoBall";
@@ -690,6 +690,9 @@ export function ScoutCompanion() {
   // JSX, which a ref alone can't do).
   const [isMobile, setIsMobile] = useState(false);
   const isMobileRef = useRef(false);
+  // Starts and stops the render loop's timer (set by the loop's own
+  // effect): docked, the tick has nothing to do, so it isn't left firing.
+  const tickLoopRef = useRef<((on: boolean) => void) | null>(null);
   // The "Sit" menu action -- holds him still in the sitting pose
   // (PixelDog's own `sitting` prop) until he's told to get up, another
   // action picks him back up (see handleMenuAction), or he has to break
@@ -840,8 +843,10 @@ export function ScoutCompanion() {
 
     // Read on mount, and again whenever a study session lands ("ozho:fed",
     // sent after a finished lesson, quiz, or review), so his mood and the
-    // fed-today flag update without a page reload.
-    function loadPetState() {
+    // fed-today flag update without a page reload. The mount read may reuse
+    // what AppShell read a moment ago (see lib/dedupeFetch.ts); the re-read
+    // after a session is forced, since that's exactly when it has changed.
+    function loadPetState(force: boolean) {
       dedupedFetchJson<{
         stage: PetStage;
         currentStreak?: number;
@@ -851,7 +856,7 @@ export function ScoutCompanion() {
         daysUntilTest?: number | null;
         weakestDomain?: string | null;
         fedToday?: boolean;
-      }>("/api/pet/state")
+      }>("/api/pet/state", { maxAgeMs: PET_STATE_MAX_AGE_MS, force })
         .then((data) => {
           if (data && data.stage) {
             stageRef.current = data.stage;
@@ -868,13 +873,15 @@ export function ScoutCompanion() {
         })
         .catch(() => {});
     }
-    loadPetState();
-    window.addEventListener("ozho:fed", loadPetState);
+    loadPetState(false);
+    const onFed = () => loadPetState(true);
+    window.addEventListener("ozho:fed", onFed);
 
     function checkMobile() {
       const mobile = window.innerWidth < MOBILE_BREAKPOINT;
       isMobileRef.current = mobile;
       setIsMobile(mobile);
+      tickLoopRef.current?.(!mobile);
     }
     checkMobile();
     window.addEventListener("resize", checkMobile);
@@ -967,7 +974,11 @@ export function ScoutCompanion() {
     // instant and doesn't depend on any refetch actually firing.
     function onCostumeChange(e: Event) {
       const detail = (e as CustomEvent<{ costume: string | null }>).detail;
-      if (detail) setCostume(detail.costume);
+      if (!detail) return;
+      // The remembered pet state still names the old costume (see
+      // lib/dedupeFetch.ts) -- drop it so nothing reads that back.
+      forgetFetched("/api/pet/state");
+      setCostume(detail.costume);
     }
     window.addEventListener("ozho:costume", onCostumeChange);
 
@@ -1057,7 +1068,7 @@ export function ScoutCompanion() {
       window.removeEventListener("ozho:board", onBoard);
       window.removeEventListener("ozho:unboard", onUnboard);
       window.removeEventListener("ozho:swap", onSwap);
-      window.removeEventListener("ozho:fed", loadPetState);
+      window.removeEventListener("ozho:fed", onFed);
       if (trickTimeoutRef.current) clearTimeout(trickTimeoutRef.current);
       if (perkTimeoutRef.current) clearTimeout(perkTimeoutRef.current);
       if (pettingTimeoutRef.current) clearTimeout(pettingTimeoutRef.current);
@@ -1163,11 +1174,31 @@ export function ScoutCompanion() {
       hasMountedPathRef.current = true;
     }
 
-    const interval = setInterval(refreshTextRects, TEXT_REFRESH_MS);
+    // The interval's refresh only -- a navigation or a resize always
+    // rescans. It walks the whole DOM, so it's skipped while nothing could
+    // use what it finds: the tab is hidden; he's docked on a phone (Mochi
+    // docks at the same width, and neither walks); or he's sound asleep
+    // and Mochi isn't out steering by the same rects (see
+    // lib/companionBus.ts). Each of those ends with a fresh scan before
+    // the rects matter again: coming back to the tab rescans right away
+    // (onVisible), leaving the phone layout is a resize, and waking him
+    // rescans as the stretch starts (see beginWakeUp).
+    function pollTextRects() {
+      if (document.hidden || isMobileRef.current) return;
+      const soundAsleep = asleepRef.current && sleepAnimRef.current === "none";
+      if (soundAsleep && Date.now() - companionBus.textReadAt > TEXT_REFRESH_MS) return;
+      refreshTextRects();
+    }
+    function onVisible() {
+      if (!document.hidden) pollTextRects();
+    }
+    const interval = setInterval(pollTextRects, TEXT_REFRESH_MS);
     window.addEventListener("resize", refreshTextRects);
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       clearInterval(interval);
       window.removeEventListener("resize", refreshTextRects);
+      document.removeEventListener("visibilitychange", onVisible);
       if (navSpeakTimeoutRef.current) clearTimeout(navSpeakTimeoutRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1355,6 +1386,9 @@ export function ScoutCompanion() {
     }
     sleepAnimRef.current = "waking";
     setSleepAnim("waking");
+    // The page's text wasn't being rescanned while he slept (see
+    // pollTextRects) -- catch up before he's on his feet and steering by it.
+    refreshTextRects();
     sleepAnimTimeoutRef.current = setTimeout(() => {
       asleepRef.current = false;
       setAsleep(false);
@@ -1726,7 +1760,7 @@ export function ScoutCompanion() {
   // React state, so 60fps movement doesn't mean 60 re-renders/sec -- only
   // the occasional pose/mood/bubble change goes through React.
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    const tick = () => {
       const now = performance.now();
       const dt = lastFrameRef.current === null ? 16 : Math.min(64, now - lastFrameRef.current);
       lastFrameRef.current = now;
@@ -2287,8 +2321,26 @@ export function ScoutCompanion() {
           at: Date.now(),
           resting: !walkingRef.current && (idleActRef.current === "rest" || sittingRef.current),
         };
-    }, 16);
-    return () => clearInterval(intervalId);
+    };
+    // Docked on a phone, every tick stops at the isMobileRef check near the
+    // top, so the timer only runs while he's roaming: checkMobile switches
+    // it (through tickLoopRef) whenever the window crosses the breakpoint.
+    // That effect runs before this one, so isMobileRef is already right.
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    const run = (on: boolean) => {
+      if (on && intervalId === null) {
+        intervalId = setInterval(tick, 16);
+      } else if (!on && intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    };
+    tickLoopRef.current = run;
+    run(!isMobileRef.current);
+    return () => {
+      run(false);
+      tickLoopRef.current = null;
+    };
   }, []);
 
   // ---- Click menu plumbing ----------------------------------------------

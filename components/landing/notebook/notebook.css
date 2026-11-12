@@ -2629,3 +2629,54 @@
     padding: 8px 14px;
   }
 }
+
+/* ---------- phones and tablets: the section links, as a second row ----------
+   The menus are hidden at this width (see .nb-navlinks above), so the bar
+   grows one row of plain links under it. Markup: .nb-navrow in Nav.tsx. */
+.nb-navrow {
+  display: none;
+}
+@media (max-width: 960px) {
+  /* A grid, not a wrapping flex row: the logo and the buttons keep sharing
+     the first line exactly as before (the wordmark still gives way first),
+     and the links take a full line of their own. */
+  .nb-nav {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 0;
+    padding-bottom: 2px;
+  }
+  .nb-sitebar .nb-nav {
+    padding-bottom: 2px;
+  }
+  .nb-nav .nb-logo-link {
+    justify-self: start;
+  }
+  .nb-navrow {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 4px;
+    min-width: 0;
+  }
+  .nb-navrow .nb-navlink {
+    padding: 0 10px;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .nb-navrow .nb-navlink::after {
+    left: 10px;
+    right: 10px;
+  }
+  /* The taller bar, for whatever sticks under it (10 + 44 + 44 + 2, and
+     the 2px rule). */
+  :root:has(.nb-sitebar) {
+    --site-bar: 102px;
+  }
+}
+@media (max-width: 760px) {
+  :root:has(.nb-sitebar) {
+    --site-bar: 100px;
+  }
+}

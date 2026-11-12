@@ -18,7 +18,7 @@ export function Pitch() {
           Every SAT skill, one week at a time, <span className="nb-hl nb-hl--static">tracked the whole way.</span>
         </h2>
         <p className="nb-body">
-          A plan built around your test date, with lessons, practice and full-length tests. Parents follow along on a free dashboard of their own.
+          A plan built around your test date, with lessons, practice, and the official practice tests scheduled for you. Parents follow along on a free dashboard of their own.
         </p>
         <div className="nb-par-ctas">
           <TrackedLink href="/start" event="signup_started" className="nb-btn nb-btn--raised nb-btn--lg">

@@ -44,7 +44,7 @@ export async function PATCH(req: NextRequest) {
   if (equippedCostume !== undefined && equippedCostume !== null) {
     const [progressRows, latestTest, streakUser] = await Promise.all([
       prisma.progress.findMany({ where: { userId: user.userId } }),
-      prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
+      prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: [{ takenAt: "desc" }, { createdAt: "desc" }] }),
       prisma.user.findUnique({ where: { id: user.userId }, select: { daysStudied: true } }),
     ]);
     const progress = progressMapFromRows(progressRows);

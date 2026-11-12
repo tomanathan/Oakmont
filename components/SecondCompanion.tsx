@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { PixelDog } from "./PixelDog";
 import { SECOND_PET_NAME } from "@/lib/pet";
-import { dedupedFetchJson } from "@/lib/dedupeFetch";
+import { dedupedFetchJson, PET_STATE_MAX_AGE_MS } from "@/lib/dedupeFetch";
 import { companionBus, pointInText } from "@/lib/companionBus";
 
 // Mochi: the second companion, earned at a long streak (see lib/pet.ts's
@@ -100,7 +100,7 @@ export function SecondCompanion() {
   // mounting this alongside Ozho doesn't double the network traffic.
   useEffect(() => {
     let cancelled = false;
-    dedupedFetchJson<{ mochiUnlocked?: boolean }>("/api/pet/state")
+    dedupedFetchJson<{ mochiUnlocked?: boolean }>("/api/pet/state", { maxAgeMs: PET_STATE_MAX_AGE_MS })
       .then((data) => {
         if (!cancelled && data) setUnlocked(!!data.mochiUnlocked);
       })

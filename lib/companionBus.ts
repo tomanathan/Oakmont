@@ -22,9 +22,14 @@ export const companionBus: {
   // Every element with its own visible text, in page coordinates --
   // refreshed by Ozho on scroll/resize/DOM change.
   textRects: PageRect[];
+  // When pointInText last looked at them. Ozho's scan walks the whole DOM,
+  // so he skips it while he's asleep -- unless this says Mochi is still up
+  // and steering by them.
+  textReadAt: number;
 } = {
   ozho: null,
   textRects: [],
+  textReadAt: 0,
 };
 
 export function pointInText(x: number, y: number, halfW: number, above: number, below: number): boolean {
@@ -33,6 +38,7 @@ export function pointInText(x: number, y: number, halfW: number, above: number, 
   const t = y - above;
   const b = y + below;
   const rects = companionBus.textRects;
+  companionBus.textReadAt = Date.now();
   for (let i = 0; i < rects.length; i++) {
     const rc = rects[i];
     if (l < rc.right && r > rc.left && t < rc.bottom && b > rc.top) return true;

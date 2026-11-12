@@ -1,17 +1,19 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { getUserStats } from "@/lib/user";
+import { getUserStats, shellStats } from "@/lib/user";
 import { hasActiveAccess } from "@/lib/subscription";
 import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
 import { computePetState } from "@/lib/pet";
 import { computeDomainMastery, completedDomainCount, orderSubskillsByWeakness } from "@/lib/mastery";
 import { progressMapFromRows, isPassed } from "@/lib/progressState";
-import { reviewCounts } from "@/lib/reviewSet";
+import { reviewCounts, reviewSetSize } from "@/lib/reviewSet";
 import { companionSummary } from "@/lib/companionSummary";
-import { buildDayPlan, getTodayPlanItem } from "@/lib/studyPlan";
-import { weeksInARow } from "@/lib/weeklyReview";
-import { addUTCDays, formatUTCDate } from "@/lib/dateOnly";
+import { getTodayPlanItem } from "@/lib/studyPlan";
+import { WEEKLY_REVIEW_SIZE } from "@/lib/weeklyReview";
+import { todaysTestLogged, weeklyStatusFor } from "@/lib/planStatus";
+import { findRecommended } from "@/lib/recommend";
+import { liveStreak } from "@/lib/gamification";
 import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } from "@/data/curriculum";
 import { AppShell } from "@/components/AppShell";
 import { WelcomeBackModal } from "@/components/WelcomeBackModal";
@@ -20,6 +22,7 @@ import { type ChecklistItem } from "@/components/GettingStarted";
 import { DashboardClient } from "./DashboardClient";
 import { parentClaimed } from "@/lib/parentAuth";
 import { leadWith } from "@/lib/planOrder";
+import { curriculumOutline } from "@/lib/curriculumOutline";
 
 // Only worth a "welcome back" recap if there was an actual gap since the
 // last login -- logging in again a few minutes later (a dropped session,
@@ -30,12 +33,33 @@ export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const [rows, stats, latestTest, weeklyRows] = await Promise.all([
+  // The getting-started checklist's own three lookups only matter while the
+  // list is still showing, which the stats row says -- so they hang off
+  // that one query and start the moment it answers, alongside the rest of
+  // this batch, instead of as a second round after all of it. Skipped
+  // exactly when they used to be: list dismissed, or about to redirect.
+  const statsLoading = getUserStats(user.userId);
+  const checklistLoading = statsLoading.then((s) =>
+    s.onboardingChecklistDismissedAt || !s.welcomeSeenAt || !hasActiveAccess(s)
+      ? null
+      : Promise.all([
+          prisma.lessonView.count({ where: { userId: user.userId } }),
+          prisma.itemAttempt.count({ where: { userId: user.userId, source: "review" } }),
+          prisma.parentLink.findMany({ where: { studentId: user.userId }, select: { parent: { select: { email: true, passwordHash: true, googleSub: true } } } }),
+        ])
+  );
+  const [rows, stats, tests, weeklyRows, checklistRows] = await Promise.all([
     prisma.progress.findMany({ where: { userId: user.userId } }),
-    getUserStats(user.userId),
-    prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
+    statsLoading,
+    prisma.practiceTest.findMany({
+      where: { userId: user.userId },
+      orderBy: [{ takenAt: "desc" }, { createdAt: "desc" }],
+      select: { takenAt: true, createdAt: true, domainScores: true },
+    }),
     prisma.weeklyReview.findMany({ where: { userId: user.userId }, select: { week: true } }),
+    checklistLoading,
   ]);
+  const latestTest = tests[0] ?? null;
   // Onboarding comes before choosing a plan, so check it first.
   if (!stats.welcomeSeenAt) redirect("/welcome");
   if (!hasActiveAccess(stats)) redirect("/subscribe");
@@ -98,29 +122,14 @@ export default async function DashboardPage() {
     : null;
 
   // This week's weekly review: which day the plan puts it on, whether it's
-  // done, and how many weeks in a row have been.
-  let weekly: { week: number; done: boolean; due: boolean; today: boolean; day: string; inARow: number } | null = null;
-  if (todayItem) {
-    const wi = todayItem.week - 1;
-    const days = buildDayPlan(
-      studyPlan[wi],
-      studyPlan.slice(0, wi).flatMap((w) => w.subskillIds),
-      wi === studyPlan.length - 1 ? courseLengthDays - wi * 7 : 7
-    );
-    const at = days.findIndex((d) => d.weekly);
-    if (at >= 0) {
-      const reviewed = weeklyRows.map((r) => r.week);
-      const todayAt = todayItem.day.day - 1;
-      weekly = {
-        week: todayItem.week,
-        done: reviewed.includes(todayItem.week),
-        due: todayAt >= at,
-        today: todayAt === at,
-        day: formatUTCDate(addUTCDays(createdAt, wi * 7 + at), { weekday: "long" }),
-        inARow: weeksInARow(reviewed, todayItem.week),
-      };
-    }
-  }
+  // done, how many weeks in a row have been, and how long the set will be
+  // (shorter than the full size while only a few skills are in play). See
+  // lib/planStatus.ts, shared with /api/plan/next.
+  const weeklyStatus = weeklyStatusFor(studyPlan, todayItem, createdAt, courseLengthDays, weeklyRows.map((r) => r.week));
+  const weekly = weeklyStatus ? { ...weeklyStatus, questions: reviewSetSize(progress, WEEKLY_REVIEW_SIZE) } : null;
+  // On a practice-test day, whether the test is already logged.
+  const testLogged = todaysTestLogged(studyPlan, todayItem, createdAt, tests);
+  const review = reviewCounts(progress);
 
   // This week's slice of the plan, for the dashboard's own "this week"
   // progress cut (see PlanClient for the plan page's overall-progress bar,
@@ -152,15 +161,21 @@ export default async function DashboardPage() {
   // where that lands hardest. Same computation the settings card and the
   // header pill use.
   const petState = computePetState(stats.lastActiveDate ?? null, stats.petBornAt);
+  // Where "Warm him up" goes: the dashboard's own next step, so it never
+  // lands on a skill that's already passed. A practice test doesn't feed
+  // him, so on a test day it's the next lesson or review instead.
+  const warmUpHref =
+    findRecommended(curriculumOutline(CURRICULUM), progress, today, {
+      order: weaknessOrderedIds,
+      reviewReady: review.ready,
+      weekly,
+      testLogged: true,
+    })?.href ?? `/subskill/${todayItem?.day.subskillIds[0] ?? weaknessOrderedIds[0]}`;
 
   // Getting-started checklist: each item checked off by real activity.
   let checklist: ChecklistItem[] | null = null;
-  if (!stats.onboardingChecklistDismissedAt) {
-    const [lessonViews, reviewAttempts, parentLinks] = await Promise.all([
-      prisma.lessonView.count({ where: { userId: user.userId } }),
-      prisma.itemAttempt.count({ where: { userId: user.userId, source: "review" } }),
-      prisma.parentLink.findMany({ where: { studentId: user.userId }, select: { parent: { select: { email: true, passwordHash: true, googleSub: true } } } }),
-    ]);
+  if (checklistRows) {
+    const [lessonViews, reviewAttempts, parentLinks] = checklistRows;
     const firstId = todayItem?.day.subskillIds[0] ?? weaknessOrderedIds[0];
     checklist = [
       {
@@ -211,14 +226,14 @@ export default async function DashboardPage() {
   }
 
   return (
-    <AppShell email={user.email} stats={stats} wide>
+    <AppShell email={user.email} stats={shellStats(stats)} wide>
       {/* Cold Ozho gets his own explanation on arrival (once per login and
           per day), in place of the welcome-back note. */}
       {petState.stage === "cold" && (
         <ColdOzhoNotice
           sessionKey={`${stats.lastLoginAt?.toISOString() ?? ""}:${new Date().toISOString().slice(0, 10)}`}
           daysInactive={petState.daysInactive}
-          href={`/subskill/${todayItem?.day.subskillIds[0] ?? weaknessOrderedIds[0]}`}
+          href={warmUpHref}
         />
       )}
       {petState.stage !== "cold" && showWelcomeBack && stats.previousLoginAt && stats.lastLoginAt && (
@@ -227,7 +242,7 @@ export default async function DashboardPage() {
           previousLoginAt={stats.previousLoginAt.toISOString()}
           quizzesLastSession={quizzesLastSession}
           masteredLastSession={masteredLastSession}
-          currentStreak={stats.currentStreak}
+          currentStreak={liveStreak(stats.currentStreak, stats.lastActiveDate ?? null, new Date(), stats.streakFreezes)}
           petStage={petState.stage}
           petMessage={petState.message}
         />
@@ -235,7 +250,7 @@ export default async function DashboardPage() {
       <DashboardClient
         firstName={stats.firstName ?? null}
         checklist={checklist}
-        curriculum={CURRICULUM}
+        curriculum={curriculumOutline(CURRICULUM)}
         progress={progress}
         pacing={pacing}
         domainMastery={domainMastery}
@@ -243,8 +258,9 @@ export default async function DashboardPage() {
         daysUntilTest={daysUntilTest(stats.targetTestDate ?? null)}
         thisWeek={{ done: weekDone, total: weekTotal }}
         planOrder={weaknessOrderedIds}
-        review={reviewCounts(progress)}
+        review={review}
         weekly={weekly}
+        testLogged={testLogged}
         companion={companionSummary({
           lastActiveDate: stats.lastActiveDate ?? null,
           petBornAt: stats.petBornAt,

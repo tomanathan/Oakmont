@@ -66,6 +66,18 @@ export function reviewCounts(progress: ProgressMap) {
   };
 }
 
+/**
+ * How many questions a set asked for at `size` will really hold. Each skill
+ * gives at most MAX_PER_SUBSKILL, so early on a set is shorter than asked:
+ * a weekly review is 6, 9 or 12 questions with two, three or four skills.
+ * 0 until there are enough skills to mix.
+ */
+export function reviewSetSize(progress: ProgressMap, size: number = REVIEW_SET_SIZE): number {
+  const ids = introducedSubskills(progress);
+  if (ids.length < MIN_SUBSKILLS_FOR_REVIEW) return 0;
+  return Math.min(size, ids.reduce((acc, id) => acc + Math.min(MAX_PER_SUBSKILL, itemsForSubskill(id).length), 0));
+}
+
 export function buildReviewSet(
   progress: ProgressMap,
   attempts: AttemptLite[],

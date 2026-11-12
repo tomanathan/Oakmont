@@ -23,7 +23,8 @@ export async function sendParentReports(now: Date = new Date()): Promise<{ paren
     try {
       const students = [];
       for (const l of p.links) {
-        const report = await loadParentReport(l.studentId, { name: displayName(l.nickname || l.student.firstName, l.student.email), timeZone: p.timeZone, now });
+        // The week ending yesterday: this goes out before Sunday has begun.
+        const report = await loadParentReport(l.studentId, { name: displayName(l.nickname || l.student.firstName, l.student.email), timeZone: p.timeZone, now, completeDays: true });
         students.push({ id: l.studentId, report });
       }
       // Not set up yet: the email carries a fresh set-password link.

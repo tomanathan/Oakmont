@@ -7,11 +7,15 @@
 // catch the eye at the top of the page, right where the roadmap -- now the
 // actual main content of /plan -- begins, and hand off to that section
 // with one click instead of asking a student to go find it.
-export function TestDuePrompt({ testNumber }: { testNumber: number }) {
+// `thisWeek` is false when the test's own week has already gone by: it is
+// still the next one to log, just no longer "this week".
+export function TestDuePrompt({ testNumber, thisWeek = true }: { testNumber: number; thisWeek?: boolean }) {
   return (
     <div className="flex items-center justify-between gap-3 bg-[#fffaf0] border border-[#f0e0b0] rounded-xl px-5 py-3.5 mb-5 flex-wrap">
       <div className="text-sm text-ink">
-        <span className="font-semibold">Practice test {testNumber} of 8 is on your schedule this week.</span>{" "}
+        <span className="font-semibold">
+          Practice test {testNumber} of 8 is {thisWeek ? "on your schedule this week" : "next on your schedule"}.
+        </span>{" "}
         <span className="text-stone-500">Log your results and the plan below adjusts to fit.</span>
       </div>
       <button

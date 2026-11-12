@@ -29,6 +29,7 @@ export function ExamChoices({
   disabled = false,
   struck = [],
   crossOut = true,
+  arrowSelects = true,
 }: {
   choices: string[];
   correctIndex: number;
@@ -46,11 +47,18 @@ export function ExamChoices({
   // choice you've ruled out. Only while answering; the lines stay once
   // the answer is shown.
   crossOut?: boolean;
+  // Whether arrow keys pick the choice they land on, as on a native radio
+  // group. False where picking is final (the starter questions reveal the
+  // answer at once): arrows then only move focus, and Enter or Space picks.
+  arrowSelects?: boolean;
 }) {
   const key = choices.join("|");
   const [crossed, setCrossed] = useState<{ key: string; set: Set<number> }>({ key, set: new Set() });
   const out = crossed.key === key ? crossed.set : new Set<number>();
   const canCross = crossOut && !revealed && !disabled;
+  // Where the Tab stop sits when arrows only move focus (it follows focus).
+  const [focused, setFocused] = useState<{ key: string; ci: number } | null>(null);
+  const tabStop = !arrowSelects && focused?.key === key ? focused.ci : selected ?? 0;
   function toggleCross(ci: number) {
     const next = new Set(out);
     if (next.has(ci)) next.delete(ci);
@@ -74,7 +82,7 @@ export function ExamChoices({
     if (delta === 0) return;
     e.preventDefault();
     const next = (ci + delta + choices.length) % choices.length;
-    select(next);
+    if (arrowSelects) select(next);
     const group = e.currentTarget.closest('[role="radiogroup"]');
     (group?.querySelectorAll<HTMLElement>('[role="radio"]')[next])?.focus();
   }
@@ -91,7 +99,7 @@ export function ExamChoices({
         // (the first choice, before anything's picked), so Tab moves past
         // the whole group in one stop and arrow keys move within it --
         // exactly how a native radio group behaves.
-        const tabIndex = disabled ? -1 : isSelected || (selected === null && ci === 0) ? 0 : -1;
+        const tabIndex = disabled ? -1 : ci === tabStop ? 0 : -1;
         // Row and letter badge share one state: resting (warm border,
         // pale sage badge), picked (green outline, solid badge), and once
         // revealed, right (green) or wrong (red). The badge carries the
@@ -120,6 +128,7 @@ export function ExamChoices({
               tabIndex={tabIndex}
               onClick={() => !disabled && select(ci)}
               onKeyDown={(e) => handleKeyDown(e, ci)}
+              onFocus={arrowSelects ? undefined : () => setFocused({ key, ci })}
               className={`relative flex min-w-0 flex-1 items-center gap-3 rounded-xl border px-3.5 py-3 text-[14.5px] leading-snug text-ink shadow-[3px_3px_0_rgba(52,97,193,0.13)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4a67a6] focus-visible:ring-offset-2 ${
                 disabled ? "cursor-default" : "cursor-pointer"
               } ${row}`}
@@ -159,7 +168,7 @@ export function ExamChoices({
                 aria-label={isOut ? `Undo cross-out on choice ${letter}` : `Cross out choice ${letter}`}
                 title={isOut ? "Undo" : "Cross out"}
                 className={`relative flex h-8 w-8 flex-none items-center justify-center rounded-full border text-[12px] font-bold transition-[transform,opacity] duration-150 ${
-                  isOut ? "border-[#7d8fb5] bg-[#eef2f9] text-[#4b5d82]" : "border-[#c9d6ee] bg-white text-[#7d8fb5] hover:border-[#4a67a6] hover:text-[#26427e]"
+                  isOut ? "border-[#7d8fb5] bg-[#eef2f9] text-[#4b5d82]" : "border-[#c9d6ee] bg-white text-[#5b6b8f] hover:border-[#4a67a6] hover:text-[#26427e]"
                 } ${!canCross || isSelected ? "pointer-events-none opacity-0" : "hover:-translate-y-0.5 active:scale-90"}`}
               >
                 {isOut ? (

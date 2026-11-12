@@ -13,13 +13,16 @@ export async function POST(req: NextRequest) {
   if (!invite || invite.usedAt || invite.expiresAt < new Date()) {
     return NextResponse.json({ error: "This invite link has expired or was already used. Ask for a new one." }, { status: 400 });
   }
-  await prisma.$transaction([
-    prisma.parentLink.upsert({
-      where: { parentId_studentId: { parentId: invite.parentId, studentId: user.userId } },
-      create: { parentId: invite.parentId, studentId: user.userId, nickname: invite.nickname },
-      update: {},
-    }),
-    prisma.parentInvite.update({ where: { id: invite.id }, data: { usedAt: new Date() } }),
-  ]);
+  // Claim the invite first, and only if nobody has: two students opening
+  // the same link at once can't both be connected by it.
+  const claimed = await prisma.parentInvite.updateMany({ where: { id: invite.id, usedAt: null }, data: { usedAt: new Date() } });
+  if (claimed.count !== 1) {
+    return NextResponse.json({ error: "This invite link has expired or was already used. Ask for a new one." }, { status: 400 });
+  }
+  await prisma.parentLink.upsert({
+    where: { parentId_studentId: { parentId: invite.parentId, studentId: user.userId } },
+    create: { parentId: invite.parentId, studentId: user.userId, nickname: invite.nickname },
+    update: {},
+  });
   return NextResponse.json({ ok: true });
 }

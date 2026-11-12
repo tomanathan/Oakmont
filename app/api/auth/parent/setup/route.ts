@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { hashPassword } from "@/lib/auth";
+import { hashPassword, sessionCutoff } from "@/lib/auth";
 import { safeTimeZone } from "@/lib/parentReportData";
 import { createParentSessionToken, PARENT_SESSION_COOKIE_NAME, PARENT_SESSION_MAX_AGE } from "@/lib/parentAuth";
 
@@ -23,6 +23,10 @@ export async function POST(req: NextRequest) {
       passwordHash: await hashPassword(password),
       setupToken: null,
       setupTokenExpires: null,
+      // The emailed link is the proof the address is theirs; anything
+      // signed in before this password was set is signed out.
+      emailVerifiedAt: parent.emailVerifiedAt ?? new Date(),
+      sessionsValidAfter: sessionCutoff(),
       ...(typeof body.timeZone === "string" && body.timeZone ? { timeZone: safeTimeZone(body.timeZone) } : {}),
     },
   });

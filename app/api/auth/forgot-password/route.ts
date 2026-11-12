@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
+import { clientIp, keyPart, rateLimitAll } from "@/lib/rateLimit";
 
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 
@@ -26,6 +27,16 @@ export async function POST(req: NextRequest) {
   if (!email || !email.includes("@")) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
   }
+
+  // A few an hour per account and per network. Past that the answer is the
+  // same "ok" with nothing sent: otherwise anyone could flood a student's
+  // inbox, and since each request replaces the last link, keep the link
+  // they're trying to use permanently dead.
+  const allowed = await rateLimitAll([
+    [`forgot:ip:${clientIp(req)}`, 10, 60 * 60],
+    [`forgot:acct:${keyPart(email)}`, 3, 60 * 60],
+  ]);
+  if (!allowed) return NextResponse.json({ ok: true });
 
   const user = await prisma.user.findUnique({ where: { email } });
   // Always the same response whether or not the email matches an account --

@@ -1,6 +1,9 @@
-import { buildParentReport, type AttemptLike, type LessonViewLike } from "@/lib/parentInsights";
+import { buildParentReport, dayKey, type AttemptLike, type LessonViewLike } from "@/lib/parentInsights";
 import { itemsForSubskill } from "@/lib/items";
 import { ALL_SUBSKILLS } from "@/data/curriculum";
+import { computePacing, courseLengthDaysForUser, daysUntilTest } from "@/lib/pacing";
+
+const TIME_ZONE = "America/New_York";
 
 function rng(seed: number) {
   return () => {
@@ -11,7 +14,10 @@ function rng(seed: number) {
 
 // A sample student ("Maya", invented) for the parent-report demo on the
 // homepage. Deterministic: the same seeded history every time, laid out
-// relative to `now` so it always reads as current.
+// relative to `now` so it always reads as current. Only the raw history is
+// made up here: the pace and the streak are worked out from it the way a
+// real report works them out, so the sample can't claim something its own
+// numbers don't show.
 export function sampleParentReport(now: Date = new Date(), mode?: "idle") {
   const searchParams = { mode };
   const r = rng(7);
@@ -23,8 +29,9 @@ export function sampleParentReport(now: Date = new Date(), mode?: "idle") {
     const weekday = (now.getDay() - dBack + 700) % 7;
     // The latest week reads as a student hitting their stride (more days,
     // a bit more accurate) against a patchier week before it, whatever
-    // weekday it happens to be viewed on.
-    const p = dBack < 7 ? 0.95 : dBack < 14 ? 0.5 : weekday === 0 || weekday === 6 ? 0.35 : 0.7;
+    // weekday it happens to be viewed on. The last three days are always
+    // study days, so the sample never opens on a streak that just ended.
+    const p = dBack <= 3 ? 1 : dBack < 7 ? 0.95 : dBack < 14 ? 0.5 : weekday === 0 || weekday === 6 ? 0.35 : 0.7;
     if (r() > p || (dBack > 40 && dBack < 46)) continue;
     const day = new Date(now.getTime() - dBack * 86400000);
     day.setHours(19 + Math.floor(r() * 3), Math.floor(r() * 60), 0, 0);
@@ -55,12 +62,16 @@ export function sampleParentReport(now: Date = new Date(), mode?: "idle") {
       attempts.push({ subskillId: s.id, itemId: item.id, source: review ? "review" : "quiz", correct, choice, confidence, ms, createdAt: new Date(t) });
     }
   }
-  const progressRows = skillsInOrder.slice(0, 13).map((s, i) => ({
+  // Thirteen quizzes passed by day 81 of a 26-week plan is right on the
+  // steady-pace line (12.9 expected); the two skills after that are the
+  // ones in progress now. The idle sample has slipped a couple behind.
+  const passed = gap ? 11 : 13;
+  const progressRows = skillsInOrder.slice(0, 15).map((s, i) => ({
     subskillId: s.id,
-    bestScore: i < 9 ? 15 : 11,
+    bestScore: i < passed ? 15 : 11,
     total: 15,
-    lastAttempt: new Date(now.getTime() - (70 - i * 5) * 86400000),
-    passedAt: i < 9 ? new Date(now.getTime() - (68 - i * 5) * 86400000) : null,
+    lastAttempt: new Date(now.getTime() - Math.max(1, 70 - i * 5) * 86400000),
+    passedAt: i < passed ? new Date(now.getTime() - (68 - i * 5) * 86400000) : null,
     masteredAt: i < 6 ? new Date(now.getTime() - (60 - i * 9) * 86400000) : null,
     reviewDueAt: i === 1 ? new Date(now.getTime() - 86400000) : i < 6 ? new Date(now.getTime() + 10 * 86400000) : null,
   }));
@@ -69,18 +80,35 @@ export function sampleParentReport(now: Date = new Date(), mode?: "idle") {
     { id: "t2", takenAt: new Date(now.getTime() - 32 * 86400000), compositeScore: 1230, rwScore: 620, mathScore: 610 },
     { id: "t3", takenAt: new Date(now.getTime() - 6 * 86400000), compositeScore: 1290, rwScore: 650, mathScore: 640 },
   ];
+  // Signed up 80 days ago with the SAT 26 weeks out.
+  const createdAt = new Date(now.getTime() - 80 * 86400000);
+  const targetTestDate = new Date(now.getTime() + 102 * 86400000);
+
+  // The streak the history above contains: the run of study days ending
+  // today, or yesterday when today's session hasn't happened yet.
+  const studied = new Set([...attempts, ...lessons].map((e) => dayKey(e.createdAt, TIME_ZONE)));
+  const [y, m, d] = dayKey(now, TIME_ZONE).split("-").map(Number);
+  const daysBack = (n: number) => new Date(Date.UTC(y, m - 1, d - n)).toISOString().slice(0, 10);
+  let currentStreak = 0;
+  for (let n = studied.has(daysBack(0)) ? 0 : 1; studied.has(daysBack(n)); n++) currentStreak++;
+  let longestStreak = 0;
+  for (let n = 80, run = 0; n >= 0; n--) {
+    run = studied.has(daysBack(n)) ? run + 1 : 0;
+    longestStreak = Math.max(longestStreak, run);
+  }
+
   const report = buildParentReport({
     now,
-    timeZone: "America/New_York",
+    timeZone: TIME_ZONE,
     name: "Maya",
-    student: { createdAt: new Date(now.getTime() - 80 * 86400000), currentStreak: gap ? 0 : 4, longestStreak: 11, lastActiveDate: null, baselineScore: 1120, goalScore: 1400, targetTestDate: new Date(now.getTime() + 51 * 86400000) },
+    student: { createdAt, currentStreak, longestStreak, lastActiveDate: null, baselineScore: 1120, goalScore: 1400, targetTestDate },
     attempts,
     lessonViews: lessons,
     progressRows,
     tests,
-    pacing: { totalUnits: 29, completedUnits: 9, dayOfCourse: 80, totalDays: 131, totalWeeks: 19, pctExpected: 61, pctComplete: 31, unitsAhead: -3, status: gap ? "behind" : "onTrack" },
+    pacing: computePacing(createdAt, now, ALL_SUBSKILLS.length, passed, courseLengthDaysForUser(createdAt, targetTestDate)),
     thisWeekPlan: { done: 1, total: 2 },
-    daysUntilTest: 51,
+    daysUntilTest: daysUntilTest(targetTestDate, now),
   });
   return report;
 }

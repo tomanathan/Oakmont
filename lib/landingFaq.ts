@@ -7,7 +7,7 @@
 export const FAQ_ITEMS = [
   {
     q: "Is this for the digital SAT?",
-    a: "Yes. It follows the current digital format: two modules per section, with difficulty that adapts as you go.",
+    a: "Yes. Every lesson and question is written for the current digital SAT.",
   },
   {
     q: "How is this different from Khan Academy?",
@@ -19,7 +19,7 @@ export const FAQ_ITEMS = [
   },
   {
     q: "What do parents get?",
-    a: "A free dashboard with every session, skill and practice score, plus a Sunday email. Your student adds your email when they sign up.",
+    a: "A free dashboard with every session, skill and practice score, plus a Sunday email. Create your own free account, or your student can add your email.",
   },
   {
     q: "What if my student needs to retake?",

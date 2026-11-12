@@ -3,6 +3,7 @@ import { sendEmail } from "@/lib/email";
 import { computePetState } from "@/lib/pet";
 import { hasActiveAccess } from "@/lib/subscription";
 import { utcDayDiff } from "@/lib/dateOnly";
+import { liveStreak } from "@/lib/gamification";
 import { displayName } from "@/lib/parentReportData";
 import { parentClaimed } from "@/lib/parentAuth";
 import { todayPlanFor, type TodayPlan } from "@/lib/todayPlan";
@@ -107,7 +108,7 @@ export async function runEncourage(slot: Slot, now: Date = new Date(), opts: { d
       everStudied: !!u.lastActiveDate,
       daysToTest: u.targetTestDate ? utcDayDiff(now, u.targetTestDate) : null,
       // A streak only counts if it's still alive (studied today or yesterday).
-      streak: pet.daysInactive <= 1 ? u.currentStreak : 0,
+      streak: liveStreak(u.currentStreak, u.lastActiveDate, now),
     });
   }
   const wantsNudge = (f: { daysInactive: number; everStudied: boolean }) => f.everStudied && f.daysInactive >= 1 && f.daysInactive <= NUDGE_WITHIN_DAYS;

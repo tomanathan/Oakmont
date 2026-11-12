@@ -46,8 +46,12 @@ export function PlanClient({
   targetTestDate,
   daysUntilTest,
   reviewedWeeks,
+  weeklyQuestions = WEEKLY_REVIEW_SIZE,
 }: {
   reviewedWeeks: number[];
+  // How many questions this week's weekly review would hold right now
+  // (fewer than the full set early on); 0 until two skills are in play.
+  weeklyQuestions?: number;
   weeks: WeekItem[];
   progress: ProgressMap;
   courseStartDate: string;
@@ -61,6 +65,12 @@ export function PlanClient({
     allSubskills.length > 0 ? Math.round((doneSubskills / allSubskills.length) * 100) : 0;
   const totalTests = weeks.reduce((acc, w) => acc + w.testNumbers.length, 0);
   const lastWeek = weeks[weeks.length - 1];
+  // The plan runs up to the day before the test, so the exam gets a row of
+  // its own after the last week (unless a plan day already falls on it).
+  const examAfterPlan =
+    !!targetTestDate &&
+    !!lastWeek &&
+    utcDayDiff(addUTCDays(courseStartDate, (lastWeek.week - 1) * 7 + lastWeek.days.length - 1), targetTestDate) > 0;
 
   // UTC calendar-day difference, not raw elapsed milliseconds -- keeps
   // "today"/"this week" lined up with the server's own day-of-course math
@@ -206,8 +216,9 @@ export function PlanClient({
                   {w.days.map((d) => {
                     const dayDate = addUTCDays(weekStart, d.day - 1);
                     const isToday = isCurrentWeek && d.day - 1 === currentDayOfWeek;
-                    const isExamDay =
-                      !!targetTestDate && w === lastWeek && d.day === lastWeek.days[lastWeek.days.length - 1]?.day;
+                    // By date, not position: the plan's last row is the day
+                    // before the test.
+                    const isExamDay = !!targetTestDate && utcDayDiff(dayDate, targetTestDate) === 0;
                     return (
                       <div
                         key={d.day}
@@ -240,6 +251,7 @@ export function PlanClient({
                                     week: w.week,
                                     done: reviewedWeeks.includes(w.week),
                                     when: w.week < currentWeekNumber ? "past" : w.week === currentWeekNumber ? "now" : "later",
+                                    questions: weeklyQuestions,
                                   }
                                 : null
                             }
@@ -252,6 +264,18 @@ export function PlanClient({
             </div>
           );
         })}
+        {examAfterPlan && targetTestDate && (
+          <div className="flex items-start gap-3 rounded-[10px] border border-[#f0e0b0] bg-[#fffaf0] px-3.5 py-2.5">
+            <div className="w-14 flex-shrink-0 pt-0.5">
+              <div className="text-[11px] font-bold text-stone-500">{formatUTCDate(targetTestDate, { weekday: "short" })}</div>
+              <div className="text-[10px] text-stone-500">{formatUTCDate(targetTestDate, { month: "short", day: "numeric" })}</div>
+              <div className="text-[9px] font-bold uppercase text-[#9a6a12]">SAT day</div>
+            </div>
+            <div className="min-w-0 flex-1 pt-0.5 text-[13px] text-stone-600">
+              Nothing to study on test day. You&apos;ve put in the work. Good luck!
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -266,7 +290,7 @@ function DayContent({
   day: DayItem;
   progress: ProgressMap;
   onNavigate: (path: string) => void;
-  weekly: { week: number; done: boolean; when: "past" | "now" | "later" } | null;
+  weekly: { week: number; done: boolean; when: "past" | "now" | "later"; questions: number } | null;
 }) {
   if (day.type === "rest") {
     return <div className="text-[13px] italic text-stone-500">Rest &amp; catch up</div>;
@@ -297,6 +321,16 @@ function DayContent({
   }
   if (day.type === "review" && weekly) {
     const open = weekly.when === "now" && !weekly.done;
+    // This week's, before there are two skills to mix: shown, but not a
+    // link, since the review can't be built yet.
+    if (open && weekly.questions === 0) {
+      return (
+        <div className="rounded-lg border border-[#c9d6ee] bg-[#f5f8fd] px-2.5 py-1.5">
+          <div className="text-sm font-semibold text-ink">Week {weekly.week} review</div>
+          <div className="text-xs text-stone-500">Opens after your second skill. It needs at least two to mix.</div>
+        </div>
+      );
+    }
     return (
       <button
         onClick={() => onNavigate(open ? "/review?weekly=1" : "/review")}
@@ -307,7 +341,10 @@ function DayContent({
         <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold text-ink">Week {weekly.week} review</div>
           <div className="text-xs text-stone-500">
-            {WEEKLY_REVIEW_SIZE} questions on everything you&apos;ve learned so far, leaning toward what you haven&apos;t seen in a while
+            {/* The real count for the one that can be taken now; other
+                weeks' sets aren't drawn yet, so no number is promised. */}
+            {open ? `${weekly.questions} questions` : "Questions"} on everything you&apos;ve learned so far, leaning toward what you
+            haven&apos;t seen in a while
           </div>
         </div>
         {weekly.done ? (

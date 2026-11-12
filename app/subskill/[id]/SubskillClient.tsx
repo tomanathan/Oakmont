@@ -11,7 +11,7 @@ import { StepList, ProseText } from "@/components/StepList";
 import { MathText } from "@/components/MathText";
 import { PassageText } from "@/components/PassageText";
 import { shuffleChoices, shuffled } from "@/lib/shuffle";
-import { paceFor, type Confidence } from "@/lib/items";
+import { paceFor, type Confidence } from "@/lib/pace";
 import { ConfidencePicker, CONFIDENCE_OPTIONS } from "@/components/ConfidencePicker";
 import { PaceClock, formatSeconds, useElapsed } from "@/components/PaceClock";
 import { GeometryDiagram } from "@/components/GeometryDiagram";
@@ -26,9 +26,13 @@ import { Stamp } from "@/components/paper/Stamp";
 // Time on a lesson before finishing it counts as the day's study (see below).
 const MIN_LESSON_MS = 2 * 60 * 1000;
 
+const SAVE_FAILED = "Couldn't save your quiz. Check your connection and submit again.";
+
 interface SubmitResult {
   justPassed: boolean;
   alreadyMastered: boolean;
+  // Whether a mixed review can be built yet (it needs two skills).
+  reviewReady: boolean;
   currentStreak: number;
   justCompletedDomain: string | null;
   newCostume: { id: string; name: string } | null;
@@ -71,16 +75,18 @@ interface QuizDraft {
   confidence?: Record<number, Confidence>;
 }
 
-function quizDraftKey(subskillId: string): string {
-  return `oakmont:quiz-draft:${subskillId}`;
+// Kept per student as well as per subskill, so on a shared computer nobody
+// lands in someone else's half-answered quiz.
+function quizDraftKey(userId: string | undefined, subskillId: string): string {
+  return `oakmont:quiz-draft:${userId ?? "preview"}:${subskillId}`;
 }
 
 // Safari private mode (and any browser with storage disabled) throws on
 // both getItem and setItem, not just setItem -- and this is a phone-first
 // user, so every call here is wrapped rather than just the writes.
-function loadQuizDraft(subskillId: string, expectedQuestionCount: number): QuizDraft | null {
+function loadQuizDraft(key: string, expectedQuestionCount: number, validItemIds?: string[]): QuizDraft | null {
   try {
-    const raw = window.localStorage.getItem(quizDraftKey(subskillId));
+    const raw = window.localStorage.getItem(key);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (
@@ -89,7 +95,7 @@ function loadQuizDraft(subskillId: string, expectedQuestionCount: number): QuizD
       typeof parsed.answers !== "object" ||
       parsed.answers === null
     ) {
-      clearQuizDraft(subskillId);
+      clearQuizDraft(key);
       return null;
     }
     // The one piece of drift worth guarding against here: the question
@@ -99,12 +105,15 @@ function loadQuizDraft(subskillId: string, expectedQuestionCount: number): QuizD
     // outright rather than just ignored, so a stale draft doesn't linger
     // forever if this subskill's question count never changes back.
     // Drafts saved before questions carried ids can't be logged per item;
-    // start those fresh rather than resuming them.
+    // start those fresh rather than resuming them. The same goes for a
+    // draft holding a question the bank no longer has: rewording a question
+    // gives it a new id (lib/items.ts), so that draft could never be saved.
+    const valid = validItemIds ? new Set(validItemIds) : null;
     if (
       parsed.quizQuestions.length !== expectedQuestionCount ||
-      !parsed.quizQuestions.every((q: { id?: unknown }) => typeof q.id === "string")
+      !parsed.quizQuestions.every((q: { id?: unknown }) => typeof q.id === "string" && (!valid || valid.has(q.id)))
     ) {
-      clearQuizDraft(subskillId);
+      clearQuizDraft(key);
       return null;
     }
     return { quizQuestions: parsed.quizQuestions, answers: parsed.answers, confidence: parsed.confidence ?? {} };
@@ -114,13 +123,13 @@ function loadQuizDraft(subskillId: string, expectedQuestionCount: number): QuizD
 }
 
 function saveQuizDraft(
-  subskillId: string,
+  key: string,
   quizQuestions: QuizQuestion[],
   answers: Record<number, number>,
   confidence: Record<number, Confidence> = {}
 ) {
   try {
-    window.localStorage.setItem(quizDraftKey(subskillId), JSON.stringify({ quizQuestions, answers, confidence }));
+    window.localStorage.setItem(key, JSON.stringify({ quizQuestions, answers, confidence }));
   } catch {
     // Private browsing, storage disabled, or quota exceeded -- the quiz
     // still works this session, it just won't survive a reload. Nothing
@@ -128,9 +137,9 @@ function saveQuizDraft(
   }
 }
 
-function clearQuizDraft(subskillId: string) {
+function clearQuizDraft(key: string) {
   try {
-    window.localStorage.removeItem(quizDraftKey(subskillId));
+    window.localStorage.removeItem(key);
   } catch {
     // ignore, same as above
   }
@@ -139,11 +148,19 @@ function clearQuizDraft(subskillId: string) {
 export function SubskillClient({
   subskill,
   questions,
+  userId,
+  validItemIds,
 }: {
   subskill: Subskill;
   questions: QuizQuestion[];
+  // Whose quiz draft this is (see quizDraftKey).
+  userId?: string;
+  // Every question id this subskill's bank holds right now, to spot a saved
+  // draft that has gone stale (see loadQuizDraft).
+  validItemIds?: string[];
 }) {
   const router = useRouter();
+  const draftKey = quizDraftKey(userId, subskill.id);
   // Defaults to "lesson" and gets flipped to "practice" in the restore
   // effect below when a draft with real answers in it is found -- a
   // student resuming a quiz should land back in the quiz, not on the
@@ -154,13 +171,23 @@ export function SubskillClient({
   // Lesson reading time for the parent report: counts only while the Lesson
   // tab is showing and the page is visible, and is sent when either stops
   // (or the page is left). Short pass-throughs are dropped server-side.
+  // The same clock, kept running across the whole visit in the two refs,
+  // is what the lesson's study credit goes by (see lessonFinished below).
+  const lessonMsRef = useRef(0); // visible lesson time already banked this visit
+  const lessonSinceRef = useRef<number | null>(null); // start of the stretch showing now
   useEffect(() => {
     if (mode !== "lesson") return;
     let visibleSince: number | null = document.visibilityState === "visible" ? Date.now() : null;
+    lessonSinceRef.current = visibleSince;
     let total = 0;
     const flush = () => {
-      if (visibleSince !== null) total += Date.now() - visibleSince;
+      if (visibleSince !== null) {
+        const stretch = Date.now() - visibleSince;
+        total += stretch;
+        lessonMsRef.current += stretch;
+      }
       visibleSince = null;
+      lessonSinceRef.current = null;
       if (total >= 10000) {
         const body = JSON.stringify({ subskillId: subskill.id, ms: total });
         if (!navigator.sendBeacon?.("/api/activity/lesson", new Blob([body], { type: "application/json" }))) {
@@ -170,7 +197,7 @@ export function SubskillClient({
       total = 0;
     };
     const onVisibility = () => {
-      if (document.visibilityState === "visible") visibleSince = Date.now();
+      if (document.visibilityState === "visible") lessonSinceRef.current = visibleSince = Date.now();
       else flush();
     };
     document.addEventListener("visibilitychange", onVisibility);
@@ -185,6 +212,10 @@ export function SubskillClient({
   const [submitted, setSubmitted] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [saving, setSaving] = useState(false);
+  // The server turned this quiz away for good: a question in it was
+  // reworded after it was drawn, so it can't be saved however often it's
+  // sent. The only way on is a fresh quiz (see the notice by Submit).
+  const [stale, setStale] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
   // How sure she was of each answer, and how long each first answer took
   // (the gap since the previous one) -- both logged per question, both
@@ -267,7 +298,7 @@ export function SubskillClient({
   // silently scrolled nothing.
   const pendingRestoreScrollRef = useRef<number | null>(null);
   useEffect(() => {
-    const draft = loadQuizDraft(subskill.id, questions.length);
+    const draft = loadQuizDraft(draftKey, questions.length, validItemIds);
     if (draft) {
       setQuizQuestions(draft.quizQuestions);
       setAnswers(draft.answers);
@@ -287,8 +318,12 @@ export function SubskillClient({
 
   // `?pattern=Name` opens the lesson on that pattern -- where a missed
   // question in mixed review sends her to relearn what it tested.
+  // `?quiz=1` opens straight on the quiz: where "Start the fresh quiz"
+  // reloads to (see the stale notice by the Submit button).
   useEffect(() => {
-    const name = new URLSearchParams(window.location.search).get("pattern");
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("quiz") === "1") setMode("practice");
+    const name = params.get("pattern");
     if (!name) return;
     const i = subskill.patterns.findIndex((p) => p.name === name);
     if (i >= 0) {
@@ -404,16 +439,26 @@ export function SubskillClient({
   // Finishing the lesson counts as today's study, same as a finished quiz:
   // it feeds Ozho and keeps the streak (see /api/activity/lesson-complete).
   // "Finished" means every question type has been opened AND at least a
-  // couple of minutes spent here -- a one-type lesson would otherwise count
-  // the moment the page opened. Sent at most once per visit.
+  // couple of minutes spent on the lesson -- a one-type lesson would
+  // otherwise count the moment the page opened. Those minutes are time with
+  // the Lesson tab actually on screen (the clock above), not time since the
+  // page opened: the quiz tab and a tab left in the background don't count.
+  // Sent at most once per visit.
   const lessonFinished = subskill.patterns.every((_, i) => isPatternViewed(i));
-  const pageOpenedAtRef = useRef(Date.now());
   const lessonCreditSentRef = useRef(false);
   useEffect(() => {
-    if (!lessonFinished || lessonCreditSentRef.current) return;
-    const wait = Math.max(0, MIN_LESSON_MS - (Date.now() - pageOpenedAtRef.current));
-    const t = window.setTimeout(() => {
+    if (!lessonFinished || lessonCreditSentRef.current || mode !== "lesson") return;
+    let t: number | undefined;
+    const check = () => {
       if (lessonCreditSentRef.current) return;
+      const shown = lessonMsRef.current + (lessonSinceRef.current !== null ? Date.now() - lessonSinceRef.current : 0);
+      // Not there yet: look again when the rest would be up. While the page
+      // is hidden the remainder doesn't shrink, so this simply comes round
+      // again until she's back.
+      if (shown < MIN_LESSON_MS) {
+        t = window.setTimeout(check, Math.max(1000, MIN_LESSON_MS - shown));
+        return;
+      }
       lessonCreditSentRef.current = true;
       fetch("/api/activity/lesson-complete", {
         method: "POST",
@@ -440,9 +485,10 @@ export function SubskillClient({
           }
         })
         .catch(() => {});
-    }, wait);
+    };
+    check();
     return () => window.clearTimeout(t);
-  }, [lessonFinished, subskill.id]);
+  }, [lessonFinished, subskill.id, mode]);
 
   const pattern = shuffledPatterns[activePattern];
   const isLastExampleInPattern = !!pattern && activeExample === pattern.examples.length - 1;
@@ -488,7 +534,7 @@ export function SubskillClient({
       // Written against the actual shuffled quizQuestions in scope right
       // now, so a later restore replays the exact same choice order these
       // indices were picked against -- see loadQuizDraft's own comment.
-      saveQuizDraft(subskill.id, quizQuestions, next, confidence);
+      saveQuizDraft(draftKey, quizQuestions, next, confidence);
       return next;
     });
     setErrorMsg("");
@@ -497,7 +543,7 @@ export function SubskillClient({
   function selectConfidence(qIdx: number, c: Confidence) {
     setConfidence((prev) => {
       const next = { ...prev, [qIdx]: c };
-      saveQuizDraft(subskill.id, quizQuestions, answers, next);
+      saveQuizDraft(draftKey, quizQuestions, answers, next);
       return next;
     });
   }
@@ -534,14 +580,36 @@ export function SubskillClient({
     setResult(null);
     setExtras(null);
     setErrorMsg("");
+    setStale(false);
     setShuffleSeed((s) => s + 1);
     // Belt and suspenders with the clear in submitQuiz below -- a retake
     // is a fresh start either way, never a draft to resume.
-    clearQuizDraft(subskill.id);
+    clearQuizDraft(draftKey);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  // Once the saved result is on the page: bring the results card into view
+  // (it sits at the top of the quiz, a long scroll up from Submit) and send
+  // Ozho over to it with whatever submitQuiz lined up for him to say.
+  const ozhoReactionRef = useRef<{ event: "ozho:celebrate" | "ozho:say"; detail: Record<string, unknown> } | null>(null);
+  useEffect(() => {
+    if (!submitted) return;
+    resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const reaction = ozhoReactionRef.current;
+    ozhoReactionRef.current = null;
+    if (reaction) {
+      window.dispatchEvent(
+        new CustomEvent(reaction.event, { detail: { ...reaction.detail, near: ozhoSpotBeside(resultsRef.current) } })
+      );
+    }
+  }, [submitted]);
+
+  // Nothing is shown as graded until the server has it. If the save fails
+  // the quiz stays exactly as it was, answers and saved draft included, with
+  // a plain message by the Submit button, so a perfect score is never
+  // announced (or cleared by Retake) without having been recorded.
   async function submitQuiz() {
+    if (saving) return;
     if (Object.keys(answers).length < quizQuestions.length) {
       const firstUnanswered = quizQuestions.findIndex((_, i) => answers[i] === undefined);
       setErrorMsg("Answer every question before submitting. We jumped you to the first one left.");
@@ -556,12 +624,8 @@ export function SubskillClient({
       return;
     }
     const score = quizQuestions.reduce((acc, q, i) => acc + (answers[i] === q.answer ? 1 : 0), 0);
-    setSubmitted(true);
+    setErrorMsg("");
     setSaving(true);
-    // The results card renders at the top of the quiz, a long scroll up
-    // from the submit button -- bring it into view on the next frame, once
-    // it actually exists in the DOM.
-    requestAnimationFrame(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
     try {
       const res = await fetch("/api/progress", {
         method: "POST",
@@ -582,13 +646,17 @@ export function SubskillClient({
         // attempt -- a successful submit means there's nothing left to
         // resume, and a later retake should start from a real reshuffle,
         // not this now-scored attempt.
-        clearQuizDraft(subskill.id);
-        const data = await res.json();
+        clearQuizDraft(draftKey);
+        const data = await res.json().catch(() => ({}));
+        // A mixed review needs two skills; until then the card points at
+        // the next lesson instead (see ResultsCard).
+        const reviewReady = data.reviewReady !== false;
         // The quiz counts as today's study: every mounted Ozho re-reads his mood.
         window.dispatchEvent(new CustomEvent("ozho:fed"));
         setResult({
           justPassed: !!data.justPassed,
           alreadyMastered: !!data.alreadyMastered,
+          reviewReady,
           currentStreak: data.currentStreak ?? 0,
           justCompletedDomain: data.justCompletedDomain ?? null,
           newCostume: data.newCostume ?? null,
@@ -630,21 +698,22 @@ export function SubskillClient({
           : data.justCompletedDomain
           ? { message: `${data.justCompletedDomain}, mastered! What's next?`, tier: "small" }
           : data.justPassed
-          ? { message: `${subskill.name}, passed! Now nail it in a mixed review to master it.`, tier: "small" }
+          ? {
+              message: reviewReady
+                ? `${subskill.name}, passed! Now nail it in a mixed review to master it.`
+                : `${subskill.name}, passed! One more skill and mixed review opens.`,
+              tier: "small",
+            }
           : null;
         // Either way Ozho comes over to the results card to react: the
         // big moments above as a celebration, anything else as a plain
-        // line about the score (see resultCopy's `ozho`).
-        const near = ozhoSpotBeside(resultsRef.current);
-        if (celebration) {
-          window.dispatchEvent(new CustomEvent("ozho:celebrate", { detail: { ...celebration, near } }));
-        } else {
-          window.dispatchEvent(
-            new CustomEvent("ozho:say", {
-              detail: { message: resultCopy(score, quizQuestions.length, "retake").ozho, near },
-            })
-          );
-        }
+        // line about the score (see resultCopy's `ozho`). He goes once the
+        // card is on the page (the effect above), so he has somewhere to
+        // trot to.
+        ozhoReactionRef.current = celebration
+          ? { event: "ozho:celebrate", detail: celebration }
+          : { event: "ozho:say", detail: { message: resultCopy(score, quizQuestions.length, "retake", reviewReady).ozho } };
+        setSubmitted(true);
         // A freshly unlocked costume becomes the worn one automatically
         // (same fallback Settings and the header pill use) unless the
         // student already hand-picked something -- update every mounted
@@ -669,7 +738,22 @@ export function SubskillClient({
         // Refreshes server-fetched data (like the streak badge in AppShell)
         // in place, without discarding this page's client-side quiz state.
         router.refresh();
+      } else if (res.status === 401 || res.status === 402) {
+        // Signed out, or the trial ended, since the quiz began. The answers
+        // stay saved on this device for when they're back.
+        window.location.assign(res.status === 401 ? "/login" : "/subscribe");
+      } else if (res.status === 400 || res.status === 409) {
+        // The quiz itself no longer matches the bank (a question reworded,
+        // or the quiz resized, after it was drawn): sending it again can't
+        // work, so drop the draft and offer a fresh one.
+        clearQuizDraft(draftKey);
+        setStale(true);
+      } else {
+        setErrorMsg(SAVE_FAILED);
       }
+    } catch {
+      // The request never got an answer: offline, or a dropped connection.
+      setErrorMsg(SAVE_FAILED);
     } finally {
       setSaving(false);
     }
@@ -1100,7 +1184,7 @@ export function SubskillClient({
                   correctIndex={q.answer}
                   selected={answers[i] ?? null}
                   revealed={submitted}
-                  disabled={submitted}
+                  disabled={submitted || saving}
                   onSelect={(ci) => selectAnswer(i, ci)}
                 />
                 {!submitted && answers[i] !== undefined && (
@@ -1139,15 +1223,32 @@ export function SubskillClient({
               </div>
             );
           })}
-          {errorMsg && <div className="text-red-700 text-sm mb-3">{errorMsg}</div>}
-          {!submitted ? (
+          {errorMsg && (
+            <div role="alert" className="text-red-700 text-sm mb-3">
+              {errorMsg}
+            </div>
+          )}
+          {stale ? (
+            // A full reload, not a retake: the fresh quiz has to be drawn
+            // from the bank as it is now, which only the server has.
+            <div role="alert" className="rounded-xl border border-[#f0e0b0] bg-[#fffaf0] px-4 py-3.5">
+              <div className="text-sm text-ink">This quiz was updated after you started it. Here&apos;s a fresh one.</div>
+              <button
+                onClick={() => window.location.assign(`/subskill/${subskill.id}?quiz=1`)}
+                className="mt-3 px-5 py-2.5 rounded-lg bg-forest text-white font-semibold text-sm"
+              >
+                Start the fresh quiz
+              </button>
+            </div>
+          ) : !submitted ? (
             quizQuestions.length > 0 && (
               <button
                 ref={submitRef}
                 onClick={submitQuiz}
-                className="px-5 py-2.5 rounded-lg bg-forest text-white font-semibold text-sm"
+                disabled={saving}
+                className="px-5 py-2.5 rounded-lg bg-forest text-white font-semibold text-sm disabled:opacity-70"
               >
-                Submit answers
+                {saving ? "Saving your quiz…" : "Submit answers"}
               </button>
             )
           ) : (
@@ -1235,10 +1336,21 @@ function ozhoSpotBeside(el: HTMLElement | null): { x: number; y: number } | unde
 // `perfectKind` only matters for a perfect score: the first one passes
 // the subskill, and mastering it takes a mixed review too (see
 // lib/progressState.ts), so the copy points her there.
-function resultCopy(score: number, total: number, perfectKind: "passed" | "mastered" | "retake") {
+// Until there are two skills to mix (`reviewReady` false) there is no mixed
+// review to send her to, so the copy says when it opens instead.
+function resultCopy(score: number, total: number, perfectKind: "passed" | "mastered" | "retake", reviewReady = true) {
   const missed = total - score;
   const ratio = total > 0 ? score / total : 0;
   if (missed === 0) {
+    if (perfectKind !== "mastered" && !reviewReady)
+      return {
+        headline: perfectKind === "passed" ? "Passed." : "Perfect again.",
+        body:
+          perfectKind === "passed"
+            ? "Every question right. To master it you'll get it right again in a mixed review, which opens after your second skill."
+            : "It's passed. Mixed review, where it becomes mastered, opens after your second skill.",
+        ozho: "Every single one! One more skill and mixed review opens.",
+      };
     if (perfectKind === "passed")
       return {
         headline: "Passed.",
@@ -1318,8 +1430,12 @@ function ResultsCard({
   const copy = resultCopy(
     score,
     total,
-    result?.justPassed ? "passed" : result?.alreadyMastered ? "mastered" : "retake"
+    result?.justPassed ? "passed" : result?.alreadyMastered ? "mastered" : "retake",
+    result?.reviewReady !== false
   );
+  // Passed, but with only one skill there's no mixed review to master it in
+  // yet: the next lesson is the way forward, so it takes the main button.
+  const reviewNotOpenYet = perfect && !!result && !result.alreadyMastered && !result.reviewReady;
   // The planner can legitimately recommend the subskill just taken (it's
   // still the first unmastered one) -- "Up next" pointing back at this
   // same page would read as a bug, and Retake already covers it.
@@ -1409,7 +1525,7 @@ function ResultsCard({
               Review {missed} {missed === 1 ? "miss" : "misses"} ↓
             </button>
           )}
-          {perfect && result && !result.alreadyMastered && (
+          {perfect && result && !result.alreadyMastered && result.reviewReady && (
             <a
               href="/review"
               className="rounded-lg bg-forest px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
@@ -1421,7 +1537,7 @@ function ResultsCard({
             <a
               href={nextUp.href}
               className={`rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors ${
-                missed === 0 && result?.alreadyMastered
+                (missed === 0 && result?.alreadyMastered) || reviewNotOpenYet
                   ? "bg-forest text-white hover:opacity-90"
                   : "border border-[#b4c5e6] bg-white text-ink hover:border-[#c2d1ee]"
               }`}
@@ -1435,7 +1551,7 @@ function ResultsCard({
           >
             Retake quiz
           </button>
-          {!nextUp && missed === 0 && result?.alreadyMastered && (
+          {!nextUp && ((missed === 0 && result?.alreadyMastered) || (reviewNotOpenYet && extras !== null)) && (
             <a
               href="/dashboard"
               className="rounded-lg bg-forest px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"

@@ -9,8 +9,12 @@ import {
   PARENT_SESSION_MAX_AGE,
   parentClaimed,
 } from "@/lib/parentAuth";
+import { clientIp, isJsonRequest, rateLimit } from "@/lib/rateLimit";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
+  if (!isJsonRequest(req)) return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   let body: { email?: string; password?: string; inviteCode?: string; nickname?: string; timeZone?: string };
   try {
     body = await req.json();
@@ -25,11 +29,19 @@ export async function POST(req: NextRequest) {
   // shouldn't be the reason it fails to match.
   const inviteCode = (body.inviteCode || "").trim().toUpperCase();
 
-  if (!email || !email.includes("@")) {
+  if (!EMAIL_RE.test(email) || email.length > 200) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
   }
   if (password.length < 6) {
     return NextResponse.json({ error: "Password must be at least 6 characters." }, { status: 400 });
+  }
+  const ip = clientIp(req);
+  if (!(await rateLimit(`signup:ip:${ip}`, 40, 60 * 60))) {
+    return NextResponse.json({ error: "Too many new accounts from this network. Try again in an hour." }, { status: 429 });
+  }
+  // A student's code opens their whole report, so guesses at it are counted.
+  if (inviteCode && !(await rateLimit(`code:ip:${ip}`, 10, 60 * 60))) {
+    return NextResponse.json({ error: "Too many tries with a code. Wait an hour and try again." }, { status: 429 });
   }
   // The student's code is optional: a parent can sign up first and send
   // their student an invite link from the dashboard instead.

@@ -184,6 +184,10 @@ export function MegaNav({ home = true }: { home?: boolean }) {
   const trig = useRef<Partial<Record<MenuId, HTMLButtonElement | null>>>({});
   const panes = useRef<Partial<Record<MenuId, HTMLDivElement | null>>>({});
   const closeT = useRef<number | null>(null);
+  // Whether the open menu was opened by pointing at it. A hovered menu
+  // closes when the pointer leaves; one opened (or pinned) by a click or
+  // the keyboard stays until it's dismissed.
+  const byHover = useRef(false);
 
   // Each menu's natural size, measured once its fonts are in.
   const measure = useCallback(() => {
@@ -263,8 +267,49 @@ export function MegaNav({ home = true }: { home?: boolean }) {
   const size = open && geo ? geo[open] : null;
   const go = () => hide(0);
 
+  // Click, Enter or Space on a trigger. Pointing at it has usually opened
+  // the menu already, so that first click pins it rather than closing it.
+  const toggle = (id: MenuId) => {
+    if (open === id && !byHover.current) {
+      hide(0);
+      return;
+    }
+    byHover.current = false;
+    show(id);
+  };
+
+  // The card comes after every trigger in the page, so Tab is handed
+  // across: from an open trigger into its menu, and from the menu's first
+  // and last links back to the bar.
+  const links = (id: MenuId) => Array.from(panes.current[id]?.querySelectorAll<HTMLElement>("a[href]") ?? []);
+  const tabIn = (e: React.KeyboardEvent, id: MenuId) => {
+    if (e.key !== "Tab" || e.shiftKey || open !== id) return;
+    const first = links(id)[0];
+    if (!first) return;
+    e.preventDefault();
+    first.focus();
+  };
+  const tabOut = (e: React.KeyboardEvent, id: MenuId) => {
+    if (e.key !== "Tab") return;
+    const all = links(id);
+    const t = trig.current[id];
+    const to = e.shiftKey ? (e.target === all[0] ? t : null) : e.target === all[all.length - 1] ? (t?.nextElementSibling as HTMLElement | null) : null;
+    if (!to) return;
+    e.preventDefault();
+    to.focus();
+  };
+  // Focus moved on: close, unless it only went between the open menu and
+  // its own trigger. (No relatedTarget means a click on something that
+  // doesn't take focus; clicks outside are handled above.)
+  const onBlur = (e: React.FocusEvent) => {
+    const to = e.relatedTarget as Node | null;
+    if (!open || !to) return;
+    if (to === trig.current[open] || panes.current[open]?.contains(to)) return;
+    hide(0);
+  };
+
   return (
-    <div className="nb-navlinks nb-mega-wrap" ref={wrap} onMouseLeave={() => hide()}>
+    <div className="nb-navlinks nb-mega-wrap" ref={wrap} onMouseLeave={() => byHover.current && hide()} onBlur={onBlur}>
       {MENUS.map((m) => (
         <button
           key={m.id}
@@ -275,9 +320,12 @@ export function MegaNav({ home = true }: { home?: boolean }) {
           className={`nb-navlink nb-navtrig ${open === m.id ? "is-open" : ""}`}
           aria-expanded={open === m.id}
           aria-controls={`nb-mega-${m.id}`}
-          onMouseEnter={() => show(m.id)}
-          onFocus={() => show(m.id)}
-          onClick={() => (open === m.id ? hide(0) : show(m.id))}
+          onMouseEnter={() => {
+            if (open !== m.id) byHover.current = true;
+            show(m.id);
+          }}
+          onClick={() => toggle(m.id)}
+          onKeyDown={(e) => tabIn(e, m.id)}
         >
           {m.label}
           <svg className="nb-navtrig-chev" width="11" height="11" viewBox="0 0 12 12" aria-hidden>
@@ -285,10 +333,10 @@ export function MegaNav({ home = true }: { home?: boolean }) {
           </svg>
         </button>
       ))}
-      <Link href={`${at}#pricing`} className="nb-navlink" onMouseEnter={() => hide()}>
+      <Link href={`${at}#pricing`} className="nb-navlink" onMouseEnter={() => byHover.current && hide()}>
         Pricing
       </Link>
-      <Link href={`${at}#faq`} className="nb-navlink" onMouseEnter={() => hide()}>
+      <Link href={`${at}#faq`} className="nb-navlink" onMouseEnter={() => byHover.current && hide()}>
         FAQ
       </Link>
 
@@ -315,6 +363,7 @@ export function MegaNav({ home = true }: { home?: boolean }) {
                 // React 18 has no boolean `inert`; an empty string sets it.
                 {...(m.id !== open ? { inert: "" as unknown as boolean } : {})}
                 aria-hidden={m.id !== open}
+                onKeyDown={(e) => tabOut(e, m.id)}
               >
                 {m.id === "course" ? <CourseMenu onGo={go} at={at} /> : <ParentsMenu onGo={go} at={at} />}
               </div>

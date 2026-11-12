@@ -81,14 +81,14 @@ export function SubscribeClient({
           </div>
         )}
 
-        {/* Full Course Access, second after Monthly -- one payment, nothing to cancel, and
+        {/* The 6-month pass, second after Monthly -- one payment, nothing to cancel, and
             enough runway (6 months) for nearly any student's whole prep
             window, so it's framed as the primary way to get this rather
             than a discount alternative to the subscription. */}
         {sixmonth && (
           <div className="relative bg-white border-2 border-ink rounded-2xl p-6 flex flex-col">
             <div className="absolute -top-3 left-6 bg-forest text-white text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full">
-              Full course access
+              6-month pass
             </div>
             <div className="mt-2 mb-1 flex items-baseline gap-1.5">
               <span className="text-[36px] leading-none font-display font-semibold text-ink">
@@ -105,13 +105,13 @@ export function SubscribeClient({
               disabled={loadingPlan !== null}
               className="mt-auto w-full py-3 rounded-lg bg-forest text-white font-semibold text-sm disabled:opacity-60"
             >
-              {loadingPlan === "sixmonth" ? "Redirecting..." : "Get full access"}
+              {loadingPlan === "sixmonth" ? "Redirecting..." : "Get the 6-month pass"}
             </button>
           </div>
         )}
       </div>
 
-      {error && <div className="text-red-700 text-sm mt-4 text-center">{error}</div>}
+      {error && <div role="alert" className="text-red-700 text-sm mt-4 text-center">{error}</div>}
 
       {/* Parents usually pay: one tap sends them straight to it. */}
       <div className="mt-6 rounded-2xl border border-[#c9d6ee] bg-[#f3f6fc] p-5 text-center">
@@ -128,7 +128,7 @@ export function SubscribeClient({
               >
                 {asked === "sending" ? "Sending..." : "Ask my parent to choose my plan"}
               </button>
-              {asked === "error" && <div className="mt-2 text-sm text-red-700">Couldn&apos;t send it. Please try again.</div>}
+              {asked === "error" && <div role="alert" className="mt-2 text-sm text-red-700">Couldn&apos;t send it. Please try again.</div>}
             </>
           )
         ) : (

@@ -33,6 +33,7 @@ export function AnalysisClient({
   domainMastery,
   tests,
   dueTestNumber,
+  dueThisWeek = true,
 }: {
   domains: DomainInfo[];
   domainMastery: DomainMastery[];
@@ -45,6 +46,8 @@ export function AnalysisClient({
   // page now; this section stays collapsed to a compact summary unless
   // there's an actual reason to show it open.
   dueTestNumber: number | null;
+  // False when that test's own week has already gone by.
+  dueThisWeek?: boolean;
 }) {
   const router = useRouter();
   const [expanded, setExpanded] = useState(dueTestNumber !== null);
@@ -159,12 +162,18 @@ export function AnalysisClient({
       </div>
       <div className="text-sm text-stone-500 mb-6">
         {dueTestNumber !== null
-          ? `Practice test ${dueTestNumber} of 8 was scheduled for this week — log your results below.`
+          ? dueThisWeek
+            ? `Practice test ${dueTestNumber} of 8 was scheduled for this week — log your results below.`
+            : `Practice test ${dueTestNumber} of 8 is next on your schedule. Log your results below.`
           : "Log your full-length practice test results here and see how each subject is trending."}
       </div>
 
       {formOpen && (
         <SubmitTestForm
+          // A fresh form per test: its fields are filled in once, when it
+          // opens, so going from editing one test straight to another would
+          // otherwise save the first one's scores over the second.
+          key={editingTest?.id ?? "new"}
           domains={domains}
           editing={editingTest}
           bestComposite={tests.length > 0 ? Math.max(...tests.map((t) => t.compositeScore)) : null}
@@ -383,6 +392,18 @@ function DomainBar({
   );
 }
 
+// Today as the student's own calendar shows it, for the date field. The UTC
+// date is already tomorrow on a US evening. Where the local date runs ahead
+// of UTC instead, the UTC one is used: the server won't take a date that
+// hasn't started there yet.
+function todayForInput(): string {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const local = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  const utc = now.toISOString().slice(0, 10);
+  return local < utc ? local : utc;
+}
+
 function SubmitTestForm({
   domains,
   editing,
@@ -404,6 +425,13 @@ function SubmitTestForm({
   const [takenAt, setTakenAt] = useState(
     editing ? editing.takenAt.slice(0, 10) : new Date().toISOString().slice(0, 10)
   );
+  // A new test defaults to today on the student's own calendar. Set after
+  // mount: the form can be open in the server's HTML, and the server only
+  // knows the UTC date.
+  useEffect(() => {
+    if (!editing) setTakenAt(todayForInput());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [composite, setComposite] = useState(editing ? String(editing.compositeScore) : "");
   const [rw, setRw] = useState(editing ? String(editing.rwScore) : "");
   const [math, setMath] = useState(editing ? String(editing.mathScore) : "");

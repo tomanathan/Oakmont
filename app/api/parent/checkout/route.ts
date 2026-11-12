@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentParent } from "@/lib/parentSession";
 import { type PlanId } from "@/lib/stripe";
-import { APP_URL, createCheckoutUrl } from "@/lib/checkout";
+import { ALREADY_SUBSCRIBED, APP_URL, createCheckoutUrl } from "@/lib/checkout";
 
 const PLAN_IDS: PlanId[] = ["monthly", "sixmonth"];
 
@@ -28,6 +28,9 @@ export async function POST(req: NextRequest) {
     successUrl: `${back}&checkout=success`,
     cancelUrl: back,
   });
+  if (url === ALREADY_SUBSCRIBED) {
+    return NextResponse.json({ error: "This student is already on the monthly plan. Refresh the page to see it." }, { status: 409 });
+  }
   if (!url) return NextResponse.json({ error: "Couldn't start checkout. Please try again." }, { status: 502 });
   return NextResponse.json({ url });
 }

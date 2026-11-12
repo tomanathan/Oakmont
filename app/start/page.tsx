@@ -16,6 +16,7 @@ import { StartClient, type StarterQuestion } from "./StartClient";
 export const metadata: Metadata = {
   title: "Try 5 SAT questions · Oakmont",
   description: "Five quick SAT questions, instant explanations, and a study plan built around you. Free, no account needed to start.",
+  alternates: { canonical: "https://oakmontsat.com/start" },
 };
 export const dynamic = "force-dynamic";
 
@@ -63,7 +64,7 @@ export default async function StartPage({ searchParams }: { searchParams: { invi
       invite={validInvite ? { token: validInvite.token, parentEmail: validInvite.parent.email } : null}
       google={googleEnabled() && !inApp}
       inApp={inApp}
-      googleError={searchParams.error === "google" || searchParams.error === "google_other_account"}
+      googleError={searchParams.error === "google" || searchParams.error === "google_other_account" ? searchParams.error : null}
     />
   );
 }

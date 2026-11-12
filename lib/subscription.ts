@@ -51,3 +51,19 @@ export function trialDaysLeft(a: AccessFields, now: Date = new Date()): number |
 export function trialEnded(a: AccessFields, now: Date = new Date()): boolean {
   return !hasPaidAccess(a, now) && !!a.trialEndsAt && a.trialEndsAt.getTime() <= now.getTime();
 }
+
+// A subscription that never got as far as a first payment isn't a plan.
+const NEVER_STARTED_STATUSES = new Set(["incomplete", "incomplete_expired"]);
+
+/**
+ * Had a plan once and it has run out: a 6-Month Pass that expired, or a
+ * monthly subscription that was canceled. trialEnded is also true for
+ * these students (their free week is long past), so wording that says
+ * "your free trial ended" should check this first. For copy only -- access
+ * is decided by the functions above.
+ */
+export function planEnded(a: AccessFields & { firstPaidAt?: Date | null }, now: Date = new Date()): boolean {
+  if (hasPaidAccess(a, now) || inFreeTrial(a, now)) return false;
+  const hadSubscription = !!a.subscriptionStatus && !NEVER_STARTED_STATUSES.has(a.subscriptionStatus);
+  return !!a.firstPaidAt || !!a.accessExpiresAt || hadSubscription;
+}

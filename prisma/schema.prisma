@@ -28,6 +28,14 @@ model User {
   // one with the same Google-verified email) -- see app/api/auth/google.
   passwordHash String?
   googleSub    String?    @unique
+  // When this address was proven to be theirs: a Google sign-in, or a
+  // password set through an emailed reset link. A password chosen at signup
+  // proves nothing, so it stays null (see the Google callback, which won't
+  // keep an unproven password on an account it links).
+  emailVerifiedAt DateTime?
+  // Sessions issued before this moment are refused (lib/session.ts). Moved
+  // forward when the password is reset, so an old cookie stops working.
+  sessionsValidAfter DateTime?
   createdAt DateTime   @default(now())
   progress  Progress[]
   practiceTests PracticeTest[]
@@ -181,6 +189,11 @@ model Parent {
   setupToken        String?   @unique
   setupTokenExpires DateTime?
   setupEmailSentAt  DateTime?
+  // Same pair as on User: when the address was proven theirs (the emailed
+  // setup link, or Google), and the cutoff before which sessions are
+  // refused. A student's report is only shown to a proven address.
+  emailVerifiedAt    DateTime?
+  sessionsValidAfter DateTime?
   createdAt    DateTime     @default(now())
   links        ParentLink[]
   invites      ParentInvite[]
@@ -218,6 +231,7 @@ model ParentLink {
   nickname  String?
 
   @@unique([parentId, studentId])
+  @@index([studentId])
 }
 
 // Parent-first linking: a parent who signs up before their student has a
@@ -293,6 +307,7 @@ model ItemAttempt {
 
   @@index([userId, createdAt])
   @@index([userId, itemId])
+  @@index([userId, subskillId])
 }
 
 // A self-reported result from a full-length practice test (e.g. Bluebook or
@@ -362,4 +377,22 @@ model WeeklyReview {
   createdAt DateTime @default(now())
 
   @@unique([userId, week])
+}
+
+// Attempt counters for lib/rateLimit.ts: logins, signups, password-reset
+// and parent emails. One row per "<what>:<who>" key, counting within a
+// fixed window that restarts once it has passed.
+model RateLimit {
+  key         String   @id
+  count       Int
+  windowStart DateTime
+
+  @@index([windowStart])
+}
+
+// Stripe payments already applied, by Checkout Session id, so a webhook
+// Stripe delivers twice can't add a pass's days twice.
+model StripeGrant {
+  id        String   @id
+  createdAt DateTime @default(now())
 }

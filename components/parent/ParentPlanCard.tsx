@@ -6,9 +6,12 @@ import { useState } from "react";
 // left, or which plan is active -- and the way to pay for it, since the
 // parent is usually the one who does.
 export interface ParentPlanState {
-  kind: "trial" | "trialEnded" | "monthly" | "pass" | "pastDue" | "none";
+  // planEnded: a paid plan that ran out (an expired pass, a canceled
+  // subscription), as opposed to a free week that ended without one.
+  kind: "trial" | "trialEnded" | "planEnded" | "monthly" | "pass" | "pastDue" | "none";
   daysLeft?: number;
   until?: string; // formatted date
+  cancelsOn?: string; // formatted date: a monthly plan set to stop then
 }
 
 export function ParentPlanCard({
@@ -20,7 +23,8 @@ export function ParentPlanCard({
   studentId: string;
   name: string;
   state: ParentPlanState;
-  prices: { monthly: number; sixmonth: number };
+  // null when the prices couldn't be read: the buttons go without them.
+  prices: { monthly: number; sixmonth: number } | null;
 }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -49,23 +53,29 @@ export function ParentPlanCard({
       ? `${name}'s free trial: ${state.daysLeft} ${state.daysLeft === 1 ? "day" : "days"} left`
       : state.kind === "trialEnded"
         ? `${name}'s free trial has ended`
-        : state.kind === "monthly"
-          ? `${name} is on the monthly plan`
-          : state.kind === "pass"
-            ? `${name} has the 6-month pass${state.until ? `, through ${state.until}` : ""}`
-            : state.kind === "pastDue"
-              ? `The last payment for ${name}'s plan didn't go through`
-              : `Choose a plan for ${name}`;
+        : state.kind === "planEnded"
+          ? `${name}'s plan has ended`
+          : state.kind === "monthly"
+            ? `${name} is on the monthly plan`
+            : state.kind === "pass"
+              ? `${name} has the 6-month pass${state.until ? `, through ${state.until}` : ""}`
+              : state.kind === "pastDue"
+                ? `The last payment for ${name}'s plan didn't go through`
+                : `Choose a plan for ${name}`;
   const sub =
     state.kind === "trial"
       ? "Choose a plan now and they keep every free day: monthly billing starts when the trial ends, and the 6-month pass counts from then."
       : state.kind === "trialEnded"
         ? "Their progress and plan are saved. Choose a plan to keep them going."
-        : state.kind === "pastDue"
-          ? "Update the card to keep their access."
-          : paid
-            ? "Receipts come to you. Cancel or update the card any time."
-            : "";
+        : state.kind === "planEnded"
+          ? "Their progress and study plan are saved. Choose a plan to pick up where they left off."
+          : state.kind === "pastDue"
+            ? "Update the card to keep their access."
+            : state.kind === "monthly" && state.cancelsOn
+              ? `Canceled. Access continues through ${state.cancelsOn}.`
+              : paid
+                ? "Receipts come to you. Cancel or update the card any time."
+                : "";
 
   return (
     <div className="mb-6 rounded-xl border border-[#c9d6ee] bg-white p-5">
@@ -79,14 +89,14 @@ export function ParentPlanCard({
               disabled={busy !== null}
               className="rounded-lg bg-forest px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
             >
-              {busy === "sixmonth" ? "Opening..." : `6-month pass, $${prices.sixmonth} once`}
+              {busy === "sixmonth" ? "Opening..." : prices ? `6-month pass, $${prices.sixmonth} once` : "6-month pass"}
             </button>
             <button
               onClick={() => go("/api/parent/checkout", { studentId, plan: "monthly" }, "monthly")}
               disabled={busy !== null}
               className="rounded-lg border border-[#b4c5e6] px-4 py-2.5 text-sm font-semibold text-ink disabled:opacity-60"
             >
-              {busy === "monthly" ? "Opening..." : `Monthly, $${prices.monthly}/month`}
+              {busy === "monthly" ? "Opening..." : prices ? `Monthly, $${prices.monthly}/month` : "Monthly"}
             </button>
           </>
         ) : (

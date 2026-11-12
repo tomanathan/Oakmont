@@ -5,6 +5,7 @@ import { emailParentsAboutPlan } from "./parentSetup";
 
 const APP_URL = process.env.APP_URL || "https://oakmontsat.com";
 const HOUR_MS = 60 * 60 * 1000;
+const REMINDER_TIME_ZONE = "America/Chicago";
 
 // One email per student, the day before their free week ends, if they
 // haven't chosen a plan: what they'd keep, and that nothing happens
@@ -21,20 +22,34 @@ export async function sendTrialReminders(now: Date = new Date()): Promise<number
 
   let sent = 0;
   for (const u of due) {
-    // Mark first, so a failed send is never retried into a duplicate.
-    await prisma.user.update({ where: { id: u.id }, data: { trialReminderSentAt: now } });
-    if (hasPaidAccess(u, now)) continue;
-    const ends = u.trialEndsAt!.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "America/Chicago" });
-    const result = await sendEmail({
-      to: u.email,
-      subject: "Your Oakmont free trial ends tomorrow",
-      html: trialEndingHtml(u.firstName, ends),
-    });
-    if (result.sent) sent++;
-    // Parents usually pay: every connected parent hears about it too.
-    sent += await emailParentsAboutPlan(u.id, "trialEnding", ends);
+    // One student's failure is logged and skipped; the rest still go out.
+    try {
+      // Mark first, so a failed send is never retried into a duplicate.
+      await prisma.user.update({ where: { id: u.id }, data: { trialReminderSentAt: now } });
+      if (hasPaidAccess(u, now)) continue;
+      const ends = u.trialEndsAt!.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: REMINDER_TIME_ZONE });
+      const result = await sendEmail({
+        to: u.email,
+        subject: `Your Oakmont free trial ends ${endsWhen(u.trialEndsAt!, now, ends)}`,
+        html: trialEndingHtml(u.firstName, ends),
+      });
+      if (result.sent) sent++;
+      // Parents usually pay: every connected parent hears about it too.
+      sent += await emailParentsAboutPlan(u.id, "trialEnding", ends);
+    } catch (e) {
+      console.error(`[trial-reminder] ${u.id}:`, e);
+    }
   }
   return sent;
+}
+
+// "today" or "tomorrow", by the same calendar the email body's date uses:
+// a trial caught 12 hours out can end later the same day. Anything else
+// (a run at an odd hour) gets the date itself.
+function endsWhen(endsAt: Date, now: Date, ends: string): string {
+  const day = (d: Date) => new Intl.DateTimeFormat("en-CA", { timeZone: REMINDER_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+  const daysOut = Math.round((Date.parse(day(endsAt)) - Date.parse(day(now))) / (24 * HOUR_MS));
+  return daysOut === 0 ? "today" : daysOut === 1 ? "tomorrow" : ends;
 }
 
 function trialEndingHtml(firstName: string | null, ends: string): string {

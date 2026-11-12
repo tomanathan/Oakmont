@@ -77,6 +77,9 @@ export function WelcomeClient(props: Props) {
   const [noScore, setNoScore] = useState(false);
   const [goal, setGoal] = useState(initial.goalScore ?? 1300);
   const [goalTouched, setGoalTouched] = useState(initial.goalScore !== null);
+  // The goal as last saved, for the summary at the end: the slider's value
+  // only counts once the score step has been continued past.
+  const [savedGoal, setSavedGoal] = useState<number | null>(initial.goalScore);
   const [parents, setParents] = useState<AddedParent[]>(props.parents);
   const [parentChoice, setParentChoice] = useState<"yes" | "solo" | null>(
     props.parents.length > 0 ? "yes" : props.optedOut ? "solo" : null
@@ -188,11 +191,16 @@ export function WelcomeClient(props: Props) {
       setError("Scores run from 400 to 1600.");
       return;
     }
+    // The goal on screen is the goal that's saved, moved or not: the slider
+    // always shows a number, so leaving it where it sits is still a choice.
     const ok = await patch({
       baselineScore: noScore ? null : validBaseline,
-      goalScore: goalTouched || validBaseline !== null ? goal : null,
+      goalScore: goal,
     });
-    if (ok) next();
+    if (ok) {
+      setSavedGoal(goal);
+      next();
+    }
   }
 
   async function saveParentChoice() {
@@ -550,7 +558,7 @@ export function WelcomeClient(props: Props) {
               <Summary label="Test day" value={chosenDate ? formatDate(chosenDate) : "Not set"} note={`${planWeeks}-week plan`} />
               <Summary
                 label="Goal"
-                value={initial.goalScore !== null || goalTouched || validBaseline !== null ? String(goal) : "Not set"}
+                value={savedGoal !== null ? String(savedGoal) : "Not set"}
                 note={validBaseline !== null && !noScore ? `Starting from ${validBaseline}` : "Set it any time"}
               />
               <Summary

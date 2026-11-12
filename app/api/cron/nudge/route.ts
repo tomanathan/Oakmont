@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runEncourage } from "@/lib/encourage/send";
+import { clearOldRateLimits } from "@/lib/rateLimit";
 
 // The afternoon job, once a day (see vercel.json): a short reminder to
 // students who haven't studied yet today, and to their parents. It runs a
@@ -12,5 +13,7 @@ export async function GET(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
   if (!secret) return NextResponse.json({ error: "CRON_SECRET is not configured." }, { status: 500 });
   if (req.headers.get("authorization") !== `Bearer ${secret}`) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  // Housekeeping that needs a daily run and nothing else: old attempt counters.
+  await clearOldRateLimits().catch((err) => console.error("clearOldRateLimits", err));
   return NextResponse.json({ ok: true, ...(await runEncourage("nudge")) });
 }

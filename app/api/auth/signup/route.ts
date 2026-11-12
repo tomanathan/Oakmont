@@ -3,8 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword, createSessionToken, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/auth";
 import { trialEndFrom } from "@/lib/subscription";
 import { START_COOKIE, applyStartOnSignup, clearStartCookie } from "@/lib/starter";
+import { clientIp, isJsonRequest, rateLimit } from "@/lib/rateLimit";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
+  if (!isJsonRequest(req)) return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   let body: { email?: string; password?: string; firstName?: string };
   try {
     body = await req.json();
@@ -21,11 +25,16 @@ export async function POST(req: NextRequest) {
   if (!firstName) {
     return NextResponse.json({ error: "Enter your first name." }, { status: 400 });
   }
-  if (!email || !email.includes("@")) {
+  if (!EMAIL_RE.test(email) || email.length > 200) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
   }
   if (password.length < 6) {
     return NextResponse.json({ error: "Password must be at least 6 characters." }, { status: 400 });
+  }
+  // Generous enough for a classroom signing up from one network; tight
+  // enough that accounts can't be made by the thousand.
+  if (!(await rateLimit(`signup:ip:${clientIp(req)}`, 40, 60 * 60))) {
+    return NextResponse.json({ error: "Too many new accounts from this network. Try again in an hour." }, { status: 429 });
   }
 
   const existing = await prisma.user.findUnique({ where: { email } });

@@ -1,20 +1,33 @@
-import { getPlanPrices } from "@/lib/stripe";
+import { getPlanPrices, type PlanId, type PlanPrice } from "@/lib/stripe";
 import { formatPrice } from "@/lib/price";
 import { TrackedLink } from "../TrackedLink";
 import { ViewTracker } from "../ViewTracker";
 import { Tick } from "./art";
 
 // Reads the same Stripe Prices /subscribe uses (cached an hour, see
-// getPlanPrices): one source of truth, never a hard-coded number.
-export async function Pricing() {
-  const prices = await getPlanPrices();
-  const six = prices.sixmonth;
-  const perMonth = formatPrice(Math.round(six.amountCents / 6 / 100) * 100, six.currency);
+// getPlanPrices): one source of truth, never a hard-coded number. If Stripe
+// can't be reached the homepage still renders: the plans show without
+// their amounts rather than the whole page failing. LandingPage loads them
+// once, for this section and for the page's structured data.
+export type PlanPrices = Record<PlanId, PlanPrice> | null;
+
+export async function loadPlanPricesSafely(): Promise<PlanPrices> {
+  try {
+    return await getPlanPrices();
+  } catch (err) {
+    console.error("Plan prices unavailable", err);
+    return null;
+  }
+}
+
+export function Pricing({ prices }: { prices: PlanPrices }) {
+  const six = prices?.sixmonth ?? null;
+  const perMonth = six ? formatPrice(Math.round(six.amountCents / 6 / 100) * 100, six.currency) : null;
 
   const included = [
     "Week-by-week plan to your test date",
     "Lessons and quizzes for every skill",
-    "Full-length practice tests",
+    "A schedule for the 8 official practice tests, with score tracking",
     "Parent dashboard and Sunday email",
     "Ozho, the study-buddy dog",
   ];
@@ -33,10 +46,12 @@ export async function Pricing() {
             <p className="nb-plan-name">
               Monthly <span className="nb-chip nb-chip--sm nb-chip--line">Flexible</span>
             </p>
-            <p className="nb-plan-price">
-              <b>{formatPrice(prices.monthly.amountCents, prices.monthly.currency)}</b>
-              <span>/month</span>
-            </p>
+            {prices && (
+              <p className="nb-plan-price">
+                <b>{formatPrice(prices.monthly.amountCents, prices.monthly.currency)}</b>
+                <span>/month</span>
+              </p>
+            )}
             <p className="nb-plan-note">Cancel anytime</p>
             <div className="nb-plan-perk">
               <Tick />
@@ -45,7 +60,7 @@ export async function Pricing() {
                 <span>Stop whenever prep is done.</span>
               </div>
             </div>
-            <TrackedLink href="/parent/login?mode=signup" event="parent_signup_started" className="nb-btn nb-plan-btn">
+            <TrackedLink href="/parent/login?mode=signup&plan=monthly" event="parent_signup_started" className="nb-btn nb-plan-btn">
               Start free trial
             </TrackedLink>
           </div>
@@ -53,11 +68,13 @@ export async function Pricing() {
             <p className="nb-plan-name">
               6-month pass <span className="nb-chip nb-chip--sm">Best value</span>
             </p>
-            <p className="nb-plan-price">
-              <b>{formatPrice(six.amountCents, six.currency)}</b>
-              <span>one time</span>
-            </p>
-            <p className="nb-plan-note">One payment, about {perMonth} a month</p>
+            {six && (
+              <p className="nb-plan-price">
+                <b>{formatPrice(six.amountCents, six.currency)}</b>
+                <span>one time</span>
+              </p>
+            )}
+            <p className="nb-plan-note">One payment{perMonth ? `, about ${perMonth} a month` : ""}</p>
             <div className="nb-plan-perk">
               <Tick />
               <div>
@@ -65,7 +82,7 @@ export async function Pricing() {
                 <span>If your student takes the SAT again, access extends free.</span>
               </div>
             </div>
-            <TrackedLink href="/parent/login?mode=signup" event="parent_signup_started" className="nb-btn nb-btn--raised nb-plan-btn">
+            <TrackedLink href="/parent/login?mode=signup&plan=sixmonth" event="parent_signup_started" className="nb-btn nb-btn--raised nb-plan-btn">
               Get the 6-month pass
             </TrackedLink>
           </div>

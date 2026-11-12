@@ -134,7 +134,7 @@ export function SettingsClient({
 
   const [inviteCode, setInviteCode] = useState(parentInviteCode);
   const [shareToken, setShareToken] = useState(parentShareToken);
-  const [parents, setParents] = useState(linkedParents);
+  const [parents, setParents] = useState<((typeof linkedParents)[number] & { sendFailed?: boolean })[]>(linkedParents);
   const [generatingCode, setGeneratingCode] = useState(false);
   const [generatingLink, setGeneratingLink] = useState(false);
   const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
@@ -221,7 +221,10 @@ export function SettingsClient({
           firstName: name,
           baselineScore: baseline ? Number(baseline) : null,
           goalScore: goal ? Number(goal) : null,
-          targetTestDate: testDate || null,
+          // Only when it changed. The server won't take a date in the past,
+          // so resending a test date that has gone by would stop a name or
+          // goal from saving.
+          ...(testDate !== (targetTestDate ?? "") ? { targetTestDate: testDate || null } : {}),
         }),
       });
       const data = await res.json();
@@ -441,7 +444,7 @@ export function SettingsClient({
             {parents.map((p) => (
               <ParentRow
                 key={p.id}
-                parent={{ id: p.parentId, email: p.email, pending: p.pending }}
+                parent={{ id: p.parentId, email: p.email, pending: p.pending, sendFailed: p.sendFailed }}
                 onUnlink={unlinkingId === p.id ? undefined : () => unlinkParent(p.id)}
               />
             ))}
@@ -452,7 +455,7 @@ export function SettingsClient({
           onAdded={(a) =>
             setParents((prev) => [
               ...prev.filter((x) => x.parentId !== a.id),
-              { id: a.linkId ?? a.id, parentId: a.id, email: a.email, pending: a.pending },
+              { id: a.linkId ?? a.id, parentId: a.id, email: a.email, pending: a.pending, sendFailed: a.sendFailed },
             ])
           }
         />

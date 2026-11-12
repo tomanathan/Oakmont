@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { getUserStats } from "@/lib/user";
@@ -11,14 +12,27 @@ import { retakeState } from "@/lib/retakeCover";
 import { RetakeCover } from "@/components/RetakeCover";
 import { prisma } from "@/lib/prisma";
 
+export const metadata: Metadata = { title: "Choose your plan · Oakmont", robots: { index: false, follow: false } };
+
 export default async function SubscribePage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
+  // From Stripe, not hardcoded, so the amount shown here can never drift
+  // from what Checkout charges (cached an hour, see getPlanPrices). Started
+  // now so it loads alongside the account lookups below; if Stripe can't be
+  // read, that still surfaces where it's awaited, after the already-paid
+  // redirect, as it did when it was fetched there.
+  const pricesLoading = getPlanPrices();
+  pricesLoading.catch(() => {});
+
   // Already paid -- nothing to sell them, and showing a pricing page to
   // someone who already has access reads as broken, not just redundant.
   // Students in their free week can come here to choose a plan early.
-  const stats = await getUserStats(user.userId);
+  const [stats, parentCount] = await Promise.all([
+    getUserStats(user.userId),
+    prisma.parentLink.count({ where: { studentId: user.userId } }),
+  ]);
   if (hasPaidAccess(stats)) {
     redirect("/dashboard");
   }
@@ -28,12 +42,9 @@ export default async function SubscribePage() {
     ? stats.trialEndsAt.toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "America/Chicago" })
     : null;
 
-  // From Stripe, not hardcoded, so the amount shown here can never drift
-  // from what Checkout charges (cached an hour, see getPlanPrices).
-  const prices = await getPlanPrices();
+  const prices = await pricesLoading;
   const plans: PlanOption[] = (["monthly", "sixmonth"] as const).map((id) => ({ id, ...prices[id] }));
 
-  const parentCount = await prisma.parentLink.count({ where: { studentId: user.userId } });
   const retake = retakeState(stats.accessExpiresAt ?? null, stats.passRetakeClaimedAt ?? null);
 
   // Fresh from onboarding: remind them what they just set up.
@@ -56,15 +67,15 @@ export default async function SubscribePage() {
             {planLine}
           </div>
         )}
-        <div className="font-display font-semibold text-[28px] text-ink mb-1.5">
+        <h1 className="font-display font-semibold text-[28px] text-ink mb-1.5">
           {trialOver ? "Your free week is over" : "Choose your plan"}
-        </div>
+        </h1>
         <div className="text-sm text-stone-500 max-w-[520px] mx-auto">
           {daysLeft !== null
             ? `You have ${daysLeft} ${daysLeft === 1 ? "day" : "days"} left in your free trial. Choose a plan now and you won't lose them: monthly billing starts when the trial ends, and the 6-month pass starts counting after it.`
             : trialOver
               ? "Your progress, study plan, and Ozho are all saved. Choose a plan to pick up right where you left off."
-              : "Every plan includes the full curriculum, all 8 practice tests, your adaptive study plan, and Ozho."}
+              : "Every plan includes the full curriculum, a schedule for all 8 official practice tests, your adaptive study plan, and Ozho."}
         </div>
       </div>
       {retake.options.length > 0 && (

@@ -1,4 +1,4 @@
-import type { Section } from "@/data/curriculum";
+import type { OutlineSection } from "./curriculumOutline";
 import { isMastered, isPassed, type ProgressMap } from "./progressState";
 
 export interface SectionProgress {
@@ -26,7 +26,7 @@ export interface SectionProgress {
  * render the exact same ring and number off the exact same numbers,
  * rather than a parent-side reimplementation drifting out of sync.
  */
-export function sectionProgress(section: Section, progress: ProgressMap): SectionProgress {
+export function sectionProgress(section: OutlineSection, progress: ProgressMap): SectionProgress {
   const subskillIds = section.domains.flatMap((d) => d.subskills.map((s) => s.id));
   const attempted = subskillIds.filter((id) => !!progress[id]);
   const masteredCount = attempted.filter((id) => isMastered(progress[id])).length;

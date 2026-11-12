@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword, createSessionToken, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/auth";
+import { clientIp, isJsonRequest, keyPart, rateLimitAll } from "@/lib/rateLimit";
+
+const TOO_MANY = "Too many tries. Wait a few minutes and try again, or use \"Forgot password?\".";
 
 export async function POST(req: NextRequest) {
+  if (!isJsonRequest(req)) return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   let body: { email?: string; password?: string };
   try {
     body = await req.json();
@@ -17,8 +21,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Enter both an email and password." }, { status: 400 });
   }
 
+  // Before any lookup or password check: a cap per address, a tighter one
+  // per account from that address, and one per account from anywhere.
+  const ip = clientIp(req);
+  const acct = keyPart(email);
+  const allowed = await rateLimitAll([
+    [`login:ip:${ip}`, 60, 15 * 60],
+    [`login:acct:${acct}:${ip}`, 8, 15 * 60],
+    [`login:acct:${acct}`, 30, 60 * 60],
+  ]);
+  if (!allowed) return NextResponse.json({ error: TOO_MANY }, { status: 429 });
+
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
+    // A parent on the student page: point them at their own login.
+    const parent = await prisma.parent.findUnique({ where: { email }, select: { id: true } });
+    if (parent) {
+      return NextResponse.json(
+        { error: "This email has a parent account. Log in from the parent page.", parentLogin: true },
+        { status: 404 }
+      );
+    }
     return NextResponse.json(
       { error: "No account found with this email. Sign up first." },
       { status: 404 }

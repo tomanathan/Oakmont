@@ -57,6 +57,18 @@ export function getWebhookSecret(): string {
   return secret;
 }
 
+// When a monthly subscription is set to stop, or null if it will renew. The
+// webhook mirrors status and period end but not "set to cancel at period
+// end" -- a subscription canceled from the Billing Portal stays "active"
+// until the period runs out -- so this one detail is read live. Throws if
+// Stripe can't be reached; callers catch and fall back to the stored status.
+export async function subscriptionCancelsAt(subscriptionId: string, currentPeriodEnd: Date | null): Promise<Date | null> {
+  const sub = await stripe.subscriptions.retrieve(subscriptionId);
+  if (sub.cancel_at) return new Date(sub.cancel_at * 1000);
+  if (sub.cancel_at_period_end) return currentPeriodEnd;
+  return null;
+}
+
 export interface PlanPrice {
   amountCents: number;
   currency: string;

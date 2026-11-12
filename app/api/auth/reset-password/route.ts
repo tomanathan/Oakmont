@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { hashPassword, createSessionToken, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/auth";
+import { hashPassword, createSessionToken, sessionCutoff, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
   let body: { token?: string; password?: string };
@@ -29,9 +29,18 @@ export async function POST(req: NextRequest) {
   }
 
   const passwordHash = await hashPassword(password);
+  // The emailed link proves the address is theirs, and a reset is what
+  // someone does when the old password may be known to someone else: every
+  // session issued before now stops working.
   await prisma.user.update({
     where: { id: user.id },
-    data: { passwordHash, passwordResetToken: null, passwordResetExpires: null },
+    data: {
+      passwordHash,
+      passwordResetToken: null,
+      passwordResetExpires: null,
+      emailVerifiedAt: user.emailVerifiedAt ?? new Date(),
+      sessionsValidAfter: sessionCutoff(),
+    },
   });
 
   // Log them straight in -- they just proved account ownership via the

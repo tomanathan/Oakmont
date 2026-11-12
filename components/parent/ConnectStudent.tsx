@@ -21,36 +21,46 @@ export function ConnectStudent({ initialName = "", compact = false }: { initialN
     e.preventDefault();
     setCodeError("");
     setLinking(true);
-    const res = await fetch("/api/parent/link-code", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, nickname: name }),
-    });
-    const data = await res.json().catch(() => ({}));
-    setLinking(false);
-    if (!res.ok) {
-      setCodeError(data.error || "Something went wrong.");
-      return;
+    try {
+      const res = await fetch("/api/parent/link-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, nickname: name }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setCodeError(data.error || "Something went wrong.");
+        return;
+      }
+      turnTo(`/parent/dashboard?student=${data.studentId}`);
+      router.refresh();
+    } catch {
+      setCodeError("Couldn't reach the server. Please try again.");
+    } finally {
+      setLinking(false);
     }
-    turnTo(`/parent/dashboard?student=${data.studentId}`);
-    router.refresh();
   }
 
   async function createInvite() {
     setInviteError("");
     setCreating(true);
-    const res = await fetch("/api/parent/invites", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nickname: name }),
-    });
-    const data = await res.json().catch(() => ({}));
-    setCreating(false);
-    if (!res.ok) {
-      setInviteError(data.error || "Something went wrong.");
-      return;
+    try {
+      const res = await fetch("/api/parent/invites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nickname: name }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) {
+        setInviteError(data.error || "Something went wrong.");
+        return;
+      }
+      setInviteUrl(data.url);
+    } catch {
+      setInviteError("Couldn't reach the server. Please try again.");
+    } finally {
+      setCreating(false);
     }
-    setInviteUrl(data.url);
   }
 
   async function copy() {

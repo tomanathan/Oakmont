@@ -238,7 +238,7 @@ export function ScoreTrend({
             {t.composite}
           </text>
           <text x={x(i)} y={H - 10} fontSize={10} fill={MUTED} textAnchor="middle">
-            {new Date(t.takenAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+            {new Date(t.takenAt).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}
           </text>
         </g>
       ))}

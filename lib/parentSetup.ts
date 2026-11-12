@@ -1,7 +1,8 @@
 import crypto from "crypto";
 import { prisma } from "./prisma";
 import { sendEmail } from "./email";
-import { parentClaimed } from "./parentAuth";
+import { parentClaimed, parentVerified } from "./parentAuth";
+import { sessionCutoff } from "./auth";
 
 // Parent accounts a student creates at signup start without a password.
 // The parent sets one through an emailed link (/parent/setup?token=...);
@@ -63,10 +64,15 @@ export function parentAddedEmail({
   studentName,
   claimed,
   token,
+  confirming = false,
 }: {
   studentName: string;
   claimed: boolean;
   token: string | null;
+  // The address already had an account whose password was never confirmed
+  // by email: this link confirms it, and the password they choose replaces
+  // the old one.
+  confirming?: boolean;
 }): { subject: string; html: string } {
   const who = esc(studentName);
   const list = `<ul style="font-size:14px;line-height:1.7;color:#3b4763;padding-left:20px;margin:0 0 20px;">${WHAT_YOU_SEE.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>`;
@@ -85,7 +91,11 @@ export function parentAddedEmail({
     subject: `${studentName} added you as their parent on Oakmont`,
     html: shell(`
   <h1 style="font-size:24px;line-height:1.25;margin:10px 0 12px;">${who} is studying for the SAT and added you as their parent</h1>
-  <p style="font-size:15px;line-height:1.6;color:#3b4763;margin:0 0 16px;">Your free parent account is ready. Set a password to see a live report of ${who}'s studying:</p>
+  <p style="font-size:15px;line-height:1.6;color:#3b4763;margin:0 0 16px;">${
+    confirming
+      ? `To confirm this email address is yours, choose a password. It replaces any password this account had, and opens a live report of ${who}'s studying:`
+      : `Your free parent account is ready. Set a password to see a live report of ${who}'s studying:`
+  }</p>
   ${list}
   ${button(url, "Set your password")}
   <p style="font-size:13px;line-height:1.6;color:#3b4763;margin:18px 0 0;">The link works for 30 days. Parent accounts are free.</p>
@@ -151,6 +161,22 @@ export async function addParentForStudent({
   });
   const link = existingLink ?? (await prisma.parentLink.create({ data: { parentId: parent.id, studentId, nickname: studentName || null } }));
 
+  // An account someone made with a password alone has never shown that
+  // this address is theirs -- anyone can sign up as someone else's parent
+  // and wait for the student to add that address. So a student's report
+  // only lands directly in an account whose address is proven (Google, or
+  // a password set through our emailed link). Otherwise the unproven
+  // password and its sessions are dropped and the real owner of the inbox
+  // sets a new one from this email, exactly like a brand-new parent. That
+  // can happen to an account only once (setting the password through the
+  // link is the proof), and never for a student it already follows.
+  const confirming = !existingLink && parentClaimed(parent) && !parentVerified(parent);
+  if (confirming) {
+    parent = await prisma.parent.update({
+      where: { id: parent.id },
+      data: { passwordHash: null, sessionsValidAfter: sessionCutoff(), ...newSetupToken(false) },
+    });
+  }
   const claimed = parentClaimed(parent);
   let token: string | null = null;
   if (!claimed) {
@@ -162,7 +188,7 @@ export async function addParentForStudent({
       token = t.setupToken;
     }
   }
-  const { subject, html } = parentAddedEmail({ studentName: studentName || "Your student", claimed, token });
+  const { subject, html } = parentAddedEmail({ studentName: studentName || "Your student", claimed, token, confirming });
   const res = await sendEmail({ to: parent.email, subject, html }).catch(() => ({ sent: false }));
   await prisma.parent.update({ where: { id: parent.id }, data: { setupEmailSentAt: new Date() } });
   return { parentId: parent.id, linkId: link.id, alreadyLinked: !!existingLink, claimed, sent: res.sent };

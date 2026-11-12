@@ -1,11 +1,15 @@
 import { LegalPageShell } from "@/components/LegalPageShell";
 import { SUPPORT_EMAIL } from "@/components/LegalFooter";
 
-export const metadata = { title: "Privacy Policy — Oakmont Study Center" };
+export const metadata = {
+  title: "Privacy Policy — Oakmont Study Center",
+  description: "What Oakmont Study Center collects, why, who it's shared with, and what a connected parent can see.",
+  alternates: { canonical: "https://oakmontsat.com/privacy" },
+};
 
 export default function PrivacyPage() {
   return (
-    <LegalPageShell title="Privacy Policy" updated="September 22, 2026">
+    <LegalPageShell title="Privacy Policy" updated="November 10, 2026">
       <p>
         This describes what Oakmont Study Center collects, why, and who it&apos;s shared with. The short version:
         we collect what's needed to run your study plan and nothing more, we never see your card number, and
@@ -16,10 +20,18 @@ export default function PrivacyPage() {
       <h2>1. What we collect</h2>
       <p>When you use Oakmont, we store:</p>
       <ul>
-        <li>Your email address and a securely hashed password (we never store the password itself).</li>
         <li>
-          Study data: quiz answers and scores, which subskills you&apos;ve practiced, your target test date and
-          goal score, practice-test results you log, and your daily study streak.
+          Your first name, your email address, and a securely hashed password (we never store the password
+          itself). If you sign in with Google, we store the Google account identifier that tells us it&apos;s you.
+        </li>
+        <li>
+          Study data: quiz answers and scores, which lessons and subskills you&apos;ve worked on and when, your
+          target test date and goal score, practice-test results you log, and your daily study streak. For each
+          practice question you answer, we also store how long you took and how confident you said you were.
+        </li>
+        <li>
+          If a student connects a parent, the parent&apos;s email address. A parent account also stores the
+          parent&apos;s time zone, so the days in their reports match their own clock.
         </li>
         <li>A couple of small cosmetic settings, like which Ozho costume you&apos;ve equipped.</li>
       </ul>
@@ -34,23 +46,41 @@ export default function PrivacyPage() {
 
       <h2>3. Sharing your progress with a parent</h2>
       <p>
-        From Settings, a student can optionally generate a parent invite code or a public share link. If you do,
-        whoever has that code or link can view a read-only summary of your practice scores, subject mastery, and
-        test history. This is off by default, entirely your choice, and can be turned off at any time from
-        Settings, which immediately revokes access. Because the public link doesn&apos;t require logging in,
-        treat it like a password — anyone who has the link can see the data behind it.
+        A student and a parent can connect their accounts, and either one can start it. A student can add a
+        parent&apos;s email address (while signing up or later in Settings), or share an invite code or a link.
+        A parent with their own account can send the student an invite link, and the two are connected when the
+        student uses it.
+      </p>
+      <p>
+        A connected parent sees a report of the student&apos;s studying: each study session (when it was, how
+        long it lasted, and what was covered), progress on every skill, accuracy, whether the plan is on pace,
+        mistakes that repeat, the confidence the student reports on their answers, and practice-test scores. The
+        parent also gets a weekly email summary.
+      </p>
+      <p>
+        Either one can remove the connection: a student from Settings, a parent from their own dashboard. A
+        student can also turn off the shareable link in Settings, which stops it working right away. Because that
+        link doesn&apos;t require logging in, treat it like a password — anyone who has the link can see the
+        report behind it.
       </p>
 
       <h2>4. Who else sees data, and why</h2>
       <ul>
         <li><strong>Stripe</strong> — processes payments (see above).</li>
         <li>
-          <strong>Resend</strong> — sends the occasional study-streak email, only if that feature is enabled on
-          your account.
+          <strong>Google</strong> — only if you choose to sign in with Google. Google confirms who you are and
+          gives us your email address, first name, and Google account identifier.
+        </li>
+        <li>
+          <strong>Resend</strong> — sends our email: account emails (password resets and parent setup links),
+          daily study emails to students and connected parents, a weekly report to connected parents on Sundays,
+          and a reminder before the free trial ends. The daily emails can be turned off in your account&apos;s
+          settings or with the unsubscribe link in each one.
         </li>
         <li>
           <strong>Supabase and Vercel</strong> — host our database and the app itself. They store data on our
-          behalf; they don&apos;t use it for anything of their own.
+          behalf; they don&apos;t use it for anything of their own. We also use Vercel Analytics to count page
+          views.
         </li>
       </ul>
       <p>We don&apos;t share your data with advertisers, and there are no ads in Oakmont.</p>

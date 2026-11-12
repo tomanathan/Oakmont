@@ -1,6 +1,6 @@
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
-import { getUserStats } from "@/lib/user";
+import { getUserStats, shellStats } from "@/lib/user";
 import { hasActiveAccess } from "@/lib/subscription";
 import { getSubskill } from "@/data/curriculum";
 import { itemsForSubskill } from "@/lib/items";
@@ -24,11 +24,15 @@ export default async function SubskillPage({ params }: { params: { id: string } 
     getUserStats(user.userId),
   ]);
   if (!hasActiveAccess(stats)) redirect("/subscribe");
-  const questions = pickQuizItems(itemsForSubskill(params.id), attempts);
+  const bank = itemsForSubskill(params.id);
+  const questions = pickQuizItems(bank, attempts);
 
   return (
-    <AppShell email={user.email} stats={stats} wide>
-      <SubskillClient subskill={sub} questions={questions} />
+    <AppShell email={user.email} stats={shellStats(stats)} wide>
+      {/* The bank's current ids (ids only, they're short) let the page drop
+          a saved draft that holds a question since reworded; the user id
+          keeps drafts apart on a shared computer. */}
+      <SubskillClient subskill={sub} questions={questions} userId={user.userId} validItemIds={bank.map((q) => q.id)} />
     </AppShell>
   );
 }

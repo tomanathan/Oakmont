@@ -59,27 +59,31 @@ function ResetPasswordForm() {
 
   return (
     <form onSubmit={submit}>
-      <label className="block text-sm text-stone-700 mb-1">New password</label>
+      <label htmlFor="reset-password" className="block text-sm text-stone-700 mb-1">New password</label>
       <input
+        id="reset-password"
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="At least 6 characters"
-        className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
+        autoComplete="new-password"
+        className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-[16px] sm:text-sm focus:outline-none focus:border-[#4a67a6]"
         required
         minLength={6}
       />
-      <label className="block text-sm text-stone-700 mb-1">Confirm new password</label>
+      <label htmlFor="reset-password-confirm" className="block text-sm text-stone-700 mb-1">Confirm new password</label>
       <input
+        id="reset-password-confirm"
         type="password"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         placeholder="Type it again"
-        className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-sm focus:outline-none focus:border-[#4a67a6]"
+        autoComplete="new-password"
+        className="w-full px-3 py-2.5 rounded-lg border border-[#b4c5e6] mb-3.5 text-[16px] sm:text-sm focus:outline-none focus:border-[#4a67a6]"
         required
         minLength={6}
       />
-      {error && <div className="text-red-700 text-sm mb-3">{error}</div>}
+      {error && <div role="alert" className="text-red-700 text-sm mb-3">{error}</div>}
       <button
         type="submit"
         disabled={submitting}
@@ -98,7 +102,7 @@ export default function ResetPasswordPage() {
       <span className="nbk-spiral" aria-hidden />
       <div className="text-center mb-8">
         <BrandMark size={56} className="mx-auto mb-3" />
-        <div className="font-display font-semibold text-[28px] text-ink mb-1">Set a new password</div>
+        <h1 className="font-display font-semibold text-[28px] text-ink mb-1">Set a new password</h1>
       </div>
       <div className="bg-white border border-[#c9d6ee] rounded-xl p-7 shadow-[3px_3px_0_rgba(52,97,193,0.13)]">
         <Suspense fallback={<div className="text-sm text-stone-500">Loading...</div>}>

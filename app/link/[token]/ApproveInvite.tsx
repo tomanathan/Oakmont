@@ -10,18 +10,23 @@ export function ApproveInvite({ token, studentEmail }: { token: string; studentE
   async function approve() {
     setState("saving");
     setError("");
-    const res = await fetch("/api/account/accept-parent-invite", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      setError(data.error || "Something went wrong.");
+    try {
+      const res = await fetch("/api/account/accept-parent-invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || "Something went wrong.");
+        setState("idle");
+        return;
+      }
+      setState("done");
+    } catch {
+      setError("Couldn't reach the server. Please try again.");
       setState("idle");
-      return;
     }
-    setState("done");
   }
 
   if (state === "done") {
@@ -47,7 +52,7 @@ export function ApproveInvite({ token, studentEmail }: { token: string; studentE
           Not now
         </button>
       </div>
-      {error && <div className="mt-2 text-sm text-red-700">{error}</div>}
+      {error && <div role="alert" className="mt-2 text-sm text-red-700">{error}</div>}
     </div>
   );
 }

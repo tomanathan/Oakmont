@@ -182,7 +182,7 @@ export function PracticeClient({
           <div className="mb-4 text-[15.5px] leading-relaxed text-ink">
             <PassageText text={current.q} figure={current.figure} />
           </div>
-          <ExamChoices choices={current.choices} correctIndex={current.answer} selected={picked ?? null} revealed={revealed} onSelect={pick} />
+          <ExamChoices choices={current.choices} correctIndex={current.answer} selected={picked ?? null} revealed={revealed} onSelect={pick} arrowSelects={false} />
           {revealed && (
             <div className={`mt-4 rounded-xl p-4 text-[14px] leading-relaxed ${right ? "bg-[#eaf6ef] text-[#23553a]" : "bg-[#eef3fb] text-stone-700"}`}>
               <div className="mb-1 font-semibold">{right ? "Nice." : "Here's the move:"}</div>

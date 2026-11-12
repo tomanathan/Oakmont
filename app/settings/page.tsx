@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
-import { getUserStats } from "@/lib/user";
+import { getUserStats, shellStats } from "@/lib/user";
 import { prisma } from "@/lib/prisma";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
 import { computeDomainMastery, completedDomainCount } from "@/lib/mastery";
@@ -10,7 +10,7 @@ import { computePetState, PET_NAME, SECOND_PET_NAME, SECOND_PET_UNLOCK_DAYS } fr
 import { AppShell } from "@/components/AppShell";
 import { SettingsClient } from "./SettingsClient";
 import { retakeState } from "@/lib/retakeCover";
-import { stripe } from "@/lib/stripe";
+import { subscriptionCancelsAt } from "@/lib/stripe";
 import { trialDaysLeft, trialEnded } from "@/lib/subscription";
 import { parentClaimed } from "@/lib/parentAuth";
 
@@ -72,9 +72,7 @@ export default async function SettingsPage() {
     const subscriptionId = parentAccess?.stripeSubscriptionId;
     if (subscriptionId && ["trialing", "active", "past_due"].includes(stats.subscriptionStatus)) {
       try {
-        const sub = await stripe.subscriptions.retrieve(subscriptionId);
-        if (sub.cancel_at) cancelsAt = new Date(sub.cancel_at * 1000).toISOString();
-        else if (sub.cancel_at_period_end) cancelsAt = stats.currentPeriodEnd?.toISOString() ?? null;
+        cancelsAt = (await subscriptionCancelsAt(subscriptionId, stats.currentPeriodEnd ?? null))?.toISOString() ?? null;
       } catch (err) {
         // Stripe being unreachable shouldn't break Settings; fall back to
         // the stored status.
@@ -89,7 +87,7 @@ export default async function SettingsPage() {
   }
 
   return (
-    <AppShell email={user.email} stats={stats}>
+    <AppShell email={user.email} stats={shellStats(stats)}>
       <SettingsClient
         encourageEmails={parentAccess?.encourageEmails ?? true}
         email={user.email}

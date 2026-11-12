@@ -60,6 +60,13 @@ export interface InsightInput {
   daysUntilTest: number | null;
 }
 
+export interface ReportOptions {
+  // The Sunday email goes out early in the morning, when "today" has barely
+  // begun, so it reports the 7 complete days ending yesterday. The live
+  // dashboard leaves this off: its week is the last 7 days including today.
+  completeDays?: boolean;
+}
+
 export type Tone = "good" | "watch" | "act";
 
 export interface DayCell {
@@ -138,7 +145,7 @@ export interface ParentReport {
   timeZone: string;
   verdict: { tone: Tone; headline: string; detail: string };
   lastActive: string | null; // ISO of the most recent activity
-  daysSinceActive: number | null;
+  daysSinceActive: number | null; // counted to the last day the week covers
   week: {
     minutes: number;
     minutesPrev: number;
@@ -228,15 +235,30 @@ function shortDayLabel(key: string): string {
   return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][weekdayOfKey(key)];
 }
 
+function daysBetweenKeys(from: string, to: string): number {
+  const [y1, m1, d1] = from.split("-").map(Number);
+  const [y2, m2, d2] = to.split("-").map(Number);
+  return Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / DAY_MS);
+}
+
+// "Sunday, November 1"
+function longDayLabel(key: string): string {
+  const [y, m, d] = key.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" });
+}
+
 function skillName(id: string): string {
   return getSubskill(id)?.name ?? id;
 }
 
 // ---- the report ---------------------------------------------------------------
 
-export function buildParentReport(input: InsightInput): ParentReport {
+export function buildParentReport(input: InsightInput, opts: ReportOptions = {}): ParentReport {
   const { now, timeZone, attempts, lessonViews, tests, student } = input;
   const today = dayKey(now, timeZone);
+  // How many days back the week ends: today for the live view, yesterday
+  // for the email.
+  const end = opts.completeDays ? 1 : 0;
   const sortedAttempts = [...attempts].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
   const sortedLessons = [...lessonViews].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
@@ -272,10 +294,10 @@ export function buildParentReport(input: InsightInput): ParentReport {
     }
     return { minutes: Math.round(minutes), questions, accuracy: pct(correct, questions), active };
   };
-  const thisWeek = sumRange(6, 0);
-  const prevWeek = sumRange(13, 7);
+  const thisWeek = sumRange(6 + end, end);
+  const prevWeek = sumRange(13 + end, 7 + end);
   const dayFlags = Array.from({ length: 7 }, (_, j) => {
-    const k = addDaysKey(today, j - 6);
+    const k = addDaysKey(today, j - 6 - end);
     const c = byDay.get(k);
     return { day: k, label: shortDayLabel(k), active: !!c && (c.minutes >= 1 || c.questions > 0), minutes: Math.round(c?.minutes ?? 0) };
   });
@@ -524,15 +546,25 @@ export function buildParentReport(input: InsightInput): ParentReport {
     student.lastActiveDate ? student.lastActiveDate.getTime() : 0
   );
   const lastActive = lastT > 0 ? new Date(lastT).toISOString() : null;
-  let daysSinceActive: number | null = null;
-  if (lastT > 0) {
-    const lk = dayKey(new Date(lastT), timeZone);
-    const [y1, m1, d1] = lk.split("-").map(Number);
-    const [y2, m2, d2] = today.split("-").map(Number);
-    daysSinceActive = Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / DAY_MS);
-  }
+  const lastDay = lastT > 0 ? dayKey(new Date(lastT), timeZone) : null;
+  // Days without study up to the end of the week above, so "no studying in
+  // N days" always agrees with the seven day boxes beside it.
+  const daysSinceActive = lastDay ? Math.max(0, daysBetweenKeys(lastDay, today) - end) : null;
 
   const hasActivity = sortedAttempts.length > 0 || sortedLessons.length > 0 || input.progressRows.length > 0;
+
+  // -- the first week. There isn't a full week to judge yet, and the pace
+  // line expects progress from day one, so a new student is measured
+  // against the days they've actually had.
+  const ageDays = Math.max(0, daysBetweenKeys(dayKey(student.createdAt, timeZone), today));
+  const isNew = ageDays < 7;
+  // Their days so far: from signup day through the end of the week above
+  // (through today when that leaves nothing, or nothing studied, to count).
+  const firstBack = Math.min(ageDays, 6);
+  let firstEnd = Math.min(end, firstBack);
+  if (sumRange(firstBack, firstEnd).active === 0) firstEnd = 0;
+  const firstDays = firstBack - firstEnd + 1;
+  const firstActive = sumRange(firstBack, firstEnd).active;
 
   // -- verdict
   const { pacing } = input;
@@ -544,14 +576,28 @@ export function buildParentReport(input: InsightInput): ParentReport {
     tone = "watch";
     headline = `${name} hasn't started yet`;
     detail = "Nothing has been studied so far. The first lesson and quiz take about 20 minutes.";
+  } else if (isNew) {
+    // The usual bar (two study days in seven) scaled to the days so far.
+    // No pace clause: nobody is behind a plan they started this week.
+    tone = firstActive >= Math.ceil((2 * firstDays) / 7) ? "good" : "watch";
+    headline = "Just getting started";
+    detail =
+      firstActive === 0
+        ? "Not a full study session yet. The first lesson and quiz take about 20 minutes."
+        : firstDays === 1
+          ? "Studied on their first day."
+          : `Studied ${firstActive} of their first ${firstDays} days.`;
   } else if (daysSinceActive !== null && daysSinceActive >= 5) {
     tone = "act";
     headline = `No studying in ${daysSinceActive} days`;
-    detail = `${name}'s last session was ${daysSinceActive} days ago. Short, regular sessions matter more than long ones; even 15 minutes gets things moving again.`;
+    // In the email the count stops at yesterday, so "N days ago" would be a
+    // day short for someone reading it today: name the day instead.
+    const last = opts.completeDays && lastDay ? `${name} last studied on ${longDayLabel(lastDay)}.` : `${name}'s last session was ${daysSinceActive} days ago.`;
+    detail = `${last} Short, regular sessions matter more than long ones; even 15 minutes gets things moving again.`;
   } else if (thisWeek.active >= 4 && pacing.status !== "behind") {
     tone = "good";
     headline = pacing.status === "ahead" ? "Ahead of plan and studying consistently" : "Steady, consistent work";
-    detail = `${thisWeek.active} study days and ${thisWeek.minutes} minutes in the last week${thisWeek.accuracy !== null ? `, answering ${thisWeek.accuracy}% correctly` : ""}.`;
+    detail = `${thisWeek.active} study days and ${thisWeek.minutes} minute${thisWeek.minutes === 1 ? "" : "s"} in the last week${thisWeek.accuracy !== null ? `, answering ${thisWeek.accuracy}% correctly` : ""}.`;
   } else if (thisWeek.active >= 2 && pacing.status !== "behind") {
     tone = "good";
     headline = "Steady, with room for more";
@@ -583,8 +629,8 @@ export function buildParentReport(input: InsightInput): ParentReport {
   if (rushedMath && rushedMath.rushedShare !== null && rushedMath.rushedShare >= 30 && rushedMath.rushedAccuracy !== null && rushedMath.steadyAccuracy !== null && rushedMath.rushedAccuracy + 10 < rushedMath.steadyAccuracy) {
     talkingPoints.push({ kind: "ask", text: `Rushing costs points in Math: quick answers are right ${rushedMath.rushedAccuracy}% of the time versus ${rushedMath.steadyAccuracy}% when they take their time.` });
   }
-  if (input.daysUntilTest !== null && input.daysUntilTest > 0 && input.daysUntilTest <= 60) talkingPoints.push({ kind: "plan", text: `${input.daysUntilTest} days until the SAT. A full-length practice test every two weeks from here keeps test day familiar.` });
-  if (pacing.status === "behind" && Math.abs(pacing.unitsAhead) >= 2) talkingPoints.push({ kind: "plan", text: `${Math.abs(pacing.unitsAhead)} skills behind schedule. Two extra 20-minute sessions a week closes that gap in about a month.` });
+  if (input.daysUntilTest !== null && input.daysUntilTest > 0 && input.daysUntilTest <= 60) talkingPoints.push({ kind: "plan", text: `${input.daysUntilTest} day${input.daysUntilTest === 1 ? "" : "s"} until the SAT. A full-length practice test every two weeks from here keeps test day familiar.` });
+  if (!isNew && pacing.status === "behind" && Math.abs(pacing.unitsAhead) >= 2) talkingPoints.push({ kind: "plan", text: `${Math.abs(pacing.unitsAhead)} skills behind schedule. Two extra 20-minute sessions a week closes that gap in about a month.` });
 
   return {
     name,

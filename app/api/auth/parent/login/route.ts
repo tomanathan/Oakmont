@@ -7,8 +7,10 @@ import {
   PARENT_SESSION_COOKIE_NAME,
   PARENT_SESSION_MAX_AGE,
 } from "@/lib/parentAuth";
+import { clientIp, isJsonRequest, keyPart, rateLimitAll } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
+  if (!isJsonRequest(req)) return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   let body: { email?: string; password?: string };
   try {
     body = await req.json();
@@ -21,6 +23,20 @@ export async function POST(req: NextRequest) {
 
   if (!email || !password) {
     return NextResponse.json({ error: "Enter both an email and password." }, { status: 400 });
+  }
+
+  const ip = clientIp(req);
+  const acct = keyPart(email);
+  const allowed = await rateLimitAll([
+    [`plogin:ip:${ip}`, 60, 15 * 60],
+    [`plogin:acct:${acct}:${ip}`, 8, 15 * 60],
+    [`plogin:acct:${acct}`, 30, 60 * 60],
+  ]);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many tries. Wait a few minutes and try again, or use \"Forgot password?\"." },
+      { status: 429 }
+    );
   }
 
   const parent = await prisma.parent.findUnique({ where: { email } });

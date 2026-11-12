@@ -1,11 +1,15 @@
 import { LegalPageShell } from "@/components/LegalPageShell";
 import { SUPPORT_EMAIL } from "@/components/LegalFooter";
 
-export const metadata = { title: "Terms of Service — Oakmont Study Center" };
+export const metadata = {
+  title: "Terms of Service — Oakmont Study Center",
+  description: "The terms for using Oakmont Study Center: the free trial, the two plans, billing and refunds, and connecting with a parent.",
+  alternates: { canonical: "https://oakmontsat.com/terms" },
+};
 
 export default function TermsPage() {
   return (
-    <LegalPageShell title="Terms of Service" updated="September 24, 2026">
+    <LegalPageShell title="Terms of Service" updated="November 10, 2026">
       <p>
         These terms cover your use of Oakmont Study Center (&ldquo;Oakmont,&rdquo; &ldquo;we,&rdquo; &ldquo;us&rdquo;), an
         online SAT preparation course. By creating an account or paying for access, you agree to them. If you&apos;re
@@ -38,7 +42,7 @@ export default function TermsPage() {
           access continues through the end of the period you already paid for.
         </li>
         <li>
-          <strong>Full Course Access ($69.99 one time):</strong> a single payment that unlocks everything for 182
+          <strong>6-month pass ($69.99 one time):</strong> a single payment that unlocks everything for 182
           days from the date you pay (or, if you buy during your free trial, from the day the trial ends). It does not renew or charge you again. It includes one free retake extension: in
           Settings, choose an upcoming official SAT date within six months of your access ending, and access extends
           through three days after that date. It can be claimed once, up to 90 days after the pass ends.
@@ -48,7 +52,7 @@ export default function TermsPage() {
 
       <h2>4. Refunds</h2>
       <p>
-        <strong>Full Course Access:</strong> if it&apos;s within 3 days of your purchase and you haven&apos;t
+        <strong>6-month pass:</strong> if it&apos;s within 3 days of your purchase and you haven&apos;t
         gotten meaningfully into the material, email us and we&apos;ll refund it in full, no hassle. After that, or
         with heavier use, reach out anyway — we look at these individually rather than applying a hard rule.
       </p>
@@ -63,10 +67,12 @@ export default function TermsPage() {
 
       <h2>5. Letting a parent see your progress</h2>
       <p>
-        From Settings, you can optionally generate an invite code (for a parent to make their own account) or a
-        public link — either one shows a read-only view of your practice scores, subject mastery, and test
-        history. This is entirely your choice: nothing is shared until you generate one of these, and turning it
-        off in Settings revokes access right away.
+        A student and a parent can connect their accounts, and either one can start it: a student can add a
+        parent&apos;s email address or share an invite code or a link, and a parent with their own account can
+        send the student an invite link. A connected parent sees a report of the student&apos;s studying: each
+        study session (when, how long, and what was covered), progress on every skill, accuracy, pacing, repeated
+        mistakes and confidence ratings, and practice-test scores. The parent also gets a weekly email. Either
+        one can remove the connection, a student from Settings and a parent from their own dashboard.
       </p>
 
       <h2>6. Using Oakmont fairly</h2>

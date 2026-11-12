@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { createSessionToken, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/auth";
+import { createSessionToken, sessionCutoff, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/auth";
 import { createParentSessionToken, PARENT_SESSION_COOKIE_NAME, PARENT_SESSION_MAX_AGE } from "@/lib/parentAuth";
 import { safeTimeZone } from "@/lib/parentReportData";
 import { trialEndFrom } from "@/lib/subscription";
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
 
   const done = saved.parent
     ? await signInParent(identity, saved.parent)
-    : await signInStudent(identity, saved.next ?? null, req.cookies.get(START_COOKIE)?.value);
+    : await signInStudent(identity, saved.next ?? null, req.cookies.get(START_COOKIE)?.value, saved.from === "start");
   if ("error" in done) return fail(done.error);
 
   const res = NextResponse.redirect(new URL(done.dest, req.url));
@@ -72,7 +72,12 @@ export async function GET(req: NextRequest) {
 
 type Outcome = { dest: string; cookie: string; token: string; maxAge: number; started?: boolean } | { error: string };
 
-async function signInStudent(identity: GoogleIdentity, next: string | null, startCookie: string | undefined): Promise<Outcome> {
+async function signInStudent(
+  identity: GoogleIdentity,
+  next: string | null,
+  startCookie: string | undefined,
+  fromStart: boolean
+): Promise<Outcome> {
   const now = new Date();
   let user = await prisma.user.findUnique({ where: { googleSub: identity.sub } });
   let isNew = false;
@@ -83,12 +88,33 @@ async function signInStudent(identity: GoogleIdentity, next: string | null, star
       // verified they own it, so link the two -- unless this account is
       // already tied to a different Google account.
       if (byEmail.googleSub && byEmail.googleSub !== identity.sub) return { error: "google_other_account" };
-      user = await prisma.user.update({ where: { id: byEmail.id }, data: { googleSub: identity.sub } });
+      // If that password was never proven to be theirs (set at signup, not
+      // through an emailed link), someone else may have signed up with
+      // their address first. Google is the proof: drop the unproven
+      // password and end any sessions it opened. They can still set a
+      // password with "Forgot password?".
+      const unproven = !!byEmail.passwordHash && !byEmail.emailVerifiedAt;
+      user = await prisma.user.update({
+        where: { id: byEmail.id },
+        data: {
+          googleSub: identity.sub,
+          emailVerifiedAt: byEmail.emailVerifiedAt ?? now,
+          ...(unproven ? { passwordHash: null, passwordResetToken: null, passwordResetExpires: null, sessionsValidAfter: sessionCutoff() } : {}),
+        },
+      });
     } else {
+      // A parent using the student page's Google button would otherwise
+      // get a brand-new student account: send them to the parent login.
+      // (/start is different: that is someone choosing to study.)
+      if (!fromStart) {
+        const parent = await prisma.parent.findUnique({ where: { email: identity.email }, select: { id: true } });
+        if (parent) return { error: "parent_account" };
+      }
       user = await prisma.user.create({
         data: {
           email: identity.email,
           googleSub: identity.sub,
+          emailVerifiedAt: now,
           firstName: identity.givenName,
           lastLoginAt: now,
           trialEndsAt: trialEndFrom(now),
@@ -128,7 +154,7 @@ async function signInParent(identity: GoogleIdentity, ctx: ParentContext): Promi
     }
     parent = await prisma.parent.update({
       where: { id: target.id },
-      data: { googleSub: identity.sub, setupToken: null, setupTokenExpires: null },
+      data: { googleSub: identity.sub, setupToken: null, setupTokenExpires: null, emailVerifiedAt: target.emailVerifiedAt ?? now },
     });
   }
 
@@ -138,7 +164,20 @@ async function signInParent(identity: GoogleIdentity, ctx: ParentContext): Promi
       // Same verified address: sign in, and claim the account if a student
       // created it for them and it was still waiting on a password.
       if (byEmail.googleSub && byEmail.googleSub !== identity.sub) return { error: "google_other_account" };
-      parent = await prisma.parent.update({ where: { id: byEmail.id }, data: { googleSub: identity.sub } });
+      // As for students: a password nobody proved was theirs doesn't
+      // survive the real owner arriving with Google. The setup link from
+      // any earlier email is spent too, now that the account is claimed.
+      const unproven = !!byEmail.passwordHash && !byEmail.emailVerifiedAt;
+      parent = await prisma.parent.update({
+        where: { id: byEmail.id },
+        data: {
+          googleSub: identity.sub,
+          setupToken: null,
+          setupTokenExpires: null,
+          emailVerifiedAt: byEmail.emailVerifiedAt ?? now,
+          ...(unproven ? { passwordHash: null, sessionsValidAfter: sessionCutoff() } : {}),
+        },
+      });
     } else {
       // A new parent account, linked to the student if they entered a code.
       const student = ctx.code ? await prisma.user.findUnique({ where: { parentInviteCode: ctx.code } }) : null;
@@ -147,6 +186,7 @@ async function signInParent(identity: GoogleIdentity, ctx: ParentContext): Promi
         data: {
           email: identity.email,
           googleSub: identity.sub,
+          emailVerifiedAt: now,
           timeZone: ctx.tz ? safeTimeZone(ctx.tz) : null,
           ...(student ? { links: { create: { studentId: student.id, nickname: ctx.name } } } : {}),
         },

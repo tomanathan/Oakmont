@@ -26,6 +26,7 @@ export function ParentControls({
   const [weekly, setWeekly] = useState(weeklyReport);
   const [daily, setDaily] = useState(dailyEmails);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -46,37 +47,57 @@ export function ParentControls({
 
   async function saveName(e: React.FormEvent) {
     e.preventDefault();
+    setError("");
     setSaving(true);
-    await fetch(`/api/parent/links/${linkId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nickname: name }),
-    });
-    setSaving(false);
-    setEditing(false);
-    router.refresh();
+    try {
+      const res = await fetch(`/api/parent/links/${linkId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nickname: name }),
+      });
+      // Not saved: keep the editor open with what they typed.
+      if (!res.ok) {
+        setError("Couldn't save the name. Please try again.");
+        return;
+      }
+      setEditing(false);
+      router.refresh();
+    } catch {
+      setError("Couldn't reach the server. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  // The switches flip at once and save behind the scenes. If the save
+  // doesn't land, the switch goes back to what is actually stored, so it
+  // never shows an email as off while it's still on.
+  async function saveSwitch(body: object): Promise<boolean> {
+    setError("");
+    try {
+      const res = await fetch("/api/parent/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (res.ok) return true;
+    } catch {
+      // Falls through to the same message.
+    }
+    setError("Couldn't save that. Please try again.");
+    return false;
   }
 
   async function toggleWeekly() {
     const next = !weekly;
     setWeekly(next);
-    const res = await fetch("/api/parent/settings", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ weeklyReport: next }),
-    });
-    if (!res.ok) setWeekly(!next);
+    if (!(await saveSwitch({ weeklyReport: next }))) setWeekly(!next);
   }
 
   async function toggleDaily() {
     const next = !daily;
     setDaily(next);
-    const res = await fetch("/api/parent/settings", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ dailyEmails: next }),
-    });
-    if (!res.ok) setDaily(!next);
+    if (!(await saveSwitch({ dailyEmails: next }))) setDaily(!next);
   }
 
   return (
@@ -94,7 +115,14 @@ export function ParentControls({
           <button type="submit" disabled={saving} className="rounded-lg bg-forest px-3 py-1.5 text-sm font-semibold text-white">
             Save
           </button>
-          <button type="button" onClick={() => setEditing(false)} className="px-1.5 text-sm text-stone-500 hover:text-ink">
+          <button
+            type="button"
+            onClick={() => {
+              setEditing(false);
+              setError("");
+            }}
+            className="px-1.5 text-sm text-stone-500 hover:text-ink"
+          >
             Cancel
           </button>
         </form>
@@ -121,6 +149,11 @@ export function ParentControls({
         <PaperCheck on={daily} size={16} seed={8} />
         Daily emails
       </button>
+      {error && (
+        <div role="alert" className="w-full text-[12.5px] text-red-700">
+          {error}
+        </div>
+      )}
     </div>
   );
 }

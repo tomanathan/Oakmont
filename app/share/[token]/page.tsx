@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { BrandMark } from "@/components/BrandMark";
 import { ParentReportView } from "@/components/parent/ParentReportView";
 import { displayName, loadParentReport } from "@/lib/parentReportData";
 
+export const metadata: Metadata = { title: "Shared study report · Oakmont", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
 
 // Public, no-login view -- anyone with the link sees the same
@@ -20,7 +22,7 @@ export default async function SharePage({ params }: { params: { token: string } 
       <div className="nbk-page mx-auto my-6 w-[calc(100%-24px)] font-sans sm:my-8 md:w-[calc(100%-80px)] max-w-[570px] text-center">
         <span className="nbk-spiral" aria-hidden />
         <BrandMark size={48} className="mx-auto mb-4" />
-        <div className="mb-2 text-lg font-semibold text-ink">This link isn&apos;t valid</div>
+        <h1 className="mb-2 text-lg font-semibold text-ink">This link isn&apos;t valid</h1>
         <div className="text-sm text-stone-500">It may have been turned off, or the link might be mistyped. Ask your student for a fresh one.</div>
       </div>
     );
@@ -33,7 +35,7 @@ export default async function SharePage({ params }: { params: { token: string } 
       <header className="mb-4 flex items-center gap-2.5 px-4 py-3">
         <BrandMark size={26} />
         <div className="font-display text-[14px] font-semibold text-ink">Oakmont Study Center</div>
-        <span className="text-xs text-stone-500">&middot; shared study report</span>
+        <span className="text-xs text-stone-600">&middot; shared study report</span>
       </header>
       <div className="nbk-page">
         <span className="nbk-spiral" aria-hidden />

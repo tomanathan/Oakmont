@@ -10,6 +10,7 @@ import { CURRICULUM, ALL_SUBSKILLS, ALL_DOMAINS, buildStudyPlan, getSubskill } f
 import { findRecommended } from "@/lib/recommend";
 import { reviewReady } from "@/lib/reviewSet";
 import { leadWith } from "@/lib/planOrder";
+import { todaysTestLogged, weeklyStatusFor } from "@/lib/planStatus";
 
 // Powers Ozho's "what should I do next?" click action. Mirrors the same
 // pipeline the dashboard runs server-side (weakness-ordered plan ->
@@ -19,11 +20,17 @@ export async function GET() {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Not logged in." }, { status: 401 });
 
-  const [rows, stats, latestTest] = await Promise.all([
+  const [rows, stats, tests, weeklyRows] = await Promise.all([
     prisma.progress.findMany({ where: { userId: user.userId } }),
     getUserStats(user.userId),
-    prisma.practiceTest.findFirst({ where: { userId: user.userId }, orderBy: { takenAt: "desc" } }),
+    prisma.practiceTest.findMany({
+      where: { userId: user.userId },
+      orderBy: [{ takenAt: "desc" }, { createdAt: "desc" }],
+      select: { takenAt: true, createdAt: true, domainScores: true },
+    }),
+    prisma.weeklyReview.findMany({ where: { userId: user.userId }, select: { week: true } }),
   ]);
+  const latestTest = tests[0] ?? null;
 
   const progress = progressMapFromRows(rows);
 
@@ -57,6 +64,8 @@ export async function GET() {
     recommendation: findRecommended(CURRICULUM, progress, today, {
       order: weaknessOrderedIds,
       reviewReady: reviewReady(progress),
+      weekly: weeklyStatusFor(studyPlan, todayItem, createdAt, courseLengthDays, weeklyRows.map((r) => r.week)),
+      testLogged: todaysTestLogged(studyPlan, todayItem, createdAt, tests),
     }),
   });
 }
