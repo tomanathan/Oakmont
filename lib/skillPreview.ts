@@ -1,4 +1,4 @@
-import { ALL_SUBSKILLS, CURRICULUM, type Pattern, type WorkedExample } from "@/data/curriculum";
+import { ALL_SUBSKILLS, CURRICULUM, type Pattern, type Subskill, type WorkedExample } from "@/data/curriculum";
 import { QUESTIONS, type Question } from "@/data/questions";
 import { slugForSubskill, slugify } from "@/lib/skillSlugs";
 import { STARTER_QUESTIONS } from "@/lib/starterQuestions";
@@ -37,8 +37,9 @@ export interface PracticeQuestion {
 }
 
 // Some bank questions are the lesson's own worked examples, word for word
-// (or with a line added). Compared on letters and digits only.
-function sameQuestion(a: string, b: string): boolean {
+// (or with a line added). Compared on letters and digits only. The question
+// of the day (lib/dailyQuestion.ts) uses it too, to skip the same copies.
+export function sameQuestion(a: string, b: string): boolean {
   const x = a.replace(/[^A-Za-z0-9]/g, "").toLowerCase();
   const y = b.replace(/[^A-Za-z0-9]/g, "").toLowerCase();
   return x === y || (Math.min(x.length, y.length) > 60 && (x.includes(y) || y.includes(x)));
@@ -86,6 +87,21 @@ export function pickPracticeQuestions(bank: Question[], examples: string[] = [])
   }
   const order = (q: Question) => DIFFICULTIES.indexOf(q.difficulty ?? "medium");
   return picked.map((p) => p.q).sort((a, b) => order(a) - order(b));
+}
+
+/** Every worked example in a skill's lesson, as question text. */
+export function workedExampleTexts(sub: Subskill): string[] {
+  return sub.patterns.flatMap((p) => p.examples.map((e) => e.q));
+}
+
+/**
+ * The three bank questions a skill's public page shows. The question of the
+ * day (lib/dailyQuestion.ts) leaves these out, so a visitor who reads both
+ * pages never meets the same question twice.
+ */
+export function previewPracticeQuestions(id: string): Question[] {
+  const sub = ALL_SUBSKILLS.find((s) => s.id === id);
+  return sub ? pickPracticeQuestions(QUESTIONS[id] ?? [], workedExampleTexts(sub)) : [];
 }
 
 /**
@@ -216,10 +232,7 @@ export function skillPreview(id: string): SkillPreview | null {
         diagram: ex.diagram,
       },
     },
-    practice: pickPracticeQuestions(
-      bank,
-      sub.patterns.flatMap((p) => p.examples.map((e) => e.q))
-    ).map((q) => ({
+    practice: previewPracticeQuestions(id).map((q) => ({
       q: q.q,
       choices: q.choices,
       answer: q.answer,

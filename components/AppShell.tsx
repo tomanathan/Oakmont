@@ -270,7 +270,7 @@ export function AppShell({
           <span className="nbk-spiral" aria-hidden />
           {children}
         </div>
-        <LegalFooter className="mt-8" />
+        <LegalFooter className="mt-8" explore={false} />
       </div>
       <FeedbackTab />
     </>

@@ -21,7 +21,10 @@ const SecondCompanion = dynamic(() => import("./SecondCompanion").then((m) => m.
 // companions would have nothing real to wander/chatter about there anyway.
 // The legal pages wear the landing page's top bar and are read on the way
 // in, so they're left out too, as are the public SAT skill pages (/sat),
-// which are reading pages for visitors. Kept as its own small client component, rather than making the whole
+// which are reading pages for visitors. The same goes for the other public
+// pages: the daily question (/daily), the embeddable widget (/embed), the
+// study plans (/sat-study-plan), test dates (/sat-test-dates) and the short
+// links (/go). Kept as its own small client component, rather than making the whole
 // root layout a client component, just to read the current route.
 export function CompanionGate() {
   const pathname = usePathname();
@@ -33,7 +36,16 @@ export function CompanionGate() {
     pathname === "/privacy" ||
     pathname === "/terms" ||
     pathname === "/sat" ||
-    pathname?.startsWith("/sat/")
+    pathname?.startsWith("/sat/") ||
+    pathname === "/daily" ||
+    pathname?.startsWith("/daily/") ||
+    pathname === "/embed" ||
+    pathname?.startsWith("/embed/") ||
+    pathname === "/sat-study-plan" ||
+    pathname?.startsWith("/sat-study-plan/") ||
+    pathname === "/sat-test-dates" ||
+    pathname === "/go" ||
+    pathname?.startsWith("/go/")
   )
     return null;
   return (

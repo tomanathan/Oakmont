@@ -608,3 +608,63 @@ body {
   align-items: center;
   min-height: 44px;
 }
+
+/* ---------- Printing a public study plan (app/sat-study-plan) ----------
+   The Print button, or the browser's own print, on a plan page (.plan-print)
+   puts just the plan on paper: no site header, footer, buttons or sign-up
+   cards (.plan-print-hide), every week open (OpenAllWeeks opens the closed
+   ones as printing starts), no week split across two sheets, black on
+   white. */
+@media print {
+  body:has(.plan-print) > :not(#app-content),
+  body:has(.plan-print) .nb-sitebar,
+  body:has(.plan-print) footer,
+  body:has(.plan-print) .nbk-spiral,
+  .plan-print-hide {
+    display: none !important;
+  }
+  body:has(.plan-print) {
+    background: #fff !important;
+  }
+  body:has(.plan-print) .seo-read {
+    width: auto;
+    max-width: none;
+    margin: 0;
+  }
+  body:has(.plan-print) .nbk-page {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+  }
+  .plan-print,
+  .plan-print * {
+    color: #000 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .plan-print .plan-week {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border-color: #000 !important;
+  }
+  .plan-print a {
+    text-decoration: none;
+  }
+}
+/* Browsers that style a closed week's body as ::details-content (Chrome,
+   Safari) can open it on paper with no script at all. On its own rule so a
+   browser that doesn't know the selector only drops this one. */
+@media print {
+  .plan-print details::details-content {
+    content-visibility: visible;
+  }
+}
+
+/* The question of the day's embeddable card (app/embed/daily) sits in an
+   iframe on other people's pages: no desk behind it, so their page shows
+   through around the card. */
+body:has(.daily-embed) {
+  background: transparent;
+}

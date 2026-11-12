@@ -13,7 +13,7 @@ BASE="${1:-https://oakmontsat.com}"
 fail=0
 
 # Public pages that must answer 200 signed out.
-for path in / /start /login /parent/login /parents/sample /privacy /terms /sat /sat/transitions /sat/circles /robots.txt /sitemap.xml; do
+for path in / /start /login /parent/login /parents/sample /privacy /terms /sat /sat/transitions /sat/circles /daily /daily/embed /embed/daily /sat-study-plan /sat-study-plan/3-month /sat-test-dates /robots.txt /sitemap.xml; do
   code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE$path")
   if [ "$code" = "200" ]; then
     echo "ok    $code $path"
@@ -22,6 +22,27 @@ for path in / /start /login /parent/login /parents/sample /privacy /terms /sat /
     fail=1
   fi
 done
+
+# Short links redirect (temporarily) to /start with the source tagged.
+go=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "$BASE/go/check")
+case "$go" in
+  "307 "*"/start?utm_source=check") echo "ok    $go /go/check" ;;
+  *) echo "FAIL  $go /go/check (want 307 to /start?utm_source=check)"; fail=1 ;;
+esac
+
+# The embeddable widget must be frameable; ordinary pages must not be.
+if curl -s -D - -o /dev/null "$BASE/embed/daily" | grep -qi '^x-frame-options:'; then
+  echo "FAIL  /embed/daily sends x-frame-options (it must be frameable)"
+  fail=1
+else
+  echo "ok    /embed/daily has no x-frame-options"
+fi
+if curl -s -D - -o /dev/null "$BASE/daily" | grep -qi '^x-frame-options:'; then
+  echo "ok    /daily sends x-frame-options"
+else
+  echo "FAIL  /daily has no x-frame-options"
+  fail=1
+fi
 
 # Signed-in pages should bounce to login, never error.
 for path in /dashboard /plan /review /settings; do

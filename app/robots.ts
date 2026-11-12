@@ -22,6 +22,7 @@ export default function robots(): MetadataRoute.Robots {
         "/parent/",
         "/share",
         "/link",
+        "/go",
         "/login",
         "/admin",
         "/review",

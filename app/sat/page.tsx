@@ -116,6 +116,27 @@ export default function SatHubPage() {
         );
       })}
 
+      <section className="mt-12" aria-labelledby="more-practice-h">
+        <h2 id="more-practice-h" className={H2}>More free SAT practice</h2>
+        <ul className="mt-4 flex flex-col gap-2.5">
+          {[
+            { href: "/daily", name: "SAT question of the day", line: "One new question every day, with a full explanation." },
+            { href: "/sat-study-plan", name: "SAT study plans", line: "Day-by-day plans by test date or length." },
+            { href: "/sat-test-dates", name: "SAT test dates", line: "Upcoming dates and how far away each one is." },
+          ].map((l) => (
+            <li key={l.href}>
+              <Link
+                href={l.href}
+                className="block rounded-xl border border-[#c9d6ee] bg-white px-4 py-3.5 shadow-[3px_3px_0_rgba(52,97,193,0.13)] hover:bg-[#f3f6fc]"
+              >
+                <span className="text-[17px] font-semibold leading-snug text-[#26427e] underline-offset-4">{l.name}</span>
+                <span className={`mt-1 block ${BODY}`}>{l.line}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <StartFree
         text={`Get every lesson, all ${questionCount} practice questions, and a study plan sized to your test date. ${TRIAL_DAYS} days free, no card needed.`}
       />
