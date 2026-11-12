@@ -20,11 +20,22 @@ const SecondCompanion = dynamic(() => import("./SecondCompanion").then((m) => m.
 // components/landing/HeroPets.tsx), and the live, session-backed
 // companions would have nothing real to wander/chatter about there anyway.
 // The legal pages wear the landing page's top bar and are read on the way
-// in, so they're left out too. Kept as its own small client component, rather than making the whole
+// in, so they're left out too, as are the public SAT skill pages (/sat),
+// which are reading pages for visitors. Kept as its own small client component, rather than making the whole
 // root layout a client component, just to read the current route.
 export function CompanionGate() {
   const pathname = usePathname();
-  if (pathname === "/" || pathname?.startsWith("/parent") || pathname?.startsWith("/share") || pathname?.startsWith("/link") || pathname === "/privacy" || pathname === "/terms") return null;
+  if (
+    pathname === "/" ||
+    pathname?.startsWith("/parent") ||
+    pathname?.startsWith("/share") ||
+    pathname?.startsWith("/link") ||
+    pathname === "/privacy" ||
+    pathname === "/terms" ||
+    pathname === "/sat" ||
+    pathname?.startsWith("/sat/")
+  )
+    return null;
   return (
     <>
       <ScoutCompanion />

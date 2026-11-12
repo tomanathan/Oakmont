@@ -7,22 +7,22 @@ import { hasActiveAccess } from "@/lib/subscription";
 import { LandingPage } from "@/components/landing/LandingPage";
 
 export const metadata: Metadata = {
-  title: "Oakmont Study Center — Every SAT skill, one week at a time",
+  title: "SAT Prep Online: Study Plan, Lessons and Practice | Oakmont",
   description:
-    "A complete SAT plan (six months recommended, sized to fit your test date) covering all 29 official SAT skills. Try a sample question free, no account needed.",
+    "Online SAT prep for the digital SAT: a week-by-week study plan sized to your test date, lessons and practice questions for all 29 SAT skills, and a dashboard for parents. Try 5 sample questions free, no account needed.",
   alternates: { canonical: "https://oakmontsat.com" },
   openGraph: {
-    title: "Oakmont Study Center — Every SAT skill, one week at a time",
+    title: "SAT Prep Online: Study Plan, Lessons and Practice | Oakmont",
     description:
-      "A complete SAT plan (six months recommended, sized to fit your test date) covering all 29 official SAT skills. Try a sample question free, no account needed.",
+      "Online SAT prep for the digital SAT: a week-by-week study plan sized to your test date, lessons and practice questions for all 29 SAT skills, and a dashboard for parents. Try 5 sample questions free, no account needed.",
     url: "https://oakmontsat.com",
     siteName: "Oakmont Study Center",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Oakmont Study Center — Every SAT skill, one week at a time",
-    description: "A complete SAT plan (six months recommended, sized to fit your test date) covering all 29 official SAT skills.",
+    title: "SAT Prep Online: Study Plan, Lessons and Practice | Oakmont",
+    description: "Online SAT prep for the digital SAT: a study plan sized to your test date, lessons and practice for all 29 SAT skills, and a dashboard for parents.",
   },
 };
 

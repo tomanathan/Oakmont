@@ -14,6 +14,11 @@ export function LegalFooter({ className = "" }: { className?: string }) {
       <a href={`mailto:${SUPPORT_EMAIL}`} className="px-2 py-3 hover:text-ink transition-colors">
         Contact support
       </a>
+      {/* The public skill pages' hub: linked from every page's footer so
+          visitors (and search engines) can reach it from anywhere. */}
+      <Link href="/sat" className="px-2 py-3 hover:text-ink transition-colors">
+        SAT skills
+      </Link>
       <Link href="/terms" className="px-2 py-3 hover:text-ink transition-colors">
         Terms of Service
       </Link>

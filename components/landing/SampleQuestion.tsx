@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { PenCross, PenLoop, PenTick } from "@/components/paper/Pencil";
 import { track } from "@vercel/analytics";
 import type { LandingShowcase } from "@/lib/landingShowcase";
@@ -58,6 +59,9 @@ export function SampleQuestion({
             The SAT, broken down to every kind of question it asks.
           </h2>
           <p className="nb-sec-sub">Each kind gets its own lesson. Answer this one, then see how it&apos;s taught.</p>
+          <Link href="/sat" className="nb-textlink" style={{ marginLeft: -6 }}>
+            See all {skillCount} SAT skills <span aria-hidden>→</span>
+          </Link>
         </div>
         <div className="nb-stats">
           <div className="nb-stat-big">

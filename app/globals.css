@@ -592,3 +592,19 @@ body {
    PixelDog's tailFrame prop and ScoutCompanion's own tailFrame timer),
    the same technique already proven for the leg-swap walk cycle at this
    same scale -- no CSS animation involved. */
+
+/* The public SAT pages (app/sat, wrapped in .seo-read by SeoShell) reuse the
+   app's question components, which read at 12.5-14.5px inside the course.
+   These pages are read on phones by people new to the app, so reading text
+   comes up to 16px there. Small uppercase labels keep their size, and so do
+   figures, whose tables and captions are sized to their drawing. */
+.seo-read :is(.text-\[12\.5px\], .text-\[13px\], .text-\[14\.5px\], .text-sm):not(figure *) {
+  font-size: 16px;
+  line-height: 1.55;
+}
+/* "Why C is right" opens with a tap: give it a finger-sized target. */
+.seo-read summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}

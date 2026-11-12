@@ -6,6 +6,7 @@ import { getSecretKey } from "./auth";
 import { itemsForSubskill, type BankItem } from "./items";
 import { finishActivity } from "./activity";
 import { onlyReferrerOrDirect } from "./signupSource";
+import { STARTER_QUESTIONS } from "./starterQuestions";
 
 // The /start onboarding: five short questions answered before any account
 // exists, then a test date, then "save my plan". What they answered is held
@@ -17,22 +18,12 @@ import { onlyReferrerOrDirect } from "./signupSource";
 export const START_COOKIE = "oak_start";
 const START_MAX_AGE = 30 * 24 * 60 * 60;
 
-// Short, phone-sized questions from skills with short lessons, alternating
-// Math and Reading & Writing, easy to medium. Found by their opening words so
-// wording edits in the bank don't silently drop one.
-const STARTERS: { skill: string; startsWith: string }[] = [
-  { skill: "m-linear-eq-1var", startsWith: "Solve for x: 6x - 9 = 2x + 15" },
-  { skill: "rw-transitions", startsWith: "Most substances expand as they warm." },
-  { skill: "m-percentages", startsWith: "A hardware store sells a ladder for $84." },
-  { skill: "rw-words-context", startsWith: "The negotiator's tone was ______" },
-  { skill: "m-linear-func", startsWith: "If h(x) = -2x + 5, what is the value of h(-4)?" },
-];
 // When every starter is right, the plan still needs a first skill: a short one
 // they haven't seen yet.
 const ALL_RIGHT_FIRST_SKILL = "m-ratios-rates";
 
 export function starterItems(): BankItem[] {
-  return STARTERS.map(({ skill, startsWith }) => {
+  return STARTER_QUESTIONS.map(({ skill, startsWith }) => {
     const bank = itemsForSubskill(skill);
     const item = bank.find((q) => q.q.startsWith(startsWith));
     if (item) return item;

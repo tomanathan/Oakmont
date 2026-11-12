@@ -1,13 +1,15 @@
 import type { MetadataRoute } from "next";
 
-// Only the public landing page and the two legal pages are worth crawling
-// -- everything else is either an authenticated app route with nothing to
-// index, or an API route.
+// Only the public pages are worth crawling: the landing page, the SAT skill
+// pages (/sat and /sat/...), /start, the sample parent view and the two legal
+// pages -- everything else is either an authenticated app route with nothing
+// to index, or an API route. ("/subskill" below is the signed-in lesson; it
+// doesn't prefix-match "/sat".)
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      allow: ["/", "/terms", "/privacy"],
+      allow: ["/", "/sat", "/terms", "/privacy"],
       // "/parent/" with its slash: a bare "/parent" is a prefix match that
       // would also block the public /parents/sample.
       disallow: [

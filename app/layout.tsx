@@ -37,6 +37,12 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://oakmontsat.com"),
   title: "Oakmont Study Center",
   description: "A complete SAT plan: six months recommended, sized to fit your test date, covering every official SAT skill.",
+  // Google Search Console and Bing Webmaster Tools check for this meta tag to
+  // confirm who owns the site; the codes are set in Vercel as GOOGLE_SITE_VERIFICATION and BING_SITE_VERIFICATION.
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
+    ...(process.env.BING_SITE_VERIFICATION ? { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } } : {}),
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

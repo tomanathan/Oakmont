@@ -13,7 +13,7 @@ BASE="${1:-https://oakmontsat.com}"
 fail=0
 
 # Public pages that must answer 200 signed out.
-for path in / /start /login /parent/login /parents/sample /privacy /terms /robots.txt /sitemap.xml; do
+for path in / /start /login /parent/login /parents/sample /privacy /terms /sat /sat/transitions /sat/circles /robots.txt /sitemap.xml; do
   code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE$path")
   if [ "$code" = "200" ]; then
     echo "ok    $code $path"
