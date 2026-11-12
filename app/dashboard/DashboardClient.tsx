@@ -20,6 +20,7 @@ import { SubskillStatusBadge } from "@/components/SubskillStatusBadge";
 import type { Recommendation } from "@/lib/recommend";
 import { WEEKLY_REVIEW_SIZE } from "@/lib/weeklyReview";
 import type { WeeklyStatus } from "@/lib/planStatus";
+import { InviteCard } from "@/components/InviteCard";
 
 export type { WeeklyStatus };
 
@@ -54,6 +55,7 @@ export function DashboardClient({
   review,
   weekly,
   testLogged = false,
+  invite,
 }: {
   firstName: string | null;
   checklist: ChecklistItem[] | null;
@@ -70,6 +72,9 @@ export function DashboardClient({
   weekly: WeeklyStatus | null;
   // On a practice-test day: the test is already logged (lib/planStatus.ts).
   testLogged?: boolean;
+  // The student's invite link and how many friends joined through it
+  // (lib/referral.ts); absent when it couldn't be loaded.
+  invite?: { url: string; joined: number } | null;
 }) {
   const router = useRouter();
   const completedCount = Object.keys(progress).length;
@@ -145,6 +150,10 @@ export function DashboardClient({
       </div>
 
       {checklist && <GettingStarted items={checklist} />}
+
+      {/* Invite a friend: a slim strip after today's plan and the
+          checklist, so it never comes before studying. */}
+      {invite && <InviteCard variant="compact" summary={invite} />}
 
       {/* Subject toggle -- these two sections are the entire test, and the
           two halves of everything below this point, so the control that

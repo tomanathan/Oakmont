@@ -13,12 +13,13 @@ import { retakeState } from "@/lib/retakeCover";
 import { subscriptionCancelsAt } from "@/lib/stripe";
 import { trialDaysLeft, trialEnded } from "@/lib/subscription";
 import { parentClaimed } from "@/lib/parentAuth";
+import { getReferralSummary, REFERRAL_STUDY_DAYS } from "@/lib/referral";
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const [stats, progressRows, parentAccess] = await Promise.all([
+  const [stats, progressRows, parentAccess, referral] = await Promise.all([
     getUserStats(user.userId),
     prisma.progress.findMany({ where: { userId: user.userId } }),
     prisma.user.findUnique({
@@ -30,6 +31,11 @@ export default async function SettingsPage() {
         encourageEmails: true,
         parentLinks: { select: { id: true, parent: { select: { id: true, email: true, passwordHash: true, googleSub: true } } }, orderBy: { createdAt: "asc" } },
       },
+    }),
+    // The invite card is extra: if it can't load, Settings shows without it.
+    getReferralSummary(user.userId).catch((err) => {
+      console.error("Couldn't load invite summary:", err);
+      return null;
     }),
   ]);
 
@@ -106,6 +112,7 @@ export default async function SettingsPage() {
         parentInviteCode={parentAccess?.parentInviteCode ?? null}
         parentShareToken={parentAccess?.parentShareToken ?? null}
         linkedParents={(parentAccess?.parentLinks ?? []).map((l) => ({ id: l.id, parentId: l.parent.id, email: l.parent.email, pending: !parentClaimed(l.parent) }))}
+        invite={referral ? { ...referral, studyDays: REFERRAL_STUDY_DAYS } : null}
         pass={pass}
         subscription={subscription}
         trial={

@@ -23,6 +23,7 @@ import { DashboardClient } from "./DashboardClient";
 import { parentClaimed } from "@/lib/parentAuth";
 import { leadWith } from "@/lib/planOrder";
 import { curriculumOutline } from "@/lib/curriculumOutline";
+import { getInviteStrip } from "@/lib/referral";
 
 // Only worth a "welcome back" recap if there was an actual gap since the
 // last login -- logging in again a few minutes later (a dropped session,
@@ -48,7 +49,7 @@ export default async function DashboardPage() {
           prisma.parentLink.findMany({ where: { studentId: user.userId }, select: { parent: { select: { email: true, passwordHash: true, googleSub: true } } } }),
         ])
   );
-  const [rows, stats, tests, weeklyRows, checklistRows] = await Promise.all([
+  const [rows, stats, tests, weeklyRows, checklistRows, referral] = await Promise.all([
     prisma.progress.findMany({ where: { userId: user.userId } }),
     statsLoading,
     prisma.practiceTest.findMany({
@@ -58,6 +59,11 @@ export default async function DashboardPage() {
     }),
     prisma.weeklyReview.findMany({ where: { userId: user.userId }, select: { week: true } }),
     checklistLoading,
+    // The invite strip is extra: if it can't load, the dashboard shows without it.
+    getInviteStrip(user.userId).catch((err) => {
+      console.error("Couldn't load invite summary:", err);
+      return null;
+    }),
   ]);
   const latestTest = tests[0] ?? null;
   // Onboarding comes before choosing a plan, so check it first.
@@ -261,6 +267,7 @@ export default async function DashboardPage() {
         review={review}
         weekly={weekly}
         testLogged={testLogged}
+        invite={referral}
         companion={companionSummary({
           lastActiveDate: stats.lastActiveDate ?? null,
           petBornAt: stats.petBornAt,

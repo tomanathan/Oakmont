@@ -22,6 +22,7 @@ import { PatternVideo } from "@/components/lessonVideo/PatternVideo";
 import { sectionTheme } from "@/lib/sectionTheme";
 import { turn, turnTo } from "@/components/paper/turn";
 import { Stamp } from "@/components/paper/Stamp";
+import { InviteNudge } from "@/components/InviteCard";
 
 // Time on a lesson before finishing it counts as the day's study (see below).
 const MIN_LESSON_MS = 2 * 60 * 1000;
@@ -150,6 +151,7 @@ export function SubskillClient({
   questions,
   userId,
   validItemIds,
+  inviteUrl,
 }: {
   subskill: Subskill;
   questions: QuizQuestion[];
@@ -158,6 +160,9 @@ export function SubskillClient({
   // Every question id this subskill's bank holds right now, to spot a saved
   // draft that has gone stale (see loadQuizDraft).
   validItemIds?: string[];
+  // The student's invite link (lib/referral.ts), offered once a quiz is
+  // passed; absent when it couldn't be loaded.
+  inviteUrl?: string | null;
 }) {
   const router = useRouter();
   const draftKey = quizDraftKey(userId, subskill.id);
@@ -1104,6 +1109,7 @@ export function SubskillClient({
               result={result}
               extras={extras}
               currentSubskillId={subskill.id}
+              inviteUrl={inviteUrl ?? null}
               onReview={reviewMisses}
               onRetake={retakeQuiz}
               avgSeconds={
@@ -1404,6 +1410,7 @@ function ResultsCard({
   result,
   extras,
   currentSubskillId,
+  inviteUrl,
   onReview,
   onRetake,
   avgSeconds,
@@ -1418,6 +1425,7 @@ function ResultsCard({
   result: SubmitResult | null;
   extras: ResultExtras | null;
   currentSubskillId: string;
+  inviteUrl: string | null;
   onReview: () => void;
   onRetake: () => void;
   avgSeconds: number | null;
@@ -1561,6 +1569,9 @@ function ResultsCard({
           )}
         </div>
       )}
+
+      {/* Just passed: a good moment to mention a friend, and only then. */}
+      {!saving && result?.justPassed && inviteUrl && <InviteNudge url={inviteUrl} />}
     </div>
   );
 }

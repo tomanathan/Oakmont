@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPageShell title="Privacy Policy" updated="November 10, 2026">
+    <LegalPageShell title="Privacy Policy" updated="November 12, 2026">
       <p>
         This describes what Oakmont Study Center collects, why, and who it&apos;s shared with. The short version:
         we collect what's needed to run your study plan and nothing more, we never see your card number, and
@@ -34,6 +34,11 @@ export default function PrivacyPage() {
           parent&apos;s time zone, so the days in their reports match their own clock.
         </li>
         <li>A couple of small cosmetic settings, like which Ozho costume you&apos;ve equipped.</li>
+        <li>
+          How you found us: the link or site that brought you to Oakmont on your first visit, such as a search
+          engine or a friend&apos;s invite link. It is kept in a cookie in your browser until you create an
+          account, and then saved with the account.
+        </li>
       </ul>
       <p>We don&apos;t track you across other sites, and we don&apos;t sell any of this to anyone.</p>
 
@@ -62,6 +67,11 @@ export default function PrivacyPage() {
         student can also turn off the shareable link in Settings, which stops it working right away. Because that
         link doesn&apos;t require logging in, treat it like a password — anyone who has the link can see the
         report behind it.
+      </p>
+      <p>
+        Students can also invite friends with a personal invite link. If you sign up through a friend&apos;s
+        link, that friend sees your first name and that you joined, and whether your studying has earned them a
+        free month. They don&apos;t see anything else about your account.
       </p>
 
       <h2>4. Who else sees data, and why</h2>

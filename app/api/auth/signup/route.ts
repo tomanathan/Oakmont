@@ -4,6 +4,9 @@ import { hashPassword, createSessionToken, SESSION_COOKIE_NAME, SESSION_MAX_AGE 
 import { trialEndFrom } from "@/lib/subscription";
 import { START_COOKIE, applyStartOnSignup, clearStartCookie } from "@/lib/starter";
 import { clientIp, isJsonRequest, rateLimit } from "@/lib/rateLimit";
+import { readSignupSource, signupSourceFields } from "@/lib/signupSource";
+import { SIGNUP_SOURCE_COOKIE } from "@/lib/signupSource.shared";
+import { applyReferralOnSignup } from "@/lib/referral";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -49,9 +52,19 @@ export async function POST(req: NextRequest) {
   // The free week starts now: full access, no card, no checkout. Paying
   // is a choice made later from /subscribe, not a step in signing up.
   const now = new Date();
+  // Where they found us, from their first visit (lib/signupSource.ts).
+  const source = readSignupSource(req.cookies.get(SIGNUP_SOURCE_COOKIE)?.value);
   const user = await prisma.user.create({
-    data: { email, passwordHash, firstName, lastLoginAt: now, trialEndsAt: trialEndFrom(now) },
+    data: { email, passwordHash, firstName, lastLoginAt: now, trialEndsAt: trialEndFrom(now), ...signupSourceFields(source) },
   });
+  // Through a friend's invite: a free month on top of the free week.
+  // The account exists by now, so a hiccup here mustn't fail the signup.
+  // A code that did not apply (unknown, mistyped) is not an invite: label the visit as it would have been.
+  await applyReferralOnSignup(user.id, source.ref)
+    .then(async (applied) => {
+      if (!applied && source.ref) await prisma.user.update({ where: { id: user.id }, data: { signupSource: source.sourceWithoutInvite } });
+    })
+    .catch((err) => console.error("Invite on signup failed", err));
 
   // Came through /start: their answers, test date, plan, and any parent invite come with them.
   const started = await applyStartOnSignup(user.id, req.cookies.get(START_COOKIE)?.value);

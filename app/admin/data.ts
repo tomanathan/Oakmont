@@ -81,8 +81,26 @@ export interface DayActivity {
   students: number;
 }
 
+// One row of "where accounts come from": a signup source (or a campaign)
+// with how many of its accounts went on to study and to pay.
+export interface SourceRow {
+  label: string;
+  signups: number;
+  studied: number;
+  paid: number;
+}
+
+export interface AdminSources {
+  students: SourceRow[]; // by signupSource, most signups first
+  campaigns: SourceRow[]; // the top utm campaigns, most signups first
+  parents: { label: string; signups: number }[];
+  invites: { joined: number; monthsGiven: number };
+}
+
 export interface AdminData {
   students: StudentRow[];
+  // Optional so the sample data in the design preview needn't fake it.
+  sources?: AdminSources;
   parents: ParentRow[];
   activity: { key: string; questions: number; correct: number; lessons: number; students: number }[];
   totals: { questions: number; correct: number; lessons: number; tests: number; studyMs: number };
@@ -95,7 +113,7 @@ export const dayKey = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: TZ 
 
 export async function loadAdminData(now: Date = new Date()): Promise<AdminData> {
   const since = new Date(now.getTime() - 30 * DAY);
-  const [users, attemptGroups, lessonGroups, tests, parents, recentAttempts, recentLessons, openFeedback] = await Promise.all([
+  const [users, attemptGroups, lessonGroups, tests, parents, recentAttempts, recentLessons, openFeedback, sources] = await Promise.all([
     prisma.user.findMany({
       orderBy: { createdAt: "desc" },
       select: {
@@ -150,6 +168,7 @@ export async function loadAdminData(now: Date = new Date()): Promise<AdminData> 
     prisma.itemAttempt.findMany({ where: { createdAt: { gte: since } }, select: { userId: true, correct: true, createdAt: true }, take: 100000 }),
     prisma.lessonView.findMany({ where: { createdAt: { gte: since } }, select: { userId: true, createdAt: true }, take: 100000 }),
     prisma.feedback.count({ where: { handledAt: null } }),
+    loadSources(),
   ]);
 
   const att = new Map<string, { n: number; correct: number; ms: number }>();
@@ -248,6 +267,7 @@ export async function loadAdminData(now: Date = new Date()): Promise<AdminData> 
 
   return {
     students,
+    sources,
     parents: parentRows,
     openFeedback,
     activity: [...days.entries()].map(([key, d]) => ({ key, questions: d.questions, correct: d.correct, lessons: d.lessons, students: d.who.size })),
@@ -258,6 +278,39 @@ export async function loadAdminData(now: Date = new Date()): Promise<AdminData> 
       tests: tests.length,
       studyMs: students.reduce((s, u) => s + u.questionMs + u.lessonMs, 0),
     },
+  };
+}
+
+// Accounts made before signup sources were recorded have none.
+const BEFORE_TRACKING = "Before tracking";
+const TOP_CAMPAIGNS = 8;
+
+// Grouped counts, not rows: _count on a column counts the rows where it is
+// set, so studied and paid come from the same query as signups.
+async function loadSources(): Promise<AdminSources> {
+  const [bySource, byCampaign, parentsBySource, joined, months] = await Promise.all([
+    prisma.user.groupBy({ by: ["signupSource"], _count: { _all: true, firstStudiedAt: true, firstPaidAt: true } }),
+    prisma.user.groupBy({
+      by: ["signupCampaign"],
+      where: { signupCampaign: { not: null } },
+      _count: { _all: true, firstStudiedAt: true, firstPaidAt: true },
+    }),
+    prisma.parent.groupBy({ by: ["signupSource"], _count: { _all: true } }),
+    prisma.user.count({ where: { referredById: { not: null } } }),
+    prisma.user.aggregate({ _sum: { referralMonthsEarned: true } }),
+  ]);
+  const row = (label: string | null, c: { _all: number; firstStudiedAt: number; firstPaidAt: number }): SourceRow => ({
+    label: label ?? BEFORE_TRACKING,
+    signups: c._all,
+    studied: c.firstStudiedAt,
+    paid: c.firstPaidAt,
+  });
+  const bySignups = (a: { signups: number }, b: { signups: number }) => b.signups - a.signups;
+  return {
+    students: bySource.map((g) => row(g.signupSource, g._count)).sort(bySignups),
+    campaigns: byCampaign.map((g) => row(g.signupCampaign, g._count)).sort(bySignups).slice(0, TOP_CAMPAIGNS),
+    parents: parentsBySource.map((g) => ({ label: g.signupSource ?? BEFORE_TRACKING, signups: g._count._all })).sort(bySignups),
+    invites: { joined, monthsGiven: months._sum.referralMonthsEarned ?? 0 },
   };
 }
 

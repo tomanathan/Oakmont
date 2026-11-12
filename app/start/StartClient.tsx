@@ -45,11 +45,13 @@ export function StartClient(props: {
   satDates: { date: string; label: string; weeks: number }[];
   today: string;
   invite: { token: string; parentEmail: string } | null;
+  // Came through a friend's invite link (lib/referral.ts).
+  friendInvite?: { firstName: string | null } | null;
   google: boolean;
   inApp: boolean;
   googleError: "google" | "google_other_account" | null;
 }) {
-  const { questions, skillNames, invite } = props;
+  const { questions, skillNames, invite, friendInvite } = props;
   const [answers, setAnswers] = useState<Record<string, number>>(props.savedAnswers);
   const firstOpen = questions.findIndex((q) => answers[q.id] === undefined);
   const [index, setIndex] = useState(firstOpen === -1 ? questions.length - 1 : firstOpen);
@@ -130,6 +132,11 @@ export function StartClient(props: {
 
       {step === "q" && current && (
         <div key={current.id}>
+          {friendInvite && index === 0 && (
+            <p className="mb-2 text-[14px] text-[#26427e]">
+              {friendInvite.firstName ? `${friendInvite.firstName} invited you.` : "A friend invited you."} Sign up and you both get an extra free month.
+            </p>
+          )}
           {/* The page's heading: shown on the first question, kept for
               screen readers on the rest. */}
           <h1 className={index === 0 && !revealed ? "mb-3 text-[14px] text-stone-600" : "sr-only"}>
@@ -257,7 +264,9 @@ export function StartClient(props: {
           >
             Save my plan
           </button>
-          <p className="mt-2 text-center text-[13px] text-stone-500">7 days free. No card needed.</p>
+          <p className="mt-2 text-center text-[13px] text-stone-500">
+            {friendInvite ? "7 days free, plus a free month from your invite. No card needed." : "7 days free. No card needed."}
+          </p>
         </div>
       )}
 
@@ -268,12 +277,14 @@ export function StartClient(props: {
 
 function SaveSheet({
   invite,
+  friendInvite,
   google,
   inApp,
   googleError,
   onDone,
 }: {
   invite: { token: string; parentEmail: string } | null;
+  friendInvite?: { firstName: string | null } | null;
   google: boolean;
   inApp: boolean;
   googleError: "google" | "google_other_account" | null;
@@ -316,7 +327,11 @@ function SaveSheet({
   return (
     <div>
       <h1 className={H1}>Save your plan</h1>
-      <p className="mt-2 text-[15px] text-stone-600">Your answers and plan come with you. 7 days free, no card.</p>
+      <p className="mt-2 text-[15px] text-stone-600">
+        {friendInvite
+          ? "Your answers and plan come with you. 7 days free plus a free month from your invite, no card."
+          : "Your answers and plan come with you. 7 days free, no card."}
+      </p>
       {invite && (
         <div className="mt-4 rounded-xl bg-[#e9effb] p-3.5 text-[14px] leading-snug text-[#26427e]">
           You&apos;ll be connected with <span className="font-semibold">{invite.parentEmail}</span>, who gets a weekly highlight of your wins.

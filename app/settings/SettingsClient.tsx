@@ -10,6 +10,8 @@ import { AddParentForm, ParentRow } from "@/components/AddParentForm";
 import { COSTUMES } from "@/lib/costumes";
 import type { PetState } from "@/lib/pet";
 import { RetakeCover, type RetakeCoverProps } from "@/components/RetakeCover";
+import { InviteCard } from "@/components/InviteCard";
+import type { ReferralSummary } from "@/lib/referral";
 
 export function SettingsClient({
   email,
@@ -28,6 +30,7 @@ export function SettingsClient({
   parentInviteCode,
   parentShareToken,
   linkedParents,
+  invite,
   pass,
   subscription,
   trial,
@@ -49,6 +52,8 @@ export function SettingsClient({
   parentInviteCode: string | null;
   parentShareToken: string | null;
   linkedParents: { id: string; parentId: string; email: string; pending: boolean }[];
+  // Invite a friend (lib/referral.ts); absent when it couldn't be loaded.
+  invite?: (ReferralSummary & { studyDays: number }) | null;
   // Only for 6-month pass holders; null for everyone else.
   pass: (RetakeCoverProps & { active: boolean }) | null;
   // Only for monthly subscribers (anyone Stripe has a subscription status
@@ -425,6 +430,13 @@ export function SettingsClient({
           {saving ? "Saving..." : "Save"}
         </button>
       </form>
+
+      {invite && (
+        <>
+          <div id="invite" className="scroll-mt-[72px] text-[11px] font-semibold text-stone-500 uppercase tracking-wide mb-2">Friends</div>
+          <InviteCard variant="full" summary={invite} studyDays={invite.studyDays} />
+        </>
+      )}
 
       {/* Parent access: parents on this account (with setup status), adding
           another by email, the invite code, and the no-login share link. */}

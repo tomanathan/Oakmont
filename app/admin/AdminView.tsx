@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { inFreeTrial, trialEnded } from "@/lib/subscription";
 import { BrandMark } from "@/components/BrandMark";
-import type { AdminData, StudentRow } from "./data";
+import type { AdminData, AdminSources, SourceRow, StudentRow } from "./data";
 import { AccountsTable } from "./AccountsTable";
 import { ParentsTable } from "./ParentsTable";
 import { DAY, TZ, dur, fmtDate, isMonthly, isPaying, pct } from "./format";
@@ -275,6 +275,8 @@ export function AdminView({ data, now }: { data: AdminData; now: Date }) {
           </div>
         </section>
 
+        {data.sources && <SourcesSection sources={data.sources} />}
+
         <div id="students" className="mb-8 scroll-mt-4">
           <AccountsTable students={users} now={now} />
         </div>
@@ -287,6 +289,76 @@ export function AdminView({ data, now }: { data: AdminData; now: Date }) {
           Visitors, pages, and where traffic comes from: Vercel dashboard → the oakmont project → Analytics. Payments and refunds: the Stripe dashboard.
         </p>
       </div>
+    </div>
+  );
+}
+
+// How students found the site (lib/signupSource.ts), and whether those
+// accounts went on to study and pay.
+function SourcesSection({ sources }: { sources: AdminSources }) {
+  return (
+    <section className="mb-8 rounded-xl border border-[#c9d6ee] bg-white">
+      <div className="px-5 pb-3 pt-5">
+        <h2 className="text-[15px] font-semibold">Where accounts come from</h2>
+        <p className="mt-0.5 text-[12px] text-stone-500">
+          Students, by how they first found the site: a link&apos;s utm_source tag, else the site that sent them, else direct. &quot;invite&quot; is a friend&apos;s invite link, &quot;parent-invite&quot; their parent&apos;s. Studied = has studied at least once. Paid = has ever paid.
+        </p>
+      </div>
+      <SourceTable rows={sources.students} first="Source" />
+      {sources.campaigns.length > 0 && (
+        <>
+          <h3 className="px-5 pb-2 pt-5 text-[13px] font-semibold">Top campaigns</h3>
+          <SourceTable rows={sources.campaigns} first="Campaign" />
+        </>
+      )}
+      <div className="space-y-1 border-t border-[#e1e9f7] px-5 py-3 text-[13px] text-stone-600">
+        <p>
+          <span className="font-semibold text-ink">Parents:</span>{" "}
+          {sources.parents.length ? sources.parents.map((p) => `${p.label} ${p.signups}`).join(" · ") : "none yet"}
+        </p>
+        <p>
+          <span className="font-semibold text-ink">Invites:</span> {sources.invites.joined} {sources.invites.joined === 1 ? "account" : "accounts"} joined through a friend&apos;s invite ·{" "}
+          {sources.invites.monthsGiven} free {sources.invites.monthsGiven === 1 ? "month" : "months"} given
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function SourceTable({ rows, first }: { rows: SourceRow[]; first: string }) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[560px] text-left text-[13px] tabular-nums">
+        <thead>
+          <tr className="border-y border-[#e1e9f7] bg-[#f3f6fc] text-[11px] uppercase tracking-[0.06em] text-stone-500">
+            <th className="px-5 py-2 font-semibold">{first}</th>
+            <th className="px-3 py-2 text-right font-semibold">Signups</th>
+            <th className="px-3 py-2 text-right font-semibold">Studied</th>
+            <th className="px-3 py-2 text-right font-semibold">Paid</th>
+            <th className="px-5 py-2 text-right font-semibold">Paid, of signups</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.label} className="border-b border-[#e8eef9] last:border-0">
+              <td className="px-5 py-2.5">{r.label}</td>
+              <td className="px-3 py-2.5 text-right">{r.signups}</td>
+              <td className="px-3 py-2.5 text-right">
+                {r.studied} <span className="text-stone-400">· {pct(r.studied, r.signups)}</span>
+              </td>
+              <td className="px-3 py-2.5 text-right">{r.paid}</td>
+              <td className="px-5 py-2.5 text-right">{pct(r.paid, r.signups)}</td>
+            </tr>
+          ))}
+          {rows.length === 0 && (
+            <tr>
+              <td colSpan={5} className="px-5 py-2.5 text-stone-500">
+                No accounts yet.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

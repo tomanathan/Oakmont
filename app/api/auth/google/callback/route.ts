@@ -5,6 +5,9 @@ import { createParentSessionToken, PARENT_SESSION_COOKIE_NAME, PARENT_SESSION_MA
 import { safeTimeZone } from "@/lib/parentReportData";
 import { trialEndFrom } from "@/lib/subscription";
 import { START_COOKIE, applyStartOnSignup, clearStartCookie } from "@/lib/starter";
+import { readSignupSource, signupSourceFields } from "@/lib/signupSource";
+import { SIGNUP_SOURCE_COOKIE } from "@/lib/signupSource.shared";
+import { applyReferralOnSignup } from "@/lib/referral";
 import { GOOGLE_STATE_COOKIE, googleRedirectUri, identityFromCode, safeNext, type GoogleIdentity } from "@/lib/googleAuth";
 
 // Step 2 of "Continue with Google": Google sends the browser back here with
@@ -52,9 +55,11 @@ export async function GET(req: NextRequest) {
   const identity = await identityFromCode(code, googleRedirectUri(req.nextUrl.origin), saved.nonce);
   if (!identity) return fail("google");
 
+  // How they first found us; only ever written onto a brand-new account.
+  const sourceCookie = req.cookies.get(SIGNUP_SOURCE_COOKIE)?.value;
   const done = saved.parent
-    ? await signInParent(identity, saved.parent)
-    : await signInStudent(identity, saved.next ?? null, req.cookies.get(START_COOKIE)?.value, saved.from === "start");
+    ? await signInParent(identity, saved.parent, sourceCookie)
+    : await signInStudent(identity, saved.next ?? null, req.cookies.get(START_COOKIE)?.value, saved.from === "start", sourceCookie);
   if ("error" in done) return fail(done.error);
 
   const res = NextResponse.redirect(new URL(done.dest, req.url));
@@ -76,7 +81,8 @@ async function signInStudent(
   identity: GoogleIdentity,
   next: string | null,
   startCookie: string | undefined,
-  fromStart: boolean
+  fromStart: boolean,
+  sourceCookie: string | undefined
 ): Promise<Outcome> {
   const now = new Date();
   let user = await prisma.user.findUnique({ where: { googleSub: identity.sub } });
@@ -110,6 +116,7 @@ async function signInStudent(
         const parent = await prisma.parent.findUnique({ where: { email: identity.email }, select: { id: true } });
         if (parent) return { error: "parent_account" };
       }
+      const source = readSignupSource(sourceCookie);
       user = await prisma.user.create({
         data: {
           email: identity.email,
@@ -118,9 +125,18 @@ async function signInStudent(
           firstName: identity.givenName,
           lastLoginAt: now,
           trialEndsAt: trialEndFrom(now),
+          ...signupSourceFields(source),
         },
       });
       isNew = true;
+      // Through a friend's invite: a free month on top of the free week.
+      // A code that did not apply (unknown, mistyped) is not an invite: label the visit as it would have been.
+      const newUserId = user.id;
+      await applyReferralOnSignup(newUserId, source.ref)
+        .then(async (applied) => {
+          if (!applied && source.ref) await prisma.user.update({ where: { id: newUserId }, data: { signupSource: source.sourceWithoutInvite } });
+        })
+        .catch((err) => console.error("Invite on signup failed", err));
     }
   }
   if (!isNew) {
@@ -138,7 +154,7 @@ async function signInStudent(
   };
 }
 
-async function signInParent(identity: GoogleIdentity, ctx: ParentContext): Promise<Outcome> {
+async function signInParent(identity: GoogleIdentity, ctx: ParentContext, sourceCookie: string | undefined): Promise<Outcome> {
   const now = new Date();
   let parent = await prisma.parent.findUnique({ where: { googleSub: identity.sub } });
   let welcomeName: string | null = null;
@@ -188,6 +204,7 @@ async function signInParent(identity: GoogleIdentity, ctx: ParentContext): Promi
           googleSub: identity.sub,
           emailVerifiedAt: now,
           timeZone: ctx.tz ? safeTimeZone(ctx.tz) : null,
+          ...signupSourceFields(readSignupSource(sourceCookie)),
           ...(student ? { links: { create: { studentId: student.id, nickname: ctx.name } } } : {}),
         },
       });

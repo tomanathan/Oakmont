@@ -5,6 +5,7 @@ import { prisma } from "./prisma";
 import { getSecretKey } from "./auth";
 import { itemsForSubskill, type BankItem } from "./items";
 import { finishActivity } from "./activity";
+import { onlyReferrerOrDirect } from "./signupSource";
 
 // The /start onboarding: five short questions answered before any account
 // exists, then a test date, then "save my plan". What they answered is held
@@ -145,6 +146,15 @@ export async function connectInvite(studentId: string, token: string): Promise<b
 export async function applyStartOnSignup(userId: string, cookieValue: string | undefined): Promise<boolean> {
   const state = await readStartCookie(cookieValue ?? "");
   const { claimed, invite } = await claimStarter(userId, state);
-  if (invite) await connectInvite(userId, invite);
+  if (invite && (await connectInvite(userId, invite))) await labelParentInvite(userId);
   return claimed;
+}
+
+// A student who came because their parent sent the link is counted that
+// way, unless a tagged link or a friend's invite brought them first.
+async function labelParentInvite(userId: string) {
+  const row = await prisma.user.findUnique({ where: { id: userId }, select: { signupSource: true, signupReferrer: true } });
+  if (row && onlyReferrerOrDirect(row)) {
+    await prisma.user.update({ where: { id: userId }, data: { signupSource: "parent-invite" } });
+  }
 }

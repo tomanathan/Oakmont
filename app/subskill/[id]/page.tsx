@@ -8,6 +8,7 @@ import { pickQuizItems } from "@/lib/quizSet";
 import { prisma } from "@/lib/prisma";
 import { AppShell } from "@/components/AppShell";
 import { SubskillClient } from "./SubskillClient";
+import { ensureReferralCode, inviteUrl } from "@/lib/referral";
 
 export default async function SubskillPage({ params }: { params: { id: string } }) {
   const user = await getCurrentUser();
@@ -16,12 +17,17 @@ export default async function SubskillPage({ params }: { params: { id: string } 
   const sub = getSubskill(params.id);
   if (!sub) notFound();
 
-  const [attempts, stats] = await Promise.all([
+  const [attempts, stats, invite] = await Promise.all([
     prisma.itemAttempt.findMany({
       where: { userId: user.userId, subskillId: params.id },
       select: { itemId: true, correct: true, confidence: true, createdAt: true },
     }),
     getUserStats(user.userId),
+    // For the invite line under a passed quiz; the quiz works without it.
+    ensureReferralCode(user.userId).then(inviteUrl, (err) => {
+      console.error("Couldn't load invite code:", err);
+      return null;
+    }),
   ]);
   if (!hasActiveAccess(stats)) redirect("/subscribe");
   const bank = itemsForSubskill(params.id);
@@ -32,7 +38,7 @@ export default async function SubskillPage({ params }: { params: { id: string } 
       {/* The bank's current ids (ids only, they're short) let the page drop
           a saved draft that holds a question since reworded; the user id
           keeps drafts apart on a shared computer. */}
-      <SubskillClient subskill={sub} questions={questions} userId={user.userId} validItemIds={bank.map((q) => q.id)} />
+      <SubskillClient subskill={sub} questions={questions} userId={user.userId} validItemIds={bank.map((q) => q.id)} inviteUrl={invite} />
     </AppShell>
   );
 }

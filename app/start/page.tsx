@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { ALL_DOMAINS, ALL_SUBSKILLS } from "@/data/curriculum";
@@ -8,6 +9,9 @@ import { upcomingSatDates, weeksUntil } from "@/lib/satDates";
 import { googleEnabled } from "@/lib/googleAuth";
 import { isInAppBrowser } from "@/lib/inAppBrowser";
 import { readStartCookie, starterItems } from "@/lib/starter";
+import { findInviter } from "@/lib/referral";
+import { readSignupSource } from "@/lib/signupSource";
+import { SIGNUP_SOURCE_COOKIE } from "@/lib/signupSource.shared";
 import { StartClient, type StarterQuestion } from "./StartClient";
 
 // The front door for students: five real questions before any account,
@@ -20,17 +24,18 @@ export const metadata: Metadata = {
 };
 export const dynamic = "force-dynamic";
 
-export default async function StartPage({ searchParams }: { searchParams: { invite?: string; error?: string } }) {
+export default async function StartPage({ searchParams }: { searchParams: { invite?: string; error?: string; r?: string } }) {
   const invite = searchParams.invite?.slice(0, 64) ?? null;
   const user = await getCurrentUser();
   // Already have an account: an invite goes through the normal connect page.
   if (user) redirect(invite ? `/link/${invite}` : "/dashboard");
 
-  const [state, inviteRow] = await Promise.all([
+  const [state, inviteRow, inviter] = await Promise.all([
     readStartCookie(),
     invite
       ? prisma.parentInvite.findUnique({ where: { token: invite }, include: { parent: { select: { email: true } } } })
       : Promise.resolve(null),
+    friendInviter(searchParams.r),
   ]);
   const validInvite = inviteRow && !inviteRow.usedAt && inviteRow.expiresAt > new Date() ? inviteRow : null;
 
@@ -62,9 +67,19 @@ export default async function StartPage({ searchParams }: { searchParams: { invi
       satDates={upcomingSatDates(now).map((d) => ({ date: d.date, label: d.label, weeks: weeksUntil(d.date, now) }))}
       today={now.toISOString().slice(0, 10)}
       invite={validInvite ? { token: validInvite.token, parentEmail: validInvite.parent.email } : null}
+      friendInvite={inviter ? { firstName: inviter.firstName } : null}
       google={googleEnabled() && !inApp}
       inApp={inApp}
       googleError={searchParams.error === "google" || searchParams.error === "google_other_account" ? searchParams.error : null}
     />
   );
+}
+
+// A friend's invite (lib/referral.ts): from the link's ?r=, or else the code
+// their first visit remembered -- the same one signup will read.
+async function friendInviter(fromQuery: string | undefined) {
+  const fromLink = typeof fromQuery === "string" ? await findInviter(fromQuery.slice(0, 64)) : null;
+  if (fromLink) return fromLink;
+  const remembered = readSignupSource(cookies().get(SIGNUP_SOURCE_COOKIE)?.value).ref;
+  return remembered ? findInviter(remembered) : null;
 }

@@ -10,6 +10,8 @@ import {
   parentClaimed,
 } from "@/lib/parentAuth";
 import { clientIp, isJsonRequest, rateLimit } from "@/lib/rateLimit";
+import { readSignupSource, signupSourceFields } from "@/lib/signupSource";
+import { SIGNUP_SOURCE_COOKIE } from "@/lib/signupSource.shared";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -80,6 +82,8 @@ export async function POST(req: NextRequest) {
       email,
       passwordHash,
       timeZone: body.timeZone ? safeTimeZone(body.timeZone) : null,
+      // Where they found us, from their first visit (lib/signupSource.ts).
+      ...signupSourceFields(readSignupSource(req.cookies.get(SIGNUP_SOURCE_COOKIE)?.value)),
       ...(student ? { links: { create: { studentId: student.id, nickname } } } : {}),
     },
   });

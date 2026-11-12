@@ -169,6 +169,30 @@ model User {
   encourageEmails    Boolean   @default(true)
   lastMorningEmailAt DateTime?
   lastNudgeEmailAt   DateTime?
+
+  // How this student found us (lib/signupSource.ts): read once, at signup,
+  // from what their first visit recorded -- a link's utm tags, the site
+  // that sent them, and the page they landed on. signupSource is the one
+  // short label the admin page groups by ("tiktok", "google", "invite",
+  // "direct", ...).
+  signupSource   String?
+  signupMedium   String?
+  signupCampaign String?
+  signupReferrer String?
+  signupLanding  String?
+
+  // Invite a friend (lib/referral.ts). referralCode is this student's own
+  // invite code, made the first time they open their invite link.
+  // referredById is the student whose link they signed up through, and
+  // referralRewardedAt (on the friend's row) marks that the inviter has
+  // been given their free month for this friend, so it is given once.
+  // referralMonthsEarned counts the inviter's free months so far.
+  referralCode         String?   @unique
+  referredById         String?
+  referralRewardedAt   DateTime?
+  referralMonthsEarned Int       @default(0)
+
+  @@index([referredById])
 }
 
 // A parent/guardian account -- entirely separate from User (the student),
@@ -213,6 +237,13 @@ model Parent {
   dailyEmails        Boolean   @default(true)
   lastMorningEmailAt DateTime?
   lastNudgeEmailAt   DateTime?
+
+  // How this parent found us; same fields as on User (lib/signupSource.ts).
+  signupSource   String?
+  signupMedium   String?
+  signupCampaign String?
+  signupReferrer String?
+  signupLanding  String?
 }
 
 // One parent linked to one student. A parent can link multiple students

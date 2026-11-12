@@ -7,6 +7,7 @@ import { progressMapFromRows } from "@/lib/progressState";
 import { bestUnlockedCostume } from "@/lib/costumes";
 import { isSecondPetUnlocked } from "@/lib/pet";
 import type { GradedItem } from "@/lib/items";
+import { REFERRAL_STUDY_DAYS, rewardInviterIfEarned } from "@/lib/referral";
 
 // What a finished quiz or mixed review changed beyond its own score -- the
 // streak, domains and sections newly completed, outfits unlocked, Mochi --
@@ -104,6 +105,13 @@ export async function finishActivity(userId: string, rowsBefore: Progress[]): Pr
       ...(dbUser?.firstStudiedAt ? {} : { firstStudiedAt: streak.lastActiveDate }),
     },
   });
+
+  // A friend who signed up through someone's invite has now studied enough
+  // days to earn that student their free month. Checked on the row just
+  // written, so it costs nothing for everyone else.
+  if (updated.referredById && !updated.referralRewardedAt && updated.daysStudied >= REFERRAL_STUDY_DAYS) {
+    await rewardInviterIfEarned(userId);
+  }
 
   return {
     currentStreak: updated.currentStreak,

@@ -9,7 +9,7 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalPageShell title="Terms of Service" updated="November 10, 2026">
+    <LegalPageShell title="Terms of Service" updated="November 12, 2026">
       <p>
         These terms cover your use of Oakmont Study Center (&ldquo;Oakmont,&rdquo; &ldquo;we,&rdquo; &ldquo;us&rdquo;), an
         online SAT preparation course. By creating an account or paying for access, you agree to them. If you&apos;re
@@ -65,7 +65,19 @@ export default function TermsPage() {
         Either way, email <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> and we&apos;ll sort it out.
       </p>
 
-      <h2>5. Letting a parent see your progress</h2>
+      <h2>5. Invites</h2>
+      <p>
+        A student can share a personal invite link. A new student who signs up through it gets an extra 30 days
+        free, in addition to the free trial. The student who sent the invite gets one free month once the new
+        student has studied on three separate days, up to six free months in total. A free month adds 30 days to
+        a free trial or a 6-month pass, or covers the next monthly payment for a student on the monthly plan.
+      </p>
+      <p>
+        Invites are for inviting other people. We may withhold or remove free months earned through accounts
+        created only to collect them.
+      </p>
+
+      <h2>6. Letting a parent see your progress</h2>
       <p>
         A student and a parent can connect their accounts, and either one can start it: a student can add a
         parent&apos;s email address or share an invite code or a link, and a parent with their own account can
@@ -75,32 +87,32 @@ export default function TermsPage() {
         one can remove the connection, a student from Settings and a parent from their own dashboard.
       </p>
 
-      <h2>6. Using Oakmont fairly</h2>
+      <h2>7. Using Oakmont fairly</h2>
       <p>
         Your account is for your own studying. Please don&apos;t share logins to spread one paid account across
         multiple students, scrape or resell the content, or otherwise try to circumvent access controls.
       </p>
 
-      <h2>7. Ending your access</h2>
+      <h2>8. Ending your access</h2>
       <p>
         You can stop using Oakmont and delete your account anytime by emailing us. We can also suspend or end an
         account that clearly violates these terms.
       </p>
 
-      <h2>8. No guarantees</h2>
+      <h2>9. No guarantees</h2>
       <p>
         Oakmont is provided as-is. We work hard to keep it accurate and available, but we can&apos;t promise
         it&apos;ll be error-free or uninterrupted, and we&apos;re not liable for indirect damages arising from its
         use, to the extent the law allows us to limit that.
       </p>
 
-      <h2>9. Changes</h2>
+      <h2>10. Changes</h2>
       <p>
         If we update these terms, we&apos;ll update the date at the top. Continuing to use Oakmont after a change
         means you accept the new version.
       </p>
 
-      <h2>10. Contact</h2>
+      <h2>11. Contact</h2>
       <p>
         Questions about any of this: <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
       </p>

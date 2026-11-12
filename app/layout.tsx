@@ -4,6 +4,7 @@ import "./globals.css";
 import "./paper.css";
 import "katex/dist/katex.min.css";
 import { SiteAnalytics } from "@/components/SiteAnalytics";
+import { SourceCapture } from "@/components/SourceCapture";
 import { CompanionGate } from "@/components/CompanionGate";
 import { GlobalConfetti } from "@/components/GlobalConfetti";
 import { PaperMotion } from "@/components/paper/PaperMotion";
@@ -67,6 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <PaperMotion />
         </Suspense>
         <SiteAnalytics />
+        <SourceCapture />
       </body>
     </html>
   );
